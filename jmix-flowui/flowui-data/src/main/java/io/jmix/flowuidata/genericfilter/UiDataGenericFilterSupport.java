@@ -246,29 +246,32 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
     protected boolean isDefaultForMeFieldVisible(Configuration currentConfiguration,
                                                  FilterConfiguration configurationModel) {
         View<?> currentView = UiComponentUtils.findView(currentConfiguration.getOwner());
-        if (currentConfiguration.getOwner().getId().isPresent() && currentView != null) {
-            SettingsFacet settingsFacet = ViewControllerUtils.getViewFacet(currentView, SettingsFacet.class);
 
-            if (settingsFacet != null) {
-                ViewSettings settings = settingsFacet.getSettings();
-
-                if (settings != null) {
-                    settings.getSettings(currentConfiguration.getOwner().getId().get(), GenericFilterSettings.class)
-                            .ifPresent(genericFilterSettings -> {
-                                String defaultConfigurationId = genericFilterSettings.getDefaultConfigurationId();
-                                if (defaultConfigurationId != null) {
-                                    boolean defaultForMe =
-                                            defaultConfigurationId.equals(configurationModel.getConfigurationId());
-
-                                    configurationModel.setDefaultForMe(defaultForMe);
-                                }
-                            });
-                }
-
-                return true;
-            }
+        if (currentConfiguration.getOwner().getId().isEmpty() || currentView == null) {
+            return false;
         }
-        return false;
+
+        SettingsFacet settingsFacet = ViewControllerUtils.getViewFacet(currentView, SettingsFacet.class);
+        if (settingsFacet == null) {
+            return false;
+        }
+
+        ViewSettings settings = settingsFacet.getSettings();
+
+        if (settings != null) {
+            settings.getSettings(currentConfiguration.getOwner().getId().get(), GenericFilterSettings.class)
+                    .ifPresent(genericFilterSettings -> {
+                        String defaultConfigurationId = genericFilterSettings.getDefaultConfigurationId();
+                        if (defaultConfigurationId != null) {
+                            boolean defaultForMe =
+                                    defaultConfigurationId.equals(configurationModel.getConfigurationId());
+
+                            configurationModel.setDefaultForMe(defaultForMe);
+                        }
+                    });
+        }
+
+        return true;
     }
 
     protected InstanceContainer<FilterConfiguration> registerConfigurationDc(FilterConfiguration configurationModel,

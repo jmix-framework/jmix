@@ -21,13 +21,18 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
+import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.settings.ViewSettings;
 import io.jmix.flowui.facet.settings.component.GenericFilterSettings;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.ViewControllerUtils;
+import io.jmix.flowuidata.entity.FilterConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Action makes the current {@link FilterConfiguration} for the {@link GenericFilter} the default for the current view.
+ */
 @ActionType(GenericFilterMakeDefaultAction.ID)
 public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericFilterMakeDefaultAction> {
 

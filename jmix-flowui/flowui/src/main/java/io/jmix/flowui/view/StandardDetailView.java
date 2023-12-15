@@ -263,7 +263,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                 if (loader instanceof InstanceLoader) {
                     //noinspection rawtypes
                     InstanceLoader instanceLoader = (InstanceLoader) loader;
-                    if (instanceLoader.getEntityId() == null) {
+                    if (instanceLoader.getEntityId() == null && EntityValues.getId(getEditedEntity()) != null) {
                         savedEntities.optional(getEditedEntity())
                                 .ifPresent(entity ->
                                         instanceLoader.setEntityId(

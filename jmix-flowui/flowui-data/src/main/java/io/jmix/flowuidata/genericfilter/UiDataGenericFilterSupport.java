@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSet;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.security.event.UserRemovedEvent;
@@ -30,21 +31,23 @@ import io.jmix.flowui.action.genericfilter.GenericFilterClearValuesAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterCopyAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterEditAction;
 import io.jmix.flowui.app.filter.condition.FilterConditionDetailView;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.component.genericfilter.configuration.AbstractConfigurationDetail;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
+import io.jmix.flowui.facet.SettingsFacet;
+import io.jmix.flowui.facet.settings.ViewSettings;
+import io.jmix.flowui.facet.settings.component.GenericFilterSettings;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.StandardOutcome;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowuidata.action.genericfilter.GenericFilterRemoveAction;
-import io.jmix.flowuidata.action.genericfilter.GenericFilterSaveAction;
-import io.jmix.flowuidata.action.genericfilter.GenericFilterSaveAsAction;
-import io.jmix.flowuidata.action.genericfilter.GenericFilterSaveWithValuesAction;
+import io.jmix.flowuidata.action.genericfilter.*;
 import io.jmix.flowuidata.component.genericfilter.configuration.UiDataFilterConfigurationDetail;
 import io.jmix.flowuidata.entity.FilterConfiguration;
 import jakarta.annotation.Nullable;
@@ -54,10 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import static io.jmix.flowui.component.genericfilter.FilterUtils.generateFilterPath;
 
@@ -182,6 +182,7 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
                 GenericFilterSaveAsAction.ID,
                 GenericFilterEditAction.ID,
                 GenericFilterRemoveAction.ID,
+                GenericFilterMakeDefaultAction.ID,
                 GenericFilterCopyAction.ID,
                 GenericFilterClearValuesAction.ID
         );
@@ -244,8 +245,33 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
 
     protected boolean isDefaultForMeFieldVisible(Configuration currentConfiguration,
                                                  FilterConfiguration configurationModel) {
-        //TODO: kremnevda, viewSettingsFacet? 04.04.2023
-        return false;
+        View<?> currentView = UiComponentUtils.findView(currentConfiguration.getOwner());
+
+        if (currentConfiguration.getOwner().getId().isEmpty() || currentView == null) {
+            return false;
+        }
+
+        SettingsFacet settingsFacet = ViewControllerUtils.getViewFacet(currentView, SettingsFacet.class);
+        if (settingsFacet == null) {
+            return false;
+        }
+
+        ViewSettings settings = settingsFacet.getSettings();
+
+        if (settings != null) {
+            settings.getSettings(currentConfiguration.getOwner().getId().get(), GenericFilterSettings.class)
+                    .ifPresent(genericFilterSettings -> {
+                        String defaultConfigurationId = genericFilterSettings.getDefaultConfigurationId();
+                        if (defaultConfigurationId != null) {
+                            boolean defaultForMe =
+                                    defaultConfigurationId.equals(configurationModel.getConfigurationId());
+
+                            configurationModel.setDefaultForMe(defaultForMe);
+                        }
+                    });
+        }
+
+        return true;
     }
 
     protected InstanceContainer<FilterConfiguration> registerConfigurationDc(FilterConfiguration configurationModel,
@@ -263,13 +289,20 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
         GenericFilter genericFilter = configuration.getOwner();
         FilterConfiguration configurationModel;
 
-        if (configurationDetail instanceof UiDataFilterConfigurationDetail) {
-            InstanceContainer<FilterConfiguration> configurationDc =
-                    ((UiDataFilterConfigurationDetail) configurationDetail).getConfigurationDc();
+        if (configurationDetail instanceof UiDataFilterConfigurationDetail dataConfigurationDetail) {
+            InstanceContainer<FilterConfiguration> configurationDc = dataConfigurationDetail.getConfigurationDc();
 
             configurationModel = configurationDc.getItem();
 
-            //TODO: kremnevda, viewSettingsFacet? 06.04.2023
+            if (genericFilter.getId().isPresent()
+                    && dataConfigurationDetail.isDefaultForMeFieldVisible()) {
+                SettingsFacet settingsFacet = ViewControllerUtils
+                        .getViewFacet(UiComponentUtils.getView(genericFilter), SettingsFacet.class);
+
+                if (settingsFacet != null) {
+                    saveFilterSettings(settingsFacet, genericFilter.getId().get(), configurationModel);
+                }
+            }
         } else {
             configurationModel = loadFilterConfigurationModel(genericFilter, configuration.getId());
         }
@@ -289,5 +322,25 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
         configurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
 
         return configurationModel;
+    }
+
+    protected void saveFilterSettings(SettingsFacet settingsFacet,
+                                      String filterId,
+                                      FilterConfiguration configurationModel) {
+        ViewSettings settings = settingsFacet.getSettings();
+        Preconditions.checkNotNullArgument(settings,
+                "%s is not attached to the view", SettingsFacet.class.getSimpleName());
+
+        GenericFilterSettings genericFilterSettings = settings.getSettingsOrCreate(filterId, GenericFilterSettings.class);
+        if (Objects.equals(genericFilterSettings.getDefaultConfigurationId(), configurationModel.getConfigurationId())
+                && !configurationModel.getDefaultForMe()) {
+            genericFilterSettings.setDefaultConfigurationId(null);
+        }
+
+        if (configurationModel.getDefaultForMe()) {
+            genericFilterSettings.setDefaultConfigurationId(configurationModel.getConfigurationId());
+        }
+
+        settings.put(genericFilterSettings);
     }
 }

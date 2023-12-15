@@ -24,10 +24,11 @@ import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View.QueryParametersChangeEvent;
-
 import org.springframework.lang.Nullable;
+
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
@@ -99,6 +100,16 @@ public final class ViewControllerUtils {
 
     public static ViewFacets getViewFacets(View<?> view) {
         return view.getViewFacets();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <T extends Facet> T getViewFacet(View<?> view, Class<T> facetClass) {
+        return (T) view.getViewFacets()
+                .getFacets()
+                .filter(facet -> facetClass.isAssignableFrom(facet.getClass()))
+                .findAny()
+                .orElse(null);
     }
 
     public static void setViewFacets(View<?> view, ViewFacets viewFacets) {

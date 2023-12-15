@@ -18,6 +18,7 @@ package io.jmix.flowui.facet.settings.component.binder;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.core.JmixOrder;
+import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.facet.settings.Settings;
 import io.jmix.flowui.facet.settings.component.GenericFilterSettings;
@@ -43,6 +44,15 @@ public class GenericFilterSettingsBinder implements ComponentSettingsBinder<Gene
     public void applySettings(GenericFilter component, GenericFilterSettings settings) {
         if (settings.getOpened() != null) {
             component.setOpened(settings.getOpened());
+        }
+
+        if (settings.getDefaultConfigurationId() != null) {
+            Configuration defaultConfiguration = component.getConfiguration(settings.getDefaultConfigurationId());
+
+            if (defaultConfiguration != null) {
+                component.setCurrentConfiguration(defaultConfiguration);
+                component.apply();
+            }
         }
     }
 

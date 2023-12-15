@@ -133,13 +133,13 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "defaultDecimalField");
-        FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "lookupField");
+        FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "isRequiredField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "minDecimalField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "maxDecimalField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "numberFormatPatternField");
-        FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "isRequiredField");
+        FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "lookupField");
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "defaultIntField");
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "minIntField");
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "maxIntField");

@@ -325,10 +325,15 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected void validateUniqueStringOnAttribute(String value,
                                                    Function<CategoryAttribute, String> mapper,
                                                    String messageKey) {
-        if (categoryAttributeDc.getItem()
+        if(categoryAttributeDc.getItem().getCategory() == null ||
+                categoryAttributeDc.getItem().getCategory().getCategoryAttrs() == null) {
+            return;
+        }
+        List<CategoryAttribute> attributes = categoryAttributeDc.getItem()
                 .getCategory()
-                .getCategoryAttrs()
-                .stream()
+                .getCategoryAttrs();
+        if (attributes.stream()
+                .filter(item -> !Objects.equals(categoryAttributeDc.getItem(), item))
                 .map(mapper)
                 .anyMatch(attrName -> Objects.equals(attrName, value))) {
             throw new ValidationException(messages.formatMessage(getClass(), messageKey, value));

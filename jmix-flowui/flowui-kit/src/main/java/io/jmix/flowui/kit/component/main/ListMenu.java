@@ -787,11 +787,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 return;
             }
 
-            if (!menuItem.isAttachedToMenu()
-                    || menuItem.getMenuComponent() != menuComponent) {
-                throw new IllegalArgumentException(MenuItem.class.getSimpleName() + "is not attached to the menu");
-            }
-
             children.stream()
                     .filter(item -> item.equals(menuItem))
                     .findFirst()

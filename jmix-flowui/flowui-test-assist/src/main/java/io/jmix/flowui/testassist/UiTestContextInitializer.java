@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * DevModeServletContextListener starts node tasks using CompletableFuture. But sometimes
  * the thread of {@link CompletableFuture} seems is not started. It leads to hanging tests in the application.
- * Since Vaadin 24.1 it is not possible do disable DevModeServletContextListener using:
+ * Since Vaadin 24.1 it is not enough do disable DevModeServletContextListener using:
  * <pre>
  *     servletContext.setInitParameter(InitParameters.SERVLET_PARAMETER_PRODUCTION_MODE, "true");
  * </pre>

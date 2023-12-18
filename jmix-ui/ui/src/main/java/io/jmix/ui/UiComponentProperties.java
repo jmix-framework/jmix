@@ -121,6 +121,11 @@ public class UiComponentProperties {
      */
     boolean filterShowConfigurationIdField;
 
+    /**
+     * Whether collection properties are available when editing filter conditions.
+     */
+    boolean filterCollectionPropertyConditionVisible;
+
     public UiComponentProperties(
             @DefaultValue("true") boolean htmlSanitizerEnabled,
             @DefaultValue("20") int uploadFieldMaxUploadSizeMb,
@@ -146,7 +151,8 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean filterAutoApply,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("3") int filterColumnsCount,
-            @DefaultValue("false") boolean filterShowConfigurationIdField
+            @DefaultValue("false") boolean filterShowConfigurationIdField,
+            @DefaultValue("false") boolean filterCollectionPropertyConditionVisible
     ) {
         this.htmlSanitizerEnabled = htmlSanitizerEnabled;
         this.uploadFieldMaxUploadSizeMb = uploadFieldMaxUploadSizeMb;
@@ -173,6 +179,7 @@ public class UiComponentProperties {
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterColumnsCount = filterColumnsCount;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
+        this.filterCollectionPropertyConditionVisible = filterCollectionPropertyConditionVisible;
     }
 
     public int getUploadFieldMaxUploadSizeMb() {
@@ -306,5 +313,12 @@ public class UiComponentProperties {
      */
     public boolean isFilterShowConfigurationIdField() {
         return filterShowConfigurationIdField;
+    }
+
+    /**
+     * @see #filterCollectionPropertyConditionVisible
+     */
+    public boolean isFilterCollectionPropertyConditionVisible() {
+        return filterCollectionPropertyConditionVisible;
     }
 }

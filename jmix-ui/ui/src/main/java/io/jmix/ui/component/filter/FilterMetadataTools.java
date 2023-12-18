@@ -110,6 +110,7 @@ public class FilterMetadataTools {
                         && isKeyValueCrossDataStoreReferenceAllowed(propertyPath, query)))
                     || (isCrossDataStoreReference(propertyPath.getMetaProperty())
                         && !(propertyPath.getMetaClass() instanceof KeyValueMetaClass)))
+                && isCardinalityAllowed(propertyPath)
                 && !(byte[].class.equals(propertyPath.getMetaProperty().getJavaType()));
     }
 
@@ -149,5 +150,10 @@ public class FilterMetadataTools {
         } else {
             return true;
         }
+    }
+
+    protected boolean isCardinalityAllowed(MetaPropertyPath propertyPath) {
+        return !propertyPath.getMetaProperty().getRange().getCardinality().isMany()
+                || uiComponentProperties.isFilterCollectionPropertyConditionVisible();
     }
 }

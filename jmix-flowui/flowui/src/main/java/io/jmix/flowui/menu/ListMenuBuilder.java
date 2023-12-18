@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -98,6 +99,7 @@ public class ListMenuBuilder {
                 createListMenu(item)
                         .ifPresent(menuBarItem::addChildItem);
             }
+            removeTrailingChildSeparators(menuBarItem);
 
             if (!menuBarItem.hasChildren()) {
                 log.debug("Menu bar item '{}' is skipped as it does not have children or they are not permitted by " +
@@ -128,6 +130,23 @@ public class ListMenuBuilder {
             menuBarItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
         }
         return menuBarItem;
+    }
+
+    /**
+     * Removes trailing child separators.
+     *
+     * @param menuBarItem parent menu item to trim
+     */
+    protected void removeTrailingChildSeparators(ListMenu.MenuBarItem menuBarItem) {
+        List<ListMenu.MenuItem> childItems = new ArrayList<>(menuBarItem.getChildren());
+        for (int i = childItems.size() - 1; i >= 0; i--) {
+            ListMenu.MenuItem childItem = childItems.get(i);
+            if (childItem.isSeparator()) {
+                menuBarItem.removeChildItem(childItem);
+            } else {
+                break;
+            }
+        }
     }
 
     @Nullable

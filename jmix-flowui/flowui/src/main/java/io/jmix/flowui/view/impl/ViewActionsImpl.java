@@ -24,9 +24,9 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.Collection;
 
 @Component("flowui_ViewActions")
@@ -45,7 +45,8 @@ public class ViewActionsImpl implements ViewActions {
             actionBinder.createShortcutActionsHolderBinding(action, getView().getContent(),
                     ((viewLayout, shortcutEventListener, keyCombination) ->
                             Shortcuts.addShortcutListener(viewLayout, shortcutEventListener,
-                                    keyCombination.getKey(), keyCombination.getKeyModifiers())),
+                                            keyCombination.getKey(), keyCombination.getKeyModifiers())
+                                    .listenOn(viewLayout)),
                     index);
         } else {
             actionBinder.addAction(action, index);

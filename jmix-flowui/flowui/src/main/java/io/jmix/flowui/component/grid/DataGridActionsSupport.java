@@ -28,31 +28,23 @@ public class DataGridActionsSupport<C extends Grid<T> & ListDataComponent<T>, T>
         super(grid);
     }
 
-    @Override
-    protected void addActionInternal(Action action, int index) {
-        super.addActionInternal(action, index);
-
-        attachAction(action);
-    }
-
-    @Override
-    protected void removeActionInternal(Action action) {
-        super.removeActionInternal(action);
-
-        detachAction(action);
-    }
-
     @SuppressWarnings("unchecked")
+    @Override
     protected void attachAction(Action action) {
+        super.attachAction(action);
+
         if (action instanceof ListDataComponentAction) {
             ((ListDataComponentAction<?, T>) action).setTarget(component);
         }
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     protected void detachAction(Action action) {
+        super.detachAction(action);
+
         if (action instanceof ListDataComponentAction) {
-            ((ListDataComponentAction<?, T>) action).setTarget(component);
+            ((ListDataComponentAction<?, T>) action).setTarget(null);
         }
     }
 }

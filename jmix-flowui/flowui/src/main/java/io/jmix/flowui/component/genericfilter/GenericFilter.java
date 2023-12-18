@@ -61,7 +61,6 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.kit.component.combobutton.ComboButtonVariant;
-import io.jmix.flowui.kit.component.dropdownbutton.ActionItem;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.model.BaseCollectionLoader;
@@ -74,7 +73,6 @@ import org.springframework.lang.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -124,6 +122,8 @@ public class GenericFilter extends Composite<JmixDetails>
     protected Configuration emptyConfiguration;
     protected Configuration currentConfiguration;
     protected List<Configuration> configurations = new ArrayList<>();
+
+    protected GenericFilterActionsSupport actionsSupport;
 
     protected List<FilterComponent> conditions;
 
@@ -272,7 +272,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected void initApplyButton(ComboButton applyButton) {
         applyButton.addClickListener(this::onApplyButtonClick);
         applyButton.addThemeVariants(ComboButtonVariant.LUMO_SUCCESS, ComboButtonVariant.LUMO_PRIMARY);
-        applyButton.setShortcutCombination(KeyCombination.create(applyShortcut));
+        applyButton.setShortcutCombination(KeyCombination.create(applyShortcut, this));
 
         updateApplyButtonText(isAutoApply());
 
@@ -312,7 +312,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
         List<GenericFilterAction<?>> defaultFilterActions = genericFilterSupport.getDefaultFilterActions(this);
         for (GenericFilterAction<?> filterAction : defaultFilterActions) {
-            settingsButton.addItem(filterAction.getId(), filterAction);
+            addAction(filterAction);
         }
 
         UiGenericFilterModifyConfigurationContext context = new UiGenericFilterModifyConfigurationContext();
@@ -402,7 +402,7 @@ public class GenericFilter extends Composite<JmixDetails>
         if (!Objects.equals(this.applyShortcut, applyShortcut)) {
             this.applyShortcut = applyShortcut;
 
-            applyButton.setShortcutCombination(KeyCombination.create(applyShortcut));
+            applyButton.setShortcutCombination(KeyCombination.create(applyShortcut, this));
         }
     }
 
@@ -506,44 +506,23 @@ public class GenericFilter extends Composite<JmixDetails>
 
     @Override
     public void addAction(Action action, int index) {
-        if (action instanceof GenericFilterAction) {
-            ((GenericFilterAction<?>) action).setTarget(this);
-        }
-
-        settingsButton.addItem(action.getId(), action, index);
+        getActionsSupport().addAction(action, index);
     }
 
     @Override
     public void removeAction(Action action) {
-        removeAction(action.getId());
-    }
-
-    @Override
-    public void removeAction(String id) {
-        settingsButton.remove(id);
-    }
-
-    @Override
-    public void removeAllActions() {
-        settingsButton.removeAll();
+        getActionsSupport().removeAction(action);
     }
 
     @Override
     public Collection<Action> getActions() {
-        return settingsButton.getItems().stream()
-                .filter(item -> item instanceof ActionItem)
-                .map(item -> ((ActionItem) item).getAction())
-                .collect(Collectors.toUnmodifiableList());
+        return getActionsSupport().getActions();
     }
 
     @Nullable
     @Override
     public Action getAction(String id) {
-        ActionItem item = (ActionItem) settingsButton.getItem(id);
-
-        return item != null
-                ? item.getAction()
-                : null;
+        return getActionsSupport().getAction(id).orElse(null);
     }
 
     /**
@@ -1042,6 +1021,22 @@ public class GenericFilter extends Composite<JmixDetails>
             throw new IllegalArgumentException("Property hierarchy depth value must be greater than 0");
         }
         this.propertyHierarchyDepth = propertyHierarchyDepth;
+    }
+
+    protected GenericFilterActionsSupport getActionsSupport() {
+        if (actionsSupport == null) {
+            actionsSupport = createActionsSupport();
+        }
+
+        return actionsSupport;
+    }
+
+    protected GenericFilterActionsSupport createActionsSupport() {
+        if (settingsButton == null) {
+            throw new IllegalStateException("Cannot create ActionsSupport, settingsButton is null");
+        }
+
+        return new GenericFilterActionsSupport(this, settingsButton);
     }
 
     /**

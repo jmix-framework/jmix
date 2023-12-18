@@ -23,9 +23,8 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.KeyCombination;
-
 import jakarta.annotation.Nullable;
+
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
@@ -57,7 +56,6 @@ public class ComboButtonActionSupport {
             updateText(overrideComponentProperties);
             updateTitle(overrideComponentProperties);
             updateIcon(overrideComponentProperties);
-            updateShortcutCombination(overrideComponentProperties);
             updateActionVariant(overrideComponentProperties);
 
             comboButtonClickRegistration =
@@ -148,12 +146,6 @@ public class ComboButtonActionSupport {
         }
     }
 
-    protected void updateShortcutCombination(boolean overrideComponentProperties) {
-        if (comboButton.getShortcutCombination() == null || overrideComponentProperties) {
-            comboButton.setShortcutCombination(action.getShortcutCombination());
-        }
-    }
-
     protected void onButtonClick(ClickEvent<MenuItem> event) {
         this.action.actionPerform(event.getSource());
     }
@@ -178,9 +170,6 @@ public class ComboButtonActionSupport {
             case Action.PROP_VARIANT:
                 removeActionVariant(comboButton, (ActionVariant) event.getOldValue());
                 addActionVariant(comboButton, (ActionVariant) event.getNewValue());
-                break;
-            case Action.PROP_SHORTCUT_COMBINATION:
-                comboButton.setShortcutCombination((KeyCombination) event.getNewValue());
                 break;
         }
     }

@@ -71,9 +71,9 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
 
     protected void setTargetInternal(@Nullable GenericFilter target) {
         this.target = target;
+        unbindListeners();
 
         if (target != null) {
-            unbindListeners();
             bindListeners(target);
         }
     }

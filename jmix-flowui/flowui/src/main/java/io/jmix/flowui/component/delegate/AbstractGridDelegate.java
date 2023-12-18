@@ -151,7 +151,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         component.addColumnReorderListener(this::onColumnReorderChange);
         addSelectionListener(this::notifyDataProviderSelectionChanged);
 
-        // Otherwise compilation error
+        // Can't use method reference, because of compilation error
         //noinspection Convert2Lambda,Anonymous2MethodRef
         ComponentUtil.addListener(component, ItemDoubleClickEvent.class, new ComponentEventListener<>() {
             @Override

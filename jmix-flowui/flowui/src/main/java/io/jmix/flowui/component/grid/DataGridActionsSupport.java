@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.component.grid;
 
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
+import org.springframework.lang.Nullable;
 
 public class DataGridActionsSupport<C extends Grid<T> & ListDataComponent<T>, T> extends GridActionsSupport<C, T> {
 
@@ -46,5 +49,19 @@ public class DataGridActionsSupport<C extends Grid<T> & ListDataComponent<T>, T>
         if (action instanceof ListDataComponentAction) {
             ((ListDataComponentAction<?, T>) action).setTarget(null);
         }
+    }
+
+    @Override
+    protected void addShortcutListenerIfNeeded(Action action) {
+        if (!needSkipShortcut(action.getShortcutCombination())) {
+            super.addShortcutListenerIfNeeded(action);
+        }
+    }
+
+    protected boolean needSkipShortcut(@Nullable KeyCombination keyCombination) {
+        // Ignore Enter shortcut, because it handled differently
+        return keyCombination != null 
+                && (keyCombination.getKeyModifiers() == null || keyCombination.getKeyModifiers().length == 0)
+                && keyCombination.getKey() == Key.ENTER;
     }
 }

@@ -23,9 +23,9 @@ import java.util.Set;
  */
 public interface LookupComponent<T> {
 
-    // TODO: gg, add analog of setLookupSelectHandler (if set, overrides Enter Press and Double Click handlers)
-
-    // TODO: gg, move to a more general interface?
+    /**
+     * @return items selected in this lookup component
+     */
     Set<T> getSelectedItems();
 
     interface MultiSelectLookupComponent<T> extends LookupComponent<T> {

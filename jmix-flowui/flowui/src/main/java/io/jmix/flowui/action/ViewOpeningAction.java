@@ -139,7 +139,7 @@ public interface ViewOpeningAction extends Action {
      * annotated with {@link Install}, e.g.:
      * <pre>
      * &#64;Install(to = "petsTable.view", subject = "viewConfigurer")
-     * protected void petsTableViewConfigurer(View<?> view) {
+     * protected void petsTableViewConfigurer(View&lt;?&gt; view) {
      *     view.setSomeParameter(someValue);
      * }
      * </pre>

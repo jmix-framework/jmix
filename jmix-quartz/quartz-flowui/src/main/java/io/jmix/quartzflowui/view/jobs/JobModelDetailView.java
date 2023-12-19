@@ -23,15 +23,17 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.ComboBoxBase;
 import com.vaadin.flow.component.grid.editor.EditorCancelEvent;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.UnconstrainedDataManager;
-import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.*;
+import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,11 +74,11 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     @Autowired
     protected QuartzJobClassFinder quartzJobClassFinder;
     @Autowired
-    protected DialogWindows dialogWindows;
-    @Autowired
     protected MessageBundle messageBundle;
     @Autowired
     protected UnconstrainedDataManager dataManager;
+    @Autowired
+    protected ScheduleDescriptionProvider scheduleDescriptionProvider;
 
     protected boolean replaceJobIfExists = true;
     protected boolean deleteObsoleteJob = false;
@@ -106,22 +108,34 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     }
 
     protected void initModelTable() {
+        triggerModelTable.addColumn(new TextRenderer<>(trigger -> scheduleDescriptionProvider.getScheduleDescription(trigger)))
+                .setHeader(messageBundle.getMessage("column.triggerScheduleDescription.header"))
+                .setResizable(true)
+                .setAutoWidth(true);
         triggerModelTable.addColumn(entity -> entity.getStartDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getStartDate()) : "").setResizable(true)
-                .setHeader(messageBundle.getMessage("column.startDate.header"));
+                                .format(entity.getStartDate()) : "")
+                .setResizable(false)
+                .setHeader(messageBundle.getMessage("column.startDate.header"))
+                .setAutoWidth(true);
         triggerModelTable.addColumn(entity -> entity.getLastFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getLastFireDate()) : "").setResizable(true)
-                .setHeader(messageBundle.getMessage("column.lastFireDate.header"));
+                                .format(entity.getLastFireDate()) : "")
+                .setResizable(false)
+                .setHeader(messageBundle.getMessage("column.lastFireDate.header"))
+                .setAutoWidth(true);
         triggerModelTable.addColumn(entity -> entity.getNextFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getNextFireDate()) : "").setResizable(true)
-                .setHeader(messageBundle.getMessage("column.nextFireDate.header"));
+                                .format(entity.getNextFireDate()) : "")
+                .setResizable(false)
+                .setHeader(messageBundle.getMessage("column.nextFireDate.header"))
+                .setAutoWidth(true);
         triggerModelTable.addColumn(entity -> entity.getEndDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
-                                .format(entity.getEndDate()) : "").setResizable(true)
-                .setHeader(messageBundle.getMessage("column.endDate.header"));
+                                .format(entity.getEndDate()) : "")
+                .setResizable(false)
+                .setHeader(messageBundle.getMessage("column.endDate.header"))
+                .setAutoWidth(true);
     }
 
     @Subscribe("jobGroupField")

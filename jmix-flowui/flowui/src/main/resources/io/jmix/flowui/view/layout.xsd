@@ -2045,7 +2045,30 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="menuSearchFieldThemeNames">
+    <xs:simpleType name="gridColumnVisibilityThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="large"/>
+                    <xs:enumeration value="tertiary"/>
+                    <xs:enumeration value="tertiary-inline"/>
+                    <xs:enumeration value="primary"/>
+                    <xs:enumeration value="success"/>
+                    <xs:enumeration value="error"/>
+                    <xs:enumeration value="contrast"/>
+                    <xs:enumeration value="icon"/>
+                    <xs:enumeration value="contained"/>
+                    <xs:enumeration value="outlined"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="menuFilterFieldThemeNames">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -2421,6 +2444,21 @@
 
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasSize"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseIconComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:sequence>
+
+                <xs:attribute name="color" type="resourceString"/>
+                <xs:attribute name="size" type="componentSize"/>
+
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3005,6 +3043,7 @@
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
+                <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasRequired"/>
@@ -3201,6 +3240,7 @@
                 <xs:attribute name="themeNames" type="radioButtonGroupThemeNames"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
+                <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
@@ -3410,16 +3450,29 @@
     <!-- Icon-->
     <xs:complexType name="iconComponent">
         <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:sequence minOccurs="0">
-                    <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:sequence>
-
+            <xs:extension base="baseIconComponent">
                 <xs:attribute name="icon" type="vaadinIconEnum" use="required"/>
-                <xs:attribute name="color" type="resourceString"/>
-                <xs:attribute name="size" type="componentSize"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
-                <xs:attributeGroup ref="hasClassNames"/>
+    <!-- SvgIcon-->
+    <xs:complexType name="svgIconComponent">
+        <xs:complexContent>
+            <xs:extension base="baseIconComponent">
+                <xs:attribute name="symbol" type="xs:string"/>
+                <xs:attribute name="resource" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="fontIconComponent">
+        <xs:complexContent>
+            <xs:extension base="baseIconComponent">
+                <xs:attribute name="iconClassNames" type="xs:string"/>
+                <xs:attribute name="fontFamily" type="xs:string"/>
+                <xs:attribute name="charCode" type="xs:string"/>
+                <xs:attribute name="ligature" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3516,6 +3569,7 @@
                 <xs:attribute name="emptySelectionAllowed" type="xs:boolean"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
+                <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
@@ -3617,6 +3671,7 @@
                 <xs:attribute name="forgotPasswordButtonVisible" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3824,8 +3879,38 @@
         </xs:complexContent>
     </xs:complexType>
 
-<!--    MenuSearchField-->
-    <xs:complexType name="menuSearchFieldComponent">
+    <!--    GridColumnVisibility-->
+    <xs:complexType name="gridColumnVisibilityComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="menuItem" minOccurs="0" type="gridColumnVisibilityMenuItemType"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasIcon"/>
+
+                <xs:attribute name="themeNames" type="gridColumnVisibilityThemeNames"/>
+                <xs:attribute name="dataGrid" type="xs:string" use="required"/>
+                <xs:attribute name="include" type="xs:string"/>
+                <xs:attribute name="exclude" type="xs:string"/>
+                <xs:attribute name="showAllEnabled" type="xs:boolean"/>
+                <xs:attribute name="hideAllEnabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="gridColumnVisibilityMenuItemType">
+        <xs:attribute name="refColumn" type="xs:string" use="required"/>
+        <xs:attribute name="text" type="xs:string"/>
+    </xs:complexType>
+
+<!--    MenuFilterField-->
+    <xs:complexType name="menuFilterFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
@@ -3838,10 +3923,10 @@
                 <xs:attribute name="value" type="xs:string"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="autoselect" type="xs:boolean"/>
-                <xs:attribute name="themeNames" type="menuSearchFieldThemeNames"/>
+                <xs:attribute name="themeNames" type="menuFilterFieldThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="menu" type="xs:string" use="required"/>
-                <xs:attribute name="searchMode" type="menuSearchFieldSearchMode"/>
+                <xs:attribute name="filterMode" type="menuFilterFieldFilterMode"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -3859,7 +3944,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:simpleType name="menuSearchFieldSearchMode">
+    <xs:simpleType name="menuFilterFieldFilterMode">
         <xs:restriction base="xs:string">
             <xs:enumeration value="CASE_SENSITIVE"/>
             <xs:enumeration value="CASE_INSENSITIVE"/>
@@ -4378,6 +4463,8 @@
                 <xs:element name="button" type="buttonComponent"/>
                 <xs:element name="avatar" type="avatarComponent"/>
                 <xs:element name="icon" type="iconComponent"/>
+                <xs:element name="svgIcon" type="svgIconComponent"/>
+                <xs:element name="fontIcon" type="fontIconComponent"/>
                 <xs:element name="select" type="selectComponent"/>
                 <xs:element name="details" type="detailsComponent"/>
                 <xs:element name="checkbox" type="checkboxComponent"/>
@@ -4420,7 +4507,8 @@
                 <xs:element name="genericFilter" type="genericFilterComponent"/>
                 <xs:element name="codeEditor" type="codeEditorComponent"/>
                 <xs:element name="virtualList" type="virtualListComponent"/>
-                <xs:element name="menuSearchField" type="menuSearchFieldComponent"/>
+                <xs:element name="gridColumnVisibility" type="gridColumnVisibilityComponent"/>
+                <xs:element name="menuFilterField" type="menuFilterFieldComponent"/>
                 <xs:element name="navigationMenuBar" type="navigationMenuBarComponent"/>
             </xs:choice>
         </xs:sequence>

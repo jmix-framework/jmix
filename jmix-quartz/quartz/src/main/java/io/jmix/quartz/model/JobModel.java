@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @JmixEntity(name = "quartz_JobModel")
 public class JobModel {
@@ -111,19 +110,6 @@ public class JobModel {
 
     public void setJobDataParameters(List<JobDataParameterModel> jobDataParameters) {
         this.jobDataParameters = jobDataParameters;
-    }
-
-    @Transient
-    @JmixProperty
-    @Nullable
-    public String getTriggerDescription() {
-        if (CollectionUtils.isEmpty(triggers)) {
-            return null;
-        }
-
-        return triggers.stream()
-                .map(TriggerModel::getScheduleDescription)
-                .collect(Collectors.joining(", "));
     }
 
     @Transient

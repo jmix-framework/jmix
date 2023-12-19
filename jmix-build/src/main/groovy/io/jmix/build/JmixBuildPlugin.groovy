@@ -76,8 +76,9 @@ class JmixBuildPlugin implements Plugin<Project> {
             }
         }
 
-        project.tasks.withType(JavaCompile) {
+        project.tasks.withType(JavaCompile).configureEach {
             options.encoding = 'UTF-8'
+            options.compilerArgs.add("-parameters")
         }
     }
 

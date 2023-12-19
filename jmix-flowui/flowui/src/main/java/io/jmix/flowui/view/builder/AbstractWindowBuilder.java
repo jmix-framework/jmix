@@ -23,6 +23,7 @@ import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.View;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,6 +37,7 @@ public class AbstractWindowBuilder<V extends View<?>> implements DialogWindowBui
 
     protected Consumer<AfterOpenEvent<V>> afterOpenListener;
     protected Consumer<AfterCloseEvent<V>> afterCloseListener;
+    protected Consumer<V> viewConfigurer;
 
     protected AbstractWindowBuilder(View<?> origin,
                                     Function<? extends AbstractWindowBuilder<V>, DialogWindow<V>> handler) {
@@ -66,6 +68,17 @@ public class AbstractWindowBuilder<V extends View<?>> implements DialogWindowBui
         return this;
     }
 
+    /**
+     * Adds configurer to the dialog window.
+     *
+     * @param configurer the configurer to add
+     * @return the instance for chaining
+     */
+    public AbstractWindowBuilder<V> withViewConfigurer(@Nullable Consumer<V> configurer) {
+        this.viewConfigurer = configurer;
+        return this;
+    }
+
     @Override
     public View<?> getOrigin() {
         return origin;
@@ -84,6 +97,11 @@ public class AbstractWindowBuilder<V extends View<?>> implements DialogWindowBui
     @Override
     public Optional<Consumer<AfterCloseEvent<V>>> getAfterCloseListener() {
         return Optional.ofNullable(afterCloseListener);
+    }
+
+    @Override
+    public Optional<Consumer<V>> getViewConfigurer() {
+        return Optional.ofNullable(viewConfigurer);
     }
 
     /**

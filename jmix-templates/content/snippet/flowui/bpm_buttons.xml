@@ -1,8 +1,20 @@
 <%
 def buttons = []
+if (caller.name() == 'START_EVENT') {
+    buttons << "<button id=\"startProcessBtn\" icon=\"CHECK\" text=\"Start Process\" themeNames=\"primary\"/>"
+} else if (formType.name() != 'CUSTOM') {
+    if (outputes == null || outputes.isEmpty()) {
+        buttons << "<button id=\"completeBtn\" icon=\"CHECK\" text=\"Complete Task\" themeNames=\"primary\"/>"
+    } else {
+        outputes.eachWithIndex { o, index ->
+            def themeNames = ''
+            if (index == 0) {
+                themeNames = " themeNames=\"primary\""
+            }
+            def buttonText = "<button id=\"${o.id}Btn\" icon=\"${o.icon}\" text=\"${o.caption}\"${themeNames}/>"
+            buttons << buttonText
+        }
+    }
 
-outputes.each { o ->
-    def buttonText = "<button id=\"${o.id}Btn\" icon=\"${o.icon}\" text=\"${o.caption}\"/>"
-    buttons << buttonText
 }
 %><%buttons.each {%>$it<%}%>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -77,6 +79,7 @@ public class NavigationMenuBarItemConverter {
                 createMenuItemWithChildren(childItem)
                         .ifPresent(parentMenuItem::addChildItem);
             }
+            removeLastChildSeparators(parentMenuItem);
 
             if (!parentMenuItem.hasChildren()) {
                 log.debug("Parent menu item '{}' is skipped as it does not have children or they are not " +
@@ -93,6 +96,22 @@ public class NavigationMenuBarItemConverter {
             NavigationMenuBar.MenuItem menuItem = createMenuItem(menuItemDescriptor);
 
             return Optional.ofNullable(menuItem);
+        }
+    }
+
+    /**
+     * Removes trailing child separators
+     * @param parentMenuItem parent menu item to trim
+     */
+    protected void removeLastChildSeparators(NavigationMenuBar.ParentMenuItem parentMenuItem) {
+        List<NavigationMenuBar.AbstractMenuItem<?>> childItems = new ArrayList<>(parentMenuItem.getChildItems());
+        for (int i = childItems.size() - 1; i >= 0; i--) {
+            NavigationMenuBar.AbstractMenuItem<?> childItem = childItems.get(i);
+            if (childItem.isSeparator()) {
+                parentMenuItem.removeChildItem(childItem);
+            } else {
+                break;
+            }
         }
     }
 

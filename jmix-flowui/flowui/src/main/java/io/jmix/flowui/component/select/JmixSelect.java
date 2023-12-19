@@ -23,9 +23,11 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.InMemoryDataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
+import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
@@ -37,13 +39,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, HasRequired, SupportsDataProvider<V>,
         SupportsItemsContainer<V>, SupportsItemsEnum<V>, SupportsValidation<V>,
-        SupportsStatusChangeHandler<JmixSelect<V>>, ApplicationContextAware, InitializingBean {
+        SupportsStatusChangeHandler<JmixSelect<V>>, SupportsDatatype<V>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -126,6 +128,17 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
     @Override
     public void setValueSource(@Nullable ValueSource<V> valueSource) {
         fieldDelegate.setValueSource(valueSource);
+    }
+
+    @Nullable
+    @Override
+    public Datatype<V> getDatatype() {
+        return fieldDelegate.getDatatype();
+    }
+
+    @Override
+    public void setDatatype(@Nullable Datatype<V> datatype) {
+        fieldDelegate.setDatatype(datatype);
     }
 
     @Override

@@ -61,6 +61,26 @@
               size="2em"
               visible="true"/>
 
+        <svgIcon id="svgIconId"
+                 classNames="cssClassName1, cssClassName2"
+                 css="color: red;"
+                 color="purple"
+                 resource="resourceString"
+                 size="2em"
+                 symbol="code-branch"
+                 visible="true"/>
+
+        <fontIcon id="fontIconId"
+                  charCode="charCode"
+                  classNames="cssClassName1, cssClassName2"
+                  css="display: flex;"
+                  color="purple"
+                  fontFamily="Lumo Icons"
+                  iconClassNames="iconClassName1, iconClassName2"
+                  ligature="ligature"
+                  size="2em"
+                  visible="true"/>
+
         <bigDecimalField
                 id="bigDecimalFieldId"
                 autocapitalize="SENTENCES"
@@ -188,6 +208,7 @@
                   allowedCharPattern="charPattern"
                   property="number"
                   readOnly="true"
+                  datatype="string"
                   required="true"
                   requiredMessage="requiredMessageString"
                   tabIndex="3"
@@ -457,6 +478,7 @@
                           css="color: red;"
                           dataContainer="orderDc"
                           enabled="true"
+                          datatype="string"
                           errorMessage="errorMessageString"
                           height="50px"
                           helperText="helperTextString"
@@ -485,6 +507,7 @@
         <select id="selectId"
                 classNames="cssClassName1, cssClassName2"
                 css="color: red;"
+                datatype="boolean"
                 height="50px"
                 width="100px"
                 maxHeight="55px"

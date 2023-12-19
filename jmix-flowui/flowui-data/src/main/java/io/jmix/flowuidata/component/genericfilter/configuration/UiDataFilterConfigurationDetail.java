@@ -75,6 +75,10 @@ public class UiDataFilterConfigurationDetail extends AbstractConfigurationDetail
         defaultForMeFieldVisible = visible;
     }
 
+    public boolean isDefaultForMeFieldVisible() {
+        return defaultForMeFieldVisible;
+    }
+
     public boolean isViewReadOnly() {
         return viewReadOnly;
     }

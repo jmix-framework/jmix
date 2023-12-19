@@ -107,6 +107,7 @@
                             <textField id="defaultDoubleField" property="defaultDouble"/>
                             <textField id="defaultDecimalField" property="defaultDecimal"/>
                             <comboBox id="defaultBooleanField" property="defaultBoolean"/>
+                            <comboBox id="defaultEnumField" label="msg://io.jmix.dynattr.model/CategoryAttribute.defaultString"/>
                             <dateTimePicker id="defaultDateField" property="defaultDate"/>
                             <datePicker id="defaultDateWithoutTimeField" property="defaultDateWithoutTime"/>
                             <textField id="numberFormatPatternField" property="configuration.numberFormatPattern"/>

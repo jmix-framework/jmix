@@ -518,7 +518,9 @@ public class EntityImportExportImpl implements EntityImportExport {
                     if (!additionalComposition) {
                         Object refId = referenceToEntitySupport.getReferenceId(e);
                         if (importPlanProperty.getCollectionImportPolicy() == CollectionImportPolicy.REMOVE_ABSENT_ITEMS) {
-                            if (!dstFilteredIds.contains(refId) && !srcFilteredIds.contains(refId)) {
+                            if (!dstFilteredIds.contains(refId) &&
+                                    !srcFilteredIds.contains(refId) &&
+                                    !EntityValues.isSoftDeleted(e)) {
                                 saveContext.removing(e);
                             }
                         }

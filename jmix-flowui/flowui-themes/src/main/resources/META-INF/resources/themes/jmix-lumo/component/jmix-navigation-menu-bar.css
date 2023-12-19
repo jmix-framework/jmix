@@ -25,6 +25,7 @@
 .jmix-navigation-menu-bar vaadin-menu-bar-button {
   color: inherit;
   background-color: transparent;
+  border-radius: var(--lumo-border-radius-m);
 }
 
 .jmix-navigation-menu-bar vaadin-menu-bar-button[expanded] {

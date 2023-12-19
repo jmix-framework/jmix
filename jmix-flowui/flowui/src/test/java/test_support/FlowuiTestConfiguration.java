@@ -18,6 +18,8 @@ package test_support;
 
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
+import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.DataConfiguration;
@@ -101,6 +103,11 @@ public class FlowuiTestConfiguration {
     @Primary
     public ServletContext servletContext() {
         return new TestServletContext();
+    }
+
+    @Bean
+    public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
+        return new LocalApplicationEventChannelSupplier();
     }
 
     @EnableWebSecurity

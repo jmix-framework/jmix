@@ -62,24 +62,6 @@
             <description>
                 <![CDATA[
                     Send an email using <code>Emailer</code>.<br>
-                    <br>
-                    Example:<br>
-                    <pre>
-<code>
-    EmailInfo emailInfo = EmailInfoBuilder.create("admin@admin.com",
-        "New task", "A new task has been assigned to you.")
-        .setBodyContentType("text/plain; charset=UTF-8")
-        .setImportant(false)
-        .build();
-
-    try {
-        emailer.sendEmail(emailInfo);
-    } catch (EmailException e) {
-        // process error
-    }
-</code>
-                    </pre>
-
                     <a href="https://docs.jmix.io/jmix/email/api.html">Jmix Documentation</a>
                 ]]>
             </description>
@@ -130,24 +112,6 @@
             <description>
                 <![CDATA[
                     Send async email using <code>Emailer</code>.<br>
-                    <br>
-                    Example:<br>
-                    <pre>
-<code>
-    EmailInfo emailInfo = EmailInfoBuilder.create("admin@admin.com",
-        "New task", "A new task has been assigned to you.")
-        .setBodyContentType("text/plain; charset=UTF-8")
-        .setImportant(false)
-        .build();
-
-    try {
-        emailer.sendEmailAsync(emailInfo);
-    } catch (EmailException e) {
-        // process error
-    }
-</code>
-                    </pre>
-
                     <a href="https://docs.jmix.io/jmix/email/api.html">Jmix Documentation</a>
                 ]]>
             </description>
@@ -186,21 +150,6 @@
             <description>
                 <![CDATA[
                     Create an email attachment from a file ref using <code>FileStorage</code> and <code>EmailAttachment</code>.<br>
-                    <br>
-                    Example:<br>
-                    <pre>
-<code>
-    try (InputStream inputStream = fileStorage.openStream(fileRef)) {
-        byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(inputStream);
-        EmailAttachment emailAtt = new EmailAttachment(bytes, "Invoice.pdf", "invoiceId");
-
-        // process
-    } catch (IOException e) {
-        // process error
-    }
-</code>
-                    </pre>
-
                     <a href="https://docs.jmix.io/jmix/email/api.html">Jmix Documentation</a>
                 ]]>
             </description>
@@ -241,22 +190,6 @@
             <description>
                 <![CDATA[
                     Create an email attachment from resources using <code>Resources</code> and <code>EmailAttachment</code>.<br>
-                    <br>
-                    Example:<br>
-                    <pre>
-<code>
-    InputStream resourceAsStream = resources.getResourceAsStream("/images/logo.svg")
-        try {
-            byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(resourceAsStream);
-            EmailAttachment emailAtt = new EmailAttachment(bytes, "Logo", "logoId");
-
-            // process
-        } catch (IOException e) {
-            // process error
-        }
-</code>
-                    </pre>
-
                     <a href="https://docs.jmix.io/jmix/email/api.html">Jmix Documentation</a>
                 ]]>
             </description>

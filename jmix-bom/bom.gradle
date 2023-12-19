@@ -322,7 +322,7 @@ dependencies {
         api 'org.webjars:diff-match-patch:0.1.jmix.1'
         api 'org.webjars:jquery:3.6.0'
         api 'org.webjars:jquery-ui:1.13.0'
-        api 'org.webjars.bower:jquery-file-upload:9.22.0.cuba.0'
+        api 'org.webjars.bower:jquery-file-upload:10.32.0.jmix.0'
         api 'org.webjars.npm:object-fit-images:3.2.3'
 
         api 'org.webjars.npm:grapesjs:0.16.2'

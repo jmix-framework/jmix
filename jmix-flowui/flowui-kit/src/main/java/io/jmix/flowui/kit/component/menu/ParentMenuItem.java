@@ -28,7 +28,7 @@ public interface ParentMenuItem<T extends MenuItem> extends MenuItem {
     /**
      * @return child items of this parent item
      */
-    List<T> getChildren();
+    List<T> getChildItems();
 
     /**
      * Removes all child items of this parent item

@@ -1679,6 +1679,9 @@
             <xs:enumeration value="STARTS_WITH"/>
             <xs:enumeration value="ENDS_WITH"/>
             <xs:enumeration value="IS_SET"/>
+            <xs:enumeration value="IS_COLLECTION_EMPTY"/>
+            <xs:enumeration value="MEMBER_OF_COLLECTION"/>
+            <xs:enumeration value="NOT_MEMBER_OF_COLLECTION"/>
         </xs:restriction>
     </xs:simpleType>
 

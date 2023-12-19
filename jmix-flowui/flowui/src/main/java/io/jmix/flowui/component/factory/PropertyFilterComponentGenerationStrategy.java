@@ -91,6 +91,10 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
             return createCollectionField(context, mpp);
         } else if (pfContext.getOperation().getType() == Operation.Type.INTERVAL) {
             return createIntervalField(context, mpp);
+        } else if (mpp.getRange().getCardinality().isMany()
+                && pfContext.getOperation().getType() == PropertyFilter.Operation.Type.VALUE) {
+            //for 'member of' conditions of x-to-many property
+            return createEntityField(context);
         }
 
         return super.createComponentInternal(context);

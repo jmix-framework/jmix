@@ -138,7 +138,7 @@ public class ListMenuBuilder {
      * @param menuBarItem parent menu item to trim
      */
     protected void removeTrailingChildSeparators(ListMenu.MenuBarItem menuBarItem) {
-        List<ListMenu.MenuItem> childItems = new ArrayList<>(menuBarItem.getChildren());
+        List<ListMenu.MenuItem> childItems = new ArrayList<>(menuBarItem.getChildItems());
         for (int i = childItems.size() - 1; i >= 0; i--) {
             ListMenu.MenuItem childItem = childItems.get(i);
             if (childItem.isSeparator()) {

@@ -70,6 +70,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
 
     protected static final String NAVIGATION_MENU_BAR_CLASS_NAME = "jmix-navigation-menu-bar";
     protected static final String ROOT_MENU_ITEM_CLASS_NAME = "jmix-navigation-menu-bar-root-item";
+    protected static final int ADD_TO_END_INDEX = -1;
 
     protected MenuItemProvider<AbstractMenuItem<?>> menuItemProvider;
     protected Subscription itemCollectionChangedSubscription;
@@ -139,15 +140,15 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     public void addMenuItem(AbstractMenuItem<?> menuItem) {
         Preconditions.checkNotNullArgument(menuItem);
 
-        addMenuItemRecursive(menuItem, null, null);
+        addMenuItemRecursive(menuItem, null, ADD_TO_END_INDEX);
 
         rootMenuItems.add(menuItem);
     }
 
     protected void addMenuItemRecursive(AbstractMenuItem<?> childMenuItem,
                                         @Nullable ParentMenuItem parentMenuItem,
-                                        @Nullable Integer index) {
-        checkItemIdDuplicate(getMenuItemIdNN(childMenuItem));
+                                        int index) {
+        checkDuplicateItemId(getMenuItemId(childMenuItem));
 
         JmixSubMenu parentSubMenu = getParentSubMenu(parentMenuItem);
 
@@ -156,7 +157,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
 
             ParentMenuItem childParentMenuItem = (ParentMenuItem) childMenuItem;
             for (AbstractMenuItem<?> item : childParentMenuItem.getChildItems()) {
-                addMenuItemRecursive(item, childParentMenuItem, null);
+                addMenuItemRecursive(item, childParentMenuItem, ADD_TO_END_INDEX);
             }
         } else if (childMenuItem.isSeparator()) {
             if (parentSubMenu != null) {
@@ -171,11 +172,11 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         attachMenuItem(childMenuItem);
     }
 
-    protected String getMenuItemIdNN(AbstractMenuItem<?> menuItem) {
+    protected String getMenuItemId(AbstractMenuItem<?> menuItem) {
         return menuItem.getId().orElseThrow(() -> new IllegalStateException("Menu item id is not defined"));
     }
 
-    protected void checkItemIdDuplicate(String id) {
+    protected void checkDuplicateItemId(String id) {
         if (allMenuItems.containsKey(id)) {
             throw new IllegalArgumentException("Menu item with id \"%s\" already exists".formatted(id));
         }
@@ -196,10 +197,10 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
 
     protected void addMenuItemToSubMenu(AbstractMenuItem<?> menuItem,
                                         @Nullable JmixSubMenu subMenu,
-                                        @Nullable Integer index) {
+                                        int index) {
         HasMenuItemsEnhanced hasMenuItems = subMenu != null ? subMenu : getContent();
 
-        JmixMenuItem wrapper = index == null
+        JmixMenuItem wrapper = index == ADD_TO_END_INDEX
                 ? hasMenuItems.addItem(menuItem)
                 : hasMenuItems.addItemAtIndex(index, menuItem);
         menuItem.setMenuItemWrapper(wrapper);
@@ -209,8 +210,8 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         }
     }
 
-    protected void addComponentToSubMenu(Component component, JmixSubMenu subMenu, @Nullable Integer index) {
-        if (index == null) {
+    protected void addComponentToSubMenu(Component component, JmixSubMenu subMenu, int index) {
+        if (index == ADD_TO_END_INDEX) {
             subMenu.add(component);
         } else {
             subMenu.addComponentAtIndex(index, component);
@@ -218,7 +219,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     protected void attachMenuItem(AbstractMenuItem<?> menuItem) {
-        allMenuItems.put(getMenuItemIdNN(menuItem), menuItem);
+        allMenuItems.put(getMenuItemId(menuItem), menuItem);
 
         menuItem.setMenu(this);
     }
@@ -237,7 +238,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         rootMenuItems.add(index, menuItem);
     }
 
-    protected void addChildItem(AbstractMenuItem<?> menuItem, ParentMenuItem parentMenuItem, @Nullable Integer index) {
+    protected void addChildItem(AbstractMenuItem<?> menuItem, ParentMenuItem parentMenuItem, int index) {
         addMenuItemRecursive(menuItem, parentMenuItem, index);
     }
 
@@ -251,7 +252,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
             throw new IllegalArgumentException("Menu item is not attached to this menu");
         }
 
-        if (!allMenuItems.containsKey(getMenuItemIdNN(menuItem))) {
+        if (!allMenuItems.containsKey(getMenuItemId(menuItem))) {
             return;
         }
 
@@ -278,7 +279,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         menuItem.setMenu(null);
         menuItem.setMenuItemWrapper(null);
 
-        allMenuItems.remove(getMenuItemIdNN(menuItem));
+        allMenuItems.remove(getMenuItemId(menuItem));
 
         if (menuItem.isMenu()) {
             for (AbstractMenuItem<?> item : ((ParentMenuItem) menuItem).getChildItems()) {
@@ -618,7 +619,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
             }
 
             if (isAttachedToMenu()) {
-                menu.addChildItem(menuItem, this, null);
+                menu.addChildItem(menuItem, this, ADD_TO_END_INDEX);
             }
 
             children.add(menuItem);

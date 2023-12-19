@@ -2628,7 +2628,7 @@ public interface StudioComponents {
                     }
             ),
             properties = {
-                    @StudioProperty(xmlAttribute = "focusComponent", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "focusComponent", type = StudioPropertyType.COMPONENT_REF),
                     @StudioProperty(xmlAttribute = "focusMode", type = StudioPropertyType.VALUES_LIST,
                             options = {"NO_FOCUS", "AUTO"}, defaultValue = "AUTO"),
                     @StudioProperty(xmlAttribute = "extends", type = StudioPropertyType.STRING),

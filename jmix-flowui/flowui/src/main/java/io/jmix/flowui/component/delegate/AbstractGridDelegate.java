@@ -18,6 +18,10 @@ package io.jmix.flowui.component.delegate;
 
 import com.google.common.base.Strings;
 import com.google.common.primitives.Booleans;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Span;
@@ -40,8 +44,11 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.list.EditAction;
+import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.SupportsEnterPress.EnterPressEvent;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
@@ -53,7 +60,9 @@ import io.jmix.flowui.data.aggregation.Aggregations;
 import io.jmix.flowui.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.sys.BeanUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -88,7 +97,12 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected Registration itemSetChangeRegistration;
     protected Registration valueChangeRegistration;
 
+    // own selection listeners registration is needed to keep listeners if selection model is changed
     protected Set<SelectionListener<Grid<E>, E>> selectionListeners = new HashSet<>();
+
+    protected Set<ComponentEventListener<ItemDoubleClickEvent<E>>> itemDoubleClickListeners = new HashSet<>();
+    protected Consumer<EnterPressEvent<C>> enterPressHandler;
+
     protected Consumer<ColumnSecurityContext<E>> afterColumnSecurityApplyHandler;
 
     protected boolean aggregatable;
@@ -137,6 +151,18 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         component.addSortListener(this::onSort);
         component.addColumnReorderListener(this::onColumnReorderChange);
         addSelectionListener(this::notifyDataProviderSelectionChanged);
+
+        // Can't use method reference, because of compilation error
+        //noinspection Convert2Lambda,Anonymous2MethodRef
+        ComponentUtil.addListener(component, ItemDoubleClickEvent.class, new ComponentEventListener<>() {
+            @Override
+            public void onComponentEvent(ItemDoubleClickEvent event) {
+                //noinspection unchecked
+                onItemDoubleClick(event);
+            }
+        });
+
+        Shortcuts.addShortcutListener(component, this::handleEnterPress, Key.ENTER);
     }
 
     @Nullable
@@ -296,6 +322,16 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                 detachSelectionListener();
             }
         };
+    }
+
+    public Registration addItemDoubleClickListener(ComponentEventListener<ItemDoubleClickEvent<E>> listener) {
+        itemDoubleClickListeners.add(listener);
+        return () -> itemDoubleClickListeners.remove(listener);
+    }
+
+
+    public void setEnterPressHandler(@Nullable Consumer<EnterPressEvent<C>> handler) {
+        this.enterPressHandler = handler;
     }
 
     public boolean isAggregatable() {
@@ -722,6 +758,64 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     public void setAfterColumnSecurityApplyHandler(
             @Nullable Consumer<ColumnSecurityContext<E>> afterColumnSecurityApplyHandler) {
         this.afterColumnSecurityApplyHandler = afterColumnSecurityApplyHandler;
+    }
+
+    protected void onItemDoubleClick(ItemDoubleClickEvent<E> itemDoubleClickEvent) {
+        if (itemDoubleClickListeners.isEmpty()) {
+            handleDoubleClickAction(itemDoubleClickEvent.getItem());
+        } else {
+            fireItemDoubleClick(itemDoubleClickEvent);
+        }
+    }
+
+    protected void fireItemDoubleClick(ItemDoubleClickEvent<E> itemDoubleClickEvent) {
+        for (ComponentEventListener<ItemDoubleClickEvent<E>> listener : itemDoubleClickListeners) {
+            listener.onComponentEvent(itemDoubleClickEvent);
+        }
+    }
+
+    protected void handleEnterPress() {
+        handleDoubleClickAction(null);
+    }
+
+    protected void handleDoubleClickAction(@Nullable E item) {
+        if (item != null) {
+            // have to select clicked item to make action work, otherwise
+            // consecutive clicks on the same item deselect it
+            component.select(item);
+        }
+
+        if (enterPressHandler != null) {
+            enterPressHandler.accept(new EnterPressEvent<>(component));
+            return;
+        }
+
+        Action action = findEnterAction();
+        if (action == null) {
+            action = component.getAction(EditAction.ID);
+            if (action == null) {
+                action = component.getAction(ReadAction.ID);
+            }
+        }
+
+        if (action != null && action.isEnabled()) {
+            action.actionPerform(component);
+        }
+    }
+
+    @Nullable
+    protected Action findEnterAction() {
+        for (Action action : component.getActions()) {
+            KeyCombination keyCombination = action.getShortcutCombination();
+            if (keyCombination != null) {
+                if ((keyCombination.getKeyModifiers() == null || keyCombination.getKeyModifiers().length == 0)
+                        && keyCombination.getKey() == Key.ENTER) {
+                    return action;
+                }
+            }
+        }
+
+        return null;
     }
 
     public static class ColumnSecurityContext<E> {

@@ -170,7 +170,7 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
 
     protected void loadLocalizedValues() {
         for (Locale locale : coreProperties.getAvailableLocales()) {
-            String localeCode = locale.toLanguageTag();
+            String localeCode = locale.toString();
             AttributeLocalizedValue localizedValue = getAttributeLocalizedValue(localeCode);
             if (localizedValue == null) {
                 localizedValue = createAttributeLocalizedValue(localeCode);

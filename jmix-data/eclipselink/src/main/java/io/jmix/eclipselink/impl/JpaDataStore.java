@@ -17,6 +17,7 @@
 package io.jmix.eclipselink.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import io.jmix.core.Id;
 import io.jmix.core.*;
 import io.jmix.core.datastore.AbstractDataStore;
@@ -36,6 +37,7 @@ import io.jmix.data.impl.JpqlQueryBuilder;
 import io.jmix.data.impl.QueryResultsManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.lazyloading.LazyLoadingContext;
+import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.exceptions.QueryException;
 import org.slf4j.Logger;
@@ -45,14 +47,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import org.springframework.lang.Nullable;
-import jakarta.persistence.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
@@ -370,12 +371,33 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     }
 
     @Override
-    protected void beforeLoadTransactionCommit(LoadContext<?> context, Collection<Object> entities) {
-        if (context.isJoinTransaction()) {
+    protected JpaTransactionContextState getTransactionContextState(boolean isJoinTransaction) {
+        JpaTransactionContextState contextState = new JpaTransactionContextState();
+        if (isJoinTransaction) {
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
+            contextState.alreadyExisted.addAll(persistenceSupport.getInstances(em));
+        }
+        return contextState;
+    }
+
+    @Override
+    protected void beforeLoadTransactionCommit(LoadContext<?> context, Collection<Object> entities, TransactionContextState transactionContextState) {
+        if (context.isJoinTransaction()) {
+            JpaTransactionContextState txState = (JpaTransactionContextState) transactionContextState;
+            EntityManager em = storeAwareLocator.getEntityManager(storeName);
+
+            Set<Object> recentlyLoaded = (Set<Object>) persistenceSupport.getInstances(em);
+            recentlyLoaded.removeAll(txState.alreadyExisted);
+
             for (Object entity : entities) {
                 detachEntity(em, entity, context.getFetchPlan(), false);
+            }
+
+            for (Object entity : recentlyLoaded) {
                 entityEventManager.publishEntityLoadingEvent(entity);
+                //Current method can be invoked several times for the same transaction in loadAllAfterSave,
+                //so we have to remember processed entities in order to not send the same event many times in a row.
+                txState.alreadyExisted.add(entity);
             }
         }
     }
@@ -473,6 +495,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         if (contextQuery != null) {
             queryBuilder.setQueryString(contextQuery.getQueryString())
                     .setCondition(contextQuery.getCondition())
+                    .setDistinct(contextQuery.isDistinct())
                     .setQueryParameters(contextQuery.getParameters());
             if (!countQuery) {
                 queryBuilder.setSort(contextQuery.getSort());
@@ -526,6 +549,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         queryBuilder.setValueProperties(context.getProperties())
                 .setQueryString(contextQuery.getQueryString())
                 .setCondition(contextQuery.getCondition())
+                .setDistinct(contextQuery.isDistinct())
                 .setQueryParameters(contextQuery.getParameters())
                 .setLockMode(context.getLockMode());
 
@@ -676,5 +700,15 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             }
         }
         return constraintName.toUpperCase();
+    }
+
+    /**
+     * Helps to distinguish newly loaded entities (including implicitly loaded) from already existed.
+     */
+    protected static class JpaTransactionContextState implements TransactionContextState {
+        /**
+         * Stores entities that have been already merged into persistent context before loading started.
+         */
+        protected final Set<Object> alreadyExisted = Sets.newIdentityHashSet();
     }
 }

@@ -17,12 +17,13 @@
 package io.jmix.flowui.kit.component;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import jakarta.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
@@ -33,6 +34,7 @@ public class KeyCombination {
 
     protected final Key key;
     protected final KeyModifier[] keyModifiers;
+    protected Component[] listenOnComponents;
 
     protected KeyCombination(Key key, KeyModifier... keyModifiers) {
         this.key = key;
@@ -46,6 +48,14 @@ public class KeyCombination {
     @Nullable
     public KeyModifier[] getKeyModifiers() {
         return keyModifiers;
+    }
+
+    /**
+     * @return components onto which the shortcut listeners are bound
+     */
+    @Nullable
+    public Component[] getListenOnComponents() {
+        return listenOnComponents;
     }
 
     public static KeyCombination create(Key key, KeyModifier... keyModifiers) {
@@ -91,6 +101,25 @@ public class KeyCombination {
         }
     }
 
+    /**
+     * Creates a new <code>KeyCombination</code> instance from a string representation.
+     *
+     * @param keyString          string of type "Modifiers-Key", e.g. "Alt-N". Case-insensitive.
+     * @param listenOnComponents {@code Component}s onto which the shortcut listeners are
+     *                           bound. Must not be null. Must not contain null. Must not have
+     *                           duplicate components.
+     * @return new instance
+     */
+    @Nullable
+    public static KeyCombination create(@Nullable String keyString, Component... listenOnComponents) {
+        KeyCombination keyCombination = create(keyString);
+        if (keyCombination != null) {
+            keyCombination.listenOnComponents = listenOnComponents;
+        }
+
+        return keyCombination;
+    }
+
     public static Key valueOf(String keyString) {
         Field keyField = Arrays.stream(Key.class.getDeclaredFields())
                 .filter(field ->
@@ -114,13 +143,13 @@ public class KeyCombination {
         StringBuilder sb = new StringBuilder();
         if (ArrayUtils.isNotEmpty(keyModifiers)) {
             for (KeyModifier modifier : keyModifiers) {
-                if (sb.length() > 0) {
+                if (!sb.isEmpty()) {
                     sb.append("+");
                 }
                 sb.append(modifier.getKeys().get(0));
             }
         }
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             sb.append("+");
         }
 

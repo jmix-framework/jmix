@@ -193,6 +193,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
                 .collect(Collectors.toList());
         List<MetaProperty> nameProperties = metaClass.getProperties().stream()
                 .filter(p -> p.getAnnotatedElement().getAnnotation(InstanceName.class) != null)
+                .filter(p -> !metadataTools.isMethodBased(p))
                 .collect(Collectors.toList());
         if (!instanceNameMethods.isEmpty()) {
             method = instanceNameMethods.get(0);

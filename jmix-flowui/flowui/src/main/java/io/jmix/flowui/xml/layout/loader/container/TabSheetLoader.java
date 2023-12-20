@@ -100,8 +100,8 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
             if (containerElement.elements().size() != 1 &&
                     (containerElement.elements().size() != 2 ||
                             containerElement.element("tooltip") == null)) {
-                String message = String.format("%s should have only one child component",
-                        resultComponent.getClass().getSimpleName());
+                String message = String.format("%s with '%s' ID should have a single child component",
+                        resultComponent.getClass().getSimpleName(), resultComponent.getId().orElse(null));
 
                 throw new GuiDevelopmentException(message, context);
             }

@@ -22,6 +22,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.HasAction;
 import io.jmix.flowui.kit.component.HasShortcutCombination;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -161,8 +162,7 @@ public class ComboButton extends AbstractDropdownButton
             }
 
             if (shortcutCombination != null) {
-                shortcutRegistration = addClickShortcut(shortcutCombination.getKey(),
-                        shortcutCombination.getKeyModifiers());
+                shortcutRegistration = ComponentUtils.addClickShortcut(this, shortcutCombination);
             }
         }
     }

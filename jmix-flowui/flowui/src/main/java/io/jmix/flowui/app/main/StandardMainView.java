@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.RouterLayout;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.applayout.JmixAppLayout;
@@ -40,6 +41,17 @@ public class StandardMainView extends View<JmixAppLayout> implements RouterLayou
     public void showRouterLayoutContent(@Nullable HasElement content) {
         getContent().showRouterLayoutContent(content != null ? content : initialLayout);
 
+        updateTitle();
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        super.afterNavigation(event);
+
+        // The same view can be opened via different menu items,
+        // e.g. with different url query parameters, as a result
+        // no 'showRouterLayoutContent' method is called, hence
+        // we need to update title on 'afterNavigation' too
         updateTitle();
     }
 

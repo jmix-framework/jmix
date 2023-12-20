@@ -20,15 +20,15 @@ import io.jmix.core.Id
 import io.jmix.core.Metadata
 import io.jmix.core.Stores
 import io.jmix.data.StoreAwareLocator
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.events.Bar
+import test_support.entity.events.Boo
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Status
-
-import jakarta.persistence.EntityManager
-import jakarta.persistence.PersistenceContext
 
 /**
  * @see test_support.listeners.TestLoadSaveEventListener
@@ -65,6 +65,49 @@ class EntityLoadSaveEventTest extends DataSpec {
 
         then:
         bar1.description == 'abc:10'
+    }
+
+    def "EntityLoading event sent correctly for nested entity"() {
+        setup:
+        def bar = dataManager.create(Bar)
+        bar.name = 'abc'
+        bar.amount = 10
+        def boo = dataManager.create(Boo)
+        boo.bar = bar
+        dataManager.save(bar, boo)
+
+        when:
+        def loadedBoo = dataManager.load(Id.of(boo))
+                .fetchPlan(b -> b.add("bar"))
+                .one()
+        then:
+        loadedBoo.bar.description == 'abc:10'
+    }
+
+    def "EntityLoadingEvent is not sent for already managed entity"() {
+        setup:
+        def bar = dataManager.create(Bar)
+        bar.name = 'abcd'
+        bar.amount = 101
+
+        def boo = dataManager.create(Boo)
+        boo.bar = bar
+        dataManager.save(bar, boo)
+
+        when:
+        def loadedBoo = storeAwareLocator.getTransactionTemplate(Stores.MAIN)
+                .execute { s ->
+                    def mergedBar = entityManager.merge(bar)
+
+                    def reloadedBoo = dataManager.load(Id.of(boo))
+                            .fetchPlan(b -> b.add("bar"))
+                            .one()
+
+                    return reloadedBoo
+                }
+
+        then: "EntityLoadingEvent is not sent during merge through EntityManager, managed clone is returned from dataManager"
+        loadedBoo.bar.description == null
     }
 
     def "EntitySavingEvent listener populates persistent fields"() {

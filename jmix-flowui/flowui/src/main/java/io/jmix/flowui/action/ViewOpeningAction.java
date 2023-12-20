@@ -131,6 +131,21 @@ public interface ViewOpeningAction extends Action {
      */
     <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler);
 
+    /**
+     * Sets the view configurer. Use the configurer if you need to provide
+     * parameters to the opened view through setters.
+     * <p>
+     * The preferred way to set the configurer is using a controller method
+     * annotated with {@link Install}, e.g.:
+     * <pre>
+     * &#64;Install(to = "petsTable.view", subject = "viewConfigurer")
+     * protected void petsTableViewConfigurer(View&lt;?&gt; view) {
+     *     view.setSomeParameter(someValue);
+     * }
+     * </pre>
+     */
+    <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer);
+
     @FunctionalInterface
     interface RouteParametersProvider {
 

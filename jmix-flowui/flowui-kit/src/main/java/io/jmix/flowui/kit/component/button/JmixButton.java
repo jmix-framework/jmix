@@ -19,10 +19,7 @@ package io.jmix.flowui.kit.component.button;
 import com.vaadin.flow.component.ShortcutRegistration;
 import com.vaadin.flow.component.button.Button;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.HasAction;
-import io.jmix.flowui.kit.component.HasShortcutCombination;
-import io.jmix.flowui.kit.component.HasTitle;
-import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.component.*;
 import jakarta.annotation.Nullable;
 
 import java.util.Objects;
@@ -70,8 +67,7 @@ public class JmixButton extends Button implements HasTitle, HasAction, HasShortc
             }
 
             if (shortcutCombination != null) {
-                shortcutRegistration = addClickShortcut(shortcutCombination.getKey(),
-                        shortcutCombination.getKeyModifiers());
+                shortcutRegistration = ComponentUtils.addClickShortcut(this, shortcutCombination);
             }
         }
     }

@@ -1,11 +1,36 @@
 <%
+def dcId = ''
+def nestedCollectionDatasourceProperties = []
+def is_inline_detailFetchPlan_ = false
+def inline_detailFetchPlan_ = ''
+def callerComponentName = processFormCaller.name() == 'START_EVENT' ? 'Start event' : 'Task'
+if (processFormType.name() == 'ENTITY') {
+    dcId = "${entity.uncapitalizedClassName}Dc"
+    nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
+    is_inline_detailFetchPlan_ = is_inline_detailFetchPlan
+    inline_detailFetchPlan_ = inline_detailFetchPlan
+}
 def containerXml = api.processSnippet('bpm_container.xml',
-        ['variables': processFormVariables, 'api': api])
+        ['variables': processFormVariables,
+        'formType': processFormType,
+        'dcId': dcId,
+        'entity': entity,
+        'detailFetchPlan': detailFetchPlan,
+        'is_inline_detailFetchPlan': is_inline_detailFetchPlan_,
+        'inline_detailFetchPlan': inline_detailFetchPlan_,
+        'nestedCollectionDatasourceProperties': nestedCollectionDatasourceProperties,
+        'api': api])
 def formXml = api.processSnippet('bpm_processform.xml',
         ['variables': processFormVariables,
+        'formType': processFormType,
+        'dcId': dcId,
+        'detailFetchPlan': detailFetchPlan,
+        'nestedCollectionDatasourceProperties': nestedCollectionDatasourceProperties,
         'api': api])
 def buttonsXml = api.processSnippet('bpm_buttons.xml',
         ['outputes': processFormOutcomes,
+        'caller': processFormCaller,
+        'formType': processFormType,
         'api': api])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
@@ -14,7 +39,7 @@ def buttonsXml = api.processSnippet('bpm_buttons.xml',
     ${containerXml}
     <layout><%if (bpmTaskName != null && bpmTaskName.trim() != '') {%>
         <h1 text="$bpmTaskName"/><%}%><%if (bpmTaskDetails != null && bpmTaskDetails.trim() != '') {%>
-        <details summaryText="Task details">
+        <details summaryText="$callerComponentName details">
             <p text="$bpmTaskDetails"/>
         </details><%}%>
         ${formXml}

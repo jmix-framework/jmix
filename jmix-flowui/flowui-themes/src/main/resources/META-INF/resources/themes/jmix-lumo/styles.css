@@ -18,6 +18,7 @@
 @import url('app/main-view.css');
 @import url('app/misc.css');
 @import url('app/login-view.css');
+@import url('app/main-view-top-menu.css');
 
 @import url('component/jmix-list-menu.css');
 @import url('component/jmix-user-indicator.css');
@@ -29,6 +30,9 @@
 @import url('component/jmix-generic-filter.css');
 @import url('component/jmix-property-filter.css');
 @import url('component/jmix-group-filter.css');
+@import url('component/jmix-grid-column-visibility.css');
+@import url('component/jmix-menu-filter-field.css');
+@import url('component/jmix-navigation-menu-bar.css');
 
 @import url('component/vaadin-form-layout.css');
 @import url('component/vaadin-grid.css');

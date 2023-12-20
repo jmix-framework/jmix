@@ -312,6 +312,12 @@ public interface StudioElements {
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = "componentItem",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }
@@ -439,7 +445,8 @@ public interface StudioElements {
                     "io.jmix.flowui.component.genericfilter.GenericFilter",
                     "io.jmix.flowui.component.propertyfilter.PropertyFilter",
                     "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
-                    "com.vaadin.flow.component.tabs.Tab"},
+                    "com.vaadin.flow.component.tabs.Tab",
+                    "io.jmix.flowui.component.menufilterfield.MenuFilterField"},
             properties = {
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING, required = true),
                     @StudioProperty(xmlAttribute = "focusDelay", type = StudioPropertyType.INTEGER),
@@ -577,7 +584,8 @@ public interface StudioElements {
                             classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter$Operation",
                             options = {"EQUAL", "NOT_EQUAL", "GREATER",
                                     "GREATER_OR_EQUAL", "LESS", "LESS_OR_EQUAL", "CONTAINS", "NOT_CONTAINS",
-                                    "STARTS_WITH", "ENDS_WITH", "IS_SET"}, required = true),
+                                    "STARTS_WITH", "ENDS_WITH", "IS_SET", "IS_COLLECTION_EMPTY", "MEMBER_OF_COLLECTION",
+                                    "NOT_MEMBER_OF_COLLECTION"}, required = true),
                     @StudioProperty(xmlAttribute = "operationEditable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "operationTextVisible", type = StudioPropertyType.BOOLEAN,
@@ -827,4 +835,15 @@ public interface StudioElements {
             }
     )
     void settingsFacetComponent();
+
+    @StudioElement(
+            name = "MenuItem",
+            xmlElement = "menuItem",
+            target = {"io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "refColumn", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    void gridColumnVisibilityMenuItem();
 }

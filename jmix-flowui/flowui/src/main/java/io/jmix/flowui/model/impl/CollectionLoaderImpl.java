@@ -19,7 +19,11 @@ package io.jmix.flowui.model.impl;
 import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -124,6 +128,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         query.setParameters(parameters);
 
         query.setCacheable(cacheable);
+        query.setDistinct(canLeadToDuplicateResultsRecursive(condition));
 
         if (firstResult > 0)
             query.setFirstResult(firstResult);
@@ -134,6 +139,41 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         loadContext.setHints(hints);
 
         return loadContext;
+    }
+
+    /**
+     * Evaluates recursively if the condition depends on some x-to-many property
+     * so the list of loaded entities can contain duplicates.
+     * @param condition condition to check
+     * @return true if duplicate results are possible, false otherwise
+     */
+    protected boolean canLeadToDuplicateResultsRecursive(Condition condition) {
+        if (condition instanceof LogicalCondition) {
+            LogicalCondition logicalCondition = (LogicalCondition) condition;
+            for (Condition childCondition : logicalCondition.getConditions()) {
+                boolean duplicatesPossible = canLeadToDuplicateResultsRecursive(childCondition);
+                if (duplicatesPossible) {
+                    return true;
+                }
+            }
+            return false;
+        } else if (condition instanceof PropertyCondition) {
+            PropertyCondition propertyCondition = (PropertyCondition) condition;
+            MetaPropertyPath mpp = container.getEntityMetaClass().getPropertyPath(propertyCondition.getProperty());
+            if (mpp == null) {
+                return false;
+            }
+            MetaProperty[] metaProperties = mpp.getMetaProperties();
+            //length - 1 because no duplicates will be produced if the only x-to-many property is the last one
+            for (int i = 0; i < metaProperties.length - 1; i++) {
+                if (metaProperties[i].getRange().getCardinality().isMany()) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
     }
 
     protected FetchPlan resolveFetchPlan() {

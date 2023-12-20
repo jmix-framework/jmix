@@ -3,14 +3,11 @@ package io.jmix.quartz.model;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.annotation.JmixProperty;
-import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import org.springframework.lang.Nullable;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @JmixEntity(name = "quartz_TriggerModel")
@@ -24,7 +21,7 @@ public class TriggerModel {
 
     private String triggerGroup;
 
-    private ScheduleType scheduleType;
+    private String scheduleType;
 
     private Date startDate;
 
@@ -43,6 +40,14 @@ public class TriggerModel {
 
     @Positive
     private Long repeatInterval;
+
+    public void setScheduleType(ScheduleType scheduleType) {
+        this.scheduleType = scheduleType == null ? null : scheduleType.getId();
+    }
+
+    public ScheduleType getScheduleType() {
+        return scheduleType == null ? null : ScheduleType.fromId(scheduleType);
+    }
 
     public UUID getId() {
         return id;
@@ -66,14 +71,6 @@ public class TriggerModel {
 
     public void setTriggerGroup(String triggerGroup) {
         this.triggerGroup = triggerGroup;
-    }
-
-    public void setScheduleType(ScheduleType scheduleType) {
-        this.scheduleType = scheduleType;
-    }
-
-    public ScheduleType getScheduleType() {
-        return scheduleType;
     }
 
     @Nullable
@@ -146,28 +143,6 @@ public class TriggerModel {
 
     public void setMisfireInstructionId(String misfireInstructionId) {
         this.misfireInstructionId = misfireInstructionId;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Transient
-    @JmixProperty
-    @Nullable
-    public String getScheduleDescription() {
-        if (getScheduleType() == null) {
-            return null;
-        }
-
-        if (getScheduleType() == ScheduleType.CRON_EXPRESSION) {
-            return cronExpression;
-        }
-
-        if (Objects.isNull(repeatCount) || repeatCount < 0) {
-            return String.format("Execute forever every %s seconds", repeatInterval / 1000);
-        } else if (repeatCount == 0) {
-            return "Execute once";
-        } else {
-            return String.format("Execute %s times every %s seconds", repeatCount + 1, repeatInterval / 1000);
-        }
     }
 
 }

@@ -38,8 +38,8 @@ import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -170,6 +170,11 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
         viewInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
+    @Override
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
     public void setTransformation(Function<Collection<E>, Collection<E>> transformation) {
         this.transformation = transformation;
     }
@@ -252,6 +257,14 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
     public <V extends View<?>> AddAction<E> withAfterCloseHandler(
             @Nullable Consumer<AfterCloseEvent<V>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
+        return this;
+    }
+
+    /**
+     * @see #setViewConfigurer(Consumer)
+     */
+    public <V extends View<?>> AddAction<E> withViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        setViewConfigurer(viewConfigurer);
         return this;
     }
 

@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.1.5")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.1.6")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -273,6 +273,8 @@ dependencies {
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"
+
+        api 'org.liquibase:liquibase-core:4.25.0'
 
         api 'org.glassfish:jakarta.el:4.0.2'
 

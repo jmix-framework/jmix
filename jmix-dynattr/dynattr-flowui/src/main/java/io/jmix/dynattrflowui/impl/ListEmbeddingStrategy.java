@@ -78,8 +78,8 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
         if (attribute.getDataType() == AttributeType.ENUMERATION) {
             if (!attribute.isCollection()) {
                 return value -> {
-                    if (value == null || attribute.getEnumerationMsgBundle() == null) {
-                        return null;
+                    if (attribute.getEnumerationMsgBundle() == null) {
+                        return value == null ? "" : value.toString();
                     } else {
                         return msgBundleTools.getLocalizedEnumeration(attribute.getEnumerationMsgBundle(), (String) value);
                     }

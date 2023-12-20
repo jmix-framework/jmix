@@ -30,14 +30,7 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
-import io.jmix.flowui.view.DefaultMainViewParent;
-import io.jmix.flowui.view.DialogMode;
-import io.jmix.flowui.view.LookupComponent;
-import io.jmix.flowui.view.StandardListView;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
+import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -84,21 +77,21 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
             if (userName.getValue() != null) {
                 sessions = sessions.filter(o -> o.getPrincipalName().toLowerCase().contains(userName.getValue()));
             }
-            if (lastRequestDateFrom.getTypedValue() != null || lastRequestTimeFrom.getTypedValue()!=null) {
+            if (lastRequestDateFrom.getTypedValue() != null || lastRequestTimeFrom.getTypedValue() != null) {
 
-                LocalDate afterDate = lastRequestDateFrom.getTypedValue()!=null ? lastRequestDateFrom.getTypedValue() :
+                LocalDate afterDate = lastRequestDateFrom.getTypedValue() != null ? lastRequestDateFrom.getTypedValue() :
                         LocalDate.now();
-                LocalTime afterTime = lastRequestTimeFrom.getTypedValue()!=null ? lastRequestTimeFrom.getTypedValue() :
-                    LocalTime.MIN;
+                LocalTime afterTime = lastRequestTimeFrom.getTypedValue() != null ? lastRequestTimeFrom.getTypedValue() :
+                        LocalTime.MIN;
                 LocalDateTime afterDateTime = LocalDateTime.of(afterDate, afterTime);
 
                 sessions = sessions.filter(o -> o.getLastRequest().after(Date
                         .from(afterDateTime.atZone(ZoneId.systemDefault()).toInstant())));
             }
-            if (lastRequestDateTo.getValue() != null || lastRequestTimeTo.getTypedValue()!=null) {
-                LocalDate beforeDate = lastRequestDateTo.getTypedValue()!=null ? lastRequestDateTo.getTypedValue() :
+            if (lastRequestDateTo.getValue() != null || lastRequestTimeTo.getTypedValue() != null) {
+                LocalDate beforeDate = lastRequestDateTo.getTypedValue() != null ? lastRequestDateTo.getTypedValue() :
                         LocalDate.now();
-                LocalTime beforeTime = lastRequestTimeTo.getTypedValue()!=null ? lastRequestTimeTo.getTypedValue() :
+                LocalTime beforeTime = lastRequestTimeTo.getTypedValue() != null ? lastRequestTimeTo.getTypedValue() :
                         LocalTime.MAX;
                 LocalDateTime beforeDateTime = LocalDateTime.of(beforeDate, beforeTime);
                 sessions = sessions.filter(o -> o.getLastRequest().before(Date
@@ -110,7 +103,7 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
 
     @Subscribe("sessionsTable.expire")
     protected void onSessionsTableExpire(ActionPerformedEvent event) {
-        if (sessionsTable.getSelectedItems().size()==0){
+        if (sessionsTable.getSelectedItems().isEmpty()) {
             notifications.create(messages.getMessage(UserSessionsView.class, "needSelectSession"))
                     .withType(Notifications.Type.WARNING)
                     .show();
@@ -120,7 +113,7 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
                 notifications.create(messages.formatMessage(UserSessionsView.class, "sessionInvalidated", session.getSessionId()))
                         .withType(Notifications.Type.DEFAULT)
                         .show();
-                userSessionsDl.load();
+                refreshDlItems();
             }
         }
     }
@@ -140,9 +133,8 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
         refreshDlItems();
     }
 
-    private void refreshDlItems() {
-
+    protected void refreshDlItems() {
+        sessionsTable.deselectAll();
         userSessionsDl.load();
     }
-
 }

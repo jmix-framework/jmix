@@ -27,6 +27,7 @@ public interface ComponentGenerationStrategy {
 
     /**
      * Creates a component according to the given {@link ComponentGenerationContext}.
+     * If the strategy is not applicable to the given context it should return null value.
      *
      * @param context the context instance
      * @return created component

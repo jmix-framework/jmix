@@ -42,21 +42,9 @@ public interface DynAttrStudioComponents {
                             type = StudioPropertyType.DATA_CONTAINER_REF,
                             required = true),
                     @StudioProperty(
-                            name = "cols",
-                            xmlAttribute = "cols",
-                            type = StudioPropertyType.INTEGER),
-                    @StudioProperty(
-                            name = "rows",
-                            xmlAttribute = "rows",
-                            type = StudioPropertyType.INTEGER),
-                    @StudioProperty(
                             name = "fieldWidth",
                             xmlAttribute = "fieldWidth",
-                            type = StudioPropertyType.INTEGER),
-                    @StudioProperty(
-                            name = "fieldCaptionWidth",
-                            xmlAttribute = "fieldCaptionWidth",
-                            type = StudioPropertyType.INTEGER),
+                            type = StudioPropertyType.STRING),
             })
     Div dynamicAttributesPanel();
 }

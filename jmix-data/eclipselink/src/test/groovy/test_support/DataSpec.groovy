@@ -19,12 +19,11 @@ package test_support
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
-
-import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(
         classes = [CoreConfiguration, DataConfiguration, EclipselinkConfiguration, DataTestConfiguration],
@@ -78,6 +77,7 @@ class DataSpec extends Specification {
         jdbc.update('delete from EXTTEST_CARD')
 
         jdbc.update('delete from TEST_EVENTS_FOO')
+        jdbc.update('delete from TEST_EVENTS_BOO')
         jdbc.update('delete from TEST_EVENTS_BAR')
     }
 }

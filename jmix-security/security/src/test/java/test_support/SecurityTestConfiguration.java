@@ -19,6 +19,8 @@ package test_support;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
+import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
@@ -65,6 +67,11 @@ public class SecurityTestConfiguration {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @Bean
+    public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
+        return new LocalApplicationEventChannelSupplier();
     }
 
     @EnableWebSecurity

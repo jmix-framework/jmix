@@ -28,7 +28,7 @@ public @interface StudioElementsGroup {
 
     String elementClassFqn() default "";
 
-    String icon() default "";
+    String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";
 
     String xmlElement() default "";
 

@@ -71,11 +71,10 @@ public class FilterConfigurationConverter {
                 configuration.setFilterComponentDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName(),
                         ((SingleFilterComponent<?>) filterComponent).getValue());
 
-            }
-
-            if (((SingleFilterComponent) filterComponent).getValueComponent() instanceof EntityComboBox) {
-                EntityComboBox entityComboBox = (EntityComboBox) (((SingleFilterComponent) filterComponent).getValueComponent());
-                entityComboBox.setOptions(new ContainerOptions(entityFieldCreationSupport.createCollectionContainer(entityComboBox.getMetaClass())));
+                if (((SingleFilterComponent) filterComponent).getValueComponent() instanceof EntityComboBox) {
+                    EntityComboBox entityComboBox = (EntityComboBox) (((SingleFilterComponent) filterComponent).getValueComponent());
+                    entityComboBox.setOptions(new ContainerOptions(entityFieldCreationSupport.createCollectionContainer(entityComboBox.getMetaClass())));
+                }
             }
         }
 

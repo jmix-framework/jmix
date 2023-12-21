@@ -169,6 +169,7 @@ public class FilterMetadataTools {
         // parse the first string to determine if child attributes should be included.
         boolean addNonSystemChildren = false;
         boolean addSystemChildren = false;
+        boolean isClass = false;
         if (first.equals("*")) {
             addNonSystemChildren = true;
             addSystemChildren = true;
@@ -196,6 +197,7 @@ public class FilterMetadataTools {
         // get the next node to traverse by either finding an existing one, or creating a new node
         if (first.isEmpty()) {
             nextNode = parentNode;
+            isClass = true;
         } else {
             int indexOfFirst = nodeChildrenContainsElement(parentNode, first);
 
@@ -214,6 +216,7 @@ public class FilterMetadataTools {
             MetaProperty metaProperty = mpp.getMetaProperty();
 
             if (metaProperty.getRange().isClass()) {
+                isClass = true;
                 if (metadataTools.getCrossDataStoreReferenceIdProperty(metaProperty.getStore().getName(), metaProperty) == null)
                 {
                     childClass = metaProperty.getRange().asClass();
@@ -221,7 +224,9 @@ public class FilterMetadataTools {
             }
         }
 
-        recursivelyAddPropertyToIncludedPropertiesTree(filterMetaClass, nextNode, rest, childClass, query);
+        if(isClass) {
+            recursivelyAddPropertyToIncludedPropertiesTree(filterMetaClass, nextNode, rest, childClass, query);
+        }
     }
 
     private <T extends Object> int nodeChildrenContainsElement(Node<T> parentNode, T object) {

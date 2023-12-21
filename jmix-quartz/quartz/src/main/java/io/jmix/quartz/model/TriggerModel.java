@@ -21,7 +21,7 @@ public class TriggerModel {
 
     private String triggerGroup;
 
-    private String scheduleType;
+    private ScheduleType scheduleType;
 
     private Date startDate;
 
@@ -40,14 +40,6 @@ public class TriggerModel {
 
     @Positive
     private Long repeatInterval;
-
-    public void setScheduleType(ScheduleType scheduleType) {
-        this.scheduleType = scheduleType == null ? null : scheduleType.getId();
-    }
-
-    public ScheduleType getScheduleType() {
-        return scheduleType == null ? null : ScheduleType.fromId(scheduleType);
-    }
 
     public UUID getId() {
         return id;
@@ -71,6 +63,14 @@ public class TriggerModel {
 
     public void setTriggerGroup(String triggerGroup) {
         this.triggerGroup = triggerGroup;
+    }
+
+    public void setScheduleType(ScheduleType scheduleType) {
+        this.scheduleType = scheduleType;
+    }
+
+    public ScheduleType getScheduleType() {
+        return scheduleType;
     }
 
     @Nullable

@@ -18,13 +18,12 @@ package io.jmix.uidata.filter;
 
 
 import io.jmix.core.annotation.Internal;
-import io.jmix.ui.component.Filter;
-import io.jmix.ui.component.FilterComponent;
-import io.jmix.ui.component.LogicalFilterComponent;
-import io.jmix.ui.component.SingleFilterComponent;
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.component.filter.registration.FilterComponents;
+import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.LogicalFilterCondition;
 import io.jmix.uidata.entity.FilterConfiguration;
@@ -39,6 +38,9 @@ public class FilterConfigurationConverter {
 
     @Autowired
     protected FilterComponents filterComponents;
+
+    @Autowired
+    private EntityFieldCreationSupport entityFieldCreationSupport;
 
     public FilterConfiguration toConfigurationModel(Filter.Configuration configuration,
                                                     FilterConfiguration configurationModel) {
@@ -68,6 +70,12 @@ public class FilterConfigurationConverter {
             if (filterComponent instanceof SingleFilterComponent) {
                 configuration.setFilterComponentDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName(),
                         ((SingleFilterComponent<?>) filterComponent).getValue());
+
+            }
+
+            if (((SingleFilterComponent) filterComponent).getValueComponent() instanceof EntityComboBox) {
+                EntityComboBox entityComboBox = (EntityComboBox) (((SingleFilterComponent) filterComponent).getValueComponent());
+                entityComboBox.setOptions(new ContainerOptions(entityFieldCreationSupport.createCollectionContainer(entityComboBox.getMetaClass())));
             }
         }
 

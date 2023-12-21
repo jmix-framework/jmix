@@ -27,6 +27,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -137,6 +138,12 @@ public class UiComponentProperties {
      */
     boolean filterConfigurationUniqueNamesEnabled;
 
+
+    /**
+     * The list of properties that should be considered "system properties" when using the includeProperties attribute with a filter
+     */
+    List<String> filterIncludedSystemProperties;
+
     public UiComponentProperties(
             @DefaultValue("true") boolean htmlSanitizerEnabled,
             @DefaultValue("20") int uploadFieldMaxUploadSizeMb,
@@ -165,7 +172,8 @@ public class UiComponentProperties {
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("3") int filterColumnsCount,
             @DefaultValue("false") boolean filterShowConfigurationIdField,
-            @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled
+            @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled,
+            @DefaultValue("id,version,createTs,createdBy,createdBy,createdDate,updateTs,updatedBy,lastModifiedBy,lastModifiedDate,deleteTs,deletedBy,deletedBy,deletedDate") String filterIncludedSystemProperties
     ) {
         this.htmlSanitizerEnabled = htmlSanitizerEnabled;
         this.uploadFieldMaxUploadSizeMb = uploadFieldMaxUploadSizeMb;
@@ -195,6 +203,7 @@ public class UiComponentProperties {
         this.filterColumnsCount = filterColumnsCount;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
         this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
+        this.filterIncludedSystemProperties = Arrays.asList(filterIncludedSystemProperties.replace(" ","").split(","));
     }
 
     public int getUploadFieldMaxUploadSizeMb() {
@@ -349,5 +358,12 @@ public class UiComponentProperties {
      */
     public boolean isFilterConfigurationUniqueNamesEnabled() {
         return filterConfigurationUniqueNamesEnabled;
+    }
+
+    /**
+     * @see #filterIncludedSystemProperties
+     */
+    public List<String> getFilterIncludedSystemProperties() {
+        return filterIncludedSystemProperties;
     }
 }

@@ -129,6 +129,11 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
                         Arrays.asList(excludePropertiesString.replace(" ", "").split(","));
                 propertiesInspector.setExcludedProperties(excludeProperties);
             });
+            loadString(propertiesElement, "includeProperties", includePropertiesString -> {
+                List<String> includeProperties =
+                        Arrays.asList(includePropertiesString.replace(" ", "").split(","));
+                propertiesInspector.setIncludedProperties(includeProperties);
+            });
             loadBoolean(propertiesElement, "excludeRecursively",
                     propertiesInspector::setExcludeRecursively);
 

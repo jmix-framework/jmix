@@ -21,18 +21,19 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 @Internal
@@ -96,6 +97,141 @@ public class FilterMetadataTools {
         }
 
         return paths;
+    }
+
+    public List<MetaPropertyPath> getPropertyPathsFromIncludedProperties(MetaClass filterMetaClass,
+                                                                         String query,
+                                                                         @Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate,
+                                                                         List<String> includedProperties) {
+        Node<String> includedPropertiesTree = new Node<>("");
+
+        List<MetaPropertyPath> paths = new ArrayList<>();
+
+        for (String property : includedProperties) {
+            List<String> pathStrings = Arrays.asList(property.split("\\."));
+            recursivelyAddPropertyToIncludedPropertiesTree(filterMetaClass, includedPropertiesTree, pathStrings, filterMetaClass, query);
+        }
+
+        List<String> propertyPaths = getAllPathsFromTree(includedPropertiesTree);
+        for (String propertyPath : new ArrayList<>(new HashSet<>(propertyPaths))) {
+            if (propertyPath.isBlank()) {
+                continue;
+            }
+            MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(filterMetaClass, propertyPath);
+            if (metaPropertyPath == null || !isMetaPropertyPathAllowed(metaPropertyPath, query)
+                    || (propertiesFilterPredicate != null && !propertiesFilterPredicate.test(metaPropertyPath))) {
+                continue;
+            }
+            paths.add(metaPropertyPath);
+        }
+        return paths;
+    }
+
+    private List<String> getAllPathsFromTree(Node<String> node) {
+        return getAllPathsFromTreeRecur(node);
+    }
+
+    private List<String> getAllPathsFromTreeRecur(Node<String> node) {
+        if (node.children == null || node.children.size() == 0) {
+            return Collections.singletonList(node.data);
+        }
+
+        List<String> output = new ArrayList<>();
+
+        for (Node<String> child : node.children) {
+            for (String path : getAllPathsFromTreeRecur(child)) {
+                String newPath = path;
+                if (node.data != null && !node.data.isBlank()) {
+                    newPath = node.data + "." + newPath;
+                }
+                output.add(node.data);
+                output.add(newPath);
+            }
+        }
+
+        return output;
+    }
+
+    /**
+     * @param parentNode current node in the traversal
+     * @param nodes      list of remaining nosed to search for
+     * @param metaClass  the metaClass of the parentNode
+     */
+    private void recursivelyAddPropertyToIncludedPropertiesTree(MetaClass filterMetaClass, Node<String> parentNode, List<String> nodes, MetaClass metaClass, String query) {
+        if (nodes.size() == 0) {
+            return;
+        }
+
+        // get the first path from the list
+        String first = nodes.get(0);
+        List<String> rest = nodes.subList(1, nodes.size());
+
+        // parse the first string to determine if child attributes should be included.
+        boolean addNonSystemChildren = false;
+        boolean addSystemChildren = false;
+        if (first.equals("*")) {
+            addNonSystemChildren = true;
+            addSystemChildren = true;
+        } else if (first.equals("+")) {
+            addNonSystemChildren = true;
+        }
+
+        // If we are adding we are adding children, we need to replace the + or * with each metaproperty
+        if(addSystemChildren||addNonSystemChildren){
+            for (MetaProperty e : metaClass.getProperties()) {
+                boolean shouldAdd = !uiComponentProperties.getFilterIncludedSystemProperties().contains(e.getName()) || addSystemChildren;
+
+                if(shouldAdd){
+                    List<String> nodesCopy = new ArrayList<>(nodes);
+                    nodesCopy.set(0, e.getName());
+                    recursivelyAddPropertyToIncludedPropertiesTree(filterMetaClass, parentNode, nodesCopy, metaClass, query);
+                }
+            }
+            return;
+        }
+
+        Node<String> nextNode;
+        MetaClass childClass = metaClass;
+
+        // get the next node to traverse by either finding an existing one, or creating a new node
+        if (first.isEmpty()) {
+            nextNode = parentNode;
+        } else {
+            int indexOfFirst = nodeChildrenContainsElement(parentNode, first);
+
+            if (indexOfFirst > -1) {
+                nextNode = parentNode.getChildren().get(indexOfFirst);
+            } else {
+                nextNode = new Node<>(first);
+                parentNode.addChild(nextNode);
+            }
+
+            MetaPropertyPath mpp = metaClass.getPropertyPath(first);
+            if (mpp == null) {
+                throw new RuntimeException("Filter includeProperties: Unable to find property " + first + " of " + metaClass.getName());
+            }
+
+            MetaProperty metaProperty = mpp.getMetaProperty();
+
+            if (metaProperty.getRange().isClass()) {
+                if (metadataTools.getCrossDataStoreReferenceIdProperty(metaProperty.getStore().getName(), metaProperty) == null)
+                {
+                    childClass = metaProperty.getRange().asClass();
+                }
+            }
+        }
+
+        recursivelyAddPropertyToIncludedPropertiesTree(filterMetaClass, nextNode, rest, childClass, query);
+    }
+
+    private <T extends Object> int nodeChildrenContainsElement(Node<T> parentNode, T object) {
+        for (int i = 0; i < parentNode.getChildren().size(); i++) {
+            if (parentNode.getChildren().get(i).getData().equals(object)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     protected boolean isMetaPropertyPathAllowed(MetaPropertyPath propertyPath, String query) {

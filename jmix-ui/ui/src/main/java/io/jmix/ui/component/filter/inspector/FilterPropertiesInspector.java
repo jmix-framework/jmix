@@ -28,6 +28,7 @@ public class FilterPropertiesInspector implements Predicate<MetaPropertyPath> {
     protected String includedPropertiesRegexp = ".*";
     protected String excludedPropertiesRegexp = "";
     protected List<String> excludedProperties = new ArrayList<>();
+    protected List<String> includedProperties = new ArrayList<>();
     protected boolean excludeRecursively;
 
     public FilterPropertiesInspector() {
@@ -47,6 +48,14 @@ public class FilterPropertiesInspector implements Predicate<MetaPropertyPath> {
 
     public void setExcludedPropertiesRegexp(String excludedPropertiesRegexp) {
         this.excludedPropertiesRegexp = excludedPropertiesRegexp;
+    }
+
+    public List<String> getIncludedProperties() {
+        return includedProperties;
+    }
+
+    public void setIncludedProperties(List<String> includedProperties) {
+        this.includedProperties = includedProperties;
     }
 
     public List<String> getExcludedProperties() {

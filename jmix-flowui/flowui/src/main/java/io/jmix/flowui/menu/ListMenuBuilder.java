@@ -126,10 +126,17 @@ public class ListMenuBuilder {
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()));
 
-        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            menuBarItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
-        }
+        setIcon(menuItem, menuBarItem);
+
         return menuBarItem;
+    }
+
+    protected void setIcon(MenuItem menuItem, ListMenu.MenuItem listMenuItem) {
+        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
+            VaadinIcon vaadinIcon = VaadinIcon.valueOf(menuItem.getIcon());
+            listMenuItem.withIcon(vaadinIcon)
+                    .setPrefixComponent(vaadinIcon.create());
+        }
     }
 
     /**
@@ -176,9 +183,7 @@ public class ListMenuBuilder {
                 .withRouteParameters(menuItem.getRouteParameters())
                 .withShortcutCombination(menuItem.getShortcutCombination());
 
-        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            listMenuItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
-        }
+        setIcon(menuItem, listMenuItem);
 
         return listMenuItem;
     }
@@ -190,9 +195,7 @@ public class ListMenuBuilder {
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()))
                 .withShortcutCombination(menuItem.getShortcutCombination());
 
-        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            beanMenuItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
-        }
+        setIcon(menuItem, beanMenuItem);
 
         beanMenuItem.withClickHandler(new MenuCommandExecutor(menuItem, menuItemCommands));
 

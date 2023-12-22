@@ -45,6 +45,17 @@
   flex-shrink: 0;
 }
 
+.jmix-list-menu .jmix-menu-item-link .prefix-component,
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .prefix-component {
+  flex-shrink: 0;
+}
+
+.jmix-list-menu .jmix-menu-item-link vaadin-icon.prefix-component,
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container vaadin-icon.prefix-component {
+  width: var(--lumo-icon-size-s);
+  height: var(--lumo-icon-size-s);
+}
+
 .jmix-list-menu .jmix-menubar-item .menubar-summary {
   white-space: nowrap;
   font-weight: bold;
@@ -52,7 +63,8 @@
   overflow: hidden;
 }
 
-.jmix-list-menu .suffix-component {
+.jmix-list-menu .jmix-menu-item-link .suffix-component,
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .suffix-component {
   margin-inline-start: auto;
   flex-shrink: 0;
 }

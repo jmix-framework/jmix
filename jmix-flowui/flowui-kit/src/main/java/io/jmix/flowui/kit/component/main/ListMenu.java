@@ -73,6 +73,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     protected static final String JMIX_MENU_ITEM_LINK_CLASS_NAME = "jmix-menu-item-link";
     protected static final String LINK_ICON_CLASS_NAME = "link-icon";
     protected static final String LINK_TEXT_CLASS_NAME = "link-text";
+    protected static final String PREFIX_COMPONENT_CLASS_NAME = "prefix-component";
     protected static final String SUFFIX_COMPONENT_CLASS_NAME = "suffix-component";
 
     protected List<MenuItem> rootMenuItems = new ArrayList<>();
@@ -303,7 +304,10 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         routerLink.addClassNames(menuItem.getClassNames().toArray(new String[0]));
         routerLink.setHighlightCondition(HighlightConditions.never());
 
-        if (menuItem.getIcon() != null) {
+        Component prefixComponent = menuItem.getPrefixComponent();
+        if (prefixComponent != null) {
+            setPrefixComponent(routerLink, prefixComponent, null);
+        } else if (menuItem.getIcon() != null) {
             Icon icon = new Icon(menuItem.getIcon());
             icon.addClassName(LINK_ICON_CLASS_NAME);
             routerLink.add(icon);
@@ -353,28 +357,27 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         menuItemComponent.setOpened(menuBarItem.isOpened());
         menuItemComponent.addThemeVariants(DetailsVariant.REVERSE);
 
+        Div div = new Div();
+        div.setWidthFull();
+        div.addClassName(JMIX_MENUBAR_SUMMARY_ICON_CONTAINER_CLASS_NAME);
+        div.setTitle(Strings.nullToEmpty(menuBarItem.getDescription()));
+
+        Component prefixComponent = menuBarItem.getPrefixComponent();
+        if (prefixComponent != null) {
+            setPrefixComponent(div, prefixComponent, null);
+        } else if (menuBarItem.getIcon() != null) {
+            Icon icon = new Icon(menuBarItem.getIcon());
+            icon.addClassName(MENUBAR_ICON_CLASS_NAME);
+            div.add(icon);
+        }
+
         Span summary = new Span();
         summary.setText(getTitle(menuBarItem));
         summary.addClassNames(MENUBAR_SUMMARY_CLASS_NAME, TEXT_SMALL_CLASS_NAME);
-
-        Icon icon = null;
-        if (menuBarItem.getIcon() != null) {
-            icon = new Icon(menuBarItem.getIcon());
-            icon.addClassName(MENUBAR_ICON_CLASS_NAME);
-        }
-
-        Div div = new Div();
-        div.setWidthFull();
-
-        if (icon != null) {
-            div.add(icon);
-        }
         div.add(summary);
 
         setSuffixComponent(div, menuBarItem.getSuffixComponent(), null);
 
-        div.addClassName(JMIX_MENUBAR_SUMMARY_ICON_CONTAINER_CLASS_NAME);
-        div.setTitle(Strings.nullToEmpty(menuBarItem.getDescription()));
         menuItemComponent.setSummary(div);
 
         UnorderedList menuList = new UnorderedList();
@@ -432,6 +435,20 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
     }
 
+    protected void setPrefixComponent(HasComponents componentContainer,
+                                      @Nullable Component prefixComponent,
+                                      @Nullable Component oldPrefixComponent) {
+        if (oldPrefixComponent != null) {
+            oldPrefixComponent.removeClassName(PREFIX_COMPONENT_CLASS_NAME);
+            componentContainer.remove(oldPrefixComponent);
+        }
+
+        if (prefixComponent != null) {
+            prefixComponent.addClassName(PREFIX_COMPONENT_CLASS_NAME);
+            componentContainer.addComponentAsFirst(prefixComponent);
+        }
+    }
+
     protected void setSuffixComponent(HasComponents componentContainer,
                                       @Nullable Component suffixComponent,
                                       @Nullable Component oldSuffixComponent) {
@@ -477,6 +494,20 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 setSuffixComponent(menuItemComponent, suffixComponent, oldSuffixComponent);
             }
         }
+        if (MenuItem.MENU_ITEM_PREFIX_COMPONENT.equals(event.getPropertyName())) {
+            MenuItem menuItem = (MenuItem) event.getSource();
+            Component oldPrefixComponent = (Component) event.getOldValue();
+            Component prefixComponent = (Component) event.getNewValue();
+
+            if (menuItem.isMenu()) {
+                Details menuBarComponent = getMenuBarComponent(menuItem);
+                Div summary = (Div) menuBarComponent.getSummary();
+                setPrefixComponent(summary, prefixComponent, oldPrefixComponent);
+            } else if (!menuItem.isSeparator()) {
+                RouterLink menuItemComponent = getMenuItemComponent(menuItem);
+                setPrefixComponent(menuItemComponent, prefixComponent, oldPrefixComponent);
+            }
+        }
     }
 
     /**
@@ -484,6 +515,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
      */
     public static class MenuItem implements io.jmix.flowui.kit.component.menu.MenuItem {
         protected static final String MENU_ITEM_CLASS_NAME = "className";
+        protected static final String MENU_ITEM_PREFIX_COMPONENT = "prefixComponent";
         protected static final String MENU_ITEM_SUFFIX_COMPONENT = "suffixComponent";
 
         protected String id;
@@ -493,6 +525,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         protected List<String> classNames;
         protected Consumer<MenuItem> clickHandler;
         protected KeyCombination shortcutCombination;
+        protected Component prefixComponent;
         protected Component suffixComponent;
 
         protected ListMenu menuComponent;
@@ -568,8 +601,10 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
         /**
          * @return icon or {@code null} if not set
+         * @deprecated use {@link #getPrefixComponent()}
          */
         @Nullable
+        @Deprecated
         public VaadinIcon getIcon() {
             return icon;
         }
@@ -579,7 +614,9 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          *
          * @param icon icon to set
          * @return current menu instance
+         * @deprecated use {@link #withPrefixComponent(Component)} or {@link #setPrefixComponent(Component)}
          */
+        @Deprecated
         public MenuItem withIcon(@Nullable VaadinIcon icon) {
             this.icon = icon;
             return this;
@@ -688,6 +725,41 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         /**
+         * @return prefix component of the item
+         */
+        public Component getPrefixComponent() {
+            return prefixComponent;
+        }
+
+        /**
+         * Sets prefix component of the item.
+         *
+         * @param prefixComponent component to set
+         * @return current menu item instance
+         */
+        public MenuItem withPrefixComponent(Component prefixComponent) {
+            Component oldPrefixComponent = this.prefixComponent;
+            this.prefixComponent = prefixComponent;
+
+            propertyChangeSupport.firePropertyChange(MENU_ITEM_PREFIX_COMPONENT, oldPrefixComponent,
+                    this.prefixComponent);
+            return this;
+        }
+
+        /**
+         * Sets prefix component of the item.
+         *
+         * @param prefixComponent component to set
+         */
+        public void setPrefixComponent(Component prefixComponent) {
+            Component oldPrefixComponent = this.prefixComponent;
+            this.prefixComponent = prefixComponent;
+
+            propertyChangeSupport.firePropertyChange(MENU_ITEM_PREFIX_COMPONENT, oldPrefixComponent,
+                    this.prefixComponent);
+        }
+
+        /**
          * @return {@code true} if menu item is {@link MenuBarItem} that contains other items,
          * {@code false} otherwise
          */
@@ -774,6 +846,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         @Override
+        @Deprecated
         public MenuBarItem withIcon(@Nullable VaadinIcon icon) {
             return (MenuBarItem) super.withIcon(icon);
         }
@@ -786,6 +859,11 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         @Override
         public MenuBarItem withSuffixComponent(Component suffixComponent) {
             return (MenuBarItem) super.withSuffixComponent(suffixComponent);
+        }
+
+        @Override
+        public MenuBarItem withPrefixComponent(Component prefixComponent) {
+            return (MenuBarItem) super.withPrefixComponent(prefixComponent);
         }
 
         /**

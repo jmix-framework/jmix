@@ -198,6 +198,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
+        @Deprecated
         public ViewMenuItem withIcon(@Nullable VaadinIcon icon) {
             super.withIcon(icon);
             return this;
@@ -212,6 +213,11 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         @Override
         public ViewMenuItem withSuffixComponent(Component suffixComponent) {
             return (ViewMenuItem) super.withSuffixComponent(suffixComponent);
+        }
+
+        @Override
+        public ViewMenuItem withPrefixComponent(Component prefixComponent) {
+            return (ViewMenuItem) super.withPrefixComponent(prefixComponent);
         }
 
         public ViewMenuItem withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
@@ -288,6 +294,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
+        @Deprecated
         public BeanMenuItem withIcon(@Nullable VaadinIcon icon) {
             super.withIcon(icon);
             return this;
@@ -302,6 +309,11 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         @Override
         public BeanMenuItem withSuffixComponent(Component suffixComponent) {
             return (BeanMenuItem) super.withSuffixComponent(suffixComponent);
+        }
+
+        @Override
+        public BeanMenuItem withPrefixComponent(Component prefixComponent) {
+            return (BeanMenuItem) super.withPrefixComponent(prefixComponent);
         }
 
         public BeanMenuItem withShortcutCombination(@Nullable KeyCombination shortcutCombination) {

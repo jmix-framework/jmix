@@ -35,6 +35,7 @@
   display: flex;
   gap: var(--lumo-space-s);
   padding: var(--lumo-space-xs) 0;
+  align-items: center;
 }
 
 .jmix-list-menu .jmix-menu-item-link .link-icon,
@@ -51,12 +52,22 @@
   overflow: hidden;
 }
 
+.jmix-list-menu .suffix-component {
+  margin-inline-start: auto;
+  flex-shrink: 0;
+}
+
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container > :last-child {
+  margin-right: var(--lumo-space-s);
+}
+
 .jmix-list-menu .jmix-menu-item-link {
   gap: var(--lumo-space-s);
   padding: var(--lumo-space-s);
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+  align-items: center;
 }
 
 .jmix-list-menu .jmix-menu-item-link .link-text {
@@ -78,4 +89,6 @@
 .jmix-list-menu .jmix-menubar-item vaadin-details-summary::part(content) {
   display: flex;
   overflow: hidden;
+  width: 100%;
+  align-items: center;
 }

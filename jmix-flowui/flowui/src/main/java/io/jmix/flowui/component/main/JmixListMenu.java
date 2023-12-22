@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.main;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.QueryParameters;
@@ -208,6 +209,11 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
             return this;
         }
 
+        @Override
+        public ViewMenuItem withSuffixComponent(Component suffixComponent) {
+            return (ViewMenuItem) super.withSuffixComponent(suffixComponent);
+        }
+
         public ViewMenuItem withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
             return (ViewMenuItem) super.withShortcutCombination(shortcutCombination);
         }
@@ -291,6 +297,11 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         public BeanMenuItem withClassNames(List<String> classNames) {
             super.withClassNames(classNames);
             return this;
+        }
+
+        @Override
+        public BeanMenuItem withSuffixComponent(Component suffixComponent) {
+            return (BeanMenuItem) super.withSuffixComponent(suffixComponent);
         }
 
         public BeanMenuItem withShortcutCombination(@Nullable KeyCombination shortcutCombination) {

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.internal.BrowserLiveReload;
 import com.vaadin.flow.server.VaadinContext;
+import com.vaadin.flow.server.communication.AtmospherePushConnection;
 import elemental.json.Json;
 import elemental.json.JsonObject;
 import org.atmosphere.cpr.AtmosphereResource;
@@ -252,6 +253,38 @@ public class DebugWindowConnection implements BrowserLiveReload {
 //        } else {
             getLogger().info("Unknown command from the browser: " + command);
         }
+    }
+
+    @Override
+    public AtmospherePushConnection.FragmentedMessage getOrCreateFragmentedMessage(AtmosphereResource resource) {
+        WeakReference<AtmosphereResource> ref = getRef(resource);
+        if (ref == null) {
+            throw new IllegalStateException(
+                    "Tried to create a fragmented message for a non-existing resource");
+        }
+        // TODO: gg, implement?
+//        return atmosphereResources.get(ref);
+        return null;
+    }
+
+    private WeakReference<AtmosphereResource> getRef(
+            AtmosphereResource resource) {
+        return atmosphereResources.stream()
+                .filter(resourceRef -> resource.equals(resourceRef.get()))
+                .findFirst().orElse(null);
+    }
+
+    @Override
+    public void clearFragmentedMessage(AtmosphereResource resource) {
+        WeakReference<AtmosphereResource> ref = getRef(resource);
+        if (ref == null) {
+            getLogger().debug(
+                    "Tried to clear the fragmented message for a non-existing resource: {}",
+                    resource);
+            return;
+        }
+        // TODO: gg, implement?
+//        atmosphereResources.put(ref, new AtmospherePushConnection.FragmentedMessage());
     }
 
     private static Logger getLogger() {

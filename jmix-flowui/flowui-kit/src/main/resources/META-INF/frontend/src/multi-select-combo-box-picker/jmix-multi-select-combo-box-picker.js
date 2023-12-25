@@ -26,7 +26,7 @@ registerStyles('jmix-multi-select-combo-box-picker', [],{
     moduleId: 'jmix-multi-select-combo-box-picker-styles'
 });
 
-// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 24.2.1]
+// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 24.3.1]
 export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
 
     static get is() {
@@ -69,6 +69,8 @@ export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
                         size="{{size}}"
                         filtered-items="[[__effectiveFilteredItems]]"
                         selected-items="[[selectedItems]]"
+                        selected-items-on-top="[[selectedItemsOnTop]]"
+                        top-group="[[_topGroup]]"
                         opened="{{opened}}"
                         renderer="[[renderer]]"
                         theme$="[[_theme]]"
@@ -79,6 +81,7 @@ export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
                 >
                     <vaadin-multi-select-combo-box-container
                             part="input-field"
+                            auto-expand-vertically="[[autoExpandVertically]]"
                             readonly="[[readonly]]"
                             disabled="[[disabled]]"
                             invalid="[[invalid]]"

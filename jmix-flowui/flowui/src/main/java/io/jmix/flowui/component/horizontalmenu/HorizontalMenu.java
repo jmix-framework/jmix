@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.navigationmenubar;
+package io.jmix.flowui.component.horizontalmenu;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
@@ -65,11 +65,11 @@ import java.util.stream.Collectors;
 /**
  * Represents horizontal menu that can be used for navigation to a view or for invoking a method of a bean
  */
-public class NavigationMenuBar extends Composite<JmixMenuBar>
-        implements HasMenuItemProvider<NavigationMenuBar.AbstractMenuItem<?>>, HasSize, HasStyle {
+public class HorizontalMenu extends Composite<JmixMenuBar>
+        implements HasMenuItemProvider<HorizontalMenu.AbstractMenuItem<?>>, HasSize, HasStyle {
 
-    protected static final String NAVIGATION_MENU_BAR_CLASS_NAME = "jmix-navigation-menu-bar";
-    protected static final String ROOT_MENU_ITEM_CLASS_NAME = "jmix-navigation-menu-bar-root-item";
+    protected static final String HORIZONTAL_MENU_CLASS_NAME = "jmix-horizontal-menu";
+    protected static final String ROOT_MENU_ITEM_CLASS_NAME = "jmix-horizontal-menu-root-item";
     protected static final int ADD_TO_END_INDEX = -1;
 
     protected MenuItemProvider<AbstractMenuItem<?>> menuItemProvider;
@@ -81,7 +81,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     @Override
     protected JmixMenuBar initContent() {
         JmixMenuBar menuBar = super.initContent();
-        menuBar.setClassName(NAVIGATION_MENU_BAR_CLASS_NAME);
+        menuBar.setClassName(HORIZONTAL_MENU_CLASS_NAME);
         return menuBar;
     }
 
@@ -318,14 +318,14 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Provides base functionality for navigation menu bar items
+     * Provides base functionality for horizontal menu items
      *
      * @param <T> root component type
      */
     public static abstract class AbstractMenuItem<T extends Component> extends Composite<T>
             implements io.jmix.flowui.kit.component.menu.MenuItem {
 
-        protected NavigationMenuBar menu;
+        protected HorizontalMenu menu;
         protected JmixMenuItem menuItemWrapper;
         protected ParentMenuItem parentMenuItem;
 
@@ -340,11 +340,11 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
          * @return menu component that contains this item
          */
         @Nullable
-        public NavigationMenuBar getMenu() {
+        public HorizontalMenu getMenu() {
             return menu;
         }
 
-        protected void setMenu(@Nullable NavigationMenuBar menu) {
+        protected void setMenu(@Nullable HorizontalMenu menu) {
             this.menu = menu;
         }
 
@@ -401,8 +401,8 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     public static abstract class AbstractIconTextMenuItem<T extends Component & HasComponents>
             extends AbstractMenuItem<T> implements HasTooltip {
 
-        protected static final String ITEM_ICON_CLASS_NAME = "jmix-navigation-menu-bar-item-icon";
-        protected static final String ITEM_ICON_WITH_TITLE_CLASS_NAME = "jmix-navigation-menu-bar-item-icon-with-title";
+        protected static final String ITEM_ICON_CLASS_NAME = "jmix-horizontal-menu-item-icon";
+        protected static final String ITEM_ICON_WITH_TITLE_CLASS_NAME = "jmix-horizontal-menu-item-icon-with-title";
 
         protected Icon iconComponent;
         protected Span textComponent;
@@ -492,11 +492,11 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Represents navigation menu bar item that can run some action on click
+     * Represents horizontal menu item that can run some action on click
      */
     public static class MenuItem extends AbstractIconTextMenuItem<RouterLink> {
 
-        protected static final String MENU_ITEM_CLASS_NAME = "jmix-navigation-menu-bar-menu-item";
+        protected static final String MENU_ITEM_CLASS_NAME = "jmix-horizontal-menu-item";
 
         protected KeyCombination shortcutCombination;
 
@@ -601,13 +601,13 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         @Override
         public boolean isOpened() {
             throw new UnsupportedOperationException(
-                    "Parent item of navigation menu bar doesn't support retrieving open state from server");
+                    "Parent item of horizontal menu doesn't support retrieving open state from server");
         }
 
         @Override
         public void setOpened(boolean opened) {
             throw new UnsupportedOperationException(
-                    "Parent item of navigation menu bar doesn't support opening from server");
+                    "Parent item of horizontal menu doesn't support opening from server");
         }
 
         @Override
@@ -714,7 +714,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Represents separator
+     * Represents a separator
      */
     public static class SeparatorMenuItem extends AbstractMenuItem<Hr> {
 

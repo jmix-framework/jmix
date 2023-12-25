@@ -22,7 +22,7 @@
           classNames="className1, className2"
           icon="TABLE">
         <item id="Application.view"
-              view="NavigationMenuBarView"
+              view="HorizontalMenuView"
               title="Application view"
               description="app view"
               icon="ABACUS"
@@ -31,12 +31,12 @@
         <menu id="nestedMenu"
               title="Nested menu">
             <item id="Nested.view"
-                  view="NavigationMenuBarView"
+                  view="HorizontalMenuView"
                   title="Nested view"/>
         </menu>
     </menu>
     <item id="Administration.view"
-          view="NavigationMenuBarView"
+          view="HorizontalMenuView"
           title="Administration view">
         <urlQueryParameters>
             <parameter name="a"

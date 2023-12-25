@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-.jmix-navigation-menu-bar {
+.jmix-horizontal-menu {
     color: var(--lumo-secondary-text-color);
 }
 
-.jmix-navigation-menu-bar-root-item:hover {
+.jmix-horizontal-menu-root-item:hover {
   color: var(--lumo-contrast-80pct);
 }
 
-.jmix-navigation-menu-bar vaadin-menu-bar-button {
+.jmix-horizontal-menu vaadin-menu-bar-button {
   color: inherit;
   background-color: transparent;
   border-radius: var(--lumo-border-radius-m);
 }
 
-.jmix-navigation-menu-bar vaadin-menu-bar-button[expanded] {
+.jmix-horizontal-menu vaadin-menu-bar-button[expanded] {
   background-color: var(--lumo-primary-color-10pct);
 }
 
-vaadin-menu-bar-item .jmix-navigation-menu-bar-menu-item,
-vaadin-menu-bar-list-box .jmix-navigation-menu-bar-menu-item {
+vaadin-menu-bar-item .jmix-horizontal-menu-item,
+vaadin-menu-bar-list-box .jmix-horizontal-menu-item {
   color: inherit;
   display: flex;
   cursor: pointer;
   width: 100%;
 }
 
-.jmix-navigation-menu-bar-menu-item:hover {
+.jmix-horizontal-menu-item:hover {
   text-decoration: none;
 }
 
-.jmix-navigation-menu-bar-item-icon-with-title {
+.jmix-horizontal-menu-item-icon-with-title {
   margin-right: var(--lumo-space-s);
 }
 
-.jmix-navigation-menu-bar-item-icon {
+.jmix-horizontal-menu-item-icon {
   width: var(--lumo-icon-size-s);
   height: var(--lumo-icon-size-s);
 }

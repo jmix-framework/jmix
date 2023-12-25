@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.navigationmenubar;
+package io.jmix.flowui.component.horizontalmenu;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -42,10 +42,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-@Component("flowui_NavigationMenuBarItemConverter")
-public class NavigationMenuBarItemConverter {
+@Component("flowui_HorizontalMenuItemConverter")
+public class HorizontalMenuItemConverter {
 
-    private static final Logger log = LoggerFactory.getLogger(NavigationMenuBarItemConverter.class);
+    private static final Logger log = LoggerFactory.getLogger(HorizontalMenuItemConverter.class);
     protected static final String GENERATED_SEPARATOR_ID_PREFIX = "separator-";
 
     protected MenuConfig menuConfig;
@@ -54,11 +54,11 @@ public class NavigationMenuBarItemConverter {
     protected UiAccessChecker uiAccessChecker;
     protected MenuItemCommands menuItemCommands;
 
-    public NavigationMenuBarItemConverter(MenuConfig menuConfig,
-                                          ViewRegistry viewRegistry,
-                                          MessageTools messageTools,
-                                          UiAccessChecker uiAccessChecker,
-                                          MenuItemCommands menuItemCommands) {
+    public HorizontalMenuItemConverter(MenuConfig menuConfig,
+                                       ViewRegistry viewRegistry,
+                                       MessageTools messageTools,
+                                       UiAccessChecker uiAccessChecker,
+                                       MenuItemCommands menuItemCommands) {
         this.menuConfig = menuConfig;
         this.viewRegistry = viewRegistry;
         this.messageTools = messageTools;
@@ -66,14 +66,14 @@ public class NavigationMenuBarItemConverter {
         this.menuItemCommands = menuItemCommands;
     }
 
-    public Optional<NavigationMenuBar.AbstractMenuItem<?>> createMenuItemWithChildren(MenuItem menuItemDescriptor) {
+    public Optional<HorizontalMenu.AbstractMenuItem<?>> createMenuItemWithChildren(MenuItem menuItemDescriptor) {
         if (menuItemDescriptor.isMenu()) {
             if (menuItemDescriptor.getChildren().isEmpty()) {
                 log.warn("Parent menu item '{}' is skipped as it does not have children", menuItemDescriptor.getId());
                 return Optional.empty();
             }
 
-            NavigationMenuBar.ParentMenuItem parentMenuItem = createParentMenuItem(menuItemDescriptor);
+            HorizontalMenu.ParentMenuItem parentMenuItem = createParentMenuItem(menuItemDescriptor);
 
             for (MenuItem childItem : menuItemDescriptor.getChildren()) {
                 createMenuItemWithChildren(childItem)
@@ -89,11 +89,11 @@ public class NavigationMenuBarItemConverter {
 
             return Optional.of(parentMenuItem);
         } else if (menuItemDescriptor.isSeparator()) {
-            NavigationMenuBar.SeparatorMenuItem separatorItem = createSeparatorItem();
+            HorizontalMenu.SeparatorMenuItem separatorItem = createSeparatorItem();
 
             return Optional.of(separatorItem);
         } else {
-            NavigationMenuBar.MenuItem menuItem = createMenuItem(menuItemDescriptor);
+            HorizontalMenu.MenuItem menuItem = createMenuItem(menuItemDescriptor);
 
             return Optional.ofNullable(menuItem);
         }
@@ -103,10 +103,10 @@ public class NavigationMenuBarItemConverter {
      * Removes trailing child separators
      * @param parentMenuItem parent menu item to trim
      */
-    protected void removeLastChildSeparators(NavigationMenuBar.ParentMenuItem parentMenuItem) {
-        List<NavigationMenuBar.AbstractMenuItem<?>> childItems = new ArrayList<>(parentMenuItem.getChildItems());
+    protected void removeLastChildSeparators(HorizontalMenu.ParentMenuItem parentMenuItem) {
+        List<HorizontalMenu.AbstractMenuItem<?>> childItems = new ArrayList<>(parentMenuItem.getChildItems());
         for (int i = childItems.size() - 1; i >= 0; i--) {
-            NavigationMenuBar.AbstractMenuItem<?> childItem = childItems.get(i);
+            HorizontalMenu.AbstractMenuItem<?> childItem = childItems.get(i);
             if (childItem.isSeparator()) {
                 parentMenuItem.removeChildItem(childItem);
             } else {
@@ -115,9 +115,9 @@ public class NavigationMenuBarItemConverter {
         }
     }
 
-    protected NavigationMenuBar.ParentMenuItem createParentMenuItem(MenuItem menuItemDescriptor) {
-        NavigationMenuBar.ParentMenuItem parentMenuItem =
-                new NavigationMenuBar.ParentMenuItem(menuItemDescriptor.getId());
+    protected HorizontalMenu.ParentMenuItem createParentMenuItem(MenuItem menuItemDescriptor) {
+        HorizontalMenu.ParentMenuItem parentMenuItem =
+                new HorizontalMenu.ParentMenuItem(menuItemDescriptor.getId());
 
         parentMenuItem.setIcon(getIcon(menuItemDescriptor));
         parentMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
@@ -155,8 +155,8 @@ public class NavigationMenuBarItemConverter {
                 .toArray(String[]::new);
     }
 
-    protected NavigationMenuBar.SeparatorMenuItem createSeparatorItem() {
-        return new NavigationMenuBar.SeparatorMenuItem(generateSeparatorId());
+    protected HorizontalMenu.SeparatorMenuItem createSeparatorItem() {
+        return new HorizontalMenu.SeparatorMenuItem(generateSeparatorId());
     }
 
     protected String generateSeparatorId() {
@@ -164,7 +164,7 @@ public class NavigationMenuBarItemConverter {
     }
 
     @Nullable
-    protected NavigationMenuBar.MenuItem createMenuItem(MenuItem menuItemDescriptor) {
+    protected HorizontalMenu.MenuItem createMenuItem(MenuItem menuItemDescriptor) {
         if (!isPermitted(menuItemDescriptor)) {
             log.debug("Menu item '{}' is not permitted by access constraint", menuItemDescriptor.getId());
             return null;
@@ -183,9 +183,9 @@ public class NavigationMenuBarItemConverter {
         return uiAccessChecker.isMenuPermitted(menuItemDescriptor);
     }
 
-    protected NavigationMenuBar.MenuItem createViewMenuItem(MenuItem menuItemDescriptor) {
-        NavigationMenuBar.ViewMenuItem viewMenuItem =
-                new NavigationMenuBar.ViewMenuItem(menuItemDescriptor.getId(), getViewClass(menuItemDescriptor));
+    protected HorizontalMenu.MenuItem createViewMenuItem(MenuItem menuItemDescriptor) {
+        HorizontalMenu.ViewMenuItem viewMenuItem =
+                new HorizontalMenu.ViewMenuItem(menuItemDescriptor.getId(), getViewClass(menuItemDescriptor));
 
         viewMenuItem.setIcon(getIcon(menuItemDescriptor));
         viewMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
@@ -217,8 +217,8 @@ public class NavigationMenuBarItemConverter {
                 && targetView.getAnnotation(ViewController.class) != null;
     }
 
-    protected NavigationMenuBar.MenuItem createBeanMenuItem(MenuItem menuItemDescriptor) {
-        NavigationMenuBar.MenuItem beanMenuItem = new NavigationMenuBar.MenuItem(menuItemDescriptor.getId());
+    protected HorizontalMenu.MenuItem createBeanMenuItem(MenuItem menuItemDescriptor) {
+        HorizontalMenu.MenuItem beanMenuItem = new HorizontalMenu.MenuItem(menuItemDescriptor.getId());
 
         beanMenuItem.setIcon(getIcon(menuItemDescriptor));
         beanMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
@@ -231,7 +231,7 @@ public class NavigationMenuBarItemConverter {
         return beanMenuItem;
     }
 
-    protected static class MenuCommandExecutor implements Consumer<NavigationMenuBar.MenuItem> {
+    protected static class MenuCommandExecutor implements Consumer<HorizontalMenu.MenuItem> {
 
         protected MenuItem item;
         protected MenuItemCommands menuItemCommands;
@@ -242,8 +242,8 @@ public class NavigationMenuBarItemConverter {
         }
 
         @Override
-        public void accept(NavigationMenuBar.MenuItem menuItem) {
-            NavigationMenuBar menuComponent = menuItem.getMenu();
+        public void accept(HorizontalMenu.MenuItem menuItem) {
+            HorizontalMenu menuComponent = menuItem.getMenu();
 
             if (menuComponent != null) {
                 menuComponent.getUI()

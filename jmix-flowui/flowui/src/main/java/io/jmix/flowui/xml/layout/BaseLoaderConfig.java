@@ -101,7 +101,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("virtualList", VirtualListLoader.class);
         loaders.put("gridColumnVisibility", GridColumnVisibilityLoader.class);
         loaders.put("menuFilterField", MenuFilterFieldLoader.class);
-        loaders.put("navigationMenuBar", NavigationMenuBarLoader.class);
+        loaders.put("horizontalMenu", HorizontalMenuLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

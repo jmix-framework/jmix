@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.flowui.component.navigationmenubar;
+package io.jmix.flowui.component.horizontalmenu;
 
 import org.springframework.lang.NonNullApi;

@@ -24,7 +24,7 @@ import org.eclipse.jetty.util.Callback;
 public class JmixErrorHandler extends ErrorHandler {
 
     @Override
-    public boolean handle(Request request, Response response, Callback callback) {
+    public boolean handle(Request request, Response response, Callback callback) throws Exception {
         return super.handle(request, response, callback);
     }
 }

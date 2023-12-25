@@ -18,9 +18,6 @@
 package io.jmix.imap.impl;
 
 
-import com.sun.mail.imap.IMAPFolder;
-import com.sun.mail.imap.IMAPMessage;
-import com.sun.mail.imap.IMAPStore;
 import io.jmix.core.Metadata;
 import io.jmix.core.TimeSource;
 import io.jmix.imap.ImapAttachments;
@@ -31,6 +28,9 @@ import io.jmix.imap.entity.ImapMessageAttachment;
 import io.jmix.imap.exception.ImapException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.angus.mail.imap.IMAPFolder;
+import org.eclipse.angus.mail.imap.IMAPMessage;
+import org.eclipse.angus.mail.imap.IMAPStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -20,7 +20,6 @@ import io.jmix.core.DataManager;
 import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -35,7 +34,6 @@ public class RoleAssignmentUserRemovalHandler {
         this.dataManager = dataManager;
     }
 
-    @Transactional
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     public void onUserRemove(UserRemovedEvent event) {
         List<RoleAssignmentEntity> assignments = dataManager.load(RoleAssignmentEntity.class)

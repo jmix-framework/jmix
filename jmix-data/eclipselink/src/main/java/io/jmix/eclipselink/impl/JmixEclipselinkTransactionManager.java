@@ -19,8 +19,9 @@ package io.jmix.eclipselink.impl;
 import io.jmix.data.impl.JmixTransactionManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.eclipse.persistence.internal.helper.JmixUtil;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.support.DefaultTransactionStatus;
 
 public class JmixEclipselinkTransactionManager extends JmixTransactionManager {
 
@@ -29,18 +30,17 @@ public class JmixEclipselinkTransactionManager extends JmixTransactionManager {
     }
 
     @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        super.setApplicationContext(applicationContext);
+
+        addListener(new JmixEclipselinkTransactionExecutionListener(getKey(), applicationContext));
+    }
+
+    @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) {
         super.doBegin(transaction, definition);
         // set soft deletion at beginning of each new transaction
         JmixUtil.setSoftDeletion(true);
         JmixUtil.setOriginalSoftDeletion(true);
-    }
-
-    @Override
-    protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) {
-        super.prepareSynchronization(status, definition);
-        // lookup instead of injection to avoid circular dependency
-        EclipselinkPersistenceSupport persistenceSupport = applicationContext.getBean(EclipselinkPersistenceSupport.class);
-        persistenceSupport.registerSynchronizations(getKey());
     }
 }

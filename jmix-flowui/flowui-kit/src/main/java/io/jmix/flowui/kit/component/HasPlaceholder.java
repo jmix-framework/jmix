@@ -33,7 +33,7 @@ public interface HasPlaceholder extends com.vaadin.flow.component.HasPlaceholder
     String PLACEHOLDER_PROPERTY_NAME = "placeholder";
 
     /**
-     * @inherited
+     * {@inheritDoc}
      */
     @Nullable
     default String getPlaceholder() {
@@ -41,7 +41,7 @@ public interface HasPlaceholder extends com.vaadin.flow.component.HasPlaceholder
     }
 
     /**
-     * @inherited
+     * {@inheritDoc}
      */
     default void setPlaceholder(@Nullable String placeholder) {
         getElement().setProperty(PLACEHOLDER_PROPERTY_NAME, Strings.nullToEmpty(placeholder));

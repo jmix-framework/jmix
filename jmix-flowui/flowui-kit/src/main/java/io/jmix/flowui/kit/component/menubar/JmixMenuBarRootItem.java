@@ -50,7 +50,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void addClassName(String className) {
@@ -59,7 +59,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void addClassNames(String... classNames) {
@@ -68,7 +68,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setClassName(String className) {
@@ -77,7 +77,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setClassName(String className, boolean set) {
@@ -86,7 +86,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public boolean removeClassName(String className) {
@@ -96,7 +96,7 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void removeClassNames(String... classNames) {

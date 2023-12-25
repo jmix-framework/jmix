@@ -17,6 +17,7 @@
 package io.jmix.eclipselink.impl;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.TransactionExecution;
 import org.springframework.transaction.TransactionExecutionListener;
 
@@ -32,7 +33,7 @@ public class JmixEclipselinkTransactionExecutionListener implements TransactionE
     }
 
     @Override
-    public void afterBegin(TransactionExecution transaction, Throwable beginFailure) {
+    public void afterBegin(TransactionExecution transaction, @Nullable Throwable beginFailure) {
         EclipselinkPersistenceSupport persistenceSupport = applicationContext.getBean(EclipselinkPersistenceSupport.class);
         persistenceSupport.registerSynchronizations(key);
     }

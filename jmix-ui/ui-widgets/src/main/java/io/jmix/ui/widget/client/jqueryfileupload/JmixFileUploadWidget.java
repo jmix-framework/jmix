@@ -49,6 +49,7 @@ public class JmixFileUploadWidget extends FlowPanel implements Focusable, HasEna
     protected String unableToUploadFileMessage;
     protected String progressWindowCaption;
     protected String cancelButtonCaption;
+    protected String totalProgressFormat;
 
     protected boolean ignoreExceptions = false;
 
@@ -60,6 +61,7 @@ public class JmixFileUploadWidget extends FlowPanel implements Focusable, HasEna
     protected FileUploadedListener fileUploadedListener;
 
     protected boolean enabled;
+    protected boolean totalProgressEnabled;
 
     public JmixFileUploadWidget() {
         submitButton = new VButton();
@@ -130,6 +132,10 @@ public class JmixFileUploadWidget extends FlowPanel implements Focusable, HasEna
                 progressWindow.setResizable(false);
                 progressWindow.setClosable(true);
 
+                progressWindow.setTotalProgressEnabled(totalProgressEnabled);
+                progressWindow.setTotalProgressFormat(totalProgressFormat);
+                progressWindow.initFilesNumber(currentXHRs.size());
+
                 progressWindow.setCaption(progressWindowCaption);
                 progressWindow.setCancelButtonCaption(cancelButtonCaption);
 
@@ -168,6 +174,7 @@ public class JmixFileUploadWidget extends FlowPanel implements Focusable, HasEna
                 if (fileUploadedListener != null) {
                     fileUploadedListener.fileUploaded(fileName);
                 }
+                totalUploadProgress();
             }
 
             @Override
@@ -175,6 +182,12 @@ public class JmixFileUploadWidget extends FlowPanel implements Focusable, HasEna
                 if (progressWindow != null) {
                     float ratio = (float) (loaded / total);
                     progressWindow.setProgress(ratio);
+                }
+            }
+
+            protected void totalUploadProgress() {
+                if (progressWindow != null) {
+                    progressWindow.updateTotalProgress(currentXHRs.size());
                 }
             }
 

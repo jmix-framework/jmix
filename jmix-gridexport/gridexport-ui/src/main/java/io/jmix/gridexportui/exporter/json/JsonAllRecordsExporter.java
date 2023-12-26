@@ -20,6 +20,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Id;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.Sort;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.gridexportui.exporter.AbstractAllRecordsExporter;
@@ -59,21 +60,23 @@ public class JsonAllRecordsExporter extends AbstractAllRecordsExporter {
      *
      * @param dataUnit          data unit linked with the data
      * @param jsonObjectCreator function that is being applied to each loaded instance
+     * @param sort An optional sorting specification for the data.
+     *             If {@code null} sorting will be applied by the primary key.
      */
     @SuppressWarnings("rawtypes")
-    public void exportAll(DataUnit dataUnit, Consumer<Object> jsonObjectCreator) {
+    public void exportAll(DataUnit dataUnit, Consumer<Object> jsonObjectCreator, Sort sort) {
         Preconditions.checkNotNullArgument(jsonObjectCreator, "jsonObjectCreator can't be null");
 
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
         transactionTemplate.executeWithoutResult(transactionStatus -> {
-            long count = dataManager.getCount(generateLoadContext(dataUnit));
+            long count = dataManager.getCount(generateLoadContext(dataUnit, sort));
             int loadBatchSize = gridExportProperties.getExportAllBatchSize();
 
             boolean initialLoading = true;
             Object lastLoadedPkValue = null;
 
             for (int firstResult = 0; firstResult < count; firstResult += loadBatchSize) {
-                LoadContext loadContext = generateLoadContext(dataUnit);
+                LoadContext loadContext = generateLoadContext(dataUnit, sort);
                 LoadContext.Query query = loadContext.getQuery();
 
                 if (initialLoading) {

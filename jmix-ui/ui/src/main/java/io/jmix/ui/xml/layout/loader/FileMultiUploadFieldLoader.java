@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.xml.layout.loader;
 
+import com.google.common.base.Strings;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.BoxLayout;
 import io.jmix.ui.component.Component;
@@ -64,6 +65,9 @@ public class FileMultiUploadFieldLoader extends AbstractComponentLoader<FileMult
         if (StringUtils.isNotEmpty(fileSizeLimit)) {
             resultComponent.setFileSizeLimit(Long.parseLong(fileSizeLimit));
         }
+
+        loadTotalProgressEnabled(resultComponent, element);
+        loadTotalProgressFormat(resultComponent, element);
     }
 
     @Override
@@ -118,6 +122,21 @@ public class FileMultiUploadFieldLoader extends AbstractComponentLoader<FileMult
             } else {
                 throw new GuiDevelopmentException("Unable to find pasteZone component with id: " + pasteZoneId, context);
             }
+        }
+    }
+
+    protected void loadTotalProgressEnabled(FileMultiUploadField uploadField, Element element) {
+        String totalProgressEnabled = element.attributeValue("totalProgressEnabled");
+        if (!Strings.isNullOrEmpty(totalProgressEnabled)) {
+            uploadField.setTotalProgressEnabled(Boolean.parseBoolean(totalProgressEnabled));
+        }
+    }
+
+    protected void loadTotalProgressFormat(FileMultiUploadField uploadField, Element element) {
+        if (element.attribute("totalProgressFormat") != null) {
+            String formatAttributeValue = element.attributeValue("totalProgressFormat");
+            String format = loadResourceString(formatAttributeValue);
+            uploadField.setTotalProgressFormat(format);
         }
     }
 }

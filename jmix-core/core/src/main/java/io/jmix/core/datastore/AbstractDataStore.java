@@ -83,15 +83,16 @@ public abstract class AbstractDataStore implements DataStore {
         Object entity;
         Object transaction = beginLoadTransaction(context.isJoinTransaction());
         try {
+            TransactionContextState txContextState = getTransactionContextState(context.isJoinTransaction());
             entity = loadOne(context);
 
-            DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entity, loadState);
+            DataStoreEntityLoadingEvent loadEvent = DataStoreEntityLoadingEvent.byEntity(context, entity, loadState);
             fireEvent(loadEvent);
 
             entity = loadEvent.getResultEntity();
 
             beforeLoadTransactionCommit(context,
-                    entity == null ? Collections.emptyList() : Collections.singletonList(entity));
+                    entity == null ? Collections.emptyList() : Collections.singletonList(entity), txContextState);
             commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
@@ -123,6 +124,7 @@ public abstract class AbstractDataStore implements DataStore {
         List<Object> resultList;
         Object transaction = beginLoadTransaction(context.isJoinTransaction());
         try {
+            TransactionContextState txContextState = getTransactionContextState(context.isJoinTransaction());
             if (context.getIds().isEmpty()) {
                 List<Object> entities = loadAll(context);
 
@@ -146,7 +148,7 @@ public abstract class AbstractDataStore implements DataStore {
                 resultList = checkAndReorderLoadedEntities(context, loadEvent.getResultEntities());
             }
 
-            beforeLoadTransactionCommit(context, resultList);
+            beforeLoadTransactionCommit(context, resultList, txContextState);
             commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
@@ -178,6 +180,7 @@ public abstract class AbstractDataStore implements DataStore {
         long count = 0L;
         Object transaction = beginLoadTransaction(context.isJoinTransaction());
         try {
+            TransactionContextState txContextState = getTransactionContextState(context.isJoinTransaction());
             if (beforeCountEvent.countByItems()) {
                 LoadContext<?> countContext = context.copy();
                 if (countContext.getQuery() != null) {
@@ -185,7 +188,7 @@ public abstract class AbstractDataStore implements DataStore {
                     countContext.getQuery().setMaxResults(0);
                 }
 
-                List<?> entities = loadAll(countContext);
+                List<Object> entities = loadAll(countContext);
 
                 DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entities, eventState);
                 fireEvent(loadEvent);
@@ -196,7 +199,7 @@ public abstract class AbstractDataStore implements DataStore {
                 count = countAll(context);
             }
 
-            beforeLoadTransactionCommit(context, Collections.emptyList());
+            beforeLoadTransactionCommit(context, Collections.emptyList(), txContextState);
             commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
@@ -323,7 +326,14 @@ public abstract class AbstractDataStore implements DataStore {
 
     protected abstract void rollbackTransaction(Object transaction);
 
-    protected void beforeLoadTransactionCommit(LoadContext<?> context, Collection<Object> entities) {
+    /**
+     * Invoked after {@link  AbstractDataStore#beginLoadTransaction}.
+     * <br>
+     * Override this method to create {@link TransactionContextState} implementation and store required data in it.
+     */
+    protected abstract TransactionContextState getTransactionContextState(boolean isJoinTransaction);
+
+    protected void beforeLoadTransactionCommit(LoadContext<?> context, Collection<Object> entities, TransactionContextState transactionContextState) {
     }
 
     protected void beforeSaveTransactionCommit(SaveContext context, Collection<Object> savedEntities,
@@ -416,6 +426,7 @@ public abstract class AbstractDataStore implements DataStore {
         Set<Object> loadedEntities = new HashSet<>();
         Object loadTransaction = beginLoadTransaction(context.isJoinTransaction());
         try {
+            TransactionContextState txContextState = getTransactionContextState(context.isJoinTransaction());
             for (Object entity : savedEntities) {
                 EventSharedState loadState = new EventSharedState();
                 LoadContext<?> loadContext = new LoadContext<>(metadata.getClass(entity))
@@ -436,7 +447,8 @@ public abstract class AbstractDataStore implements DataStore {
 
                         copyNonPersistentAttributes(entity, fetchedEntity);
 
-                        DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(loadContext, fetchedEntity, loadState);
+                        DataStoreEntityLoadingEvent loadEvent =
+                                DataStoreEntityLoadingEvent.byEntity(loadContext, fetchedEntity, loadState);
                         fireEvent(loadEvent);
 
                         loadedEntities.add(loadEvent.getResultEntity());
@@ -446,7 +458,7 @@ public abstract class AbstractDataStore implements DataStore {
 
             for (Object entity : loadedEntities) {
                 EntityLoadInfo loadInfo = loadInfoMap.get(entity);
-                beforeLoadTransactionCommit(loadInfo.loadContext, Collections.singletonList(entity));
+                beforeLoadTransactionCommit(loadInfo.loadContext, Collections.singletonList(entity), txContextState);
             }
             commitTransaction(loadTransaction);
         } finally {
@@ -504,5 +516,14 @@ public abstract class AbstractDataStore implements DataStore {
             this.loadContext = loadContext;
             this.eventState = eventState;
         }
+    }
+
+    /**
+     * Designed to store and share various data during load transaction.
+     * <p>
+     * E.g. for {@code JpaDataStore}: to remember already existed in persistence context entities.
+     * It is required to distinguish newly loaded entities (including implicitly loaded) from already existed.
+     */
+    protected interface TransactionContextState {
     }
 }

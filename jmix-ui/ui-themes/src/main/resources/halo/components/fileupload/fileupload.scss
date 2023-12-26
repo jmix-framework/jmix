@@ -114,14 +114,17 @@
       display: inline-block;
     }
 
-    .v-label.upload-file-label {
+    .v-label.upload-file-label,
+    .v-label.upload-file-total-label {
       font-family: $v-font-family;
       font-size: $v-font-size;
       line-height: $v-line-height;
     }
 
     .v-label.upload-file-label,
+    .v-label.upload-file-total-label,
     .upload-progressbar,
+    .upload-total-progressbar,
     .v-button.upload-cancel-button {
       margin-top: $v-layout-margin-top;
     }

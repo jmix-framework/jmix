@@ -20,6 +20,8 @@ import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.GroupFilter;
 import io.jmix.ui.component.LogicalFilterComponent;
 import io.jmix.ui.component.SupportsCaptionPosition;
+import io.jmix.ui.component.impl.FilterLoaderUtils;
+import io.jmix.ui.component.impl.GroupFilterImpl;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
@@ -78,6 +80,11 @@ public class GroupFilterLoader extends AbstractComponentLoader<GroupFilter> {
                     ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
                     DataLoader dataLoader = screenData.getLoader(dataLoaderId);
                     component.setDataLoader(dataLoader);
+
+                    getComponentContext().addInitTask((context, window) ->
+                            FilterLoaderUtils.updateDataLoaderInitialCondition(((GroupFilterImpl) component),
+                                    dataLoader.getCondition())
+                    );
                 });
     }
 

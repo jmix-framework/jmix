@@ -27,6 +27,7 @@ import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.gridexportui.action.ExportAction;
 import io.jmix.gridexportui.exporter.AbstractTableExporter;
 import io.jmix.gridexportui.exporter.ExportMode;
+import io.jmix.gridexportui.exporter.ExporterSortHelper;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.*;
@@ -243,9 +244,10 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(table instanceof TreeTable);
                 excelAllRecordsExporter.exportAll(tableItems, (context) -> {
-                    createRowForEntityInstance(table, columns, 0, context.getRowNumber(), context.getEntity(),
-                            addLevelPadding);
-                }, this::checkIsRowNumberExceed);
+                            createRowForEntityInstance(table, columns, 0, context.getRowNumber(), context.getEntity(),
+                                    addLevelPadding);
+                        }, this::checkIsRowNumberExceed,
+                        ExporterSortHelper.getSortOrder(table.getSortInfo()));
             }
 
             for (int c = 0; c < columns.size(); c++) {
@@ -362,9 +364,10 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(dataGrid instanceof TreeDataGrid);
                 excelAllRecordsExporter.exportAll(dataGrid.getItems(), (context) -> {
-                    createDataGridRowForEntityInstance(dataGrid, columns, 0, context.getRowNumber(),
-                            context.getEntity(), addLevelPadding);
-                }, this::checkIsRowNumberExceed);
+                            createDataGridRowForEntityInstance(dataGrid, columns, 0, context.getRowNumber(),
+                                    context.getEntity(), addLevelPadding);
+                        }, this::checkIsRowNumberExceed,
+                        ExporterSortHelper.getSortOrder(dataGrid.getSortOrder()));
             }
 
             for (int c = 0; c < columns.size(); c++) {

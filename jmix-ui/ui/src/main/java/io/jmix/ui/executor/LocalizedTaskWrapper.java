@@ -89,8 +89,8 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
             Notifications notifications = getScreenContext().getNotifications();
 
             notifications.create(Notifications.NotificationType.WARNING)
-                    .withCaption(messages.getMessage(LocalizedTaskWrapper.class, "backgroundWorkProgress.timeout"))
-                    .withDescription(messages.getMessage(LocalizedTaskWrapper.class, "backgroundWorkProgress.timeoutMessage"))
+                    .withCaption(messages.getMessage("backgroundWorkProgress.timeout"))
+                    .withDescription(messages.getMessage("backgroundWorkProgress.timeoutMessage"))
                     .show();
 
             handled = true;
@@ -137,7 +137,7 @@ public class LocalizedTaskWrapper<T, V> extends BackgroundTask<T, V> {
 
             dialogs.createExceptionDialog()
                     .withThrowable(ex)
-                    .withCaption(messages.getMessage(LocalizedTaskWrapper.class, "backgroundWorkProgress.executionError"))
+                    .withCaption(messages.getMessage("backgroundWorkProgress.executionError"))
                     .withMessage(ex.getLocalizedMessage())
                     .show();
         }

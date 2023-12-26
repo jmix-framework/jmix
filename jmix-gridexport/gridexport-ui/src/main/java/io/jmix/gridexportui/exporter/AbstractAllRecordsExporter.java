@@ -29,6 +29,7 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.HasLoader;
+import javax.annotation.Nullable;
 
 public abstract class AbstractAllRecordsExporter {
 
@@ -44,9 +45,11 @@ public abstract class AbstractAllRecordsExporter {
      * Generates the load context using the given {@code DataUnit}.
      *
      * @param dataUnit data unit linked with the data
+     * @param sort An optional sorting specification for the data.
+     *             If {@code null} sorting will be applied by the primary key.
      */
     @SuppressWarnings("rawtypes")
-    public LoadContext generateLoadContext(DataUnit dataUnit) {
+    public LoadContext generateLoadContext(DataUnit dataUnit, @Nullable Sort sort) {
         if (!(dataUnit instanceof ContainerDataUnit)) {
             throw new RuntimeException("Cannot export all rows. DataUnit must be an instance of ContainerDataUnit.");
         }
@@ -77,7 +80,9 @@ public abstract class AbstractAllRecordsExporter {
         if (primaryKeyName == null) {
             throw new RuntimeException("Cannot find a primary key for a meta class " + entityMetaClass.getName());
         }
-        query.setSort(Sort.by(primaryKeyName));
+        sort = sort != null ? sort : Sort.by(primaryKeyName);
+
+        query.setSort(sort);
 
         Condition condition = loadContext.getQuery().getCondition();
 

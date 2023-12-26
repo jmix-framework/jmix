@@ -24,6 +24,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.data.PersistenceHints;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
 import org.springframework.beans.factory.BeanFactory;
@@ -37,6 +38,8 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static io.jmix.eclipselink.impl.lazyloading.AbstractSingleValueHolder.PREV_SOFT_DELETION;
+import static io.jmix.eclipselink.impl.lazyloading.AbstractSingleValueHolder.SOFT_DELETION_ABSENT;
 import static io.jmix.eclipselink.impl.lazyloading.ValueHoldersSupport.*;
 
 @Component("eclipselink_JpaLazyLoadingInterceptor")
@@ -89,6 +92,8 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
             }
         }
 
+        restoreSoftDeletion(serializableHints);
+
         LoadOptions loadOptions = LoadOptions.with()
                 .setAccessConstraints(loadContext.getAccessConstraints().stream()
                         .filter(c -> c instanceof InMemoryConstraint)
@@ -112,6 +117,20 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Restores SOFT_DELETION hint state if value has been forcefully set in single value property holder
+     */
+    protected void restoreSoftDeletion(Map<String, Serializable> hints) {
+        if (hints.containsKey(PREV_SOFT_DELETION)) {
+            if (hints.get(PREV_SOFT_DELETION).equals(SOFT_DELETION_ABSENT)) {
+                hints.remove(PersistenceHints.SOFT_DELETION);
+            } else {
+                hints.put(PersistenceHints.SOFT_DELETION, hints.get(PREV_SOFT_DELETION));
+            }
+            hints.remove(PREV_SOFT_DELETION);
         }
     }
 

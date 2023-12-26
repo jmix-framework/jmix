@@ -1190,6 +1190,9 @@
             <xs:enumeration value="IN_LIST"/>
             <xs:enumeration value="NOT_IN_LIST"/>
             <xs:enumeration value="DATE_INTERVAL"/>
+            <xs:enumeration value="IS_COLLECTION_EMPTY"/>
+            <xs:enumeration value="MEMBER_OF_COLLECTION"/>
+            <xs:enumeration value="NOT_MEMBER_OF_COLLECTION"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -2513,6 +2516,8 @@
 
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasContextHelp"/>
+                <xs:attribute name="totalProgressEnabled" type="xs:boolean"/>
+                <xs:attribute name="totalProgressFormat" type="resourceString"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

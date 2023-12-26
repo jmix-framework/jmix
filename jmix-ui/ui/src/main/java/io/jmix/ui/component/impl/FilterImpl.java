@@ -189,6 +189,10 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         initEmptyConfiguration();
     }
 
+    protected void updateDataLoaderInitialCondition(@Nullable Condition condition) {
+        this.initialDataLoaderCondition = copy(condition);
+    }
+
     @Override
     public boolean isAutoApply() {
         return autoApply;
@@ -683,8 +687,8 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
             LogicalCondition resultCondition;
             if (initialDataLoaderCondition instanceof LogicalCondition) {
-                resultCondition = (LogicalCondition) initialDataLoaderCondition.copy();
-                resultCondition.add(filterCondition);
+                resultCondition = (LogicalCondition) copy(initialDataLoaderCondition);
+                Objects.requireNonNull(resultCondition).add(filterCondition);
             } else if (initialDataLoaderCondition != null) {
                 resultCondition = LogicalCondition.and()
                         .add(initialDataLoaderCondition)
@@ -797,6 +801,23 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                 }
             }
         }
+    }
+
+    @Nullable
+    protected Condition copy(@Nullable Condition condition) {
+        if (condition == null) {
+            return null;
+        }
+
+        if (condition instanceof LogicalCondition) {
+            LogicalCondition logicalCondition = ((LogicalCondition) condition);
+
+            LogicalCondition copy = new LogicalCondition(logicalCondition.getType());
+            logicalCondition.getConditions().forEach(copy::add);
+            return copy;
+        }
+
+        return condition.copy();
     }
 
     protected void setupLoaderFirstResult() {

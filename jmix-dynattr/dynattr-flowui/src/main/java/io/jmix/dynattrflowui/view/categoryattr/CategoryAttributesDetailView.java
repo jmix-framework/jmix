@@ -118,10 +118,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     static {
         FIELDS_VISIBLE_FOR_TYPES.put(BOOLEAN, "defaultBooleanField");
-        FIELDS_VISIBLE_FOR_TYPES.put(BOOLEAN, "isRequiredField");
         FIELDS_VISIBLE_FOR_TYPES.put(STRING, "defaultStringField");
         FIELDS_VISIBLE_FOR_TYPES.put(STRING, "lookupField");
-        FIELDS_VISIBLE_FOR_TYPES.put(STRING, "isRequiredField");
         FIELDS_VISIBLE_FOR_TYPES.put(STRING, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(STRING, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(STRING, "rowsCountField");
@@ -129,11 +127,9 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "minDoubleField");
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "maxDoubleField");
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "lookupField");
-        FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "isRequiredField");
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "defaultDecimalField");
-        FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "isRequiredField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "minDecimalField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "maxDecimalField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "widthField");
@@ -143,29 +139,24 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "defaultIntField");
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "minIntField");
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "maxIntField");
-        FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "isRequiredField");
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "lookupField");
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE, "defaultDateField");
-        FIELDS_VISIBLE_FOR_TYPES.put(DATE, "isRequiredField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE, "defaultDateIsCurrentField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE, "widthField");
-        FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "isRequiredField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "defaultDateWithoutTimeField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "defaultDateIsCurrentField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "enumerationBox");
-        FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "isRequiredField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "enumerationField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "editEnumerationBtn");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "defaultEnumField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "entityClassField");
-        FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "isRequiredField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "screenField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "lookupField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "defaultEntityIdField");

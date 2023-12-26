@@ -57,6 +57,7 @@
                                        requiredMessage="msg://nameField.required"/>
                             <textField id="codeField" property="code" required="true"
                                        requiredMessage="msg://codeField.required"/>
+                            <checkbox id="isRequiredField" property="required" />
                             <comboBox id="dataTypeField" property="dataType" required="true"
                                       requiredMessage="msg://dataTypeField.required"/>
                             <textArea id="descriptionField" property="description" minHeight="7em"/>
@@ -122,7 +123,6 @@
                                 <tooltip text="msg://lookupField.contextHelp"/>
                             </checkbox>
                             <checkbox id="isCollectionField" property="isCollection" visible="false"/>
-                            <checkbox id="isRequiredField" property="required" visible="false"/>
                         </formLayout>
                     </hbox>
                     <div width="100%" classNames="flex items-start">

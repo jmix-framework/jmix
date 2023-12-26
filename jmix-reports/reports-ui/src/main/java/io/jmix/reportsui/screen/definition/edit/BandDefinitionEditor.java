@@ -57,6 +57,11 @@ import java.util.*;
 @UiDescriptor("band-definition-edit-fragment.xml")
 public class BandDefinitionEditor extends ScreenFragment implements Suggester {
 
+    private static final String ENTITY_PARAM_NAME = "entityParamName";
+    private static final String LIST_ENTITIES_PARAM_NAME = "listEntitiesParamName";
+    private static final String PROCESS_TEMPLATE = "processTemplate";
+    private static final String FETCH_PLAN_NAME = "fetchPlanName";
+
     @Autowired
     protected CollectionContainer<BandDefinition> bandsDc;
     @Autowired
@@ -333,9 +338,9 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
 
         fetchPlanNameField.setOptionsMap(new HashMap<>());
 
-        entitiesParamField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "listEntitiesParamName"));
-        entityParamField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "entityParamName"));
-        fetchPlanNameField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "fetchPlanName"));
+        entitiesParamField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, LIST_ENTITIES_PARAM_NAME));
+        entityParamField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, ENTITY_PARAM_NAME));
+        fetchPlanNameField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, FETCH_PLAN_NAME));
     }
 
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)
@@ -392,12 +397,12 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     @Subscribe(id = "dataSetsDc", target = Target.DATA_CONTAINER)
     protected void onDataSetsDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<DataSet> event) {
         applyVisibilityRules(event.getItem());
-        if ("entityParamName".equals(event.getProperty()) || "listEntitiesParamName".equals(event.getProperty())) {
+        if (ENTITY_PARAM_NAME.equals(event.getProperty()) || LIST_ENTITIES_PARAM_NAME.equals(event.getProperty())) {
             ReportInputParameter linkedParameter = findParameterByAlias(String.valueOf(event.getValue()));
             refreshFetchPlanNames(linkedParameter);
         }
 
-        if ("processTemplate".equals(event.getProperty())) {
+        if (PROCESS_TEMPLATE.equals(event.getProperty())) {
             applyVisibilityRulesForType(event.getItem());
         }
     }

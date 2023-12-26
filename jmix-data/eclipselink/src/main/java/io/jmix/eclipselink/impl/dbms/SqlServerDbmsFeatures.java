@@ -52,7 +52,7 @@ public class SqlServerDbmsFeatures implements DbmsFeatures {
 
     @Override
     public String getUniqueConstraintViolationPattern() {
-        return "(Violation of UNIQUE KEY constraint '(.+?)'|with unique index '(.+)')";
+        return "Violation of UNIQUE KEY constraint '(.+?)'|with unique index '(.+)'";
     }
 
     @Override

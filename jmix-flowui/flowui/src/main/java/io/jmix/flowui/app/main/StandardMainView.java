@@ -65,7 +65,7 @@ public class StandardMainView extends View<JmixAppLayout> implements RouterLayou
         return UiComponentUtils.findComponent(getContent(), "viewTitle");
     }
 
-    private String getTitleFromOpenedView() {
+    protected String getTitleFromOpenedView() {
         return ViewControllerUtils.getPageTitle(getContent().getContent());
     }
 

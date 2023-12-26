@@ -20,6 +20,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Id;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.Sort;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.gridexportui.exporter.AbstractAllRecordsExporter;
@@ -61,16 +62,18 @@ public class ExcelAllRecordsExporter extends AbstractAllRecordsExporter {
      * @param dataUnit        data unit linked with the data
      * @param excelRowCreator function that is being applied to each loaded instance
      * @param excelRowChecker function that checks for exceeding the maximum number of rows in XLSX format
+     * @param sort An optional sorting specification for the data.
+     *             If {@code null} sorting will be applied by the primary key.
      */
     @SuppressWarnings("rawtypes")
     protected void exportAll(DataUnit dataUnit, Consumer<RowCreationContext> excelRowCreator,
-                             Predicate<Integer> excelRowChecker) {
+                             Predicate<Integer> excelRowChecker, Sort sort) {
         Preconditions.checkNotNullArgument(excelRowCreator, "Cannot export all rows. ExcelRowCreator can't be null");
         Preconditions.checkNotNullArgument(excelRowChecker, "Cannot export all rows. ExcelRowChecker can't be null");
 
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
         transactionTemplate.executeWithoutResult(transactionStatus -> {
-            long count = dataManager.getCount(generateLoadContext(dataUnit));
+            long count = dataManager.getCount(generateLoadContext(dataUnit, sort));
             int loadBatchSize = gridExportProperties.getExportAllBatchSize();
 
             int rowNumber = 0;
@@ -78,7 +81,7 @@ public class ExcelAllRecordsExporter extends AbstractAllRecordsExporter {
             Object lastLoadedPkValue = null;
 
             for (int firstResult = 0; firstResult < count && !excelRowChecker.test(rowNumber); firstResult += loadBatchSize) {
-                LoadContext loadContext = generateLoadContext(dataUnit);
+                LoadContext loadContext = generateLoadContext(dataUnit, sort);
                 LoadContext.Query query = loadContext.getQuery();
 
                 if (initialLoading) {

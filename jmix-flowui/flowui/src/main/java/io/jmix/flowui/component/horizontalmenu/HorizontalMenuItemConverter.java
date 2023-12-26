@@ -119,7 +119,7 @@ public class HorizontalMenuItemConverter {
         HorizontalMenu.ParentMenuItem parentMenuItem =
                 new HorizontalMenu.ParentMenuItem(menuItemDescriptor.getId());
 
-        parentMenuItem.setIcon(getIcon(menuItemDescriptor));
+        parentMenuItem.setPrefixComponent(getIcon(menuItemDescriptor));
         parentMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
         parentMenuItem.addClassNames(getClassNames(menuItemDescriptor));
         //noinspection DataFlowIssue
@@ -187,7 +187,7 @@ public class HorizontalMenuItemConverter {
         HorizontalMenu.ViewMenuItem viewMenuItem =
                 new HorizontalMenu.ViewMenuItem(menuItemDescriptor.getId(), getViewClass(menuItemDescriptor));
 
-        viewMenuItem.setIcon(getIcon(menuItemDescriptor));
+        viewMenuItem.setPrefixComponent(getIcon(menuItemDescriptor));
         viewMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
         //noinspection DataFlowIssue
         viewMenuItem.setTooltipText(getDescription(menuItemDescriptor));
@@ -220,7 +220,7 @@ public class HorizontalMenuItemConverter {
     protected HorizontalMenu.MenuItem createBeanMenuItem(MenuItem menuItemDescriptor) {
         HorizontalMenu.MenuItem beanMenuItem = new HorizontalMenu.MenuItem(menuItemDescriptor.getId());
 
-        beanMenuItem.setIcon(getIcon(menuItemDescriptor));
+        beanMenuItem.setPrefixComponent(getIcon(menuItemDescriptor));
         beanMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
         //noinspection DataFlowIssue
         beanMenuItem.setTooltipText(getDescription(menuItemDescriptor));

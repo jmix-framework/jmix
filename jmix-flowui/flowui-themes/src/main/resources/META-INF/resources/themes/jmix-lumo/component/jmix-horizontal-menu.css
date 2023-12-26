@@ -32,8 +32,30 @@
   background-color: var(--lumo-primary-color-10pct);
 }
 
-vaadin-menu-bar-item .jmix-horizontal-menu-item,
-vaadin-menu-bar-list-box .jmix-horizontal-menu-item {
+.jmix-horizontal-menu-content-item {
+  gap: var(--lumo-space-s);
+  align-items: center;
+}
+
+.jmix-horizontal-menu-content-item vaadin-icon.prefix-component {
+  width: var(--lumo-icon-size-s);
+  height: var(--lumo-icon-size-s);
+}
+
+vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item .text-component:not(:last-child) {
+  margin-right: var(--lumo-space-l);
+}
+
+.jmix-horizontal-menu-content-item .suffix-component {
+  margin-inline-start: auto;
+}
+
+/*to remove padding for '>' sign when a suffix exists to retain all the suffixes in a column*/
+.jmix-horizontal-menu-item-wrapper:not([dir='rtl'])[aria-haspopup='true'][suffixed]::after {
+  padding-left: 0;
+}
+
+vaadin-menu-bar-item .jmix-horizontal-menu-item {
   color: inherit;
   display: flex;
   cursor: pointer;
@@ -42,13 +64,4 @@ vaadin-menu-bar-list-box .jmix-horizontal-menu-item {
 
 .jmix-horizontal-menu-item:hover {
   text-decoration: none;
-}
-
-.jmix-horizontal-menu-item-icon-with-title {
-  margin-right: var(--lumo-space-s);
-}
-
-.jmix-horizontal-menu-item-icon {
-  width: var(--lumo-icon-size-s);
-  height: var(--lumo-icon-size-s);
 }

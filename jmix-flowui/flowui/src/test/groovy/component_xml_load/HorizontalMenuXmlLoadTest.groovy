@@ -18,6 +18,7 @@ package component_xml_load
 
 import com.vaadin.flow.component.Key
 import com.vaadin.flow.component.KeyModifier
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import component_xml_load.screen.HorizontalMenuView
 import io.jmix.flowui.component.horizontalmenu.HorizontalMenu
@@ -63,7 +64,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
         parentApplicationItem.getId().isPresent()
         parentApplicationItem.getId().get() == "application"
         parentApplicationItem.getTitle() == "Application title"
-        parentApplicationItem.getIcon().element.getAttribute("icon") ==
+        (parentApplicationItem.prefixComponent as Icon).element.getAttribute("icon") ==
                 VaadinIcon.TABLE.create().element.getAttribute("icon")
         parentApplicationItem.getClassNames().containsAll(List.of("className1", "className2"))
         parentApplicationItem.getChildItems().size() == 3
@@ -80,7 +81,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
         applicationViewMenuItem.getId().isPresent()
         applicationViewMenuItem.getId().get() == "Application.view"
         applicationViewMenuItem.getTitle() == "Application view"
-        applicationViewMenuItem.getIcon().element.getAttribute("icon") ==
+        (applicationViewMenuItem.prefixComponent as Icon).element.getAttribute("icon") ==
                 VaadinIcon.ABACUS.create().element.getAttribute("icon")
         applicationViewMenuItem.getMenu() == menu
         applicationViewMenuItem.getParentMenuItem() == applicationItem
@@ -108,7 +109,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
         parentNestedMenuItem.getId().isPresent()
         parentNestedMenuItem.getId().get() == "nestedMenu"
         parentNestedMenuItem.getTitle() == "Nested menu"
-        parentNestedMenuItem.getIcon() == null
+        parentNestedMenuItem.getPrefixComponent() == null
         parentNestedMenuItem.getChildItems().size() == 1
         parentNestedMenuItem.getMenu() == menu
         parentNestedMenuItem.getParentMenuItem() == applicationItem
@@ -123,7 +124,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
         nestedViewMenuItem.getId().isPresent()
         nestedViewMenuItem.getId().get() == "Nested.view"
         nestedViewMenuItem.getTitle() == "Nested view"
-        nestedViewMenuItem.getIcon() == null
+        nestedViewMenuItem.getPrefixComponent() == null
         nestedViewMenuItem.getMenu() == menu
         nestedViewMenuItem.getParentMenuItem() == nestedMenuItem
         nestedViewMenuItem.getTooltip().getText() == null
@@ -141,7 +142,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
         administrationViewMenuItem.getId().isPresent()
         administrationViewMenuItem.getId().get() == "Administration.view"
         administrationViewMenuItem.getTitle() == "Administration view"
-        administrationViewMenuItem.getIcon() == null
+        administrationViewMenuItem.getPrefixComponent() == null
         administrationViewMenuItem.getMenu() == menu
         administrationViewMenuItem.getParentMenuItem() == null
         administrationViewMenuItem.getTooltip().getText() == null

@@ -254,14 +254,6 @@ public class ComboBoxImpl<V> extends AbstractField<JmixComboBox<V>, V, V>
         component.setTextInputAllowed(textInputAllowed);
     }
 
-    @Override
-    public boolean isAutomaticPopupOnFocus() {
-        return false;
-    }
-
-    @Override
-    public void setAutomaticPopupOnFocus(boolean popup) {}
-
     @Nullable
     @Override
     public Consumer<EnterPressEvent> getEnterPressHandler() {

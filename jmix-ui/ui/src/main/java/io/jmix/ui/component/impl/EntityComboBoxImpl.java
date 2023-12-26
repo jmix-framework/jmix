@@ -198,15 +198,6 @@ public class EntityComboBoxImpl<V> extends EntityPickerImpl<V>
         getComponent().setTextInputAllowed(textInputAllowed);
     }
 
-    @Override
-    public void setAutomaticPopupOnFocus(boolean automaticPopupOnFocus) {
-    }
-
-    @Override
-    public boolean isAutomaticPopupOnFocus() {
-        return false;
-    }
-
     @Nullable
     @Override
     public Consumer<EnterPressEvent> getEnterPressHandler() {

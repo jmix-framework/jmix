@@ -400,7 +400,7 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
      *
      * @param <T> root component type
      */
-    public static abstract class ContentMenuItem<T extends Component & HasComponents>
+    public static abstract class AbstractContentMenuItem<T extends Component & HasComponents>
             extends AbstractMenuItem<T> implements HasTooltip, HasPrefix, HasSuffix {
 
         protected static final String CONTENT_ITEM_CLASS_NAME = "jmix-horizontal-menu-content-item";
@@ -414,10 +414,10 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
         protected Component suffixComponent;
         protected Tooltip tooltip;
 
-        public ContentMenuItem() {
+        public AbstractContentMenuItem() {
         }
 
-        public ContentMenuItem(String id) {
+        public AbstractContentMenuItem(String id) {
             super(id);
         }
 
@@ -549,7 +549,7 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
     /**
      * Represents horizontal menu item that can run some action on click
      */
-    public static class MenuItem extends ContentMenuItem<RouterLink> {
+    public static class MenuItem extends AbstractContentMenuItem<RouterLink> {
 
         protected static final String MENU_ITEM_CLASS_NAME = "jmix-horizontal-menu-item";
 
@@ -633,7 +633,7 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
     /**
      * Represents menu item that can contain other menu items.
      */
-    public static class ParentMenuItem extends ContentMenuItem<HorizontalLayout>
+    public static class ParentMenuItem extends AbstractContentMenuItem<HorizontalLayout>
             implements io.jmix.flowui.kit.component.menu.ParentMenuItem<AbstractMenuItem<?>> {
 
         protected List<AbstractMenuItem<?>> children;

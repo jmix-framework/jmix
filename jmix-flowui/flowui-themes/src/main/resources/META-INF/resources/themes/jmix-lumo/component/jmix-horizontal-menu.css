@@ -43,7 +43,7 @@
 }
 
 vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item .text-component:not(:last-child) {
-  margin-right: var(--lumo-space-l);
+  margin-inline-end: var(--lumo-space-l);
 }
 
 .jmix-horizontal-menu-content-item .suffix-component {
@@ -51,8 +51,8 @@ vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item .text-component:not(
 }
 
 /*to remove padding for '>' sign when a suffix exists to retain all the suffixes in a column*/
-.jmix-horizontal-menu-item-wrapper:not([dir='rtl'])[aria-haspopup='true'][suffixed]::after {
-  padding-left: 0;
+.jmix-horizontal-menu-item-wrapper[aria-haspopup='true'][suffixed]::after {
+  padding-inline-start: 0;
 }
 
 vaadin-menu-bar-item .jmix-horizontal-menu-item {

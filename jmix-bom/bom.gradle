@@ -383,8 +383,8 @@ dependencies {
 
         api 'org.jsoup:jsoup:1.14.3'
 
-        api 'org.apache.poi:poi:4.1.2'
-        api 'org.apache.poi:poi-ooxml:4.1.2'
+        api 'org.apache.poi:poi:5.2.3'
+        api 'org.apache.poi:poi-ooxml:5.2.3'
         api 'org.apache.tika:tika-parsers:1.27'
 
         api 'org.webjars.bower:pivottable:2.21.0.jmix.0'

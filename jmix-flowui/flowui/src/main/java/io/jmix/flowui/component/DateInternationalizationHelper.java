@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * Utility class for internationalizing date-related information such as month names,
@@ -55,7 +54,7 @@ public class DateInternationalizationHelper {
         DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(locale);
         return Arrays.stream(dateFormatSymbols.getWeekdays())
                 .filter(weekday -> !weekday.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -68,7 +67,7 @@ public class DateInternationalizationHelper {
         DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(locale);
         return Arrays.stream(dateFormatSymbols.getShortWeekdays())
                 .filter(shortWeekday -> !shortWeekday.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

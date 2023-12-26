@@ -337,10 +337,12 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
         throw new UnsupportedOperationException("Text input is not allowed for SearchPickerField");
     }
 
+    @Deprecated
     @Override
     public void setAutomaticPopupOnFocus(boolean automaticPopupOnFocus) {
     }
 
+    @Deprecated
     @Override
     public boolean isAutomaticPopupOnFocus() {
         return false;

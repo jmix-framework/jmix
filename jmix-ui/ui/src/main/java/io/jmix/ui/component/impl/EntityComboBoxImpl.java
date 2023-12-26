@@ -198,10 +198,12 @@ public class EntityComboBoxImpl<V> extends EntityPickerImpl<V>
         getComponent().setTextInputAllowed(textInputAllowed);
     }
 
+    @Deprecated
     @Override
     public void setAutomaticPopupOnFocus(boolean automaticPopupOnFocus) {
     }
 
+    @Deprecated
     @Override
     public boolean isAutomaticPopupOnFocus() {
         return false;

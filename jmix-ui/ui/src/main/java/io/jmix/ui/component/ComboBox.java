@@ -98,11 +98,13 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
     /**
      * When enabled popup automatically opens on focus.
      */
+    @Deprecated
     void setAutomaticPopupOnFocus(boolean automaticPopupOnFocus);
 
     /**
      * @return whether popup is automatically shows on focus.
      */
+    @Deprecated
     boolean isAutomaticPopupOnFocus();
 
     /**

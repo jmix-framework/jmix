@@ -30,6 +30,7 @@
                     <xs:attributeGroup ref="layout:hasEnabled"/>
                     <xs:attributeGroup ref="layout:hasHelperText"/>
                     <xs:attributeGroup ref="layout:hasLabel"/>
+                    <xs:attributeGroup ref="layout:hasPlaceholder"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
                     <xs:attributeGroup ref="layout:hasTabIndex"/>
                     <xs:attributeGroup ref="layout:hasTitle"/>

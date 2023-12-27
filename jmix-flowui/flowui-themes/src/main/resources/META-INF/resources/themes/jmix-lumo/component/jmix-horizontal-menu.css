@@ -15,7 +15,7 @@
  */
 
 .jmix-horizontal-menu {
-    color: var(--lumo-secondary-text-color);
+  color: var(--lumo-secondary-text-color);
 }
 
 .jmix-horizontal-menu-root-item:hover {
@@ -69,14 +69,18 @@ vaadin-menu-bar-list-box vaadin-menu-bar-item[class~='jmix-horizontal-menu-item-
 vaadin-menu-bar .jmix-horizontal-menu-content-item {
   padding-inline-start: calc(var(--lumo-size-m) / 3 + var(--lumo-border-radius-m) / 2);
   padding-inline-end: calc(var(--lumo-size-m) / 3 + var(--lumo-border-radius-m) / 2);
+
+  /*explicit values are copied from vaadin-menu-bar-item component*/
   padding-top: 0.5em;
   padding-bottom: 0.5em;
 }
 
 vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item {
-/*The padding is equal to width of icon prefix when it's not set*/
+  /*The padding is equal to width of icon prefix when it's not set*/
   padding-inline-start: calc(var(--lumo-icon-size-s) + var(--lumo-space-s) * 2);
   padding-inline-end: 0;
+
+  /*explicit values are copied from vaadin-menu-bar-item component*/
   padding-top: 0.5em;
   padding-bottom: 0.5em;
 }
@@ -100,7 +104,7 @@ vaadin-menu-bar-item .jmix-horizontal-menu-item {
   width: 100%;
 }
 
-/*The padding is equal to width of 'greater' sign of expandable items*/
 vaadin-menu-bar-list-box .jmix-horizontal-menu-item {
+  /*The padding is equal to width of 'greater' sign of expandable items*/
   padding-inline-end: calc(var(--lumo-icon-size-s) + var(--lumo-space-s) * 2);
 }

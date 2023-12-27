@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.navigationmenubar;
+package io.jmix.flowui.component.horizontalmenu;
 
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
@@ -27,23 +27,23 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Menu item provider for {@link io.jmix.flowui.component.navigationmenubar.NavigationMenuBar}
+ * Menu item provider for {@link HorizontalMenu}
  */
-@Component("flowui_MenuConfigNavigationMenuBarItemProvider")
+@Component("flowui_MenuConfigHorizontalMenuItemProvider")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class MenuConfigNavigationMenuBarItemProvider
-        extends MenuConfigMenuItemProvider<NavigationMenuBar.AbstractMenuItem<?>> {
+public class MenuConfigHorizontalMenuItemProvider
+        extends MenuConfigMenuItemProvider<HorizontalMenu.AbstractMenuItem<?>> {
 
-    protected NavigationMenuBarItemConverter itemConverter;
+    protected HorizontalMenuItemConverter itemConverter;
 
-    public MenuConfigNavigationMenuBarItemProvider(MenuConfig menuConfig,
-                                                   NavigationMenuBarItemConverter itemConverter) {
+    public MenuConfigHorizontalMenuItemProvider(MenuConfig menuConfig,
+                                                HorizontalMenuItemConverter itemConverter) {
         super(menuConfig);
         this.itemConverter = itemConverter;
     }
 
     @Override
-    protected List<NavigationMenuBar.AbstractMenuItem<?>> convertToMenuItems(Collection<MenuItem> menuConfigItems) {
+    protected List<HorizontalMenu.AbstractMenuItem<?>> convertToMenuItems(Collection<MenuItem> menuConfigItems) {
         return menuConfigItems.stream()
                 .flatMap(item -> itemConverter.createMenuItemWithChildren(item).stream())
                 .toList();

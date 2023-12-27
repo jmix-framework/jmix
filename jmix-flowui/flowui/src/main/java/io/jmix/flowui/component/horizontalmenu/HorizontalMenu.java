@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.navigationmenubar;
+package io.jmix.flowui.component.horizontalmenu;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
@@ -29,9 +29,9 @@ import com.vaadin.flow.component.ShortcutRegistration;
 import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.shared.HasPrefix;
+import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.dom.DomListenerRegistration;
@@ -65,11 +65,12 @@ import java.util.stream.Collectors;
 /**
  * Represents horizontal menu that can be used for navigation to a view or for invoking a method of a bean
  */
-public class NavigationMenuBar extends Composite<JmixMenuBar>
-        implements HasMenuItemProvider<NavigationMenuBar.AbstractMenuItem<?>>, HasSize, HasStyle {
+public class HorizontalMenu extends Composite<JmixMenuBar>
+        implements HasMenuItemProvider<HorizontalMenu.AbstractMenuItem<?>>, HasSize, HasStyle {
 
-    protected static final String NAVIGATION_MENU_BAR_CLASS_NAME = "jmix-navigation-menu-bar";
-    protected static final String ROOT_MENU_ITEM_CLASS_NAME = "jmix-navigation-menu-bar-root-item";
+    protected static final String HORIZONTAL_MENU_CLASS_NAME = "jmix-horizontal-menu";
+    protected static final String ROOT_MENU_ITEM_CLASS_NAME = "jmix-horizontal-menu-root-item";
+    protected static final String ITEM_WRAPPER_CLASS_NAME = "jmix-horizontal-menu-item-wrapper";
     protected static final int ADD_TO_END_INDEX = -1;
 
     protected MenuItemProvider<AbstractMenuItem<?>> menuItemProvider;
@@ -81,7 +82,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     @Override
     protected JmixMenuBar initContent() {
         JmixMenuBar menuBar = super.initContent();
-        menuBar.setClassName(NAVIGATION_MENU_BAR_CLASS_NAME);
+        menuBar.setClassName(HORIZONTAL_MENU_CLASS_NAME);
         return menuBar;
     }
 
@@ -203,6 +204,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
         JmixMenuItem wrapper = index == ADD_TO_END_INDEX
                 ? hasMenuItems.addItem(menuItem)
                 : hasMenuItems.addItemAtIndex(index, menuItem);
+        wrapper.addClassName(ITEM_WRAPPER_CLASS_NAME);
         menuItem.setMenuItemWrapper(wrapper);
 
         if (subMenu == null) {
@@ -318,14 +320,14 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Provides base functionality for navigation menu bar items
+     * Provides base functionality for horizontal menu items
      *
      * @param <T> root component type
      */
     public static abstract class AbstractMenuItem<T extends Component> extends Composite<T>
             implements io.jmix.flowui.kit.component.menu.MenuItem {
 
-        protected NavigationMenuBar menu;
+        protected HorizontalMenu menu;
         protected JmixMenuItem menuItemWrapper;
         protected ParentMenuItem parentMenuItem;
 
@@ -340,11 +342,11 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
          * @return menu component that contains this item
          */
         @Nullable
-        public NavigationMenuBar getMenu() {
+        public HorizontalMenu getMenu() {
             return menu;
         }
 
-        protected void setMenu(@Nullable NavigationMenuBar menu) {
+        protected void setMenu(@Nullable HorizontalMenu menu) {
             this.menu = menu;
         }
 
@@ -394,25 +396,37 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Provides base functionality for items that can display icon and text
+     * Provides base functionality for items that contain text with suffix and prefix components
      *
      * @param <T> root component type
      */
-    public static abstract class AbstractIconTextMenuItem<T extends Component & HasComponents>
-            extends AbstractMenuItem<T> implements HasTooltip {
+    public static abstract class AbstractContentMenuItem<T extends Component & HasComponents>
+            extends AbstractMenuItem<T> implements HasTooltip, HasPrefix, HasSuffix {
 
-        protected static final String ITEM_ICON_CLASS_NAME = "jmix-navigation-menu-bar-item-icon";
-        protected static final String ITEM_ICON_WITH_TITLE_CLASS_NAME = "jmix-navigation-menu-bar-item-icon-with-title";
+        protected static final String CONTENT_ITEM_CLASS_NAME = "jmix-horizontal-menu-content-item";
+        protected static final String PREFIX_COMPONENT_CLASS_NAME = "prefix-component";
+        protected static final String TEXT_COMPONENT_CLASS_NAME = "text-component";
+        protected static final String SUFFIX_COMPONENT_CLASS_NAME = "suffix-component";
+        protected static final String PREFIXED_ATTRIBUTE_NAME = "prefixed";
+        protected static final String SUFFIXED_ATTRIBUTE_NAME = "suffixed";
 
-        protected Icon iconComponent;
+        protected Component prefixComponent;
         protected Span textComponent;
+        protected Component suffixComponent;
         protected Tooltip tooltip;
 
-        public AbstractIconTextMenuItem() {
+        public AbstractContentMenuItem() {
         }
 
-        public AbstractIconTextMenuItem(String id) {
+        public AbstractContentMenuItem(String id) {
             super(id);
+        }
+
+        @Override
+        protected T initContent() {
+            T content = super.initContent();
+            content.addClassName(CONTENT_ITEM_CLASS_NAME);
+            return content;
         }
 
         /**
@@ -421,53 +435,100 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
          * @param title item text
          */
         public void setTitle(@Nullable String title) {
-            updateContent(iconComponent, title);
+            updateContent(prefixComponent, title, suffixComponent);
         }
 
-        protected void updateContent(@Nullable Icon icon, @Nullable String title) {
-            getContent().removeAll();
-            iconComponent = null;
-            textComponent = null;
+        protected void updateContent(@Nullable Component prefixComponent,
+                                     @Nullable String title,
+                                     @Nullable Component suffixComponent) {
+            setPrefixComponentInternal(prefixComponent);
+            setTextComponentInternal(title);
+            setSuffixComponentInternal(suffixComponent);
+        }
 
-            if (icon != null) {
-                iconComponent = icon;
-                getContent().add(iconComponent);
+        protected void setPrefixComponentInternal(@Nullable Component prefixComponent) {
+            if (this.prefixComponent != null) {
+                this.prefixComponent.removeClassName(PREFIX_COMPONENT_CLASS_NAME);
+                getContent().remove(this.prefixComponent);
+
+                setPrefixedAttribute(false);
             }
-            if (!Strings.isNullOrEmpty(title)) {
-                textComponent = new Span(title);
+
+            this.prefixComponent = prefixComponent;
+            if (prefixComponent != null) {
+                prefixComponent.addClassName(PREFIX_COMPONENT_CLASS_NAME);
+                getContent().addComponentAsFirst(prefixComponent);
+
+                setPrefixedAttribute(true);
+            }
+        }
+
+        protected void setPrefixedAttribute(boolean prefixed) {
+            this.getElement().setAttribute(PREFIXED_ATTRIBUTE_NAME, prefixed);
+        }
+
+        protected void setTextComponentInternal(@Nullable String title) {
+            if (this.textComponent != null) {
+                this.textComponent.removeClassName(TEXT_COMPONENT_CLASS_NAME);
+                getContent().remove(this.textComponent);
+            }
+
+            if (Strings.isNullOrEmpty(title)) {
+                this.textComponent = null;
+            } else {
+                this.textComponent = new Span(title);
+                this.textComponent.addClassName(TEXT_COMPONENT_CLASS_NAME);
                 getContent().add(textComponent);
             }
+        }
 
-            if (iconComponent != null) {
-                iconComponent.setClassName(ITEM_ICON_CLASS_NAME);
-                if (textComponent != null) {
-                    iconComponent.addClassName(ITEM_ICON_WITH_TITLE_CLASS_NAME);
-                }
+        protected void setSuffixComponentInternal(@Nullable Component suffixComponent) {
+            if (this.suffixComponent != null) {
+                this.suffixComponent.removeClassName(SUFFIX_COMPONENT_CLASS_NAME);
+                getContent().remove(this.suffixComponent);
+
+                setSuffixedAttribute(false);
             }
+
+            this.suffixComponent = suffixComponent;
+            if (suffixComponent != null) {
+                suffixComponent.addClassName(SUFFIX_COMPONENT_CLASS_NAME);
+                getContent().add(suffixComponent);
+
+                setSuffixedAttribute(true);
+            }
+        }
+
+        protected void setSuffixedAttribute(boolean suffixed) {
+            this.getElement().setAttribute(SUFFIXED_ATTRIBUTE_NAME, suffixed);
+        }
+
+        @Override
+        public void setPrefixComponent(@Nullable Component component) {
+            updateContent(component, getTitle(), suffixComponent);
+        }
+
+        @Override
+        @Nullable
+        public Component getPrefixComponent() {
+            return prefixComponent;
+        }
+
+        @Override
+        public void setSuffixComponent(@Nullable Component component) {
+            updateContent(prefixComponent, getTitle(), component);
+        }
+
+        @Override
+        @Nullable
+        public Component getSuffixComponent() {
+            return suffixComponent;
         }
 
         @Nullable
         @Override
         public String getTitle() {
             return textComponent != null ? textComponent.getText() : null;
-        }
-
-        /**
-         * Sets the icon of menu item.
-         *
-         * @param icon icon to set
-         */
-        public void setIcon(@Nullable Icon icon) {
-            String title = textComponent != null ? textComponent.getText() : null;
-            updateContent(icon, title);
-        }
-
-        /**
-         * @return menu item icon or null if not set
-         */
-        @Nullable
-        public Icon getIcon() {
-            return iconComponent;
         }
 
         @Override
@@ -492,11 +553,11 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Represents navigation menu bar item that can run some action on click
+     * Represents horizontal menu item that can run some action on click
      */
-    public static class MenuItem extends AbstractIconTextMenuItem<RouterLink> {
+    public static class MenuItem extends AbstractContentMenuItem<RouterLink> {
 
-        protected static final String MENU_ITEM_CLASS_NAME = "jmix-navigation-menu-bar-menu-item";
+        protected static final String MENU_ITEM_CLASS_NAME = "jmix-horizontal-menu-item";
 
         protected KeyCombination shortcutCombination;
 
@@ -512,8 +573,8 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
 
         @Override
         protected RouterLink initContent() {
-            RouterLink routerLink = new RouterLink();
-            routerLink.setClassName(MENU_ITEM_CLASS_NAME);
+            RouterLink routerLink = super.initContent();
+            routerLink.addClassName(MENU_ITEM_CLASS_NAME);
             routerLink.setHighlightCondition(HighlightConditions.never());
             return routerLink;
         }
@@ -578,7 +639,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     /**
      * Represents menu item that can contain other menu items.
      */
-    public static class ParentMenuItem extends AbstractIconTextMenuItem<HorizontalLayout>
+    public static class ParentMenuItem extends AbstractContentMenuItem<HorizontalLayout>
             implements io.jmix.flowui.kit.component.menu.ParentMenuItem<AbstractMenuItem<?>> {
 
         protected List<AbstractMenuItem<?>> children;
@@ -592,22 +653,21 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
 
         @Override
         protected HorizontalLayout initContent() {
-            HorizontalLayout hbox = new HorizontalLayout();
-            hbox.setAlignItems(FlexComponent.Alignment.CENTER);
-            hbox.setSpacing(false);
-            return hbox;
+            HorizontalLayout horizontalLayout = super.initContent();
+            horizontalLayout.setWidthFull();
+            return horizontalLayout;
         }
 
         @Override
         public boolean isOpened() {
             throw new UnsupportedOperationException(
-                    "Parent item of navigation menu bar doesn't support retrieving open state from server");
+                    "Parent item of horizontal menu doesn't support retrieving open state from server");
         }
 
         @Override
         public void setOpened(boolean opened) {
             throw new UnsupportedOperationException(
-                    "Parent item of navigation menu bar doesn't support opening from server");
+                    "Parent item of horizontal menu doesn't support opening from server");
         }
 
         @Override
@@ -714,7 +774,7 @@ public class NavigationMenuBar extends Composite<JmixMenuBar>
     }
 
     /**
-     * Represents separator
+     * Represents a separator
      */
     public static class SeparatorMenuItem extends AbstractMenuItem<Hr> {
 

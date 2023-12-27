@@ -17,20 +17,20 @@
 package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.navigationmenubar.NavigationMenuBar;
+import io.jmix.flowui.component.horizontalmenu.HorizontalMenu;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 
-@Route(value = "navigation-menu-bar-view")
-@ViewController("NavigationMenuBarView")
-@ViewDescriptor("navigation-menu-bar-view.xml")
-public class NavigationMenuBarView extends StandardView {
+@Route(value = "horizontal-menu-view")
+@ViewController("HorizontalMenuView")
+@ViewDescriptor("horizontal-menu-view.xml")
+public class HorizontalMenuView extends StandardView {
 
     @ViewComponent
-    public NavigationMenuBar navigationMenuBar;
+    public HorizontalMenu horizontalMenu;
 
     @ViewComponent
-    public NavigationMenuBar navigationMenuBarNoItemsLoad;
+    public HorizontalMenu horizontalMenuNoItemsLoad;
 }

@@ -26,10 +26,26 @@
   color: inherit;
   background-color: transparent;
   border-radius: var(--lumo-border-radius-m);
+  padding: 0;
 }
 
 .jmix-horizontal-menu vaadin-menu-bar-button[expanded] {
   background-color: var(--lumo-primary-color-10pct);
+}
+
+vaadin-menu-bar .jmix-horizontal-menu-item-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+vaadin-menu-bar-list-box .jmix-horizontal-menu-item-wrapper {
+  padding: 0;
+}
+
+.jmix-horizontal-menu-item-wrapper[aria-haspopup='true']::after {
+  margin: 0;
+  padding-inline-end: var(--lumo-space-s);
+  padding-inline-start: var(--lumo-space-s);
 }
 
 .jmix-horizontal-menu-content-item {
@@ -42,17 +58,30 @@
   height: var(--lumo-icon-size-s);
 }
 
-vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item .text-component:not(:last-child) {
-  margin-inline-end: var(--lumo-space-l);
-}
-
 .jmix-horizontal-menu-content-item .suffix-component {
   margin-inline-start: auto;
 }
 
-/*to remove padding for '>' sign when a suffix exists to retain all the suffixes in a column*/
-.jmix-horizontal-menu-item-wrapper[aria-haspopup='true'][suffixed]::after {
-  padding-inline-start: 0;
+vaadin-menu-bar .jmix-horizontal-menu-content-item {
+  padding-inline-start: calc(var(--lumo-size-m) / 3 + var(--lumo-border-radius-m) / 2);
+  padding-inline-end: calc(var(--lumo-size-m) / 3 + var(--lumo-border-radius-m) / 2);
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item {
+  padding-inline-start: calc(var(--lumo-border-radius-m) / 4);
+  padding-inline-end: 0;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item .text-component:not(:last-child) {
+  margin-inline-end: var(--lumo-space-l);
+}
+
+.jmix-horizontal-menu-item:hover {
+  text-decoration: none;
 }
 
 vaadin-menu-bar-item .jmix-horizontal-menu-item {
@@ -62,6 +91,7 @@ vaadin-menu-bar-item .jmix-horizontal-menu-item {
   width: 100%;
 }
 
-.jmix-horizontal-menu-item:hover {
-  text-decoration: none;
+/*The padding is equal to width of 'greater' sign of expandable items*/
+vaadin-menu-bar-list-box .jmix-horizontal-menu-item {
+  padding-inline-end: calc(var(--lumo-space-m) + var(--lumo-space-s) * 2);
 }

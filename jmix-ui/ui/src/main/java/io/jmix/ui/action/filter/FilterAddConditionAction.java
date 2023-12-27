@@ -22,13 +22,14 @@ import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.app.filter.condition.AddConditionScreen;
-import io.jmix.ui.component.*;
-import io.jmix.ui.component.data.options.ContainerOptions;
+import io.jmix.ui.component.Filter;
+import io.jmix.ui.component.FilterComponent;
+import io.jmix.ui.component.LogicalFilterComponent;
+import io.jmix.ui.component.SingleFilterComponent;
 import io.jmix.ui.component.filter.builder.FilterConditionsBuilder;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.component.filter.registration.FilterComponents;
-import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.HeaderFilterCondition;
 import io.jmix.ui.icon.Icons;
@@ -62,9 +63,6 @@ public class FilterAddConditionAction extends FilterAction implements Action.Adj
     public FilterAddConditionAction() {
         this(ID);
     }
-
-    @Autowired
-    private EntityFieldCreationSupport entityFieldCreationSupport;
 
     public FilterAddConditionAction(String id) {
         super(id);

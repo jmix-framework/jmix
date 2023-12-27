@@ -21,14 +21,14 @@ import io.jmix.flowui.devserver.servlet.JmixErrorHandler;
 import io.jmix.flowui.devserver.servlet.JmixServletContextListener;
 import io.jmix.flowui.devserver.servlet.JmixSystemPropertiesLifeCycleListener;
 import io.jmix.flowui.devserver.servlet.JmixVaadinServlet;
-import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import org.eclipse.jetty.ee10.annotations.AnnotationConfiguration;
+import org.eclipse.jetty.ee10.webapp.Configurations;
+import org.eclipse.jetty.ee10.webapp.JettyWebXmlConfiguration;
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
+import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
-import org.eclipse.jetty.webapp.Configurations;
-import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
-import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -56,7 +56,7 @@ public class FlowJettyServer extends Server {
     private void init() throws IOException {
         WebAppContext context = createContext();
         this.setHandler(
-                new HandlerList(
+                new Sequence(
                         context,
                         new ShutdownHandler("studio")
                 )
@@ -78,10 +78,10 @@ public class FlowJettyServer extends Server {
         context.setContextPath("/");
         context.setClassLoader(FlowJettyServer.class.getClassLoader());
         context.setExtraClasspath((String) params.get("ExtraClassPath"));
-        context.setResourceBase((String) params.get("ResourceBaseDir"));
+        context.setBaseResourceAsString((String) params.get("ResourceBaseDir"));
         context.addServlet(JmixVaadinServlet.class, "/*");
         context.setConfigurationDiscovered(true);
-        context.getServletContext().setExtendedListenerTypes(true);
+        context.getContext().setExtendedListenerTypes(true);
         context.addEventListener(new ServletContextListeners());
         JakartaWebSocketServletContainerInitializer.configure(context, null);
         context.setErrorHandler(new JmixErrorHandler());

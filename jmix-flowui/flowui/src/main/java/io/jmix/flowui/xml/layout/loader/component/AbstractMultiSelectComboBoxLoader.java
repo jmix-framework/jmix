@@ -39,9 +39,7 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
 
-        loadResourceString(element, "placeholder",
-                context.getMessageGroup(), resultComponent::setPlaceholder);
-
+        componentLoader().loadPlaceholder(resultComponent, element);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);

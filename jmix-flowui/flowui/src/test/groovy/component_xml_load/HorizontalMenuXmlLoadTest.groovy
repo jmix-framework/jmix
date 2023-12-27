@@ -18,29 +18,30 @@ package component_xml_load
 
 import com.vaadin.flow.component.Key
 import com.vaadin.flow.component.KeyModifier
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
-import component_xml_load.screen.NavigationMenuBarView
-import io.jmix.flowui.component.navigationmenubar.NavigationMenuBar
+import component_xml_load.screen.HorizontalMenuView
+import io.jmix.flowui.component.horizontalmenu.HorizontalMenu
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
-@SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/navigationmenubar/menu.xml"])
-class NavigationMenuBarXmlLoadTest extends FlowuiTestSpecification {
+@SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/horizontalmenu/menu.xml"])
+class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
         registerViewBasePackages("component_xml_load.screen")
     }
 
-    def "Load NavigationMenuBar component from XML"() {
-        when: "Open the NavigationMenuBarView"
-        def navigationMenuBarView = navigateToView(NavigationMenuBarView.class)
+    def "Load HorizontalMenu component from XML"() {
+        when: "Open HorizontalMenuView"
+        def horizontalMenuView = navigateToView(HorizontalMenuView.class)
 
-        then: "NavigationMenuBar attributes will be loaded"
+        then: "HorizontalMenu attributes will be loaded"
 
-        def menu = navigationMenuBarView.navigationMenuBar
+        def menu = horizontalMenuView.horizontalMenu
         verifyAll(menu) {
-            id.get() == "navigationMenuBar"
+            id.get() == "horizontalMenu"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
             height == "15em"
@@ -56,14 +57,14 @@ class NavigationMenuBarXmlLoadTest extends FlowuiTestSpecification {
 
         def applicationItem = menu.getMenuItem("application")
         applicationItem != null
-        applicationItem instanceof NavigationMenuBar.ParentMenuItem
+        applicationItem instanceof HorizontalMenu.ParentMenuItem
 
-        def parentApplicationItem = (NavigationMenuBar.ParentMenuItem) applicationItem
+        def parentApplicationItem = (HorizontalMenu.ParentMenuItem) applicationItem
 
         parentApplicationItem.getId().isPresent()
         parentApplicationItem.getId().get() == "application"
         parentApplicationItem.getTitle() == "Application title"
-        parentApplicationItem.getIcon().element.getAttribute("icon") ==
+        (parentApplicationItem.prefixComponent as Icon).element.getAttribute("icon") ==
                 VaadinIcon.TABLE.create().element.getAttribute("icon")
         parentApplicationItem.getClassNames().containsAll(List.of("className1", "className2"))
         parentApplicationItem.getChildItems().size() == 3
@@ -73,41 +74,42 @@ class NavigationMenuBarXmlLoadTest extends FlowuiTestSpecification {
 
         def applicationViewItem = menu.getMenuItem("Application.view")
         applicationViewItem != null
-        applicationViewItem instanceof NavigationMenuBar.ViewMenuItem
+        applicationViewItem instanceof HorizontalMenu.ViewMenuItem
 
-        def applicationViewMenuItem = (NavigationMenuBar.ViewMenuItem) applicationViewItem
+        def applicationViewMenuItem = (HorizontalMenu.ViewMenuItem) applicationViewItem
 
         applicationViewMenuItem.getId().isPresent()
         applicationViewMenuItem.getId().get() == "Application.view"
         applicationViewMenuItem.getTitle() == "Application view"
-        applicationViewMenuItem.getIcon().element.getAttribute("icon") ==
+        (applicationViewMenuItem.prefixComponent as Icon).element.getAttribute("icon") ==
                 VaadinIcon.ABACUS.create().element.getAttribute("icon")
         applicationViewMenuItem.getMenu() == menu
         applicationViewMenuItem.getParentMenuItem() == applicationItem
         applicationViewMenuItem.getTooltip().getText() == "app view"
         applicationViewMenuItem.getShortcutCombination() != null
         applicationViewMenuItem.getShortcutCombination().getKey() == Key.ENTER
-        Arrays.equals(applicationViewMenuItem.getShortcutCombination().getKeyModifiers(), new KeyModifier[]{KeyModifier.CONTROL})
-        applicationViewMenuItem.getViewClass() == NavigationMenuBarView.class
+        Arrays.equals(applicationViewMenuItem.getShortcutCombination().getKeyModifiers(),
+                new KeyModifier[]{KeyModifier.CONTROL})
+        applicationViewMenuItem.getViewClass() == HorizontalMenuView.class
         applicationViewMenuItem.getUrlQueryParameters().getParameters().isEmpty()
         applicationViewMenuItem.getRouteParameters().getParameterNames().isEmpty()
 
         def separatorItem = parentApplicationItem.getChildItems().get(1)
-        separatorItem instanceof NavigationMenuBar.SeparatorMenuItem
+        separatorItem instanceof HorizontalMenu.SeparatorMenuItem
         separatorItem.getParentMenuItem() == parentApplicationItem
         separatorItem.getMenu() == menu
         separatorItem.getTitle() == null
 
         def nestedMenuItem = menu.getMenuItem("nestedMenu")
         nestedMenuItem != null
-        nestedMenuItem instanceof NavigationMenuBar.ParentMenuItem
+        nestedMenuItem instanceof HorizontalMenu.ParentMenuItem
 
-        def parentNestedMenuItem = (NavigationMenuBar.ParentMenuItem) nestedMenuItem
+        def parentNestedMenuItem = (HorizontalMenu.ParentMenuItem) nestedMenuItem
 
         parentNestedMenuItem.getId().isPresent()
         parentNestedMenuItem.getId().get() == "nestedMenu"
         parentNestedMenuItem.getTitle() == "Nested menu"
-        parentNestedMenuItem.getIcon() == null
+        parentNestedMenuItem.getPrefixComponent() == null
         parentNestedMenuItem.getChildItems().size() == 1
         parentNestedMenuItem.getMenu() == menu
         parentNestedMenuItem.getParentMenuItem() == applicationItem
@@ -115,51 +117,51 @@ class NavigationMenuBarXmlLoadTest extends FlowuiTestSpecification {
 
         def nestedViewItem = menu.getMenuItem("Nested.view")
         nestedViewItem != null
-        nestedViewItem instanceof NavigationMenuBar.ViewMenuItem
+        nestedViewItem instanceof HorizontalMenu.ViewMenuItem
 
-        def nestedViewMenuItem = (NavigationMenuBar.ViewMenuItem) nestedViewItem
+        def nestedViewMenuItem = (HorizontalMenu.ViewMenuItem) nestedViewItem
 
         nestedViewMenuItem.getId().isPresent()
         nestedViewMenuItem.getId().get() == "Nested.view"
         nestedViewMenuItem.getTitle() == "Nested view"
-        nestedViewMenuItem.getIcon() == null
+        nestedViewMenuItem.getPrefixComponent() == null
         nestedViewMenuItem.getMenu() == menu
         nestedViewMenuItem.getParentMenuItem() == nestedMenuItem
         nestedViewMenuItem.getTooltip().getText() == null
         nestedViewMenuItem.getShortcutCombination() == null
-        nestedViewMenuItem.getViewClass() == NavigationMenuBarView.class
+        nestedViewMenuItem.getViewClass() == HorizontalMenuView.class
         nestedViewMenuItem.getUrlQueryParameters().getParameters().isEmpty()
         nestedViewMenuItem.getRouteParameters().getParameterNames().isEmpty()
 
         def administrationViewItem = menu.getMenuItem("Administration.view")
         administrationViewItem != null
-        administrationViewItem instanceof NavigationMenuBar.ViewMenuItem
+        administrationViewItem instanceof HorizontalMenu.ViewMenuItem
 
-        def administrationViewMenuItem = (NavigationMenuBar.ViewMenuItem) administrationViewItem
+        def administrationViewMenuItem = (HorizontalMenu.ViewMenuItem) administrationViewItem
 
         administrationViewMenuItem.getId().isPresent()
         administrationViewMenuItem.getId().get() == "Administration.view"
         administrationViewMenuItem.getTitle() == "Administration view"
-        administrationViewMenuItem.getIcon() == null
+        administrationViewMenuItem.getPrefixComponent() == null
         administrationViewMenuItem.getMenu() == menu
         administrationViewMenuItem.getParentMenuItem() == null
         administrationViewMenuItem.getTooltip().getText() == null
         administrationViewMenuItem.getShortcutCombination() == null
-        administrationViewMenuItem.getViewClass() == NavigationMenuBarView.class
+        administrationViewMenuItem.getViewClass() == HorizontalMenuView.class
         administrationViewMenuItem.getUrlQueryParameters().getSingleParameter("a").isPresent()
         administrationViewMenuItem.getUrlQueryParameters().getSingleParameter("a").get() == "A"
         administrationViewMenuItem.getRouteParameters().getParameterNames().isEmpty()
     }
 
-    def "Load NavigationMenuBar component without loading items from XML"() {
-        when: "Open the NavigationMenuBarView"
-        def navigationMenuBarView = navigateToView(NavigationMenuBarView.class)
+    def "Load HorizontalMenu component without loading items from XML"() {
+        when: "Open HorizontalMenuView"
+        def horizontalMenuView = navigateToView(HorizontalMenuView.class)
 
-        then: "NavigationMenuBar items will not be loaded"
+        then: "HorizontalMenu items will not be loaded"
 
-        def menu = navigationMenuBarView.navigationMenuBarNoItemsLoad
+        def menu = horizontalMenuView.horizontalMenuNoItemsLoad
         verifyAll(menu) {
-            id.get() == "navigationMenuBarNoItemsLoad"
+            id.get() == "horizontalMenuNoItemsLoad"
 
             getMenuItems().size() == 0
         }

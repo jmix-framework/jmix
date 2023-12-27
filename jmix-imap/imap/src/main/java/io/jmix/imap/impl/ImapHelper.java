@@ -16,11 +16,11 @@
 
 package io.jmix.imap.impl;
 
-import com.sun.mail.imap.IMAPStore;
 import io.jmix.imap.data.ImapDataProvider;
 import io.jmix.imap.entity.ImapMailBox;
 import io.jmix.imap.protocol.ThreadExtension;
 import org.apache.commons.io.IOUtils;
+import org.eclipse.angus.mail.imap.IMAPStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -198,7 +198,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
-        @Deprecated
+        @Deprecated(since="2.2", forRemoval=true)
         public ViewMenuItem withIcon(@Nullable VaadinIcon icon) {
             super.withIcon(icon);
             return this;
@@ -294,7 +294,7 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
-        @Deprecated
+        @Deprecated(since="2.2", forRemoval=true)
         public BeanMenuItem withIcon(@Nullable VaadinIcon icon) {
             super.withIcon(icon);
             return this;

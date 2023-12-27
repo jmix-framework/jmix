@@ -604,7 +604,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @deprecated use {@link #getPrefixComponent()}
          */
         @Nullable
-        @Deprecated
+        @Deprecated(since="2.2", forRemoval=true)
         public VaadinIcon getIcon() {
             return icon;
         }
@@ -616,7 +616,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @return current menu instance
          * @deprecated use {@link #withPrefixComponent(Component)} or {@link #setPrefixComponent(Component)}
          */
-        @Deprecated
+        @Deprecated(since="2.2", forRemoval=true)
         public MenuItem withIcon(@Nullable VaadinIcon icon) {
             this.icon = icon;
             return this;
@@ -707,7 +707,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @return current menu item instance
          */
         public MenuItem withSuffixComponent(@Nullable Component suffixComponent) {
-            this.suffixComponent = suffixComponent;
+            setSuffixComponent(suffixComponent);
             return this;
         }
 
@@ -738,11 +738,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @return current menu item instance
          */
         public MenuItem withPrefixComponent(Component prefixComponent) {
-            Component oldPrefixComponent = this.prefixComponent;
-            this.prefixComponent = prefixComponent;
-
-            propertyChangeSupport.firePropertyChange(MENU_ITEM_PREFIX_COMPONENT, oldPrefixComponent,
-                    this.prefixComponent);
+            setPrefixComponent(prefixComponent);
             return this;
         }
 
@@ -846,7 +842,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         @Override
-        @Deprecated
+        @Deprecated(since="2.2", forRemoval=true)
         public MenuBarItem withIcon(@Nullable VaadinIcon icon) {
             return (MenuBarItem) super.withIcon(icon);
         }

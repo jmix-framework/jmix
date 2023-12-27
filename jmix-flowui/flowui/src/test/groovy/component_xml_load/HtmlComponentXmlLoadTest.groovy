@@ -188,7 +188,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             maxWidth == "120px"
             minHeight == "40px"
             minWidth == "80px"
-            placeholder.get() == "placeholderString"
+            placeholder == "placeholderString"
             tabIndex == 3
             type == "password"
             valueChangeMode == ValueChangeMode.ON_CHANGE

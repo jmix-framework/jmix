@@ -17,19 +17,32 @@
 package io.jmix.flowui.kit.component;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.HasElement;
-
 import jakarta.annotation.Nullable;
 
-public interface HasPlaceholder extends HasElement {
+/**
+ * A component which supports a placeholder.
+ * <p>
+ * A placeholder is a text that should be displayed in the input element, when
+ * the user has not entered a value.
+ *
+ * @deprecated use {@link com.vaadin.flow.component.HasPlaceholder} instead.
+ */
+@Deprecated(since = "2.2", forRemoval = true)
+public interface HasPlaceholder extends com.vaadin.flow.component.HasPlaceholder {
 
     String PLACEHOLDER_PROPERTY_NAME = "placeholder";
 
+    /**
+     * {@inheritDoc}
+     */
     @Nullable
     default String getPlaceholder() {
         return getElement().getProperty(PLACEHOLDER_PROPERTY_NAME);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     default void setPlaceholder(@Nullable String placeholder) {
         getElement().setProperty(PLACEHOLDER_PROPERTY_NAME, Strings.nullToEmpty(placeholder));
     }

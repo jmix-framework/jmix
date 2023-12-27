@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.HasPlaceholder;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
@@ -63,6 +64,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
@@ -465,6 +467,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                         component.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
     }
 
+    /**
+     * @deprecated {@link #loadDatePickerI18n(Element, Supplier<DatePicker.DatePickerI18n>)} instead
+     */
+    @Deprecated(since = "2.1.2", forRemoval = true)
     public void loadDatePickerI18n(Element element, Consumer<DatePicker.DatePickerI18n> setter) {
         DatePicker.DatePickerI18n datePickerI18n = new DatePicker.DatePickerI18n();
 
@@ -472,6 +478,13 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loadDateFormat(datePickerI18n, element);
 
         setter.accept(datePickerI18n);
+    }
+
+    public void loadDatePickerI18n(Element element, Supplier<DatePicker.DatePickerI18n> getter) {
+        DatePicker.DatePickerI18n datePickerI18n = getter.get();
+
+        loadFirstDayOfWeek(datePickerI18n, element);
+        loadDateFormat(datePickerI18n, element);
     }
 
     protected void loadDateFormat(DatePicker.DatePickerI18n datePickerI18n, Element element) {

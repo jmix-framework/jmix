@@ -29,7 +29,7 @@ public class JmixValuePickerActionSupport extends ValuePickerActionSupport {
      * @deprecated use one of {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component)},
      * {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component, String, String)}
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.2", forRemoval = true)
     public JmixValuePickerActionSupport(HasElement component) {
         //noinspection removal
         super(component);
@@ -39,7 +39,7 @@ public class JmixValuePickerActionSupport extends ValuePickerActionSupport {
      * @deprecated use one of {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component)},
      * {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component, String, String)}
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.2", forRemoval = true)
     public JmixValuePickerActionSupport(PickerComponent<?> component,
                                         String actionsSlot, String hasActionsAttribute) {
         //noinspection removal

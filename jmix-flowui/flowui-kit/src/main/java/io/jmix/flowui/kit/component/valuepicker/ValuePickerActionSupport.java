@@ -43,7 +43,7 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
      * @deprecated use one of {@link ValuePickerActionSupport#ValuePickerActionSupport(Component)},
      * {@link ValuePickerActionSupport#ValuePickerActionSupport(Component, String, String)}
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.2", forRemoval = true)
     public ValuePickerActionSupport(HasElement component) {
         this(component, SLOT_ACTIONS, ATTRIBUTE_HAS_ACTIONS);
     }
@@ -52,7 +52,7 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
      * @deprecated use one of {@link ValuePickerActionSupport#ValuePickerActionSupport(Component)},
      * {@link ValuePickerActionSupport#ValuePickerActionSupport(Component, String, String)}
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.2", forRemoval = true)
     public ValuePickerActionSupport(HasElement component,
                                     String actionsSlot,
                                     String hasActionsAttribute) {

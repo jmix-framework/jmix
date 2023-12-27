@@ -57,9 +57,11 @@
                                        requiredMessage="msg://nameField.required"/>
                             <textField id="codeField" property="code" required="true"
                                        requiredMessage="msg://codeField.required"/>
+
                             <comboBox id="dataTypeField" property="dataType" required="true"
                                       requiredMessage="msg://dataTypeField.required"/>
                             <textArea id="descriptionField" property="description" minHeight="7em"/>
+                            <checkbox id="isRequiredField" property="required" />
                         </formLayout>
                         <formLayout id="optionalAttributeForm" dataContainer="categoryAttributeDc"
                                     width="100%"

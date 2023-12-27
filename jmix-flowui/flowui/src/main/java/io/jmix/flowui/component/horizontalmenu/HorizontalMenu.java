@@ -407,7 +407,8 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
         protected static final String PREFIX_COMPONENT_CLASS_NAME = "prefix-component";
         protected static final String TEXT_COMPONENT_CLASS_NAME = "text-component";
         protected static final String SUFFIX_COMPONENT_CLASS_NAME = "suffix-component";
-        protected static final String ITEM_WRAPPER_SUFFIXED_ATTRIBUTE_NAME = "suffixed";
+        protected static final String PREFIXED_ATTRIBUTE_NAME = "prefixed";
+        protected static final String SUFFIXED_ATTRIBUTE_NAME = "suffixed";
 
         protected Component prefixComponent;
         protected Span textComponent;
@@ -449,13 +450,21 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
             if (this.prefixComponent != null) {
                 this.prefixComponent.removeClassName(PREFIX_COMPONENT_CLASS_NAME);
                 getContent().remove(this.prefixComponent);
+
+                setPrefixedAttribute(false);
             }
 
             this.prefixComponent = prefixComponent;
             if (prefixComponent != null) {
                 prefixComponent.addClassName(PREFIX_COMPONENT_CLASS_NAME);
                 getContent().addComponentAsFirst(prefixComponent);
+
+                setPrefixedAttribute(true);
             }
+        }
+
+        protected void setPrefixedAttribute(boolean prefixed) {
+            this.getElement().setAttribute(PREFIXED_ATTRIBUTE_NAME, prefixed);
         }
 
         protected void setTextComponentInternal(@Nullable String title) {
@@ -478,7 +487,7 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
                 this.suffixComponent.removeClassName(SUFFIX_COMPONENT_CLASS_NAME);
                 getContent().remove(this.suffixComponent);
 
-                setWrapperSuffixedAttribute(false);
+                setSuffixedAttribute(false);
             }
 
             this.suffixComponent = suffixComponent;
@@ -486,15 +495,12 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
                 suffixComponent.addClassName(SUFFIX_COMPONENT_CLASS_NAME);
                 getContent().add(suffixComponent);
 
-                setWrapperSuffixedAttribute(true);
+                setSuffixedAttribute(true);
             }
         }
 
-        protected void setWrapperSuffixedAttribute(boolean suffixed) {
-            JmixMenuItem wrapper = getMenuItemWrapper();
-            if (wrapper != null) {
-                wrapper.getElement().setAttribute(ITEM_WRAPPER_SUFFIXED_ATTRIBUTE_NAME, suffixed);
-            }
+        protected void setSuffixedAttribute(boolean suffixed) {
+            this.getElement().setAttribute(SUFFIXED_ATTRIBUTE_NAME, suffixed);
         }
 
         @Override

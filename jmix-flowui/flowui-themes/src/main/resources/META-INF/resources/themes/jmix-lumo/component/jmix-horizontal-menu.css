@@ -42,10 +42,14 @@ vaadin-menu-bar-list-box .jmix-horizontal-menu-item-wrapper {
   padding: 0;
 }
 
+vaadin-menu-bar-list-box vaadin-menu-bar-item[class~='jmix-horizontal-menu-item-wrapper']::part(checkmark) {
+  display: none;
+}
+
 .jmix-horizontal-menu-item-wrapper[aria-haspopup='true']::after {
   margin: 0;
+  padding-inline-start: calc(var(--lumo-space-s) + var(--lumo-space-xs));
   padding-inline-end: var(--lumo-space-s);
-  padding-inline-start: var(--lumo-space-s);
 }
 
 .jmix-horizontal-menu-content-item {
@@ -70,10 +74,15 @@ vaadin-menu-bar .jmix-horizontal-menu-content-item {
 }
 
 vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item {
-  padding-inline-start: calc(var(--lumo-border-radius-m) / 4);
+/*The padding is equal to width of icon prefix when it's not set*/
+  padding-inline-start: calc(var(--lumo-icon-size-s) + var(--lumo-space-s) * 2);
   padding-inline-end: 0;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
+}
+
+vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item[prefixed] {
+  padding-inline-start: var(--lumo-space-s);
 }
 
 vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item .text-component:not(:last-child) {
@@ -93,5 +102,5 @@ vaadin-menu-bar-item .jmix-horizontal-menu-item {
 
 /*The padding is equal to width of 'greater' sign of expandable items*/
 vaadin-menu-bar-list-box .jmix-horizontal-menu-item {
-  padding-inline-end: calc(var(--lumo-space-m) + var(--lumo-space-s) * 2);
+  padding-inline-end: calc(var(--lumo-icon-size-s) + var(--lumo-space-s) * 2);
 }

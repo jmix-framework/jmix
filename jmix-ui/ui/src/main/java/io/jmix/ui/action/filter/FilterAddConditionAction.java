@@ -163,12 +163,6 @@ public class FilterAddConditionAction extends FilterAction implements Action.Adj
                     currentConfiguration.getRootLogicalFilterComponent().add(filterComponent);
                     currentConfiguration.setFilterComponentModified(filterComponent, true);
 
-                    if(filterComponent instanceof SingleFilterComponent &&
-                            ((SingleFilterComponent)filterComponent).getValueComponent() instanceof EntityComboBox){
-                        EntityComboBox entityComboBox = (EntityComboBox) (((SingleFilterComponent)filterComponent).getValueComponent());
-                        entityComboBox.setOptions(new ContainerOptions(entityFieldCreationSupport.createCollectionContainer(entityComboBox.getMetaClass())));
-                    }
-
                     boolean nonNullDefaultValue = setFilterComponentDefaultValue(filterComponent, currentConfiguration);
                     if (nonNullDefaultValue) {
                         dataLoadNeeded = true;

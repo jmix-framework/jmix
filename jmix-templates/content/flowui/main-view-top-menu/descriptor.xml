@@ -7,23 +7,32 @@
     </actions>
     <appLayout classNames="jmix-main-view-top-menu-app-layout">
         <navigationBar>
-            <header classNames="jmix-main-view-top-menu-header">
-                <image id="logoImage"
-                       resource="icons/icon.png"
-                       classNames="jmix-main-view-top-menu-logo"/>
-                <nav id="navigation"
-                     classNames="jmix-main-view-top-menu-navigation">
-                    <navigationMenuBar id="navigationMenuBar"
-                                       width="100%"/>
-                </nav>
-                <hbox id="userHeaderBox"
-                      classNames="jmix-main-view-top-menu-user-box">
-                    <userIndicator id="userIndicator"/>
-                    <button id="logoutButton"
-                            action="logout"
-                            classNames="jmix-logout-button"/>
+            <vbox id="navigationBarBox"
+                  classNames="jmix-main-view-top-menu-navigation-bar-box">
+                <header id="navigationHeader"
+                        classNames="jmix-main-view-top-menu-header">
+                    <image id="logoImage"
+                           resource="icons/icon.png"
+                           classNames="jmix-main-view-top-menu-logo"/>
+                    <nav id="navigation"
+                         classNames="jmix-main-view-top-menu-navigation">
+                        <horizontalMenu id="horizontalMenu"
+                                        width="100%"/>
+                    </nav>
+                    <hbox id="userHeaderBox"
+                          classNames="jmix-main-view-top-menu-user-box">
+                        <userIndicator id="userIndicator"/>
+                        <button id="logoutButton"
+                                action="logout"
+                                classNames="jmix-logout-button"/>
+                    </hbox>
+                </header>
+                <hbox id="viewHeaderBox"
+                      classNames="jmix-main-view-top-menu-view-header-box">
+                    <h1 id="viewTitle"
+                        classNames="jmix-main-view-top-menu-view-title"/>
                 </hbox>
-            </header>
+            </vbox>
         </navigationBar>
         <initialLayout/>
     </appLayout>

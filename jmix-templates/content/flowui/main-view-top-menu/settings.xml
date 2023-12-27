@@ -21,7 +21,7 @@
           order="80"
           enabled="true">
     <description>
-        <![CDATA[<html>A main view with a top menu.</html>]]>
+        <![CDATA[<html>Main view with top menu.</html>]]>
     </description>
 
     <locMessages key="viewTitle">

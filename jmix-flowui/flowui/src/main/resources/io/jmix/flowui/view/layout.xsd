@@ -2088,6 +2088,19 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="listMenuThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="toggle-button-last"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -2654,6 +2667,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:attribute name="loadMenuConfig" type="xs:boolean"/>
+                <xs:attribute name="themeNames" type="listMenuThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasClassNames"/>

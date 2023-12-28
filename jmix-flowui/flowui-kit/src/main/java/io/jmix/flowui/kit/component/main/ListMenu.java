@@ -27,7 +27,6 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.details.Details;
-import com.vaadin.flow.component.details.DetailsVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.ListItem;
@@ -35,6 +34,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ListMenu extends Composite<UnorderedList> implements HasSize, HasStyle {
+public class ListMenu extends Composite<UnorderedList> implements HasSize, HasStyle, HasThemeVariant<ListMenuVariant> {
 
     protected static final String TEXT_SMALL_CLASS_NAME = "text-s";
     protected static final String LIST_NONE_CLASS_NAME = "list-none";
@@ -355,7 +355,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         menuItemComponent.addClassName(JMIX_MENUBAR_ITEM_CLASS_NAME);
         menuItemComponent.addClassNames(menuBarItem.getClassNames().toArray(new String[0]));
         menuItemComponent.setOpened(menuBarItem.isOpened());
-        menuItemComponent.addThemeVariants(DetailsVariant.REVERSE);
 
         Div div = new Div();
         div.setWidthFull();

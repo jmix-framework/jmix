@@ -34,7 +34,6 @@
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container {
   display: flex;
   gap: var(--lumo-space-s);
-  padding: var(--lumo-space-xs) 0;
   align-items: center;
 }
 
@@ -103,4 +102,13 @@
   overflow: hidden;
   width: 100%;
   align-items: center;
+}
+
+.jmix-list-menu[theme~='toggle-button-last'] vaadin-details-summary {
+  justify-content: space-between;
+}
+
+.jmix-list-menu[theme~='toggle-button-last'] vaadin-details-summary::part(toggle) {
+  order: 1;
+  margin-inline-end: 0;
 }

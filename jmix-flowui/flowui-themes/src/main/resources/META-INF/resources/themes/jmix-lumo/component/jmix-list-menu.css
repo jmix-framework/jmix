@@ -22,12 +22,12 @@
 }
 
 .jmix-list-menu .jmix-menubar-item .menubar-list {
-  margin-left: var(--lumo-space-m);
+  margin-inline-start: var(--lumo-space-m);
 }
 
 .jmix-list-menu .jmix-menubar-item {
   padding: var(--lumo-space-s);
-  padding-right: 0;
+  padding-inline-end: 0;
   margin: 0;
 }
 
@@ -69,7 +69,7 @@
 }
 
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container > :last-child {
-  margin-right: var(--lumo-space-s);
+  margin-inline-end: var(--lumo-space-s);
 }
 
 .jmix-list-menu .jmix-menu-item-link {

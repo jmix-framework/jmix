@@ -104,11 +104,11 @@
   align-items: center;
 }
 
-.jmix-list-menu[theme~='toggle-button-last'] vaadin-details-summary {
+.jmix-list-menu[theme~='toggle-reverse'] vaadin-details-summary {
   justify-content: space-between;
 }
 
-.jmix-list-menu[theme~='toggle-button-last'] vaadin-details-summary::part(toggle) {
+.jmix-list-menu[theme~='toggle-reverse'] vaadin-details-summary::part(toggle) {
   order: 1;
   margin-inline-end: 0;
 }

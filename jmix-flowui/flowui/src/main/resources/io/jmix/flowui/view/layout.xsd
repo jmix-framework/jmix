@@ -2095,7 +2095,7 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="toggle-button-last"/>
+                    <xs:enumeration value="toggle-reverse"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

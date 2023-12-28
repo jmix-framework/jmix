@@ -50,7 +50,7 @@ public interface StudioMainViewComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
-                            options = {"toggle-button-last"}),
+                            options = {"toggle-reverse"}),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)

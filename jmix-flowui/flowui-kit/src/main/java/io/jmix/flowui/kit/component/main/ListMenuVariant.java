@@ -23,7 +23,10 @@ import com.vaadin.flow.component.shared.ThemeVariant;
  */
 public enum ListMenuVariant implements ThemeVariant {
 
-    TOGGLE_BUTTON_LAST("toggle-button-last");
+    /**
+     * Expand/collapse toggle mark will be placed in the end of parent menu item component
+     */
+    TOGGLE_REVERSE("toggle-reverse");
 
     private final String variant;
 

@@ -27,6 +27,7 @@ public class ListMenuLoader extends AbstractComponentLoader<JmixListMenu> {
     public void loadComponent() {
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
 
         loadMenuConfig(element);
     }

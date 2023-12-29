@@ -18,111 +18,51 @@
 
     <category name="Reports">
 
-        <codeSnippet name="Running a report by a report code using UIReportRunner" contextTypes="controller">
+        <codeSnippet name="Run report using UiReportRunner" contextTypes="controller">
 
             <inject variable="uiReportRunner" classQualifiedName="io.jmix.reportsflowui.runner.UiReportRunner"/>
 
             <stringInputParameter code="code" text="Report code"/>
             <optionsInputParameter code="outputType" text="Output type">
-                <option name="XLS" value="XLS"/>
-                <option name="DOC" value="DOC"/>
+                <option name="XLSX" value="XLSX"/>
+                <option name="DOCX" value="DOCX"/>
                 <option name="PDF" value="PDF"/>
                 <option name="HTML" value="HTML"/>
-                <option name="DOCX" value="DOCX"/>
-                <option name="XLSX" value="XLSX"/>
-                <option name="CUSTOM" value="CUSTOM"/>
                 <option name="CSV" value="CSV"/>
                 <option name="TABLE" value="TABLE"/>
-                <!--<option name="CHART" value="CHART"/>-->
-                <!--<option name="PIVOT_TABLE" value="PIVOT_TABLE"/>-->
+                <option name="CUSTOM" value="CUSTOM"/>
             </optionsInputParameter>
-            <stringInputParameter code="outputNamePattern" text="Output name pattern"/>
-            <optionsInputParameter code="dialogShowMode" text="Dialog show mode">
+            <optionsInputParameter code="dialogShowMode" text="Show parameters dialog?">
+                <option name="If required" value="IF_REQUIRED"/>
                 <option name="Yes" value="YES"/>
                 <option name="No" value="NO"/>
-                <option name="If required" value="IF_REQUIRED"/>
             </optionsInputParameter>
-            <optionsInputParameter code="isBackground" text="Is background?">
-                <option name="True" value="true"/>
-                <option name="False" value="false"/>
+            <optionsInputParameter code="isBackground" text="Run report in background?">
+                <option name="Yes" value="true"/>
+                <option name="No" value="false"/>
             </optionsInputParameter>
 
             <text language="java">
                 uiReportRunner.byReportCode("${code}")
-                .withParams(java.util.Map.of("param", "param1"))
-                .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
-                .withOutputNamePattern("${outputNamePattern}")
-                .withParametersDialogShowMode(io.jmix.reportsflowui.runner.ParametersDialogShowMode.${dialogShowMode})&lt;% if (isBackground == 'true') print '\n.inBackground(this)' %&gt;
-                .runAndShow();
+                        .withParams(java.util.Map.of("param1", "value1"))
+                        .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
+                        .withOutputNamePattern("${code}.${outputType.toLowerCase()}")
+                        .withParametersDialogShowMode(io.jmix.reportsflowui.runner.ParametersDialogShowMode.${dialogShowMode})&lt;% if (isBackground == 'true') print '\n.inBackground(this)' %&gt;
+                        .runAndShow();
             </text>
 
             <text language="kotlin">
                 uiReportRunner.byReportCode("${code}")
-                .withParams(java.util.Map.of("param", "param1"))
-                .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
-                .withOutputNamePattern("${outputNamePattern}")
-                .withParametersDialogShowMode(io.jmix.reportsflowui.runner.ParametersDialogShowMode.${dialogShowMode})&lt;% if (isBackground == 'true') print '\n.inBackground(this)' %&gt;
-                .runAndShow();
+                        .withParams(mapOf("param1" to "value1"))
+                        .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
+                        .withOutputNamePattern("${code}.${outputType.toLowerCase()}")
+                        .withParametersDialogShowMode(io.jmix.reportsflowui.runner.ParametersDialogShowMode.${dialogShowMode})&lt;% if (isBackground == 'true') print '\n.inBackground(this)' %&gt;
+                        .runAndShow();
             </text>
 
             <description>
                 <![CDATA[
-                    Run a report by code and show the result content using <code>UIReportRunner</code>.<br>
-                    <a href="https://docs.jmix.io/jmix/reports/run-report.html#ui-report-runner">Jmix Documentation</a>
-                ]]>
-            </description>
-        </codeSnippet>
-
-        <codeSnippet name="Running a report by a report entity using UIReportRunner" contextTypes="controller">
-
-            <inject variable="uiReportRunner" classQualifiedName="io.jmix.reportsflowui.runner.UiReportRunner"/>
-
-            <variableInputParameter code="report" text="Report" jmixEntity="true"/>
-            <optionsInputParameter code="outputType" text="Output type">
-                <option name="XLS" value="XLS"/>
-                <option name="DOC" value="DOC"/>
-                <option name="PDF" value="PDF"/>
-                <option name="HTML" value="HTML"/>
-                <option name="DOCX" value="DOCX"/>
-                <option name="XLSX" value="XLSX"/>
-                <option name="CUSTOM" value="CUSTOM"/>
-                <option name="CSV" value="CSV"/>
-                <option name="TABLE" value="TABLE"/>
-                <!--<option name="CHART" value="CHART"/>-->
-                <!--<option name="PIVOT_TABLE" value="PIVOT_TABLE"/>-->
-            </optionsInputParameter>
-            <stringInputParameter code="outputNamePattern" text="Output name pattern"/>
-            <optionsInputParameter code="dialogShowMode" text="Dialog show mode">
-                <option name="Yes" value="YES"/>
-                <option name="No" value="NO"/>
-                <option name="If required" value="IF_REQUIRED"/>
-            </optionsInputParameter>
-            <optionsInputParameter code="isBackground" text="Is background?">
-                <option name="True" value="true"/>
-                <option name="False" value="false"/>
-            </optionsInputParameter>
-
-            <text language="java">
-                uiReportRunner.byReportEntity(${report})
-                .withParams(java.util.Map.of("param", "param1"))
-                .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
-                .withOutputNamePattern("${outputNamePattern}")
-                .withParametersDialogShowMode(io.jmix.reportsflowui.runner.ParametersDialogShowMode.${dialogShowMode})&lt;% if (isBackground == 'true') print '\n.inBackground(this)' %&gt;
-                .runAndShow();
-            </text>
-
-            <text language="kotlin">
-                uiReportRunner.byReportEntity(${report})
-                .withParams(java.util.Map.of("param", "param1"))
-                .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
-                .withOutputNamePattern("${outputNamePattern}")
-                .withParametersDialogShowMode(io.jmix.reportsflowui.runner.ParametersDialogShowMode.${dialogShowMode})&lt;% if (isBackground == 'true') print '\n.inBackground(this)' %&gt;
-                .runAndShow();
-            </text>
-
-            <description>
-                <![CDATA[
-                    Run a report by code and show the result content using <code>UIReportRunner</code>.<br>
+                    Run a report by its code and show the result content using <code>UiReportRunner</code>.<br>
                     <a href="https://docs.jmix.io/jmix/reports/run-report.html#ui-report-runner">Jmix Documentation</a>
                 ]]>
             </description>

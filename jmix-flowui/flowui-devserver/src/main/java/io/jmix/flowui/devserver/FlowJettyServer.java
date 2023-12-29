@@ -16,24 +16,20 @@
 
 package io.jmix.flowui.devserver;
 
-import com.vaadin.flow.server.startup.ServletContextListeners;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Properties;
+
 import io.jmix.flowui.devserver.servlet.JmixErrorHandler;
 import io.jmix.flowui.devserver.servlet.JmixServletContextListener;
 import io.jmix.flowui.devserver.servlet.JmixSystemPropertiesLifeCycleListener;
-import io.jmix.flowui.devserver.servlet.JmixVaadinServlet;
 import org.eclipse.jetty.ee10.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.ee10.webapp.Configurations;
 import org.eclipse.jetty.ee10.webapp.JettyWebXmlConfiguration;
 import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ShutdownHandler;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * Used in Studio.
@@ -50,10 +46,12 @@ public class FlowJettyServer extends Server {
 
     public void initAndStart() throws Exception {
         init();
+        // uncomment to debug server state
+        // FrontendUtils.console(FrontendUtils.BRIGHT_BLUE, dump(), false);
         start();
     }
 
-    private void init() throws IOException {
+    private void init() {
         WebAppContext context = createContext();
         this.setHandler(
                 new Sequence(
@@ -70,27 +68,28 @@ public class FlowJettyServer extends Server {
         );
         Configurations
                 .setServerDefault(this)
-                .add(JettyWebXmlConfiguration.class.getName(), AnnotationConfiguration.class.getName());
+                .add(new AnnotationConfiguration(), new JettyWebXmlConfiguration());
     }
 
-    private WebAppContext createContext() throws IOException {
+    private WebAppContext createContext() {
         WebAppContext context = new WebAppContext();
         context.setContextPath("/");
-        context.setClassLoader(FlowJettyServer.class.getClassLoader());
-        context.setExtraClasspath((String) params.get("ExtraClassPath"));
-        context.setBaseResourceAsString((String) params.get("ResourceBaseDir"));
-        context.addServlet(JmixVaadinServlet.class, "/*");
         context.setConfigurationDiscovered(true);
         context.getContext().setExtendedListenerTypes(true);
-        context.addEventListener(new ServletContextListeners());
+        context.setClassLoader(FlowJettyServer.class.getClassLoader());
+        context.setParentLoaderPriority(true);
+        context.setExtraClasspath((String) params.get("ExtraClassPath"));
+        context.setBaseResourceAsString((String) params.get("ResourceBaseDir"));
+
         JakartaWebSocketServletContainerInitializer.configure(context, null);
-        context.setErrorHandler(new JmixErrorHandler());
+
         context.addEventListener(new JmixServletContextListener(params));
+        context.setErrorHandler(new JmixErrorHandler());
+
         return context;
     }
 
     private FlowJettyServer() {
         this.params = Collections.emptyMap();
     }
-
 }

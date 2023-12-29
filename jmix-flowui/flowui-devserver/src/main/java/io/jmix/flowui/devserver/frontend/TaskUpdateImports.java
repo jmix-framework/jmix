@@ -16,11 +16,13 @@
 
 package io.jmix.flowui.devserver.frontend;
 
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.frontend.FrontendTools;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import com.vaadin.flow.server.frontend.scanner.FrontendDependenciesScanner;
 import com.vaadin.flow.theme.AbstractTheme;
+import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.ThemeDefinition;
 import io.jmix.flowui.devserver.frontend.scanner.ThemeWrapper;
 import org.slf4j.Logger;
@@ -28,7 +30,12 @@ import org.slf4j.Logger;
 /**
  * An updater that it's run when the servlet context is initialised in dev-mode
  * or when flow-maven-plugin goals are run in order to update Flow imports file
- * and "jar-resources" contents by visiting all classes with JsModule and Theme annotations.
+ * and {@value FrontendUtils#JAR_RESOURCES_FOLDER} contents by visiting all
+ * classes with {@link JsModule} and {@link Theme} annotations.
+ * <p>
+ * For internal use only. May be renamed or removed in a future release.
+ *
+ * @since 2.0
  */
 public class TaskUpdateImports extends NodeUpdater {
 
@@ -54,6 +61,13 @@ public class TaskUpdateImports extends NodeUpdater {
 
     /**
      * Create an instance of the updater given all configurable parameters.
+     *
+     * @param finder
+     *            a reusable class finder
+     * @param frontendDepScanner
+     *            a reusable frontend dependencies scanner
+     * @param options
+     *            options for the task
      */
     TaskUpdateImports(ClassFinder finder,
                       FrontendDependenciesScanner frontendDepScanner,
@@ -76,9 +90,15 @@ public class TaskUpdateImports extends NodeUpdater {
     }
 
     private String getAbsentPackagesMessage() {
-        String lockFile = options.isEnablePnpm() ? "pnpm-lock.yaml"
-                : Constants.PACKAGE_LOCK_JSON;
-        String command = options.isEnablePnpm() ? "pnpm" : "npm";
+        String lockFile;
+        String toolName = TaskRunNpmInstall.getToolName(options);
+        if (options.isEnableBun()) {
+            lockFile = Constants.PACKAGE_LOCK_BUN;
+        } else if (options.isEnablePnpm()) {
+            lockFile = Constants.PACKAGE_LOCK_YAML;
+        } else {
+            lockFile = Constants.PACKAGE_LOCK_JSON;
+        }
         String note = "";
         if (options.isEnablePnpm()) {
             note = "\nMake sure first that `pnpm` command is installed, otherwise you should install it using npm: `npm add -g pnpm@"
@@ -88,7 +108,7 @@ public class TaskUpdateImports extends NodeUpdater {
                 "If the build fails, check that npm packages are installed.\n\n"
                         + "  To fix the build remove `%s` and `node_modules` directory to reset modules.\n"
                         + "  In addition you may run `%s install` to fix `node_modules` tree structure.%s",
-                lockFile, command, note);
+                lockFile, toolName, note);
     }
 }
 

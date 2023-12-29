@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.devserver.servlet;
+package io.jmix.flowui.devserver;
 
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.server.handler.ErrorHandler;
-import org.eclipse.jetty.util.Callback;
+import elemental.json.JsonObject;
 
-public class JmixErrorHandler extends ErrorHandler {
+/**
+ * For interfacing with the development tools by plugins.
+ */
+public interface DevToolsInterface {
+
+    /**
+     * Sends the given message to the client side.
+     *
+     * @param command
+     *            the command to send
+     * @param data
+     *            data, specific to the command
+     */
+    void send(String command, JsonObject data);
 }

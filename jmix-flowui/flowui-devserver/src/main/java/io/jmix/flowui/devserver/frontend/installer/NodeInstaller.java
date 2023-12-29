@@ -541,10 +541,14 @@ public class NodeInstaller {
                         throw e;
                     }
 
-                    getLogger().debug("Error during downloading " + downloadUrl,
-                            e);
-                    getLogger().warn("Download failed, retrying...");
-                    FrontendUtils.logInFile("Download failed, retrying...");
+                    String errorMsg = "Error during downloading " + downloadUrl;
+                    getLogger().debug(errorMsg, e);
+                    FrontendUtils.logInFile(errorMsg);
+
+                    String retryingMsg = "Download failed, retrying in "
+                            + DOWNLOAD_ATTEMPT_DELAY + "s...";
+                    getLogger().warn(retryingMsg);
+                    FrontendUtils.logInFile(retryingMsg);
 
                     try {
                         Thread.sleep(DOWNLOAD_ATTEMPT_DELAY * 1000);

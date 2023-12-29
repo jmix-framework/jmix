@@ -53,7 +53,7 @@ public class TaskUpdateSettingsFile implements FallibleCommand, Serializable {
 
     TaskUpdateSettingsFile(Options builder, String themeName,
                            PwaConfiguration pwaConfiguration) {
-        this.npmFolder = builder.getNpmFolder();
+        this.npmFolder = builder.getStudioFolder();
         this.frontendDirectory = builder.getFrontendDirectory();
         this.jarFrontendResourcesFolder = builder
                 .getJarFrontendResourcesFolder();

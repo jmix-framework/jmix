@@ -77,7 +77,7 @@ public class TaskCopyTemplateFiles implements FallibleCommand {
                 if (options.isDevBundleBuild()) {
                     templateDirectory = new File(
                             DevBundleUtils.getDevBundleFolder(
-                                    options.getNpmFolder(),
+                                    options.getStudioFolder(),
                                     options.getBuildDirectoryName()),
                             Constants.TEMPLATE_DIRECTORY);
                 } else {

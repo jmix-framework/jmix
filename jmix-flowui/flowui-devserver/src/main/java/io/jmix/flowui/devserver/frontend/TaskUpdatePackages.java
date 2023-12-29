@@ -57,14 +57,17 @@ public class TaskUpdatePackages extends NodeUpdater {
     protected static final String VAADIN_APP_PACKAGE_HASH = "vaadinAppPackageHash";
     private final boolean forceCleanUp;
     private final boolean enablePnpm;
-    private File jarResourcesFolder;
+    private final File jarResourcesFolder;
 
     /**
      * Create an instance of the updater given all configurable parameters.
      *
-     * @param finder               a reusable class finder
-     * @param frontendDependencies a reusable frontend dependencies
-     * @param options              the task options
+     * @param finder
+     *            a reusable class finder
+     * @param frontendDependencies
+     *            a reusable frontend dependencies
+     * @param options
+     *            the task options
      */
     TaskUpdatePackages(ClassFinder finder,
                        FrontendDependenciesScanner frontendDependencies, Options options) {
@@ -78,25 +81,18 @@ public class TaskUpdatePackages extends NodeUpdater {
     public void execute() {
         try {
             Map<String, String> scannedApplicationDependencies = frontDeps.getPackages();
+            Map<String, String> scannedApplicationDevDependencies = frontDeps
+                    .getDevPackages();
             JsonObject packageJson = getPackageJson(getStudioJsonFile());
-            modified = updatePackageJsonDependencies(packageJson, scannedApplicationDependencies);
+            modified = updatePackageJsonDependencies(packageJson,
+                    scannedApplicationDependencies,
+                    scannedApplicationDevDependencies);
             generateVersionsJson(packageJson);
             boolean npmVersionLockingUpdated = lockVersionForNpm(packageJson);
 
             if (modified || npmVersionLockingUpdated) {
                 writePackageFile(packageJson);
 
-                if (enablePnpm) {
-                    // With pnpm dependency versions are pinned via pnpmfile.js.
-                    // When updating a dependency in package.json, the old
-                    // version may be left in the pnpm-lock.yaml file, causing
-                    // duplicate dependencies. Work around this issue by
-                    // deleting pnpm-lock.yaml ("pnpm install" will
-                    // re-generate). For details, see:
-                    // https://github.com/pnpm/pnpm/issues/2587
-                    // https://github.com/vaadin/flow/issues/9719
-                    deletePnpmLockFile();
-                }
             }
 
         } catch (IOException e) {
@@ -105,9 +101,6 @@ public class TaskUpdatePackages extends NodeUpdater {
     }
 
     boolean lockVersionForNpm(JsonObject packageJson) throws IOException {
-        if (enablePnpm) {
-            return false;
-        }
         boolean versionLockingUpdated = false;
 
         JsonObject overridesSection = getOverridesSection(packageJson);
@@ -152,10 +145,6 @@ public class TaskUpdatePackages extends NodeUpdater {
             return true;
         }
 
-        if ("chokidar".equals(dependency)) {
-            // Explicitly lock this to avoid getting chokidar 2 with issues
-            return true;
-        }
         return false;
     }
 
@@ -211,7 +200,8 @@ public class TaskUpdatePackages extends NodeUpdater {
 
     @SuppressWarnings("squid:S134")
     private boolean updatePackageJsonDependencies(JsonObject packageJson,
-                                                  Map<String, String> applicationDependencies) throws IOException {
+            Map<String, String> applicationDependencies,
+            Map<String, String> applicationDevDependencies) throws IOException {
         int added = 0;
 
 
@@ -221,6 +211,12 @@ public class TaskUpdatePackages extends NodeUpdater {
                     dep.getValue());
         }
 
+        // Add application dev dependencies.
+        for (Entry<String, String> devDep : applicationDevDependencies
+                .entrySet()) {
+            added += addDependency(packageJson, DEV_DEPENDENCIES,
+                    devDep.getKey(), devDep.getValue());
+        }
         /*
          * #10572 lock all platform internal versions
          */
@@ -261,6 +257,7 @@ public class TaskUpdatePackages extends NodeUpdater {
 
         // Remove obsolete devDependencies
         dependencyCollection = new ArrayList<>(getDefaultDevDependencies().keySet());
+        dependencyCollection.addAll(applicationDevDependencies.keySet());
 
         int removedDev = 0;
         removedDev = cleanDependencies(dependencyCollection, packageJson, DEV_DEPENDENCIES);
@@ -320,17 +317,40 @@ public class TaskUpdatePackages extends NodeUpdater {
         // packages exist at this point
         assert vaadinDeps != null : "vaadin{ dependencies { } } should exist";
         assert packageJsonDeps != null : "dependencies { } should exist";
-        if (!packageJsonDeps.hasKey(pkg) || !vaadinDeps.hasKey(pkg)
-                || !platformPinnedVersion.equals(
-                new FrontendVersion(packageJsonDeps.getString(pkg)))
-                || !platformPinnedVersion.equals(
-                new FrontendVersion(vaadinDeps.getString(pkg)))) {
+        FrontendVersion packageJsonVersion = null, vaadinDepsVersion = null;
+        try {
+            if (packageJsonDeps.hasKey(pkg)) {
+                packageJsonVersion = new FrontendVersion(
+                        packageJsonDeps.getString(pkg));
+            }
+        } catch (NumberFormatException e) {
+            // Overridden to a file link in package.json, do not change
+            return false;
+        }
+        try {
+            if (vaadinDeps.hasKey(pkg)) {
+                vaadinDepsVersion = new FrontendVersion(
+                        vaadinDeps.getString(pkg));
+            }
+        } catch (NumberFormatException e) {
+            // Vaadin defines a non-numeric version. Not sure what the case
+            // would be but probably it should be pinned like any other version
+        }
+
+        if ((vaadinDepsVersion != null && packageJsonVersion != null)
+                && !vaadinDepsVersion.equals(packageJsonVersion)) {
+            // The user has overridden the version, use that
+            return false;
+        }
+
+        if (platformPinnedVersion.equals(packageJsonVersion)
+                && platformPinnedVersion.equals(vaadinDepsVersion)) {
+            return false;
+        }
             packageJsonDeps.put(pkg, platformPinnedVersion.getFullVersion());
             vaadinDeps.put(pkg, platformPinnedVersion.getFullVersion());
             return true;
         }
-        return false;
-    }
 
 
     /**
@@ -340,7 +360,8 @@ public class TaskUpdatePackages extends NodeUpdater {
      * considered updated.
      *
      * @return {@code true} if the version has changed, {@code false} if not
-     * @throws IOException when file reading fails
+     * @throws IOException
+     *             when file reading fails
      */
     private boolean isPlatformVersionUpdated() throws IOException {
         // if no record of current version is present, version is not
@@ -441,12 +462,6 @@ public class TaskUpdatePackages extends NodeUpdater {
         }
     }
 
-    private void deletePnpmLockFile() throws IOException {
-        File lockFile = new File(options.getStudioFolder(), "pnpm-lock.yaml");
-        if (lockFile.exists()) {
-            FileUtils.forceDelete(lockFile);
-        }
-    }
 
     /**
      * Generate hash for package dependencies. This will consider both

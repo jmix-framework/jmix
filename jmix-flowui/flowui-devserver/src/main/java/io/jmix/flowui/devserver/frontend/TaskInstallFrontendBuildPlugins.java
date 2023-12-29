@@ -20,6 +20,7 @@ import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,13 +45,14 @@ import static io.jmix.flowui.devserver.frontend.FrontendPluginsUtil.PLUGIN_TARGE
  */
 public class TaskInstallFrontendBuildPlugins implements FallibleCommand {
 
-    private File targetFolder;
+    private final File targetFolder;
 
     /**
      * Copy Flow webpack plugins into <code>PLUGIN_TARGET</code> under the build
      * directory.
      *
-     * @param options the task options
+     * @param options
+     *            the task options
      */
     public TaskInstallFrontendBuildPlugins(Options options) {
         targetFolder = new File(options.getBuildDirectory(), PLUGIN_TARGET);
@@ -72,7 +74,7 @@ public class TaskInstallFrontendBuildPlugins implements FallibleCommand {
 
     private void generatePluginFiles(String pluginName) throws IOException {
         // Get the target folder where the plugin should be installed to
-        File pluginTargetFile = new File(targetFolder, pluginName);
+        File pluginTargetFolder = new File(targetFolder, pluginName);
 
         final String pluginFolderName = PLUGIN_TARGET + "/" + pluginName + "/";
         final JsonObject packageJson = FrontendPluginsUtil
@@ -84,35 +86,42 @@ public class TaskInstallFrontendBuildPlugins implements FallibleCommand {
             return;
         }
 
-        // Validate installed version and don't override if same
-        if (pluginTargetFile.exists()
-                && new File(pluginTargetFile, PACKAGE_JSON).exists()) {
+        if (pluginTargetFolder.exists()
+                && new File(pluginTargetFolder, PACKAGE_JSON).exists()) {
             String packageFile = FileUtils.readFileToString(
-                    new File(pluginTargetFile, PACKAGE_JSON),
+                    new File(pluginTargetFolder, PACKAGE_JSON),
                     StandardCharsets.UTF_8);
             final JsonObject targetJson = Json.parse(packageFile);
             if (targetJson.hasKey("update")
                     && !targetJson.getBoolean("update")) {
+                // This is used only while developing the plugins inside the
+                // Flow project and the attribute is then added manually to
+                // package.json
                 return;
             }
         }
 
         // Create target folder if necessary
-        FileUtils.forceMkdir(pluginTargetFile);
+        FileUtils.forceMkdir(pluginTargetFolder);
 
         // copy only files named in package.json { files }
         final JsonArray files = packageJson.getArray("files");
         for (int i = 0; i < files.length(); i++) {
             final String file = files.getString(i);
-            FileUtils.copyURLToFile(
-                    FrontendPluginsUtil.getResourceUrl(pluginFolderName + file),
-                    new File(pluginTargetFile, file));
+            copyIfNeeded(new File(pluginTargetFolder, file),
+                    pluginFolderName + file);
         }
         // copy package.json to plugin directory
-        FileUtils.copyURLToFile(
-                FrontendPluginsUtil
-                        .getResourceUrl(pluginFolderName + PACKAGE_JSON),
-                new File(pluginTargetFile, PACKAGE_JSON));
+        copyIfNeeded(new File(pluginTargetFolder, PACKAGE_JSON),
+                pluginFolderName + PACKAGE_JSON);
+    }
+
+    private void copyIfNeeded(File targetFile, String sourceResource)
+            throws IOException {
+        String content = IOUtils.toString(
+                FrontendPluginsUtil.getResourceUrl(sourceResource),
+                StandardCharsets.UTF_8);
+        FileIOUtils.writeIfChanged(targetFile, content);
     }
 
     private Logger log() {

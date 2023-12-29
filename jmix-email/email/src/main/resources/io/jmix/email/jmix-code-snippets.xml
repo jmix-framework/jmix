@@ -18,179 +18,141 @@
 
     <category name="Email">
 
-        <codeSnippet name="Sending an email" contextTypes="service,controller">
+        <codeSnippet name="Send email" contextTypes="service,controller">
             <inject variable="emailer" classQualifiedName="io.jmix.email.Emailer"/>
 
-            <stringInputParameter code="address" text="Address"/>
-            <stringInputParameter code="subject" text="Subject"/>
-            <stringInputParameter code="body" text="Body"/>
             <optionsInputParameter code="contentType" text="Content type">
-                <option name="Plain" value="text/plain; charset=UTF-8"/>
-                <option name="Html" value="text/html; charset=UTF-8"/>
-            </optionsInputParameter>
-            <optionsInputParameter code="important" text="Important">
-                <option name="True" value="true"/>
-                <option name="False" value="false"/>
+                <option name="Plain text" value="text/plain; charset=UTF-8"/>
+                <option name="HTML" value="text/html; charset=UTF-8"/>
             </optionsInputParameter>
 
             <text language="java">
-                ${IS_FINAL}io.jmix.email.EmailInfo emailInfo = io.jmix.email.EmailInfoBuilder.create("${address}", "${subject}", "${body}")
+                ${IS_FINAL}io.jmix.email.EmailInfo emailInfo = io.jmix.email.EmailInfoBuilder.create("test@email.com", "email subject", "email body")
                     .setBodyContentType("${contentType}")
-                    .setImportant(${important})
+                    .setImportant(false)
                     .build();
-
                 try {
                     emailer.sendEmail(emailInfo);
                 } catch (${IS_FINAL}io.jmix.email.EmailException e) {
-                    // process error
+                    throw new RuntimeException("Error sending email to " +
+                            e.getFailedAddresses() + " due to " + e.getMessages());
                 }
             </text>
 
             <text language="kotlin">
-                val emailInfo = io.jmix.email.EmailInfoBuilder.create("${address}", "${subject}", "${body}")
+                val emailInfo = io.jmix.email.EmailInfoBuilder.create("test@email.com", "email subject", "email body")
                     .setBodyContentType("${contentType}")
-                    .setImportant(${important})
+                    .setImportant(false)
                     .build()
-
                 try {
                     emailer.sendEmail(emailInfo)
                 } catch (e: io.jmix.email.EmailException) {
-                    // process error
+                    throw RuntimeException("Error sending email to " +
+                            e.failedAddresses + " due to " + e.messages)
                 }
             </text>
 
             <description>
                 <![CDATA[
-                    Send an email using <code>Emailer</code>.<br>
+                    Send an email in the current thread.<br>
                     <a href="https://docs.jmix.io/jmix/email/api.html">Jmix Documentation</a>
                 ]]>
             </description>
 
         </codeSnippet>
 
-        <codeSnippet name="Sending an asynchronous email" contextTypes="service,controller">
+        <codeSnippet name="Send email asynchronously" contextTypes="service,controller">
             <inject variable="emailer" classQualifiedName="io.jmix.email.Emailer"/>
 
-            <stringInputParameter code="address" text="Address"/>
-            <stringInputParameter code="subject" text="Subject"/>
-            <stringInputParameter code="body" text="Body"/>
             <optionsInputParameter code="contentType" text="Content type">
-                <option name="Plain" value="text/plain; charset=UTF-8"/>
-                <option name="Html" value="text/html; charset=UTF-8"/>
-            </optionsInputParameter>
-            <optionsInputParameter code="important" text="Important">
-                <option name="True" value="true"/>
-                <option name="False" value="false"/>
+                <option name="Plain text" value="text/plain; charset=UTF-8"/>
+                <option name="HTML" value="text/html; charset=UTF-8"/>
             </optionsInputParameter>
 
             <text language="java">
-                ${IS_FINAL}io.jmix.email.EmailInfo emailInfo = io.jmix.email.EmailInfoBuilder.create("${address}", "${subject}", "${body}")
+                ${IS_FINAL}io.jmix.email.EmailInfo emailInfo = io.jmix.email.EmailInfoBuilder.create("test@email.com", "email subject", "email body")
                     .setBodyContentType("${contentType}")
-                    .setImportant(${important})
+                    .setImportant(false)
                     .build();
-
-                try {
-                    emailer.sendEmailAsync(emailInfo);
-                } catch (${IS_FINAL}io.jmix.email.EmailException e) {
-                    // process error
-                }
+                emailer.sendEmailAsync(emailInfo);
             </text>
 
             <text language="kotlin">
-                val emailInfo = io.jmix.email.EmailInfoBuilder.create("${address}", "${subject}", "${body}")
+                val emailInfo = io.jmix.email.EmailInfoBuilder.create("test@email.com", "email subject", "email body")
                     .setBodyContentType("${contentType}")
-                    .setImportant(${important})
+                    .setImportant(false)
                     .build()
-
-                try {
-                    emailer.sendEmailAsync(emailInfo)
-                } catch (e: io.jmix.email.EmailException) {
-                    // process error
-                }
+                emailer.sendEmailAsync(emailInfo)
             </text>
 
             <description>
                 <![CDATA[
-                    Send async email using <code>Emailer</code>.<br>
+                    Create and enqueue an email to be sent by a background process.<br>
                     <a href="https://docs.jmix.io/jmix/email/api.html">Jmix Documentation</a>
                 ]]>
             </description>
 
         </codeSnippet>
 
-        <codeSnippet name="Create an attachment from File Ref" contextTypes="service,controller">
+        <codeSnippet name="Create attachment from FileRef" contextTypes="service,controller">
             <inject variable="fileStorage" classQualifiedName="io.jmix.core.FileStorage"/>
 
-            <stringInputParameter code="fileName" text="File name"/>
-            <stringInputParameter code="contentId" text="Content ID"/>
-            <variableInputParameter code="fileRef" text="File Ref"/>
+            <variableInputParameter code="fileRef" text="FileRef variable"/>
 
             <text language="java">
+                ${IS_FINAL}io.jmix.email.EmailAttachment emailAtt;
                 try (${IS_FINAL}java.io.InputStream inputStream = fileStorage.openStream(${fileRef})) {
-                    ${IS_FINAL}byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(inputStream);
-                    ${IS_FINAL}io.jmix.email.EmailAttachment emailAtt = new EmailAttachment(bytes, "${fileName}", "${contentId}");
-
-                    // process
+                    emailAtt = new EmailAttachment(org.apache.commons.io.IOUtils.toByteArray(inputStream), "file name", "someId");
+                    // use EmailInfo.addAttachment() to send an email with the attachment
                 } catch (${IS_FINAL}java.io.IOException e) {
-                    // process error
+                    throw new RuntimeException("Error reading file", e);
                 }
             </text>
 
             <text language="kotlin">
-                try (val inputStream = fileStorage.openStream(${fileRef})) {
-                    val bytes = org.apache.commons.io.IOUtils.toByteArray(inputStream)
-                    val emailAtt = new EmailAttachment(bytes, "${fileName}", "${contentId}")
-
-                    // process
-                } catch (e: java.io.IOException) {
-                    // process error
+                // use EmailInfo.addAttachment() to send an email with the attachment
+                val emailAtt = fileStorage.openStream(fileRef).use {
+                    return@use io.jmix.email.EmailAttachment(it.readAllBytes(), "file name", "someId")
                 }
             </text>
 
             <description>
                 <![CDATA[
-                    Create an email attachment from a file ref using <code>FileStorage</code> and <code>EmailAttachment</code>.<br>
-                    <a href="https://docs.jmix.io/jmix/email/api.html">Jmix Documentation</a>
+                    Create an email attachment from an existing <code>FileRef</code> variable using <code>FileStorage</code> and <code>EmailAttachment</code>.<br>
+                    <a href="https://docs.jmix.io/jmix/email/api.html#email-attachments">Jmix Documentation</a>
                 ]]>
             </description>
 
         </codeSnippet>
 
-        <codeSnippet name="Create an attachment from resources" contextTypes="service,controller">
+        <codeSnippet name="Create attachment from resource" contextTypes="service,controller">
             <inject variable="resources" classQualifiedName="io.jmix.core.Resources"/>
 
-            <stringInputParameter code="fileName" text="File name"/>
-            <stringInputParameter code="contentId" text="Content ID"/>
-            <stringInputParameter code="path" text="Path to resource"/>
-
             <text language="java">
-                ${IS_FINAL}java.io.InputStream resourceAsStream = resources.getResourceAsStream("${path}");
-                try {
-                    ${IS_FINAL}byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(resourceAsStream);
-                    ${IS_FINAL}io.jmix.email.EmailAttachment emailAtt = new EmailAttachment(bytes, "${fileName}", "${contentId}");
-
-                    // process
+                ${IS_FINAL}io.jmix.email.EmailAttachment emailAtt;
+                try (${IS_FINAL}java.io.InputStream inputStream = resources.getResourceAsStream("/com/company/demo/resource.ext")) {
+                    if (inputStream == null)
+                        throw new RuntimeException("Resource doesn't exist");
+                    emailAtt = new EmailAttachment(org.apache.commons.io.IOUtils.toByteArray(inputStream), "file name", "someId");
+                    // use EmailInfo.addAttachment() to send an email with the attachment
                 } catch (${IS_FINAL}java.io.IOException e) {
-                    // process error
+                    throw new RuntimeException("Error reading resource", e);
                 }
             </text>
 
             <text language="kotlin">
-                val resourceAsStream = resources.getResourceAsStream("${path}")
-                try {
-                    val bytes = org.apache.commons.io.IOUtils.toByteArray(resourceAsStream);
-                    val emailAtt = new EmailAttachment(bytes, "${fileName}", "${contentId}")
-
-                    // process
-                } catch (e: java.io.IOException) {
-                    // process error
+                // use EmailInfo.addAttachment() to send an email with the attachment
+                val inputStream = resources.getResourceAsStream("/com/company/demo/resource.ext")
+                        ?: throw RuntimeException("Resource doesn't exist")
+                val emailAtt = inputStream.use {
+                    return@use io.jmix.email.EmailAttachment(it.readAllBytes(), "file name", "someId")
                 }
             </text>
 
             <description>
                 <![CDATA[
-                    Create an email attachment from resources using <code>Resources</code> and <code>EmailAttachment</code>.<br>
-                    <a href="https://docs.jmix.io/jmix/email/api.html">Jmix Documentation</a>
+                    Create an email attachment from a classpath resource using <code>Resources</code> and <code>EmailAttachment</code>.<br>
+                    <a href="https://docs.jmix.io/jmix/email/api.html#email-attachments">Jmix Documentation</a>
                 ]]>
             </description>
         </codeSnippet>

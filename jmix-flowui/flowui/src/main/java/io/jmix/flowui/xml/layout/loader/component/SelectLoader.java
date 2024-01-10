@@ -45,11 +45,11 @@ public class SelectLoader extends AbstractComponentLoader<JmixSelect<?>> {
         getPrefixSuffixLoaderSupport().loadPrefixSuffixComponents();
 
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
-        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadResourceString(element, "emptySelectionCaption", context.getMessageGroup(),
                 resultComponent::setEmptySelectionCaption);
         loadBoolean(element, "emptySelectionAllowed", resultComponent::setEmptySelectionAllowed);
 
+        componentLoader().loadPlaceholder(resultComponent, element);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);

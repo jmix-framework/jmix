@@ -16,10 +16,13 @@
 
 package io.jmix.flowui.devserver.frontend;
 
+import com.vaadin.flow.server.frontend.TypeScriptBootstrapModifier;
 import com.vaadin.flow.server.frontend.scanner.FrontendDependenciesScanner;
 import com.vaadin.flow.theme.ThemeDefinition;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,15 +44,32 @@ public class TaskGenerateBootstrap extends AbstractTaskClientGenerator {
             "import '%svaadin-dev-tools.js';%n",
             FrontendUtils.JAR_RESOURCES_IMPORT + "vaadin-dev-tools/");
     private final FrontendDependenciesScanner frontDeps;
-    private final ThemeDefinition themeDefinition;
+
     private final Options options;
+    private List<TypeScriptBootstrapModifier> modifiers;
+    private final ThemeDefinition themeDef;
 
     TaskGenerateBootstrap(FrontendDependenciesScanner frontDeps,
                           Options options,
-                          ThemeDefinition themeDefinition) {
+                          ThemeDefinition themeDef) {
         this.frontDeps = frontDeps;
         this.options = options;
-        this.themeDefinition = themeDefinition;
+        this.themeDef = themeDef;
+        this.modifiers = new ArrayList<>();
+        for (Class<? extends TypeScriptBootstrapModifier> modifierClass : options
+                .getClassFinder()
+                .getSubTypesOf(TypeScriptBootstrapModifier.class)) {
+            try {
+                this.modifiers
+                        .add(modifierClass.getConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException
+                     | IllegalArgumentException | InvocationTargetException
+                     | NoSuchMethodException | SecurityException e) {
+                String msg = "Failed to instantiate TypeScriptBootstrapModifier";
+                FrontendUtils.logInFile(msg + "\n" + e);
+                LoggerFactory.getLogger(TaskGenerateBootstrap.class).error(msg, e);
+            }
+        }
     }
 
     @Override
@@ -62,6 +82,9 @@ public class TaskGenerateBootstrap extends AbstractTaskClientGenerator {
         }
         lines.addAll(getThemeLines());
 
+        for (TypeScriptBootstrapModifier modifier : modifiers) {
+            modifier.modify(lines, options.isProductionMode());
+        }
         return String.join(System.lineSeparator(), lines);
     }
 
@@ -91,8 +114,8 @@ public class TaskGenerateBootstrap extends AbstractTaskClientGenerator {
 
     private Collection<String> getThemeLines() {
         Collection<String> lines = new ArrayList<>();
-        if (themeDefinition != null && !"".equals(themeDefinition.getName())) {
-            lines.add("import './theme-" + themeDefinition.getName() + ".global.generated.js';");
+        if (themeDef != null && !"".equals(themeDef.getName())) {
+            lines.add("import './theme-" + themeDef.getName() + ".global.generated.js';");
             lines.add("import { applyTheme } from './theme.js';");
             lines.add("applyTheme(document);");
             lines.add("");

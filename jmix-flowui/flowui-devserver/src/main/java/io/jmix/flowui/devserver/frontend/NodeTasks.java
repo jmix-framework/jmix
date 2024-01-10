@@ -30,13 +30,21 @@ import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import com.vaadin.flow.server.frontend.scanner.FrontendDependenciesScanner;
 import com.vaadin.flow.theme.AbstractTheme;
 import com.vaadin.flow.theme.ThemeDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -58,6 +66,7 @@ public class NodeTasks implements FallibleCommand {
                     TaskGeneratePackageJson.class,
                     TaskGenerateIndexHtml.class,
                     TaskGenerateIndexTs.class,
+                    TaskGenerateReactFiles.class,
                     TaskUpdateOldIndexTs.class,
                     TaskGenerateViteDevMode.class,
                     TaskGenerateTsConfig.class,
@@ -87,12 +96,18 @@ public class NodeTasks implements FallibleCommand {
 
     private final List<FallibleCommand> commands = new ArrayList<>();
 
+    private Path lockFile;
+
     /**
      * Initialize tasks with the given options.
      *
      * @param options the options
      */
     public NodeTasks(Options options) {
+        // Lock file is created in the project root folder and not in target/ so
+        // that Maven does not remove it
+        lockFile = new File(options.getStudioFolder(), ".flow-node-tasks.lock")
+                .toPath();
         commands.add(new TaskCopyThemes(options));
 
         ClassFinder classFinder = new ClassFinder.CachedClassFinder(
@@ -137,7 +152,7 @@ public class NodeTasks implements FallibleCommand {
                         frontendDependencies, classFinder,
                         Mode.DEVELOPMENT_BUNDLE)*/) {
                     commands.add(
-                            new TaskCleanFrontendFiles(options.getNpmFolder()));
+                            new TaskCleanFrontendFiles(options.getStudioFolder()));
                     options.withRunNpmInstall(true);
                     options.withCopyTemplates(true);
                     // BundleUtils.copyPackageLockFromBundle(options);
@@ -265,6 +280,10 @@ public class NodeTasks implements FallibleCommand {
         if (options.isProductionMode() || options.isFrontendHotdeploy()
                 || options.isBundleBuild()) {
             commands.add(new TaskGenerateIndexTs(options));
+            if (options.getFeatureFlags()
+                    .isEnabled(FeatureFlags.REACT_ROUTER)) {
+                commands.add(new TaskGenerateReactFiles(options));
+            }
             if (!options.isProductionMode()) {
                 commands.add(new TaskGenerateViteDevMode(options));
             }
@@ -327,12 +346,122 @@ public class NodeTasks implements FallibleCommand {
 
     @Override
     public void execute() throws ExecutionFailedException {
-        sortCommands(commands);
+        getLock();
+        try {
+            sortCommands(commands);
 
-        for (FallibleCommand command : commands) {
-            FrontendUtils.logInFile("Executing task: " + command.getClass().getSimpleName());
-            command.execute();
+            for (FallibleCommand command : commands) {
+                FrontendUtils.logInFile("Executing task: " + command.getClass().getSimpleName());
+                command.execute();
+            }
+        } finally {
+            releaseLock();
         }
+    }
+
+    private void getLock() {
+        boolean loggedWaiting = false;
+
+        while (lockFile.toFile().exists()) {
+            NodeTasksLockInfo lockInfo;
+            try {
+                lockInfo = readLockFile();
+            } catch (Exception e) {
+                getLogger().error("Error waiting for another "
+                        + getClass().getSimpleName() + " process to finish", e);
+                break;
+            }
+
+            try {
+                Optional<ProcessHandle> processHandle = ProcessHandle
+                        .of(lockInfo.pid());
+
+                if (processHandle.isPresent()
+                        && processHandle.get().info().commandLine().orElse("")
+                        .equals(lockInfo.commandLine())) {
+                    if (!loggedWaiting) {
+                        getLogger().info("Waiting for a previous instance of "
+                                + getClass().getSimpleName() + " (pid: "
+                                + lockInfo.pid() + ") to finish...");
+                        loggedWaiting = true;
+                    }
+                    Thread.sleep(500);
+                } else {
+                    // The process has died without removing the lock file
+                    lockFile.toFile().delete();
+                }
+            } catch (InterruptedException e) {
+                // Restore interrupted state
+                Thread.currentThread().interrupt();
+
+                throw new RuntimeException(
+                        "Interrupted while waiting for another "
+                                + getClass().getSimpleName() + " process (pid: "
+                                + lockInfo.pid() + ") to finish",
+                        e);
+            } catch (Exception e) {
+                getLogger().error("Error waiting for another "
+                        + getClass().getSimpleName() + " process (pid: "
+                        + lockInfo.pid() + ") to finish", e);
+            }
+        }
+
+        try {
+            writeLockFile();
+        } catch (IOException e) {
+            getLogger().error("Error writing lock file ({})",
+                    lockFile.toFile().getAbsolutePath(), e);
+        }
+    }
+
+    private void releaseLock() {
+        if (!lockFile.toFile().exists()) {
+            getLogger().warn("Somebody else has removed the lock file ({})",
+                    lockFile.toFile().getAbsolutePath());
+            return;
+        }
+
+        try {
+            long pid = readLockFile().pid();
+            if (pid != ProcessHandle.current().pid()) {
+                getLogger().warn(
+                        "Another process ({}) has overwritten the lock file ({})",
+                        pid, lockFile.toFile().getAbsolutePath());
+                return;
+            }
+            lockFile.toFile().delete();
+        } catch (Exception e) {
+            getLogger().error("Error releasing lock file ({})",
+                    lockFile.toFile().getAbsolutePath());
+        }
+    }
+
+    public record NodeTasksLockInfo(long pid, String commandLine) implements Serializable {
+    }
+
+    private NodeTasksLockInfo readLockFile()
+            throws NumberFormatException, IOException {
+        List<String> lines = Files.readAllLines(lockFile,
+                StandardCharsets.UTF_8);
+        if (lines.size() != 2) {
+            throw new IllegalStateException(
+                    "Invalid lock file. It should contain 2 rows but contains "
+                            + lines);
+        }
+        return new NodeTasksLockInfo(Long.parseLong(lines.get(0)),
+                lines.get(1));
+    }
+
+    private void writeLockFile() throws IOException {
+        ProcessHandle currentProcess = ProcessHandle.current();
+        long myPid = currentProcess.pid();
+        String commandLine = currentProcess.info().commandLine().orElse("");
+        List<String> lines = List.of(Long.toString(myPid), commandLine);
+        Files.write(lockFile, lines, StandardCharsets.UTF_8);
+    }
+
+    private Logger getLogger() {
+        return LoggerFactory.getLogger(getClass());
     }
 
     /**

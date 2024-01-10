@@ -19,18 +19,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.internal.BrowserLiveReload;
 import com.vaadin.flow.server.VaadinContext;
+import com.vaadin.flow.server.communication.AtmospherePushConnection;
+import com.vaadin.flow.server.communication.AtmospherePushConnection.FragmentedMessage;
+import com.vaadin.flow.server.communication.IndexHtmlRequestHandler;
 import elemental.json.Json;
 import elemental.json.JsonObject;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
@@ -46,7 +54,7 @@ public class DebugWindowConnection implements BrowserLiveReload {
     private final ClassLoader classLoader;
     private VaadinContext context;
 
-    private final ConcurrentLinkedQueue<WeakReference<AtmosphereResource>> atmosphereResources = new ConcurrentLinkedQueue<>();
+    private final ConcurrentHashMap<WeakReference<AtmosphereResource>, FragmentedMessage> resources = new ConcurrentHashMap<>();
 
     private Backend backend = null;
 
@@ -58,6 +66,8 @@ public class DebugWindowConnection implements BrowserLiveReload {
     // private IdeIntegration ideIntegration;
 
     // private ThemeEditorMessageHandler themeEditorMessageHandler;
+
+    private List<DevToolsMessageHandler> plugins;
 
     static {
         IDENTIFIER_CLASSES.put(Backend.JREBEL, Collections.singletonList(
@@ -79,6 +89,17 @@ public class DebugWindowConnection implements BrowserLiveReload {
 //        this.ideIntegration = new IdeIntegration(
 //                ApplicationConfiguration.get(context));
 //        this.themeEditorMessageHandler = new ThemeEditorMessageHandler(context);
+
+        findPlugins();
+    }
+
+    private void findPlugins() {
+        ServiceLoader<DevToolsMessageHandler> loader = ServiceLoader
+                .load(DevToolsMessageHandler.class, classLoader);
+        this.plugins = new ArrayList<>();
+        for (DevToolsMessageHandler s : loader) {
+            this.plugins.add(s);
+        }
     }
 
     @Override
@@ -114,13 +135,80 @@ public class DebugWindowConnection implements BrowserLiveReload {
         this.backend = backend;
     }
 
+    /** Implementation of the development tools interface. */
+    public static class DevToolsInterfaceImpl implements DevToolsInterface {
+        private DebugWindowConnection debugWindowConnection;
+        private AtmosphereResource resource;
+
+        private DevToolsInterfaceImpl(
+                DebugWindowConnection debugWindowConnection,
+                AtmosphereResource resource) {
+            this.debugWindowConnection = debugWindowConnection;
+            this.resource = resource;
+        }
+
+        @Override
+        public void send(String command, JsonObject data) {
+            JsonObject msg = Json.createObject();
+            msg.put("command", command);
+            if (data != null) {
+                msg.put("data", data);
+            }
+
+            debugWindowConnection.send(resource, msg.toJson());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            DevToolsInterfaceImpl that = (DevToolsInterfaceImpl) o;
+            return Objects.equals(debugWindowConnection,
+                    that.debugWindowConnection)
+                    && Objects.equals(resource, that.resource);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(debugWindowConnection, resource);
+        }
+    }
+
+    protected DevToolsInterface getDevToolsInterface(
+            AtmosphereResource resource) {
+        return new DevToolsInterfaceImpl(this, resource);
+    }
+
     @Override
     public void onConnect(AtmosphereResource resource) {
+        if (IndexHtmlRequestHandler.RANDOM_DEV_TOOLS_TOKEN
+                .equals(resource.getRequest().getParameter("token"))) {
+            handleConnect(resource);
+        } else {
+            getLogger().warn(
+                    "Connection denied because of a missing or invalid token. The host is probably not on the allow list");
+            try {
+                resource.close();
+            } catch (IOException e) {
+                getLogger().debug(
+                        "Error closing the denied websocket connection", e);
+            }
+        }
+    }
+
+    private void handleConnect(AtmosphereResource resource) {
         resource.suspend(-1);
-        atmosphereResources.add(new WeakReference<>(resource));
+        resources.put(new WeakReference<>(resource), new FragmentedMessage());
         resource.getBroadcaster().broadcast("{\"command\": \"hello\"}",
                 resource);
 
+        for (DevToolsMessageHandler plugin : plugins) {
+            plugin.handleConnect(getDevToolsInterface(resource));
+        }
         send(resource, "serverInfo", new ServerInfo());
         send(resource, "featureFlags", new FeatureFlagMessage(FeatureFlags
                 .get(context).getFeatures().stream()
@@ -136,16 +224,23 @@ public class DebugWindowConnection implements BrowserLiveReload {
     private void send(AtmosphereResource resource, String command,
                       Object data) {
         try {
-            resource.getBroadcaster().broadcast(objectMapper.writeValueAsString(
-                    new DebugWindowMessage(command, data)), resource);
+            send(resource, objectMapper
+                    .writeValueAsString(new DebugWindowMessage(command, data)));
         } catch (Exception e) {
             getLogger().error("Error sending message", e);
         }
     }
 
+    private void send(AtmosphereResource resource, String json) {
+        resource.getBroadcaster().broadcast(json, resource);
+    }
+
     @Override
     public void onDisconnect(AtmosphereResource resource) {
-        if (!atmosphereResources
+        for (DevToolsMessageHandler plugin : plugins) {
+            plugin.handleDisconnect(getDevToolsInterface(resource));
+        }
+        if (!resources.keySet()
                 .removeIf(resourceRef -> resource.equals(resourceRef.get()))) {
             String uuid = resource.uuid();
             getLogger().warn(
@@ -156,12 +251,11 @@ public class DebugWindowConnection implements BrowserLiveReload {
 
     @Override
     public boolean isLiveReload(AtmosphereResource resource) {
-        return atmosphereResources.stream()
-                .anyMatch(resourceRef -> resource.equals(resourceRef.get()));
+        return getRef(resource) != null;
     }
 
     private void send(JsonObject msg) {
-        atmosphereResources.forEach(resourceRef -> {
+        resources.keySet().forEach(resourceRef -> {
             AtmosphereResource resource = resourceRef.get();
             if (resource != null) {
                 resource.getBroadcaster().broadcast(msg.toJson(), resource);
@@ -250,12 +344,52 @@ public class DebugWindowConnection implements BrowserLiveReload {
 //                    .handleDebugMessageData(command, data);
 //            send(resource, ThemeEditorCommand.RESPONSE, resultData);
 //        } else {
-            getLogger().info("Unknown command from the browser: " + command);
+            boolean handled = false;
+            for (DevToolsMessageHandler plugin : plugins) {
+                handled = plugin.handleMessage(command, data,
+                        getDevToolsInterface(resource));
+                if (handled) {
+                    break;
+                }
+            }
+            if (!handled) {
+                getLogger()
+                        .info("Unknown command from the browser: " + command);
+            }
         }
     }
 
     private static Logger getLogger() {
         return LoggerFactory.getLogger(DebugWindowConnection.class.getName());
+    }
+    @Override
+    public FragmentedMessage getOrCreateFragmentedMessage(
+            AtmosphereResource resource) {
+        WeakReference<AtmosphereResource> ref = getRef(resource);
+        if (ref == null) {
+            throw new IllegalStateException(
+                    "Tried to create a fragmented message for a non-existing resource");
+        }
+        return resources.get(ref);
+    }
+
+    private WeakReference<AtmosphereResource> getRef(
+            AtmosphereResource resource) {
+        return resources.keySet().stream()
+                .filter(resourceRef -> resource.equals(resourceRef.get()))
+                .findFirst().orElse(null);
+    }
+
+    @Override
+    public void clearFragmentedMessage(AtmosphereResource resource) {
+        WeakReference<AtmosphereResource> ref = getRef(resource);
+        if (ref == null) {
+            getLogger().debug(
+                    "Tried to clear the fragmented message for a non-existing resource: {}",
+                    resource);
+            return;
+        }
+        resources.put(ref, new FragmentedMessage());
     }
 
 }

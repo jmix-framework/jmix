@@ -16,15 +16,15 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.component.navigationmenubar.MenuConfigNavigationMenuBarItemProvider;
-import io.jmix.flowui.component.navigationmenubar.NavigationMenuBar;
+import io.jmix.flowui.component.horizontalmenu.MenuConfigHorizontalMenuItemProvider;
+import io.jmix.flowui.component.horizontalmenu.HorizontalMenu;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 
-public class NavigationMenuBarLoader extends AbstractComponentLoader<NavigationMenuBar> {
+public class HorizontalMenuLoader extends AbstractComponentLoader<HorizontalMenu> {
 
     @Override
-    protected NavigationMenuBar createComponent() {
-        return factory.create(NavigationMenuBar.class);
+    protected HorizontalMenu createComponent() {
+        return factory.create(HorizontalMenu.class);
     }
 
     @Override
@@ -41,8 +41,8 @@ public class NavigationMenuBarLoader extends AbstractComponentLoader<NavigationM
                 .orElse(true);
 
         if (loadMenuConfig) {
-            MenuConfigNavigationMenuBarItemProvider itemProvider =
-                    applicationContext.getBean(MenuConfigNavigationMenuBarItemProvider.class);
+            MenuConfigHorizontalMenuItemProvider itemProvider =
+                    applicationContext.getBean(MenuConfigHorizontalMenuItemProvider.class);
             resultComponent.setMenuItemProvider(itemProvider);
             itemProvider.load();
         }

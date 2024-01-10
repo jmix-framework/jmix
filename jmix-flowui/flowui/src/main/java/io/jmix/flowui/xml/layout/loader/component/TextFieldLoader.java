@@ -50,10 +50,10 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
         loadInteger(element, "maxLength", resultComponent::setMaxLength);
         loadInteger(element, "minLength", resultComponent::setMinLength);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
-        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
+        componentLoader().loadPlaceholder(resultComponent, element);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);

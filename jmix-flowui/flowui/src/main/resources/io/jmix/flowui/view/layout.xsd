@@ -2088,6 +2088,19 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="listMenuThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="toggle-reverse"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -2654,6 +2667,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:attribute name="loadMenuConfig" type="xs:boolean"/>
+                <xs:attribute name="themeNames" type="listMenuThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasClassNames"/>
@@ -3954,8 +3968,8 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <!-- NavigationMenuBar -->
-    <xs:complexType name="navigationMenuBarComponent">
+    <!-- HorizontalMenu -->
+    <xs:complexType name="horizontalMenuComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:attribute name="loadMenuConfig" type="xs:boolean"/>
@@ -4512,7 +4526,7 @@
                 <xs:element name="virtualList" type="virtualListComponent"/>
                 <xs:element name="gridColumnVisibility" type="gridColumnVisibilityComponent"/>
                 <xs:element name="menuFilterField" type="menuFilterFieldComponent"/>
-                <xs:element name="navigationMenuBar" type="navigationMenuBarComponent"/>
+                <xs:element name="horizontalMenu" type="horizontalMenuComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

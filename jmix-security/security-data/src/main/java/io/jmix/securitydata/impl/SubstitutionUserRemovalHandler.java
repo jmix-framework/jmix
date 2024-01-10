@@ -21,10 +21,8 @@ import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
 import io.jmix.securitydata.entity.UserSubstitutionEntity;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -42,7 +40,6 @@ public class SubstitutionUserRemovalHandler {
         this.eventPublisher = eventPublisher;
     }
 
-    @Transactional
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     public void onUserRemove(UserRemovedEvent event) {
         List<UserSubstitutionEntity> substitutions = dataManager.load(UserSubstitutionEntity.class)

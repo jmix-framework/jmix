@@ -53,7 +53,6 @@ import io.jmix.flowuidata.entity.FilterConfiguration;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -233,7 +232,6 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
     }
 
     @SuppressWarnings({"SpringEventListenerInspection"})
-    @Transactional
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     protected void onUserRemove(UserRemovedEvent event) {
         List<FilterConfiguration> configurations = dataManager.load(FilterConfiguration.class)

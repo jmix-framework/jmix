@@ -2877,11 +2877,11 @@ public interface StudioComponents {
     TextField menuFilterField();
 
     @StudioComponent(
-            name = "NavigationMenuBar",
-            classFqn = "io.jmix.flowui.component.navigationmenubar.NavigationMenuBar",
+            name = "HorizontalMenu",
+            classFqn = "io.jmix.flowui.component.horizontalmenu.HorizontalMenu",
             category = "Components",
-            xmlElement = "navigationMenuBar",
-            icon = "io/jmix/flowui/kit/meta/icon/component/navigationMenuBar.svg",
+            xmlElement = "horizontalMenu",
+            icon = "io/jmix/flowui/kit/meta/icon/component/horizontalMenu.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -2903,5 +2903,5 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
             }
     )
-    JmixMenuBar navigationMenuBar();
+    JmixMenuBar horizontalMenu();
 }

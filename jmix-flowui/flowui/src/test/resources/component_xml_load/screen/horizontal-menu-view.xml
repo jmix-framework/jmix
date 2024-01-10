@@ -17,19 +17,19 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
-        <navigationMenuBar id="navigationMenuBar"
-                           width="30em"
-                           height="15em"
-                           minWidth="20em"
-                           minHeight="10em"
-                           maxWidth="40em"
-                           maxHeight="20em"
-                           classNames="cssClassName1, cssClassName2"
-                           loadMenuConfig="true"
-                           css="color: red;"
-                           visible="true"/>
+        <horizontalMenu id="horizontalMenu"
+                        width="30em"
+                        height="15em"
+                        minWidth="20em"
+                        minHeight="10em"
+                        maxWidth="40em"
+                        maxHeight="20em"
+                        classNames="cssClassName1, cssClassName2"
+                        loadMenuConfig="true"
+                        css="color: red;"
+                        visible="true"/>
 
-        <navigationMenuBar id="navigationMenuBarNoItemsLoad"
-                           loadMenuConfig="false"/>
+        <horizontalMenu id="horizontalMenuNoItemsLoad"
+                        loadMenuConfig="false"/>
     </layout>
 </view>

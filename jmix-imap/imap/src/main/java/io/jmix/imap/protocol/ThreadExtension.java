@@ -16,11 +16,10 @@
 
 package io.jmix.imap.protocol;
 
-import com.sun.mail.imap.protocol.FetchItem;
-import com.sun.mail.imap.protocol.FetchResponse;
-import com.sun.mail.imap.protocol.Item;
-
 import jakarta.mail.FetchProfile;
+import org.eclipse.angus.mail.imap.protocol.FetchItem;
+import org.eclipse.angus.mail.imap.protocol.FetchResponse;
+import org.eclipse.angus.mail.imap.protocol.Item;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class ThreadExtension {

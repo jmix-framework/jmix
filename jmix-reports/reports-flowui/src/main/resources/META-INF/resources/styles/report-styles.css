@@ -92,3 +92,9 @@
     flex-basis: 30em;
 }
 
+.report-wizard-tip-label {
+    font-size: medium;
+    display: block;
+    padding: calc(0.5em + var(--lumo-border-radius-l));
+    line-height: normal;
+}

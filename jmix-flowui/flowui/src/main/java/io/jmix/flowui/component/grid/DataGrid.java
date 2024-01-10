@@ -42,6 +42,7 @@ import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
+import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -60,6 +61,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     protected ApplicationContext applicationContext;
 
     protected GridDelegate<E, DataGridItems<E>> gridDelegate;
+    protected JmixGridContextMenu<E> contextMenu;
 
     protected boolean editorCreated = false;
 
@@ -379,5 +381,29 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
             // Remove column from component while GridDelegate stores this column
             super.removeColumn(context.getColumn());
         }
+    }
+
+    @Override
+    @Nullable
+    public JmixGridContextMenu<E> getContextMenu() {
+        return contextMenu;
+    }
+
+    @Override
+    public void setContextMenu(@Nullable JmixGridContextMenu<E> contextMenu) {
+        if (this.contextMenu != null) {
+            this.contextMenu.setTarget(null);
+        }
+        if (contextMenu != null) {
+            contextMenu.setTarget(this);
+        }
+        this.contextMenu = contextMenu;
+    }
+
+    @Override
+    public JmixGridContextMenu<E> addContextMenu() {
+        JmixGridContextMenu<E> contextMenu = new JmixGridContextMenu<>();
+        setContextMenu(contextMenu);
+        return contextMenu;
     }
 }

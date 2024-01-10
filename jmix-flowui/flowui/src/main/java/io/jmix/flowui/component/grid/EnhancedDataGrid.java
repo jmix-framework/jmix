@@ -19,6 +19,7 @@ package io.jmix.flowui.component.grid;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import org.springframework.lang.Nullable;
 
 import java.util.Map;
@@ -71,6 +72,18 @@ public interface EnhancedDataGrid<T> {
      * @return aggregated values for columns
      */
     Map<Grid.Column<T>, Object> getAggregationResults();
+
+    /**
+     * @return grid context menu or null if not specified
+     */
+    @Nullable
+    JmixGridContextMenu<T> getContextMenu();
+
+    /**
+     * Removes existing context menu and sets specified menu if it's not null.
+     * @param contextMenu context menu to set
+     */
+    void setContextMenu(@Nullable JmixGridContextMenu<T> contextMenu);
 
     /**
      * Defines the position of aggregation row.

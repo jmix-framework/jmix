@@ -40,6 +40,7 @@ import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
 import io.jmix.flowui.data.grid.TreeDataGridItems;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
+import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -59,6 +60,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     protected ApplicationContext applicationContext;
 
     protected TreeGridDelegate<E, TreeDataGridItems<E>> gridDelegate;
+    protected JmixGridContextMenu<E> contextMenu;
 
     protected boolean editorCreated = false;
 
@@ -420,5 +422,29 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
             // Remove column from component while GridDelegate stores this column
             super.removeColumn(context.getColumn());
         }
+    }
+
+    @Override
+    @Nullable
+    public JmixGridContextMenu<E> getContextMenu() {
+        return contextMenu;
+    }
+
+    @Override
+    public void setContextMenu(@Nullable JmixGridContextMenu<E> contextMenu) {
+        if (this.contextMenu != null) {
+            this.contextMenu.setTarget(null);
+        }
+        if (contextMenu != null) {
+            contextMenu.setTarget(this);
+        }
+        this.contextMenu = contextMenu;
+    }
+
+    @Override
+    public JmixGridContextMenu<E> addContextMenu() {
+        JmixGridContextMenu<E> contextMenu = new JmixGridContextMenu<>();
+        setContextMenu(contextMenu);
+        return contextMenu;
     }
 }

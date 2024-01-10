@@ -23,12 +23,29 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
+import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import org.springframework.lang.Nullable;
 
 public class DataGridActionsSupport<C extends Grid<T> & ListDataComponent<T>, T> extends GridActionsSupport<C, T> {
 
     public DataGridActionsSupport(C grid) {
         super(grid);
+    }
+
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void initContextMenu() {
+        if (component instanceof EnhancedDataGrid enhancedDataGrid) {
+            JmixGridContextMenu<T> contextMenu = enhancedDataGrid.getContextMenu();
+            if (contextMenu == null) {
+                contextMenu = new JmixGridContextMenu<>();
+                enhancedDataGrid.setContextMenu(contextMenu);
+            }
+            this.contextMenu = contextMenu;
+            updateContextMenu();
+        } else {
+            super.initContextMenu();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -60,7 +77,7 @@ public class DataGridActionsSupport<C extends Grid<T> & ListDataComponent<T>, T>
 
     protected boolean needSkipShortcut(@Nullable KeyCombination keyCombination) {
         // Ignore Enter shortcut, because it handled differently
-        return keyCombination != null 
+        return keyCombination != null
                 && (keyCombination.getKeyModifiers() == null || keyCombination.getKeyModifiers().length == 0)
                 && keyCombination.getKey() == Key.ENTER;
     }

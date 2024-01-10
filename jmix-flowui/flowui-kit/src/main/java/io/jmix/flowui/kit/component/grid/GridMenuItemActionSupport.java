@@ -16,11 +16,15 @@
 
 package io.jmix.flowui.kit.component.grid;
 
-import com.google.common.base.Strings;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
-
+import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.component.KeyCombination;
 import jakarta.annotation.Nullable;
+
 import java.util.Objects;
 
 public class GridMenuItemActionSupport {
@@ -54,6 +58,12 @@ public class GridMenuItemActionSupport {
             menuItem.setText(action.getText());
             menuItem.setEnabled(action.isEnabled());
             menuItem.setVisible(action.isVisible());
+            menuItem.setTooltipText(action.getDescription());
+            menuItem.setPrefixComponent(createIconComponent(action.getIcon()));
+            //todo app property
+            if (true) {
+                menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
+            }
 
             registration = menuItem.addMenuItemClickListener(event ->
                     action.actionPerform(event.getSource()));
@@ -63,10 +73,28 @@ public class GridMenuItemActionSupport {
         updateVisible();
     }
 
+    @Nullable
+    protected Component createIconComponent(@Nullable Icon actionIcon) {
+        if (actionIcon == null) {
+            return null;
+        }
+        String iconAttribute = actionIcon.getElement().getAttribute("icon");
+        if (iconAttribute == null) {
+            return null;
+        }
+        return ComponentUtils.parseIcon(iconAttribute);
+    }
+
+    @Nullable
+    protected Component createShortcutComponent(@Nullable KeyCombination keyCombination) {
+        return keyCombination == null ? null : new Span(keyCombination.format());
+    }
+
     protected void updateVisible() {
         menuItem.setVisible(
-                !Strings.isNullOrEmpty(menuItem.getText())
-                        && action != null && action.isVisible()
+                !menuItem.isEmpty()
+                        && action != null
+                        && action.isVisible()
         );
     }
 
@@ -98,6 +126,14 @@ public class GridMenuItemActionSupport {
                 case Action.PROP_VISIBLE:
                     updateVisible();
                     break;
+                case Action.PROP_DESCRIPTION:
+                    menuItem.setTooltipText(action.getDescription());
+                case Action.PROP_ICON:
+                    menuItem.setPrefixComponent(action.getIcon());
+                    updateVisible();
+                case Action.PROP_SHORTCUT_COMBINATION:
+                    menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
+                    updateVisible();
                 default:
             }
         });

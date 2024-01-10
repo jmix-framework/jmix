@@ -34,6 +34,11 @@ public class UiComponentProperties {
     String gridEditShortcut;
     String gridReadShortcut;
 
+    /**
+     * Whether to show action shortcuts in grid context menu
+     */
+    boolean gridContextMenuShowShortcuts;
+
     String defaultNotificationPosition;
     int defaultNotificationDuration;
 
@@ -78,6 +83,7 @@ public class UiComponentProperties {
             String gridRemoveShortcut,
             @DefaultValue("ENTER") String gridEditShortcut,
             @DefaultValue("ENTER") String gridReadShortcut,
+            @DefaultValue("false") boolean gridContextMenuShowShortcuts,
             @DefaultValue("MIDDLE") String defaultNotificationPosition,
             @DefaultValue("3000") int defaultNotificationDuration,
             String pickerLookupShortcut,
@@ -94,6 +100,7 @@ public class UiComponentProperties {
         this.gridRemoveShortcut = gridRemoveShortcut;
         this.gridEditShortcut = gridEditShortcut;
         this.gridReadShortcut = gridReadShortcut;
+        this.gridContextMenuShowShortcuts = gridContextMenuShowShortcuts;
         this.defaultNotificationPosition = defaultNotificationPosition;
         this.defaultNotificationDuration = defaultNotificationDuration;
 
@@ -128,6 +135,13 @@ public class UiComponentProperties {
 
     public String getGridReadShortcut() {
         return gridReadShortcut;
+    }
+
+    /**
+     * @see #gridContextMenuShowShortcuts
+     */
+    public boolean isGridContextMenuShowShortcuts() {
+        return gridContextMenuShowShortcuts;
     }
 
     public Notification.Position getDefaultNotificationPosition() {

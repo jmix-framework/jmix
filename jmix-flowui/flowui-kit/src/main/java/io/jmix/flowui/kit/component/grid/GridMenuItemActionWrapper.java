@@ -19,6 +19,10 @@ package io.jmix.flowui.kit.component.grid;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
+import com.vaadin.flow.component.shared.HasPrefix;
+import com.vaadin.flow.component.shared.HasSuffix;
+import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
@@ -26,14 +30,17 @@ import io.jmix.flowui.kit.action.Action;
 import jakarta.annotation.Nullable;
 import java.util.Optional;
 
-public class GridMenuItemActionWrapper<T> implements HasText, HasComponents, HasEnabled {
+public class GridMenuItemActionWrapper<T> implements HasText, HasComponents, HasEnabled, HasPrefix, HasSuffix,
+        HasTooltip {
 
     protected final GridMenuItem<T> menuItem;
+    protected GridContextMenuItemComponent component;
 
     protected GridMenuItemActionSupport actionSupport;
 
-    public GridMenuItemActionWrapper(GridMenuItem<T> menuItem) {
+    public GridMenuItemActionWrapper(GridMenuItem<T> menuItem, GridContextMenuItemComponent component) {
         this.menuItem = menuItem;
+        this.component = component;
     }
 
     public GridMenuItem<T> getMenuItem() {
@@ -47,6 +54,10 @@ public class GridMenuItemActionWrapper<T> implements HasText, HasComponents, Has
 
     public void setAction(@Nullable Action action) {
         getActionSupport().setAction(action);
+    }
+
+    public GridContextMenuItemComponent getComponent() {
+        return component;
     }
 
     public Registration addMenuItemClickListener(
@@ -98,22 +109,52 @@ public class GridMenuItemActionWrapper<T> implements HasText, HasComponents, Has
 
     @Override
     public String getText() {
-        return menuItem.getText();
+        return component.getText();
     }
 
     @Override
     public void setText(String text) {
-        menuItem.setText(text);
+        component.setText(text);
+    }
+
+    @Override
+    public Component getPrefixComponent() {
+        return component.getPrefixComponent();
+    }
+
+    @Override
+    public void setPrefixComponent(Component prefixComponent) {
+        component.setPrefixComponent(prefixComponent);
+    }
+
+    @Override
+    public Component getSuffixComponent() {
+        return component.getSuffixComponent();
+    }
+
+    @Override
+    public void setSuffixComponent(Component suffixComponent) {
+        component.setSuffixComponent(suffixComponent);
+    }
+
+    @Override
+    public Tooltip getTooltip() {
+        return component.getTooltip();
+    }
+
+    @Override
+    public Tooltip setTooltipText(String text) {
+        return component.setTooltipText(text);
     }
 
     @Override
     public WhiteSpace getWhiteSpace() {
-        return menuItem.getWhiteSpace();
+        return component.getWhiteSpace();
     }
 
     @Override
     public void setWhiteSpace(WhiteSpace value) {
-        menuItem.setWhiteSpace(value);
+        component.setWhiteSpace(value);
     }
 
     @Override
@@ -161,5 +202,9 @@ public class GridMenuItemActionWrapper<T> implements HasText, HasComponents, Has
 
     protected GridMenuItemActionSupport createActionSupport() {
         return new GridMenuItemActionSupport(this);
+    }
+
+    public boolean isEmpty() {
+        return component.isEmpty();
     }
 }

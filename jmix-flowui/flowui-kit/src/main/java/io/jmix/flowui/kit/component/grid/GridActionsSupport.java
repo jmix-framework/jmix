@@ -51,11 +51,11 @@ public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHol
     }
 
     protected void addContextMenuItem(Action action, int index) {
-        String text = action.getText();
+        GridContextMenuItemComponent component = new GridContextMenuItemComponent();
 
-        GridMenuItem<T> menuItem = contextMenu.addItemAtIndex(index, text);
+        GridMenuItem<T> menuItem = contextMenu.addItemAtIndex(index, component);
 
-        GridMenuItemActionWrapper<T> wrapper = new GridMenuItemActionWrapper<>(menuItem);
+        GridMenuItemActionWrapper<T> wrapper = new GridMenuItemActionWrapper<>(menuItem, component);
         wrapper.setAction(action);
 
         actionBinding.put(action, wrapper);

@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.component.grid;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.contextmenu.MenuManager;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.grid.contextmenu.GridSubMenu;
@@ -29,6 +30,13 @@ import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
 import jakarta.annotation.Nullable;
 
 public class JmixGridContextMenu<E> extends GridContextMenu<E> {
+
+    public JmixGridContextMenu() {
+    }
+
+    public JmixGridContextMenu(Grid<E> target) {
+        super(target);
+    }
 
     public GridMenuItem<E> addItemAtIndex(int index, String text) {
         return getItems().size() == index

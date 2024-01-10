@@ -21,6 +21,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSelectionModel;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.selection.SelectionListener;
@@ -425,26 +426,17 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     }
 
     @Override
-    @Nullable
     public JmixGridContextMenu<E> getContextMenu() {
-        return contextMenu;
-    }
-
-    @Override
-    public void setContextMenu(@Nullable JmixGridContextMenu<E> contextMenu) {
-        if (this.contextMenu != null) {
-            this.contextMenu.setTarget(null);
-        }
-        if (contextMenu != null) {
+        if (contextMenu == null) {
+            contextMenu = new JmixGridContextMenu<>();
             contextMenu.setTarget(this);
         }
-        this.contextMenu = contextMenu;
+        return contextMenu;
     }
 
     @Override
-    public JmixGridContextMenu<E> addContextMenu() {
-        JmixGridContextMenu<E> contextMenu = new JmixGridContextMenu<>();
-        setContextMenu(contextMenu);
-        return contextMenu;
+    public GridContextMenu<E> addContextMenu() {
+        throw new UnsupportedOperationException("TreeDataGrid can have only one context menu attached, " +
+                "use getContextMenu() to retrieve it");
     }
 }

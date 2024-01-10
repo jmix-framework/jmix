@@ -23,7 +23,6 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
-import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import org.springframework.lang.Nullable;
 
 public class DataGridActionsSupport<C extends Grid<T> & ListDataComponent<T>, T> extends GridActionsSupport<C, T> {
@@ -36,12 +35,7 @@ public class DataGridActionsSupport<C extends Grid<T> & ListDataComponent<T>, T>
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void initContextMenu() {
         if (component instanceof EnhancedDataGrid enhancedDataGrid) {
-            JmixGridContextMenu<T> contextMenu = enhancedDataGrid.getContextMenu();
-            if (contextMenu == null) {
-                contextMenu = new JmixGridContextMenu<>();
-                enhancedDataGrid.setContextMenu(contextMenu);
-            }
-            this.contextMenu = contextMenu;
+            this.contextMenu = enhancedDataGrid.getContextMenu();
             updateContextMenu();
         } else {
             super.initContextMenu();

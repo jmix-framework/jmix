@@ -21,6 +21,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSelectionModel;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.grid.dataview.GridDataView;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -384,26 +385,16 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     }
 
     @Override
-    @Nullable
     public JmixGridContextMenu<E> getContextMenu() {
+        if (contextMenu == null) {
+            contextMenu = new JmixGridContextMenu<>(this);
+        }
         return contextMenu;
     }
 
     @Override
-    public void setContextMenu(@Nullable JmixGridContextMenu<E> contextMenu) {
-        if (this.contextMenu != null) {
-            this.contextMenu.setTarget(null);
-        }
-        if (contextMenu != null) {
-            contextMenu.setTarget(this);
-        }
-        this.contextMenu = contextMenu;
-    }
-
-    @Override
-    public JmixGridContextMenu<E> addContextMenu() {
-        JmixGridContextMenu<E> contextMenu = new JmixGridContextMenu<>();
-        setContextMenu(contextMenu);
-        return contextMenu;
+    public GridContextMenu<E> addContextMenu() {
+        throw new UnsupportedOperationException("DataGrid can have only one context menu attached, " +
+                "use getContextMenu() to retrieve it");
     }
 }

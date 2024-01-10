@@ -74,16 +74,9 @@ public interface EnhancedDataGrid<T> {
     Map<Grid.Column<T>, Object> getAggregationResults();
 
     /**
-     * @return grid context menu or null if not specified
+     * @return context menu instance attached to the grid
      */
-    @Nullable
     JmixGridContextMenu<T> getContextMenu();
-
-    /**
-     * Removes existing context menu and sets specified menu if it's not null.
-     * @param contextMenu context menu to set
-     */
-    void setContextMenu(@Nullable JmixGridContextMenu<T> contextMenu);
 
     /**
      * Defines the position of aggregation row.

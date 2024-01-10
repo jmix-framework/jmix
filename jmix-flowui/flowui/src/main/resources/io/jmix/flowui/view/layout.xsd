@@ -2818,6 +2818,8 @@
                                     <xs:element name="action" type="gridAction"/>
                                 </xs:choice>
                             </xs:sequence>
+
+                            <xs:attribute name="showInContextMenuEnabled" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="columns">

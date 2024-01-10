@@ -101,7 +101,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadData();
         loadMultiSort();
 
-        getActionLoaderSupport().loadActions(resultComponent, element);
+        loadActions();
     }
 
     protected void loadData() {
@@ -632,4 +632,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected abstract void setupDataProvider(GridDataHolder holder);
+
+    protected void loadActions() {
+        getActionLoaderSupport().loadActions(resultComponent, element);
+    }
 }

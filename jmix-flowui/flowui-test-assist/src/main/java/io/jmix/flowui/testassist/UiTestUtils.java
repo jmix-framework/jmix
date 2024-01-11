@@ -18,6 +18,7 @@ package io.jmix.flowui.testassist;
 
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.view.View;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -53,5 +54,14 @@ public final class UiTestUtils {
                     " navigation was performed before getting current view");
         }
         return (T) targetsChain.get(0);
+    }
+
+    /**
+     * Returns a component defined in the view by the component id.
+     *
+     * @throws IllegalArgumentException if not found
+     */
+    public static <T> T getComponent(View<?> view, String componentId) {
+        return (T) UiComponentUtils.getComponent(view, componentId);
     }
 }

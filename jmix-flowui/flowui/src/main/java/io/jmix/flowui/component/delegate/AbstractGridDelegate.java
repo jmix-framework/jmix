@@ -162,7 +162,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             }
         });
 
-        Shortcuts.addShortcutListener(component, this::handleEnterPress, Key.ENTER);
+        Shortcuts.addShortcutListener(component, this::handleEnterPress, Key.ENTER)
+                .listenOn(component);
     }
 
     @Nullable

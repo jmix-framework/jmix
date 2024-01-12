@@ -17,18 +17,26 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Splitter;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnRendering;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.NestedNullBehavior;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
+import com.vaadin.flow.component.grid.contextmenu.GridSubMenu;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.grid.editor.Editor;
+import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
-import io.jmix.core.*;
+import io.jmix.core.ClassManager;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanProperty;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -43,7 +51,15 @@ import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.model.*;
+import io.jmix.flowui.kit.component.grid.GridContextMenuItemComponent;
+import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.model.CollectionPropertyContainer;
+import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.model.HasLoader;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.InstanceLoader;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.component.datagrid.RendererProvider;
@@ -56,8 +72,16 @@ import org.dom4j.datatype.DatatypeElementFactory;
 import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -101,6 +125,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadData();
         loadMultiSort();
 
+        loadContextMenu();
         loadActions();
     }
 
@@ -632,6 +657,63 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected abstract void setupDataProvider(GridDataHolder holder);
+
+    protected void loadContextMenu() {
+        Element contextMenuElement = element.element("contextMenu");
+        if (contextMenuElement == null) {
+            return;
+        }
+        JmixGridContextMenu<?> contextMenu = resultComponent.getContextMenu();
+
+        loadId(contextMenu, contextMenuElement);
+        loadVisible(contextMenu, contextMenuElement);
+
+        componentLoader().loadCss(contextMenu, contextMenuElement);
+        componentLoader().loadClassNames(contextMenu, contextMenuElement);
+        componentLoader().loadEnabled(contextMenu, contextMenuElement);
+
+        for (Element childItemElement : contextMenuElement.elements()) {
+            addContextMenuItem(contextMenu::addItem, contextMenu::add, childItemElement);
+        }
+    }
+
+    protected void addContextMenuItem(Function<Component, GridMenuItem<?>> menuItemGenerator,
+                                      Consumer<Component> separatorConsumer,
+                                      Element childElement) {
+        switch (childElement.getName()) {
+            case "item":
+                GridContextMenuItemComponent component = new GridContextMenuItemComponent();
+                GridMenuItem<?> menuItem = menuItemGenerator.apply(component);
+                loadContextMenuItem(component, menuItem, childElement);
+                break;
+            case "separator":
+                separatorConsumer.accept(new Hr());
+                break;
+            default:
+                throw new GuiDevelopmentException("Unknown context menu child element: " + childElement.getName(),
+                        context, "Component ID", resultComponent.getId());
+        }
+    }
+
+    protected void loadContextMenuItem(GridContextMenuItemComponent component,
+                                       GridMenuItem<?> menuItem,
+                                       Element itemElement) {
+        loadId(menuItem, itemElement);
+        loadVisible(menuItem, itemElement);
+
+        componentLoader().loadCss(menuItem, itemElement);
+        componentLoader().loadEnabled(menuItem, itemElement);
+        componentLoader().loadClassNames(menuItem, itemElement);
+
+        componentLoader().loadText(component, itemElement);
+        componentLoader().loadWhiteSpace(component, itemElement);
+        componentLoader().loadIcon(itemElement, component::setPrefixComponent);
+
+        GridSubMenu<?> subMenu = menuItem.getSubMenu();
+        for (Element contextMenuChildItemElement : itemElement.elements()) {
+            addContextMenuItem(subMenu::addItem, subMenu::add, contextMenuChildItemElement);
+        }
+    }
 
     protected void loadActions() {
         getActionLoaderSupport().loadActions(resultComponent, element);

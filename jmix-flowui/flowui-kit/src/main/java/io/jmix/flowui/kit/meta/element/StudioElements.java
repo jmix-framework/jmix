@@ -24,7 +24,12 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
-import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo;
+import io.jmix.flowui.kit.meta.StudioElement;
+import io.jmix.flowui.kit.meta.StudioProperty;
+import io.jmix.flowui.kit.meta.StudioPropertyType;
+import io.jmix.flowui.kit.meta.StudioSupplyHandler;
+import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
 public interface StudioElements {
@@ -846,4 +851,54 @@ public interface StudioElements {
             }
     )
     void gridColumnVisibilityMenuItem();
+
+    @StudioElement(
+            name = "ContextMenu",
+            xmlElement = "contextMenu",
+            classFqn = "io.jmix.flowui.kit.component.grid.JmixGridContextMenu",
+            unlimitedCount = false,
+            target = {"io.jmix.flowui.component.grid.DataGrid", "io.jmix.flowui.component.grid.TreeDataGrid"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+    )
+    void gridContextMenu();
+
+    @StudioElement(
+            name = "Item",
+            xmlElement = "item",
+            classFqn = "com.vaadin.flow.component.grid.contextmenu.GridMenuItem",
+            target = {"io.jmix.flowui.kit.component.grid.JmixGridContextMenu",
+                    "com.vaadin.flow.component.grid.contextmenu.GridMenuItem"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "whiteSpace", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
+                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
+                                    "INITIAL"})
+            }
+    )
+    void gridContextMenuItem();
+
+    @StudioElement(
+            name = "Separator",
+            xmlElement = "separator",
+            target = {"io.jmix.flowui.kit.component.grid.JmixGridContextMenu",
+                    "com.vaadin.flow.component.grid.contextmenu.GridMenuItem"}
+    )
+    void gridContextMenuSeparator();
 }

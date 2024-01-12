@@ -62,14 +62,23 @@ public class GridContextMenuItemComponent extends Composite<Div> implements HasT
 
     @Override
     public void setText(String text) {
-        updateContent(prefixComponent, text, suffixComponent);
+        if (Strings.isNullOrEmpty(text)) {
+            updateContent(prefixComponent, null, suffixComponent);
+        } else {
+            if (textComponent == null) {
+                textComponent = new Span(text);
+            } else {
+                textComponent.setText(text);
+            }
+            updateContent(prefixComponent, textComponent, suffixComponent);
+        }
     }
 
     protected void updateContent(@Nullable Component prefixComponent,
-                                 @Nullable String text,
+                                 @Nullable Span textComponent,
                                  @Nullable Component suffixComponent) {
         setPrefixComponentInternal(prefixComponent);
-        setTextComponentInternal(text);
+        setTextComponentInternal(textComponent);
         setSuffixComponentInternal(suffixComponent);
     }
 
@@ -86,16 +95,14 @@ public class GridContextMenuItemComponent extends Composite<Div> implements HasT
         }
     }
 
-    protected void setTextComponentInternal(@Nullable String title) {
+    protected void setTextComponentInternal(@Nullable Span textComponent) {
         if (this.textComponent != null) {
             this.textComponent.removeClassName(TEXT_COMPONENT_CLASS_NAME);
             getContent().remove(this.textComponent);
         }
 
-        if (Strings.isNullOrEmpty(title)) {
-            this.textComponent = null;
-        } else {
-            this.textComponent = new Span(title);
+        this.textComponent = textComponent;
+        if (textComponent != null) {
             this.textComponent.addClassName(TEXT_COMPONENT_CLASS_NAME);
             getContent().add(textComponent);
         }
@@ -128,7 +135,7 @@ public class GridContextMenuItemComponent extends Composite<Div> implements HasT
 
     @Override
     public void setPrefixComponent(@Nullable Component component) {
-        updateContent(component, getText(), suffixComponent);
+        updateContent(component, textComponent, suffixComponent);
     }
 
     @Override
@@ -139,7 +146,7 @@ public class GridContextMenuItemComponent extends Composite<Div> implements HasT
 
     @Override
     public void setSuffixComponent(@Nullable Component component) {
-        updateContent(prefixComponent, getText(), component);
+        updateContent(prefixComponent, textComponent, component);
     }
 
     @Override

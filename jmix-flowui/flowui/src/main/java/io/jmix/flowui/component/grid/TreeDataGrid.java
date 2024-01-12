@@ -34,6 +34,7 @@ import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
 import io.jmix.flowui.component.SupportsEnterPress;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
@@ -438,5 +439,22 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     public GridContextMenu<E> addContextMenu() {
         throw new UnsupportedOperationException("TreeDataGrid can have only one context menu attached, " +
                 "use getContextMenu() to retrieve it");
+    }
+
+    @Nullable
+    @Override
+    public Object getSubPart(String name) {
+        Object column = super.getSubPart(name);
+        if (column != null) {
+            return column;
+        }
+        if (contextMenu != null) {
+            if (UiComponentUtils.sameId(contextMenu, name)) {
+                return contextMenu;
+            } else {
+                return contextMenu.getSubPart(name);
+            }
+        }
+        return null;
     }
 }

@@ -25,11 +25,14 @@ import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.grid.contextmenu.GridSubMenu;
 import com.vaadin.flow.function.SerializableBiFunction;
 import com.vaadin.flow.function.SerializableRunnable;
+import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
-
 import jakarta.annotation.Nullable;
+import org.apache.commons.lang3.ArrayUtils;
 
-public class JmixGridContextMenu<E> extends GridContextMenu<E> {
+import java.util.Collection;
+
+public class JmixGridContextMenu<E> extends GridContextMenu<E> implements HasSubParts {
 
     public JmixGridContextMenu() {
     }
@@ -78,5 +81,70 @@ public class JmixGridContextMenu<E> extends GridContextMenu<E> {
     @Override
     protected JmixMenuManager<GridContextMenu<E>, GridMenuItem<E>, GridSubMenu<E>> getMenuManager() {
         return (JmixMenuManager<GridContextMenu<E>, GridMenuItem<E>, GridSubMenu<E>>) super.getMenuManager();
+    }
+
+    /**
+     * @return a menu item with id matching the name if exists.
+     */
+    @Nullable
+    @Override
+    public Object getSubPart(String name) {
+        String[] ids = name.split("\\.");
+        if (ids.length == 0) {
+            return null;
+        } else if (ids.length == 1) {
+            return findMenuItemByIdRecursive(getItems(), ids[0]);
+        } else {
+            if (ids[0].equals(getId().orElse(null))) {
+                String[] childIds = ArrayUtils.subarray(ids, 1, ids.length);
+                return findMenuItemByFullPathRecursive(getItems(), childIds);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Performs recursive search for a menu item by single id (for example: "item2")
+     */
+    @Nullable
+    protected GridMenuItem<E> findMenuItemByIdRecursive(Collection<GridMenuItem<E>> childItems, String id) {
+        for (GridMenuItem<E> childItem : childItems) {
+            if (id.equals(childItem.getId().orElse(null))) {
+                return childItem;
+            }
+        }
+        for (GridMenuItem<E> childItem : childItems) {
+            GridMenuItem<E> item = findMenuItemByIdRecursive(childItem.getSubMenu().getItems(), id);
+            if (item != null) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Performs recursive search for a menu item by id path parts (for example: ["cm1", "menu1", "item2"])
+     */
+    @Nullable
+    protected GridMenuItem<E> findMenuItemByFullPathRecursive(Collection<GridMenuItem<E>> childItems, String[] ids) {
+        if (ids.length == 0) {
+            return null;
+        } else {
+            GridMenuItem<E> sameIdChildItem = childItems.stream()
+                    .filter(item -> ids[0].equals(item.getId().orElse(null)))
+                    .findAny()
+                    .orElse(null);
+            if (ids.length == 1) {
+                return sameIdChildItem;
+            } else {
+                if (sameIdChildItem == null) {
+                    return null;
+                } else {
+                    String[] childIds = ArrayUtils.subarray(ids, 1, ids.length);
+                    return findMenuItemByFullPathRecursive(sameIdChildItem.getSubMenu().getItems(), childIds);
+                }
+            }
+        }
     }
 }

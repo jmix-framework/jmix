@@ -854,6 +854,7 @@ public interface StudioElements {
 
     @StudioElement(
             name = "ContextMenu",
+            icon = "io/jmix/flowui/kit/meta/icon/element/contextMenu.svg",
             xmlElement = "contextMenu",
             classFqn = "io.jmix.flowui.kit.component.grid.JmixGridContextMenu",
             unlimitedCount = false,
@@ -872,6 +873,7 @@ public interface StudioElements {
 
     @StudioElement(
             name = "Item",
+            icon = "io/jmix/flowui/kit/meta/icon/element/contextMenuItem.svg",
             xmlElement = "item",
             classFqn = "com.vaadin.flow.component.grid.contextmenu.GridMenuItem",
             target = {"io.jmix.flowui.kit.component.grid.JmixGridContextMenu",
@@ -898,6 +900,7 @@ public interface StudioElements {
 
     @StudioElement(
             name = "Separator",
+            icon = "io/jmix/flowui/kit/meta/icon/element/contextMenuSeparator.svg",
             xmlElement = "separator",
             target = {"io.jmix.flowui.kit.component.grid.JmixGridContextMenu",
                     "com.vaadin.flow.component.grid.contextmenu.GridMenuItem"}

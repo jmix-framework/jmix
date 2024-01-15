@@ -33,6 +33,7 @@ import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.SupportsStatusChangeHandler.StatusContext;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.*;
@@ -576,6 +577,7 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
         public Component apply(EditComponentGenerationContext<T> generationContext) {
             ComponentGenerationContext context = new ComponentGenerationContext(getEntityMetaClass(), property);
             context.setValueSource(generationContext.getValueSourceProvider().getValueSource(property));
+            context.setTargetClass(DataGrid.class);
 
             Component editComponent = getUiComponentsGenerator().generate(context);
 

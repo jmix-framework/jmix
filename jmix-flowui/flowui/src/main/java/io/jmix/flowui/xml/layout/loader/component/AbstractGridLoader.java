@@ -51,7 +51,7 @@ import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.kit.component.grid.GridContextMenuItemComponent;
+import io.jmix.flowui.kit.component.grid.GridMenuItemActionWrapper;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
@@ -61,6 +61,7 @@ import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.InstanceLoader;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
+import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.component.datagrid.RendererProvider;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
@@ -677,13 +678,15 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void addContextMenuItem(Function<Component, GridMenuItem<?>> menuItemGenerator,
                                       Consumer<Component> separatorConsumer,
                                       Element childElement) {
         switch (childElement.getName()) {
             case "item":
-                GridContextMenuItemComponent component = new GridContextMenuItemComponent();
-                GridMenuItem<?> menuItem = menuItemGenerator.apply(component);
+                GridMenuItemActionWrapper<?> component = new GridMenuItemActionWrapper<>();
+                GridMenuItem menuItem = menuItemGenerator.apply(component);
+                component.setMenuItem(menuItem);
                 loadContextMenuItem(component, menuItem, childElement);
                 break;
             case "separator":
@@ -695,7 +698,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
     }
 
-    protected void loadContextMenuItem(GridContextMenuItemComponent component,
+    protected void loadContextMenuItem(GridMenuItemActionWrapper<?> component,
                                        GridMenuItem<?> menuItem,
                                        Element itemElement) {
         loadId(menuItem, itemElement);
@@ -709,10 +712,18 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         componentLoader().loadWhiteSpace(component, itemElement);
         componentLoader().loadIcon(itemElement, component::setPrefixComponent);
 
+        loadContextMenuItemAction(component, itemElement);
+
         GridSubMenu<?> subMenu = menuItem.getSubMenu();
         for (Element contextMenuChildItemElement : itemElement.elements()) {
             addContextMenuItem(subMenu::addItem, subMenu::add, contextMenuChildItemElement);
         }
+    }
+
+    protected void loadContextMenuItemAction(GridMenuItemActionWrapper<?> component, Element element) {
+        loadString(element, "action")
+                .ifPresent(actionId -> getComponentContext().addInitTask(
+                        new AssignActionInitTask<>(component, actionId, getComponentContext().getView())));
     }
 
     protected void loadActions() {

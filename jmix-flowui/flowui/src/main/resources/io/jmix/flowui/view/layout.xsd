@@ -2680,6 +2680,7 @@
             <xs:element name="separator" minOccurs="0"/>
         </xs:choice>
 
+        <xs:attribute name="action" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="css" type="xs:string"/>
 

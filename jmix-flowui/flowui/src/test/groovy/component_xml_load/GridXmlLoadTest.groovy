@@ -16,20 +16,16 @@
 
 package component_xml_load
 
-import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
-import com.vaadin.flow.component.grid.contextmenu.GridMenuItem
 import com.vaadin.flow.component.grid.dnd.GridDropMode
 import com.vaadin.flow.component.html.Hr
-import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import component_xml_load.screen.GridView
 import io.jmix.core.DataManager
 import io.jmix.flowui.component.grid.EnhancedDataGrid
-import io.jmix.flowui.kit.component.grid.GridContextMenuItemComponent
-import io.jmix.flowui.kit.component.grid.JmixGridContextMenu
+import io.jmix.flowui.kit.component.grid.GridMenuItemActionWrapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -160,11 +156,11 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             enabled
             visible
             menuItemComponent != null
-            menuItemComponent instanceof GridContextMenuItemComponent
-            (menuItemComponent as GridContextMenuItemComponent).prefixComponent.element.getAttribute("icon") ==
+            menuItemComponent instanceof GridMenuItemActionWrapper<?>
+            (menuItemComponent as GridMenuItemActionWrapper<?>).prefixComponent.element.getAttribute("icon") ==
                     VaadinIcon.ABACUS.create().element.getAttribute("icon")
-            (menuItemComponent as GridContextMenuItemComponent).text == "Menu 1"
-            (menuItemComponent as GridContextMenuItemComponent).whiteSpace == HasText.WhiteSpace.NOWRAP
+            (menuItemComponent as GridMenuItemActionWrapper<?>).text == "Menu 1"
+            (menuItemComponent as GridMenuItemActionWrapper<?>).whiteSpace == HasText.WhiteSpace.NOWRAP
         }
 
         def menu1Items = menu1Item.getSubMenu().getItems()
@@ -174,8 +170,8 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(item1) {
             id.get() == "item1"
             item1Component != null
-            item1Component instanceof GridContextMenuItemComponent
-            (item1Component as GridContextMenuItemComponent).text == "Item 1"
+            item1Component instanceof GridMenuItemActionWrapper<?>
+            (item1Component as GridMenuItemActionWrapper<?>).text == "Item 1"
         }
 
         def item2 = menu1Items.get(1)
@@ -183,8 +179,8 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(item2) {
             id.get() == "item2"
             item2Component != null
-            item2Component instanceof GridContextMenuItemComponent
-            (item2Component as GridContextMenuItemComponent).text == "Item 2"
+            item2Component instanceof GridMenuItemActionWrapper<?>
+            (item2Component as GridMenuItemActionWrapper<?>).text == "Item 2"
         }
 
         //separator
@@ -196,8 +192,8 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(item3) {
             id.get() == "item3"
             item3Component != null
-            item3Component instanceof GridContextMenuItemComponent
-            (item3Component as GridContextMenuItemComponent).text == "Item 3"
+            item3Component instanceof GridMenuItemActionWrapper<?>
+            (item3Component as GridMenuItemActionWrapper<?>).text == "Item 3"
         }
 
         //separator
@@ -299,11 +295,11 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             enabled
             visible
             menuItemComponent != null
-            menuItemComponent instanceof GridContextMenuItemComponent
-            (menuItemComponent as GridContextMenuItemComponent).prefixComponent.element.getAttribute("icon") ==
+            menuItemComponent instanceof GridMenuItemActionWrapper<?>
+            (menuItemComponent as GridMenuItemActionWrapper<?>).prefixComponent.element.getAttribute("icon") ==
                     VaadinIcon.ABACUS.create().element.getAttribute("icon")
-            (menuItemComponent as GridContextMenuItemComponent).text == "Menu 1"
-            (menuItemComponent as GridContextMenuItemComponent).whiteSpace == HasText.WhiteSpace.NOWRAP
+            (menuItemComponent as GridMenuItemActionWrapper<?>).text == "Menu 1"
+            (menuItemComponent as GridMenuItemActionWrapper<?>).whiteSpace == HasText.WhiteSpace.NOWRAP
         }
 
         def menu1Items = menu1Item.getSubMenu().getItems()
@@ -313,8 +309,8 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(item1) {
             id.get() == "item1"
             item1Component != null
-            item1Component instanceof GridContextMenuItemComponent
-            (item1Component as GridContextMenuItemComponent).text == "Item 1"
+            item1Component instanceof GridMenuItemActionWrapper<?>
+            (item1Component as GridMenuItemActionWrapper<?>).text == "Item 1"
         }
 
         def item2 = menu1Items.get(1)
@@ -322,8 +318,8 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(item2) {
             id.get() == "item2"
             item2Component != null
-            item2Component instanceof GridContextMenuItemComponent
-            (item2Component as GridContextMenuItemComponent).text == "Item 2"
+            item2Component instanceof GridMenuItemActionWrapper<?>
+            (item2Component as GridMenuItemActionWrapper<?>).text == "Item 2"
         }
 
         //separator
@@ -335,8 +331,8 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(item3) {
             id.get() == "item3"
             item3Component != null
-            item3Component instanceof GridContextMenuItemComponent
-            (item3Component as GridContextMenuItemComponent).text == "Item 3"
+            item3Component instanceof GridMenuItemActionWrapper<?>
+            (item3Component as GridMenuItemActionWrapper<?>).text == "Item 3"
         }
 
         //separator

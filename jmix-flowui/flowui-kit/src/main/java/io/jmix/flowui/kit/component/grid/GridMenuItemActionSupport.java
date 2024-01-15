@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.component.grid;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
@@ -32,6 +33,7 @@ public class GridMenuItemActionSupport {
     protected final GridMenuItemActionWrapper<?> menuItem;
 
     protected Action action;
+    protected boolean overrideComponentProperties;
 
     protected Registration registration;
     protected Registration actionPropertyChangeRegistration;
@@ -46,31 +48,43 @@ public class GridMenuItemActionSupport {
     }
 
     public void setAction(@Nullable Action action) {
-        if (Objects.equals(this.action, action)) {
+        setAction(action, true);
+    }
+
+    public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
+        if (Objects.equals(this.action, action) && this.overrideComponentProperties == overrideComponentProperties) {
             return;
         }
 
         removeRegistrations();
 
         this.action = action;
+        this.overrideComponentProperties = overrideComponentProperties;
 
         if (action != null) {
-            menuItem.setText(action.getText());
-            menuItem.setEnabled(action.isEnabled());
-            menuItem.setVisible(action.isVisible());
-            menuItem.setTooltipText(action.getDescription());
-            menuItem.setPrefixComponent(createIconComponent(action.getIcon()));
-            //todo app property
-            if (true) {
-                menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
+            GridMenuItem<?> contextMenuItem = menuItem.getMenuItem();
+            if (overrideComponentProperties) {
+                menuItem.setText(action.getText());
+                contextMenuItem.setEnabled(action.isEnabled());
+                contextMenuItem.setVisible(action.isVisible());
+                menuItem.setTooltipText(action.getDescription());
+                if (isShowActionIconEnabled()) {
+                    menuItem.setPrefixComponent(createIconComponent(action.getIcon()));
+                }
+                if (isShowActionShortcutEnabled()) {
+                    menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
+                }
+                actionPropertyChangeRegistration = addPropertyChangeListener();
             }
-
-            registration = menuItem.addMenuItemClickListener(event ->
+            registration = contextMenuItem.addMenuItemClickListener(event ->
                     action.actionPerform(event.getSource()));
-            actionPropertyChangeRegistration = addPropertyChangeListener();
         }
 
         updateVisible();
+    }
+
+    protected boolean isShowActionIconEnabled() {
+        return false;
     }
 
     @Nullable
@@ -85,17 +99,21 @@ public class GridMenuItemActionSupport {
         return ComponentUtils.parseIcon(iconAttribute);
     }
 
+    protected boolean isShowActionShortcutEnabled() {
+        return false;
+    }
+
     @Nullable
     protected Component createShortcutComponent(@Nullable KeyCombination keyCombination) {
         return keyCombination == null ? null : new Span(keyCombination.format());
     }
 
     protected void updateVisible() {
-        menuItem.setVisible(
-                !menuItem.isEmpty()
-                        && action != null
-                        && action.isVisible()
-        );
+        GridMenuItem<?> contextMenuItem = menuItem.getMenuItem();
+        if (contextMenuItem != null) {
+            boolean visibleByAction = !overrideComponentProperties || (action != null && action.isVisible());
+            contextMenuItem.setVisible(!menuItem.isEmpty() && visibleByAction);
+        }
     }
 
     protected void removeRegistrations() {
@@ -115,13 +133,16 @@ public class GridMenuItemActionSupport {
     protected Registration addPropertyChangeListener() {
         return action.addPropertyChangeListener(event -> {
             String propertyName = event.getPropertyName();
+            GridMenuItem<?> contextMenuItem = menuItem.getMenuItem();
             switch (propertyName) {
                 case Action.PROP_TEXT:
                     menuItem.setText(action.getText());
                     updateVisible();
                     break;
                 case Action.PROP_ENABLED:
-                    menuItem.setEnabled(action.isEnabled());
+                    if (contextMenuItem != null) {
+                        contextMenuItem.setEnabled(action.isEnabled());
+                    }
                     break;
                 case Action.PROP_VISIBLE:
                     updateVisible();

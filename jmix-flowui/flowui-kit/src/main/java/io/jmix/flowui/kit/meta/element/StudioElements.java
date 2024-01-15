@@ -877,6 +877,8 @@ public interface StudioElements {
             target = {"io.jmix.flowui.kit.component.grid.JmixGridContextMenu",
                     "com.vaadin.flow.component.grid.contextmenu.GridMenuItem"},
             properties = {
+                    @StudioProperty(xmlAttribute = "action", type = StudioPropertyType.ACTION_REF,
+                            classFqn = "io.jmix.flowui.kit.action.Action"),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,

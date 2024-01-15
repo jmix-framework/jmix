@@ -413,10 +413,10 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         return new DataGridEditorImpl<>(this, applicationContext);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     @Override
     protected GridActionsSupport<JmixTreeGrid<E>, E> createActionsSupport() {
-        return new DataGridActionsSupport(this);
+        return applicationContext.getBean(DataGridActionsSupport.class, this);
     }
 
     protected void onAfterApplyColumnSecurity(AbstractGridDelegate.ColumnSecurityContext<E> context) {

@@ -372,10 +372,10 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return new DataGridEditorImpl<>(this, applicationContext);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     @Override
     protected GridActionsSupport<JmixGrid<E>, E> createActionsSupport() {
-        return new DataGridActionsSupport(this);
+        return applicationContext.getBean(DataGridActionsSupport.class, this);
     }
 
     protected void onAfterApplyColumnSecurity(AbstractGridDelegate.ColumnSecurityContext<E> context) {

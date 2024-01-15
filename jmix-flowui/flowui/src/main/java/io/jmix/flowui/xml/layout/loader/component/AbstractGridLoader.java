@@ -45,13 +45,13 @@ import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
+import io.jmix.flowui.component.grid.GridContextMenuItemComponent;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.data.aggregation.AggregationStrategy;
 import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.kit.component.grid.GridMenuItemActionWrapper;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
@@ -684,7 +684,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                                       Element childElement) {
         switch (childElement.getName()) {
             case "item":
-                GridMenuItemActionWrapper<?> component = new GridMenuItemActionWrapper<>();
+                GridContextMenuItemComponent<?> component = new GridContextMenuItemComponent<>();
+                component.setApplicationContext(applicationContext);
                 GridMenuItem menuItem = menuItemGenerator.apply(component);
                 component.setMenuItem(menuItem);
                 loadContextMenuItem(component, menuItem, childElement);
@@ -698,7 +699,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
     }
 
-    protected void loadContextMenuItem(GridMenuItemActionWrapper<?> component,
+    protected void loadContextMenuItem(GridContextMenuItemComponent<?> component,
                                        GridMenuItem<?> menuItem,
                                        Element itemElement) {
         loadId(menuItem, itemElement);
@@ -720,7 +721,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
     }
 
-    protected void loadContextMenuItemAction(GridMenuItemActionWrapper<?> component, Element element) {
+    protected void loadContextMenuItemAction(GridContextMenuItemComponent<?> component, Element element) {
         loadString(element, "action")
                 .ifPresent(actionId -> getComponentContext().addInitTask(
                         new AssignActionInitTask<>(component, actionId, getComponentContext().getView())));

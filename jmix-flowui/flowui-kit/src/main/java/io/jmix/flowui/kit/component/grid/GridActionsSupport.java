@@ -46,13 +46,17 @@ public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHol
     }
 
     protected void addContextMenuItem(Action action, int index) {
-        GridMenuItemActionWrapper<T> wrapper = new GridMenuItemActionWrapper<>();
+        GridMenuItemActionWrapper<T> wrapper = createContextMenuItemComponent();
         GridMenuItem<T> menuItem = getContextMenu().addItemAtIndex(index, wrapper);
 
         wrapper.setMenuItem(menuItem);
         wrapper.setAction(action);
 
         actionBinding.put(action, wrapper);
+    }
+
+    protected GridMenuItemActionWrapper<T> createContextMenuItemComponent() {
+        return new GridMenuItemActionWrapper<>();
     }
 
     protected JmixGridContextMenu<T> getContextMenu() {
@@ -105,7 +109,7 @@ public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHol
     }
 
     /**
-     * @return true if actions are showed in grid context menu
+     * @return true if actions are showed in grid context menu, false otherwise
      */
     public boolean isShowActionsInContextMenuEnabled() {
         return showActionsInContextMenuEnabled;

@@ -18,6 +18,7 @@ package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
+import io.jmix.flowui.util.WebBrowserTools;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -33,6 +34,14 @@ public class LogoutSupport {
     }
 
     public void logout() {
+        // window's 'beforeunload' event is triggered by changing Page's location,
+        // so we need to remove 'beforeunload' event listener, because logout happens
+        // anyway, even if a user stops browser tab closing, as a result it breaks app
+        WebBrowserTools.allowBrowserTabClosing(UI.getCurrent())
+                .then(jsonValue -> doLogout());
+    }
+
+    protected void doLogout() {
         String contextPath = servletContext == null ? null : servletContext.getContextPath();
         String logoutPath = Strings.isNullOrEmpty(contextPath) ? "/logout" : contextPath + "/logout";
 

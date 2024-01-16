@@ -16,9 +16,13 @@
 
 package io.jmix.flowui.util;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import io.jmix.flowui.view.View;
 
+/**
+ * Utility class for web browser related functionality.
+ */
 public final class WebBrowserTools {
 
     public static final String BEFORE_UNLOAD_LISTENER = "jmixBeforeUnloadListener";
@@ -26,14 +30,50 @@ public final class WebBrowserTools {
     private WebBrowserTools() {
     }
 
+    /**
+     * Subscribes on window's beforeunload event to prevent browser tab closing.
+     *
+     * @param view a view that calls JavaScript function
+     * @return a pending result from a JavaScript snippet sent to the browser for evaluation.
+     */
     public static PendingJavaScriptResult preventBrowserTabClosing(View<?> view) {
-        return view.getElement().executeJs(
+        return view.getUI()
+                .map(WebBrowserTools::preventBrowserTabClosing)
+                .orElseThrow(() -> new IllegalStateException("Passed view is not attached to a UI"));
+    }
+
+    /**
+     * Removes window's beforeunload event listener that prevents browser tab closing.
+     *
+     * @param view a view that calls JavaScript function
+     * @return a pending result from a JavaScript snippet sent to the browser for evaluation.
+     */
+    public static PendingJavaScriptResult allowBrowserTabClosing(View<?> view) {
+        return view.getUI()
+                .map(WebBrowserTools::allowBrowserTabClosing)
+                .orElseThrow(() -> new IllegalStateException("Passed view is not attached to a UI"));
+    }
+
+    /**
+     * Subscribes on window's beforeunload event to prevent browser tab closing.
+     *
+     * @param ui ui object that calls JavaScript function
+     * @return a pending result from a JavaScript snippet sent to the browser for evaluation.
+     */
+    public static PendingJavaScriptResult preventBrowserTabClosing(UI ui) {
+        return ui.getElement().executeJs(
                 "window.addEventListener('beforeunload', " + BEFORE_UNLOAD_LISTENER + ", {capture: true})"
         );
     }
 
-    public static PendingJavaScriptResult allowBrowserTabClosing(View<?> view) {
-        return view.getElement().executeJs(
+    /**
+     * Removes window's beforeunload event listener that prevents browser tab closing.
+     *
+     * @param ui ui object that calls JavaScript function
+     * @return a pending result from a JavaScript snippet sent to the browser for evaluation.
+     */
+    public static PendingJavaScriptResult allowBrowserTabClosing(UI ui) {
+        return ui.getElement().executeJs(
                 "window.removeEventListener('beforeunload', " + BEFORE_UNLOAD_LISTENER + ", {capture: true})"
         );
     }

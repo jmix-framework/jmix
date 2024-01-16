@@ -19,6 +19,8 @@ package io.jmix.gridexportflowui.exporter.excel;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import io.jmix.core.Entity;
@@ -53,6 +55,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
@@ -152,9 +155,9 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             CellStyle headerCellStyle = wb.createCellStyle();
             headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
             for (DataGrid.Column<?> column : columns) {
-                String caption = column.getHeaderText();
+                String columnHeaderText = getColumnHeaderText(column);
 
-                int countOfReturnSymbols = StringUtils.countMatches(caption, "\n");
+                int countOfReturnSymbols = StringUtils.countMatches(columnHeaderText, "\n");
                 if (countOfReturnSymbols > 0) {
                     maxHeight = Math.max(maxHeight, (countOfReturnSymbols + 1) * sheet.getDefaultRowHeightInPoints());
                     headerCellStyle.setWrapText(true);
@@ -274,6 +277,15 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             com.vaadin.flow.component.Component headerComponent = column.getHeaderComponent();
             if (headerComponent instanceof HasText hasText) {
                 headerText = hasText.getText();
+            } else if (headerComponent instanceof HorizontalLayout horizontalLayout
+                    && horizontalLayout.getComponentCount() == 2
+                    && horizontalLayout.getComponentAt(0) instanceof Span headerFilterTextComponent) {
+                // For cases when a header filter is used.
+                //
+                // Temporary solution.
+                // Will be refactored in version 2.2 due to the allocation of a separate component
+                // for the DataGrid header filter.
+                headerText = headerFilterTextComponent.getText();
             }
             return Strings.nullToEmpty(headerText);
         }

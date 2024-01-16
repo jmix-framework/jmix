@@ -28,14 +28,13 @@ import org.springframework.stereotype.Component;
 @Component 
 public class QuartzFlowUIExceptionHandler extends AbstractUiExceptionHandler {
     @Autowired
-    private final Notifications notifications;
+    protected Notifications notifications;
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
     protected UiViewProperties viewProperties;
-    public QuartzFlowUIExceptionHandler(Notifications notifications) {
+    public QuartzFlowUIExceptionHandler() {
         super(QuartzJobSaveException.class.getName());
-        this.notifications = notifications;
     }
 
     @Override

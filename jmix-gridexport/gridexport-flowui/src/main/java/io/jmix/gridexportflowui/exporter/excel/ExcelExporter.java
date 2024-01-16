@@ -33,6 +33,7 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
+import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
@@ -50,9 +51,9 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
@@ -152,9 +153,9 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             CellStyle headerCellStyle = wb.createCellStyle();
             headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
             for (DataGrid.Column<?> column : columns) {
-                String caption = column.getHeaderText();
+                String columnHeaderText = getColumnHeaderText(column);
 
-                int countOfReturnSymbols = StringUtils.countMatches(caption, "\n");
+                int countOfReturnSymbols = StringUtils.countMatches(columnHeaderText, "\n");
                 if (countOfReturnSymbols > 0) {
                     maxHeight = Math.max(maxHeight, (countOfReturnSymbols + 1) * sheet.getDefaultRowHeightInPoints());
                     headerCellStyle.setWrapText(true);
@@ -273,6 +274,9 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         } else {
             com.vaadin.flow.component.Component headerComponent = column.getHeaderComponent();
             if (headerComponent instanceof HasText hasText) {
+                headerText = hasText.getText();
+            } else if (headerComponent instanceof DataGridHeaderFilter dataGridHeaderFilter
+                    && dataGridHeaderFilter.getHeader() instanceof HasText hasText) {
                 headerText = hasText.getText();
             }
             return Strings.nullToEmpty(headerText);

@@ -35,10 +35,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -127,7 +124,7 @@ public class ListMenuBuilder {
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()));
 
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            menuBarItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
+            menuBarItem.withIcon(parseIcon(menuItem.getIcon()));
         }
         return menuBarItem;
     }
@@ -177,10 +174,25 @@ public class ListMenuBuilder {
                 .withShortcutCombination(menuItem.getShortcutCombination());
 
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            listMenuItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
+            listMenuItem.withIcon(parseIcon(menuItem.getIcon()));
         }
 
         return listMenuItem;
+    }
+
+    protected VaadinIcon parseIcon(String iconString) {
+        if (iconString.contains(":")) {
+            String[] parts = iconString.split(":");
+            if (parts.length != 2) {
+                throw new IllegalStateException("Unexpected number of icon parts, must be two");
+            }
+            if (!parts[0].equals("vaadin")) {
+                throw new IllegalStateException("Unsupported icon collection: '" + parts[0] + "'");
+            }
+            return VaadinIcon.valueOf(parts[1].toUpperCase());
+        } else {
+            return VaadinIcon.valueOf(iconString);
+        }
     }
 
     protected JmixListMenu.MenuItem createBeanMenuItem(MenuItem menuItem) {
@@ -191,7 +203,7 @@ public class ListMenuBuilder {
                 .withShortcutCombination(menuItem.getShortcutCombination());
 
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            beanMenuItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
+            beanMenuItem.withIcon(parseIcon(menuItem.getIcon()));
         }
 
         beanMenuItem.withClickHandler(new MenuCommandExecutor(menuItem, menuItemCommands));

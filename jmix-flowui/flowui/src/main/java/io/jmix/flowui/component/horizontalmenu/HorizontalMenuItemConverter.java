@@ -20,8 +20,8 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.MessageTools;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
 import io.jmix.flowui.menu.MenuItemCommand;
@@ -101,6 +101,7 @@ public class HorizontalMenuItemConverter {
 
     /**
      * Removes trailing child separators
+     *
      * @param parentMenuItem parent menu item to trim
      */
     protected void removeLastChildSeparators(HorizontalMenu.ParentMenuItem parentMenuItem) {
@@ -130,10 +131,9 @@ public class HorizontalMenuItemConverter {
 
     @Nullable
     protected Icon getIcon(MenuItem menuItemDescriptor) {
-        VaadinIcon vaadinIcon = Strings.isNullOrEmpty(menuItemDescriptor.getIcon())
-                ? null
-                : VaadinIcon.valueOf(menuItemDescriptor.getIcon());
-        return vaadinIcon == null ? null : vaadinIcon.create();
+        return !Strings.isNullOrEmpty(menuItemDescriptor.getIcon())
+                ? ComponentUtils.parseIcon(menuItemDescriptor.getIcon())
+                : null;
     }
 
     @Nullable

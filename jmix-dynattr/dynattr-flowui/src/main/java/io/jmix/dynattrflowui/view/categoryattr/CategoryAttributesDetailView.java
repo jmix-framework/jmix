@@ -888,9 +888,14 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         if (Strings.isNullOrEmpty(attribute.getCode()) && !Strings.isNullOrEmpty(attribute.getName())) {
             String categoryName = StringUtils.EMPTY;
             if (attribute.getCategory() != null) {
-                categoryName = StringUtils.defaultString(attribute.getCategory().getName());
+                categoryName = attribute.getCategory().getName();
             }
-            codeField.setValue(StringUtils.deleteWhitespace(categoryName + attribute.getName()));
+            // `org.springframework.util.StringUtils::hasText` simplifies expression `isNotEmpty && isNotBlank` into one `hasText`
+            String fullAttributeCode = org.springframework.util.StringUtils.hasText(categoryName) ?
+                    categoryName  + "_" + attribute.getName() :
+                    attribute.getName();
+
+            codeField.setValue(StringUtils.deleteWhitespace(fullAttributeCode));
         }
     }
 

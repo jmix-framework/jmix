@@ -1125,43 +1125,6 @@ public interface StudioHTMLComponents {
     UnorderedList unorderedList();
 
     @StudioComponent(
-            name = "Label",
-            classFqn = "com.vaadin.flow.component.html.Label",
-            category = "HTML",
-            xmlElement = "label",
-            properties = {
-                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "setFor", type = StudioPropertyType.COMPONENT_REF),
-                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
-                            options = {"normal", "success", "error", "contrast", "primary", "small", "pill", "badge"}),
-                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "whiteSpace", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
-                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
-                                    "INITIAL"}),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
-    )
-    Label label();
-
-    @StudioComponent(
             name = "NativeLabel",
             classFqn = "com.vaadin.flow.component.html.NativeLabel",
             category = "HTML",

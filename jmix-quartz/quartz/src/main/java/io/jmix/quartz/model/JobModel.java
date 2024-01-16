@@ -6,6 +6,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.apache.commons.collections4.CollectionUtils;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.lang.Nullable;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
@@ -22,8 +23,9 @@ public class JobModel {
     private UUID id;
 
     @NotNull
+    @Length(max = 200)
     private String jobName;
-
+    @Length(max = 200)
     private String jobGroup;
 
     @NotNull
@@ -33,6 +35,7 @@ public class JobModel {
 
     private JobSource jobSource;
 
+    @Length(max = 250)
     private String description;
 
     private List<TriggerModel> triggers = new ArrayList<>();

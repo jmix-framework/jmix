@@ -35,7 +35,7 @@ public class VirtualListLoader extends AbstractComponentLoader<JmixVirtualList<?
 
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
-        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
     }
 

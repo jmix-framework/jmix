@@ -60,6 +60,7 @@ public interface StudioSearchComponents {
                             classFqn = "io.jmix.search.searching.SearchStrategy",
                             options = {"anyTermAnyField", "allTermsAnyField", "allTermsSingleField", "phrase"}),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
                             options = {"small", "align-center", "align-right", "helper-above-field",
                                     "always-float-label"}),

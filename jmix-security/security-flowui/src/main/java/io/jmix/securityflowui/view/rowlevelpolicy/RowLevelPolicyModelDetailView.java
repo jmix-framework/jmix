@@ -3,6 +3,7 @@ package io.jmix.securityflowui.view.rowlevelpolicy;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -94,6 +95,7 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
         ComponentUtils.setItemsMap(entityNameField, getEntityOptionsMap());
         docsLink.getStyle().set("margin-inline-start", "auto");
         detailActions.setAlignSelf(Alignment.CENTER, docsLink);
+        initJoinClauseFieldHelperText();
     }
 
     @Subscribe
@@ -243,6 +245,11 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
             log.info("Groovy script error: {}", e.getMessage());
             showTestPassedNotification();
         }
+    }
+
+    protected void initJoinClauseFieldHelperText() {
+        String joinHelperMessage = messageBundle.getMessage("joinClauseField.helperText");
+        joinClauseField.setHelperComponent(new Html(joinHelperMessage));
     }
 
     private void showTestFailedNotification(Component content) {

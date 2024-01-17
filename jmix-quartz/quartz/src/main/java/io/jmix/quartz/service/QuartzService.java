@@ -199,7 +199,7 @@ public class QuartzService {
     public void updateQuartzJob(JobModel jobModel,
                                 List<JobDataParameterModel> jobDataParameterModels,
                                 List<TriggerModel> triggerModels,
-                                boolean replaceJobIfExists) throws QuartzJobSaveException {
+                                boolean replaceJobIfExists) {
         log.debug("updating job with name {} and group {}", jobModel.getJobName(), jobModel.getJobGroup());
         try {
             JobKey jobKey = JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup());

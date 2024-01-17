@@ -85,10 +85,6 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     protected UnconstrainedDataManager dataManager;
     @Autowired
     protected ScheduleDescriptionProvider scheduleDescriptionProvider;
-    @Autowired
-    protected Notifications notifications;
-    @Autowired
-    protected UiViewProperties viewProperties;
     protected boolean replaceJobIfExists = true;
     protected boolean deleteObsoleteJob = false;
     protected String obsoleteJobName = null;

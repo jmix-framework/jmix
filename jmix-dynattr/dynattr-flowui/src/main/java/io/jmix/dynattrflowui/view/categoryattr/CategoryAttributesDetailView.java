@@ -21,10 +21,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -532,6 +529,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 recalculationScriptField,
                 dynAttrUiHelper.createHelperButton(
                         messages.getMessage(CategoryAttributesDetailView.class, "recalculationScriptHelp")));
+        String joinHelperMessage = messages.getMessage(CategoryAttributesDetailView.class, "joinHelperText");
+        joinClauseField.setHelperComponent(new Html(joinHelperMessage));
     }
 
     protected void loadTargetViews() {

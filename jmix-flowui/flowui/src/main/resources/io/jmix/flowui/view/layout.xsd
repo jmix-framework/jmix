@@ -2273,9 +2273,19 @@
     </xs:complexType>
 
     <xs:complexType name="dropdownButtonAction">
-        <xs:complexContent>
-            <xs:extension base="baseAction"/>
-        </xs:complexContent>
+        <xs:sequence>
+            <xs:element name="properties" type="actionProperties" minOccurs="0"/>
+        </xs:sequence>
+
+        <xs:attribute name="type" type="actionTypeEnum"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="text" type="resourceString"/>
+        <xs:attribute name="description" type="resourceString"/>
+        <xs:attribute name="actionVariant" type="actionVariant"/>
+
+        <xs:attributeGroup ref="hasIcon"/>
+        <xs:attributeGroup ref="requiresId"/>
+        <xs:attributeGroup ref="hasEnabled"/>
     </xs:complexType>
 
     <xs:complexType name="genericFilterAction">

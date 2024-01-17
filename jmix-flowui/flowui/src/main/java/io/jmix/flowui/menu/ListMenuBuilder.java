@@ -22,6 +22,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.main.JmixListMenu;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.View;
@@ -133,9 +134,25 @@ public class ListMenuBuilder {
 
     protected void setIcon(MenuItem menuItem, ListMenu.MenuItem listMenuItem) {
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            VaadinIcon vaadinIcon = VaadinIcon.valueOf(menuItem.getIcon());
+            VaadinIcon vaadinIcon = getVaadinIcon(menuItem.getIcon());
             listMenuItem.withIcon(vaadinIcon)
-                    .setPrefixComponent(vaadinIcon.create());
+                    .setPrefixComponent(ComponentUtils.parseIcon(menuItem.getIcon()));
+        }
+    }
+
+    @Nullable
+    protected VaadinIcon getVaadinIcon(String iconString) {
+        if (iconString.contains(":")) {
+            String[] parts = iconString.split(":");
+            if (parts.length != 2) {
+                throw new IllegalStateException("Unexpected number of icon parts, must be two");
+            }
+            if (!parts[0].equals("vaadin")) {
+                return null;
+            }
+            return VaadinIcon.valueOf(parts[1].toUpperCase());
+        } else {
+            return VaadinIcon.valueOf(iconString);
         }
     }
 

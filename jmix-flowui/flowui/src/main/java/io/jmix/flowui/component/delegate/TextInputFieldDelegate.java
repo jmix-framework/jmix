@@ -17,144 +17,16 @@
 package io.jmix.flowui.component.delegate;
 
 import com.vaadin.flow.component.AbstractField;
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.component.HasLengthLimited;
-import io.jmix.flowui.component.validation.RegexpValidator;
-import io.jmix.flowui.component.validation.SizeValidator;
-import io.jmix.flowui.component.validation.Validator;
-import io.jmix.flowui.data.DataAwareComponentsTools;
-import io.jmix.flowui.data.EntityValueSource;
-import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
-import io.jmix.flowui.data.binding.impl.FieldValueBinding;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Primary
 @Component("flowui_TextFieldDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class TextInputFieldDelegate<C extends AbstractField<?, String>, V> extends AbstractFieldDelegate<C, V, String> {
-
-    private static final Logger log = LoggerFactory.getLogger(TextInputFieldDelegate.class);
-
-    protected SizeValidator<? super V> sizeValidator;
-    protected RegexpValidator regexpValidator;
-    protected DataAwareComponentsTools dataAwareComponentsTools;
-
-    protected String pattern;
-    protected int maxLength = -1;
-    protected int minLength = -1;
+public class TextInputFieldDelegate<C extends AbstractField<?, String>, V>
+        extends AbstractTextInputFieldDelegate<C, V> {
 
     public TextInputFieldDelegate(C component) {
         super(component);
-    }
-
-    @Autowired
-    public void setDataAwareComponentsTools(DataAwareComponentsTools dataAwareComponentsTools) {
-        this.dataAwareComponentsTools = dataAwareComponentsTools;
-    }
-
-    public String getPattern() {
-        return pattern;
-    }
-
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
-
-        setupRegexpValidation();
-    }
-
-    public int getMaxLength() {
-        return maxLength;
-    }
-
-    public void setMaxLength(int maxLength) {
-        this.maxLength = maxLength;
-
-        setupSizeValidation();
-    }
-
-    public int getMinLength() {
-        return minLength;
-    }
-
-    public void setMinLength(int minLength) {
-        this.minLength = minLength;
-
-        setupSizeValidation();
-    }
-
-    protected void setupRegexpValidation() {
-        if (isStringDatatype()) {
-            if (regexpValidator == null) {
-                regexpValidator = createRegexpValidator(pattern);
-                addValidator((Validator<V>) regexpValidator);
-            } else {
-                regexpValidator.setRegexp(pattern);
-            }
-        } else {
-            log.debug("{} is not added because component value type is not {}",
-                    RegexpValidator.class, String.class.getSimpleName());
-        }
-    }
-
-    protected void setupSizeValidation() {
-        if (isStringDatatype()) {
-            if (sizeValidator == null) {
-                sizeValidator = createSizeValidator();
-                addValidator(sizeValidator);
-            }
-            if (getMinLength() != -1) {
-                sizeValidator.setMin(getMinLength());
-            }
-            if (getMaxLength() != -1) {
-                sizeValidator.setMax(getMaxLength());
-            }
-        } else {
-            log.debug("{} is not added because component value type is not {}",
-                    SizeValidator.class, String.class.getSimpleName());
-        }
-    }
-
-    @Override
-    protected void setupProperties(EntityValueSource<?, V> valueSource) {
-        if (component instanceof HasLengthLimited hasLengthLimitedComponent) {
-            dataAwareComponentsTools.setupLength(hasLengthLimitedComponent, valueSource);
-        }
-    }
-
-    protected boolean isStringDatatype() {
-        if (getDatatype() != null) {
-            return String.class.isAssignableFrom(getDatatype().getJavaClass());
-        }
-
-        if (getValueSource() instanceof EntityValueSource) {
-            MetaPropertyPath metaPropertyPath = ((EntityValueSource<?, V>) getValueSource()).getMetaPropertyPath();
-            MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
-            return String.class.isAssignableFrom(metaProperty.getJavaType());
-        }
-
-        return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected AbstractValueBinding<V> createValueBinding(ValueSource<V> valueSource) {
-        return applicationContext.getBean(FieldValueBinding.class, valueSource, component);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected SizeValidator<V> createSizeValidator() {
-        return applicationContext.getBean(SizeValidator.class);
-    }
-
-    protected RegexpValidator createRegexpValidator(String pattern) {
-        return applicationContext.getBean(RegexpValidator.class, pattern);
     }
 }

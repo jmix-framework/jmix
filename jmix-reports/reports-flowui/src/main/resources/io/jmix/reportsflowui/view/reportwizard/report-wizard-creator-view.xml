@@ -65,7 +65,6 @@
                         <button id="addTabulatedRegionBtn"
                                 text="msg://tabulatedRegion"/>
                     </hbox>
-                    <button id="regionsRunBtn" text="msg://runReport"/>
                     <button id="regionsEditBtn" action="regionDataGrid.edit" text="msg://editRegion"/>
                     <button id="removeBtn" action="regionDataGrid.remove"/>
                     <button id="moveUpBtn" action="regionDataGrid.up"/>

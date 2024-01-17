@@ -1797,7 +1797,7 @@
             </xs:simpleType>
         </xs:union>
     </xs:simpleType>
-    
+
     <xs:simpleType name="spacingThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -2587,10 +2587,18 @@
         <xs:attribute name="nullRepresentation" type="resourceString"/>
     </xs:complexType>
 
+    <xs:complexType name="numberRendererType">
+        <xs:complexContent>
+            <xs:attribute name="format" type="resourceString"/>
+            <xs:attribute name="numberFormat" type="resourceString"/>
+            <xs:attribute name="nullRepresentation" type="resourceString"/>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:group name="renderers">
         <xs:sequence>
             <xs:choice>
-                <xs:element name="numberRenderer" minOccurs="0" type="formattableRendererType"/>
+                <xs:element name="numberRenderer" minOccurs="0" type="numberRendererType"/>
                 <xs:element name="localDateRenderer" minOccurs="0" type="formattableRendererType"/>
                 <xs:element name="localDateTimeRenderer" minOccurs="0" type="formattableRendererType"/>
             </xs:choice>
@@ -3936,7 +3944,7 @@
         <xs:attribute name="text" type="xs:string"/>
     </xs:complexType>
 
-<!--    MenuFilterField-->
+    <!--    MenuFilterField-->
     <xs:complexType name="menuFilterFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">

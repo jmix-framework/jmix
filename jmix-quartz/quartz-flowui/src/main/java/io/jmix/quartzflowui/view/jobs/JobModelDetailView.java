@@ -87,13 +87,13 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     protected ScheduleDescriptionProvider scheduleDescriptionProvider;
     @Autowired
     protected Notifications notifications;
+    @Autowired
+    protected UiViewProperties viewProperties;
     protected boolean replaceJobIfExists = true;
     protected boolean deleteObsoleteJob = false;
     protected String obsoleteJobName = null;
     protected String obsoleteJobGroup = null;
     protected List<String> jobGroupNames;
-    @Autowired
-    protected UiViewProperties viewProperties;
 
     @Subscribe
     protected void onInit(View.InitEvent event) {
@@ -238,25 +238,40 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
             errors.add(messageBundle.formatMessage("jobAlreadyExistsValidationMessage", currentJobName,
                     Strings.isNullOrEmpty(currentJobGroup) ? "DEFAULT" : currentJobGroup));
         }
-
-        getEditedEntity().getTriggers().stream()
-            .filter(triggerModel -> !Strings.isNullOrEmpty(triggerModel.getTriggerName()))
-            .filter(triggerModel -> quartzService.checkTriggerExists(triggerModel.getTriggerName(),
-                    triggerModel.getTriggerGroup()))
-            .filter(distinctByKey(t -> TriggerKey.triggerKey(t.getTriggerName() + t.getTriggerGroup())))
-            .forEach(triggerModel -> errors.add(
+        // check for local key duplicates
+        getEditedEntity().getTriggers().stream().filter(triggerModel -> getEditedEntity().getTriggers().stream()
+                .filter(t -> TriggerKey.triggerKey(t.getTriggerName(),
+                        t.getTriggerGroup()).equals(
+                                TriggerKey.triggerKey(triggerModel.getTriggerName(), triggerModel.getTriggerGroup())))
+                .count() > 1)
+            .filter(distinctByKey(t -> TriggerKey.triggerKey(t.getTriggerName(), t.getTriggerGroup())))
+            .forEach(triggerModel ->
+                errors.add(
                     messageBundle.formatMessage(
-                            "triggerAlreadyExistsValidationMessage",
-                            triggerModel.getTriggerName(),
-                            Strings.isNullOrEmpty(triggerModel.getTriggerGroup()) ? "DEFAULT" :
-                                    triggerModel.getTriggerGroup())
-        ));
+                        "triggerAlreadyExistsValidationMessage",
+                        triggerModel.getTriggerName(),
+                        Strings.isNullOrEmpty(triggerModel.getTriggerGroup()) ? "DEFAULT" :
+                                triggerModel.getTriggerGroup()))
+        );
 
-        if (!replaceJobIfExists) {
+        if (!replaceJobIfExists) { // create new job
             if (quartzService.checkJobExists(currentJobName, currentJobGroup)) {
                 errors.add(messageBundle.formatMessage("jobAlreadyExistsValidationMessage", currentJobName,
                         Strings.isNullOrEmpty(currentJobGroup) ? "DEFAULT" : currentJobGroup));
             }
+            // check for quartz key duplicates
+            getEditedEntity().getTriggers().stream()
+                    .filter(triggerModel -> !Strings.isNullOrEmpty(triggerModel.getTriggerName()))
+                    .filter(triggerModel -> quartzService.checkTriggerExists(triggerModel.getTriggerName(),
+                            triggerModel.getTriggerGroup()))
+                    .filter(distinctByKey(t -> TriggerKey.triggerKey(t.getTriggerName(), t.getTriggerGroup())))
+                    .forEach(triggerModel -> errors.add(
+                            messageBundle.formatMessage(
+                                    "triggerAlreadyExistsValidationMessage",
+                                    triggerModel.getTriggerName(),
+                                    Strings.isNullOrEmpty(triggerModel.getTriggerGroup()) ? "DEFAULT" :
+                                            triggerModel.getTriggerGroup())
+                    ));
         }
 
         //noinspection ConstantValue
@@ -278,7 +293,7 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     }
 
     @Subscribe
-    protected void onBeforeCommitChanges(BeforeSaveEvent event) throws QuartzJobSaveException {
+    protected void onBeforeCommitChanges(BeforeSaveEvent event) {
         if (deleteObsoleteJob) {
             quartzService.deleteJob(obsoleteJobName, obsoleteJobGroup);
         }

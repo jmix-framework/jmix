@@ -16,7 +16,7 @@
 
 package io.jmix.quartz.exception;
 
-public class QuartzJobSaveException extends Exception  {
+public class QuartzJobSaveException extends RuntimeException  {
     public QuartzJobSaveException() {
     }
 

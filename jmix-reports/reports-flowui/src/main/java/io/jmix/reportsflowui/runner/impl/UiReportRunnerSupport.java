@@ -56,8 +56,7 @@ public class UiReportRunnerSupport {
                     .build();
 
             ReportTableView reportTableView = showReportTableViewDialogWindow.getView();
-            reportTableView.setTableData(document.getContent());
-            reportTableView.setReport((Report) document.getReport());
+            reportTableView.setDocument(document);
             reportTableView.setTemplateCode(templateCode);
             reportTableView.setReportParameters(params);
             showReportTableViewDialogWindow.open();

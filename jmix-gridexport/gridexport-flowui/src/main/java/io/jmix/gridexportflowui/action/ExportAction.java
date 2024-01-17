@@ -105,6 +105,16 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
         return (T) dataGridExporter;
     }
 
+    public void setFileName(String fileName) {
+        dataGridExporter.setFileName(fileName);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T withFileName(String fileName) {
+        setFileName(fileName);
+        return (T) dataGridExporter;
+    }
+
     /**
      * Adds a function to get value from the column.
      *

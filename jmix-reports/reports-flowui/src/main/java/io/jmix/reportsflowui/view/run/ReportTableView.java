@@ -40,7 +40,6 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
-import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionLoader;
@@ -105,13 +104,27 @@ public class ReportTableView extends StandardView {
     @Autowired
     protected Notifications notifications;
 
-
-    protected Report report;
     protected String templateCode;
     protected Map<String, Object> reportParameters;
     protected InputParametersFragment inputParametersFrame;
+    protected ReportOutputDocument document;
+
+    /**
+     * @deprecated use {@link #document}
+     */
+    @Deprecated(since = "2.1.3", forRemoval = true)
+    protected Report report;
+
+    /**
+     * @deprecated use {@link #document}
+     */
+    @Deprecated(since = "2.1.3", forRemoval = true)
     protected byte[] tableData;
 
+    /**
+     * @deprecated use {@link #setDocument(ReportOutputDocument)}
+     */
+    @Deprecated(since = "2.1.3", forRemoval = true)
     public void setReport(Report report) {
         this.report = report;
     }
@@ -124,53 +137,56 @@ public class ReportTableView extends StandardView {
         this.reportParameters = reportParameters;
     }
 
+    /**
+     * @deprecated use {@link #setDocument(ReportOutputDocument)}
+     */
+    @Deprecated(since = "2.1.3", forRemoval = true)
     public void setTableData(byte[] tableData) {
         this.tableData = tableData;
     }
 
+    public void setDocument(ReportOutputDocument document) {
+        this.document = document;
+    }
+
     @Subscribe("reportEntityComboBox")
     public void onReportEntityComboBoxComponentValueChange(AbstractField.ComponentValueChangeEvent<EntityComboBox<Report>, Report> event) {
-        report = event.getValue();
-        openReportParameters();
+        openReportParameters(event.getValue());
     }
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         reportsDl.load();
+        reportForm.setVisible(false);
 
-        if (report != null) {
-            reportForm.setVisible(false);
-
+        if (document != null) {
+            drawTables(document);
+        } else {
             JmixTableData dto = (JmixTableData) serialization.deserialize(tableData);
             drawTables(dto);
+        }
 
-            openReportParameters();
+        if (report != null) {
+            openReportParameters(report);
+        } else if (document != null) {
+            openReportParameters((Report) document.getReport());
         }
     }
 
 
-    private void openReportParameters() {
+    private void openReportParameters(Report report) {
         parametersFrameHolder.removeAll();
 
         inputParametersFrame = uiComponents.create(InputParametersFragment.class);
-        if (report != null) {
-            inputParametersFrame.setReport(report);
-            inputParametersFrame.setParameters(reportParameters);
-            //todo
-//            inputParametersFrame.setInputParameter(inputParameter);
-//            inputParametersFrame.setBulkPrint(bulkPrint);
-            //inputParametersFrame.initContent();
-            //inputParametersFrame.initTemplateAndOutputSelect();
+        inputParametersFrame.setReport(report);
+        inputParametersFrame.setParameters(reportParameters);
 
-            parametersFrameHolder.add(inputParametersFrame);
+        parametersFrameHolder.add(inputParametersFrame);
 
-            boolean isParameterBoxVisible = report.getInputParameters().stream()
-                    .anyMatch(param -> param.getHidden() == null || !param.getHidden());
+        boolean isParameterBoxVisible = report.getInputParameters().stream()
+                .anyMatch(param -> param.getHidden() == null || !param.getHidden());
 
-            parametersBox.setVisible(isParameterBoxVisible);
-        } else {
-            parametersBox.setVisible(false);
-        }
+        parametersBox.setVisible(isParameterBoxVisible);
     }
 
     @Subscribe("runAction")
@@ -185,12 +201,12 @@ public class ReportTableView extends StandardView {
                 }
 
                 try {
-                    ReportOutputDocument reportResult = reportRunner.byReportEntity(report)
+                    ReportOutputDocument reportOutputDocument = reportRunner.byReportEntity(report)
                             .withParams(parameters)
                             .withTemplateCode(templateCode)
                             .run();
-                    JmixTableData dto = (JmixTableData) serialization.deserialize(reportResult.getContent());
-                    drawTables(dto);
+
+                    drawTables(reportOutputDocument);
                 } catch (MissingDefaultTemplateException e) {
                     notifications.create(
                                     messages.getMessage("runningReportError.title"),
@@ -213,6 +229,10 @@ public class ReportTableView extends StandardView {
         return null;
     }
 
+    /**
+     * @deprecated use {@link #drawTables(ReportOutputDocument)}
+     */
+    @Deprecated(since = "2.1.3", forRemoval = true)
     protected void drawTables(JmixTableData dto) {
         Map<String, List<KeyValueEntity>> data = dto.getData();
         Map<String, Set<JmixTableData.ColumnInfo>> headerMap = dto.getHeaders();
@@ -229,7 +249,7 @@ public class ReportTableView extends StandardView {
             if (CollectionUtils.isNotEmpty(keyValueEntities)) {
                 KeyValueCollectionContainer container = createContainer(dataSetName, keyValueEntities, headerMap);
                 DataGrid<KeyValueEntity> dataGrid = createTable(dataSetName, container, headerMap);
-                HorizontalLayout buttonsPanel = createButtonsPanel(dataGrid);
+                HorizontalLayout buttonsPanel = createButtonsPanel(document, dataGrid);
 
                 VerticalLayout verticalLayout = uiComponents.create(VerticalLayout.class);
                 verticalLayout.setPadding(false);
@@ -245,8 +265,43 @@ public class ReportTableView extends StandardView {
         tablesVBoxLayout.expand(jmixTabSheet);
     }
 
-    private HorizontalLayout createButtonsPanel(DataGrid<KeyValueEntity> dataGrid) {
-        Action excelExportAction = actions.create(ExcelExportAction.ID);
+    protected void drawTables(ReportOutputDocument document) {
+        JmixTableData dto = (JmixTableData) serialization.deserialize(document.getContent());
+
+        Map<String, List<KeyValueEntity>> data = dto.getData();
+        Map<String, Set<JmixTableData.ColumnInfo>> headerMap = dto.getHeaders();
+        tablesVBoxLayout.removeAll();
+
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+
+        JmixTabSheet jmixTabSheet = uiComponents.create(JmixTabSheet.class);
+        jmixTabSheet.setWidthFull();
+
+        data.forEach((dataSetName, keyValueEntities) -> {
+            if (CollectionUtils.isNotEmpty(keyValueEntities)) {
+                KeyValueCollectionContainer container = createContainer(dataSetName, keyValueEntities, headerMap);
+                DataGrid<KeyValueEntity> dataGrid = createTable(dataSetName, container, headerMap);
+                HorizontalLayout buttonsPanel = createButtonsPanel(document, dataGrid);
+
+                VerticalLayout verticalLayout = uiComponents.create(VerticalLayout.class);
+                verticalLayout.setPadding(false);
+                verticalLayout.add(buttonsPanel);
+                verticalLayout.add(dataGrid);
+
+                verticalLayout.expand(dataGrid);
+                jmixTabSheet.add(dataSetName, verticalLayout);
+            }
+        });
+
+        tablesVBoxLayout.add(jmixTabSheet);
+        tablesVBoxLayout.expand(jmixTabSheet);
+    }
+
+    private HorizontalLayout createButtonsPanel(ReportOutputDocument document, DataGrid<KeyValueEntity> dataGrid) {
+        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
+        excelExportAction.withFileName(document.getReport().getName());
         dataGrid.addAction(excelExportAction);
 
         JmixButton excelButton = uiComponents.create(JmixButton.class);

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -196,6 +197,7 @@ public class QuartzService {
      * @param replaceJobIfExists     replace if job with the same name already exists
      */
     @SuppressWarnings("unchecked")
+    @Transactional(rollbackForClassName={"Exception"})
     public void updateQuartzJob(JobModel jobModel,
                                 List<JobDataParameterModel> jobDataParameterModels,
                                 List<TriggerModel> triggerModels,

@@ -12,13 +12,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.CoreProperties;
-import io.jmix.core.ExtendedEntities;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.Stores;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
@@ -44,36 +38,13 @@ import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
-import io.jmix.flowui.model.CollectionChangeType;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionPropertyContainer;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.view.ChangeTrackerCloseAction;
-import io.jmix.flowui.view.CloseAction;
-import io.jmix.flowui.view.DefaultMainViewParent;
-import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.Install;
-import io.jmix.flowui.view.MessageBundle;
-import io.jmix.flowui.view.StandardOutcome;
-import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.Target;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
-import io.jmix.flowui.view.ViewValidation;
+import io.jmix.flowui.model.*;
+import io.jmix.flowui.view.*;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
-import io.jmix.reports.entity.wizard.EntityTreeNode;
-import io.jmix.reports.entity.wizard.QueryParameter;
-import io.jmix.reports.entity.wizard.RegionProperty;
-import io.jmix.reports.entity.wizard.ReportData;
-import io.jmix.reports.entity.wizard.ReportRegion;
-import io.jmix.reports.entity.wizard.ReportTypeGenerate;
-import io.jmix.reports.entity.wizard.TemplateFileType;
+import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsClientProperties;
@@ -94,14 +65,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 @Route(value = "reports/wizard", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportWizardCreatorView")
@@ -135,8 +99,6 @@ public class ReportWizardCreatorView extends StandardView {
     protected DataGrid<ReportRegion> regionDataGrid;
     @ViewComponent
     protected DataGrid<QueryParameter> reportParameterDataGrid;
-    @ViewComponent
-    protected JmixButton regionsRunBtn;
     @ViewComponent
     protected HorizontalLayout buttonsBox;
     @ViewComponent
@@ -267,7 +229,6 @@ public class ReportWizardCreatorView extends StandardView {
             updateRegionButtons();
             showAddRegion();
             updateFragmentChangeButtons();
-            regionsRunBtn.setVisible(getReportTypeGenerate() != ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
         } else if (vbox.equals(queryVBox)) {
             ReportData item = reportDataDc.getItem();
             String resultQuery = item.getQuery();
@@ -670,28 +631,6 @@ public class ReportWizardCreatorView extends StandardView {
     @Subscribe("regionDataGrid.edit")
     public void onRegionDataGridEditItemAction(ActionPerformedEvent event) {
         editRegion();
-    }
-
-    @Subscribe("regionsRunBtn")
-    public void onRegionsRunBtnClick(ClickEvent<Button> event) {
-        if (reportDataDc.getItem().getReportRegions().isEmpty()) {
-            notifications.create(messageBundle.getMessage("addRegionsWarn.message"))
-                    .withType(Notifications.Type.DEFAULT)
-                    .withPosition(Notification.Position.BOTTOM_END)
-                    .show();
-            return;
-        }
-
-        lastGeneratedTmpReport = buildReport(true);
-
-        if (lastGeneratedTmpReport != null) {
-            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(lastGeneratedTmpReport)
-                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
-                fluentRunner.inBackground(this);
-            }
-            fluentRunner.runAndShow();
-        }
     }
 
     @Install(to = "regionDataGrid.up", subject = "enabledRule")

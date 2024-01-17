@@ -130,6 +130,8 @@ public class JobModelListView extends StandardListView<JobModel> {
                         || containsIgnoreCase(jobModel.getJobGroup(), groupFilter.getTypedValue()))
                         && (jobStateFilter.getValue() == null
                         || jobStateFilter.getValue().equals(jobModel.getJobState())))
+                .sorted(comparing(JobModel::getJobState, nullsLast(naturalOrder()))
+                        .thenComparing(JobModel::getJobName))
                 .collect(Collectors.toList());
 
         jobModelsDc.setItems(jobs);

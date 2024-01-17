@@ -34,12 +34,16 @@ import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
+import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Route(value = "quartz/jobmodels/:id", layout = DefaultMainViewParent.class)
@@ -194,6 +198,13 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
 
     }
 
+    public static <T> Predicate<T> distinctByKey(
+            Function<? super T, ?> keyExtractor) {
+
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
     @Subscribe
     protected void onValidation(ValidationEvent event) {
         ValidationErrors errors = event.getErrors();
@@ -225,16 +236,17 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
                                                 triggerModel.getTriggerGroup()))
                 );
 
-        if (!replaceJobIfExists) {
+        if (!replaceJobIfExists) { // create new job
             if (quartzService.checkJobExists(currentJobName, currentJobGroup)) {
                 errors.add(messageBundle.formatMessage("jobAlreadyExistsValidationMessage", currentJobName,
                         Strings.isNullOrEmpty(currentJobGroup) ? "DEFAULT" : currentJobGroup));
             }
-
+            // check for quartz key duplicates
             getEditedEntity().getTriggers().stream()
                     .filter(triggerModel -> !Strings.isNullOrEmpty(triggerModel.getTriggerName()))
                     .filter(triggerModel -> quartzService.checkTriggerExists(triggerModel.getTriggerName(),
                             triggerModel.getTriggerGroup()))
+                    .filter(distinctByKey(t -> TriggerKey.triggerKey(t.getTriggerName(), t.getTriggerGroup())))
                     .forEach(triggerModel -> errors.add(
                             messageBundle.formatMessage(
                                     "triggerAlreadyExistsValidationMessage",

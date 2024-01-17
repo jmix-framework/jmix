@@ -2,6 +2,7 @@ package io.jmix.quartz.service;
 
 import com.google.common.base.Strings;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.quartz.exception.QuartzJobSaveException;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -196,7 +196,6 @@ public class QuartzService {
      * @param replaceJobIfExists     replace if job with the same name already exists
      */
     @SuppressWarnings("unchecked")
-    @Transactional(rollbackForClassName={"Exception"})
     public void updateQuartzJob(JobModel jobModel,
                                 List<JobDataParameterModel> jobDataParameterModels,
                                 List<TriggerModel> triggerModels,
@@ -220,10 +219,10 @@ public class QuartzService {
             }
         } catch (SchedulerException e) {
             log.warn("Unable to update job with name {} and group {}", jobModel.getJobName(), jobModel.getJobGroup(), e);
-            throw new IllegalStateException(e.getMessage());
+            throw new QuartzJobSaveException(e.getMessage());
         } catch (ClassNotFoundException e) {
             log.warn("Unable to find job class {}", jobModel.getJobClass());
-            throw new IllegalStateException("Job class " + jobModel.getJobClass() + " not found");
+            throw new QuartzJobSaveException("Job class " + jobModel.getJobClass() + " not found");
         }
     }
 

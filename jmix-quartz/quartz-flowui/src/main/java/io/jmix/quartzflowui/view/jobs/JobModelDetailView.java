@@ -208,6 +208,22 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
             errors.add(messageBundle.formatMessage("jobAlreadyExistsValidationMessage", currentJobName,
                     Strings.isNullOrEmpty(currentJobGroup) ? "DEFAULT" : currentJobGroup));
         }
+        // check for local key duplicates
+        getEditedEntity().getTriggers().stream()
+                .filter(triggerModel -> getEditedEntity().getTriggers().stream()
+                        .filter(t -> TriggerKey.triggerKey(t.getTriggerName(),
+                                t.getTriggerGroup()).equals(
+                                TriggerKey.triggerKey(triggerModel.getTriggerName(), triggerModel.getTriggerGroup())))
+                        .count() > 1)
+                .filter(distinctByKey(t -> TriggerKey.triggerKey(t.getTriggerName(), t.getTriggerGroup())))
+                .forEach(triggerModel ->
+                        errors.add(
+                                messageBundle.formatMessage(
+                                        "triggerAlreadyExistsValidationMessage",
+                                        triggerModel.getTriggerName(),
+                                        Strings.isNullOrEmpty(triggerModel.getTriggerGroup()) ? "DEFAULT" :
+                                                triggerModel.getTriggerGroup()))
+                );
 
         if (!replaceJobIfExists) {
             if (quartzService.checkJobExists(currentJobName, currentJobGroup)) {

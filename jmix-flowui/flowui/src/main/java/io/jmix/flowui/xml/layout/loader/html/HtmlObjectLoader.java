@@ -32,6 +32,6 @@ public class HtmlObjectLoader extends AbstractHtmlContainerLoader<HtmlObject> {
         loadString(element, "data", resultComponent::setData);
         loadString(element, "type", resultComponent::setType);
 
-        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadFocusableAttributes(resultComponent, element);
     }
 }

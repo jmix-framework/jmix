@@ -32,7 +32,7 @@
                     <xs:attributeGroup ref="layout:hasLabel"/>
                     <xs:attributeGroup ref="layout:hasPlaceholder"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
-                    <xs:attributeGroup ref="layout:hasTabIndex"/>
+                    <xs:attributeGroup ref="layout:hasFocusableAttributes"/>
                     <xs:attributeGroup ref="layout:hasTitle"/>
                     <xs:attributeGroup ref="layout:hasValueChangeMode"/>
 

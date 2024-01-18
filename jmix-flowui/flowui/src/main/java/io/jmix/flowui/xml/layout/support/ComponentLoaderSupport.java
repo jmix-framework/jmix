@@ -237,8 +237,20 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadInteger(element, "valueChangeTimeout", component::setValueChangeTimeout);
     }
 
+    /**
+     * Deprecated, use {@link ComponentLoaderSupport#loadFocusableAttributes(Focusable, Element)} instead
+     */
+    @Deprecated(since = "2.2", forRemoval = true)
     public void loadTabIndex(Focusable<?> component, Element element) {
         loaderSupport.loadInteger(element, "tabIndex", component::setTabIndex);
+    }
+
+    public void loadFocusableAttributes(Focusable<?> component, Element element) {
+        loaderSupport.loadInteger(element, "tabIndex", component::setTabIndex);
+        loadShortcut(element, "focusShortcut")
+                .map(KeyCombination::create)
+                .ifPresent(keyCombination ->
+                        component.addFocusShortcut(keyCombination.getKey(), keyCombination.getKeyModifiers()));
     }
 
     public void loadCss(com.vaadin.flow.component.Component component, Element element) {

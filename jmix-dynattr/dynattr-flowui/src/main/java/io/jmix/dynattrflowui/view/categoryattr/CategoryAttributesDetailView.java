@@ -361,7 +361,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 .filter(item -> !Objects.equals(categoryAttributeDc.getItem(), item))
                 .map(mapper)
                 .anyMatch(attrName -> Objects.equals(attrName, value))) {
-            throw new ValidationException(messages.formatMessage(getClass(), messageKey, value));
+            throw new ValidationException(messages.getMessage(getClass(), messageKey));
         }
     }
 

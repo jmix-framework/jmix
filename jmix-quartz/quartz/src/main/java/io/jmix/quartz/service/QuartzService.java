@@ -2,6 +2,7 @@ package io.jmix.quartz.service;
 
 import com.google.common.base.Strings;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.quartz.exception.QuartzJobSaveException;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
 import org.apache.commons.collections4.CollectionUtils;
@@ -220,10 +221,10 @@ public class QuartzService {
             }
         } catch (SchedulerException e) {
             log.warn("Unable to update job with name {} and group {}", jobModel.getJobName(), jobModel.getJobGroup(), e);
-            throw new IllegalStateException(e.getMessage());
+            throw new QuartzJobSaveException(e.getMessage());
         } catch (ClassNotFoundException e) {
             log.warn("Unable to find job class {}", jobModel.getJobClass());
-            throw new IllegalStateException("Job class " + jobModel.getJobClass() + " not found");
+            throw new QuartzJobSaveException("Job class " + jobModel.getJobClass() + " not found");
         }
     }
 

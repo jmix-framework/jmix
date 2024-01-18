@@ -81,7 +81,6 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     protected MessageBundle messageBundle;
     @Autowired
     protected UnconstrainedDataManager dataManager;
-
     protected boolean replaceJobIfExists = true;
     protected boolean deleteObsoleteJob = false;
     protected String obsoleteJobName = null;

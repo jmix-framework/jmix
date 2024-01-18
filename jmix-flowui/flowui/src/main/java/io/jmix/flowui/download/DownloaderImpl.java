@@ -40,6 +40,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -128,6 +129,9 @@ public class DownloaderImpl implements Downloader {
      * @param dataProvider   DownloadDataProvider
      * @param resourceName   ResourceName for client side
      * @param downloadFormat DownloadFormat
+     * @implNote This implementation will replace all invalid {@code  resourceName} characters with
+     * underscores before downloading. {@code  resourceName} parameter value will be used in URI
+     * (generated when resource is registered) in a way that the name is the last segment of the path.<br/>
      * @see FileRefDownloadDataProvider
      * @see ByteArrayDownloadDataProvider
      */
@@ -137,6 +141,8 @@ public class DownloaderImpl implements Downloader {
         checkUIAccess();
 
         boolean showNewWindow = this.newWindow;
+
+        resourceName = normalize(resourceName);
 
         if (useViewList) {
             String fileExt;
@@ -271,6 +277,10 @@ public class DownloaderImpl implements Downloader {
         PrintWriter writer = response.getWriter();
         writer.write("<h1 style=\"font-size:40px;\">404</h1><p style=\"font-size: 25px\">" + message + "</p>");
         writer.flush();
+    }
+
+    protected String normalize(String originString) {
+        return originString.replaceAll("[/\\\\]", "_");
     }
 
     protected boolean isBrowserSupportsPopups() {

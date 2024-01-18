@@ -68,6 +68,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Route(value = "reports/wizard", layout = DefaultMainViewParent.class)
+@DialogMode(draggable = false, width = "45em")
 @ViewController("report_ReportWizardCreatorView")
 @ViewDescriptor("report-wizard-creator-view.xml")
 public class ReportWizardCreatorView extends StandardView {

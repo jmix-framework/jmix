@@ -29,7 +29,7 @@
             <span id="wizardDescriptionSpan" classNames="report-wizard-tip-label"
                   themeNames="badge normal" width="100%"/>
             <vbox id="detailsVBox" padding="false">
-                <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="45em">
+                <formLayout id="groupBox" dataContainer="reportDataDc">
                     <responsiveSteps>
                         <responsiveStep minWidth="0" columns="1"/>
                     </responsiveSteps>
@@ -105,7 +105,7 @@
                               helperText="msg://outputFileTypeHintMsg"/>
                 </formLayout>
             </vbox>
-            <vbox id="queryVBox" width="40em" padding="false">
+            <vbox id="queryVBox" padding="false">
                 <div classNames="flex, justify-between, buttons-panel">
                     <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
                     <button id="fullScreenTransformationBtn"
@@ -117,7 +117,7 @@
                     <codeEditor id="reportQueryCodeEditor"
                                 title="msg://reportQuery"
                                 width="100%"
-                                height="15em"
+                                height="10em"
                                 required="true"
                                 showGutter="false"
                                 highlightActiveLine="false"
@@ -136,7 +136,7 @@
                 </hbox>
                 <dataGrid id="reportParameterDataGrid"
                           dataContainer="queryParametersDc"
-                          height="15em"
+                          height="10em"
                           width="100%">
                     <actions>
                         <action id="generate" text="msg://generateParameters.text"/>

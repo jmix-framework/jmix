@@ -72,6 +72,11 @@ public class UiComponentProperties {
      */
     boolean filterConfigurationUniqueNamesEnabled;
 
+    /**
+     * Whether error message should be shown below the field or not.
+     */
+    boolean showErrorMessageBelowField;
+
     public UiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -88,7 +93,8 @@ public class UiComponentProperties {
             String filterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("false") boolean filterShowConfigurationIdField,
-            @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled) {
+            @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled,
+            @DefaultValue("true") boolean showErrorMessageBelowField) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -108,6 +114,8 @@ public class UiComponentProperties {
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
         this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
+
+        this.showErrorMessageBelowField = showErrorMessageBelowField;
     }
 
     public String getGridCreateShortcut() {
@@ -190,5 +198,12 @@ public class UiComponentProperties {
      */
     public boolean isFilterConfigurationUniqueNamesEnabled() {
         return filterConfigurationUniqueNamesEnabled;
+    }
+
+    /**
+     * @see #showErrorMessageBelowField
+     */
+    public boolean isShowErrorMessageBelowField() {
+        return showErrorMessageBelowField;
     }
 }

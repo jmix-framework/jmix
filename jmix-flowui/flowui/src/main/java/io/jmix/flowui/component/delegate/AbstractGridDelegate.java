@@ -210,6 +210,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         closeEditorIfOpened();
         component.getDataCommunicator().reset();
         updateAggregationRow();
+        //refresh selection because it contains old item instances which may not exist in the container anymore
+        refreshSelection(event.getSource().getItems());
     }
 
     protected void closeEditorIfOpened() {
@@ -226,6 +228,31 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                 ((DataGridDataProviderChangeObserver) editor).dataProviderChanged();
             }
         }
+    }
+
+    /**
+     * Refreshes current selection using provided items.
+     */
+    protected void refreshSelection(Collection<E> items) {
+        Set<E> prevSelectedItemsToRefresh = new HashSet<>(getSelectedItems());
+
+        List<E> itemsToSelect = new ArrayList<>(prevSelectedItemsToRefresh.size());
+        for (E item : items) {
+            //select the item if it was selected before refresh
+            if (prevSelectedItemsToRefresh.remove(item)) {
+                itemsToSelect.add(item);
+            }
+
+            //skip further checks if no more items were selected
+            if (prevSelectedItemsToRefresh.isEmpty()) {
+                break;
+            }
+        }
+        //selection model doesn't provide direct access to selected items,
+        //so to update the model we are forced to deselect all items and select new items again
+        //to handle any changes in item collection or items themselves
+        deselectAll();
+        select(itemsToSelect);
     }
 
     protected void itemsValueChanged(DataGridItems.ValueChangeEvent<E> event) {

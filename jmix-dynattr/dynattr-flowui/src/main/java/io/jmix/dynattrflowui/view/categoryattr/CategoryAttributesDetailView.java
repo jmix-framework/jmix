@@ -892,8 +892,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             }
             // `org.springframework.util.StringUtils::hasText` simplifies expression `isNotEmpty && isNotBlank` into one `hasText`
             String fullAttributeCode = org.springframework.util.StringUtils.hasText(categoryName) ?
-                    categoryName  + "_" + attribute.getName() :
-                    attribute.getName();
+                    StringUtils.uncapitalize(categoryName) + StringUtils.capitalize(attribute.getName()) :
+                    StringUtils.uncapitalize(attribute.getName());
 
             codeField.setValue(StringUtils.deleteWhitespace(fullAttributeCode));
         }

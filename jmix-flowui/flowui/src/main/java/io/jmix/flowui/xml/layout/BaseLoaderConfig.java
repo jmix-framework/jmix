@@ -74,6 +74,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("datePicker", DatePickerLoader.class);
         loaders.put("avatar", AvatarLoader.class);
         loaders.put("icon", IconLoader.class);
+        loaders.put("svgIcon", SvgIconLoader.class);
+        loaders.put("fontIcon", FontIconLoader.class);
         loaders.put("select", SelectLoader.class);
         loaders.put("valuePicker", ValuePickerLoader.class);
         loaders.put("multiValuePicker", MultiValuePickerLoader.class);
@@ -98,6 +100,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("codeEditor", CodeEditorLoader.class);
         loaders.put("virtualList", VirtualListLoader.class);
         loaders.put("gridColumnVisibility", GridColumnVisibilityLoader.class);
+        loaders.put("menuFilterField", MenuFilterFieldLoader.class);
+        loaders.put("horizontalMenu", HorizontalMenuLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

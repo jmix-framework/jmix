@@ -17,6 +17,7 @@
 package component.listmenu
 
 import com.vaadin.flow.component.KeyModifier
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.main.JmixListMenu
@@ -83,12 +84,16 @@ class ListMenuTest extends FlowuiTestSpecification {
         applicationMenuBar.opened
         applicationMenuBar.icon == VaadinIcon.ABACUS
         applicationMenuBar.description == "Description"
-        applicationMenuBar.getChildren().size() == 2
+        (applicationMenuBar.prefixComponent as Icon).element.getAttribute("icon") ==
+                VaadinIcon.ABACUS.create().element.getAttribute("icon")
+        applicationMenuBar.getChildItems().size() == 2
 
         def menuItem = listMenu.getMenuItem("ListMenuTestView")
         menuItem != null
         menuItem.title == "List menu test view"
         menuItem.icon == VaadinIcon.ABACUS
+        (menuItem.prefixComponent as Icon).element.getAttribute("icon") ==
+                VaadinIcon.ABACUS.create().element.getAttribute("icon")
         menuItem.description == "Description"
         menuItem.shortcutCombination.key.keys.get(0) == "KeyO"
 
@@ -96,6 +101,8 @@ class ListMenuTest extends FlowuiTestSpecification {
         menuBeanItem != null
         menuBeanItem.title == "Bean menu"
         menuBeanItem.icon == VaadinIcon.ABACUS
+        (menuBeanItem.prefixComponent as Icon).element.getAttribute("icon") ==
+                VaadinIcon.ABACUS.create().element.getAttribute("icon")
         menuBeanItem.description == "Description"
         menuBeanItem.shortcutCombination.key.keys.get(0) == "KeyO"
         menuBeanItem.shortcutCombination.keyModifiers[0] == KeyModifier.CONTROL

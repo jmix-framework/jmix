@@ -26,30 +26,23 @@ import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep.LabelsPosi
 import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.shared.SlotUtils;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.formlayout.JmixFormLayout;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.SupportsValueSource;
-import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.data.value.ContainerValueSourceProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionPropertyContainer;
-import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
-import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 import org.dom4j.Element;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
 
@@ -68,6 +61,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
         loadData(resultComponent, element);
         loadLabelPosition(element);
@@ -206,6 +200,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
             loadLabel(resultComponent, element);
             componentLoader().loadEnabled(resultComponent, element);
             componentLoader().loadClassNames(resultComponent, element);
+            componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
             loadSubComponent();
         }

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.vaadin.flow.server.frontend.DevBundleUtils;
 import com.vaadin.flow.server.frontend.FallibleCommand;
 import com.vaadin.flow.server.frontend.FrontendToolsSettings;
 import org.apache.commons.io.FileUtils;
@@ -78,8 +79,7 @@ public class TaskRunDevBundleBuild implements FallibleCommand {
                     "Read more [about Vaadin development mode](https://vaadin.com/docs/next/configuration/development-mode/#pre-compiled-front-end-bundle-for-faster-start-up).";
     //@formatter:on
 
-    public static final String README_NOT_CREATED = "Failed to create a README file in "
-            + Constants.DEV_BUNDLE_LOCATION;
+    private final String README_NOT_CREATED;
 
     private final Options options;
 
@@ -91,6 +91,9 @@ public class TaskRunDevBundleBuild implements FallibleCommand {
      */
     TaskRunDevBundleBuild(Options options) {
         this.options = options;
+        README_NOT_CREATED = "Failed to create a README file in "
+                + options.getBuildDirectoryName() + "/"
+                + Constants.DEV_BUNDLE_LOCATION;
     }
 
     @Override
@@ -116,7 +119,7 @@ public class TaskRunDevBundleBuild implements FallibleCommand {
         Logger logger = getLogger();
 
         FrontendToolsSettings settings = new FrontendToolsSettings(
-                options.getNpmFolder().getAbsolutePath(),
+                options.getStudioFolder().getAbsolutePath(),
                 () -> FrontendUtils.getVaadinHomeDirectory().getAbsolutePath());
         settings.setNodeDownloadRoot(options.getNodeDownloadRoot());
         settings.setForceAlternativeNode(options.isRequireHomeNodeExec());
@@ -125,7 +128,7 @@ public class TaskRunDevBundleBuild implements FallibleCommand {
         settings.setNodeVersion(options.getNodeVersion());
         FrontendTools frontendTools = new FrontendTools(settings);
 
-        File buildExecutable = new File(options.getNpmFolder(),
+        File buildExecutable = new File(options.getStudioFolder(),
                 "node_modules/" + executable);
         if (!buildExecutable.isFile()) {
             throw new IllegalStateException(String.format(
@@ -155,7 +158,7 @@ public class TaskRunDevBundleBuild implements FallibleCommand {
 
         Process process = null;
         try {
-            builder.directory(options.getNpmFolder());
+            builder.directory(options.getStudioFolder());
             builder.redirectInput(ProcessBuilder.Redirect.PIPE);
             builder.redirectErrorStream(true);
 
@@ -204,10 +207,19 @@ public class TaskRunDevBundleBuild implements FallibleCommand {
                 process.destroyForcibly();
             }
         }
+        if (options.isCompressBundle()) {
+            DevBundleUtils.compressBundle(options.getStudioFolder(),
+                    new File(
+                            new File(options.getStudioFolder(),
+                                    options.getBuildDirectoryName()),
+                            Constants.DEV_BUNDLE_LOCATION));
+        }
     }
 
     private void copyPackageLockToBundleFolder() {
-        File devBundleFolder = new File(options.getNpmFolder(),
+        File devBundleFolder = new File(
+                new File(options.getStudioFolder(),
+                        options.getBuildDirectoryName()),
                 Constants.DEV_BUNDLE_LOCATION);
         assert devBundleFolder.exists() : "No dev-bundle folder created";
 
@@ -215,7 +227,7 @@ public class TaskRunDevBundleBuild implements FallibleCommand {
                 ? Constants.PACKAGE_LOCK_YAML
                 : Constants.PACKAGE_LOCK_JSON;
 
-        File packageLockJson = new File(options.getNpmFolder(),
+        File packageLockJson = new File(options.getStudioFolder(),
                 packageLockFile);
         if (packageLockJson.exists()) {
             try {
@@ -229,8 +241,11 @@ public class TaskRunDevBundleBuild implements FallibleCommand {
     }
 
     private void addReadme() {
-        File devBundleFolder = new File(options.getNpmFolder(),
-                Constants.DEV_BUNDLE_LOCATION);
+        if (!options.isCompressBundle()) {
+            return;
+        }
+        File devBundleFolder = new File(options.getStudioFolder(),
+                Constants.BUNDLE_LOCATION);
         assert devBundleFolder.exists();
 
         try {

@@ -21,10 +21,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.shared.SlotUtils;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.HasAction;
-import io.jmix.flowui.kit.component.HasShortcutCombination;
-import io.jmix.flowui.kit.component.HasTitle;
-import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.component.*;
 
 import jakarta.annotation.Nullable;
 import java.util.Objects;
@@ -120,8 +117,7 @@ public class ValuePickerButton extends Component
             }
 
             if (shortcutCombination != null) {
-                shortcutRegistration = addClickShortcut(shortcutCombination.getKey(),
-                        shortcutCombination.getKeyModifiers());
+                shortcutRegistration = ComponentUtils.addClickShortcut(this, shortcutCombination);
             }
         }
     }

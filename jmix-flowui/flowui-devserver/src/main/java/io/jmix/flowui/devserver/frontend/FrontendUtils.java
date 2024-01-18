@@ -84,7 +84,7 @@ public class FrontendUtils {
     /**
      * Default folder for the node related content. It's the base directory for
      * {@link Constants#PACKAGE_JSON} and {@link FrontendUtils#NODE_MODULES}.
-     * <p>
+     *
      * By default it's the project root folder.
      */
     public static final String DEFAULT_NODE_DIR = "./";
@@ -110,7 +110,7 @@ public class FrontendUtils {
     /**
      * Path of the folder containing application frontend source files, it needs
      * to be relative to the {@link FrontendUtils#DEFAULT_NODE_DIR}
-     * <p>
+     *
      * By default it is <code>/frontend</code> in the project folder.
      */
     public static final String DEFAULT_FRONTEND_DIR = DEFAULT_NODE_DIR
@@ -426,10 +426,13 @@ public class FrontendUtils {
      * Auto-reloading will work automatically, like other files in the
      * `frontend/` folder.
      *
-     * @param service the vaadin service
+     * @param service
+     *            the vaadin service
      * @return the content of the index html file as a string, null if not
-     * found.
-     * @throws IOException on error when reading file
+     *         found.
+     * @throws IOException
+     *             on error when reading file
+     *
      */
     public static String getIndexHtmlContent(VaadinService service)
             throws IOException {
@@ -446,10 +449,13 @@ public class FrontendUtils {
      * watcher. Auto-reloading will work automatically, like other files in the
      * `frontend/` folder.
      *
-     * @param service the vaadin service
+     * @param service
+     *            the vaadin service
      * @return the content of the web-component.html file as a string, null if
-     * not found.
-     * @throws IOException on error when reading file
+     *         not found.
+     * @throws IOException
+     *             on error when reading file
+     *
      */
     public static String getWebComponentHtmlContent(VaadinService service)
             throws IOException {
@@ -462,8 +468,8 @@ public class FrontendUtils {
         InputStream content = null;
 
         try {
-            Optional<DevModeHandler> devModeHandler = DevModeHandlerManager
-                    .getDevModeHandler(service);
+            Optional<DevModeHandler> devModeHandler = activeDevModeHandler(
+                    service);
             if (config.isProductionMode()) {
                 // In production mode, this is on the class path
                 content = getFileFromClassPath(service, path);
@@ -480,6 +486,15 @@ public class FrontendUtils {
         }
     }
 
+    // The DevModeHandler is serving contents only if the port is
+    // equal to or greater than zero. Otherwise, it is just a fake
+    // implementation used to present a waiting page during dev
+    // bundle creation
+    private static Optional<DevModeHandler> activeDevModeHandler(
+            VaadinService service) {
+        return DevModeHandlerManager.getDevModeHandler(service)
+                .filter(d -> d.getPort() >= 0);
+    }
     private static InputStream getFileFromFrontendDir(
             AbstractConfiguration config, String path) {
         File file = new File(new File(System.getProperty(PARAM_STUDIO_DIR), "frontend"),
@@ -527,8 +542,7 @@ public class FrontendUtils {
      */
     public static InputStream getFrontendFileFromDevModeHandler(
             VaadinService service, String path) {
-        Optional<DevModeHandler> devModeHandler = DevModeHandlerManager
-                .getDevModeHandler(service);
+        Optional<DevModeHandler> devModeHandler = activeDevModeHandler(service);
         if (devModeHandler.isPresent()) {
             try {
                 File frontendFile = resolveFrontendPath(
@@ -669,7 +683,7 @@ public class FrontendUtils {
 
     static void validateToolVersion(String tool, FrontendVersion toolVersion,
                                     FrontendVersion supported) {
-        if (isVersionAtLeast(toolVersion, supported)) {
+        if (toolVersion.isEqualOrNewer(supported)) {
             return;
         }
 
@@ -678,14 +692,6 @@ public class FrontendUtils {
                 supported.getMinorVersion()));
     }
 
-    static boolean isVersionAtLeast(FrontendVersion toolVersion,
-                                    FrontendVersion required) {
-        int major = toolVersion.getMajorVersion();
-        int minor = toolVersion.getMinorVersion();
-        return (major > required.getMajorVersion()
-                || (major == required.getMajorVersion()
-                && minor >= required.getMinorVersion()));
-    }
 
     /**
      * Thrown when detecting the version of a tool fails.
@@ -809,14 +815,14 @@ public class FrontendUtils {
 
     /**
      * Reads input and error stream from the give process asynchronously.
-     * <p>
+     *
      * The method returns a {@link CompletableFuture} that is completed when
      * both the streams are consumed.
-     * <p>
+     *
      * Streams are converted into strings and wrapped into a {@link Pair},
      * mapping input stream into {@link Pair#getFirst()} and error stream into
      * {@link Pair#getSecond()}.
-     * <p>
+     *
      * This method should be mainly used to avoid that {@link Process#waitFor()}
      * hangs indefinitely on some operating systems because process streams are
      * not consumed. See https://github.com/vaadin/flow/issues/15339 for an
@@ -1316,12 +1322,16 @@ public class FrontendUtils {
 
     public static InputStream getResourceAsStream(String name) {
         final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
-        return FrontendUtils.class.getClassLoader().getResourceAsStream(devServerResourcesBaseDir + name);
+        final ClassLoader classLoader = FrontendUtils.class.getClassLoader();
+        InputStream resource = classLoader.getResourceAsStream(devServerResourcesBaseDir + name);
+        return resource != null ? resource : classLoader.getResourceAsStream(name);
     }
 
     public static URL getResource(String name) {
         final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
-        return FrontendUtils.class.getClassLoader().getResource(devServerResourcesBaseDir + name);
+        final ClassLoader classLoader = FrontendUtils.class.getClassLoader();
+        URL resource = classLoader.getResource(devServerResourcesBaseDir + name);
+        return resource != null ? resource : classLoader.getResource(name);
     }
 
     public static File getProjectBaseDir(ApplicationConfiguration configuration) {

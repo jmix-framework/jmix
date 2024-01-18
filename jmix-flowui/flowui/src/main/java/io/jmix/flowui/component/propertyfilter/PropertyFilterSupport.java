@@ -155,8 +155,14 @@ public class PropertyFilterSupport {
     public EnumSet<Operation> getAvailableOperations(MetaPropertyPath mpp) {
         Range mppRange = mpp.getRange();
 
-        if (mppRange.isClass() || mppRange.isEnum()) {
+        if (mppRange.isEnum()) {
             return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET/*, IN_LIST, NOT_IN_LIST*/);
+        } else if (mppRange.isClass()) {
+            if (mppRange.getCardinality().isMany()) {
+                return EnumSet.of(IS_COLLECTION_EMPTY, MEMBER_OF_COLLECTION, NOT_MEMBER_OF_COLLECTION);
+            } else {
+                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET/*, IN_LIST, NOT_IN_LIST*/);
+            }
         } else if (mppRange.isDatatype()) {
             Class<?> type = mppRange.asDatatype().getJavaClass();
 
@@ -203,14 +209,23 @@ public class PropertyFilterSupport {
             throw new UnsupportedOperationException("Unsupported attribute name: " + property);
         }
 
-        return isStringDatatype(mpp)
-                ? CONTAINS
-                : EQUAL;
+        if (isStringDatatype(mpp)) {
+            return CONTAINS;
+        } else if (isCollectionDatatype(mpp)) {
+            return IS_COLLECTION_EMPTY;
+        } else {
+            return EQUAL;
+        }
     }
 
     protected boolean isStringDatatype(MetaPropertyPath mpp) {
         Range range = mpp.getMetaProperty().getRange();
         return range.isDatatype() && String.class.equals(range.asDatatype().getJavaClass());
+    }
+
+    protected boolean isCollectionDatatype(MetaPropertyPath mpp) {
+        Range range = mpp.getMetaProperty().getRange();
+        return range.isClass() && range.getCardinality().isMany();
     }
 
     public String toPropertyConditionOperation(Operation operation) {
@@ -243,6 +258,12 @@ public class PropertyFilterSupport {
                 return PropertyCondition.Operation.NOT_IN_LIST;
             case DATE_INTERVAL:
                 return PropertyCondition.Operation.IN_INTERVAL;*/
+            case IS_COLLECTION_EMPTY:
+                return PropertyCondition.Operation.IS_COLLECTION_EMPTY;
+            case MEMBER_OF_COLLECTION:
+                return PropertyCondition.Operation.MEMBER_OF_COLLECTION;
+            case NOT_MEMBER_OF_COLLECTION:
+                return PropertyCondition.Operation.NOT_MEMBER_OF_COLLECTION;
             default:
                 throw new IllegalArgumentException("Unknown operation: " + operation);
         }

@@ -30,6 +30,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -210,6 +211,12 @@ public class LookupWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
 
     public LookupWindowBuilder<E, V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
+        return this;
+    }
+
+    @Override
+    public LookupWindowBuilder<E, V> withViewConfigurer(@Nullable Consumer<V> configurer) {
+        super.withViewConfigurer(configurer);
         return this;
     }
 

@@ -22,7 +22,6 @@ import io.jmix.flowuidata.entity.UserSettingsItem;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -35,7 +34,6 @@ public class UserSettingsRemoveUserListener {
     @PersistenceContext
     protected EntityManager entityManager;
 
-    @Transactional
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     public void onUserRemove(UserRemovedEvent event) {
         String username = event.getUsername();

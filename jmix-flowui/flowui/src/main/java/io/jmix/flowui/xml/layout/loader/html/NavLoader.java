@@ -30,5 +30,6 @@ public class NavLoader extends AbstractHtmlContainerLoader<Nav> {
         super.loadComponent();
 
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
     }
 }

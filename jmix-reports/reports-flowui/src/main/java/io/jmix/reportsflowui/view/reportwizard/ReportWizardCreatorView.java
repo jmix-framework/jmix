@@ -23,6 +23,7 @@ import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -67,6 +68,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Route(value = "reports/wizard", layout = DefaultMainViewParent.class)
+@DialogMode(draggable = false, width = "45em")
 @ViewController("report_ReportWizardCreatorView")
 @ViewDescriptor("report-wizard-creator-view.xml")
 public class ReportWizardCreatorView extends StandardView {
@@ -83,7 +85,7 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     protected TypedTextField<String> outputFileName;
     @ViewComponent
-    protected JmixButton downloadTemplateFile;
+    protected JmixButton downloadTemplateFileBtn;
     @ViewComponent
     protected JmixButton moveUpBtn;
     @ViewComponent
@@ -98,8 +100,6 @@ public class ReportWizardCreatorView extends StandardView {
     protected DataGrid<ReportRegion> regionDataGrid;
     @ViewComponent
     protected DataGrid<QueryParameter> reportParameterDataGrid;
-    @ViewComponent
-    protected JmixButton regionsRunBtn;
     @ViewComponent
     protected HorizontalLayout buttonsBox;
     @ViewComponent
@@ -215,18 +215,21 @@ public class ReportWizardCreatorView extends StandardView {
         fragmentsList = getFragmentsList();
     }
 
+    @Subscribe("reportNameField")
+    public void onReportNameFieldTypedValueChange(final SupportsTypedValue.TypedValueChangeEvent<TypedTextField<String>, String> event) {
+        if (!StringUtils.isEmpty(event.getValue())) {
+            outputFileName.setTypedValue(generateOutputFileName(reportDataDc.getItem().getTemplateFileType().toString(),
+                    getReportTypeGenerate()));
+        }
+    }
+
     protected void beforeShowFragments() {
         VerticalLayout vbox = fragmentsList.get(currentFragmentIdx);
         if (vbox.equals(regionsVBox)) {
+            addRegionDescription();
             updateRegionButtons();
             showAddRegion();
             updateFragmentChangeButtons();
-            regionsRunBtn.setVisible(getReportTypeGenerate() != ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
-        } else if (vbox.equals(saveVBox)) {
-            if (StringUtils.isEmpty(outputFileName.getValue())) {
-                ReportData reportData = reportDataDc.getItem();
-                outputFileName.setTypedValue(generateOutputFileName(reportData.getTemplateFileType().toString().toLowerCase()));
-            }
         } else if (vbox.equals(queryVBox)) {
             ReportData item = reportDataDc.getItem();
             String resultQuery = item.getQuery();
@@ -273,18 +276,27 @@ public class ReportWizardCreatorView extends StandardView {
 
     @Subscribe(id = "reportDataDc", target = Target.DATA_CONTAINER)
     public void onReportDataDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<ReportData> event) {
+        ReportData reportData = reportDataDc.getItem();
         if ("reportTypeGenerate".equals(event.getProperty())) {
             List<VerticalLayout> stepFragments = getFragmentsList();
             if (Objects.equals(event.getValue(), ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY)) {
                 stepFragments.add(2, queryVBox);
             }
-            addRegionDescription();
             fragmentsList = stepFragments;
+            if (StringUtils.isNotBlank(reportData.getEntityName()))
+                updateReportOutputName(reportData, metadata.getClass(reportData.getEntityName()));
         }
-        if ("entityName".equals(event.getProperty()) || ("templateFileType".equals(event.getProperty())
-                && reportDataDc.getItem().getTemplateFileType() != null)) {
-            updateCorrectReportOutputType();
+        if ("entityName".equals(event.getProperty())) {
             updateDownloadTemplateFile();
+            outputFileName.setTypedValue(generateOutputFileName(reportDataDc.getItem().getTemplateFileType().toString(),
+                    getReportTypeGenerate()));
+        }
+        if ("templateFileType".equals(event.getProperty())
+                && reportDataDc.getItem().getTemplateFileType() != null) {
+            updateCorrectReportOutputType((TemplateFileType) event.getValue());
+            updateDownloadTemplateFile();
+            outputFileName.setTypedValue(generateOutputFileName(reportDataDc.getItem().getTemplateFileType().toString(),
+                    getReportTypeGenerate()));
         }
     }
 
@@ -316,13 +328,16 @@ public class ReportWizardCreatorView extends StandardView {
         if (currentFragmentIdx == 0) {
             backBtn.setVisible(false);
             saveBtn.setVisible(false);
+            downloadTemplateFileBtn.setVisible(false);
         } else if (currentFragmentIdx == fragmentsList.size() - 1) {
             saveBtn.setVisible(true);
+            downloadTemplateFileBtn.setVisible(true);
             nextBtn.setVisible(false);
         } else {
             backBtn.setVisible(true);
             nextBtn.setVisible(true);
             saveBtn.setVisible(false);
+            downloadTemplateFileBtn.setVisible(false);
         }
     }
 
@@ -499,9 +514,9 @@ public class ReportWizardCreatorView extends StandardView {
     protected void setReportName(ReportData reportData, @Nullable MetaClass prevValue, MetaClass value) {
         String oldName = reportData.getName();
         if (StringUtils.isBlank(oldName)) {
-            reportData.setName(messageBundle.formatMessage("reportData.reportNamePattern", messageTools.getEntityCaption(value)));
+            updateReportOutputName(reportData, value);
         } else {
-            if (prevValue != null && value != null) {
+            if (prevValue != null) {
                 //if old text contains MetaClass name substring, just replace it
                 String prevEntityCaption = messageTools.getEntityCaption(prevValue);
                 if (StringUtils.contains(oldName, prevEntityCaption)) {
@@ -527,17 +542,32 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
+    protected void updateReportOutputName(ReportData reportData, MetaClass value) {
+        if (ReportTypeGenerate.SINGLE_ENTITY == getReportTypeGenerate()) {
+            reportData.setName(messageTools.getEntityCaption(value));
+        } else {
+            reportData.setName(messageBundle.formatMessage(
+                    "downloadEntityListNamePattern",
+                    messageTools.getEntityCaption(value)));
+        }
+    }
+
+    @Subscribe("templateFileTypeField")
+    public void onTemplateFileTypeFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixComboBox<TemplateFileType>, TemplateFileType> event) {
+        updateDownloadTemplateFile();
+    }
+
 
     protected void initTemplateFormatLookupField() {
         ComponentUtils.setItemsMap(templateFileTypeField, getAvailableTemplateFormats());
         templateFileTypeField.setAllowCustomValue(false);
-        templateFileTypeField.setValue(TemplateFileType.DOCX);
+        templateFileTypeField.setValue(TemplateFileType.XLSX);
     }
 
     protected void initReportTypeOptionGroup() {
-        reportTypeGenerateField.setItems(ReportTypeGenerate.SINGLE_ENTITY, ReportTypeGenerate.LIST_OF_ENTITIES, ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
+        reportTypeGenerateField.setItems(ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY, ReportTypeGenerate.LIST_OF_ENTITIES, ReportTypeGenerate.SINGLE_ENTITY);
         reportTypeGenerateField.setItemLabelGenerator(this::itemLabelGenerator);
-        reportTypeGenerateField.setValue(ReportTypeGenerate.SINGLE_ENTITY);
+        reportTypeGenerateField.setValue(ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
     }
 
     protected String itemLabelGenerator(ReportTypeGenerate reportTypeGenerate) {
@@ -602,28 +632,6 @@ public class ReportWizardCreatorView extends StandardView {
     @Subscribe("regionDataGrid.edit")
     public void onRegionDataGridEditItemAction(ActionPerformedEvent event) {
         editRegion();
-    }
-
-    @Subscribe("regionsRunBtn")
-    public void onRegionsRunBtnClick(ClickEvent<Button> event) {
-        if (reportDataDc.getItem().getReportRegions().isEmpty()) {
-            notifications.create(messageBundle.getMessage("addRegionsWarn.message"))
-                    .withType(Notifications.Type.DEFAULT)
-                    .withPosition(Notification.Position.BOTTOM_END)
-                    .show();
-            return;
-        }
-
-        lastGeneratedTmpReport = buildReport(true);
-
-        if (lastGeneratedTmpReport != null) {
-            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(lastGeneratedTmpReport)
-                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
-                fluentRunner.inBackground(this);
-            }
-            fluentRunner.runAndShow();
-        }
     }
 
     @Install(to = "regionDataGrid.up", subject = "enabledRule")
@@ -792,18 +800,30 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
-    protected void updateCorrectReportOutputType() {
-        ReportOutputType outputFileFormatPrevValue = outputFileFormat.getValue();
-        outputFileFormat.setValue(null);
+    @Subscribe("outputFileFormat")
+    public void onOutputFileFormatComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixComboBox<ReportOutputType>, ReportOutputType> event) {
+        if (event.getOldValue() != null && event.getValue() != null
+                && StringUtils.isNotBlank(outputFileName.getValue())) {
+            ReportOutputType prevValue = event.getOldValue();
+            ReportOutputType value = event.getValue();
+            String prevOutputFileName = outputFileName.getValue();
+            if (prevOutputFileName.contains(prevValue.name())) {
+                String newOutputFileName = prevOutputFileName.replace(prevValue.name(), value.name());
+                outputFileName.setValue(newOutputFileName);
+                updateDownloadTemplateFile();
+            }
+        }
+    }
+
+    protected void updateCorrectReportOutputType(TemplateFileType newValue) {
         Map<String, ReportOutputType> optionsMap = outputFormatTools
                 .getOutputAvailableFormats(reportDataDc.getItem().getTemplateFileType());
-        if (optionsMap != null && !optionsMap.isEmpty()) {
+        if (!optionsMap.isEmpty()) {
             ComponentUtils.setItemsMap(outputFileFormat, MapUtils.invertMap(optionsMap));
 
-            if (outputFileFormatPrevValue != null) {
-                if (optionsMap.containsKey(outputFileFormatPrevValue.toString())) {
-                    outputFileFormat.setValue(outputFileFormatPrevValue);
-                }
+            if (optionsMap.containsKey(newValue.toString())) {
+                ReportOutputType reportOutputType = optionsMap.get(newValue.toString());
+                outputFileFormat.setValue(reportOutputType);
             }
             if (outputFileFormat.getValue() == null) {
                 if (optionsMap.size() > 1) {
@@ -815,14 +835,18 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
-    protected String generateOutputFileName(String fileExtension) {
+    protected String generateOutputFileName(String fileExtension, ReportTypeGenerate reportTypeGenerate) {
         ReportData reportData = reportDataDc.getItem();
         if (StringUtils.isBlank(reportData.getName())) {
             MetaClass entityMetaClass = metadata.findClass(reportData.getEntityName());
             if (entityMetaClass != null) {
-                return messageBundle.formatMessage(
-                        "downloadOutputFileNamePattern",
-                        messageTools.getEntityCaption(entityMetaClass), fileExtension);
+                if (ReportTypeGenerate.SINGLE_ENTITY == reportTypeGenerate) {
+                    return messageTools.getEntityCaption(entityMetaClass) + "." + fileExtension;
+                } else {
+                    return messageBundle.formatMessage(
+                            "downloadEntityListOutputFileNamePattern",
+                            messageTools.getEntityCaption(entityMetaClass), fileExtension);
+                }
             } else {
                 return Strings.EMPTY;
             }
@@ -867,7 +891,6 @@ public class ReportWizardCreatorView extends StandardView {
     public void updateDownloadTemplateFile() {
         String templateFileName = generateTemplateFileName(reportDataDc.getItem().getTemplateFileType().toString().toLowerCase());
 
-        downloadTemplateFile.setText(templateFileName);
         reportDataDc.getItem().setTemplateFileName(templateFileName);
     }
 
@@ -927,7 +950,7 @@ public class ReportWizardCreatorView extends StandardView {
         return queryParameter;
     }
 
-    @Subscribe("downloadTemplateFile")
+    @Subscribe("downloadTemplateFileBtn")
     public void onDownloadTemplateFileClick(ClickEvent<Button> event) {
         ReportData reportData = reportDataDc.getItem();
         try {
@@ -938,7 +961,7 @@ public class ReportWizardCreatorView extends StandardView {
                             newTemplate,
                             uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                             coreProperties.getTempDir()),
-                    downloadTemplateFile.getText(),
+                    reportDataDc.getItem().getTemplateFileName(),
                     DownloadFormat.getByExtension(templateFileType.toString().toLowerCase()));
         } catch (TemplateGenerationException e) {
             notifications.create(messageBundle.getMessage("templateGenerationException.message"))

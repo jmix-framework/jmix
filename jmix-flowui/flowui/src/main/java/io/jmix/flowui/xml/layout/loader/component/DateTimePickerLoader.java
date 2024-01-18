@@ -47,13 +47,13 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
         loadDateTime(element, "max", resultComponent::setMax);
         loadDateTime(element, "min", resultComponent::setMin);
 
-        componentLoader().loadDatePickerI18n(element, resultComponent::setDatePickerI18n);
+        componentLoader().loadDatePickerI18n(element, resultComponent::getDatePickerI18n);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadOverlayClass(resultComponent, element);
-        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);

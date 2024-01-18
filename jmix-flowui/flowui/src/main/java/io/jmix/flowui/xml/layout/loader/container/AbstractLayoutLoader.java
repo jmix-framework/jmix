@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.container;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.ClickNotifier;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
@@ -25,7 +26,7 @@ import org.dom4j.Element;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractLayoutLoader<T extends Component & ThemableLayout & FlexComponent>
+public abstract class AbstractLayoutLoader<T extends Component & ThemableLayout & FlexComponent & ClickNotifier<T>>
         extends AbstractContainerLoader<T> {
 
     @Override
@@ -39,6 +40,7 @@ public abstract class AbstractLayoutLoader<T extends Component & ThemableLayout 
         componentLoader().loadThemableAttributes(resultComponent, element);
         componentLoader().loadFlexibleAttributes(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
         loadThemeNames(resultComponent, element);
 
         loadSubComponentsAndExpand(resultComponent, element);

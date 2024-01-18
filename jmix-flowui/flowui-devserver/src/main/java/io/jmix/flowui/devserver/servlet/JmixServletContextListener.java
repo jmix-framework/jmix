@@ -16,15 +16,21 @@
 
 package io.jmix.flowui.devserver.servlet;
 
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.vaadin.flow.server.startup.ServletContextListeners;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 public class JmixServletContextListener implements ServletContextListener {
 
     private final Map<String, Object> params = new HashMap<>();
+    private final ServletContextListeners listeners = new ServletContextListeners();
+
+    // do not delete
+    public JmixServletContextListener() {
+    }
 
     public JmixServletContextListener(Map<String, Object> params) {
         this.params.putAll(params);
@@ -33,10 +39,11 @@ public class JmixServletContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         params.forEach((key, value) -> sce.getServletContext().setAttribute(key, value));
+        listeners.contextInitialized(sce);
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-
+        listeners.contextDestroyed(sce);
     }
 }

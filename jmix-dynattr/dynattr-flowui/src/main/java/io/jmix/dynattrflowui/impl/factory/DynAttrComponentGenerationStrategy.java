@@ -39,10 +39,7 @@ import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
-import io.jmix.flowui.component.ComponentGenerationContext;
-import io.jmix.flowui.component.ComponentGenerationStrategy;
-import io.jmix.flowui.component.SupportsTypedValue;
-import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -154,7 +151,10 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
         if (resultComponent instanceof HasValueAndElement) {
             setEditable((HasValueAndElement<?, ?>) resultComponent, attribute);
-            setRequired((HasValueAndElement<?, ?>) resultComponent, attribute);
+
+        }
+        if(resultComponent instanceof HasRequired) {
+            setRequired((HasRequired) resultComponent, attribute);
         }
         if (resultComponent instanceof HasEnabled && !(resultComponent instanceof HasValueAndElement)) {
             ((HasEnabled) resultComponent).setEnabled(!attribute.isReadOnly());
@@ -464,8 +464,8 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 msgBundleTools.getLocalizedValue(attribute.getDescriptionsMsgBundle(), attribute.getDescription()));
     }
 
-    protected void setRequired(HasValueAndElement<?, ?> field, AttributeDefinition attribute) {
-        field.setRequiredIndicatorVisible(attribute.isRequired());
+    protected void setRequired(HasRequired field, AttributeDefinition attribute) {
+        field.setRequired(attribute.isRequired());
     }
 
     @SuppressWarnings({"rawtypes"})

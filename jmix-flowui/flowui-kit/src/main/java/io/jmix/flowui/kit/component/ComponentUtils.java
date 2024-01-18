@@ -17,10 +17,7 @@
 package io.jmix.flowui.kit.component;
 
 import com.google.common.base.Preconditions;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasElement;
-import com.vaadin.flow.component.HasEnabled;
-import com.vaadin.flow.component.ItemLabelGenerator;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -148,8 +145,7 @@ public final class ComponentUtils {
     }
 
     public static boolean isAutoSize(@Nullable String size) {
-        // TODO: gg, implement
-        return false;
+        return "auto".equalsIgnoreCase(size);
     }
 
     public static void setVisible(Component component, boolean visible) {
@@ -182,5 +178,26 @@ public final class ComponentUtils {
         } else {
             throw new IllegalArgumentException("Passed object is not a component: " + component.getClass().getName());
         }
+    }
+
+    /**
+     * Adds a shortcut which 'clicks' the {@link Component} which implements
+     * {@link ClickNotifier} interface.
+     *
+     * @param component           a component to add shortcut
+     * @param shortcutCombination an object that stores information about key,
+     *                            modifiers and additional settings
+     * @return {@link ShortcutRegistration} for configuring the shortcut and removing
+     */
+    public static ShortcutRegistration addClickShortcut(ClickNotifier<?> component,
+                                                        KeyCombination shortcutCombination) {
+        ShortcutRegistration shortcutRegistration = component.addClickShortcut(shortcutCombination.getKey(),
+                shortcutCombination.getKeyModifiers());
+
+        if (shortcutCombination.getListenOnComponents() != null) {
+            shortcutRegistration.listenOn(shortcutCombination.getListenOnComponents());
+        }
+
+        return shortcutRegistration;
     }
 }

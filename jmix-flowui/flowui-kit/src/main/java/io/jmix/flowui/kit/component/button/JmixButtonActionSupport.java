@@ -24,7 +24,6 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.KeyCombination;
 import jakarta.annotation.Nullable;
 
 import java.beans.PropertyChangeEvent;
@@ -58,7 +57,6 @@ public class JmixButtonActionSupport {
             updateText(overrideComponentProperties);
             updateTitle(overrideComponentProperties);
             updateIcon(overrideComponentProperties);
-            updateShortcutCombination(overrideComponentProperties);
             updateActionVariant(overrideComponentProperties);
 
             buttonClickRegistration =
@@ -149,12 +147,6 @@ public class JmixButtonActionSupport {
         }
     }
 
-    protected void updateShortcutCombination(boolean overrideComponentProperties) {
-        if (button.getShortcutCombination() == null || overrideComponentProperties) {
-            button.setShortcutCombination(action.getShortcutCombination());
-        }
-    }
-
     protected void onButtonClick(ClickEvent<Button> event) {
         this.action.actionPerform(event.getSource());
     }
@@ -179,9 +171,6 @@ public class JmixButtonActionSupport {
             case Action.PROP_VARIANT:
                 removeActionVariant(button, (ActionVariant) event.getOldValue());
                 addActionVariant(button, (ActionVariant) event.getNewValue());
-                break;
-            case Action.PROP_SHORTCUT_COMBINATION:
-                button.setShortcutCombination((KeyCombination) event.getNewValue());
                 break;
         }
     }

@@ -71,6 +71,28 @@ public interface StudioElements {
     DropdownButtonItem actionItem();
 
     @StudioElement(
+            name = "Action",
+            xmlElement = "action",
+            classFqn = "io.jmix.flowui.kit.action.BaseAction",
+            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            target = {"io.jmix.flowui.kit.component.dropdownbutton.ActionItem"},
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
+                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
+                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
+                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
+            }
+    )
+    void dropdownButtonAction();
+
+    @StudioElement(
             name = "AdditionalInformation",
             xmlElement = "additionalInformation",
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
@@ -312,6 +334,12 @@ public interface StudioElements {
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = "componentItem",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 1
+                    )
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }
@@ -439,7 +467,8 @@ public interface StudioElements {
                     "io.jmix.flowui.component.genericfilter.GenericFilter",
                     "io.jmix.flowui.component.propertyfilter.PropertyFilter",
                     "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
-                    "com.vaadin.flow.component.tabs.Tab"},
+                    "com.vaadin.flow.component.tabs.Tab",
+                    "io.jmix.flowui.component.menufilterfield.MenuFilterField"},
             properties = {
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING, required = true),
                     @StudioProperty(xmlAttribute = "focusDelay", type = StudioPropertyType.INTEGER),
@@ -526,6 +555,7 @@ public interface StudioElements {
             ),
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -577,7 +607,8 @@ public interface StudioElements {
                             classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter$Operation",
                             options = {"EQUAL", "NOT_EQUAL", "GREATER",
                                     "GREATER_OR_EQUAL", "LESS", "LESS_OR_EQUAL", "CONTAINS", "NOT_CONTAINS",
-                                    "STARTS_WITH", "ENDS_WITH", "IS_SET"}, required = true),
+                                    "STARTS_WITH", "ENDS_WITH", "IS_SET", "IS_COLLECTION_EMPTY", "MEMBER_OF_COLLECTION",
+                                    "NOT_MEMBER_OF_COLLECTION"}, required = true),
                     @StudioProperty(xmlAttribute = "operationEditable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "operationTextVisible", type = StudioPropertyType.BOOLEAN,
@@ -591,6 +622,7 @@ public interface StudioElements {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true")
@@ -630,6 +662,7 @@ public interface StudioElements {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),

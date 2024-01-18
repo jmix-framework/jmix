@@ -1,0 +1,73 @@
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<jmixCodeSnippets xmlns="http://jmix.io/schema/core/code-snippets">
+
+    <category name="Reports">
+
+        <codeSnippet name="Run report using UiReportRunner" contextTypes="controller">
+
+            <inject variable="uiReportRunner" classQualifiedName="io.jmix.reportsflowui.runner.UiReportRunner"/>
+
+            <stringInputParameter code="code" text="Report code"/>
+            <optionsInputParameter code="outputType" text="Output type">
+                <option name="XLSX" value="XLSX"/>
+                <option name="DOCX" value="DOCX"/>
+                <option name="PDF" value="PDF"/>
+                <option name="HTML" value="HTML"/>
+                <option name="CSV" value="CSV"/>
+                <option name="TABLE" value="TABLE"/>
+                <option name="CUSTOM" value="CUSTOM"/>
+            </optionsInputParameter>
+            <optionsInputParameter code="dialogShowMode" text="Show parameters dialog?">
+                <option name="If required" value="IF_REQUIRED"/>
+                <option name="Yes" value="YES"/>
+                <option name="No" value="NO"/>
+            </optionsInputParameter>
+            <optionsInputParameter code="isBackground" text="Run report in background?">
+                <option name="Yes" value="true"/>
+                <option name="No" value="false"/>
+            </optionsInputParameter>
+
+            <text language="java">
+                uiReportRunner.byReportCode("${code}")
+                        .withParams(java.util.Map.of("param1", "value1"))
+                        .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
+                        .withOutputNamePattern("${code}.${outputType.toLowerCase()}")
+                        .withParametersDialogShowMode(io.jmix.reportsflowui.runner.ParametersDialogShowMode.${dialogShowMode})&lt;% if (isBackground == 'true') print '\n.inBackground(this)' %&gt;
+                        .runAndShow();
+            </text>
+
+            <text language="kotlin">
+                uiReportRunner.byReportCode("${code}")
+                        .withParams(mapOf("param1" to "value1"))
+                        .withOutputType(io.jmix.reports.entity.ReportOutputType.${outputType})
+                        .withOutputNamePattern("${code}.${outputType.toLowerCase()}")
+                        .withParametersDialogShowMode(io.jmix.reportsflowui.runner.ParametersDialogShowMode.${dialogShowMode})&lt;% if (isBackground == 'true') print '\n.inBackground(this)' %&gt;
+                        .runAndShow();
+            </text>
+
+            <description>
+                <![CDATA[
+                    Run a report by its code and show the result content using <code>UiReportRunner</code>.<br>
+                    <a href="https://docs.jmix.io/jmix/reports/run-report.html#ui-report-runner">Jmix Documentation</a>
+                ]]>
+            </description>
+        </codeSnippet>
+
+    </category>
+
+</jmixCodeSnippets>

@@ -17,14 +17,14 @@ import { Router } from '@vaadin/router';
 import { Flow } from 'Frontend/generated/jar-resources/Flow.js';
 
 const { serverSideRoutes } = new Flow({
-    imports: () => import('Frontend/generated/flow/generated-flow-imports.js')
+  imports: () => import('Frontend/generated/flow/generated-flow-imports.js')
 });
 
 const routes = [
-    // for client-side, place routes below (more info https://hilla.dev/docs/lit/guides/routing#initializing-the-router)
+  // for client-side, place routes below (more info https://hilla.dev/docs/lit/guides/routing#initializing-the-router)
 
-    // for server-side, the next magic line sends all unmatched routes:
-    ...serverSideRoutes // IMPORTANT: this must be the last entry in the array
+  // for server-side, the next magic line sends all unmatched routes:
+  ...serverSideRoutes // IMPORTANT: this must be the last entry in the array
 ];
 
 // Vaadin router needs an outlet in the index.html page to display views

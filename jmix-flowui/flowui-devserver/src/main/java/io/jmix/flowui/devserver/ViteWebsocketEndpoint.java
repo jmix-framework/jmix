@@ -16,11 +16,13 @@
 package io.jmix.flowui.devserver;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.jmix.flowui.devserver.frontend.FrontendUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,8 +62,9 @@ public class ViteWebsocketEndpoint extends Endpoint {
         ServerContainer container = (ServerContainer) servletContext
                 .getAttribute(ServerContainer.class.getName());
         if (container == null) {
-            getLogger().error(
-                    "Unable to deploy Vite websocket endpoint, no container value is available");
+            String msg = "Unable to deploy Vite websocket endpoint, no container value is available";
+            FrontendUtils.logInFile(msg);
+            getLogger().error(msg);
             return;
         }
         try {
@@ -74,8 +77,9 @@ public class ViteWebsocketEndpoint extends Endpoint {
                     .put(ViteWebsocketEndpoint.VITE_HANDLER, viteHandler);
             container.addEndpoint(endpointConfig);
         } catch (DeploymentException e) {
-            getLogger().error("Error deploying Vite websocket proxy endpoint",
-                    e);
+            String msg = "Error deploying Vite websocket proxy endpoint";
+            FrontendUtils.logInFile(msg + "\n" + Arrays.toString(e.getStackTrace()));
+            getLogger().error(msg, e);
         }
 
     }
@@ -91,11 +95,14 @@ public class ViteWebsocketEndpoint extends Endpoint {
                 .get(VITE_HANDLER);
         ViteWebsocketProxy proxy;
         try {
-            proxy = new ViteWebsocketProxy(session, viteHandler.getPort());
+            proxy = new ViteWebsocketProxy(session, viteHandler.getPort(),
+                    viteHandler.getPathToVaadin());
             proxies.put(session.getId(), proxy);
             session.addMessageHandler(proxy);
         } catch (Exception e) {
-            getLogger().error("Error creating Vite proxy connection", e);
+            String msg = "Error creating Vite proxy connection";
+            FrontendUtils.logInFile(msg + "\n" + e);
+            getLogger().error(msg, e);
             try {
                 session.close();
             } catch (IOException e1) {

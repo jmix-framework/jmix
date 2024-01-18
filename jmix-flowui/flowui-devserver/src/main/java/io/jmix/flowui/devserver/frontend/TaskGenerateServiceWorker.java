@@ -31,7 +31,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class TaskGenerateServiceWorker extends AbstractTaskClientGenerator {
 
-    private Options options;
+    private final Options options;
 
     /**
      * Create a task to generate <code>sw.ts</code> if necessary.

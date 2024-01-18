@@ -3,14 +3,12 @@ package io.jmix.quartz.model;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.annotation.JmixProperty;
-import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.lang.Nullable;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @JmixEntity(name = "quartz_TriggerModel")
@@ -20,8 +18,9 @@ public class TriggerModel {
     @JmixId
     private UUID id;
 
+    @Length(max = 200)
     private String triggerName;
-
+    @Length(max = 200)
     private String triggerGroup;
 
     private ScheduleType scheduleType;
@@ -33,7 +32,7 @@ public class TriggerModel {
     private Date lastFireDate;
 
     private Date nextFireDate;
-
+    @Length(max = 120)
     private String cronExpression;
 
     private String misfireInstructionId;
@@ -146,28 +145,6 @@ public class TriggerModel {
 
     public void setMisfireInstructionId(String misfireInstructionId) {
         this.misfireInstructionId = misfireInstructionId;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Transient
-    @JmixProperty
-    @Nullable
-    public String getScheduleDescription() {
-        if (getScheduleType() == null) {
-            return null;
-        }
-
-        if (getScheduleType() == ScheduleType.CRON_EXPRESSION) {
-            return cronExpression;
-        }
-
-        if (Objects.isNull(repeatCount) || repeatCount < 0) {
-            return String.format("Execute forever every %s seconds", repeatInterval / 1000);
-        } else if (repeatCount == 0) {
-            return "Execute once";
-        } else {
-            return String.format("Execute %s times every %s seconds", repeatCount + 1, repeatInterval / 1000);
-        }
     }
 
 }

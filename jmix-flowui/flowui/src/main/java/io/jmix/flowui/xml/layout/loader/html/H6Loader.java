@@ -24,4 +24,11 @@ public class H6Loader extends AbstractHtmlContainerLoader<H6> {
     protected H6 createComponent() {
         return factory.create(H6.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

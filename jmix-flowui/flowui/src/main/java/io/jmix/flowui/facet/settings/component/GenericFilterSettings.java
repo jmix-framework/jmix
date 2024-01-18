@@ -25,6 +25,8 @@ public class GenericFilterSettings implements Settings {
 
     protected Boolean opened;
 
+    protected String defaultConfigurationId;
+
     @Nullable
     @Override
     public String getId() {
@@ -43,5 +45,14 @@ public class GenericFilterSettings implements Settings {
 
     public void setOpened(@Nullable Boolean opened) {
         this.opened = opened;
+    }
+
+    @Nullable
+    public String getDefaultConfigurationId() {
+        return defaultConfigurationId;
+    }
+
+    public void setDefaultConfigurationId(@Nullable String defaultConfigurationId) {
+        this.defaultConfigurationId = defaultConfigurationId;
     }
 }

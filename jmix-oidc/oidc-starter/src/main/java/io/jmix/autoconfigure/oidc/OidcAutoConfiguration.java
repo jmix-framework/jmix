@@ -94,7 +94,8 @@ public class OidcAutoConfiguration {
         @Order(JmixSecurityFilterChainOrder.OIDC_LOGIN)
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                        JmixOidcUserService jmixOidcUserService,
-                                                       ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+                                                       ClientRegistrationRepository clientRegistrationRepository,
+                                                       OidcProperties oidcProperties) throws Exception {
             http.authorizeHttpRequests(authorize -> {
                         authorize
                                 //if we don't allow /vaadinServlet/PUSH URL the Session Expired toolbox won't
@@ -108,7 +109,8 @@ public class OidcAutoConfiguration {
                         });
                     })
                     .logout(logout -> {
-                        logout.logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository));
+                        logout.logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository,
+                                oidcProperties.getPostLogoutRedirectUri()));
                     })
                     .csrf(csrf -> {
                         csrf.disable();
@@ -123,9 +125,9 @@ public class OidcAutoConfiguration {
             return http.build();
         }
 
-        protected OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
+        protected OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository, String postLogoutRedirectUri) {
             OidcClientInitiatedLogoutSuccessHandler successHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-            successHandler.setPostLogoutRedirectUri("{baseUrl}");
+            successHandler.setPostLogoutRedirectUri(postLogoutRedirectUri);
             return successHandler;
         }
     }

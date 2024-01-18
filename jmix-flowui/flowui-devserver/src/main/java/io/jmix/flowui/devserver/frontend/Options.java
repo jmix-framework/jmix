@@ -78,6 +78,7 @@ public class Options implements Serializable {
 
     private boolean enablePnpm = Constants.ENABLE_PNPM_DEFAULT;
 
+    private boolean enableBun = Constants.ENABLE_BUN_DEFAULT;
     private boolean ciBuild;
 
     private boolean forceProductionBuild;
@@ -94,6 +95,7 @@ public class Options implements Serializable {
 
     private boolean skipDevBundle = false;
 
+    private boolean compressBundle = true;
     private File studioFolder;
     private String themeValue;
     private String themeVariant;
@@ -453,6 +455,19 @@ public class Options implements Serializable {
     }
 
     /**
+     * Enables bun tool.
+     * <p>
+     * "bun" will be used instead of "npm".
+     *
+     * @param enable
+     *            enables bun.
+     * @return the builder, for chaining
+     */
+    public Options withEnableBun(boolean enable) {
+        enableBun = enable;
+        return this;
+    }
+    /**
      * Enables ci build.
      * <p>
      * "npm ci" will be used instead of "npm install". "--frozen-lockfile" will
@@ -785,6 +800,9 @@ public class Options implements Serializable {
         return enablePnpm;
     }
 
+    public boolean isEnableBun() {
+        return enableBun;
+    }
     public boolean isCiBuild() {
         return ciBuild;
     }
@@ -872,5 +890,25 @@ public class Options implements Serializable {
      */
     public boolean isSkipDevBundle() {
         return skipDevBundle;
+    }
+    /**
+     * Set to {@code false} to skip frontend bundle compression.
+     *
+     * @param compressBundle
+     *            {@code false} to not compress frontend bundles
+     * @return this builder
+     */
+    public Options withCompressBundle(boolean compressBundle) {
+        this.compressBundle = compressBundle;
+        return this;
+    }
+
+    /**
+     * Get if frontend bundle should be compressed or not.
+     *
+     * @return true to copress, false to skip compression
+     */
+    public boolean isCompressBundle() {
+        return compressBundle;
     }
 }

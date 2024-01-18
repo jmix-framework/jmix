@@ -7,6 +7,7 @@ import com.vaadin.flow.i18n.LocaleChangeEvent
 import com.vaadin.flow.i18n.LocaleChangeObserver
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.VaadinSession
+import io.jmix.core.CoreProperties
 import io.jmix.core.MessageTools
 import io.jmix.flowui.component.loginform.JmixLoginForm
 import io.jmix.flowui.kit.component.ComponentUtils
@@ -14,15 +15,19 @@ import io.jmix.flowui.kit.component.loginform.JmixLoginI18n
 import io.jmix.flowui.view.*
 import io.jmix.securityflowui.authentication.AuthDetails
 import io.jmix.securityflowui.authentication.LoginViewSupport
-import org.apache.commons.collections4.MapUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+
+import java.util.Locale
 
 @Route(value = "login")
 @ViewController("${normalizedPrefix_underscore}LoginView")
 @ViewDescriptor("login-view.xml")
 open class LoginView : StandardView(), LocaleChangeObserver {
+
+    @Autowired
+    private lateinit var coreProperties: CoreProperties
 
     @Autowired
     private lateinit var loginViewSupport: LoginViewSupport
@@ -51,8 +56,11 @@ open class LoginView : StandardView(), LocaleChangeObserver {
     }
 
     protected open fun initLocales() {
-        ComponentUtils.setItemsMap(login,
-                MapUtils.invertMap(messageTools.availableLocalesMap))
+        val locales: MutableMap<Locale, String> =
+                coreProperties.availableLocales.associateByTo(
+                        mutableMapOf(), { it }, messageTools::getLocaleDisplayName)
+
+        ComponentUtils.setItemsMap(login, locales);
 
         login.selectedLocale = VaadinSession.getCurrent().locale
     }

@@ -19,6 +19,7 @@ package io.jmix.flowui.devserver.servlet;
 import com.vaadin.flow.component.PushConfiguration;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.internal.BootstrapHandlerHelper;
 import com.vaadin.flow.server.AppShellRegistry;
 import com.vaadin.flow.server.VaadinRequest;
@@ -49,20 +50,22 @@ public class JmixJavaScriptBootstrapHandler extends JavaScriptBootstrapHandler {
         ui.getInternals().setSession(session);
         ui.setLocale(session.getLocale());
 
-        BootstrapContext context = createBootstrapContext(
-                request,
-                response,
-                ui,
-                vaadinRequest -> vaadinRequest.getService().getContextRootRelativePath(request)
+        BootstrapContext context = createBootstrapContext(request, response, ui,
+                request.getService()::getContextRootRelativePath
         );
 
-        Optional<Push> push = context.getPageConfigurationAnnotation(Push.class);
+        Optional<Push> push = context
+                .getPageConfigurationAnnotation(Push.class);
 
+        DeploymentConfiguration deploymentConfiguration = context.getSession()
+                .getService().getDeploymentConfiguration();
+        PushMode pushMode = PushMode.MANUAL;
         setupPushConnectionFactory(pushConfiguration, context);
-        pushConfiguration.setPushMode(PushMode.MANUAL);
-        push.stream()
-                .map(Push::transport)
-                .forEach(pushConfiguration::setTransport);
+        pushConfiguration.setPushMode(pushMode);
+        pushConfiguration.setPushServletMapping(
+                BootstrapHandlerHelper.determinePushServletMapping(session));
+
+        push.map(Push::transport).ifPresent(pushConfiguration::setTransport);
 
         // Set thread local here so it is available in init
         UI.setCurrent(ui);

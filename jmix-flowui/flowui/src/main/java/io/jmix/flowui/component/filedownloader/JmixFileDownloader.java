@@ -34,9 +34,11 @@ import io.jmix.core.annotation.Internal;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ContentDisposition;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -150,8 +152,10 @@ public class JmixFileDownloader extends Composite<Anchor> {
                 response.setStatus(200);
                 response.setHeader(
                         "Content-Disposition",
-                        type + "; filename=\"" + getFileName(session, request) + "\""
-                );
+                        ContentDisposition.builder(type)
+                                .filename(getFileName(session, request), StandardCharsets.UTF_8)
+                                .build()
+                                .toString());
 
                 if (isViewDocumentRequest && Strings.isNotEmpty(contentType)) {
                     response.setContentType(contentType);

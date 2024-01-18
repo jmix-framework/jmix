@@ -61,7 +61,7 @@ public interface StudioFacets {
             xmlElement = "timer",
             icon = "io/jmix/flowui/kit/meta/icon/facet/timer.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "delay", type = StudioPropertyType.INTEGER, required = true),
                     @StudioProperty(xmlAttribute = "repeating", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "autostart", type = StudioPropertyType.BOOLEAN, defaultValue = "false")

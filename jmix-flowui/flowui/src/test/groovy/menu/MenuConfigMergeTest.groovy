@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
-@SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/merge-menu.xml"])
+@SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/menuconfig/merge-menu.xml"])
 class MenuConfigMergeTest extends FlowuiTestSpecification {
 
     @Autowired

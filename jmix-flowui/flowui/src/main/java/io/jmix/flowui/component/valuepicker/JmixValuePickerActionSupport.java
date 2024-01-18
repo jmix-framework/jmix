@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.valuepicker;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.PickerComponent;
@@ -24,31 +25,42 @@ import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 
 public class JmixValuePickerActionSupport extends ValuePickerActionSupport {
 
+    /**
+     * @deprecated use one of {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component)},
+     * {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component, String, String)}
+     */
+    @Deprecated(since = "2.2", forRemoval = true)
     public JmixValuePickerActionSupport(HasElement component) {
+        //noinspection removal
         super(component);
     }
 
+    /**
+     * @deprecated use one of {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component)},
+     * {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component, String, String)}
+     */
+    @Deprecated(since = "2.2", forRemoval = true)
     public JmixValuePickerActionSupport(PickerComponent<?> component,
                                         String actionsSlot, String hasActionsAttribute) {
+        //noinspection removal
         super(component, actionsSlot, hasActionsAttribute);
     }
 
-    @Override
-    protected void addActionInternal(Action action, int index) {
-        super.addActionInternal(action, index);
-
-        attachAction(action);
+    public <C extends Component & PickerComponent<?>> JmixValuePickerActionSupport(C component) {
+        super(component);
     }
 
-    @Override
-    protected void removeActionInternal(Action action) {
-        super.removeActionInternal(action);
-
-        detachAction(action);
+    public <C extends Component & PickerComponent<?>> JmixValuePickerActionSupport(C component,
+                                                                                   String actionsSlot,
+                                                                                   String hasActionsAttribute) {
+        super(component, actionsSlot, hasActionsAttribute);
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     protected void attachAction(Action action) {
+        super.attachAction(action);
+
         if (action instanceof PickerAction) {
             ((PickerAction<?, PickerComponent<?>, ?>) action)
                     .setTarget(((PickerComponent<?>) component));
@@ -56,7 +68,10 @@ public class JmixValuePickerActionSupport extends ValuePickerActionSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     protected void detachAction(Action action) {
+        super.detachAction(action);
+
         if (action instanceof PickerAction) {
             ((PickerAction<?, PickerComponent<?>, ?>) action)
                     .setTarget(null);

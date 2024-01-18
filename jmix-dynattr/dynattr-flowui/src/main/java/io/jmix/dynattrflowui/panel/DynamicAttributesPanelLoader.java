@@ -34,10 +34,7 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
     @Override
     public void loadComponent() {
         loadDataContainer(resultComponent, element);
-        loadColumnsCount(resultComponent, element);
-        loadRowsCount(resultComponent, element);
         loadFieldWidth(resultComponent, element);
-        loadFieldCaptionWidth(resultComponent, element);
     }
 
 
@@ -51,33 +48,10 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
         resultComponent.setInstanceContainer(container);
     }
 
-    protected void loadColumnsCount(DynamicAttributesPanel resultComponent, Element element) {
-        resultComponent.setColumnsCount(getIntegerAttribute("cols", element));
-    }
-
-    protected void loadRowsCount(DynamicAttributesPanel resultComponent, Element element) {
-        resultComponent.setRowsCount(getIntegerAttribute("rows", element));
-    }
-
     protected void loadFieldWidth(DynamicAttributesPanel resultComponent, Element element) {
         String fieldWidth = element.attributeValue("fieldWidth");
         if (!Strings.isNullOrEmpty(fieldWidth)) {
             resultComponent.setFieldWidth(fieldWidth);
         }
-    }
-
-    protected void loadFieldCaptionWidth(DynamicAttributesPanel resultComponent, Element element) {
-        String fieldWidth = element.attributeValue("fieldCaptionWidth");
-        if (!Strings.isNullOrEmpty(fieldWidth)) {
-            resultComponent.setFieldCaptionWidth(fieldWidth);
-        }
-    }
-
-    protected Integer getIntegerAttribute(String attributeName, Element element) {
-        String columnsCountStr = element.attributeValue(attributeName);
-        if (!Strings.isNullOrEmpty(columnsCountStr)) {
-            return Integer.parseInt(columnsCountStr);
-        }
-        return null;
     }
 }

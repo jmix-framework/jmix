@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -60,6 +61,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
+/**
+ * Deals with most details of starting a frontend development server or
+ * connecting to an existing one.
+ * <p>
+ * This class is meant to be used during developing time.
+ * <p>
+ * For internal use only. May be renamed or removed in a future release.
+ */
 public abstract class AbstractDevServerRunner implements DevModeHandler {
     private static final String START_FAILURE = "Couldn't start dev server because";
 
@@ -111,6 +120,7 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
 
     private String failedOutput = null;
 
+    private transient Runnable waitForRestart;
     /**
      * Craete an instance that waits for the given task to complete before
      * starting or connecting to the server.
@@ -159,7 +169,11 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         }
     }
 
-    private void doStartDevModeServer() throws ExecutionFailedException {
+    void doStartDevModeServer() throws ExecutionFailedException {
+        waitForRestart = DevServerOutputTracker.activeServerRestartGuard();
+        if (waitForRestart != null) {
+            getLogger().debug("RestartMonitor is active");
+        }
         // If port is defined, means that the dev server is already running
         if (port > 0) {
             if (!checkConnection()) {
@@ -203,9 +217,15 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
             Process process = doStartDevServer();
             devServerProcess.set(process);
             if (!isRunning()) {
-                throw new IllegalStateException("Startup of " + getServerName()
-                        + " failed. Output was:\n" + getFailedOutput());
+                String msg = "Startup of " + getServerName()
+                        + " failed. Output was:\n" + getFailedOutput();
+                FrontendUtils.logInFile(msg);
+                throw new IllegalStateException(msg);
             }
+            long ms = (System.nanoTime() - start) / 1000000;
+            String startMsg = String.format("Started %s. Time: %d ms", getServerName(), ms);
+            FrontendUtils.logInFile(startMsg);
+            getLogger().info(startMsg);
         } finally {
             if (devServerProcess.get() == null) {
                 removeRunningDevServerPort();
@@ -287,10 +307,15 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
      */
     protected void updateServerStartupEnvironment(FrontendTools frontendTools,
                                                   Map<String, String> environment) {
+        environment.put("watchDogHost", getLoopbackAddress().getHostAddress());
         environment.put("watchDogPort",
                 Integer.toString(getWatchDog().getWatchDogPort()));
     }
 
+    // visible for tests
+    InetAddress getLoopbackAddress() {
+        return InetAddress.getLoopbackAddress();
+    }
     /**
      * Gets a pattern to match with the output to determine that the server has
      * started successfully.
@@ -303,6 +328,33 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
      */
     protected abstract Pattern getServerFailurePattern();
 
+    /**
+     * Gets a pattern to match with the output to determine that the server is
+     * restarting.
+     *
+     * Defaults to {@literal null}, meaning that server restart is not
+     * monitored.
+     *
+     * Server restart is monitored only if both this method and
+     * {@link #getServerRestartedPattern()} provides a pattern.
+     */
+    protected Pattern getServerRestartingPattern() {
+        return null;
+    }
+
+    /**
+     * Gets a pattern to match with the output to determine that the server has
+     * been restarted.
+     *
+     * Defaults to {@literal null}, meaning that server restart is not
+     * monitored.
+     *
+     * Server restart is monitored only if both this method and
+     * {@link #getServerRestartingPattern()} provides a pattern.
+     */
+    protected Pattern getServerRestartedPattern() {
+        return null;
+    }
     /**
      * Starts the dev server and returns the started process.
      *
@@ -346,6 +398,16 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
             DevServerOutputTracker outputTracker = new DevServerOutputTracker(
                     process.getInputStream(), getServerSuccessPattern(),
                     getServerFailurePattern(), this::onDevServerCompilation);
+            Pattern restartingPattern = getServerRestartingPattern();
+            Pattern restartedPattern = getServerRestartedPattern();
+            if (restartingPattern != null && restartedPattern != null) {
+                waitForRestart = outputTracker.serverRestartGuard(
+                        restartingPattern, restartedPattern);
+                getLogger().debug("RestartMonitor is active");
+            } else {
+                getLogger().trace(
+                        "RestartMonitor not active. Both restarting and restarted pattern are required");
+            }
             outputTracker.find();
             String startMessage = String.format(LOG_START, getServerName());
             getLogger().info(startMessage);
@@ -568,6 +630,9 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
     @Override
     public HttpURLConnection prepareConnection(String path, String method)
             throws IOException {
+        if (waitForRestart != null) {
+            waitForRestart.run();
+        }
         // path should have been checked at this point for any outside requests
         URL uri = new URL(DEV_SERVER_HOST + ":" + getPort() + path);
         HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
@@ -580,6 +645,13 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
     @Override
     public boolean handleRequest(VaadinSession session, VaadinRequest request,
                                  VaadinResponse response) throws IOException {
+        return handleRequestInternal(request, response, devServerStartFuture,
+                isDevServerFailedToStart);
+    }
+
+    static boolean handleRequestInternal(VaadinRequest request,
+            VaadinResponse response, CompletableFuture<?> devServerStartFuture,
+            AtomicBoolean isDevServerFailedToStart) throws IOException {
         if (devServerStartFuture.isDone()) {
             // The server has started, check for any exceptions in the startup
             // process
@@ -725,7 +797,7 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         return true;
     }
 
-    private RuntimeException getCause(Throwable exception) {
+    private static RuntimeException getCause(Throwable exception) {
         if (exception instanceof CompletionException) {
             return getCause(exception.getCause());
         } else if (exception instanceof RuntimeException) {

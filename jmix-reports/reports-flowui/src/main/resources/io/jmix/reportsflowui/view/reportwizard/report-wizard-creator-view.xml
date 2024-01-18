@@ -25,145 +25,138 @@
         <action id="save" icon="CHECK" text="msg://save"/>
     </actions>
     <layout spacing="false">
-        <div width="100%">
-            <hr minHeight="0.06em" classNames="my-s"/>
-            <span id="wizardDescriptionSpan"/>
-            <hr minHeight="0.06em" classNames="my-s"/>
-        </div>
-        <vbox id="detailsVBox" padding="false">
-            <formLayout id="groupBox" dataContainer="reportDataDc" maxWidth="45em">
-                <responsiveSteps>
-                    <responsiveStep minWidth="0" columns="1"/>
-                </responsiveSteps>
-                <comboBox id="entityField"
-                          label="msg://entity"
-                          required="true"
-                          requiredMessage="msg://metaClassNotFoundDialog.message"
-                          helperText="msg://entityHintMsg" width="100%"/>
-                <comboBox id="templateFileTypeField"
-                          property="templateFileType"
-                          allowCustomValue="false"
-                          label="msg://templateFileFormat"
-                          required="true"
-                          requiredMessage="msg://fillTemplateTypeMsg"
-                          helperText="msg://templateTypeHintMsg" width="100%"/>
-                <textField id="reportNameField"
-                           property="name"
-                           label="msg://reportName"
-                           required="true"
-                           requiredMessage="msg://fillReportNameMsg"
-                           width="100%"/>
-                <radioButtonGroup id="reportTypeGenerateField"
-                                  themeNames="vertical"
-                                  label="msg://reportBuildType"/>
-            </formLayout>
-        </vbox>
-        <vbox id="regionsVBox" padding="false">
-            <hbox width="100%" classNames="buttons-panel">
-                <hbox id="buttonsBox">
-                    <button id="addRegionDisabledBtn" text="msg://addRegion" enabled="false"/>
-                    <button id="addSimpleRegionBtn"
-                            text="msg://simpleRegion"/>
-                    <button id="addTabulatedRegionBtn"
-                            text="msg://tabulatedRegion"/>
+        <vbox id="contentVBox" padding="false" spacing="true">
+            <span id="wizardDescriptionSpan" classNames="report-wizard-tip-label"
+                  themeNames="badge normal" width="100%"/>
+            <vbox id="detailsVBox" padding="false">
+                <formLayout id="groupBox" dataContainer="reportDataDc">
+                    <responsiveSteps>
+                        <responsiveStep minWidth="0" columns="1"/>
+                    </responsiveSteps>
+                    <comboBox id="entityField"
+                              label="msg://entity"
+                              required="true"
+                              requiredMessage="msg://metaClassNotFoundDialog.message"
+                              helperText="msg://entityHintMsg" width="100%"/>
+                    <comboBox id="templateFileTypeField"
+                              property="templateFileType"
+                              allowCustomValue="false"
+                              label="msg://templateFileFormat"
+                              required="true"
+                              requiredMessage="msg://fillTemplateTypeMsg"
+                              helperText="msg://templateTypeHintMsg" width="100%"/>
+                    <textField id="reportNameField"
+                               property="name"
+                               label="msg://reportName"
+                               required="true"
+                               requiredMessage="msg://fillReportNameMsg"
+                               width="100%"/>
+                    <radioButtonGroup id="reportTypeGenerateField"
+                                      themeNames="vertical"
+                                      label="msg://reportBuildType"/>
+                </formLayout>
+            </vbox>
+            <vbox id="regionsVBox" padding="false">
+                <hbox width="100%" classNames="buttons-panel">
+                    <hbox id="buttonsBox">
+                        <button id="addRegionDisabledBtn" text="msg://addRegion" enabled="false"/>
+                        <button id="addSimpleRegionBtn"
+                                text="msg://simpleRegion"/>
+                        <button id="addTabulatedRegionBtn"
+                                text="msg://tabulatedRegion"/>
+                    </hbox>
+                    <button id="regionsEditBtn" action="regionDataGrid.edit" text="msg://editRegion"/>
+                    <button id="removeBtn" action="regionDataGrid.remove"/>
+                    <button id="moveUpBtn" action="regionDataGrid.up"/>
+                    <button id="moveDownBtn" action="regionDataGrid.down"/>
                 </hbox>
-                <button id="regionsRunBtn" text="msg://runReport"/>
-                <button id="regionsEditBtn" action="regionDataGrid.edit" text="msg://editRegion"/>
-                <button id="removeBtn" action="regionDataGrid.remove"/>
-                <button id="moveUpBtn" action="regionDataGrid.up"/>
-                <button id="moveDownBtn" action="regionDataGrid.down"/>
-            </hbox>
-            <dataGrid id="regionDataGrid" dataContainer="reportRegionsDc"
-                      columnReorderingAllowed="false"
-                      height="25em" width="100%">
-                <actions>
-                    <action id="up" type="list_itemTracking" icon="ARROW_UP"/>
-                    <action id="down" type="list_itemTracking" icon="ARROW_DOWN"/>
-                    <action id="remove" type="list_remove"/>
-                    <action id="edit" text="msg://editRegion" icon="PENCIL"/>
-                </actions>
-            </dataGrid>
+                <dataGrid id="regionDataGrid" dataContainer="reportRegionsDc"
+                          columnReorderingAllowed="false"
+                          height="25em" width="100%">
+                    <actions>
+                        <action id="up" type="list_itemTracking" icon="ARROW_UP"/>
+                        <action id="down" type="list_itemTracking" icon="ARROW_DOWN"/>
+                        <action id="remove" type="list_remove"/>
+                        <action id="edit" text="msg://editRegion" icon="PENCIL"/>
+                    </actions>
+                </dataGrid>
+            </vbox>
+            <vbox id="saveVBox" padding="false">
+                <formLayout id="saveBox" dataContainer="reportDataDc">
+                    <responsiveSteps>
+                        <responsiveStep minWidth="0" columns="1"/>
+                    </responsiveSteps>
+                    <textField id="outputFileName"
+                               width="100%"
+                               label="msg://outputFileName"
+                               property="outputNamePattern"
+                               helperText="msg://outputFileNameHintMsg" maxLength="255">
+                        <validators>
+                            <custom bean="report_OutputFileNameValidator"/>
+                        </validators>
+                    </textField>
+                    <comboBox id="outputFileFormat"
+                              required="true"
+                              requiredMessage="msg://outputFileFormat.requiredMessage"
+                              width="100%"
+                              label="msg://outputFileFormat"
+                              allowCustomValue="false"
+                              property="outputFileType"
+                              helperText="msg://outputFileTypeHintMsg"/>
+                </formLayout>
+            </vbox>
+            <vbox id="queryVBox" padding="false">
+                <div classNames="flex, justify-between, buttons-panel">
+                    <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
+                    <button id="fullScreenTransformationBtn"
+                            text="msg://fullScreen.title"
+                            classNames="link"
+                            themeNames="icon, tertiary-inline"/>
+                </div>
+                <div width="100%" classNames="flex, items-start">
+                    <codeEditor id="reportQueryCodeEditor"
+                                title="msg://reportQuery"
+                                width="100%"
+                                height="10em"
+                                required="true"
+                                showGutter="false"
+                                highlightActiveLine="false"
+                                mode="SQL"
+                                dataContainer="reportDataDc"
+                                property="query"/>
+                    <button id="queryCodeEditorHelpIcon"
+                            themeNames="icon, tertiary-inline"
+                            icon="QUESTION_CIRCLE"/>
+                </div>
+                <hbox classNames="buttons-panel">
+                    <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
+                    <button id="generateParameters" action="reportParameterDataGrid.generate"/>
+                    <button id="editParameterBtn" action="reportParameterDataGrid.edit"/>
+                    <button id="removeParameterBtn" action="reportParameterDataGrid.remove"/>
+                </hbox>
+                <dataGrid id="reportParameterDataGrid"
+                          dataContainer="queryParametersDc"
+                          height="10em"
+                          width="100%">
+                    <actions>
+                        <action id="generate" text="msg://generateParameters.text"/>
+                        <action id="create" type="list_create"/>
+                        <action id="edit" type="list_edit"/>
+                        <action id="remove" type="list_remove"/>
+                    </actions>
+                    <columns>
+                        <column property="name"/>
+                        <column property="parameterType"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
         </vbox>
-        <vbox id="saveVBox" padding="false">
-            <formLayout id="saveBox" dataContainer="reportDataDc" maxWidth="35em">
-                <responsiveSteps>
-                    <responsiveStep minWidth="0" columns="1"/>
-                </responsiveSteps>
-                <button id="downloadTemplateFile"
-                        classNames="link"
-                        themeNames="icon, tertiary-inline"
-                        icon="DOWNLOAD"
-                        iconAfterText="true"
-                        title="msg://templateHintMsg"/>
-                <textField id="outputFileName" width="100%"
-                           required="true"
-                           requiredMessage="msg://outputFileName.requiredMessage"
-                           label="msg://outputFileName"
-                           property="outputNamePattern"
-                           helperText="msg://outputFileNameHintMsg" maxLength="255">
-                    <validators>
-                        <custom bean="report_OutputFileNameValidator"/>
-                    </validators>
-                </textField>
-                <comboBox id="outputFileFormat"
-                          required="true"
-                          requiredMessage="msg://outputFileFormat.requiredMessage"
-                          width="100%"
-                          label="msg://outputFileFormat"
-                          allowCustomValue="false"
-                          property="outputFileType"
-                          helperText="msg://outputFileTypeHintMsg"/>
-            </formLayout>
-        </vbox>
-        <vbox id="queryVBox" width="40em" padding="false">
-            <div classNames="flex, justify-between, buttons-panel">
-                <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
-                <button id="fullScreenTransformationBtn"
-                        text="msg://fullScreen.title"
-                        classNames="link"
-                        themeNames="icon, tertiary-inline"/>
-            </div>
-            <div width="100%" classNames="flex, items-start">
-                <codeEditor id="reportQueryCodeEditor"
-                            title="msg://reportQuery"
-                            width="100%"
-                            height="15em"
-                            required="true"
-                            showGutter="false"
-                            highlightActiveLine="false"
-                            mode="SQL"
-                            dataContainer="reportDataDc"
-                            property="query"/>
-                <button id="queryCodeEditorHelpIcon"
-                        themeNames="icon, tertiary-inline"
-                        icon="QUESTION_CIRCLE"/>
-            </div>
-            <hbox classNames="buttons-panel">
-                <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
-                <button id="generateParameters" action="reportParameterDataGrid.generate"/>
-                <button id="editParameterBtn" action="reportParameterDataGrid.edit"/>
-                <button id="removeParameterBtn" action="reportParameterDataGrid.remove"/>
-            </hbox>
-            <dataGrid id="reportParameterDataGrid"
-                      dataContainer="queryParametersDc"
-                      height="15em"
-                      width="100%">
-                <actions>
-                    <action id="generate" text="msg://generateParameters.text"/>
-                    <action id="create" type="list_create"/>
-                    <action id="edit" type="list_edit"/>
-                    <action id="remove" type="list_remove"/>
-                </actions>
-                <columns>
-                    <column property="name"/>
-                    <column property="parameterType"/>
-                </columns>
-            </dataGrid>
-        </vbox>
-        <hbox id="buttonPanel" classNames="mt-m" padding="false">
+        <hbox id="buttonPanel" classNames="mt-m" padding="false" width="100%">
             <button id="backBtn" visible="false" action="back"/>
             <button id="nextBtn" action="next"/>
             <button id="saveBtn" visible="false" themeNames="primary" action="save"/>
+            <button id="downloadTemplateFileBtn" classNames="ml-auto" iconAfterText="true"
+                    text="msg://downloadTemplateFile" visible="false" icon="DOWNLOAD"/>
         </hbox>
     </layout>
 </view>

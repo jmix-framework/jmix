@@ -22,6 +22,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.main.JmixListMenu;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.View;
@@ -32,9 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -85,7 +87,7 @@ public class ListMenuBuilder {
         }
     }
 
-    protected Optional<JmixListMenu.MenuItem> createListMenu(MenuItem menuItem) {
+    public Optional<JmixListMenu.MenuItem> createListMenu(MenuItem menuItem) {
         if (menuItem.isMenu()) {
             if (menuItem.getChildren().isEmpty()) {
                 log.warn("Menu bar item '{}' is skipped as it does not have children", menuItem.getId());
@@ -98,6 +100,7 @@ public class ListMenuBuilder {
                 createListMenu(item)
                         .ifPresent(menuBarItem::addChildItem);
             }
+            removeTrailingChildSeparators(menuBarItem);
 
             if (!menuBarItem.hasChildren()) {
                 log.debug("Menu bar item '{}' is skipped as it does not have children or they are not permitted by " +
@@ -124,10 +127,50 @@ public class ListMenuBuilder {
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()));
 
-        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            menuBarItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
-        }
+        setIcon(menuItem, menuBarItem);
+
         return menuBarItem;
+    }
+
+    protected void setIcon(MenuItem menuItem, ListMenu.MenuItem listMenuItem) {
+        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
+            VaadinIcon vaadinIcon = getVaadinIcon(menuItem.getIcon());
+            listMenuItem.withIcon(vaadinIcon)
+                    .setPrefixComponent(ComponentUtils.parseIcon(menuItem.getIcon()));
+        }
+    }
+
+    @Nullable
+    protected VaadinIcon getVaadinIcon(String iconString) {
+        if (iconString.contains(":")) {
+            String[] parts = iconString.split(":");
+            if (parts.length != 2) {
+                throw new IllegalStateException("Unexpected number of icon parts, must be two");
+            }
+            if (!parts[0].equals("vaadin")) {
+                return null;
+            }
+            return VaadinIcon.valueOf(parts[1].toUpperCase());
+        } else {
+            return VaadinIcon.valueOf(iconString);
+        }
+    }
+
+    /**
+     * Removes trailing child separators.
+     *
+     * @param menuBarItem parent menu item to trim
+     */
+    protected void removeTrailingChildSeparators(ListMenu.MenuBarItem menuBarItem) {
+        List<ListMenu.MenuItem> childItems = new ArrayList<>(menuBarItem.getChildItems());
+        for (int i = childItems.size() - 1; i >= 0; i--) {
+            ListMenu.MenuItem childItem = childItems.get(i);
+            if (childItem.isSeparator()) {
+                menuBarItem.removeChildItem(childItem);
+            } else {
+                break;
+            }
+        }
     }
 
     @Nullable
@@ -157,9 +200,7 @@ public class ListMenuBuilder {
                 .withRouteParameters(menuItem.getRouteParameters())
                 .withShortcutCombination(menuItem.getShortcutCombination());
 
-        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            listMenuItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
-        }
+        setIcon(menuItem, listMenuItem);
 
         return listMenuItem;
     }
@@ -171,9 +212,7 @@ public class ListMenuBuilder {
                 .withClassNames(Arrays.stream(getClassNames(menuItem)).collect(Collectors.toList()))
                 .withShortcutCombination(menuItem.getShortcutCombination());
 
-        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            beanMenuItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
-        }
+        setIcon(menuItem, beanMenuItem);
 
         beanMenuItem.withClickHandler(new MenuCommandExecutor(menuItem, menuItemCommands));
 

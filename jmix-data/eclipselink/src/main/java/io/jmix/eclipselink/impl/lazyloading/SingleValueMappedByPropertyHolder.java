@@ -76,12 +76,16 @@ public class SingleValueMappedByPropertyHolder extends AbstractSingleValueHolder
                                 .build())
                 .setAccessConstraints(getLoadOptions().getAccessConstraints())
                 .setHints(getLoadOptions().getHints())
+                .setHint(PREV_SOFT_DELETION,
+                        getLoadOptions().getHints().getOrDefault(PersistenceHints.SOFT_DELETION, SOFT_DELETION_ABSENT))
                 .setHint(PersistenceHints.SOFT_DELETION, false);
     }
 
     protected LoadContext<?> createLoadContextByInverseProperty(MetaClass metaClass, String primaryKeyName) {
         LoadContext<?> loadContext = new LoadContext<>(metaClass)
                 .setHints(getLoadOptions().getHints())
+                .setHint(PREV_SOFT_DELETION,
+                        getLoadOptions().getHints().getOrDefault(PersistenceHints.SOFT_DELETION, SOFT_DELETION_ABSENT))
                 .setHint(PersistenceHints.SOFT_DELETION, false);
         loadContext.setQueryString(String.format("select e from %s e where e.%s.%s = :entityId", metaClass.getName(),
                 getPropertyInfo().getInversePropertyName(), primaryKeyName))

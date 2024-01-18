@@ -16,26 +16,23 @@
 
 package io.jmix.flowui.kit.component.grid;
 
-import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.delegate.AbstractActionsHolderSupport;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import static io.jmix.flowui.kit.component.ComponentUtils.findActionIndexById;
+public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHolderSupport<C> {
 
-public class GridActionsSupport<C extends Grid<T>, T> {
-
-    protected final C component;
-
-    protected List<Action> actions = new ArrayList<>();
     protected Map<Action, GridMenuItemActionWrapper<T>> actionBinding = new HashMap<>();
 
     protected JmixGridContextMenu<T> contextMenu;
 
     public GridActionsSupport(C component) {
-        this.component = component;
+        super(component);
+
         initContextMenu();
     }
 
@@ -45,26 +42,9 @@ public class GridActionsSupport<C extends Grid<T>, T> {
         contextMenu.setVisible(false);
     }
 
-    public void addAction(Action action) {
-        addAction(action, actions.size());
-    }
-
-    public void addAction(Action action, int index) {
-        Preconditions.checkNotNull(action, "Action cannot be null");
-
-        addActionInternal(action, index);
-    }
-
+    @Override
     protected void addActionInternal(Action action, int index) {
-        int oldIndex = findActionIndexById(actions, action.getId());
-        if (oldIndex >= 0) {
-            removeActionInternal(actions.get(oldIndex));
-            if (index > oldIndex) {
-                index--;
-            }
-        }
-
-        actions.add(index, action);
+        super.addActionInternal(action, index);
 
         addContextMenuItem(action, index);
         updateContextMenu();
@@ -95,17 +75,16 @@ public class GridActionsSupport<C extends Grid<T>, T> {
         }
     }
 
-    public void removeAction(Action action) {
-        Preconditions.checkNotNull(action, "Action cannot be null");
-
-        removeActionInternal(action);
-    }
-
-    protected void removeActionInternal(Action action) {
-        if (actions.remove(action)) {
+    @Override
+    protected boolean removeActionInternal(Action action) {
+        if (super.removeActionInternal(action)) {
             removeContextMenuItem(action);
             updateContextMenu();
+
+            return true;
         }
+
+        return false;
     }
 
     protected void removeContextMenuItem(Action action) {
@@ -113,16 +92,5 @@ public class GridActionsSupport<C extends Grid<T>, T> {
         item.setAction(null);
 
         contextMenu.remove(item.getMenuItem());
-    }
-
-    public Optional<Action> getAction(String id) {
-        return getActions().stream()
-                .filter(action ->
-                        Objects.equals(action.getId(), id))
-                .findFirst();
-    }
-
-    public Collection<Action> getActions() {
-        return Collections.unmodifiableList(actions);
     }
 }

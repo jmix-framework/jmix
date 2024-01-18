@@ -26,6 +26,8 @@ import java.io.Serializable;
 import java.nio.file.Path;
 
 /**
+ * Special for Studio designer.
+ * <p>
  * Copy themes files from {projectFolder}/frontend/themes
  * to {projectFolder}/.jmix/screen-designer/frontend/themes
  */

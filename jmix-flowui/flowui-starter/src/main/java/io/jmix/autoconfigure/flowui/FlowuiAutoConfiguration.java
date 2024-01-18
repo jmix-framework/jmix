@@ -22,7 +22,9 @@ import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
+import io.jmix.flowui.sys.vaadin.SecurityContextHolderAtmosphereInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -58,5 +60,11 @@ public class FlowuiAutoConfiguration {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
         actionsConfiguration.setBasePackages(Collections.singletonList(jmixModules.getLast().getBasePackage()));
         return actionsConfiguration;
+    }
+
+    @Bean("flowui_SecurityContextHolderAtmosphereInterceptor")
+    @ConditionalOnProperty(name = "jmix.ui.websocket-request-security-context-provided", matchIfMissing = true)
+    public SecurityContextHolderAtmosphereInterceptor securityContextHolderAtmosphereInterceptor() {
+        return new SecurityContextHolderAtmosphereInterceptor();
     }
 }

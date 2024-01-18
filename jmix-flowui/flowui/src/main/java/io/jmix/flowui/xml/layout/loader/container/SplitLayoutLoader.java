@@ -46,6 +46,7 @@ public class SplitLayoutLoader extends AbstractContainerLoader<JmixSplitLayout> 
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
         loadSubComponents();
     }

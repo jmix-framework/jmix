@@ -726,6 +726,11 @@ public class ViewControllerDependencyInjector {
                 if (content.getId().isPresent() && content.getId().get().equals(id)) {
                     return content;
                 }
+
+                Optional<Component> childComponent = UiComponentUtils.findComponent(content, id);
+                if (childComponent.isPresent()) {
+                    return childComponent.get();
+                }
             } else if (dropdownItemCandidate instanceof ActionItem actionItem) {
                 Action action = actionItem.getAction();
                 if (action == null) {

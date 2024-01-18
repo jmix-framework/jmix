@@ -26,8 +26,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.flowui.DialogWindows;
-import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -83,10 +81,6 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     protected MessageBundle messageBundle;
     @Autowired
     protected UnconstrainedDataManager dataManager;
-    @Autowired
-    protected Notifications notifications;
-    @Autowired
-    protected UiViewProperties viewProperties;
     protected boolean replaceJobIfExists = true;
     protected boolean deleteObsoleteJob = false;
     protected String obsoleteJobName = null;

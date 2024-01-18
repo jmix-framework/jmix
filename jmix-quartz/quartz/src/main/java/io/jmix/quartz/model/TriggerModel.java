@@ -5,6 +5,7 @@ import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.lang.Nullable;
 
 import java.util.Date;
@@ -17,8 +18,9 @@ public class TriggerModel {
     @JmixId
     private UUID id;
 
+    @Length(max = 200)
     private String triggerName;
-
+    @Length(max = 200)
     private String triggerGroup;
 
     private ScheduleType scheduleType;
@@ -30,7 +32,7 @@ public class TriggerModel {
     private Date lastFireDate;
 
     private Date nextFireDate;
-
+    @Length(max = 120)
     private String cronExpression;
 
     private String misfireInstructionId;

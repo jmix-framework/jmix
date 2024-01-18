@@ -36,6 +36,7 @@ import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
@@ -119,8 +120,8 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
 
-    protected void loadJobsData() {
-        List<JobModel> sortedJobs = quartzService.getAllJobs().stream()
+    protected List<JobModel> loadJobsData() {
+        List<JobModel> jobs = quartzService.getAllJobs().stream()
                 .filter(jobModel -> (Strings.isNullOrEmpty(nameFilter.getTypedValue())
                         || containsIgnoreCase(jobModel.getJobName(), nameFilter.getTypedValue()))
                         && (Strings.isNullOrEmpty(classFilter.getTypedValue())
@@ -133,7 +134,8 @@ public class JobModelListView extends StandardListView<JobModel> {
                         .thenComparing(JobModel::getJobName))
                 .collect(Collectors.toList());
 
-        jobModelsDc.setItems(sortedJobs);
+        jobModelsDc.setItems(jobs);
+        return jobs;
     }
 
     @Install(to = "jobModelsTable.executeNow", subject = "enabledRule")
@@ -164,6 +166,15 @@ public class JobModelListView extends StandardListView<JobModel> {
                 && JobSource.USER_DEFINED.equals(selectedJobModel.getJobSource());
     }
 
+    protected void updateDataWithSelection(JobModel selectedJobModel) {
+        List<JobModel> newJobs = loadJobsData();
+        jobModelsTable.sort(jobModelsTable.getSortOrder());
+        JobKey newJobKey = JobKey.jobKey(selectedJobModel.getJobName(), selectedJobModel.getJobGroup());
+        newJobs.stream()
+                .filter(j -> JobKey.jobKey(j.getJobName(), j.getJobGroup()).equals(newJobKey))
+                .findAny().ifPresent(selectedJob -> jobModelsTable.select(selectedJob));
+    }
+
     @Subscribe("jobModelsTable.executeNow")
     protected void onJobModelsTableExecuteNow(ActionPerformedEvent event) {
         JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
@@ -175,7 +186,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         notifications.create(messageBundle.formatMessage("jobExecuted", selectedJobModel.getJobName()))
                 .withType(Notifications.Type.DEFAULT)
                 .show();
-        loadJobsData();
+        updateDataWithSelection(selectedJobModel);
     }
 
     @Subscribe("jobModelsTable.activate")
@@ -190,7 +201,7 @@ public class JobModelListView extends StandardListView<JobModel> {
                 .withType(Notifications.Type.DEFAULT)
                 .show();
 
-        loadJobsData();
+        updateDataWithSelection(selectedJobModel);
     }
 
     @Subscribe("jobModelsTable.deactivate")
@@ -201,7 +212,7 @@ public class JobModelListView extends StandardListView<JobModel> {
                 .withType(Notifications.Type.DEFAULT)
                 .show();
 
-        loadJobsData();
+        updateDataWithSelection(selectedJobModel);
     }
 
     @Subscribe("jobModelsTable.remove")

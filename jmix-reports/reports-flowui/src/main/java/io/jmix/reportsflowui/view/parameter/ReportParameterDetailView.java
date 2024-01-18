@@ -127,6 +127,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         initMetaClassLookup();
         initEnumsLookup();
         initLocaleField();
+        initJoinCodeEditorLookupHelperText();
     }
 
     @Subscribe
@@ -365,6 +366,12 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         }
 
         ComponentUtils.setItemsMap(metaClassField, metaClassesOptionsMap);
+    }
+
+    protected void initJoinCodeEditorLookupHelperText() {
+        String helperTextMessage =
+                messages.getMessage(ReportParameterDetailView.class, "parameters.lookupJoin.helperText");
+        lookupJoinCodeEditor.setHelperComponent(new Html(helperTextMessage));
     }
 
     @Subscribe

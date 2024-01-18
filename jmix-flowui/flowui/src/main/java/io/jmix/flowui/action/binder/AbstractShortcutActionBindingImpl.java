@@ -60,8 +60,7 @@ public abstract class AbstractShortcutActionBindingImpl<H extends Component, A e
                                                    ShortcutActionHandler<C> actionHandler) {
         if (shortcutCombination != null) {
             shortcutRegistration =
-                    actionHandler.handle(component, __ -> action.actionPerform(component), shortcutCombination)
-                            .resetFocusOnActiveElement();
+                    actionHandler.handle(component, __ -> action.actionPerform(component), shortcutCombination);
             this.shortcutCombination = shortcutCombination;
             this.registrations.add(shortcutRegistration);
         }

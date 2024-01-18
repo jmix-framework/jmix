@@ -245,6 +245,13 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadInteger(element, "tabIndex", component::setTabIndex);
     }
 
+    public void loadClickNotifierAttributes(ClickNotifier<?> component, Element element) {
+        loadShortcut(element, "clickShortcut")
+                .map(KeyCombination::create)
+                .ifPresent(keyCombination ->
+                        component.addClickShortcut(keyCombination.getKey(), keyCombination.getKeyModifiers()));
+    }
+
     public void loadFocusableAttributes(Focusable<?> component, Element element) {
         loaderSupport.loadInteger(element, "tabIndex", component::setTabIndex);
         loadShortcut(element, "focusShortcut")

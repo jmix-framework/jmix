@@ -25,11 +25,25 @@ public class DescriptionListLoader extends AbstractHtmlContainerLoader<Descripti
         return factory.create(DescriptionList.class);
     }
 
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
+
     public static class TermLoader extends AbstractHtmlContainerLoader<DescriptionList.Term> {
 
         @Override
         protected DescriptionList.Term createComponent() {
             return factory.create(DescriptionList.Term.class);
+        }
+
+        @Override
+        public void loadComponent() {
+            super.loadComponent();
+
+            componentLoader().loadClickNotifierAttributes(resultComponent, element);
         }
     }
 
@@ -38,6 +52,13 @@ public class DescriptionListLoader extends AbstractHtmlContainerLoader<Descripti
         @Override
         protected DescriptionList.Description createComponent() {
             return factory.create(DescriptionList.Description.class);
+        }
+
+        @Override
+        public void loadComponent() {
+            super.loadComponent();
+
+            componentLoader().loadClickNotifierAttributes(resultComponent, element);
         }
     }
 }

@@ -30,5 +30,6 @@ public class OrderedListLoader extends AbstractHtmlContainerLoader<OrderedList> 
         super.loadComponent();
 
         loadEnum(element, OrderedList.NumberingType.class, "numberingType", resultComponent::setType);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
     }
 }

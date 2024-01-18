@@ -35,6 +35,7 @@ public class FlexLayoutLoader extends AbstractContainerLoader<FlexLayout> {
     public void loadComponent() {
         componentLoader().loadFlexibleAttributes(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
         getLoaderSupport().loadEnum(element, FlexLayout.ContentAlignment.class,
                 "contentAlignment", resultComponent::setAlignContent);

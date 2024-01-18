@@ -33,5 +33,6 @@ public class HtmlObjectLoader extends AbstractHtmlContainerLoader<HtmlObject> {
         loadString(element, "type", resultComponent::setType);
 
         componentLoader().loadFocusableAttributes(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
     }
 }

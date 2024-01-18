@@ -41,5 +41,6 @@ public class DrawerToggleLoader extends AbstractComponentLoader<DrawerToggle> {
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
     }
 }

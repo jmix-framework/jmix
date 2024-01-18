@@ -24,4 +24,11 @@ public class H2Loader extends AbstractHtmlContainerLoader<H2> {
     protected H2 createComponent() {
         return factory.create(H2.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

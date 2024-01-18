@@ -24,4 +24,11 @@ public class ParagraphLoader extends AbstractHtmlContainerLoader<Paragraph> {
     protected Paragraph createComponent() {
         return factory.create(Paragraph.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

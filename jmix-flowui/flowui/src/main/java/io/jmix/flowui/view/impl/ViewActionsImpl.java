@@ -16,10 +16,13 @@
 
 package io.jmix.flowui.view.impl;
 
+import com.vaadin.flow.component.ShortcutEventListener;
+import com.vaadin.flow.component.ShortcutRegistration;
 import com.vaadin.flow.component.Shortcuts;
 import io.jmix.flowui.action.binder.ActionBinder;
 import io.jmix.flowui.action.view.ViewAction;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -42,12 +45,7 @@ public class ViewActionsImpl implements ViewActions {
     @Override
     public void addAction(Action action, int index) {
         if (action.getShortcutCombination() != null) {
-            actionBinder.createShortcutActionsHolderBinding(action, getView().getContent(),
-                    ((viewLayout, shortcutEventListener, keyCombination) ->
-                            Shortcuts.addShortcutListener(viewLayout, shortcutEventListener,
-                                            keyCombination.getKey(), keyCombination.getKeyModifiers())
-                                    .listenOn(viewLayout)),
-                    index);
+            actionBinder.createShortcutActionsHolderBinding(action, getView().getContent(), this::shortcutHandler, index);
         } else {
             actionBinder.addAction(action, index);
         }
@@ -69,6 +67,16 @@ public class ViewActionsImpl implements ViewActions {
     @Override
     public Action getAction(String id) {
         return actionBinder.getAction(id).orElse(null);
+    }
+
+    protected <C extends com.vaadin.flow.component.Component> ShortcutRegistration shortcutHandler(C viewLayout,
+                                                                                                   ShortcutEventListener shortcutEventListener,
+                                                                                                   KeyCombination keyCombination) {
+        ShortcutRegistration shortcutRegistration = Shortcuts.addShortcutListener(viewLayout, shortcutEventListener,
+                        keyCombination.getKey(), keyCombination.getKeyModifiers())
+                .listenOn(viewLayout);
+        shortcutRegistration.setResetFocusOnActiveElement(keyCombination.isResetFocusOnActiveElement());
+        return shortcutRegistration;
     }
 
     protected View<?> getView() {

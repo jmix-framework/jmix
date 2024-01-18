@@ -193,6 +193,7 @@ public final class ComponentUtils {
                                                         KeyCombination shortcutCombination) {
         ShortcutRegistration shortcutRegistration = component.addClickShortcut(shortcutCombination.getKey(),
                 shortcutCombination.getKeyModifiers());
+        shortcutRegistration.setResetFocusOnActiveElement(shortcutCombination.isResetFocusOnActiveElement());
 
         if (shortcutCombination.getListenOnComponents() != null) {
             shortcutRegistration.listenOn(shortcutCombination.getListenOnComponents());

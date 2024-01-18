@@ -24,4 +24,11 @@ public class EmphasisLoader extends AbstractHtmlContainerLoader<Emphasis> {
     protected Emphasis createComponent() {
         return factory.create(Emphasis.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

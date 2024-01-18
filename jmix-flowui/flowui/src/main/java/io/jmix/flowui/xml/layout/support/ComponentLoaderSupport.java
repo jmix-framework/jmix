@@ -241,6 +241,13 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadInteger(element, "tabIndex", component::setTabIndex);
     }
 
+    public void loadClickNotifierAttributes(ClickNotifier<?> component, Element element) {
+        loadShortcut(element, "clickShortcut")
+                .map(KeyCombination::create)
+                .ifPresent(keyCombination ->
+                        component.addClickShortcut(keyCombination.getKey(), keyCombination.getKeyModifiers()));
+    }
+
     public void loadCss(com.vaadin.flow.component.Component component, Element element) {
         loaderSupport.loadString(element, "css", css -> applyCss(css, component.getStyle()::set));
     }

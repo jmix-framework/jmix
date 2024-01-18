@@ -555,6 +555,7 @@ public interface StudioElements {
             ),
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,

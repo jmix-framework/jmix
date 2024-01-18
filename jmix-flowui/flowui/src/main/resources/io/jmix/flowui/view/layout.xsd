@@ -2200,6 +2200,10 @@
         <xs:attribute name="classNames" type="xs:string"/>
     </xs:attributeGroup>
 
+    <xs:attributeGroup name="hasClickNotifierAttributes">
+        <xs:attribute name="clickShortcut" type="xs:string"/>
+    </xs:attributeGroup>
+
     <xs:attributeGroup name="hasOverlayClass">
         <xs:attribute name="overlayClass" type="xs:string"/>
     </xs:attributeGroup>
@@ -2317,6 +2321,14 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="baseClickableHtmlContainer">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlContainer">
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="baseHtmlDescription">
         <xs:complexContent>
             <xs:extension base="baseComponent">
@@ -2328,6 +2340,7 @@
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2485,6 +2498,7 @@
                 <xs:attribute name="size" type="componentSize"/>
 
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2499,7 +2513,7 @@
 
     <xs:complexType name="unorderedListHtmlContainer">
         <xs:complexContent>
-            <xs:extension base="baseHtmlComponent">
+            <xs:extension base="baseClickableHtmlContainer">
                 <xs:sequence minOccurs="0" maxOccurs="unbounded">
                     <xs:group ref="htmlLists"/>
                 </xs:sequence>
@@ -2522,12 +2536,12 @@
     <xs:group name="htmlHeaders">
         <xs:sequence>
             <xs:choice maxOccurs="unbounded">
-                <xs:element name="h1" type="baseHtmlContainer"/>
-                <xs:element name="h2" type="baseHtmlContainer"/>
-                <xs:element name="h3" type="baseHtmlContainer"/>
-                <xs:element name="h4" type="baseHtmlContainer"/>
-                <xs:element name="h5" type="baseHtmlContainer"/>
-                <xs:element name="h6" type="baseHtmlContainer"/>
+                <xs:element name="h1" type="baseClickableHtmlContainer"/>
+                <xs:element name="h2" type="baseClickableHtmlContainer"/>
+                <xs:element name="h3" type="baseClickableHtmlContainer"/>
+                <xs:element name="h4" type="baseClickableHtmlContainer"/>
+                <xs:element name="h5" type="baseClickableHtmlContainer"/>
+                <xs:element name="h6" type="baseClickableHtmlContainer"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>
@@ -2535,7 +2549,7 @@
     <xs:group name="htmlLists">
         <xs:sequence>
             <xs:choice maxOccurs="unbounded">
-                <xs:element name="listItem" type="baseHtmlContainer"/>
+                <xs:element name="listItem" type="baseClickableHtmlContainer"/>
                 <xs:element name="orderedList" type="orderedListHtmlContainer"/>
                 <xs:element name="unorderedList" type="unorderedListHtmlContainer"/>
             </xs:choice>
@@ -2546,6 +2560,14 @@
         <xs:complexContent>
             <xs:extension base="baseHtmlContainer">
                 <xs:attributeGroup ref="hasAriaLabel"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="clickableHtmlContainerWithArea">
+        <xs:complexContent>
+            <xs:extension base="htmlContainerWithAria">
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2748,6 +2770,7 @@
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3002,6 +3025,7 @@
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3493,6 +3517,7 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- FontIcon-->
     <xs:complexType name="fontIconComponent">
         <xs:complexContent>
             <xs:extension base="baseIconComponent">
@@ -3534,6 +3559,7 @@
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3659,6 +3685,7 @@
         <xs:attributeGroup ref="hasLabel"/>
         <xs:attributeGroup ref="hasId"/>
         <xs:attributeGroup ref="hasClassNames"/>
+        <xs:attributeGroup ref="hasClickNotifierAttributes"/>
     </xs:complexType>
 
     <!-- Form-->
@@ -3679,6 +3706,7 @@
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3936,7 +3964,7 @@
         <xs:attribute name="text" type="xs:string"/>
     </xs:complexType>
 
-<!--    MenuFilterField-->
+    <!--    MenuFilterField-->
     <xs:complexType name="menuFilterFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
@@ -4034,7 +4062,7 @@
     <!-- Image-->
     <xs:complexType name="imageHtmlComponent">
         <xs:complexContent>
-            <xs:extension base="baseHtmlContainer">
+            <xs:extension base="baseClickableHtmlContainer">
                 <xs:attribute name="resource" type="xs:string"/>
                 <xs:attribute name="alternateText" type="resourceString"/>
 
@@ -4077,7 +4105,7 @@
     <!-- HtmlObject-->
     <xs:complexType name="htmlObjectComponent">
         <xs:complexContent>
-            <xs:extension base="baseHtmlContainer">
+            <xs:extension base="baseClickableHtmlContainer">
                 <xs:attribute name="data" type="xs:string"/>
                 <xs:attribute name="type" type="xs:string"/>
 
@@ -4098,7 +4126,7 @@
     <!-- NativeButton-->
     <xs:complexType name="nativeButtonComponent">
         <xs:complexContent>
-            <xs:extension base="htmlContainerWithAria">
+            <xs:extension base="clickableHtmlContainerWithArea">
                 <xs:attributeGroup ref="hasTabIndex"/>
             </xs:extension>
         </xs:complexContent>
@@ -4448,23 +4476,23 @@
                 <xs:group ref="htmlHeaders"/>
                 <xs:group ref="htmlLists"/>
                 <xs:element name="html" type="htmlComponent"/>
-                <xs:element name="div" type="baseHtmlContainer"/>
-                <xs:element name="span" type="baseHtmlContainer"/>
-                <xs:element name="section" type="baseHtmlContainer"/>
-                <xs:element name="pre" type="baseHtmlContainer"/>
-                <xs:element name="p" type="baseHtmlContainer"/>
-                <xs:element name="nav" type="htmlContainerWithAria"/>
+                <xs:element name="div" type="baseClickableHtmlContainer"/>
+                <xs:element name="span" type="baseClickableHtmlContainer"/>
+                <xs:element name="section" type="baseClickableHtmlContainer"/>
+                <xs:element name="pre" type="baseClickableHtmlContainer"/>
+                <xs:element name="p" type="baseClickableHtmlContainer"/>
+                <xs:element name="nav" type="clickableHtmlContainerWithArea"/>
                 <xs:element name="param" type="paramHtmlComponent"/>
-                <xs:element name="main" type="htmlContainerWithAria"/>
+                <xs:element name="main" type="clickableHtmlContainerWithArea"/>
                 <xs:element name="hr" type="baseHtmlComponent"/>
-                <xs:element name="header" type="baseHtmlContainer"/>
-                <xs:element name="footer" type="baseHtmlContainer"/>
-                <xs:element name="aside" type="baseHtmlContainer"/>
-                <xs:element name="emphasis" type="baseHtmlContainer"/>
+                <xs:element name="header" type="baseClickableHtmlContainer"/>
+                <xs:element name="footer" type="baseClickableHtmlContainer"/>
+                <xs:element name="aside" type="baseClickableHtmlContainer"/>
+                <xs:element name="emphasis" type="baseClickableHtmlContainer"/>
                 <xs:element name="anchor" type="anchor"/>
                 <xs:element name="nativeLabel" type="labelComponent"/>
                 <xs:element name="nativeButton" type="nativeButtonComponent"/>
-                <xs:element name="article" type="baseHtmlContainer"/>
+                <xs:element name="article" type="baseClickableHtmlContainer"/>
                 <xs:element name="input" type="inputHtmlComponent"/>
                 <xs:element name="image" type="imageComponent"/>
                 <xs:element name="iframe" type="iframeHtmlComponent"/>
@@ -4576,6 +4604,8 @@
                 <xs:attribute name="alignSelf" type="alignEnum"/>
                 <xs:attribute name="css" type="xs:string"/>
                 <xs:attribute name="themeNames" type="spacingThemeNames"/>
+
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4591,6 +4621,7 @@
                 <xs:attribute name="flexWrap" type="flexWrapEnum"/>
 
                 <xs:attributeGroup ref="hasFlexible"/>
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

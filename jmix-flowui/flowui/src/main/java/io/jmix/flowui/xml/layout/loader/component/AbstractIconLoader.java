@@ -28,5 +28,6 @@ public abstract class AbstractIconLoader<T extends AbstractIcon<T>> extends Abst
 
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
     }
 }

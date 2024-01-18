@@ -36,6 +36,8 @@ public class ImageLoader extends AbstractHtmlContainerLoader<JmixImage<?>> {
         loadResourceString(element, "alternateText", context.getMessageGroup(), resultComponent::setAlt);
 
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+
         getDataLoaderSupport().loadData(resultComponent, element);
     }
 

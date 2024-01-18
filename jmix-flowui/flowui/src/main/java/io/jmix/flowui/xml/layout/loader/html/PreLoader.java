@@ -24,4 +24,11 @@ public class PreLoader extends AbstractHtmlContainerLoader<Pre> {
     protected Pre createComponent() {
         return factory.create(Pre.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

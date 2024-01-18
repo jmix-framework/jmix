@@ -106,6 +106,10 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected static final String QUERY_PARAM_ENTITY = "entity";
     protected static final String QUERY_PARAM_MODE = "mode";
 
+    protected static final Set<String> EXCLUDED_META_CLASS_NAMES = Set.of(
+            "dummyAppSettingsEntity"
+    );
+
     @ViewComponent
     protected HorizontalLayout lookupBox;
     @ViewComponent
@@ -786,7 +790,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected boolean readPermitted(MetaClass metaClass) {
         UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
-        return entityContext.isViewPermitted();
+        return entityContext.isViewPermitted()
+                && !EXCLUDED_META_CLASS_NAMES.contains(metaClass.getName());
     }
 
     protected void setShowMode(String showModeParameter) {

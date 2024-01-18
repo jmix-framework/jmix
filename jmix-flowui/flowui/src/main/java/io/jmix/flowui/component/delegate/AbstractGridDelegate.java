@@ -217,6 +217,9 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                 break;
             }
         }
+        //selection model doesn't provide direct access to selected items,
+        //so to update the model we are forced to deselect all items and select new items again
+        //to handle any changes in item collection or items themselves
         deselectAll();
         select(itemsToSelect);
     }

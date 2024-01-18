@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.component;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -37,8 +38,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class ComponentUtils {
+
+    private static final String SIZE_PATTERN_REGEXP =
+            "^(-?\\d*(?:\\.\\d+)?)(%|cm|mm|q|in|pc|pt|px|em|ex|ch|rem|lh|rlh|vw|vh|vmin|vmax|vb|vi|svw|svh|lvw|lvh|dvw|dvh)?$";
+    private static final Pattern SIZE_PATTERN = Pattern
+            .compile(SIZE_PATTERN_REGEXP, Pattern.CASE_INSENSITIVE);
 
     private ComponentUtils() {
     }
@@ -145,7 +153,27 @@ public final class ComponentUtils {
     }
 
     public static boolean isAutoSize(@Nullable String size) {
-        return "auto".equalsIgnoreCase(size);
+        // CSS attribute is removed if null or empty value passed,
+        // so default 'auto' size will be used.
+        if (Strings.isNullOrEmpty(size)) {
+            return true;
+        }
+        String trimmedSize = size.trim();
+        // If size is 'auto' value.
+        if ("auto".equalsIgnoreCase(trimmedSize)) {
+            return true;
+        }
+        // Check that size has correct value: numbers and supported unit size.
+        // If it does not, CSS will use 'auto' value.
+        Matcher matcher = SIZE_PATTERN.matcher(trimmedSize);
+        if (!matcher.find()) {
+            // Size is incorrect, will be used 'auto' value.
+            return true;
+        }
+        String sizeValue = matcher.group(1);
+        String sizeUnit = matcher.group(2);
+        // If at least one group is null or empty, size is incorrect
+        return Strings.isNullOrEmpty(sizeValue) || Strings.isNullOrEmpty(sizeUnit);
     }
 
     public static void setVisible(Component component, boolean visible) {

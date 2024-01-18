@@ -145,8 +145,7 @@ public final class ComponentUtils {
     }
 
     public static boolean isAutoSize(@Nullable String size) {
-        // TODO: gg, implement
-        return false;
+        return "auto".equalsIgnoreCase(size);
     }
 
     public static void setVisible(Component component, boolean visible) {

@@ -26,14 +26,11 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.UnconstrainedDataManager;
-import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
-import io.jmix.quartz.exception.QuartzJobSaveException;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
@@ -85,10 +82,6 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
     protected UnconstrainedDataManager dataManager;
     @Autowired
     protected ScheduleDescriptionProvider scheduleDescriptionProvider;
-    @Autowired
-    protected Notifications notifications;
-    @Autowired
-    protected UiViewProperties viewProperties;
     protected boolean replaceJobIfExists = true;
     protected boolean deleteObsoleteJob = false;
     protected String obsoleteJobName = null;

@@ -63,8 +63,9 @@ import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 @DialogMode(width = "50em", resizable = true)
 public class EntityInspectorDetailView extends StandardDetailView<Object> {
 
-    protected static final String BASE_SELECT_QUERY = "select e from %s e where e.%s.id = '%s'";
-    protected static final String SOFT_DELETABLE_SELECT_QUERY = "select e from %s e where e.%s.id = '%s' and e.%s is null";
+    protected static final String BASE_SELECT_QUERY = "select e from %s s join s.%s e where s = :editEntity";
+    protected static final String SOFT_DELETABLE_SELECT_QUERY =
+            "select e from %s s join s.%s e where s = :editEntity and e.%s is null";
     protected static final String SINGLE_SELECT_QUERY = "select e from %s e where e.id = '%s'";
     public static final String ROUTE_PARAM_NAME = "entityName";
     public static final String ROUTE_PARAM_ID = "entityId";
@@ -351,13 +352,13 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
                     : BASE_SELECT_QUERY;
 
             String query = String.format(queryString,
-                    meta.getName(),
-                    childMeta.getInverse().getName(),
-                    EntityValues.getId(parent.getItem()),
+                    childMeta.getDomain().getName(),
+                    childMeta.getName(),
                     metadataTools.findDeletedDateProperty(meta.getJavaClass()));
 
             Collection<?> loadedChild = dataManager.load(meta.getJavaClass())
                     .query(query)
+                    .parameter("editEntity", parent.getItem())
                     .list();
             return new ArrayList<>(loadedChild);
         });

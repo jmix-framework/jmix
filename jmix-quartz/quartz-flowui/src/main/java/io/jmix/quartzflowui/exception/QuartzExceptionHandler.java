@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.quartzflowui;
+package io.jmix.quartzflowui.exception;
 
 import com.vaadin.flow.component.notification.Notification;
 import io.jmix.flowui.Notifications;

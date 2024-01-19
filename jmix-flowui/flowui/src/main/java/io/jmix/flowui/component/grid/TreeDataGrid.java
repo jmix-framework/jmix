@@ -437,8 +437,8 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
 
     @Override
     public GridContextMenu<E> addContextMenu() {
-        throw new UnsupportedOperationException("TreeDataGrid can have only one context menu attached, " +
-                "use getContextMenu() to retrieve it");
+        throw new UnsupportedOperationException(getClass().getSimpleName() +
+                " can have only one context menu attached, use getContextMenu() to retrieve it");
     }
 
     @Nullable

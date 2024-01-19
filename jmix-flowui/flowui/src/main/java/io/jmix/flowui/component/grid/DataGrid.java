@@ -395,8 +395,8 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
 
     @Override
     public GridContextMenu<E> addContextMenu() {
-        throw new UnsupportedOperationException("DataGrid can have only one context menu attached, " +
-                "use getContextMenu() to retrieve it");
+        throw new UnsupportedOperationException(getClass().getSimpleName() +
+                " can have only one context menu attached, use getContextMenu() to retrieve it");
     }
 
     @Nullable

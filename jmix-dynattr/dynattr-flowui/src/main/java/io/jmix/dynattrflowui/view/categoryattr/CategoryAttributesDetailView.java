@@ -80,6 +80,7 @@ import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -888,14 +889,19 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         if (Strings.isNullOrEmpty(attribute.getCode()) && !Strings.isNullOrEmpty(attribute.getName())) {
             String categoryName = StringUtils.EMPTY;
             if (attribute.getCategory() != null) {
-                categoryName = attribute.getCategory().getName();
+                categoryName = StringUtils.defaultString(attribute.getCategory().getName());
             }
-            // `org.springframework.util.StringUtils::hasText` simplifies expression `isNotEmpty && isNotBlank` into one `hasText`
-            String fullAttributeCode = org.springframework.util.StringUtils.hasText(categoryName) ?
-                    StringUtils.uncapitalize(categoryName) + StringUtils.capitalize(attribute.getName()) :
-                    StringUtils.uncapitalize(attribute.getName());
+            char[] delimiters = {' ', '.', '_', '-', '\t'};
 
-            codeField.setValue(StringUtils.deleteWhitespace(fullAttributeCode));
+            String categoryNameInCamelCaseUncapitalized = CaseUtils.toCamelCase(categoryName, false, delimiters);
+            String attributeNameInCamelCaseUncapitalized = CaseUtils.toCamelCase(attribute.getName(), false, delimiters);
+
+            // `org.springframework.util.StringUtils::hasText` simplifies expression `isNotEmpty && isNotBlank` into one `hasText`
+            String resultCodeName = org.springframework.util.StringUtils.hasText(categoryNameInCamelCaseUncapitalized) ?
+                    categoryNameInCamelCaseUncapitalized + StringUtils.capitalize(attributeNameInCamelCaseUncapitalized) :
+                    attributeNameInCamelCaseUncapitalized;
+
+            codeField.setValue(resultCodeName);
         }
     }
 

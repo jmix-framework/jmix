@@ -77,6 +77,7 @@ import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -889,7 +890,16 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             if (attribute.getCategory() != null) {
                 categoryName = StringUtils.defaultString(attribute.getCategory().getName());
             }
-            codeField.setValue(StringUtils.deleteWhitespace(categoryName + attribute.getName()));
+            char[] delimiters = {' ', '.', '_', '-', '\t'};
+
+            String categoryNameInCamelCaseUncapitalized = CaseUtils.toCamelCase(categoryName, false, delimiters);
+            String attributeNameInCamelCaseUncapitalized = CaseUtils.toCamelCase(attribute.getName(), false, delimiters);
+
+            String resultCodeName = Strings.isNullOrEmpty(categoryNameInCamelCaseUncapitalized) ?
+                    categoryNameInCamelCaseUncapitalized + StringUtils.capitalize(attributeNameInCamelCaseUncapitalized) :
+                    attributeNameInCamelCaseUncapitalized;
+
+            codeField.setValue(resultCodeName);
         }
     }
 

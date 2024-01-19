@@ -125,4 +125,7 @@ public class HtmlView extends StandardView {
 
     @ViewComponent
     public Param paramId;
+
+    @ViewComponent
+    public NativeDetails nativeDetailsId;
 }

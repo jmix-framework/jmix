@@ -144,5 +144,6 @@ public abstract class BaseLoaderConfig {
         loaders.put("label", LabelLoader.class);
         loaders.put("nativeLabel", NativeLabelLoader.class);
         loaders.put("nativeButton", NativeButtonLoader.class);
+        loaders.put("nativeDetails", NativeDetailsLoader.class);
     }
 }

@@ -4139,6 +4139,20 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="nativeDetailsComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:group ref="layoutOrComponent"/>
+                </xs:sequence>
+
+                <xs:attribute name="open" type="xs:boolean"/>
+                <xs:attribute name="summaryText" type="resourceString"/>
+
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
     <!-- Filters -->
 
@@ -4499,6 +4513,7 @@
                 <xs:element name="anchor" type="anchor"/>
                 <xs:element name="nativeLabel" type="labelComponent"/>
                 <xs:element name="nativeButton" type="nativeButtonComponent"/>
+                <xs:element name="nativeDetails" type="nativeDetailsComponent"/>
                 <xs:element name="article" type="baseClickableHtmlContainer"/>
                 <xs:element name="input" type="inputHtmlComponent"/>
                 <xs:element name="image" type="imageComponent"/>

@@ -1228,4 +1228,35 @@ public interface StudioHTMLComponents {
             }
     )
     NativeButton nativeButton();
+
+    @StudioComponent(
+            name = "NativeDetails",
+            classFqn = "com.vaadin.flow.component.html.NativeDetails",
+            category = "HTML",
+            xmlElement = "nativeDetails",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "open", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "summaryText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    NativeDetails nativeDetails();
 }

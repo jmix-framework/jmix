@@ -22,6 +22,7 @@ import com.vaadin.flow.component.HtmlContainer
 import com.vaadin.flow.component.html.AnchorTarget
 import com.vaadin.flow.component.html.IFrame
 import com.vaadin.flow.component.html.OrderedList
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.data.value.ValueChangeMode
 import component_xml_load.screen.HtmlView
 import org.springframework.boot.test.context.SpringBootTest
@@ -144,7 +145,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         }
 
         where:
-        component << ["hr", "iframe", "param"]
+        component << ["hr", "iframe", "param", "nativeDetails"]
     }
 
     def "Load specific hr attributes from XML"() {
@@ -233,6 +234,20 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             name == "nameString"
             title.get() == "paramTitle"
             value.get() == "paramValueString"
+        }
+    }
+
+    def "Load specific nativeDetails attributes from XML"() {
+        when: "Open the HtmlView"
+        def htmlView = navigateToView(HtmlView)
+
+        then: "Specific nativeDetails attributes will be loaded"
+        verifyAll(htmlView.nativeDetailsId) {
+            open
+            summaryText == "detailsSummaryText"
+            title.get() == "detailsTitle"
+            content instanceof Span
+            (content as Span).text == "nativeDetailsContent"
         }
     }
 }

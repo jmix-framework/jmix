@@ -2699,6 +2699,37 @@
         <xs:attribute name="cellTitle" type="resourceString"/>
     </xs:complexType>
 
+    <xs:complexType name="contextMenuType">
+        <xs:choice minOccurs="0">
+            <xs:element name="item" minOccurs="0" type="contextMenuItemType"/>
+            <xs:element name="separator" minOccurs="0"/>
+        </xs:choice>
+
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="css" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attributeGroup ref="hasEnabled"/>
+        <xs:attributeGroup ref="hasClassNames"/>
+    </xs:complexType>
+
+    <xs:complexType name="contextMenuItemType">
+        <xs:choice minOccurs="0">
+            <xs:element name="item" minOccurs="0" type="contextMenuItemType"/>
+            <xs:element name="separator" minOccurs="0"/>
+        </xs:choice>
+
+        <xs:attribute name="action" type="xs:string"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="css" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attributeGroup ref="hasEnabled"/>
+        <xs:attributeGroup ref="hasClassNames"/>
+        <xs:attributeGroup ref="hasText"/>
+        <xs:attributeGroup ref="hasIcon"/>
+    </xs:complexType>
+
     <!-- Components -->
 
     <!-- ListMenu -->
@@ -2858,6 +2889,8 @@
                                     <xs:element name="action" type="gridAction"/>
                                 </xs:choice>
                             </xs:sequence>
+
+                            <xs:attribute name="showInContextMenuEnabled" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="columns">
@@ -2873,6 +2906,7 @@
                             <xs:attribute name="resizable" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
+                    <xs:element name="contextMenu" minOccurs="0" type="contextMenuType"/>
                 </xs:all>
 
                 <xs:attribute name="pageSize" type="xs:integer"/>

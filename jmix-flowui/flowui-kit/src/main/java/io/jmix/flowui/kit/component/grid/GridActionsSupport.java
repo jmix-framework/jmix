@@ -29,11 +29,41 @@ public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHol
     protected Map<Action, GridMenuItemActionWrapper<T>> actionBinding = new HashMap<>();
 
     protected JmixGridContextMenu<T> contextMenu;
+    protected boolean showActionsInContextMenuEnabled = true;
 
     public GridActionsSupport(C component) {
         super(component);
+    }
 
-        initContextMenu();
+    @Override
+    protected void addActionInternal(Action action, int index) {
+        super.addActionInternal(action, index);
+
+        if (showActionsInContextMenuEnabled) {
+            addContextMenuItem(action, index);
+            updateContextMenu();
+        }
+    }
+
+    protected void addContextMenuItem(Action action, int index) {
+        GridMenuItemActionWrapper<T> wrapper = createContextMenuItemComponent();
+        GridMenuItem<T> menuItem = getContextMenu().addItemAtIndex(index, wrapper);
+
+        wrapper.setMenuItem(menuItem);
+        wrapper.setAction(action);
+
+        actionBinding.put(action, wrapper);
+    }
+
+    protected GridMenuItemActionWrapper<T> createContextMenuItemComponent() {
+        return new GridMenuItemActionWrapper<>();
+    }
+
+    protected JmixGridContextMenu<T> getContextMenu() {
+        if (contextMenu == null) {
+            initContextMenu();
+        }
+        return contextMenu;
     }
 
     protected void initContextMenu() {
@@ -42,26 +72,8 @@ public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHol
         contextMenu.setVisible(false);
     }
 
-    @Override
-    protected void addActionInternal(Action action, int index) {
-        super.addActionInternal(action, index);
-
-        addContextMenuItem(action, index);
-        updateContextMenu();
-    }
-
-    protected void addContextMenuItem(Action action, int index) {
-        String text = action.getText();
-
-        GridMenuItem<T> menuItem = contextMenu.addItemAtIndex(index, text);
-
-        GridMenuItemActionWrapper<T> wrapper = new GridMenuItemActionWrapper<>(menuItem);
-        wrapper.setAction(action);
-
-        actionBinding.put(action, wrapper);
-    }
-
     protected void updateContextMenu() {
+        JmixGridContextMenu<T> contextMenu = getContextMenu();
         boolean empty = contextMenu.getItems().isEmpty();
         boolean visible = contextMenu.isVisible();
 
@@ -78,8 +90,10 @@ public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHol
     @Override
     protected boolean removeActionInternal(Action action) {
         if (super.removeActionInternal(action)) {
-            removeContextMenuItem(action);
-            updateContextMenu();
+            if (showActionsInContextMenuEnabled) {
+                removeContextMenuItem(action);
+                updateContextMenu();
+            }
 
             return true;
         }
@@ -91,6 +105,22 @@ public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHol
         GridMenuItemActionWrapper<T> item = actionBinding.remove(action);
         item.setAction(null);
 
-        contextMenu.remove(item.getMenuItem());
+        getContextMenu().remove(item.getMenuItem());
+    }
+
+    /**
+     * @return true if actions are showed in grid context menu, false otherwise
+     */
+    public boolean isShowActionsInContextMenuEnabled() {
+        return showActionsInContextMenuEnabled;
+    }
+
+    /**
+     * Sets whether to show actions in grid context menu.
+     *
+     * @param showActionsInContextMenuEnabled true if actions should be showed to context menu, false otherwise
+     */
+    public void setShowActionsInContextMenuEnabled(boolean showActionsInContextMenuEnabled) {
+        this.showActionsInContextMenuEnabled = showActionsInContextMenuEnabled;
     }
 }

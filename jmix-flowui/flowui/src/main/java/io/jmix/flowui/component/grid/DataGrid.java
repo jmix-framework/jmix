@@ -21,6 +21,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSelectionModel;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.grid.dataview.GridDataView;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -34,6 +35,7 @@ import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
 import io.jmix.flowui.component.SupportsEnterPress;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.GridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
@@ -42,6 +44,7 @@ import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
+import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -60,6 +63,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     protected ApplicationContext applicationContext;
 
     protected GridDelegate<E, DataGridItems<E>> gridDelegate;
+    protected JmixGridContextMenu<E> contextMenu;
 
     protected boolean editorCreated = false;
 
@@ -368,10 +372,10 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return new DataGridEditorImpl<>(this, applicationContext);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     @Override
     protected GridActionsSupport<JmixGrid<E>, E> createActionsSupport() {
-        return new DataGridActionsSupport(this);
+        return applicationContext.getBean(DataGridActionsSupport.class, this);
     }
 
     protected void onAfterApplyColumnSecurity(AbstractGridDelegate.ColumnSecurityContext<E> context) {
@@ -379,5 +383,36 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
             // Remove column from component while GridDelegate stores this column
             super.removeColumn(context.getColumn());
         }
+    }
+
+    @Override
+    public JmixGridContextMenu<E> getContextMenu() {
+        if (contextMenu == null) {
+            contextMenu = new JmixGridContextMenu<>(this);
+        }
+        return contextMenu;
+    }
+
+    @Override
+    public GridContextMenu<E> addContextMenu() {
+        throw new UnsupportedOperationException(getClass().getSimpleName() +
+                " can have only one context menu attached, use getContextMenu() to retrieve it");
+    }
+
+    @Nullable
+    @Override
+    public Object getSubPart(String name) {
+        Object column = super.getSubPart(name);
+        if (column != null) {
+            return column;
+        }
+        if (contextMenu != null) {
+            if (UiComponentUtils.sameId(contextMenu, name)) {
+                return contextMenu;
+            } else {
+                return contextMenu.getSubPart(name);
+            }
+        }
+        return null;
     }
 }

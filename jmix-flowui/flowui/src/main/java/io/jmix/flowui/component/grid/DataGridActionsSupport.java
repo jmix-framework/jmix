@@ -23,12 +23,40 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
+import io.jmix.flowui.kit.component.grid.GridMenuItemActionWrapper;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
-public class DataGridActionsSupport<C extends Grid<T> & ListDataComponent<T>, T> extends GridActionsSupport<C, T> {
+@Component("flowui_DataGridActionsSupport")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class DataGridActionsSupport<C extends Grid<T> & ListDataComponent<T>, T> extends GridActionsSupport<C, T>
+        implements ApplicationContextAware {
+
+    protected ApplicationContext applicationContext;
 
     public DataGridActionsSupport(C grid) {
         super(grid);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void initContextMenu() {
+        if (component instanceof EnhancedDataGrid enhancedDataGrid) {
+            this.contextMenu = enhancedDataGrid.getContextMenu();
+            updateContextMenu();
+        } else {
+            super.initContextMenu();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -60,8 +88,15 @@ public class DataGridActionsSupport<C extends Grid<T> & ListDataComponent<T>, T>
 
     protected boolean needSkipShortcut(@Nullable KeyCombination keyCombination) {
         // Ignore Enter shortcut, because it handled differently
-        return keyCombination != null 
+        return keyCombination != null
                 && (keyCombination.getKeyModifiers() == null || keyCombination.getKeyModifiers().length == 0)
                 && keyCombination.getKey() == Key.ENTER;
+    }
+
+    @Override
+    protected GridMenuItemActionWrapper<T> createContextMenuItemComponent() {
+        GridContextMenuItemComponent<T> itemComponent = new GridContextMenuItemComponent<>();
+        itemComponent.setApplicationContext(applicationContext);
+        return itemComponent;
     }
 }

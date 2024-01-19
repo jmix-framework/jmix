@@ -18,8 +18,17 @@ package io.jmix.quartzflowui.view.jobs;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.MessageTools;
+import io.jmix.core.Metadata;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.select.JmixSelect;
@@ -37,6 +46,7 @@ import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,6 +84,8 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected MessageBundle messageBundle;
     @Autowired
     protected MessageTools messageTools;
+    @Autowired
+    private Metadata metadata;
 
     @Subscribe
     protected void onInit(View.InitEvent event) {
@@ -104,6 +116,10 @@ public class JobModelListView extends StandardListView<JobModel> {
 
 
     protected List<JobModel> loadJobsData() {
+        List<GridSortOrder<JobModel>> sorting = jobModelsTable.getSortOrder();
+
+        Comparator<JobModel> jobModelComparator = createJobModelComparator(sorting);
+
         List<JobModel> jobs = quartzService.getAllJobs().stream()
                 .filter(jobModel -> (Strings.isNullOrEmpty(nameFilter.getTypedValue())
                         || containsIgnoreCase(jobModel.getJobName(), nameFilter.getTypedValue()))
@@ -113,12 +129,60 @@ public class JobModelListView extends StandardListView<JobModel> {
                         || containsIgnoreCase(jobModel.getJobGroup(), groupFilter.getTypedValue()))
                         && (jobStateFilter.getValue() == null
                         || jobStateFilter.getValue().equals(jobModel.getJobState())))
-                .sorted(comparing(JobModel::getJobState, nullsLast(naturalOrder()))
-                        .thenComparing(JobModel::getJobName))
+                .sorted(jobModelComparator)
                 .collect(Collectors.toList());
 
         jobModelsDc.setItems(jobs);
         return jobs;
+    }
+
+    protected Comparator<JobModel> createJobModelComparator(List<GridSortOrder<JobModel>> sorting) {
+        Comparator<JobModel> jobModelComparator = null;
+        if (sorting.isEmpty()) {
+            // Default sorting
+            jobModelComparator = comparing(JobModel::getJobState, nullsLast(naturalOrder()))
+                    .thenComparing(JobModel::getJobName, String.CASE_INSENSITIVE_ORDER);
+        } else {
+            // Keep user sorting
+            MetaClass jobModelMetaClass = metadata.getClass(JobModel.class);
+            for (GridSortOrder<JobModel> sortOrder : sorting) {
+                Grid.Column<JobModel> column = sortOrder.getSorted();
+                SortDirection direction = sortOrder.getDirection();
+                String key = column.getKey();
+
+                Comparator<?> comparator = createSortOrderComparator(jobModelMetaClass, key, direction);
+
+                if (jobModelComparator == null) {
+                    jobModelComparator = comparing(jobModel -> EntityValues.getValue(jobModel, key), nullsLast(comparator));
+                } else {
+                    jobModelComparator = jobModelComparator.thenComparing(jobModel -> EntityValues.getValue(jobModel, key), nullsLast(comparator));
+                }
+            }
+        }
+        return jobModelComparator;
+    }
+
+    protected Comparator<?> createSortOrderComparator(MetaClass jobModelMetaClass, String propertyKey, SortDirection direction) {
+        MetaProperty property = jobModelMetaClass.getProperty(propertyKey);
+        Range range = property.getRange();
+        boolean isDatatype = range.isDatatype();
+        boolean isStringValue = false;
+        if (isDatatype) {
+            Datatype<Object> datatype = range.asDatatype();
+            String datatypeId = datatype.getId();
+            if ("string".equals(datatypeId)) {
+                isStringValue = true;
+            }
+        }
+
+        Comparator<?> comparator;
+        if (direction.equals(SortDirection.ASCENDING)) {
+            comparator = isStringValue ? String.CASE_INSENSITIVE_ORDER : naturalOrder();
+        } else {
+            comparator = isStringValue ? String.CASE_INSENSITIVE_ORDER.reversed() : reverseOrder();
+        }
+
+        return comparator;
     }
 
     @Install(to = "jobModelsTable.executeNow", subject = "enabledRule")

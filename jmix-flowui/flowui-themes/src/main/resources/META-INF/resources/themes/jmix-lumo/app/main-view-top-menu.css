@@ -38,8 +38,11 @@ vaadin-app-layout.jmix-main-view-top-menu-app-layout::part(navbar) {
   border-bottom: 1px solid var(--lumo-contrast-10pct)
 }
 
-.jmix-main-view-top-menu-logo {
+.jmix-main-view-top-menu-logo-container {
   margin: 0 var(--lumo-space-m);
+}
+
+.jmix-main-view-top-menu-logo {
   width: var(--lumo-size-m);
   height: var(--lumo-size-m);
 }

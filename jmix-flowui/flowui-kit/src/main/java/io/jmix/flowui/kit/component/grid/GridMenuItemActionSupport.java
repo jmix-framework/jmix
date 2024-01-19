@@ -19,7 +19,6 @@ package io.jmix.flowui.kit.component.grid;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -88,15 +87,11 @@ public class GridMenuItemActionSupport {
     }
 
     @Nullable
-    protected Component createIconComponent(@Nullable Icon actionIcon) {
+    protected Component createIconComponent(@Nullable Component actionIcon) {
         if (actionIcon == null) {
             return null;
         }
-        String iconAttribute = actionIcon.getElement().getAttribute("icon");
-        if (iconAttribute == null) {
-            return null;
-        }
-        return ComponentUtils.parseIcon(iconAttribute);
+        return ComponentUtils.copyIcon(actionIcon);
     }
 
     protected boolean isShowActionShortcutEnabled() {

@@ -896,8 +896,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             String categoryNameInCamelCaseUncapitalized = CaseUtils.toCamelCase(categoryName, false, delimiters);
             String attributeNameInCamelCaseUncapitalized = CaseUtils.toCamelCase(attribute.getName(), false, delimiters);
 
-            // `org.springframework.util.StringUtils::hasText` simplifies expression `isNotEmpty && isNotBlank` into one `hasText`
-            String resultCodeName = org.springframework.util.StringUtils.hasText(categoryNameInCamelCaseUncapitalized) ?
+            String resultCodeName = Strings.isNullOrEmpty(categoryNameInCamelCaseUncapitalized) ?
                     categoryNameInCamelCaseUncapitalized + StringUtils.capitalize(attributeNameInCamelCaseUncapitalized) :
                     attributeNameInCamelCaseUncapitalized;
 

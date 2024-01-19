@@ -63,6 +63,16 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
         }
     }
 
+    static get forwardedEventNames() {
+        return ['click', 'dblclick', 'mousedown', 'mousemove', 'mouseup', 'mouseover', 'mouseout', 'globalout',
+            'highlight', 'downplay', 'selectchanged', 'legendselectchanged', 'legendselected', 'legendunselected',
+            'legendselectall', 'legendinverseselect', 'legendscroll', 'datazoom', 'datarangeselected', 'graphroam',
+            'georoam', 'treeroam', 'timelinechanged', 'timelineplaychanged', 'restore', 'dataviewchanged',
+            'magictypechanged', 'geoselectchanged', 'geoselected', 'geounselected', 'axisareaselected',
+            'brush', 'brushend', 'brushselected', 'globalcursortaken', 'rendered', 'finished',
+        ];
+    }
+
     /**
      * @protected
      */
@@ -74,6 +84,20 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
         this.initApplicationThemeObserver();
 
         this._root = echarts.init(chart, this.theme);
+
+        this._forwardEvents();
+
+    }
+
+    _forwardEvents() {
+        for (let eventName of JmixChart.forwardedEventNames) {
+            this._root.on(eventName, (params) => {
+                delete params.event;
+                const customEvent = new CustomEvent('jmixchart' + eventName,
+                    { detail: params });
+                this.dispatchEvent(customEvent);
+            });
+        }
     }
 
     initApplicationThemeObserver() {

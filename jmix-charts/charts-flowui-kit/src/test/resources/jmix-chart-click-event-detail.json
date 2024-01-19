@@ -1,0 +1,14 @@
+{
+  "componentType": "xAxis",
+  "componentIndex": 0,
+  "xAxisIndex": 0,
+  "targetType": "axisLabel",
+  "value": "2012-09-04",
+  "tickIndex": 3,
+  "dataIndex": 39,
+  "type": "click",
+  "testDTO": {
+    "strField": "strValue",
+    "longField": 115
+  }
+}

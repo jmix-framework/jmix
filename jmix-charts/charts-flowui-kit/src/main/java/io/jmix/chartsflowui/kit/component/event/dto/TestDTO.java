@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,27 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.chartsflowui.kit.component.event.dto;
 
-group = 'io.jmix.charts'
-archivesBaseName = 'jmix-charts-flowui-kit'
+public class TestDTO {
 
-dependencies {
-    api project(':flowui-kit')
-    testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    String strField;
+
+    Long longField;
+
+    public String getStrField() {
+        return strField;
+    }
+
+    public void setStrField(String strField) {
+        this.strField = strField;
+    }
+
+    public Long getLongField() {
+        return longField;
+    }
+
+    public void setLongField(Long longField) {
+        this.longField = longField;
+    }
 }

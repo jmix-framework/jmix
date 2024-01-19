@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.chartsflowui.kit.component;
 
-group = 'io.jmix.charts'
-archivesBaseName = 'jmix-charts-flowui-kit'
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-dependencies {
-    api project(':flowui-kit')
-    testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface DtoDetail {
+    Class dtoClazz();
 }

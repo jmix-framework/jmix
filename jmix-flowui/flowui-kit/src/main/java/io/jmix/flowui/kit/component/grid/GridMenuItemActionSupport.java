@@ -17,8 +17,8 @@
 package io.jmix.flowui.kit.component.grid;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
@@ -105,7 +105,7 @@ public class GridMenuItemActionSupport {
 
     @Nullable
     protected Component createShortcutComponent(@Nullable KeyCombination keyCombination) {
-        return keyCombination == null ? null : new Span(keyCombination.format());
+        return keyCombination == null ? null : new Html("<kbd>" + keyCombination.format() + "</kbd>");
     }
 
     protected void updateVisible() {

@@ -234,7 +234,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return OperationResult.success();
     }
 
-    private ValidationErrors validateView() {
+    protected ValidationErrors validateView() {
         ValidationErrors validationErrors = validateUiComponents();
 
         if (!validationErrors.isEmpty()) {

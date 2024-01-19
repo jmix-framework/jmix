@@ -407,6 +407,10 @@ public class View<T extends Component> extends Composite<T>
      *         getContent().add(label);
      *     }
      * </pre>
+     * <strong>Note</strong> that the event is triggered only once after {@link View} creation. It means if the
+     * navigation to {@link View} performed at first time, event triggered. Then if navigation performed to the same
+     * {@link View}, which currently opened, second and more times event is not triggered because the {@link View}
+     * instance has been already created.
      *
      * @see #addInitListener(ComponentEventListener)
      */
@@ -431,6 +435,15 @@ public class View<T extends Component> extends Composite<T>
      * </pre>
      * <p>
      * You can abort the process of opening the view by throwing an exception.
+     * <p>
+     * <strong>Note</strong> consequent navigation to the same {@link View}, which currently opened, leads to
+     * triggering {@link BeforeShowEvent} once more for the same {@link View} instance. For example, the user
+     * navigates to the {@link View} first time: {@link View} instance is created, {@link BeforeShowEvent} is
+     * triggered. Then the user navigates to the same {@link View}, which currently opened: we have the same
+     * {@link View} instance, but {@link BeforeShowEvent} is triggered again.
+     * <p>
+     * If {@link BeforeShowEvent} method listener contains logic of adding components or loading data, it will be
+     * performed again, which can lead to adding duplicated components or reloading data.
      *
      * @see #addBeforeShowListener(ComponentEventListener)
      */
@@ -452,6 +465,15 @@ public class View<T extends Component> extends Composite<T>
      *         notifications.show("Just opened");
      *     }
      * </pre>
+     * <p>
+     * <strong>Note</strong> consequent navigation to the same {@link View}, which currently opened, leads to
+     * triggering {@link ReadyEvent} once more for the same {@link View} instance. For example, the user
+     * navigates to the {@link View} first time: {@link View} instance is created, {@link ReadyEvent} is
+     * triggered. Then the user navigates to the same {@link View}, which currently opened: we have the same
+     * {@link View} instance, but {@link ReadyEvent} is triggered again.
+     * <p>
+     * If {@link ReadyEvent} method listener contains logic of adding components or loading data, it will be
+     * performed again, which can lead to adding duplicated components or reloading data.
      *
      * @see #addReadyListener(ComponentEventListener)
      */
@@ -477,6 +499,12 @@ public class View<T extends Component> extends Composite<T>
      *         }
      *     }
      * </pre>
+     * <p>
+     * <strong>Note</strong> the event can be triggered few times for one {@link View} instance. It may happen if
+     * the user tries to navigate to the same {@link View}, which is currently opened. In this case,
+     * {@link BeforeCloseEvent} is triggered, because we "close" the {@link View}, however due to navigation
+     * the same instance of {@link View} will be opened. It means {@link BeforeCloseEvent} will be triggered again
+     * for the same {@link View} instance, when user close the View or navigates to another one.
      *
      * @see #addBeforeCloseListener(ComponentEventListener)
      */
@@ -548,6 +576,12 @@ public class View<T extends Component> extends Composite<T>
      *         notifications.show("Just closed");
      *     }
      * </pre>
+     * <p>
+     * <strong>Note</strong> the event can be triggered few times for one {@link View} instance. It may happen if
+     * the user tries to navigate to the same {@link View}, which is currently opened. In this case,
+     * {@link AfterCloseEvent} is triggered, because we "close" the {@link View}, however due to navigation
+     * the same instance of {@link View} will be opened. It means {@link AfterCloseEvent} will be triggered again
+     * for the same {@link View} instance, when user close the View or navigates to another one.
      *
      * @see #addAfterCloseListener(ComponentEventListener)
      */

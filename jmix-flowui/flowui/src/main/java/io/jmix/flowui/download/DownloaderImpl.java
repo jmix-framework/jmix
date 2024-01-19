@@ -129,9 +129,6 @@ public class DownloaderImpl implements Downloader {
      * @param dataProvider   DownloadDataProvider
      * @param resourceName   ResourceName for client side
      * @param downloadFormat DownloadFormat
-     * @implNote This implementation will replace all invalid {@code  resourceName} characters with
-     * underscores before downloading. {@code  resourceName} parameter value will be used in URI
-     * (generated when resource is registered) in a way that the name is the last segment of the path.<br/>
      * @see FileRefDownloadDataProvider
      * @see ByteArrayDownloadDataProvider
      */
@@ -142,6 +139,9 @@ public class DownloaderImpl implements Downloader {
 
         boolean showNewWindow = this.newWindow;
 
+        // Replace all invalid 'resourceName' characters with underscores before downloading.
+        // 'resourceName' parameter value will be used in URI (generated when resource is registered)
+        // in a way that the name is the last segment of the path
         resourceName = normalize(resourceName);
 
         if (useViewList) {

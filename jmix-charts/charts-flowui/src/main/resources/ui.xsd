@@ -1,0 +1,3422 @@
+<!--
+  ~ Copyright 2023 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema targetNamespace="http://jmix.io/schema/charts/ui"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:layout="http://jmix.io/schema/flowui/layout"
+           xmlns="http://jmix.io/schema/charts/ui"
+           elementFormDefault="qualified">
+
+    <xs:element name="chart">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="layout:baseComponent">
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="title" type="titleType"/>
+                        <xs:element name="legend" type="legendType"/>
+                        <xs:element name="scrollableLegend" type="scrollableLegendType"/>
+                        <xs:element name="tooltip" type="tooltipType"/>
+                        <xs:element name="toolbox" type="toolboxType"/>
+                        <xs:element name="brush" type="brushType"/>
+                        <xs:element name="grid" type="gridType"/>
+                        <xs:element name="aria" type="ariaType"/>
+
+                        <xs:element name="xAxes" type="xAxesType"/>
+                        <xs:element name="yAxes" type="yAxesType"/>
+                        <xs:element name="polar" type="polarType"/>
+                        <xs:element name="radiusAxis" type="radiusAxisType"/>
+                        <xs:element name="angleAxis" type="angleAxisType"/>
+                        <xs:element name="radar" type="radarType"/>
+                        <xs:element name="dataZoom" type="dataZoomType"/>
+                        <xs:element name="visualMap" type="visualMapType"/>
+                        <xs:element name="axisPointer" type="axisPointerType"/>
+
+                        <xs:element name="dataSet" type="dataSetType"/>
+
+                        <xs:element name="series" type="seriesType"/>
+
+                        <xs:element name="textStyle" type="baseText"/>
+                        <xs:element name="stateAnimation" type="stateAnimationType"/>
+                        <xs:element name="nativeJson">
+                            <xs:complexType mixed="true"/>
+                        </xs:element>
+                    </xs:sequence>
+
+                    <xs:attribute name="colorPalette" type="colorType"/>
+                    <xs:attribute name="backgroundColor" type="colorType"/>
+                    <xs:attribute name="animation" type="xs:boolean"/>
+                    <xs:attribute name="animationThreshold" type="xs:integer"/>
+                    <xs:attribute name="animationDuration" type="xs:integer"/>
+                    <xs:attribute name="animationEasing" type="xs:string"/>
+                    <xs:attribute name="animationDelay" type="xs:integer"/>
+                    <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+                    <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+                    <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+                    <xs:attribute name="hoverLayerThreshold" type="xs:integer"/>
+                    <xs:attribute name="useUtc" type="xs:boolean"/>
+
+                    <xs:attribute name="blendMode" type="blendMode"/>
+
+                    <xs:attributeGroup ref="layout:hasClassNames"/>
+                    <xs:attributeGroup ref="layout:hasSize"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Element-->
+    <xs:complexType name="seriesType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="line" type="lineSeriesType"/>
+            <xs:element name="bar" type="barSeriesType"/>
+            <xs:element name="pie" type="pieSeriesType"/>
+            <xs:element name="scatter" type="scatterSeriesType"/>
+            <xs:element name="effectScatter" type="effectScatterSeriesType"/>
+            <xs:element name="radar" type="radarSeriesType"/>
+            <xs:element name="boxplot" type="boxplotSeriesType"/>
+            <xs:element name="candlestick" type="candlestickSeriesType"/>
+            <xs:element name="funnel" type="funnelSeriesType"/>
+            <xs:element name="gauge" type="gaugeSeriesType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="lineSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseAxisAwareSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="endLabel" type="lineSeriesEndLabelType"/>
+                    <xs:element name="lineStyle" type="lineStyleType"/>
+                    <xs:element name="itemStyle" type="lineSeriesItemStyleType"/>
+                    <xs:element name="labelLine" type="lineSeriesLabelLineType"/>
+                    <xs:element name="areaStyle" type="lineSeriesAreaStyleType"/>
+
+                    <xs:element name="emphasis" type="lineSeriesEmphasisType"/>
+                    <xs:element name="blur" type="baseLineSeriesElement"/>
+                    <xs:element name="select" type="lineSeriesSelectType"/>
+                </xs:sequence>
+
+                <xs:attribute name="coordinateSystem" type="coordinateSystemType"/>
+                <xs:attribute name="xAxisIndex" type="xs:integer"/>
+                <xs:attribute name="yAxisIndex" type="xs:integer"/>
+                <xs:attribute name="polarIndex" type="xs:integer"/>
+                <xs:attribute name="clip" type="xs:boolean"/>
+                <xs:attribute name="sampling" type="samplingType"/>
+                <xs:attribute name="showSymbol" type="xs:boolean"/>
+                <xs:attribute name="showAllSymbol" type="xs:boolean"/>
+                <xs:attribute name="step">
+                    <xs:simpleType>
+                        <xs:restriction>
+                            <xs:enumeration value="START"/>
+                            <xs:enumeration value="MIDDLE"/>
+                            <xs:enumeration value="END"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="connectNulls" type="xs:boolean"/>
+                <xs:attribute name="triggerLineEvent" type="xs:boolean"/>
+                <xs:attribute name="cursor" type="xs:string"/>
+                <xs:attribute name="smooth" type="xs:double"/>
+                <xs:attribute name="smoothMonotone">
+                    <xs:simpleType>
+                        <xs:restriction>
+                            <xs:enumeration value="X"/>
+                            <xs:enumeration value="Y"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="animation" type="xs:boolean"/>
+                <xs:attribute name="animationThreshold" type="xs:integer"/>
+                <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+                <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+                <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasSymbols"/>
+                <xs:attributeGroup ref="hasStack"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="barSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseAxisAwareSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="backgroundStyle" type="barSeriesBackgroundStyleType"/>
+                    <xs:element name="labelLine" type="barSeriesLabelLineType"/>
+                    <xs:element name="itemStyle" type="seriesItemStyleWithDecalType"/>
+                    <xs:element name="emphasis" type="barSeriesEmphasisType"/>
+                    <xs:element name="blur" type="baseBarSeriesElement"/>
+                    <xs:element name="select" type="barSeriesSelectType"/>
+                </xs:sequence>
+
+                <xs:attribute name="coordinateSystem" type="coordinateSystemType"/>
+                <xs:attribute name="xAxisIndex" type="xs:integer"/>
+                <xs:attribute name="yAxisIndex" type="xs:integer"/>
+                <xs:attribute name="polarIndex" type="xs:integer"/>
+                <xs:attribute name="sampling" type="samplingType"/>
+                <xs:attribute name="clip" type="xs:boolean"/>
+                <xs:attribute name="roundCap" type="xs:boolean"/>
+                <xs:attribute name="realtimeSort" type="xs:boolean"/>
+                <xs:attribute name="showBackground" type="xs:boolean"/>
+                <xs:attribute name="barWidth" type="xs:string"/>
+                <xs:attribute name="barMaxWidth" type="xs:string"/>
+                <xs:attribute name="barMinWidth" type="xs:string"/>
+                <xs:attribute name="barMinHeight" type="xs:integer"/>
+                <xs:attribute name="barMinAngle" type="xs:integer"/>
+                <xs:attribute name="barGap" type="xs:string"/>
+                <xs:attribute name="barCategoryGap" type="xs:string"/>
+                <xs:attribute name="cursor" type="xs:string"/>
+                <xs:attribute name="large" type="xs:boolean"/>
+                <xs:attribute name="largeThreshold" type="xs:integer"/>
+                <xs:attribute name="progressive" type="xs:integer"/>
+                <xs:attribute name="progressiveThreshold" type="xs:integer"/>
+                <xs:attribute name="progressiveChunkMode" type="progressiveChunkMode"/>
+                <xs:attribute name="animation" type="xs:boolean"/>
+                <xs:attribute name="animationThreshold" type="xs:integer"/>
+                <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+                <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+                <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasStack"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="pieSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseAxisAwareSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="emptyCircleStyle" type="baseBorderedTextType"/>
+                    <xs:element name="labelLine" type="pieSeriesLabelLineType"/>
+                    <xs:element name="itemStyle" type="baseBorderedTextType"/>
+
+                    <xs:element name="emphasis" type="pieSeriesEmphasisType"/>
+                    <xs:element name="blur" type="basePieSeriesElement"/>
+                    <xs:element name="selected" type="pieSeriesSelectedType"/>
+                </xs:sequence>
+
+                <xs:attribute name="geoIndex" type="xs:integer"/>
+                <xs:attribute name="calendarIndex" type="xs:integer"/>
+                <xs:attribute name="selectedOffset" type="xs:integer"/>
+                <xs:attribute name="clockwise" type="xs:boolean"/>
+                <xs:attribute name="startAngle" type="xs:integer"/>
+                <xs:attribute name="minAngle" type="xs:integer"/>
+                <xs:attribute name="minShowLabelAngle" type="xs:integer"/>
+                <xs:attribute name="roseType" type="pieRoseType"/>
+                <xs:attribute name="avoidLabelOverlap" type="xs:boolean"/>
+                <xs:attribute name="stillShowZeroSum" type="xs:boolean"/>
+                <xs:attribute name="percentPrecision" type="xs:integer"/>
+                <xs:attribute name="width" type="xs:string"/>
+                <xs:attribute name="height" type="xs:string"/>
+                <xs:attribute name="cursor" type="xs:string"/>
+                <xs:attribute name="showEmptyCircle" type="xs:boolean"/>
+                <xs:attribute name="center" type="xs:string"/>
+                <xs:attribute name="radius" type="xs:string"/>
+                <xs:attribute name="animationType" type="pieAnimationType"/>
+                <xs:attribute name="animationTypeUpdate" type="pieAnimationUpdateType"/>
+                <xs:attribute name="animation" type="xs:boolean"/>
+                <xs:attribute name="animationThreshold" type="xs:integer"/>
+                <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+                <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+                <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasPosition"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="scatterSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseAxisAwareSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="labelLine" type="scatterSeriesLabelLineType"/>
+                    <xs:element name="itemStyle" type="baseBorderedTextType"/>
+                    <xs:element name="emphasis" type="scatterSeriesEmphasisType"/>
+                    <xs:element name="blur" type="baseScatterSeriesElement"/>
+                    <xs:element name="select" type="scatterSeriesSelectType"/>
+                </xs:sequence>
+
+                <xs:attribute name="coordinateSystem" type="coordinateSystemType"/>
+                <xs:attribute name="xAxisIndex" type="xs:integer"/>
+                <xs:attribute name="yAxisIndex" type="xs:integer"/>
+                <xs:attribute name="polarIndex" type="xs:integer"/>
+                <xs:attribute name="geoIndex" type="xs:integer"/>
+                <xs:attribute name="calendarIndex" type="xs:integer"/>
+                <xs:attribute name="clip" type="xs:boolean"/>
+                <xs:attribute name="cursor" type="xs:string"/>
+                <xs:attribute name="large" type="xs:boolean"/>
+                <xs:attribute name="largeThreshold" type="xs:integer"/>
+                <xs:attribute name="progressive" type="xs:integer"/>
+                <xs:attribute name="progressiveThreshold" type="xs:integer"/>
+                <xs:attribute name="animation" type="xs:boolean"/>
+                <xs:attribute name="animationThreshold" type="xs:integer"/>
+                <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+                <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+                <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasSymbols"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="effectScatterSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseAxisAwareSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="rippleEffect" type="effectScatterSeriesRippleEffectType"/>
+                    <xs:element name="labelLine" type="effectScatterSeriesLabelLineType"/>
+                    <xs:element name="itemStyle" type="baseBorderedTextType"/>
+
+                    <xs:element name="emphasis" type="effectScatterSeriesEmphasisType"/>
+                    <xs:element name="blur" type="baseEffectScatterSeriesElement"/>
+                    <xs:element name="select" type="effectScatterSeriesSelectType"/>
+                </xs:sequence>
+
+                <xs:attribute name="coordinateSystem" type="coordinateSystemType"/>
+                <xs:attribute name="effectType" type="xs:string"/>
+                <xs:attribute name="showEffectOn" type="effectScatterSeriesEffectType"/>
+                <xs:attribute name="xAxisIndex" type="xs:integer"/>
+                <xs:attribute name="yAxisIndex" type="xs:integer"/>
+                <xs:attribute name="polarIndex" type="xs:integer"/>
+                <xs:attribute name="geoIndex" type="xs:integer"/>
+                <xs:attribute name="calendarIndex" type="xs:integer"/>
+                <xs:attribute name="clip" type="xs:boolean"/>
+                <xs:attribute name="cursor" type="xs:string"/>
+                <xs:attribute name="animation" type="xs:boolean"/>
+                <xs:attribute name="animationThreshold" type="xs:integer"/>
+                <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+                <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+                <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasSymbols"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="radarSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="itemStyle" type="seriesItemStyleWithDecalType"/>
+                    <xs:element name="lineStyle" type="lineStyleType"/>
+                    <xs:element name="areaStyle" type="radarSeriesAreaStyleType"/>
+
+                    <xs:element name="emphasis" type="radarSeriesEmphasisType"/>
+                    <xs:element name="blur" type="baseRadarSeriesElement"/>
+                    <xs:element name="select" type="radarSeriesSelectType"/>
+                </xs:sequence>
+
+                <xs:attribute name="radarIndex" type="xs:integer"/>
+                <xs:attribute name="animation" type="xs:boolean"/>
+                <xs:attribute name="animationThreshold" type="xs:integer"/>
+                <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+                <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+                <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasSymbols"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="boxplotSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseAxisAwareSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="itemStyle" type="baseBorderedTextType"/>
+                    <xs:element name="emphasis" type="boxplotSeriesEmphasisType"/>
+                    <xs:element name="blur" type="baseBoxplotSeriesElement"/>
+                    <xs:element name="select" type="boxplotSeriesSelectType"/>
+                </xs:sequence>
+
+                <xs:attribute name="coordinateSystem" type="coordinateSystemType"/>
+                <xs:attribute name="xAxisIndex" type="xs:integer"/>
+                <xs:attribute name="yAxisIndex" type="xs:integer"/>
+                <xs:attribute name="hoverAnimation" type="xs:boolean"/>
+                <xs:attribute name="layout" type="orientationType"/>
+                <xs:attribute name="boxWidth" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="candlestickSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseAxisAwareSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="itemStyle" type="candlestickSeriesItemStyleType"/>
+                    <xs:element name="emphasis" type="candlestickSeriesEmphasisType"/>
+                    <xs:element name="blur" type="baseCandlestickSeriesElement"/>
+                    <xs:element name="select" type="candlestickSeriesSelectType"/>
+                </xs:sequence>
+
+                <xs:attribute name="coordinateSystem" type="coordinateSystemType"/>
+                <xs:attribute name="xAxisIndex" type="xs:integer"/>
+                <xs:attribute name="yAxisIndex" type="xs:integer"/>
+                <xs:attribute name="hoverAnimation" type="xs:boolean"/>
+                <xs:attribute name="layout" type="orientationType"/>
+                <xs:attribute name="layout" type="orientationType"/>
+                <xs:attribute name="barWidth" type="xs:string"/>
+                <xs:attribute name="barMaxWidth" type="xs:string"/>
+                <xs:attribute name="barMinWidth" type="xs:string"/>
+                <xs:attribute name="large" type="xs:boolean"/>
+                <xs:attribute name="largeThreshold" type="xs:integer"/>
+                <xs:attribute name="progressive" type="xs:integer"/>
+                <xs:attribute name="progressiveThreshold" type="xs:integer"/>
+                <xs:attribute name="progressiveChunkMode" type="progressiveChunkMode"/>
+                <xs:attribute name="clip" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="funnelSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseAxisAwareSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="labelLine" type="funnelSeriesLabelLineType"/>
+                    <xs:element name="itemStyle" type="baseBorderedTextType"/>
+
+                    <xs:element name="emphasis" type="funnelSeriesEmphasisType"/>
+                    <xs:element name="blur" type="baseFunnelSeriesElement"/>
+                    <xs:element name="select" type="funnelSeriesSelectType"/>
+
+                    <xs:element name="sortFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="max" type="xs:integer"/>
+                <xs:attribute name="min" type="xs:integer"/>
+                <xs:attribute name="minSize" type="xs:string"/>
+                <xs:attribute name="maxSize" type="xs:string"/>
+                <xs:attribute name="orientation" type="orientationType"/>
+                <xs:attribute name="sort" type="funnelSortType"/>
+                <xs:attribute name="sortFunction" type="xs:string"/>
+                <xs:attribute name="gap" type="xs:integer"/>
+                <xs:attribute name="funnelAlign" type="alignType"/>
+                <xs:attribute name="width" type="xs:string"/>
+                <xs:attribute name="height" type="xs:string"/>
+                <xs:attribute name="animation" type="xs:boolean"/>
+                <xs:attribute name="animationThreshold" type="xs:integer"/>
+                <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+                <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+                <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasPosition"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="axisLine" type="gaugeSeriesAxisLineType"/>
+                    <xs:element name="progress" type="gaugeSeriesProgressType"/>
+                    <xs:element name="splitLine" type="gaugeSeriesSplitLineType"/>
+                    <xs:element name="axisTick" type="gaugeSeriesAxisTickType"/>
+                    <xs:element name="axisLabel" type="seriesLabelType"/>
+                    <xs:element name="itemStyle" type="baseBorderedTextType"/>
+                    <xs:element name="pointer" type="gaugeSeriesPointerType"/>
+                    <xs:element name="anchor" type="gaugeSeriesAnchorType"/>
+                    <xs:element name="emphasis" type="gaugeSeriesEmphasisType"/>
+                    <xs:element name="title" type="baseGaugeSeriesTextElement"/>
+                    <xs:element name="detail" type="gaugeSeriesDetailType"/>
+
+                    <xs:element name="markPoint" type="markPointType"/>
+                    <xs:element name="markLine" type="markLineType"/>
+                    <xs:element name="markArea" type="markAreaType"/>
+
+                    <xs:element name="data" type="gaugeSeriesDataType"/>
+                </xs:sequence>
+
+                <xs:attribute name="center" type="xs:string"/>
+                <xs:attribute name="radius" type="xs:string"/>
+                <xs:attribute name="legendHoverLink" type="xs:boolean"/>
+                <xs:attribute name="startAngle" type="xs:integer"/>
+                <xs:attribute name="endAngle" type="xs:integer"/>
+                <xs:attribute name="clockwise" type="xs:boolean"/>
+                <xs:attribute name="min" type="xs:integer"/>
+                <xs:attribute name="max" type="xs:integer"/>
+                <xs:attribute name="splitNumber" type="xs:integer"/>
+                <xs:attribute name="animation" type="xs:boolean"/>
+                <xs:attribute name="animationThreshold" type="xs:integer"/>
+                <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+                <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+                <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesDataType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="dataItem" type="gaugeSeriesDataItemType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesDataItemType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="title" type="baseGaugeSeriesTextElement"/>
+            <xs:element name="detail" type="gaugeSeriesDetailType"/>
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+        </xs:sequence>
+
+        <xs:attribute name="name" type="layout:resourceString"/>
+        <xs:attribute name="value" type="xs:double"/>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesAxisLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="gaugeSeriesAxisLineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="roundCap" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesAxisLineStyleType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="colorPalette" type="gaugeSeriesAxisLineStyleColorPaletteType"/>
+        </xs:sequence>
+        <xs:attribute name="width" type="xs:integer"/>
+        <xs:attribute name="opacity" type="xs:double"/>
+
+        <xs:attributeGroup ref="hasShadow"/>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesAxisLineStyleColorPaletteType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="colorItem" type="gaugeSeriesAxisLineStyleColorItemType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesAxisLineStyleColorItemType">
+        <xs:attribute name="range" type="xs:double" use="required"/>
+        <xs:attribute name="color" type="colorType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesProgressType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="overlap" type="xs:boolean"/>
+        <xs:attribute name="width" type="xs:integer"/>
+        <xs:attribute name="roundCap" type="xs:boolean"/>
+        <xs:attribute name="clip" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesSplitLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="length" type="xs:integer"/>
+        <xs:attribute name="distance" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesAxisTickType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="splitNumber" type="xs:integer"/>
+        <xs:attribute name="length" type="xs:integer"/>
+        <xs:attribute name="distance" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesPointerType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="showAbove" type="xs:boolean"/>
+        <xs:attribute name="icon" type="xs:string"/>
+        <xs:attribute name="offsetCenter" type="xs:string"/>
+        <xs:attribute name="length" type="xs:string"/>
+        <xs:attribute name="width" type="xs:integer"/>
+        <xs:attribute name="keepAspect" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesAnchorType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="showAbove" type="xs:boolean"/>
+        <xs:attribute name="size" type="xs:integer"/>
+        <xs:attribute name="icon" type="xs:string"/>
+        <xs:attribute name="offsetCenter" type="xs:string"/>
+        <xs:attribute name="keepAspect" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesEmphasisType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+        </xs:sequence>
+
+        <xs:attribute name="disabled" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="gaugeSeriesDetailType">
+        <xs:complexContent>
+            <xs:extension base="baseGaugeSeriesTextElement">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="formatterFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="formatter" type="xs:string"/>
+                <xs:attribute name="formatterFunction" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="funnelSeriesLabelLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="length" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="funnelSeriesEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="baseFunnelSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+                <xs:attribute name="focus" type="focusType"/>
+                <xs:attribute name="blurScope" type="blurScopeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="funnelSeriesSelectType">
+        <xs:complexContent>
+            <xs:extension base="baseFunnelSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="candlestickSeriesItemStyleType">
+        <xs:attribute name="bullishColor" type="colorType"/>
+        <xs:attribute name="bearishColor" type="colorType"/>
+        <xs:attribute name="bullishBorderColor" type="colorType"/>
+        <xs:attribute name="bearishBorderColor" type="colorType"/>
+        <xs:attribute name="dojiBorderColor" type="colorType"/>
+        <xs:attribute name="borderWidth" type="xs:double"/>
+        <xs:attribute name="opacity" type="xs:double"/>
+
+        <xs:attributeGroup ref="hasShadow"/>
+    </xs:complexType>
+
+    <xs:complexType name="candlestickSeriesEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="baseCandlestickSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+                <xs:attribute name="focus" type="focusType"/>
+                <xs:attribute name="blurScope" type="blurScopeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="candlestickSeriesSelectType">
+        <xs:complexContent>
+            <xs:extension base="baseCandlestickSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="boxplotSeriesEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="baseBoxplotSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+                <xs:attribute name="focus" type="focusType"/>
+                <xs:attribute name="blurScope" type="blurScopeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="boxplotSeriesSelectType">
+        <xs:complexContent>
+            <xs:extension base="baseBoxplotSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="radarSeriesAreaStyleType">
+        <xs:complexContent>
+            <xs:extension base="baseAreaStyleType">
+                <xs:attribute name="color" type="colorType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="radarSeriesEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="baseRadarSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+                <xs:attribute name="focus" type="focusType"/>
+                <xs:attribute name="blurScope" type="blurScopeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="radarSeriesSelectType">
+        <xs:complexContent>
+            <xs:extension base="baseRadarSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="effectScatterSeriesRippleEffectType">
+        <xs:attribute name="color" type="colorType"/>
+        <xs:attribute name="number" type="xs:integer"/>
+        <xs:attribute name="period" type="xs:integer"/>
+        <xs:attribute name="scale" type="xs:double"/>
+        <xs:attribute name="brushType" type="rippleEffectBrushType"/>
+    </xs:complexType>
+
+    <xs:complexType name="effectScatterSeriesLabelLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="showAbove" type="xs:boolean"/>
+        <xs:attribute name="length" type="xs:integer"/>
+        <xs:attribute name="smooth" type="xs:boolean"/>
+        <xs:attribute name="minTurnAngle" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="effectScatterSeriesEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="baseEffectScatterSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+                <xs:attribute name="scale" type="xs:double"/>
+                <xs:attribute name="focus" type="focusType"/>
+                <xs:attribute name="blurScope" type="blurScopeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="effectScatterSeriesSelectType">
+        <xs:complexContent>
+            <xs:extension base="baseEffectScatterSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="scatterSeriesLabelLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="showAbove" type="xs:boolean"/>
+        <xs:attribute name="length" type="xs:integer"/>
+        <xs:attribute name="smooth" type="xs:boolean"/>
+        <xs:attribute name="minTurnAngle" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="scatterSeriesEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="baseScatterSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+                <xs:attribute name="scale" type="xs:double"/>
+                <xs:attribute name="focus" type="focusType"/>
+                <xs:attribute name="blurScope" type="blurScopeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="scatterSeriesSelectType">
+        <xs:complexContent>
+            <xs:extension base="baseScatterSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="pieSeriesLabelLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="showAbove" type="xs:boolean"/>
+        <xs:attribute name="length" type="xs:integer"/>
+        <xs:attribute name="length2" type="xs:integer"/>
+        <xs:attribute name="smooth" type="xs:boolean"/>
+        <xs:attribute name="minTurnAngle" type="xs:integer"/>
+        <xs:attribute name="maxSurfaceAngle" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="pieSeriesEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="basePieSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+                <xs:attribute name="scale" type="xs:boolean"/>
+                <xs:attribute name="scaleSize" type="xs:integer"/>
+                <xs:attribute name="focus" type="focusType"/>
+                <xs:attribute name="blurScope" type="blurScopeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="pieSeriesSelectedType">
+        <xs:complexContent>
+            <xs:extension base="basePieSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="barSeriesBackgroundStyleType">
+        <xs:attribute name="color" type="colorType"/>
+        <xs:attribute name="borderType" type="xs:string"/>
+        <xs:attribute name="opacity" type="xs:double"/>
+
+        <xs:attributeGroup ref="hasShadow"/>
+        <xs:attributeGroup ref="hasBorder"/>
+    </xs:complexType>
+
+    <xs:complexType name="barSeriesLabelLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="seriesItemStyleWithDecalType">
+        <xs:complexContent>
+            <xs:extension base="baseSeriesItemStyle">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="decal" type="decalType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="barSeriesEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="baseBarSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+                <xs:attribute name="focus" type="focusType"/>
+                <xs:attribute name="blurScope" type="blurScopeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="barSeriesSelectType">
+        <xs:complexContent>
+            <xs:extension base="baseBarSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="lineSeriesEndLabelType">
+        <xs:complexContent>
+            <xs:extension base="baseEnhancedLabel">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="formatterFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="formatter" type="xs:string"/>
+                <xs:attribute name="formatterFunction" type="xs:string"/>
+                <xs:attribute name="valueAnimation" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="lineSeriesItemStyleType">
+        <xs:complexContent>
+            <xs:extension base="baseBorderedTextType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="decal" type="decalType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="lineSeriesLabelLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="showAbove" type="xs:boolean"/>
+        <xs:attribute name="length" type="xs:integer"/>
+        <xs:attribute name="smooth" type="xs:boolean"/>
+        <xs:attribute name="minTurnAngle" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="lineSeriesAreaStyleType">
+        <xs:attribute name="color" type="colorType"/>
+        <xs:attribute name="originType">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="AUTO"/>
+                    <xs:enumeration value="START"/>
+                    <xs:enumeration value="END"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="originValue" type="xs:double"/>
+        <xs:attribute name="opacity" type="xs:double"/>
+
+        <xs:attributeGroup ref="hasShadow"/>
+    </xs:complexType>
+
+    <xs:complexType name="lineSeriesEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="baseLineSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+                <xs:attribute name="scale" type="xs:double"/>
+                <xs:attribute name="focus" type="focusType"/>
+                <xs:attribute name="blurScope" type="blurScopeType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="lineSeriesSelectType">
+        <xs:complexContent>
+            <xs:extension base="baseLineSeriesElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dataSetType">
+        <xs:choice minOccurs="0">
+            <xs:element name="source" type="dataSetSourceType"/>
+        </xs:choice>
+        <xs:attribute name="id" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="dataSetSourceType">
+        <xs:attribute name="categoryField" type="xs:string"/>
+        <xs:attribute name="valueFields" type="xs:string"/>
+        <xs:attribute name="dataContainer" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="stateAnimationType">
+        <xs:attribute name="duration" type="xs:integer"/>
+        <xs:attribute name="easing" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="titleType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="textStyle" type="baseRichText"/>
+            <xs:element name="subtextStyle" type="titleSubtextType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="text" type="layout:resourceString"/>
+        <xs:attribute name="link" type="xs:string"/>
+        <xs:attribute name="target" type="targetType"/>
+        <xs:attribute name="subtext" type="layout:resourceString"/>
+        <xs:attribute name="sublink" type="xs:string"/>
+        <xs:attribute name="subtarget" type="targetType"/>
+        <xs:attribute name="textAlign" type="titleTextAlign"/>
+        <xs:attribute name="textVerticalAlign" type="titleTextVerticalAlign"/>
+        <xs:attribute name="triggerEvent" type="xs:boolean"/>
+        <xs:attribute name="itemGap" type="xs:integer"/>
+        <xs:attribute name="zLevel" type="xs:integer"/>
+        <xs:attribute name="z" type="xs:integer"/>
+        <xs:attribute name="backgroundColor" type="colorType"/>
+
+        <xs:attributeGroup ref="hasPosition"/>
+        <xs:attributeGroup ref="hasShadow"/>
+        <xs:attributeGroup ref="hasPadding"/>
+        <xs:attributeGroup ref="hasBorder"/>
+    </xs:complexType>
+
+    <xs:complexType name="gridType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="gridItem" type="gridItemType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ariaType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="ariaLabelType"/>
+            <xs:element name="decal" type="ariaDecalType"/>
+        </xs:sequence>
+
+        <xs:attribute name="enabled" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="ariaDecalType">
+        <xs:choice minOccurs="0">
+            <xs:element name="decals">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                        <xs:element name="decal" type="decalType"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="ariaLabelType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="general" type="ariaLabelGeneralType"/>
+            <xs:element name="series" type="ariaLabelSeriesType"/>
+            <xs:element name="data" type="ariaLabelDataType"/>
+        </xs:sequence>
+
+        <xs:attribute name="enabled" type="xs:boolean"/>
+        <xs:attribute name="description" type="layout:resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="ariaLabelGeneralType">
+        <xs:attribute name="withTitle" type="layout:resourceString"/>
+        <xs:attribute name="withoutTitle" type="layout:resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="ariaLabelSeriesType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="single" type="baseAriaSeriesLabel"/>
+            <xs:element name="multiple" type="multipleAriaSeriesLabel"/>
+        </xs:sequence>
+
+        <xs:attribute name="maxCount" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseAriaSeriesLabel">
+        <xs:attribute name="prefix" type="layout:resourceString"/>
+        <xs:attribute name="withName" type="layout:resourceString"/>
+        <xs:attribute name="withoutName" type="layout:resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="multipleAriaSeriesLabel">
+        <xs:complexContent>
+            <xs:extension base="baseAriaSeriesLabel">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="separator" type="separatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ariaLabelDataType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="separator" type="separatorType"/>
+        </xs:sequence>
+
+        <xs:attribute name="maxCount" type="xs:integer"/>
+        <xs:attribute name="allData" type="layout:resourceString"/>
+        <xs:attribute name="partialData" type="layout:resourceString"/>
+        <xs:attribute name="withName" type="layout:resourceString"/>
+        <xs:attribute name="withoutName" type="layout:resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="separatorType">
+        <xs:attribute name="middle" type="xs:string"/>
+        <xs:attribute name="end" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="xAxesType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="xAxis" type="baseCartesianAxis"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="yAxesType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="yAxis" type="baseCartesianAxis"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="legendType">
+        <xs:complexContent>
+            <xs:extension base="baseLegendType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="decalType">
+        <xs:attribute name="dashGapX" type="xs:integer"/>
+        <xs:attribute name="dashArrayX" type="xs:string"/>
+        <xs:attribute name="dashGapY" type="xs:integer"/>
+        <xs:attribute name="dashArrayY" type="xs:string"/>
+
+        <xs:attribute name="symbol" type="symbolType"/>
+        <xs:attribute name="symbolSize" type="xs:double"/>
+        <xs:attribute name="symbolKeepAspect" type="xs:boolean"/>
+        <xs:attribute name="color" type="colorType"/>
+        <xs:attribute name="backgroundColor" type="colorType"/>
+        <xs:attribute name="rotation" type="xs:double"/>
+        <xs:attribute name="maxTileWidth" type="xs:integer"/>
+        <xs:attribute name="maxTileHeight" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="scrollableLegendType">
+        <xs:complexContent>
+            <xs:extension base="baseLegendType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="pageTextStyle" type="baseText"/>
+                    <xs:element name="pageIcons" type="pageIconsType"/>
+                    <xs:element name="pageFormatterFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="scrollDataIndex" type="xs:integer"/>
+                <xs:attribute name="pageButtonItemGap" type="xs:integer"/>
+                <xs:attribute name="pageButtonGap" type="xs:integer"/>
+                <xs:attribute name="pageButtonPosition" type="positionType"/>
+                <xs:attribute name="pageFormatter" type="xs:string"/>
+                <xs:attribute name="pageFormatterFunction" type="xs:string"/>
+                <xs:attribute name="pageIconColor" type="colorType"/>
+                <xs:attribute name="pageIconInactiveColor" type="colorType"/>
+                <xs:attribute name="pageIconSize" type="xs:integer"/>
+                <xs:attribute name="animation" type="xs:boolean"/>
+                <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="gridItemType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="tooltip" type="baseTooltipType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="zLevel" type="xs:integer"/>
+        <xs:attribute name="z" type="xs:integer"/>
+        <xs:attribute name="width" type="xs:string"/>
+        <xs:attribute name="height" type="xs:string"/>
+        <xs:attribute name="containLabel" type="xs:boolean"/>
+        <xs:attribute name="backgroundColor" type="colorType"/>
+        <xs:attribute name="borderColor" type="colorType"/>
+        <xs:attribute name="borderWidth" type="xs:integer"/>
+
+        <xs:attributeGroup ref="hasShadow"/>
+        <xs:attributeGroup ref="hasPosition"/>
+    </xs:complexType>
+
+    <xs:complexType name="pageIconsType">
+        <xs:all minOccurs="0">
+            <xs:element name="horizontal">
+                <xs:complexType>
+                    <xs:attribute name="prevPageIcon" type="xs:string" use="required"/>
+                    <xs:attribute name="nextPageIcon" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="vertical">
+                <xs:complexType>
+                    <xs:attribute name="prevPageIcon" type="xs:string" use="required"/>
+                    <xs:attribute name="nextPageIcon" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="polarType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="tooltip" type="baseTooltipType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="zLevel" type="xs:integer"/>
+        <xs:attribute name="z" type="xs:integer"/>
+        <xs:attribute name="center" type="xs:string"/>
+        <xs:attribute name="radius" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="radarType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="axisName" type="radarAxisNameType"/>
+            <xs:element name="axisLine" type="axisLineType"/>
+            <xs:element name="axisTick" type="axisTickType"/>
+            <xs:element name="axisLabel" type="axisLabelType"/>
+            <xs:element name="splitLine" type="splitLineType"/>
+            <xs:element name="splitArea" type="splitAreaType"/>
+
+            <xs:element name="indicators" type="indicatorsType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="zLevel" type="xs:integer"/>
+        <xs:attribute name="z" type="xs:integer"/>
+        <xs:attribute name="center" type="xs:string"/>
+        <xs:attribute name="radius" type="xs:string"/>
+        <xs:attribute name="startAngle" type="xs:integer"/>
+        <xs:attribute name="nameGap" type="xs:integer"/>
+        <xs:attribute name="splitNumber" type="xs:integer"/>
+        <xs:attribute name="scale" type="xs:boolean"/>
+        <xs:attribute name="silent" type="xs:boolean"/>
+        <xs:attribute name="triggerEvent" type="xs:boolean"/>
+        <xs:attribute name="shape">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="POLYGON"/>
+                    <xs:enumeration value="CIRCLE"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="radarAxisNameType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="formatterFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="formatter" type="xs:string"/>
+        <xs:attribute name="formatterFunction" type="xs:string"/>
+        <xs:attribute name="borderType" type="xs:string"/>
+        <xs:attribute name="borderDashOffset" type="xs:integer"/>
+        <xs:attribute name="backgroundColor" type="colorType"/>
+
+        <xs:attributeGroup ref="hasBorder"/>
+        <xs:attributeGroup ref="hasShadow"/>
+        <xs:attributeGroup ref="hasPadding"/>
+    </xs:complexType>
+
+    <xs:complexType name="indicatorsType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="indicator">
+                <xs:complexType>
+                    <xs:attribute name="name" type="xs:string"/>
+                    <xs:attribute name="max" type="xs:integer"/>
+                    <xs:attribute name="min" type="xs:integer"/>
+                    <xs:attribute name="color" type="colorType"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="dataZoomType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="insideDataZoom" type="insideDataZoomType"/>
+            <xs:element name="sliderDataZoom" type="sliderDataZoomType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="insideDataZoomType">
+        <xs:complexContent>
+            <xs:extension base="baseDataZoom">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+                <xs:attribute name="zoomOnMouseWheel" type="xs:boolean"/>
+                <xs:attribute name="moveOnMouseMove" type="xs:boolean"/>
+                <xs:attribute name="moveOnMouseWheel" type="xs:boolean"/>
+                <xs:attribute name="preventDefaultMouseMove" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="sliderDataZoomType">
+        <xs:complexContent>
+            <xs:extension base="baseDataZoom">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="dataBackground" type="dataBackgroundType"/>
+                    <xs:element name="selectedDataBackground" type="dataBackgroundType"/>
+                    <xs:element name="handleStyle" type="baseBorderedTextType"/>
+                    <xs:element name="moveHandleStyle" type="baseBorderedTextType"/>
+                    <xs:element name="textStyle" type="baseText"/>
+                    <xs:element name="brushStyle" type="baseBorderedTextType"/>
+
+                    <xs:element name="emphasis">
+                        <xs:complexType>
+                            <xs:sequence minOccurs="0">
+                                <xs:element name="handleStyle" type="baseBorderedTextType"/>
+                                <xs:element name="moveHandleStyle" type="baseBorderedTextType"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+
+                    <xs:element name="labelFormatterFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="show" type="xs:boolean"/>
+                <xs:attribute name="backgroundColor" type="colorType"/>
+                <xs:attribute name="fillerColor" type="colorType"/>
+                <xs:attribute name="borderColor" type="colorType"/>
+                <xs:attribute name="borderRadius" type="xs:integer"/>
+                <xs:attribute name="handleIcon" type="xs:string"/>
+                <xs:attribute name="handleSize" type="xs:string"/>
+                <xs:attribute name="moveHandleIcon" type="xs:string"/>
+                <xs:attribute name="moveHandleSize" type="xs:integer"/>
+                <xs:attribute name="labelPrecision" type="xs:integer"/>
+                <xs:attribute name="labelFormatter" type="xs:string"/>
+                <xs:attribute name="labelFormatterFunction" type="xs:string"/>
+                <xs:attribute name="showDetail" type="xs:boolean"/>
+                <xs:attribute name="showDataShadow" type="xs:boolean"/>
+                <xs:attribute name="realtime" type="xs:boolean"/>
+                <xs:attribute name="zLevel" type="xs:integer"/>
+                <xs:attribute name="z" type="xs:integer"/>
+                <xs:attribute name="width" type="xs:string"/>
+                <xs:attribute name="height" type="xs:string"/>
+                <xs:attribute name="brushSelect" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasPosition"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dataBackgroundType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+            <xs:element name="areaStyle" type="areaStyleType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="visualMapType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="piecewiseVisualMap" type="piecewiseVisualMapType"/>
+            <xs:element name="continuousVisualMap" type="continuousVisualMapType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="piecewiseVisualMapType">
+        <xs:complexContent>
+            <xs:extension base="baseVisualMap">
+                <xs:choice minOccurs="0">
+                    <xs:element name="pieces">
+                        <xs:complexType>
+                            <xs:sequence minOccurs="0">
+                                <xs:element name="piece" type="pieceType"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+
+                <xs:attribute name="splitNumber" type="xs:integer"/>
+                <xs:attribute name="categories" type="xs:string"/>
+                <xs:attribute name="minOpen" type="xs:boolean"/>
+                <xs:attribute name="maxOpen" type="xs:boolean"/>
+                <xs:attribute name="selectedMode" type="selectedMode"/>
+                <xs:attribute name="showLabel" type="xs:boolean"/>
+                <xs:attribute name="itemGap" type="xs:integer"/>
+                <xs:attribute name="itemSymbol" type="symbolType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="pieceType">
+        <xs:attribute name="min" type="xs:double"/>
+        <xs:attribute name="max" type="xs:double"/>
+        <xs:attribute name="label" type="layout:resourceString"/>
+        <xs:attribute name="value" type="xs:double"/>
+        <xs:attribute name="color" type="colorType"/>
+    </xs:complexType>
+
+    <xs:complexType name="continuousVisualMapType">
+        <xs:complexContent>
+            <xs:extension base="baseVisualMap">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="handleStyle" type="baseBorderedTextType"/>
+                    <xs:element name="indicatorStyle" type="baseBorderedTextType"/>
+                </xs:sequence>
+
+                <xs:attribute name="calculable" type="xs:boolean"/>
+                <xs:attribute name="range" type="xs:string"/>
+                <xs:attribute name="realtime" type="xs:boolean"/>
+                <xs:attribute name="handleIcon" type="xs:string"/>
+                <xs:attribute name="handleSize" type="xs:string"/>
+                <xs:attribute name="indicatorIcon" type="xs:string"/>
+                <xs:attribute name="indicatorSize" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="axisPointerType">
+        <xs:complexContent>
+            <xs:extension base="baseAxisPointer">
+                <xs:attribute name="id" type="xs:string"/>
+                <xs:attribute name="triggerOn" type="triggerOnMode"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="radiusAxisType">
+        <xs:complexContent>
+            <xs:extension base="basePolarAxis">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="nameTextStyle" type="nameTextStyleType"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasAxisName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="angleAxisType">
+        <xs:complexContent>
+            <xs:extension base="basePolarAxis">
+                <xs:attribute name="startAngle" type="xs:integer"/>
+                <xs:attribute name="clockwise" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="titleSubtextType">
+        <xs:complexContent>
+            <xs:extension base="baseRichText">
+                <xs:attributeGroup ref="hasAlign"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="lineStyleType">
+        <xs:attribute name="color" type="colorType"/>
+        <xs:attribute name="width" type="xs:integer"/>
+        <xs:attribute name="type" type="xs:string"/>
+        <xs:attribute name="dashOffset" type="xs:integer"/>
+        <xs:attribute name="opacity" type="xs:double"/>
+
+        <xs:attributeGroup ref="hasShadow"/>
+        <xs:attributeGroup ref="hasLineStyle"/>
+    </xs:complexType>
+
+    <xs:complexType name="lineSeriesElementAreaStyleType">
+        <xs:complexContent>
+            <xs:extension base="baseAreaStyleType">
+                <xs:attribute name="color" type="colorType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="tooltipType">
+        <xs:complexContent>
+            <xs:extension base="baseTooltipType">
+                <xs:attribute name="showContent" type="xs:boolean"/>
+                <xs:attribute name="alwaysShowContent" type="xs:boolean"/>
+                <xs:attribute name="triggerOn" type="triggerOnMode"/>
+                <xs:attribute name="showDelay" type="xs:integer"/>
+                <xs:attribute name="hideDelay" type="xs:integer"/>
+                <xs:attribute name="enterable" type="xs:boolean"/>
+                <xs:attribute name="renderMode" type="renderMode"/>
+                <xs:attribute name="confine" type="xs:boolean"/>
+                <xs:attribute name="appendToBody" type="xs:boolean"/>
+                <xs:attribute name="className" type="xs:string"/>
+                <xs:attribute name="transitionDuration" type="xs:double"/>
+                <xs:attribute name="order" type="orderType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="brushType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="brushStyle">
+                <xs:complexType>
+                    <xs:attribute name="borderWidth" type="xs:integer"/>
+                    <xs:attribute name="color" type="colorType"/>
+                    <xs:attribute name="borderColor" type="colorType"/>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="inBrush" type="visualEffectType"/>
+            <xs:element name="outOfBrush" type="visualEffectType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="toolboxes" type="toolboxesType"/>
+        <xs:attribute name="brushLinkIndexes" type="xs:string"/>
+        <xs:attribute name="brushLinkMode" type="brushSelectMode"/>
+        <xs:attribute name="seriesIndex">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="ALL"/>
+                    <xs:enumeration value="ARRAY"/>
+                    <xs:enumeration value="NUMBER"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="geoIndex" type="xs:integer"/>
+        <xs:attribute name="geoIndexes" type="xs:string"/>
+        <xs:attribute name="geoIndexMode" type="brushSelectMode"/>
+        <xs:attribute name="xAxisIndex" type="xs:integer"/>
+        <xs:attribute name="xAxisIndexes" type="xs:string"/>
+        <xs:attribute name="xAxisIndexMode" type="brushSelectMode"/>
+        <xs:attribute name="yAxisIndex" type="xs:integer"/>
+        <xs:attribute name="yAxisIndexes" type="xs:string"/>
+        <xs:attribute name="yAxisIndexMode" type="brushSelectMode"/>
+        <xs:attribute name="brushType">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="RECT"/>
+                    <xs:enumeration value="POLYGON"/>
+                    <xs:enumeration value="LINE_X"/>
+                    <xs:enumeration value="LINE_Y"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="brushMode">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="SINGLE"/>
+                    <xs:enumeration value="MULTIPLE"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="transformable" type="xs:boolean"/>
+        <xs:attribute name="throttleType">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="DEBOUNCE"/>
+                    <xs:enumeration value="FIX_RATE"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="throttleDelay" type="xs:double"/>
+        <xs:attribute name="removeOnClick" type="xs:boolean"/>
+        <xs:attribute name="z" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:simpleType name="brushSelectMode">
+        <xs:restriction>
+            <xs:enumeration value="ALL"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="toolboxType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="features">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="saveAsImage" type="saveAsImageFeatureType"/>
+                        <xs:element name="restore" type="restoreFeatureType"/>
+                        <xs:element name="dataZoom" type="dataZoomFeatureType"/>
+                        <xs:element name="magicType" type="magicFeatureType"/>
+                        <xs:element name="brush" type="brushFeatureType"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="iconStyle" type="baseBorderedTextType"/>
+
+            <xs:element name="emphasis" type="toolboxEmphasisType"/>
+
+            <xs:element name="tooltip" type="tooltipType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="orientation" type="orientationType"/>
+        <xs:attribute name="itemSize" type="xs:integer"/>
+        <xs:attribute name="itemGap" type="xs:integer"/>
+        <xs:attribute name="showTitle" type="xs:boolean"/>
+        <xs:attribute name="zLevel" type="xs:integer"/>
+        <xs:attribute name="z" type="xs:integer"/>
+        <xs:attribute name="width" type="xs:string"/>
+        <xs:attribute name="height" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasPosition"/>
+    </xs:complexType>
+
+    <xs:complexType name="toolboxEmphasisType">
+        <xs:choice minOccurs="0">
+            <xs:element name="iconStyle">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="baseBorderedTextType">
+                            <xs:attribute name="textPosition">
+                                <xs:simpleType>
+                                    <xs:restriction>
+                                        <xs:enumeration value="LEFT"/>
+                                        <xs:enumeration value="RIGHT"/>
+                                        <xs:enumeration value="TOP"/>
+                                        <xs:enumeration value="BOTTOM"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:attribute>
+                            <xs:attribute name="textFill" type="colorType"/>
+                            <xs:attribute name="textAlign" type="alignType"/>
+                            <xs:attribute name="textBackgroundColor" type="colorType"/>
+                            <xs:attribute name="textBorderRadius" type="xs:integer"/>
+
+                            <xs:attributeGroup ref="hasPadding"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="saveAsImageFeatureType">
+        <xs:complexContent>
+            <xs:extension base="baseToolboxFeature">
+                <xs:attribute name="type">
+                    <xs:simpleType>
+                        <xs:restriction>
+                            <xs:enumeration value="PNG"/>
+                            <xs:enumeration value="JPG"/>
+                            <xs:enumeration value="SVG"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+
+                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="backgroundColor" type="colorType"/>
+                <xs:attribute name="connectedBackgroundColor" type="colorType"/>
+                <xs:attribute name="excludeComponents" type="xs:string"/>
+                <xs:attribute name="title" type="layout:resourceString"/>
+                <xs:attribute name="icon" type="xs:string"/>
+                <xs:attribute name="pixelRatio" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="restoreFeatureType">
+        <xs:complexContent>
+            <xs:extension base="baseToolboxFeature">
+                <xs:attribute name="title" type="layout:resourceString"/>
+                <xs:attribute name="icon" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dataZoomFeatureType">
+        <xs:complexContent>
+            <xs:extension base="baseToolboxFeature">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="title">
+                        <xs:complexType>
+                            <xs:attribute name="zoom" type="layout:resourceString"/>
+                            <xs:attribute name="back" type="layout:resourceString"/>
+                        </xs:complexType>
+                    </xs:element>
+
+                    <xs:element name="icon">
+                        <xs:complexType>
+                            <xs:attribute name="zoom" type="xs:string"/>
+                            <xs:attribute name="back" type="xs:string"/>
+                        </xs:complexType>
+                    </xs:element>
+
+                    <xs:element name="brushStyle" type="baseBorderedTextType"/>
+                </xs:sequence>
+
+                <xs:attribute name="filterMode" type="filterMode"/>
+                <xs:attribute name="xAxisIndexes" type="xs:string"/>
+                <xs:attribute name="yAxisIndexes" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="magicFeatureType">
+        <xs:complexContent>
+            <xs:extension base="baseToolboxFeature">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="title">
+                        <xs:complexType>
+                            <xs:attribute name="bar" type="layout:resourceString"/>
+                            <xs:attribute name="line" type="layout:resourceString"/>
+                            <xs:attribute name="stack" type="layout:resourceString"/>
+                            <xs:attribute name="tiled" type="layout:resourceString"/>
+                        </xs:complexType>
+                    </xs:element>
+
+                    <xs:element name="icon">
+                        <xs:complexType>
+                            <xs:attribute name="bar" type="xs:string"/>
+                            <xs:attribute name="line" type="xs:string"/>
+                            <xs:attribute name="stack" type="xs:string"/>
+                            <xs:attribute name="tiled" type="xs:string"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="types" type="magicFeatureTypes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="brushFeatureType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="title">
+                <xs:complexType>
+                    <xs:attribute name="rect" type="layout:resourceString"/>
+                    <xs:attribute name="polygon" type="layout:resourceString"/>
+                    <xs:attribute name="lineX" type="layout:resourceString"/>
+                    <xs:attribute name="lineY" type="layout:resourceString"/>
+                    <xs:attribute name="keep" type="layout:resourceString"/>
+                    <xs:attribute name="clear" type="layout:resourceString"/>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="icon">
+                <xs:complexType>
+                    <xs:attribute name="rect" type="xs:string"/>
+                    <xs:attribute name="polygon" type="xs:string"/>
+                    <xs:attribute name="lineX" type="xs:string"/>
+                    <xs:attribute name="lineY" type="xs:string"/>
+                    <xs:attribute name="keep" type="xs:string"/>
+                    <xs:attribute name="clear" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="types" type="brushFeatureTypes"/>
+    </xs:complexType>
+
+    <xs:complexType name="areaStyleType">
+        <xs:complexContent>
+            <xs:extension base="baseAreaStyleType">
+                <xs:attribute name="colors" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="shadowStyleType">
+        <xs:attribute name="color" type="xs:string"/>
+        <xs:attribute name="opacity" type="xs:double"/>
+
+        <xs:attributeGroup ref="hasShadow"/>
+    </xs:complexType>
+
+    <xs:complexType name="axisLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="onZero" type="xs:boolean"/>
+        <xs:attribute name="onZeroAxisIndex" type="xs:integer"/>
+        <xs:attribute name="symbols" type="xs:string"/>
+        <xs:attribute name="symbolsSize" type="xs:string"/>
+        <xs:attribute name="symbolsOffset" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="axisTickType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+            <xs:element name="intervalFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="alignWithLabel" type="xs:boolean"/>
+        <xs:attribute name="interval" type="xs:integer"/>
+        <xs:attribute name="intervalFunction" type="xs:string"/>
+        <xs:attribute name="inside" type="xs:boolean"/>
+        <xs:attribute name="length" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="axisLabelType">
+        <xs:complexContent>
+            <xs:extension base="baseRichText">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="intervalFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+
+                    <xs:element name="formatterFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+
+                    <xs:element name="colorFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="show" type="xs:boolean"/>
+                <xs:attribute name="interval" type="xs:integer"/>
+                <xs:attribute name="intervalFunction" type="xs:string"/>
+                <xs:attribute name="inside" type="xs:boolean"/>
+                <xs:attribute name="rotate" type="xs:integer"/>
+                <xs:attribute name="margin" type="xs:integer"/>
+                <xs:attribute name="formatter" type="xs:string"/>
+                <xs:attribute name="formatterFunction" type="xs:string"/>
+                <xs:attribute name="colorFunction" type="xs:string"/>
+                <xs:attribute name="showMinLabel" type="xs:boolean"/>
+                <xs:attribute name="showMaxLabel" type="xs:boolean"/>
+                <xs:attribute name="hideOverlap" type="xs:boolean"/>
+                <xs:attribute name="backgroundColor" type="colorType"/>
+                <xs:attribute name="borderType" type="xs:string"/>
+                <xs:attribute name="borderDashOffset" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasAlign"/>
+                <xs:attributeGroup ref="hasShadow"/>
+                <xs:attributeGroup ref="hasPadding"/>
+                <xs:attributeGroup ref="hasBorder"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="splitLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+            <xs:element name="intervalFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="interval" type="xs:integer"/>
+        <xs:attribute name="intervalFunction" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="splitAreaType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="areaStyle" type="areaStyleType"/>
+            <xs:element name="intervalFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="interval" type="xs:integer"/>
+        <xs:attribute name="intervalFunction" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="seriesLabelType">
+        <xs:complexContent>
+            <xs:extension base="baseEnhancedLabel">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="formatterFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="formatter" type="xs:string"/>
+                <xs:attribute name="formatterFunction" type="xs:string"/>
+                <xs:attribute name="positionType" type="seriesLabelPositionType"/>
+                <xs:attribute name="positionCoordinate" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="elementLabelLineType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="seriesLabelLayoutType">
+        <xs:attribute name="hideOverlap" type="xs:boolean"/>
+        <xs:attribute name="moveOverlap">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="SHIFT_X"/>
+                    <xs:enumeration value="SHIFT_Y"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="x" type="xs:string"/>
+        <xs:attribute name="y" type="xs:string"/>
+        <xs:attribute name="dx" type="xs:integer"/>
+        <xs:attribute name="dy" type="xs:integer"/>
+        <xs:attribute name="rotate" type="xs:integer"/>
+        <xs:attribute name="width" type="xs:integer"/>
+        <xs:attribute name="height" type="xs:integer"/>
+        <xs:attribute name="fontSize" type="xs:integer"/>
+        <xs:attribute name="draggable" type="xs:boolean"/>
+        <xs:attribute name="labelLinePoints" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasAlign"/>
+    </xs:complexType>
+
+    <xs:complexType name="seriesTooltipType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="textStyle" type="baseText"/>
+        </xs:sequence>
+
+        <xs:attribute name="position">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="INSIDE"/>
+                    <xs:enumeration value="TOP"/>
+                    <xs:enumeration value="LEFT"/>
+                    <xs:enumeration value="RIGHT"/>
+                    <xs:enumeration value="BOTTOM"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="positionCoordinates" type="xs:string"/>
+        <xs:attribute name="formatter" type="xs:string"/>
+        <xs:attribute name="valueFormatter" type="xs:string"/>
+        <xs:attribute name="backgroundColor" type="colorType"/>
+        <xs:attribute name="borderColor" type="colorType"/>
+        <xs:attribute name="borderWidth" type="xs:integer"/>
+        <xs:attribute name="extraCssText" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasPadding"/>
+    </xs:complexType>
+
+    <xs:complexType name="encodeType">
+        <xs:attribute name="x" type="xs:string"/>
+        <xs:attribute name="y" type="xs:string"/>
+        <xs:attribute name="radius" type="xs:string"/>
+        <xs:attribute name="angle" type="xs:string"/>
+        <xs:attribute name="value" type="xs:string"/>
+        <xs:attribute name="tooltip" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="markPointType">
+        <xs:complexContent>
+            <xs:extension base="baseMark">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="itemStyle" type="baseBorderedTextType"/>
+                    <xs:element name="emphasis" type="markEmphasisType"/>
+                    <xs:element name="blur" type="baseMarkElement"/>
+                    <xs:element name="data" type="markPointDataType"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasSymbols"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="markEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="baseMarkElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="markPointDataType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="point" type="markPointDataPointType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="markPointDataPointType">
+        <xs:complexContent>
+            <xs:extension base="baseMarkElement">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="emphasis" type="markEmphasisType"/>
+                </xs:sequence>
+
+                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="type" type="pointDataType"/>
+                <xs:attribute name="valueIndex" type="xs:integer"/>
+                <xs:attribute name="valueDim" type="xs:string"/>
+                <xs:attribute name="stringCoordinate" type="xs:string"/>
+                <xs:attribute name="numberCoordinate" type="xs:string"/>
+                <xs:attribute name="x" type="xs:string"/>
+                <xs:attribute name="y" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasSymbols"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="markLineType">
+        <xs:complexContent>
+            <xs:extension base="baseMark">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="lineStyle" type="lineStyleType"/>
+                    <xs:element name="emphasis" type="markLineEmphasisType"/>
+                    <xs:element name="blur" type="baseMarkLineElement"/>
+                    <xs:element name="data" type="markLineDataType"/>
+                </xs:sequence>
+
+                <xs:attribute name="symbolTypes" type="symbolTypes"/>
+                <xs:attribute name="symbolIcons" type="xs:string"/>
+                <xs:attribute name="symbolSize" type="xs:string"/>
+                <xs:attribute name="precision" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="markLineDataType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="singlePointLine" type="markLinePointType"/>
+            <xs:element name="pairPointLine" type="markLinePairPointType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="markLinePairPointType">
+        <xs:all>
+            <xs:element name="startPoint" type="markLinePointType"/>
+            <xs:element name="endPoint" type="markLinePointType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="markLinePointType">
+        <xs:complexContent>
+            <xs:extension base="baseMarkLineElement">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="emphasis" type="markLineEmphasisType"/>
+                    <xs:element name="blur" type="baseMarkLineElement"/>
+                </xs:sequence>
+
+                <xs:attribute name="type" type="pointDataType"/>
+                <xs:attribute name="valueIndex" type="xs:integer"/>
+                <xs:attribute name="valueDim" type="xs:string"/>
+                <xs:attribute name="stringCoordinate" type="xs:string"/>
+                <xs:attribute name="numberCoordinate" type="xs:string"/>
+                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="x" type="xs:string"/>
+                <xs:attribute name="y" type="xs:string"/>
+                <xs:attribute name="xAxis" type="xs:string"/>
+                <xs:attribute name="yAxis" type="xs:string"/>
+                <xs:attribute name="value" type="xs:double"/>
+
+                <xs:attributeGroup ref="hasSymbols"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="markLineEmphasisType">
+        <xs:complexContent>
+            <xs:extension base="baseMarkLineElement">
+                <xs:attribute name="disabled" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="markAreaType">
+        <xs:complexContent>
+            <xs:extension base="baseMark">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="itemStyle" type="baseBorderedTextType"/>
+                    <xs:element name="emphasis" type="markEmphasisType"/>
+                    <xs:element name="blur" type="baseMarkElement"/>
+                    <xs:element name="data" type="markAreaDataType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="markAreaDataType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="pointPair" type="markAreaPointPairType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="markAreaPointPairType">
+        <xs:all>
+            <xs:element name="leftTopPoint" type="markAreaDataPointType"/>
+            <xs:element name="rightBottomPoint" type="markAreaDataPointType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="markAreaDataPointType">
+        <xs:complexContent>
+            <xs:extension base="baseMarkElement">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="emphasis" type="markEmphasisType"/>
+                    <xs:element name="blur" type="baseMarkElement"/>
+                </xs:sequence>
+
+                <xs:attribute name="type" type="pointDataType"/>
+                <xs:attribute name="valueIndex" type="xs:integer"/>
+                <xs:attribute name="valueDim" type="xs:string"/>
+                <xs:attribute name="stringCoordinate" type="xs:string"/>
+                <xs:attribute name="numberCoordinate" type="xs:string"/>
+                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="x" type="xs:string"/>
+                <xs:attribute name="y" type="xs:string"/>
+                <xs:attribute name="value" type="xs:double"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Base-->
+    <xs:complexType name="baseAxisAwareSeriesType">
+        <xs:complexContent>
+            <xs:extension base="baseSeriesType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="encode" type="encodeType"/>
+
+                    <xs:element name="markPoint" type="markPointType"/>
+                    <xs:element name="markLine" type="markLineType"/>
+                    <xs:element name="markArea" type="markAreaType"/>
+                </xs:sequence>
+
+                <xs:attribute name="legendHoverLink" type="xs:boolean"/>
+                <xs:attribute name="datasetIndex" type="xs:integer"/>
+                <xs:attribute name="seriesLayoutBy">
+                    <xs:simpleType>
+                        <xs:restriction>
+                            <xs:enumeration value="COLUMN"/>
+                            <xs:enumeration value="ROW"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseSeriesType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="seriesLabelType"/>
+            <xs:element name="labelLayout" type="seriesLabelLayoutType"/>
+            <xs:element name="tooltip" type="seriesTooltipType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="name" type="layout:resourceString"/>
+        <xs:attribute name="colorBy" type="colorByType"/>
+        <xs:attribute name="selectedMode" type="selectedMode"/>
+        <xs:attribute name="dataGroupId" type="xs:string"/>
+        <xs:attribute name="zLevel" type="xs:integer"/>
+        <xs:attribute name="z" type="xs:integer"/>
+        <xs:attribute name="silent" type="xs:boolean"/>
+        <xs:attribute name="animationDuration" type="xs:integer"/>
+        <xs:attribute name="animationEasing" type="xs:string"/>
+        <xs:attribute name="animationDelay" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseLineSeriesElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="seriesLabelType"/>
+            <xs:element name="labelLine" type="elementLabelLineType"/>
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+            <xs:element name="lineStyle" type="lineStyleType"/>
+            <xs:element name="areaStyle" type="lineSeriesElementAreaStyleType"/>
+            <xs:element name="endLabel" type="lineSeriesEndLabelType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseMark">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="seriesLabelType"/>
+        </xs:sequence>
+
+        <xs:attribute name="silent" type="xs:boolean"/>
+        <xs:attribute name="animation" type="xs:boolean"/>
+        <xs:attribute name="animationThreshold" type="xs:integer"/>
+        <xs:attribute name="animationDuration" type="xs:integer"/>
+        <xs:attribute name="animationEasing" type="xs:string"/>
+        <xs:attribute name="animationDelay" type="xs:integer"/>
+        <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+        <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+        <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseMarkElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+            <xs:element name="label" type="seriesLabelType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseMarkLineElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="seriesLabelType"/>
+            <xs:element name="lineStyle" type="lineStyleType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="basePolarAxis">
+        <xs:complexContent>
+            <xs:extension base="baseAxis">
+                <xs:attribute name="polarIndex" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseCartesianAxis">
+        <xs:complexContent>
+            <xs:extension base="baseAxis">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="nameTextStyle" type="nameTextStyleType"/>
+                </xs:sequence>
+
+                <xs:attribute name="show" type="xs:boolean"/>
+                <xs:attribute name="gridIndex" type="xs:integer"/>
+                <xs:attribute name="alignTicks" type="xs:boolean"/>
+                <xs:attribute name="offset" type="xs:integer"/>
+                <xs:attribute name="position">
+                    <xs:simpleType>
+                        <xs:restriction>
+                            <xs:enumeration value="TOP"/>
+                            <xs:enumeration value="BOTTOM"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+
+                <xs:attributeGroup ref="hasAxisName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseAxis">
+        <xs:sequence minOccurs="0">
+            <xs:element name="axisLine" type="axisLineType"/>
+            <xs:element name="axisTick" type="axisTickType"/>
+            <xs:element name="axisLabel" type="axisLabelType"/>
+            <xs:element name="splitLine" type="splitLineType"/>
+            <xs:element name="splitArea" type="splitAreaType"/>
+            <xs:element name="axisPointer" type="baseAxisPointer"/>
+
+            <xs:element name="minorTick">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="lineStyle" type="lineStyleType"/>
+                    </xs:sequence>
+
+                    <xs:attribute name="show" type="xs:boolean"/>
+                    <xs:attribute name="splitNumber" type="xs:integer"/>
+                    <xs:attribute name="length" type="xs:integer"/>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="minorSplitLine">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="lineStyle" type="lineStyleType"/>
+                    </xs:sequence>
+
+                    <xs:attribute name="show" type="xs:boolean"/>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="minFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+            <xs:element name="maxFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+            <xs:element name="animationDurationFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+            <xs:element name="animationDelayFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+            <xs:element name="animationDurationUpdateFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+            <xs:element name="animationDelayUpdateFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="type" type="axisType"/>
+        <xs:attribute name="categoryBoundaryGap" type="xs:boolean"/>
+        <xs:attribute name="nonCategoryBoundaryGap" type="xs:string"/>
+        <xs:attribute name="min" type="xs:string"/>
+        <xs:attribute name="minFunction" type="xs:string"/>
+        <xs:attribute name="max" type="xs:string"/>
+        <xs:attribute name="maxFunction" type="xs:string"/>
+        <xs:attribute name="scale" type="xs:boolean"/>
+        <xs:attribute name="splitNumber" type="xs:integer"/>
+        <xs:attribute name="minInterval" type="xs:integer"/>
+        <xs:attribute name="maxInterval" type="xs:integer"/>
+        <xs:attribute name="interval" type="xs:integer"/>
+        <xs:attribute name="logBase" type="xs:integer"/>
+        <xs:attribute name="silent" type="xs:boolean"/>
+        <xs:attribute name="triggerEvent" type="xs:boolean"/>
+        <xs:attribute name="animation" type="xs:boolean"/>
+        <xs:attribute name="animationThreshold" type="xs:integer"/>
+        <xs:attribute name="animationDuration" type="xs:integer"/>
+        <xs:attribute name="animationDurationFunction" type="xs:string"/>
+        <xs:attribute name="animationEasing" type="xs:string"/>
+        <xs:attribute name="animationDelay" type="xs:integer"/>
+        <xs:attribute name="animationDelayFunction" type="xs:string"/>
+        <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+        <xs:attribute name="animationDurationUpdateFunction" type="xs:string"/>
+        <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+        <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+        <xs:attribute name="animationDelayUpdateFunction" type="xs:string"/>
+        <xs:attribute name="zLevel" type="xs:integer"/>
+        <xs:attribute name="z" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseDataZoom">
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="xAxisIndexes" type="xs:string"/>
+        <xs:attribute name="yAxisIndexes" type="xs:string"/>
+        <xs:attribute name="radiusAxisIndexes" type="xs:string"/>
+        <xs:attribute name="angleAxisIndexes" type="xs:string"/>
+        <xs:attribute name="filterMode" type="filterMode"/>
+        <xs:attribute name="start" type="xs:double"/>
+        <xs:attribute name="end" type="xs:double"/>
+        <xs:attribute name="startValue" type="xs:string"/>
+        <xs:attribute name="endValue" type="xs:string"/>
+        <xs:attribute name="minSpan" type="xs:double"/>
+        <xs:attribute name="maxSpan" type="xs:double"/>
+        <xs:attribute name="minValueSpan" type="xs:string"/>
+        <xs:attribute name="maxValueSpan" type="xs:string"/>
+        <xs:attribute name="orientation" type="orientationType"/>
+        <xs:attribute name="zoomLock" type="xs:boolean"/>
+        <xs:attribute name="throttle" type="xs:integer"/>
+        <xs:attribute name="rangeMode" type="dataZoomRangeMode"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseVisualMap">
+        <xs:sequence minOccurs="0">
+            <xs:element name="textStyle" type="baseText"/>
+            <xs:element name="inRange" type="visualEffectType"/>
+            <xs:element name="outRange" type="visualEffectType"/>
+
+            <xs:element name="controller">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="inRange" type="visualEffectType"/>
+                        <xs:element name="outRange" type="visualEffectType"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="formatterFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="min" type="xs:double"/>
+        <xs:attribute name="max" type="xs:double"/>
+        <xs:attribute name="inverse" type="xs:boolean"/>
+        <xs:attribute name="precision" type="xs:double"/>
+        <xs:attribute name="itemWidth" type="xs:double"/>
+        <xs:attribute name="itemHeight" type="xs:double"/>
+        <xs:attribute name="align">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="AUTO"/>
+                    <xs:enumeration value="LEFT"/>
+                    <xs:enumeration value="TOP"/>
+                    <xs:enumeration value="BOTTOM"/>
+                    <xs:enumeration value="RIGHT"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+
+        <xs:attribute name="text" type="xs:string"/>
+        <xs:attribute name="textGap" type="xs:double"/>
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="dimension" type="xs:string"/>
+        <xs:attribute name="seriesIndex" type="xs:integer"/>
+        <xs:attribute name="hoverLink" type="xs:boolean"/>
+        <xs:attribute name="zLevel" type="xs:double"/>
+        <xs:attribute name="z" type="xs:double"/>
+        <xs:attribute name="backgroundColor" type="colorType"/>
+        <xs:attribute name="borderColor" type="colorType"/>
+        <xs:attribute name="borderWidth" type="xs:double"/>
+        <xs:attribute name="formatter" type="xs:string"/>
+        <xs:attribute name="formatterFunction" type="xs:string"/>
+        <xs:attribute name="orientation" type="orientationType"/>
+
+        <xs:attributeGroup ref="hasPadding"/>
+        <xs:attributeGroup ref="hasPosition"/>
+    </xs:complexType>
+
+    <xs:complexType name="visualEffectType">
+        <xs:attribute name="symbol" type="xs:string"/>
+        <xs:attribute name="symbolSize" type="xs:string"/>
+        <xs:attribute name="color" type="xs:string"/>
+        <xs:attribute name="colorAlpha" type="xs:string"/>
+        <xs:attribute name="opacity" type="xs:string"/>
+        <xs:attribute name="colorLightness" type="xs:string"/>
+        <xs:attribute name="colorSaturation" type="xs:string"/>
+        <xs:attribute name="colorHue" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseAreaStyleType">
+        <xs:attribute name="opacity" type="xs:double"/>
+
+        <xs:attributeGroup ref="hasShadow"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseToolboxFeature">
+        <xs:sequence minOccurs="0">
+            <xs:element name="iconStyle" type="baseBorderedTextType"/>
+            <xs:element name="emphasis" type="toolboxEmphasisType"/>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseAxisPointer">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="labelType"/>
+            <xs:element name="lineStyle" type="lineStyleType"/>
+            <xs:element name="shadowStyle" type="shadowStyleType"/>
+
+            <xs:element name="handle">
+                <xs:complexType>
+                    <xs:attribute name="show" type="xs:boolean"/>
+                    <xs:attribute name="icon" type="xs:string"/>
+                    <xs:attribute name="size" type="xs:string"/>
+                    <xs:attribute name="margin" type="xs:integer"/>
+                    <xs:attribute name="color" type="colorType"/>
+                    <xs:attribute name="throttle" type="xs:integer"/>
+
+                    <xs:attributeGroup ref="hasShadow"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="type">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="LINE"/>
+                    <xs:enumeration value="SHADOW"/>
+                    <xs:enumeration value="NONE"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="snap" type="xs:boolean"/>
+        <xs:attribute name="z" type="xs:integer"/>
+        <xs:attribute name="triggerEmphasis" type="xs:boolean"/>
+        <xs:attribute name="triggerTooltip" type="xs:boolean"/>
+        <xs:attribute name="value" type="xs:integer"/>
+        <xs:attribute name="status" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseLegendType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+            <xs:element name="lineStyle" type="lineStyleType"/>
+            <xs:element name="textStyle">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="baseRichText">
+                            <xs:attribute name="backgroundColor" type="colorType"/>
+                            <xs:attribute name="borderType" type="xs:string"/>
+                            <xs:attribute name="borderDashOffset" type="xs:integer"/>
+
+                            <xs:attributeGroup ref="hasShadow"/>
+                            <xs:attributeGroup ref="hasBorder"/>
+                            <xs:attributeGroup ref="hasPadding"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="selectorLabel" type="baseEnhancedLabel"/>
+            <xs:element name="emphasis">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="selectorLabel" type="baseEnhancedLabel"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="tooltip" type="tooltipType"/>
+            <xs:element name="formatterFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="zLevel" type="xs:integer"/>
+        <xs:attribute name="z" type="xs:integer"/>
+        <xs:attribute name="width" type="xs:string"/>
+        <xs:attribute name="height" type="xs:string"/>
+        <xs:attribute name="orientation" type="orientationType"/>
+        <xs:attribute name="itemGap" type="xs:integer"/>
+        <xs:attribute name="itemWidth" type="xs:integer"/>
+        <xs:attribute name="itemHeight" type="xs:integer"/>
+        <xs:attribute name="symbolRotate" type="xs:integer"/>
+        <xs:attribute name="formatter" type="xs:string"/>
+        <xs:attribute name="formatterFunction" type="xs:string"/>
+        <xs:attribute name="selectedMode" type="selectedMode"/>
+        <xs:attribute name="inactiveColor" type="colorType"/>
+        <xs:attribute name="inactiveBorderColor" type="colorType"/>
+        <xs:attribute name="inactiveBorderWidth" type="xs:integer"/>
+        <xs:attribute name="unselectedSeries" type="xs:string"/>
+        <xs:attribute name="icon" type="xs:string"/>
+        <xs:attribute name="backgroundColor" type="colorType"/>
+        <xs:attribute name="selector" type="xs:boolean"/>
+        <xs:attribute name="selectorPosition" type="positionType"/>
+        <xs:attribute name="selectorItemGap" type="xs:integer"/>
+        <xs:attribute name="selectorButtonGap" type="xs:integer"/>
+        <xs:attribute name="align">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="AUTO"/>
+                    <xs:enumeration value="LEFT"/>
+                    <xs:enumeration value="RIGHT"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+
+        <xs:attributeGroup ref="hasShadow"/>
+        <xs:attributeGroup ref="hasPosition"/>
+        <xs:attributeGroup ref="hasBorder"/>
+        <xs:attributeGroup ref="hasPadding"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseTooltipType">
+        <xs:sequence minOccurs="0">
+            <xs:element name="axisPointer">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="label" type="labelType"/>
+                        <xs:element name="lineStyle" type="lineStyleType"/>
+                        <xs:element name="shadowStyle" type="shadowStyleType"/>
+                        <xs:element name="crossStyle" type="lineStyleType"/>
+
+                        <xs:element name="animationDurationFunction">
+                            <xs:complexType mixed="true"/>
+                        </xs:element>
+                        <xs:element name="animationDelayFunction">
+                            <xs:complexType mixed="true"/>
+                        </xs:element>
+                        <xs:element name="animationDurationUpdateFunction">
+                            <xs:complexType mixed="true"/>
+                        </xs:element>
+                        <xs:element name="animationDelayUpdateFunction">
+                            <xs:complexType mixed="true"/>
+                        </xs:element>
+                    </xs:sequence>
+
+                    <xs:attribute name="type">
+                        <xs:simpleType>
+                            <xs:restriction>
+                                <xs:enumeration value="LINE"/>
+                                <xs:enumeration value="SHADOW"/>
+                                <xs:enumeration value="NONE"/>
+                                <xs:enumeration value="CROSS"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+
+                    <xs:attribute name="axis">
+                        <xs:simpleType>
+                            <xs:restriction>
+                                <xs:enumeration value="X"/>
+                                <xs:enumeration value="Y"/>
+                                <xs:enumeration value="RADIUS"/>
+                                <xs:enumeration value="ANGLE"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+
+                    <xs:attribute name="snap" type="xs:boolean"/>
+                    <xs:attribute name="z" type="xs:integer"/>
+
+                    <xs:attribute name="animation" type="xs:boolean"/>
+                    <xs:attribute name="animationThreshold" type="xs:integer"/>
+                    <xs:attribute name="animationDuration" type="xs:integer"/>
+                    <xs:attribute name="animationDurationFunction" type="xs:string"/>
+                    <xs:attribute name="animationEasing" type="xs:string"/>
+                    <xs:attribute name="animationDelay" type="xs:integer"/>
+                    <xs:attribute name="animationDelayFunction" type="xs:string"/>
+                    <xs:attribute name="animationDurationUpdate" type="xs:integer"/>
+                    <xs:attribute name="animationDurationUpdateFunction" type="xs:string"/>
+                    <xs:attribute name="animationEasingUpdate" type="xs:string"/>
+                    <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
+                    <xs:attribute name="animationDelayUpdateFunction" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="textStyle" type="baseText"/>
+            <xs:element name="formatterFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+            <xs:element name="valueFormatterFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="show" type="xs:boolean"/>
+        <xs:attribute name="trigger" type="triggerType"/>
+        <xs:attribute name="formatter" type="xs:string"/>
+        <xs:attribute name="formatterFunction" type="xs:string"/>
+        <xs:attribute name="valueFormatter" type="xs:string"/>
+        <xs:attribute name="valueFormatterFunction" type="xs:string"/>
+        <xs:attribute name="backgroundColor" type="colorType"/>
+        <xs:attribute name="borderColor" type="colorType"/>
+        <xs:attribute name="borderWidth" type="xs:integer"/>
+        <xs:attribute name="extraCssText" type="xs:string"/>
+        <xs:attribute name="positionCoordinates" type="xs:string"/>
+        <xs:attribute name="position" type="tooltipPositionType"/>
+
+        <xs:attributeGroup ref="hasPadding"/>
+    </xs:complexType>
+
+    <xs:complexType name="nameTextStyleType">
+        <xs:attribute name="backgroundColor" type="colorType"/>
+        <xs:attribute name="borderType" type="xs:string"/>
+        <xs:attribute name="borderDashOffset" type="xs:integer"/>
+
+        <xs:attributeGroup ref="hasAlign"/>
+        <xs:attributeGroup ref="hasPadding"/>
+        <xs:attributeGroup ref="hasShadow"/>
+        <xs:attributeGroup ref="hasBorder"/>
+    </xs:complexType>
+
+    <xs:complexType name="labelType">
+        <xs:complexContent>
+            <xs:extension base="baseText">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="formatterFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attribute name="show" type="xs:boolean"/>
+                <xs:attribute name="precision" type="xs:integer"/>
+                <xs:attribute name="formatter" type="xs:string"/>
+                <xs:attribute name="formatterFunction" type="xs:string"/>
+                <xs:attribute name="margin" type="xs:integer"/>
+                <xs:attribute name="backgroundColor" type="colorType"/>
+                <xs:attribute name="borderColor" type="colorType"/>
+                <xs:attribute name="borderWidth" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasShadow"/>
+                <xs:attributeGroup ref="hasPadding"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseEnhancedLabel">
+        <xs:complexContent>
+            <xs:extension base="baseRichText">
+                <xs:attribute name="show" type="xs:boolean"/>
+                <xs:attribute name="distance" type="xs:integer"/>
+                <xs:attribute name="rotate" type="xs:integer"/>
+                <xs:attribute name="backgroundColor" type="colorType"/>
+                <xs:attribute name="borderType" type="xs:string"/>
+                <xs:attribute name="borderDashOffset" type="xs:integer"/>
+                <xs:attribute name="offset" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasShadow"/>
+                <xs:attributeGroup ref="hasBorder"/>
+                <xs:attributeGroup ref="hasAlign"/>
+                <xs:attributeGroup ref="hasPadding"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseBorderedTextType">
+        <xs:attribute name="color" type="colorType"/>
+        <xs:attribute name="borderColor" type="colorType"/>
+        <xs:attribute name="borderWidth" type="xs:integer"/>
+        <xs:attribute name="borderType" type="xs:string"/>
+        <xs:attribute name="borderDashOffset" type="xs:integer"/>
+        <xs:attribute name="opacity" type="xs:double"/>
+
+        <xs:attributeGroup ref="hasShadow"/>
+        <xs:attributeGroup ref="hasLineStyle"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseText">
+        <xs:attribute name="color" type="colorType"/>
+        <xs:attribute name="fontStyle" type="fontStyleType"/>
+        <xs:attribute name="fontWeight" type="xs:string"/>
+        <xs:attribute name="fontFamily" type="xs:string"/>
+        <xs:attribute name="fontSize" type="xs:integer"/>
+        <xs:attribute name="lineHeight" type="xs:integer"/>
+        <xs:attribute name="width" type="xs:integer"/>
+        <xs:attribute name="height" type="xs:integer"/>
+        <xs:attribute name="overflow" type="overflowType"/>
+        <xs:attribute name="ellipsis" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasText"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseRichText">
+        <xs:complexContent>
+            <xs:extension base="baseText">
+                <xs:choice minOccurs="0">
+                    <xs:element name="rich" type="richItemType"/>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="richItemType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="richStyle" type="richStyleType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="richStyleType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="fontStyle" type="fontStyleType"/>
+        <xs:attribute name="fontWeight" type="xs:string"/>
+        <xs:attribute name="fontFamily" type="xs:string"/>
+        <xs:attribute name="fontSize" type="xs:integer"/>
+        <xs:attribute name="lineHeight" type="xs:integer"/>
+        <xs:attribute name="borderType" type="xs:string"/>
+        <xs:attribute name="borderDashOffset" type="xs:integer"/>
+        <xs:attribute name="width" type="xs:integer"/>
+        <xs:attribute name="height" type="xs:integer"/>
+
+        <xs:attribute name="color" type="colorType"/>
+        <xs:attribute name="backgroundColor" type="colorType"/>
+
+        <xs:attributeGroup ref="hasAlign"/>
+        <xs:attributeGroup ref="hasPadding"/>
+        <xs:attributeGroup ref="hasText"/>
+        <xs:attributeGroup ref="hasShadow"/>
+        <xs:attributeGroup ref="hasBorder"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseSeriesItemStyle">
+        <xs:attribute name="color" type="colorType"/>
+        <xs:attribute name="borderType" type="xs:string"/>
+        <xs:attribute name="opacity" type="xs:double"/>
+
+        <xs:attributeGroup ref="hasShadow"/>
+        <xs:attributeGroup ref="hasBorder"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseBarSeriesElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="seriesLabelType"/>
+            <xs:element name="labelLine" type="barSeriesLabelLineType"/>
+            <xs:element name="itemStyle" type="baseSeriesItemStyle"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="basePieSeriesElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="seriesLabelType"/>
+            <xs:element name="labelLine" type="elementLabelLineType"/>
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseScatterSeriesElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="seriesLabelType"/>
+            <xs:element name="labelLine" type="elementLabelLineType"/>
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseEffectScatterSeriesElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="seriesLabelType"/>
+            <xs:element name="labelLine" type="elementLabelLineType"/>
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseRadarSeriesElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+            <xs:element name="label" type="seriesLabelType"/>
+            <xs:element name="lineStyle" type="lineStyleType"/>
+            <xs:element name="areaStyle" type="radarSeriesAreaStyleType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseBoxplotSeriesElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseCandlestickSeriesElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="itemStyle" type="candlestickSeriesItemStyleType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseFunnelSeriesElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="label" type="seriesLabelType"/>
+            <xs:element name="labelLine" type="elementLabelLineType"/>
+            <xs:element name="itemStyle" type="baseBorderedTextType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseGaugeSeriesTextElement">
+        <xs:complexContent>
+            <xs:extension base="baseRichText">
+                <xs:attribute name="show" type="xs:boolean"/>
+                <xs:attribute name="offsetCenter" type="xs:string"/>
+                <xs:attribute name="valueAnimation" type="xs:boolean"/>
+                <xs:attribute name="backgroundColor" type="colorType"/>
+                <xs:attribute name="borderType" type="xs:string"/>
+                <xs:attribute name="borderDashOffset" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasShadow"/>
+                <xs:attributeGroup ref="hasPadding"/>
+                <xs:attributeGroup ref="hasBorder"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Interface-->
+    <xs:attributeGroup name="hasText">
+        <xs:attribute name="textBorderColor" type="colorType"/>
+        <xs:attribute name="textBorderWidth" type="xs:double"/>
+        <xs:attribute name="textBorderType" type="xs:string"/>
+        <xs:attribute name="textBorderDashOffset" type="xs:integer"/>
+        <xs:attribute name="textShadowBlur" type="xs:integer"/>
+        <xs:attribute name="textShadowColor" type="colorType"/>
+        <xs:attribute name="textShadowOffsetX" type="xs:integer"/>
+        <xs:attribute name="textShadowOffsetY" type="xs:integer"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasPadding">
+        <xs:attribute name="padding" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasPosition">
+        <xs:attribute name="left" type="xs:string"/>
+        <xs:attribute name="top" type="xs:string"/>
+        <xs:attribute name="right" type="xs:string"/>
+        <xs:attribute name="bottom" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasStack">
+        <xs:attribute name="stack" type="xs:string"/>
+        <xs:attribute name="stackStrategy">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="SAME_SIGN"/>
+                    <xs:enumeration value="ALL"/>
+                    <xs:enumeration value="POSITIVE"/>
+                    <xs:enumeration value="NEGATIVE"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasSymbols">
+        <xs:attribute name="symbol" type="xs:string"/>
+        <xs:attribute name="symbolType">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="CIRCLE"/>
+                    <xs:enumeration value="RECTANGLE"/>
+                    <xs:enumeration value="ROUND_RECTANGLE"/>
+                    <xs:enumeration value="TRIANGLE"/>
+                    <xs:enumeration value="DIAMOND"/>
+                    <xs:enumeration value="PIN"/>
+                    <xs:enumeration value="ARROW"/>
+                    <xs:enumeration value="NONE"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="symbolSize" type="xs:integer"/>
+        <xs:attribute name="symbolRotate" type="xs:integer"/>
+        <xs:attribute name="symbolKeepAspect" type="xs:boolean"/>
+        <xs:attribute name="symbolOffset" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasAxisName">
+        <xs:attribute name="name" type="layout:resourceString"/>
+        <xs:attribute name="nameLocation">
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="END"/>
+                    <xs:enumeration value="CENTER"/>
+                    <xs:enumeration value="START"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+
+        <xs:attribute name="nameGap" type="xs:integer"/>
+        <xs:attribute name="nameRotate" type="xs:integer"/>
+        <xs:attribute name="inverse" type="xs:boolean"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasShadow">
+        <xs:attribute name="shadowBlur" type="xs:integer"/>
+        <xs:attribute name="shadowColor" type="colorType"/>
+        <xs:attribute name="shadowOffsetX" type="xs:integer"/>
+        <xs:attribute name="shadowOffsetY" type="xs:integer"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasLineStyle">
+        <xs:attribute name="cap" type="capType"/>
+        <xs:attribute name="join" type="joinType"/>
+        <xs:attribute name="miterLimit" type="xs:integer"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasBorder">
+        <xs:attribute name="borderColor" type="colorType"/>
+        <xs:attribute name="borderWidth" type="xs:integer"/>
+        <xs:attribute name="borderRadius" type="xs:integer"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasAlign">
+        <xs:attribute name="align" type="alignType"/>
+        <xs:attribute name="verticalAlign" type="verticalAlignType"/>
+    </xs:attributeGroup>
+
+    <!-- Enum-->
+    <xs:simpleType name="axisType">
+        <xs:restriction>
+            <xs:enumeration value="CATEGORY"/>
+            <xs:enumeration value="VALUE"/>
+            <xs:enumeration value="TIME"/>
+            <xs:enumeration value="LOG"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="alignType">
+        <xs:restriction>
+            <xs:enumeration value="LEFT"/>
+            <xs:enumeration value="RIGHT"/>
+            <xs:enumeration value="CENTER"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="verticalAlignType">
+        <xs:restriction>
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="BOTTOM"/>
+            <xs:enumeration value="MIDDLE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="titleTextAlign">
+        <xs:restriction>
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="LEFT"/>
+            <xs:enumeration value="RIGHT"/>
+            <xs:enumeration value="CENTER"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="titleTextVerticalAlign">
+        <xs:restriction>
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="BOTTOM"/>
+            <xs:enumeration value="MIDDLE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="capType">
+        <xs:restriction>
+            <xs:enumeration value="BUTT"/>
+            <xs:enumeration value="ROUND"/>
+            <xs:enumeration value="SQUARE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="joinType">
+        <xs:restriction>
+            <xs:enumeration value="BEVEL"/>
+            <xs:enumeration value="ROUND"/>
+            <xs:enumeration value="MITER"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="positionType">
+        <xs:restriction>
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="END"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="triggerType">
+        <xs:restriction>
+            <xs:enumeration value="ITEM"/>
+            <xs:enumeration value="AXIS"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="tooltipPositionType">
+        <xs:restriction>
+            <xs:enumeration value="INSIDE"/>
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="LEFT"/>
+            <xs:enumeration value="RIGHT"/>
+            <xs:enumeration value="BOTTOM"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="triggerOnMode">
+        <xs:restriction>
+            <xs:enumeration value="MOUSE_MOVE"/>
+            <xs:enumeration value="CLICK"/>
+            <xs:enumeration value="MOUSE_MOVE_CLICK"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="renderMode">
+        <xs:restriction>
+            <xs:enumeration value="HTML"/>
+            <xs:enumeration value="RICH_TEXT"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="orderType">
+        <xs:restriction>
+            <xs:enumeration value="SERIES_ASC"/>
+            <xs:enumeration value="SERIES_DESC"/>
+            <xs:enumeration value="VALUE_ASC"/>
+            <xs:enumeration value="VALUE_DESC"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="symbolTypes">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction>
+                    <xs:enumeration value="CIRCLE"/>
+                    <xs:enumeration value="RECTANGLE"/>
+                    <xs:enumeration value="ROUND_RECTANGLE"/>
+                    <xs:enumeration value="TRIANGLE"/>
+                    <xs:enumeration value="DIAMOND"/>
+                    <xs:enumeration value="PIN"/>
+                    <xs:enumeration value="ARROW"/>
+                    <xs:enumeration value="NONE"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="symbolType">
+        <xs:restriction>
+            <xs:enumeration value="CIRCLE"/>
+            <xs:enumeration value="RECTANGLE"/>
+            <xs:enumeration value="ROUND_RECTANGLE"/>
+            <xs:enumeration value="TRIANGLE"/>
+            <xs:enumeration value="DIAMOND"/>
+            <xs:enumeration value="PIN"/>
+            <xs:enumeration value="ARROW"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="targetType">
+        <xs:restriction>
+            <xs:enumeration value="SELF"/>
+            <xs:enumeration value="BLANK"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="selectedMode">
+        <xs:restriction>
+            <xs:enumeration value="DISABLED"/>
+            <xs:enumeration value="SINGLE"/>
+            <xs:enumeration value="MULTIPLE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="colorByType">
+        <xs:restriction>
+            <xs:enumeration value="SERIES"/>
+            <xs:enumeration value="DATA"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="seriesLabelPositionType">
+        <xs:restriction>
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="LEFT"/>
+            <xs:enumeration value="RIGHT"/>
+            <xs:enumeration value="BOTTOM"/>
+            <xs:enumeration value="INSIDE"/>
+            <xs:enumeration value="INSIDE_LEFT"/>
+            <xs:enumeration value="INSIDE_RIGHT"/>
+            <xs:enumeration value="INSIDE_TOP"/>
+            <xs:enumeration value="INSIDE_BOTTOM"/>
+            <xs:enumeration value="INSIDE_TOP_LEFT"/>
+            <xs:enumeration value="INSIDE_BOTTOM_LEFT"/>
+            <xs:enumeration value="INSIDE_TOP_RIGHT"/>
+            <xs:enumeration value="INSIDE_BOTTOM_RIGHT"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="coordinateSystemType">
+        <xs:restriction>
+            <xs:enumeration value="CARTESIAN_2_D"/>
+            <xs:enumeration value="POLAR"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="samplingType">
+        <xs:restriction>
+            <xs:enumeration value="LARGEST_TRIANGLE_THREE_BUCKET"/>
+            <xs:enumeration value="AVERAGE"/>
+            <xs:enumeration value="MAX"/>
+            <xs:enumeration value="MIN"/>
+            <xs:enumeration value="SUM"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="progressiveChunkMode">
+        <xs:restriction>
+            <xs:enumeration value="SEQUENTIAL"/>
+            <xs:enumeration value="MOD"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="pieRoseType">
+        <xs:restriction>
+            <xs:enumeration value="RADIUS"/>
+            <xs:enumeration value="AREA"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="pieAnimationType">
+        <xs:restriction>
+            <xs:enumeration value="EXPANSION"/>
+            <xs:enumeration value="SCALE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="pieAnimationUpdateType">
+        <xs:restriction>
+            <xs:enumeration value="TRANSITION"/>
+            <xs:enumeration value="EXPANSION"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="effectScatterSeriesEffectType">
+        <xs:restriction>
+            <xs:enumeration value="RENDER"/>
+            <xs:enumeration value="EMPHASIS"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="rippleEffectBrushType">
+        <xs:restriction>
+            <xs:enumeration value="STROKE"/>
+            <xs:enumeration value="FILL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="pointDataType">
+        <xs:restriction>
+            <xs:enumeration value="MIN"/>
+            <xs:enumeration value="MAX"/>
+            <xs:enumeration value="AVERAGE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="blendMode">
+        <xs:restriction>
+            <xs:enumeration value="SOURCE_OVER"/>
+            <xs:enumeration value="SOURCE_IN"/>
+            <xs:enumeration value="SOURCE_OUT"/>
+            <xs:enumeration value="SOURCE_ATOP"/>
+            <xs:enumeration value="DESTINATION_OVER"/>
+            <xs:enumeration value="DESTINATION_IN"/>
+            <xs:enumeration value="DESTINATION_OUT"/>
+            <xs:enumeration value="DESTINATION_ATOP"/>
+            <xs:enumeration value="LIGHTER"/>
+            <xs:enumeration value="COPY"/>
+            <xs:enumeration value="XOR"/>
+            <xs:enumeration value="MULTIPLY"/>
+            <xs:enumeration value="SCREEN"/>
+            <xs:enumeration value="OVERLAY"/>
+            <xs:enumeration value="DARKEN"/>
+            <xs:enumeration value="LIGHTEN"/>
+            <xs:enumeration value="COLOR_DODGE"/>
+            <xs:enumeration value="COLOR_BURN"/>
+            <xs:enumeration value="HARD_LIGHT"/>
+            <xs:enumeration value="SOFT_LIGHT"/>
+            <xs:enumeration value="DIFFERENCE"/>
+            <xs:enumeration value="EXCLUSION"/>
+            <xs:enumeration value="HUE"/>
+            <xs:enumeration value="SATURATION"/>
+            <xs:enumeration value="COLOR"/>
+            <xs:enumeration value="LUMINOSITY"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="overflowType">
+        <xs:restriction>
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="TRUNCATE"/>
+            <xs:enumeration value="BREAK"/>
+            <xs:enumeration value="BREAK_ALL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="fontStyleType">
+        <xs:restriction>
+            <xs:enumeration value="NORMAL"/>
+            <xs:enumeration value="ITALIC"/>
+            <xs:enumeration value="OBLIQUE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="filterMode">
+        <xs:restriction>
+            <xs:enumeration value="FILTER"/>
+            <xs:enumeration value="WEAK_FILTER"/>
+            <xs:enumeration value="EMPTY"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="toolboxesType">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="RECT"/>
+                    <xs:enumeration value="POLYGON"/>
+                    <xs:enumeration value="LINE_X"/>
+                    <xs:enumeration value="LINE_Y"/>
+                    <xs:enumeration value="KEEP"/>
+                    <xs:enumeration value="CLEAR"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="magicFeatureTypes">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="LINE"/>
+                    <xs:enumeration value="BAR"/>
+                    <xs:enumeration value="STACK"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="brushFeatureTypes">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="RECT"/>
+                    <xs:enumeration value="POLYGON"/>
+                    <xs:enumeration value="LINE_X"/>
+                    <xs:enumeration value="LINE_Y"/>
+                    <xs:enumeration value="KEEP"/>
+                    <xs:enumeration value="CLEAR"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="dataZoomRangeMode">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="VALUE"/>
+                    <xs:enumeration value="PERCENT"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="focusType">
+        <xs:restriction>
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="SELF"/>
+            <xs:enumeration value="SERIES"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="blurScopeType">
+        <xs:restriction>
+            <xs:enumeration value="COORDINATE_SYSTEM"/>
+            <xs:enumeration value="SERIES"/>
+            <xs:enumeration value="GLOBAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="funnelSortType">
+        <xs:restriction>
+            <xs:enumeration value="ASCENDING"/>
+            <xs:enumeration value="DESCENDING"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="orientationType">
+        <xs:restriction>
+            <xs:enumeration value="HORIZONTAL"/>
+            <xs:enumeration value="VERTICAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="colorType">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="ALICEBLUE"/>
+                    <xs:enumeration value="ANTIQUEWHITE"/>
+                    <xs:enumeration value="AQUA"/>
+                    <xs:enumeration value="AQUAMARINE"/>
+                    <xs:enumeration value="AZURE"/>
+                    <xs:enumeration value="BEIGE"/>
+                    <xs:enumeration value="BISQUE"/>
+                    <xs:enumeration value="BLACK"/>
+                    <xs:enumeration value="BLANCHEDALMOND"/>
+                    <xs:enumeration value="BLUE"/>
+                    <xs:enumeration value="BLUEVIOLET"/>
+                    <xs:enumeration value="BROWN"/>
+                    <xs:enumeration value="BURLYWOOD"/>
+                    <xs:enumeration value="CADETBLUE"/>
+                    <xs:enumeration value="CHARTREUSE"/>
+                    <xs:enumeration value="CHOCOLATE"/>
+                    <xs:enumeration value="CORAL"/>
+                    <xs:enumeration value="CORNFLOWERBLUE"/>
+                    <xs:enumeration value="CORNSILK"/>
+                    <xs:enumeration value="CRIMSON"/>
+                    <xs:enumeration value="CYAN"/>
+                    <xs:enumeration value="DARKBLUE"/>
+                    <xs:enumeration value="DARKCYAN"/>
+                    <xs:enumeration value="DARKGOLDENROD"/>
+                    <xs:enumeration value="DARKGRAY"/>
+                    <xs:enumeration value="DARKGREY"/>
+                    <xs:enumeration value="DARKGREEN"/>
+                    <xs:enumeration value="DARKKHAKI"/>
+                    <xs:enumeration value="DARKMAGENTA"/>
+                    <xs:enumeration value="DARKOLIVEGREEN"/>
+                    <xs:enumeration value="DARKORANGE"/>
+                    <xs:enumeration value="DARKORCHID"/>
+                    <xs:enumeration value="DARKRED"/>
+                    <xs:enumeration value="DARKSALMON"/>
+                    <xs:enumeration value="DARKSEAGREEN"/>
+                    <xs:enumeration value="DARKSLATEBLUE"/>
+                    <xs:enumeration value="DARKSLATEGRAY"/>
+                    <xs:enumeration value="DARKSLATEGREY"/>
+                    <xs:enumeration value="DARKTURQUOISE"/>
+                    <xs:enumeration value="DARKVIOLET"/>
+                    <xs:enumeration value="DEEPPINK"/>
+                    <xs:enumeration value="DEEPSKYBLUE"/>
+                    <xs:enumeration value="DIMGRAY"/>
+                    <xs:enumeration value="DIMGREY"/>
+                    <xs:enumeration value="DODGERBLUE"/>
+                    <xs:enumeration value="FIREBRICK"/>
+                    <xs:enumeration value="FLORALWHITE"/>
+                    <xs:enumeration value="FORESTGREEN"/>
+                    <xs:enumeration value="FUCHSIA"/>
+                    <xs:enumeration value="GAINSBORO"/>
+                    <xs:enumeration value="GHOSTWHITE"/>
+                    <xs:enumeration value="GOLD"/>
+                    <xs:enumeration value="GOLDENROD"/>
+                    <xs:enumeration value="GRAY"/>
+                    <xs:enumeration value="GREY"/>
+                    <xs:enumeration value="GREEN"/>
+                    <xs:enumeration value="GREENYELLOW"/>
+                    <xs:enumeration value="HONEYDEW"/>
+                    <xs:enumeration value="HOTPINK"/>
+                    <xs:enumeration value="INDIANRED"/>
+                    <xs:enumeration value="INDIGO"/>
+                    <xs:enumeration value="IVORY"/>
+                    <xs:enumeration value="KHAKI"/>
+                    <xs:enumeration value="LAVENDER"/>
+                    <xs:enumeration value="LAVENDERBLUSH"/>
+                    <xs:enumeration value="LAWNGREEN"/>
+                    <xs:enumeration value="LEMONCHIFFON"/>
+                    <xs:enumeration value="LIGHTBLUE"/>
+                    <xs:enumeration value="LIGHTCORAL"/>
+                    <xs:enumeration value="LIGHTCYAN"/>
+                    <xs:enumeration value="LIGHTGOLDENRODYELLOW"/>
+                    <xs:enumeration value="LIGHTGRAY"/>
+                    <xs:enumeration value="LIGHTGREY"/>
+                    <xs:enumeration value="LIGHTGREEN"/>
+                    <xs:enumeration value="LIGHTPINK"/>
+                    <xs:enumeration value="LIGHTSALMON"/>
+                    <xs:enumeration value="LIGHTSEAGREEN"/>
+                    <xs:enumeration value="LIGHTSKYBLUE"/>
+                    <xs:enumeration value="LIGHTSLATEGRAY"/>
+                    <xs:enumeration value="LIGHTSLATEGREY"/>
+                    <xs:enumeration value="LIGHTSTEELBLUE"/>
+                    <xs:enumeration value="LIGHTYELLOW"/>
+                    <xs:enumeration value="LIME"/>
+                    <xs:enumeration value="LIMEGREEN"/>
+                    <xs:enumeration value="LINEN"/>
+                    <xs:enumeration value="MAGENTA"/>
+                    <xs:enumeration value="MAROON"/>
+                    <xs:enumeration value="MEDIUMAQUAMARINE"/>
+                    <xs:enumeration value="MEDIUMBLUE"/>
+                    <xs:enumeration value="MEDIUMORCHID"/>
+                    <xs:enumeration value="MEDIUMPURPLE"/>
+                    <xs:enumeration value="MEDIUMSEAGREEN"/>
+                    <xs:enumeration value="MEDIUMSLATEBLUE"/>
+                    <xs:enumeration value="MEDIUMSPRINGGREEN"/>
+                    <xs:enumeration value="MEDIUMTURQUOISE"/>
+                    <xs:enumeration value="MEDIUMVIOLETRED"/>
+                    <xs:enumeration value="MIDNIGHTBLUE"/>
+                    <xs:enumeration value="MINTCREAM"/>
+                    <xs:enumeration value="MISTYROSE"/>
+                    <xs:enumeration value="MOCCASIN"/>
+                    <xs:enumeration value="NAVAJOWHITE"/>
+                    <xs:enumeration value="NAVY"/>
+                    <xs:enumeration value="OLDLACE"/>
+                    <xs:enumeration value="OLIVE"/>
+                    <xs:enumeration value="OLIVEDRAB"/>
+                    <xs:enumeration value="ORANGE"/>
+                    <xs:enumeration value="ORANGERED"/>
+                    <xs:enumeration value="ORCHID"/>
+                    <xs:enumeration value="PALEGOLDENROD"/>
+                    <xs:enumeration value="PALEGREEN"/>
+                    <xs:enumeration value="PALETURQUOISE"/>
+                    <xs:enumeration value="PALEVIOLETRED"/>
+                    <xs:enumeration value="PAPAYAWHIP"/>
+                    <xs:enumeration value="PEACHPUFF"/>
+                    <xs:enumeration value="PERU"/>
+                    <xs:enumeration value="PINK"/>
+                    <xs:enumeration value="PLUM"/>
+                    <xs:enumeration value="POWDERBLUE"/>
+                    <xs:enumeration value="PURPLE"/>
+                    <xs:enumeration value="RED"/>
+                    <xs:enumeration value="ROSYBROWN"/>
+                    <xs:enumeration value="ROYALBLUE"/>
+                    <xs:enumeration value="SADDLEBROWN"/>
+                    <xs:enumeration value="SALMON"/>
+                    <xs:enumeration value="SANDYBROWN"/>
+                    <xs:enumeration value="SEAGREEN"/>
+                    <xs:enumeration value="SEASHELL"/>
+                    <xs:enumeration value="SIENNA"/>
+                    <xs:enumeration value="SILVER"/>
+                    <xs:enumeration value="SKYBLUE"/>
+                    <xs:enumeration value="SLATEBLUE"/>
+                    <xs:enumeration value="SLATEGRAY"/>
+                    <xs:enumeration value="SLATEGREY"/>
+                    <xs:enumeration value="SNOW"/>
+                    <xs:enumeration value="SPRINGGREEN"/>
+                    <xs:enumeration value="STEELBLUE"/>
+                    <xs:enumeration value="TAN"/>
+                    <xs:enumeration value="TEAL"/>
+                    <xs:enumeration value="THISTLE"/>
+                    <xs:enumeration value="TOMATO"/>
+                    <xs:enumeration value="TURQUOISE"/>
+                    <xs:enumeration value="VIOLET"/>
+                    <xs:enumeration value="WHEAT"/>
+                    <xs:enumeration value="WHITE"/>
+                    <xs:enumeration value="WHITESMOKE"/>
+                    <xs:enumeration value="YELLOW"/>
+                    <xs:enumeration value="YELLOWGREEN"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+</xs:schema>

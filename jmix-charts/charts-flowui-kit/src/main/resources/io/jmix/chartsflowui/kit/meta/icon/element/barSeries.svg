@@ -1,0 +1,28 @@
+<!--
+  - Copyright 2023 Haulmont.
+  -
+  - Licensed under the Apache License, Version 2.0 (the "License");
+  - you may not use this file except in compliance with the License.
+  - You may obtain a copy of the License at
+  -
+  -     http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the License for the specific language governing permissions and
+  - limitations under the License.
+  -->
+
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1 7L1 1L3 1L3 7L1 7Z" fill="#9AA7B0"/>
+<path d="M7 9L7 1L9 1L9 9L7 9Z" fill="#9AA7B0"/>
+<path d="M4 6L4 1L6 1L6 6L4 6Z" fill="#9AA7B0"/>
+<path d="M4 15L4 7L6 7L6 15L4 15Z" fill="#9AA7B0"/>
+<path d="M13 15L13 8L15 8L15 15L13 15Z" fill="#9AA7B0"/>
+<path d="M10 15L10 4L12 4L12 15L10 15Z" fill="#9AA7B0"/>
+<path d="M1 15L1 8L3 8L3 15L1 15Z" fill="#9AA7B0"/>
+<path d="M7 15L7 10L9 10L9 15L7 15Z" fill="#9AA7B0"/>
+<path d="M13 7L13 1L15 1L15 7L13 7Z" fill="#9AA7B0"/>
+<path d="M10 3L10 1L12 1L12 3L10 3Z" fill="#9AA7B0"/>
+</svg>

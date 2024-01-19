@@ -1,0 +1,90 @@
+{
+  "series": [
+    {
+      "type": "pie",
+      "id": "pieId",
+      "name": "pieName",
+      "colorBy": "series",
+      "legendHoverLink": false,
+      "geoIndex": 32,
+      "calendarIndex": 2,
+      "selectedMode": "single",
+      "selectedOffset": 11,
+      "clockwise": false,
+      "startAngle": 45,
+      "minAngle": 12,
+      "minShowLabelAngle": 32,
+      "roseType": "radius",
+      "avoidLabelOverlap": false,
+      "stillShowZeroSum": false,
+      "percentPrecision": 1,
+      "cursor": "pointer",
+      "zlevel": 12,
+      "z": 32,
+      "left": "32",
+      "top": "2",
+      "right": "43%",
+      "bottom": "12%",
+      "width": "32",
+      "height": "12",
+      "showEmptyCircle": false,
+      "emptyCircleStyle": {
+        "color": "#FFFFF0",
+        "borderColor": "#FFFFF0",
+        "borderWidth": 1,
+        "borderType": "dashed",
+        "borderDashOffset": 1,
+        "borderCap": "butt",
+        "borderJoin": "bevel",
+        "borderMiterLimit": 12,
+        "shadowBlur": 12,
+        "shadowColor": "#FFFFF0",
+        "shadowOffsetX": 12,
+        "shadowOffsetY": 12,
+        "opacity": 0.34
+      },
+      "labelLine": {
+        "show": false,
+        "showAbove": false,
+        "length": 23,
+        "length2": 12,
+        "smooth": true,
+        "minTurnAngle": 81,
+        "maxSurfaceAngle": 21
+      },
+      "emphasis": {
+        "disabled": true,
+        "scale": false,
+        "scaleSize": 11,
+        "focus": "series",
+        "blurScope": "global"
+      },
+      "center": [
+        "54%",
+        "42%"
+      ],
+      "radius": [
+        "12",
+        "63%"
+      ],
+      "seriesLayoutBy": "row",
+      "datasetIndex": 2,
+      "encode": {
+        "x": ["2"],
+        "y": ["12"]
+      },
+      "dataGroupId": "group",
+      "silent": true,
+      "animationType": "scale",
+      "animationTypeUpdate": "expansion",
+      "animation": true,
+      "animationThreshold": 1501,
+      "animationDuration": 1500,
+      "animationEasing": "backOut",
+      "animationDelay": 15,
+      "animationDurationUpdate": 150,
+      "animationEasingUpdate": "cubicOut",
+      "animationDelayUpdate": 15
+    }
+  ]
+}

@@ -19,6 +19,7 @@
 @import url('app/misc.css');
 @import url('app/login-view.css');
 @import url('app/main-view-top-menu.css');
+@import url('app/role-assigment-view.css');
 
 @import url('component/jmix-list-menu.css');
 @import url('component/jmix-user-indicator.css');

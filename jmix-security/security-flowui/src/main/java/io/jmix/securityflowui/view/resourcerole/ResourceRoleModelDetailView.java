@@ -18,9 +18,6 @@ package io.jmix.securityflowui.view.resourcerole;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
@@ -37,15 +34,14 @@ import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
-import io.jmix.security.model.*;
+import io.jmix.security.model.ResourcePolicy;
+import io.jmix.security.model.ResourcePolicyEffect;
+import io.jmix.security.model.ResourceRole;
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.securitydata.entity.ResourcePolicyEntity;
 import io.jmix.securitydata.entity.ResourceRoleEntity;
 import io.jmix.securityflowui.model.*;
-import io.jmix.securityflowui.model.ResourcePolicyType;
-import io.jmix.securityflowui.model.ResourceRoleModel;
-import io.jmix.securityflowui.model.RoleModelConverter;
-import io.jmix.securityflowui.model.RoleSource;
 import io.jmix.securityflowui.view.resourcepolicy.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,23 +62,13 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     public static final String ROUTE_PARAM_NAME = "code";
 
     @ViewComponent
-    private Tabs tabs;
-    @ViewComponent
-    private VerticalLayout childRolesWrapper;
-    @ViewComponent
-    private VerticalLayout resourcePoliciesWrapper;
-    @ViewComponent
     private TypedTextField<String> codeField;
-    @ViewComponent
-    private TypedTextField<String> sourceField;
     @ViewComponent
     private JmixCheckboxGroup<String> scopesField;
     @ViewComponent
     private DataGrid<ResourcePolicyModel> resourcePoliciesTable;
     @ViewComponent
     private DataGrid<ResourceRoleModel> childRolesTable;
-    @ViewComponent
-    private HorizontalLayout resourcePoliciesButtonsPanel;
     @ViewComponent
     private DropdownButton createDropdownButton;
 
@@ -121,7 +107,6 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         // otherwise it will be cleared
         initScopesField();
         initResourcePoliciesTable();
-        initTabs();
     }
 
     @Subscribe
@@ -221,29 +206,6 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         lookupDialog.getView().setExcludedRoles(excludedRolesCodes);
 
         lookupDialog.open();
-    }
-
-    private void initTabs() {
-        tabs.addSelectedChangeListener(this::onSelectedTabChange);
-    }
-
-    private void onSelectedTabChange(Tabs.SelectedChangeEvent event) {
-        String tabId = event.getSelectedTab().getId()
-                .orElse("<no_id>");
-
-        switch (tabId) {
-            case "resourcePoliciesTab":
-                resourcePoliciesWrapper.setVisible(true);
-                childRolesWrapper.setVisible(false);
-                break;
-            case "childRolesTab":
-                resourcePoliciesWrapper.setVisible(false);
-                childRolesWrapper.setVisible(true);
-                break;
-            default:
-                resourcePoliciesWrapper.setVisible(false);
-                childRolesWrapper.setVisible(false);
-        }
     }
 
     private void initResourcePoliciesTable() {

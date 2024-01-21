@@ -167,6 +167,8 @@ public class ViewActionsImpl implements ViewActions {
                     keyCombination.getKey(),
                     keyCombination.getKeyModifiers());
 
+            shortcutRegistration.setResetFocusOnActiveElement(keyCombination.isResetFocusOnActiveElement());
+
             // Setting shortcut scope to a particular component(s) instead of global
             com.vaadin.flow.component.Component[] listenOnComponents = keyCombination.getListenOnComponents();
             if (listenOnComponents != null) {

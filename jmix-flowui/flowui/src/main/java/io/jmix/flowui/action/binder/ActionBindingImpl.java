@@ -25,6 +25,7 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.function.BiFunction;
 
+@Deprecated(since = "2.2", forRemoval = true)
 public class ActionBindingImpl<C extends Component, A extends Action>
         extends AbstractActionBindingImpl<C, A, C> {
 

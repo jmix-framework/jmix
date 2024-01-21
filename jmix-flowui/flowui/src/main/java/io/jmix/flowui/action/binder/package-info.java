@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@Deprecated(since = "2.2", forRemoval = true)
 @NonNullApi
 package io.jmix.flowui.action.binder;
 

@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+@Deprecated(since = "2.2", forRemoval = true)
 @org.springframework.stereotype.Component("flowui_ActionBinder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ActionBinder<H extends Component> {

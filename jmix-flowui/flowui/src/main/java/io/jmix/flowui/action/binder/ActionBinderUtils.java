@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated(since = "2.2", forRemoval = true)
 public class ActionBinderUtils {
 
     public static void refreshShortcutCombinationProperty(ClickNotifier component,

@@ -24,6 +24,7 @@ import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated(since = "2.2", forRemoval = true)
 public abstract class AbstractActionBindingImpl<H extends Component, A extends Action, C extends Component>
         implements ActionBinding<C, A> {
 

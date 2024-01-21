@@ -24,7 +24,6 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.flowui.action.binder.ActionBinders;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.View.InitEvent;
@@ -84,8 +83,7 @@ public class ViewSupport {
 
         ViewControllerUtils.setViewData(view, applicationContext.getBean(ViewData.class));
 
-        ActionBinders actionBinders = applicationContext.getBean(ActionBinders.class);
-        ViewActions actions = applicationContext.getBean(ViewActions.class, actionBinders.binder(view));
+        ViewActions actions = applicationContext.getBean(ViewActions.class, view);
         ViewControllerUtils.setViewActions(view, actions);
 
         ViewControllerUtils.setViewFacets(view, applicationContext.getBean(ViewFacets.class, view));

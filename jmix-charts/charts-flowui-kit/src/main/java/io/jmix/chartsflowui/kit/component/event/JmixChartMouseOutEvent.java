@@ -20,10 +20,11 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixMouseOutEventDetail;
 
 
 @DomEvent(JmixChartMouseOutEvent.EVENT_NAME)
-public class JmixChartMouseOutEvent extends JmixChartMouseEvent {
+public class JmixChartMouseOutEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixMouseOutEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "mouseout";
 

@@ -25,7 +25,7 @@ import io.jmix.chartsflowui.kit.component.JmixChart;
 @DomEvent(JmixChartAxisAreaSelectedEvent.EVENT_NAME)
 public class JmixChartAxisAreaSelectedEvent extends JmixChartEvent {
 
-    public static final String EVENT_NAME = EVENT_NAME_PREFIX + "axisareaelected";
+    public static final String EVENT_NAME = EVENT_NAME_PREFIX + "axisareaselected";
 
     public JmixChartAxisAreaSelectedEvent(JmixChart source, boolean fromClient,
                                           @EventData("event.detail") JsonObject detail) {

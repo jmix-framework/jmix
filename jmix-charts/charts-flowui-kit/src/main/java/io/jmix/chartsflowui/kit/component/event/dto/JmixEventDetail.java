@@ -18,42 +18,8 @@ package io.jmix.chartsflowui.kit.component.event.dto;
 
 
 public class JmixEventDetail {
-    private String componentType;
-    private String componentSubType;
-    private Integer componentIndex;
-    private Integer seriesIndex;
-    private Integer xAxisIndex;
-    private String seriesName;
-    private String seriesType;
-    private String targetType;
-    private String value;
-    private Integer tickIndex;
-    private Integer dataIndex;
+
     private String type;
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public Integer getTickIndex() {
-        return tickIndex;
-    }
-
-    public void setTickIndex(Integer tickIndex) {
-        this.tickIndex = tickIndex;
-    }
-
-    public Integer getDataIndex() {
-        return dataIndex;
-    }
-
-    public void setDataIndex(Integer dataIndex) {
-        this.dataIndex = dataIndex;
-    }
 
     public String getType() {
         return type;
@@ -62,69 +28,4 @@ public class JmixEventDetail {
     public void setType(String type) {
         this.type = type;
     }
-
-    public String getComponentType() {
-        return componentType;
-    }
-
-    public void setComponentType(String componentType) {
-        this.componentType = componentType;
-    }
-
-    public String getComponentSubType() {
-        return componentSubType;
-    }
-
-    public void setComponentSubType(String componentSubType) {
-        this.componentSubType = componentSubType;
-    }
-
-    public Integer getComponentIndex() {
-        return componentIndex;
-    }
-
-    public void setComponentIndex(Integer componentIndex) {
-        this.componentIndex = componentIndex;
-    }
-
-    public Integer getSeriesIndex() {
-        return seriesIndex;
-    }
-
-    public void setSeriesIndex(Integer seriesIndex) {
-        this.seriesIndex = seriesIndex;
-    }
-
-    public Integer getXAxisIndex() {
-        return xAxisIndex;
-    }
-
-    public void setXAxisIndex(Integer xAxisIndex) {
-        this.xAxisIndex = xAxisIndex;
-    }
-
-    public String getSeriesName() {
-        return seriesName;
-    }
-
-    public void setSeriesName(String seriesName) {
-        this.seriesName = seriesName;
-    }
-
-    public String getSeriesType() {
-        return seriesType;
-    }
-
-    public void setSeriesType(String seriesType) {
-        this.seriesType = seriesType;
-    }
-
-    public String getTargetType() {
-        return targetType;
-    }
-
-    public void setTargetType(String targetType) {
-        this.targetType = targetType;
-    }
-
 }

@@ -92,9 +92,9 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
     _forwardEvents() {
         for (let eventName of JmixChart.forwardedEventNames) {
             this._root.on(eventName, (params) => {
-                delete params.event;
+                const detail = { ...params, event: null };
                 const customEvent = new CustomEvent('jmixchart' + eventName,
-                    { detail: params });
+                    { detail: detail });
                 this.dispatchEvent(customEvent);
             });
         }

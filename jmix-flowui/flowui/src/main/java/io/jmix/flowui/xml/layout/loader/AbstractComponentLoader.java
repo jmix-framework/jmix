@@ -160,8 +160,17 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return loaderSupport.loadResourceString(element, attributeName, messageGroup);
     }
 
+    protected Optional<String> loadResourceString(Element element, String attributeName,
+                                                  String messageGroup, boolean emptyToNull) {
+        return loaderSupport.loadResourceString(element, attributeName, messageGroup, emptyToNull);
+    }
+
     protected Optional<String> loadString(Element element, String attributeName) {
         return loaderSupport.loadString(element, attributeName);
+    }
+
+    protected Optional<String> loadString(Element element, String attributeName, boolean emptyToNull) {
+        return loaderSupport.loadString(element, attributeName, emptyToNull);
     }
 
     protected Optional<Integer> loadInteger(Element element, String attributeName) {

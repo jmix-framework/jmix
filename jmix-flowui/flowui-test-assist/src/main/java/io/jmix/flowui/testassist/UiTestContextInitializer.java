@@ -20,6 +20,8 @@ import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -34,13 +36,23 @@ import java.util.concurrent.CompletableFuture;
 public class UiTestContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     protected static final String PRODUCTION_MODE_ATTRIBUTE = "vaadin.productionMode";
+    protected static final String WEBSOCKET_REQUEST_SECURITY_CONTEXT_PROVIDED_ATTRIBUTE
+            = "jmix.ui.websocket-request-security-context-provided";
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
+        Map<String, String> properties = new HashMap<>(2);
+
         // Do not override value of production mode if it's added to environment.
         if (!applicationContext.getEnvironment().containsProperty(PRODUCTION_MODE_ATTRIBUTE)) {
-            TestPropertyValues.of(PRODUCTION_MODE_ATTRIBUTE + "=true")
-                    .applyTo(applicationContext.getEnvironment());
+            properties.put(PRODUCTION_MODE_ATTRIBUTE, "true");
         }
+
+        // Disable SecurityContextHolderAtmosphereInterceptor since it
+        // produces NPE and moreover cannot be used in integration tests.
+        properties.put(WEBSOCKET_REQUEST_SECURITY_CONTEXT_PROVIDED_ATTRIBUTE, "false");
+
+        TestPropertyValues.of(properties)
+                .applyTo(applicationContext.getEnvironment());
     }
 }

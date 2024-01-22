@@ -247,6 +247,11 @@ public class JmixChart extends Component implements HasSize {
         eventRegistrations.put(JmixChartFinishedEvent.EVENT_NAME, getEventBus().addListener(JmixChartFinishedEvent.class, listener));
         return getRemovalCallback(JmixChartFinishedEvent.EVENT_NAME, JmixChartFinishedEvent.class);
     }
+
+    public void onJmixChartEvent(JmixChartEvent event) {
+        getEventBus().fireEvent(event);
+    }
+
     public void setNativeJson(String json) {
         options.setNativeJson(json);
     }

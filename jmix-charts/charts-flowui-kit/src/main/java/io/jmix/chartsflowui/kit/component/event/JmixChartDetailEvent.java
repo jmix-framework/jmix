@@ -75,7 +75,7 @@ public interface JmixChartDetailEvent<T> {
             genericType  = (Class<?>) pt.getActualTypeArguments()[0];
         }
         List<Object> instance = new ArrayList<>();
-        Method setter = Arrays.stream(ownerClazz.getDeclaredMethods())
+        Method setter = getAllMethods(ownerClazz).stream()
                 .filter(m -> m.getName().equals("set" + StringUtils.capitalize(field.getName()))).findAny().orElseThrow();
         setter.invoke(target, instance);
         String fieldClassName = getFieldClassName(field);
@@ -99,7 +99,7 @@ public interface JmixChartDetailEvent<T> {
             genericType  = (Class<?>) pt.getActualTypeArguments()[1];
         }
         Map<Object, Object> instance = new HashMap<>();
-        Method setter = Arrays.stream(ownerClazz.getDeclaredMethods())
+        Method setter = getAllMethods(ownerClazz).stream()
                 .filter(m -> m.getName().equals("set" + StringUtils.capitalize(field.getName()))).findAny().orElseThrow();
         setter.invoke(target, instance);
         String fieldClassName = getFieldClassName(field);
@@ -139,7 +139,7 @@ public interface JmixChartDetailEvent<T> {
     }
 
     default void convertClassFields(Object instance, JsonObject source, Class<?> ownerClazz) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
-        Field[] fields = ownerClazz.getDeclaredFields();
+        List<Field> fields = getAllFields(ownerClazz);
         for (Field field : fields) {
             switch (getFieldClassName(field)) {
                 case "String", "Long", "Integer" -> convertPrimitiveField(field, source, instance, ownerClazz);
@@ -157,6 +157,22 @@ public interface JmixChartDetailEvent<T> {
             }
         }
     }
+
+    public static List<Field> getAllFields(Class<?> type) {
+        List<Field> fields = new ArrayList<Field>();
+        for (Class<?> c = type; c != null; c = c.getSuperclass()) {
+            fields.addAll(Arrays.asList(c.getDeclaredFields()));
+        }
+        return fields;
+    }
+    public static List<Method> getAllMethods(Class<?> type) {
+        List<Method> fields = new ArrayList<Method>();
+        for (Class<?> c = type; c != null; c = c.getSuperclass()) {
+            fields.addAll(Arrays.asList(c.getMethods()));
+        }
+        return fields;
+    }
+
     default <T> T convertDetail(Class<?> detailClazz) {
         //noinspection unchecked
         return (T) mapDetail(detailClazz);

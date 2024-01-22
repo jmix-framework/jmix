@@ -19,7 +19,6 @@ package io.jmix.chartsflowui.kit.component.event;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonString;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixClickEventDetail;
 import org.apache.commons.lang3.StringUtils;
 
@@ -113,7 +112,7 @@ public interface JmixChartDetailEvent<T> {
         }
     }
 
-    default Object getPrimitiveValue(String fieldGetterName, String fieldClassName, JsonObject source) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    default Object getPrimitiveValue(String fieldGetterName, String fieldClassName, JsonValue source) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Method getter = source.getClass().getMethod("get" + fieldGetterName);
         Object detailValue = getter.invoke(source);
         return switch (fieldClassName) {

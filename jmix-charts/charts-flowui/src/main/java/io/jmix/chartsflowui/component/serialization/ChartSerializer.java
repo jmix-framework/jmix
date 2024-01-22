@@ -16,6 +16,7 @@
 
 package io.jmix.chartsflowui.component.serialization;
 
+import io.jmix.chartsflowui.component.Chart;
 import io.jmix.chartsflowui.kit.component.serialization.AbstractSerializer;
 import io.jmix.chartsflowui.kit.component.serialization.JmixChartSerializer;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
@@ -30,6 +31,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Serializes options and data for the {@link Chart} into JSON for subsequent sending it to the client-side.
+ */
 @Component("charts_ChartSerializer")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ChartSerializer extends JmixChartSerializer

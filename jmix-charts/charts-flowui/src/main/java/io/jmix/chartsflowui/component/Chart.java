@@ -37,7 +37,9 @@ import org.springframework.context.ApplicationContextAware;
 import java.util.function.Function;
 
 /**
- *
+ * Chart is a component for showing data in graphical form. Allows to configure axes, series, legend, tooltip,
+ * data source and other options. For more detailed information, see the documentation.
+ * @see <a href="https://echarts.apache.org/en/option.html">Apache ECharts option documentation</a>
  */
 public class Chart extends JmixChart
         implements ApplicationContextAware, InitializingBean {

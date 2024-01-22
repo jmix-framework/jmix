@@ -62,7 +62,7 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      *
      * @param id must not be {@literal null}.
      * @return the entity with the given id
-     * @throws IllegalStateException if nothing was loaded
+     * @throws io.jmix.core.NoResultException if nothing was loaded
      */
     T getById(ID id, FetchPlan fetchPlan);
 
@@ -71,7 +71,7 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      *
      * @param id must not be {@literal null}.
      * @return the entity with the given id
-     * @throws IllegalStateException if nothing was loaded
+     * @throws io.jmix.core.NoResultException if nothing was loaded
      */
     T getById(ID id);
 

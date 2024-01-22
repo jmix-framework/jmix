@@ -19,7 +19,6 @@ package io.jmix.chartsflowui.kit.component.event;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixClickEventDetail;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.*;
@@ -30,8 +29,13 @@ public interface JmixChartDetailEvent<T> {
     Object getDetail();
     void setDetail(Object detailObject);
 
+    @SuppressWarnings("unchecked")
+    default Class<T> reflectClassType() {
+        return ((Class<T>) ((ParameterizedType) getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0]);
+    }
+
     default T loadDetail() {
-        return convertDetail(JmixClickEventDetail.class);
+        return convertDetail(reflectClassType());
     }
 
     default String getFieldClassName(Field field) {

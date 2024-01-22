@@ -34,5 +34,4 @@ public class JmixChartClickEvent extends JmixChartMouseEvent implements JmixChar
         super(source, fromClient, detail, value);
     }
 
-
 }

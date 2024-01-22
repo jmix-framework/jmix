@@ -17,7 +17,6 @@
 import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
 import elemental.json.impl.JreJsonFactory;
-import elemental.json.impl.JreJsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.JmixChartClickEvent;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixClickEventDetail;
@@ -52,7 +51,8 @@ public class JmixChartClickEventTest {
 
 
         JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detail, "0");
-        assertEquals("2012-09-04", ((JmixClickEventDetail) event.mapDetail(JmixClickEventDetail.class)).getValue());
+        JmixClickEventDetail eventDetail = event.mapDetail(JmixClickEventDetail.class);
+        assertEquals("2012-09-04", eventDetail.getValue());
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
+
 public class JmixClickEventDetail {
     private String componentType;
     private Integer componentIndex;
@@ -25,16 +26,6 @@ public class JmixClickEventDetail {
     private Integer tickIndex;
     private Integer dataIndex;
     private String type;
-
-    private TestDTO testDTO;
-
-    public TestDTO getTestDTO() {
-        return testDTO;
-    }
-
-    public void setTestDTO(TestDTO testDTO) {
-        this.testDTO = testDTO;
-    }
 
     public String getValue() {
         return value;
@@ -99,4 +90,5 @@ public class JmixClickEventDetail {
     public void setTargetType(String targetType) {
         this.targetType = targetType;
     }
+
 }

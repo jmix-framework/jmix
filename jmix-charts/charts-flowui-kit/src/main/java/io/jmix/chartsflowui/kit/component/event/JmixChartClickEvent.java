@@ -32,7 +32,6 @@ public class JmixChartClickEvent extends JmixChartMouseEvent implements JmixChar
                                             @EventData("event.detail") JsonObject detail,
                                             @EventData("event.detail.value") String value) {
         super(source, fromClient, detail, value);
-        System.out.println("EVENT DETAIL VALUE: " + loadDetail().getValue());
     }
 
 

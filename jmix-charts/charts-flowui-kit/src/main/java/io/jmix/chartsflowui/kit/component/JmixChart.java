@@ -65,13 +65,6 @@ public class JmixChart extends Component implements HasSize {
     protected StateTree.ExecutionRegistration synchronizeChartIncrementalUpdateDataExecution;
 
     protected Map<String, Registration> eventRegistrations = new HashMap<>();
-    protected Registration doubleClickDomRegistration;
-    protected Registration mouseDownRegistration;
-    protected Registration mouseOutRegistration;
-    protected Registration mouseOverRegistration;
-    protected Registration mouseUpRegistration;
-    protected Registration globalOutRegistration;
-    protected Registration highlightRegistration;
 
     protected Map<DataSet, ChartIncrementalChanges<? extends DataItem>> changedItems = new HashMap<>();
 

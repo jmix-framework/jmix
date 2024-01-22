@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,21 @@
 
 package io.jmix.chartsflowui.kit.component.event;
 
+import elemental.json.JsonArray;
 import elemental.json.JsonObject;
+import elemental.json.JsonValue;
+import elemental.json.impl.JreJsonString;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixClickEventDetail;
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
+import java.util.*;
 
 public interface JmixChartDetailEvent<T> {
     JsonObject getDetailJson();
     Object getDetail();
     void setDetail(Object detailObject);
+
     default T loadDetail() {
         return convertDetail(JmixClickEventDetail.class);
     }
@@ -36,59 +39,133 @@ public interface JmixChartDetailEvent<T> {
         return field.getType().getName().replace(field.getType().getPackageName() + ".", "");
     }
 
-    default void convertPrimitiveField(Field field, JsonObject source, Object target, Class<?> detailClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    default String getFieldGetterName(String fieldClassName) {
+        return switch (fieldClassName) {
+            case "Long", "Integer", "Double" -> "Number";
+            default -> "String";
+        };
+    }
+
+    default void convertPrimitiveField(Field field, JsonObject source, Object target, Class<?> ownerClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String fieldClassName = getFieldClassName(field);
         String fieldGetterName = switch (fieldClassName) {
             case "Long", "Integer", "Double" -> "Number";
             default -> "String";
         };
-        Method getter = source.getClass().getMethod("get" + fieldGetterName, String.class);
-        Object detailValue = getter.invoke(source, field.getName());
-        Object convertedValue = switch (fieldClassName) {
+        if (source.hasKey(field.getName())) {
+            Method getter = source.getClass().getMethod("get" + fieldGetterName, String.class);
+            Object value = getter.invoke(source, field.getName());
+            Object convertedValue = switch (fieldClassName) {
+                case "Long" -> value.getClass().getMethod("longValue").invoke(value);
+                case "Integer" -> value.getClass().getMethod("intValue").invoke(value);
+                default -> value;
+            };
+            Method setter = ownerClazz.getMethod("set" + StringUtils.capitalize(field.getName()), Class.forName(field.getType().getName()));
+            setter.invoke(target, convertedValue);
+        }
+    }
+
+    default void convertList(Field field, JsonArray source, Object target, Class<?> ownerClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        Type type = field.getGenericType();
+        Class<?> genericType = null;
+        if (type instanceof ParameterizedType pt) {
+            genericType  = (Class<?>) pt.getActualTypeArguments()[0];
+        }
+        List<Object> instance = new ArrayList<>();
+        Method setter = Arrays.stream(ownerClazz.getDeclaredMethods())
+                .filter(m -> m.getName().equals("set" + StringUtils.capitalize(field.getName()))).findAny().orElseThrow();
+        setter.invoke(target, instance);
+        String fieldClassName = getFieldClassName(field);
+        String fieldGetterName = getFieldGetterName(fieldClassName);
+        for (int i = 0; i < source.length(); i++) {
+            if (source.get(i) instanceof JsonObject && genericType != null) {
+                Object listItem = genericType.getConstructor().newInstance();
+                convertClassFields(listItem, source.get(i), genericType);
+                instance.add(listItem);
+            } else {
+                Object value = getPrimitiveValue(fieldGetterName, fieldClassName, source.get(i));
+                instance.add(value);
+            }
+        }
+    }
+
+    default void convertMsp(Field field, JsonObject source, Object target, Class<?> ownerClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        Type type = field.getGenericType();
+        Class<?> genericType = null;
+        if (type instanceof ParameterizedType pt) {
+            genericType  = (Class<?>) pt.getActualTypeArguments()[1];
+        }
+        Map<Object, Object> instance = new HashMap<>();
+        Method setter = Arrays.stream(ownerClazz.getDeclaredMethods())
+                .filter(m -> m.getName().equals("set" + StringUtils.capitalize(field.getName()))).findAny().orElseThrow();
+        setter.invoke(target, instance);
+        String fieldClassName = getFieldClassName(field);
+        String fieldGetterName = getFieldGetterName(fieldClassName);
+        for (String key: source.keys()) {
+            if (source.get(key) instanceof JsonObject && genericType != null) {
+                Object listItem = genericType.getConstructor().newInstance();
+                convertClassFields(listItem, source.get(key), genericType);
+                instance.put(key, listItem);
+            } else {
+                Object value = getPrimitiveValue(fieldGetterName, fieldClassName, source.get(key));
+                instance.put(key, value);
+            }
+        }
+    }
+
+    default Object getPrimitiveValue(String fieldGetterName, String fieldClassName, JsonObject source) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method getter = source.getClass().getMethod("get" + fieldGetterName);
+        Object detailValue = getter.invoke(source);
+        return switch (fieldClassName) {
             case "Long" -> detailValue.getClass().getMethod("longValue").invoke(detailValue);
             case "Integer" -> detailValue.getClass().getMethod("intValue").invoke(detailValue);
             default -> detailValue;
         };
-        Method setter = detailClazz.getMethod("set" + StringUtils.capitalize(field.getName()), Class.forName(field.getType().getName()));
-        setter.invoke(target, convertedValue);
     }
 
-    default void convertClass(Field field, JsonObject source, Object target, Class<?> detailClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    default void convertClass(Field field, JsonObject source, Object target, Class<?> ownerClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> fieldClazz = Class.forName(field.getType().getName());
         Object instance = fieldClazz.getConstructor().newInstance();
-        Method setter = detailClazz.getMethod("set" + StringUtils.capitalize(field.getName()), Class.forName(field.getType().getName()));
+        Method setter = ownerClazz.getMethod("set" + StringUtils.capitalize(field.getName()), Class.forName(field.getType().getName()));
         setter.invoke(target, instance);
 
         Method getter = source.getClass().getMethod("getObject", String.class);
         JsonObject fieldValue = (JsonObject) getter.invoke(source, field.getName());
 
-        Field[] instanceFields = fieldClazz.getDeclaredFields();
-        for (Field instanceField : instanceFields) {
+        convertClassFields(instance, fieldValue, fieldClazz);
+    }
 
-            switch (getFieldClassName(instanceField)) {
-                case "String", "Long", "Integer" -> convertPrimitiveField(instanceField, fieldValue, instance, fieldClazz);
-                case "List" -> System.out.println("List");
-                default -> convertClass(instanceField, fieldValue, instance, detailClazz);
+    default void convertClassFields(Object instance, JsonObject source, Class<?> ownerClazz) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+        Field[] fields = ownerClazz.getDeclaredFields();
+        for (Field field : fields) {
+            switch (getFieldClassName(field)) {
+                case "String", "Long", "Integer" -> convertPrimitiveField(field, source, instance, ownerClazz);
+                case "List" -> {
+                    Method getter = source.getClass().getMethod("getArray", String.class);
+                    JsonArray fieldValue = (JsonArray) getter.invoke(source, field.getName());
+                    convertList(field, fieldValue, instance, ownerClazz);
+                }
+                case "Map" -> {
+                    Method getter = source.getClass().getMethod("getObject", String.class);
+                    JsonObject fieldValue = (JsonObject) getter.invoke(source, field.getName());
+                    convertMsp(field, fieldValue, instance, ownerClazz);
+                }
+                default -> convertClass(field, source, instance, ownerClazz);
             }
         }
     }
-
     default <T> T convertDetail(Class<?> detailClazz) {
         if (getDetail() == null) {
-            Field[] fields = detailClazz.getDeclaredFields();
             try {
-                setDetail(detailClazz.getConstructor().newInstance());
-                for (Field field : fields) {
-                    switch (getFieldClassName(field)) {
-                        case "String", "Long", "Integer" -> convertPrimitiveField(field, getDetailJson(), getDetail(), detailClazz);
-                        default -> convertClass(field, getDetailJson(), getDetail(), detailClazz);
-                    }
-                }
+                Object instance = detailClazz.getConstructor().newInstance();
+                setDetail(instance);
+                convertClassFields(instance, getDetailJson(), detailClazz);
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException
                      | NoSuchMethodException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
+        //noinspection unchecked
         return (T) getDetail().getClass().cast(getDetail());
     }
 }

@@ -285,16 +285,16 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             enabled
             height == "50px"
             icon.element.getAttribute("icon") ==
-                    VaadinIcon.USER.create().element.getAttribute("icon")
+                    VaadinIcon.GAMEPAD.create().element.getAttribute("icon")
             maxHeight == "55px"
             maxWidth == "120px"
             minHeight == "40px"
             minWidth == "80px"
             openOnHover
             tabIndex == 3
-            text == "Action Text"
+            text == "comboButtonText"
             themeNames.containsAll([DropdownButtonVariant.LUMO_PRIMARY.getVariantName()])
-            title == "Action Description"
+            title == "comboButtonTitle"
             visible
             whiteSpace == HasText.WhiteSpace.PRE
             width == "100px"

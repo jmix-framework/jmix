@@ -20,6 +20,7 @@ import elemental.json.impl.JreJsonFactory;
 import elemental.json.impl.JreJsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.JmixChartClickEvent;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixClickEventDetail;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -40,6 +41,18 @@ public class JmixChartClickEventTest {
 
         JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detail, "0");
         assertEquals("2012-09-04", event.loadDetail().getValue());
+    }
+
+    @Test
+    public void mapDetailTest() throws IOException {
+        JmixChart chart = new JmixChart();
+        JsonFactory jsonFactory = new JreJsonFactory();
+        File file = new File(getClass().getResource("jmix-chart-click-event-detail.json").getFile());
+        JsonObject detail = jsonFactory.parse(Files.readString(file.toPath()));
+
+
+        JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detail, "0");
+        assertEquals("2012-09-04", ((JmixClickEventDetail) event.mapDetail(JmixClickEventDetail.class)).getValue());
     }
 
 }

@@ -158,6 +158,11 @@ public interface JmixChartDetailEvent<T> {
         }
     }
     default <T> T convertDetail(Class<?> detailClazz) {
+        //noinspection unchecked
+        return (T) mapDetail(detailClazz);
+    }
+
+    default Object mapDetail(Class<?> detailClazz) {
         if (getDetail() == null) {
             try {
                 Object instance = detailClazz.getConstructor().newInstance();
@@ -168,7 +173,7 @@ public interface JmixChartDetailEvent<T> {
                 throw new RuntimeException(e);
             }
         }
-        //noinspection unchecked
-        return (T) getDetail().getClass().cast(getDetail());
+        return getDetail().getClass().cast(getDetail());
     }
+
 }

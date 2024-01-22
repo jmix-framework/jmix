@@ -21,6 +21,10 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.appsettings")
 public class AppSettingsProperties {
+    /**
+     * {@code false} value allows to use settings entities without permissions. <p>
+     * Set {@code true} if you need to control access to them.
+     */
     final Boolean checkPermissionsForAppSettingsEntity;
 
     public AppSettingsProperties(@DefaultValue("false") Boolean checkPermissionsForAppSettingsEntity) {

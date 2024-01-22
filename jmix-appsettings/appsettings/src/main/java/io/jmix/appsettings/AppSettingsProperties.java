@@ -31,6 +31,9 @@ public class AppSettingsProperties {
         this.checkPermissionsForAppSettingsEntity = checkPermissionsForAppSettingsEntity;
     }
 
+    /**
+     * @see #checkPermissionsForAppSettingsEntity
+     */
     public Boolean isCheckPermissionsForAppSettingsEntity() {
         return checkPermissionsForAppSettingsEntity;
     }

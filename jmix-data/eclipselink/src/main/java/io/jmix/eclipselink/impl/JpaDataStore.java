@@ -37,6 +37,7 @@ import io.jmix.data.impl.JpqlQueryBuilder;
 import io.jmix.data.impl.QueryResultsManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.lazyloading.LazyLoadingContext;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.exceptions.QueryException;

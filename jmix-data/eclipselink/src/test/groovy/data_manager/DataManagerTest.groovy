@@ -144,7 +144,7 @@ class DataManagerTest extends DataSpec {
 
         then:
 
-        thrown(IllegalStateException)
+        thrown(NoResultException)
     }
 
     def "load by empty ids"() {

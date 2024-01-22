@@ -17,12 +17,12 @@
 package io.jmix.core;
 
 import io.jmix.core.entity.KeyValueEntity;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.TemporalType;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.LockModeType;
-import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -102,7 +102,7 @@ public class FluentValueLoader<T> extends AbstractFluentValueLoader {
     /**
      * Loads a single instance.
      *
-     * @throws IllegalStateException if nothing was loaded
+     * @throws NoResultException if nothing was loaded
      */
     public T one() {
         ValueLoadContext loadContext = createLoadContext();
@@ -111,7 +111,7 @@ public class FluentValueLoader<T> extends AbstractFluentValueLoader {
         if (!list.isEmpty())
             return castValue(list.get(0).getValue(PROP_NAME));
         else
-            throw new IllegalStateException("No results");
+            throw new NoResultException("No results");
     }
 
     @Override

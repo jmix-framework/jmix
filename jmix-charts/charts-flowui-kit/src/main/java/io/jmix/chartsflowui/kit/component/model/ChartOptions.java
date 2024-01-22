@@ -36,6 +36,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Basic chart options.
+ */
 public class ChartOptions extends ChartObservableObject {
 
     protected Title title;
@@ -589,6 +592,9 @@ public class ChartOptions extends ChartObservableObject {
         return super.isDirtyInDepth();
     }
 
+    /**
+     * State switching animation configurations. Can be configured in each series individually.
+     */
     public static class StateAnimation extends ChartObservableObject {
 
         protected Integer duration;
@@ -624,6 +630,11 @@ public class ChartOptions extends ChartObservableObject {
         }
     }
 
+    /**
+     * Type of compositing operation to apply when drawing a new shape.
+     *
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation">CanvasRenderingContext2D.globalCompositeOperation [MDN]</a>
+     */
     public enum BlendMode implements HasEnumId {
         SOURCE_OVER("source-over"),
         SOURCE_IN("source-in"),

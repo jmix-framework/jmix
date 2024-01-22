@@ -22,6 +22,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
+/**
+ * Base class for all chart options objects that are to be serialized.
+ * If an object changes, then {@link ObjectChangeEvent} is transmitted up the tree to the chart options.
+ */
 public abstract class ChartObservableObject implements Serializable {
 
     protected Set<ChartObservableObject> children = new LinkedHashSet<>();

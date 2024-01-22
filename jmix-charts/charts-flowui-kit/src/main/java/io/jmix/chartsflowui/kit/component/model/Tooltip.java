@@ -20,6 +20,12 @@ import io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip;
 import io.jmix.chartsflowui.kit.component.model.shared.TriggerOnMode;
 import jakarta.annotation.Nullable;
 
+/**
+ * Tooltip component. Used to display some contextual information.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#tooltip">Tooltip documentation</a>
+ */
 public class Tooltip extends AbstractTooltip<Tooltip> {
 
     protected Boolean showContent;
@@ -46,6 +52,9 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
 
     protected OrderType order;
 
+    /**
+     * Render mode for tooltip.
+     */
     public enum RenderMode implements HasEnumId {
         HTML("html"),
         RICH_TEXT("richText");
@@ -73,6 +82,9 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         }
     }
 
+    /**
+     * Tooltip order for multiple series.
+     */
     public enum OrderType implements HasEnumId {
         SERIES_ASC("seriesAsc"),
         SERIES_DESC("seriesDesc"),

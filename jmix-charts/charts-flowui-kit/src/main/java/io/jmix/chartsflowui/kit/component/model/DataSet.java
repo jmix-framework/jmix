@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model;
 
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.chartsflowui.kit.component.model.series.GaugeSeries;
 import io.jmix.chartsflowui.kit.data.chart.ChartItems;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
 import jakarta.annotation.Nullable;
@@ -29,6 +30,14 @@ import java.util.Objects;
 import static io.jmix.chartsflowui.kit.component.ChartUpdateUtil.requestIncrementalUpdateChartDataSet;
 import static io.jmix.chartsflowui.kit.component.ChartUpdateUtil.requestUpdateChartDataSet;
 
+/**
+ * DataSet component is the recommended way to provide data to a chart. All series added to the chart
+ * will use the data set. The only series that requires its own data set is the {@link GaugeSeries}.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#dataset">DataSet documentation</a>
+ * @see <a href="https://echarts.apache.org/handbook/en/concepts/dataset/">DataSet concept tutorial</a>
+ */
 public class DataSet extends ChartDataObservableObject {
 
     protected String id;
@@ -82,6 +91,23 @@ public class DataSet extends ChartDataObservableObject {
         }
     }
 
+    /**
+     * Source data. May be associated with a data container or another provided data provider.
+     * Serialized only in row based key-value format (object array), where the keys indicate category field.<br/>
+     * Serialization example:
+     * <pre>{@code
+     * [
+     *     // {category field}, {value field #1}, {value field #2}
+     *     {"product": "Matcha Latte", "count": 823, "score": 95.8},
+     *     {"product": "Milk Tea", "count": 235, "score": 81.4},
+     *     {"product": "Cheese Cocoa", "count": 1042, "score": 91.2},
+     *     {"product": "Walnut Brownie", "count": 988, "score": 76.9}
+     * ]
+     * }</pre>
+     *
+     * @param <T> data item class type
+     * @see ChartItems
+     */
     public static class Source<T extends DataItem> extends ChartDataObservableObject {
 
         protected DataProvider<T, ?> dataProvider;
@@ -114,7 +140,8 @@ public class DataSet extends ChartDataObservableObject {
 
             if (dataProvider instanceof ChartItems) {
                 ChartItems<T> chartItems = (ChartItems<T>) dataProvider;
-                dataProviderItemSetChangeRegistration = chartItems.addItemSetChangeListener(this::onItemSetChangeListener);
+                dataProviderItemSetChangeRegistration =
+                        chartItems.addItemSetChangeListener(this::onItemSetChangeListener);
             }
         }
 

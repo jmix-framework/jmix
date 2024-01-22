@@ -17,9 +17,21 @@
 
 package io.jmix.chartsflowui.kit.component.model;
 
+import io.jmix.chartsflowui.kit.component.model.series.BarSeries;
+import io.jmix.chartsflowui.kit.component.model.series.EffectScatterSeries;
+import io.jmix.chartsflowui.kit.component.model.series.LineSeries;
+import io.jmix.chartsflowui.kit.component.model.series.ScatterSeries;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.InnerTooltip;
 
+/**
+ * Grid component is used to drawing grid in rectangular coordinate. In a single grid, at most
+ * two X and Y axes each is allowed. {@link LineSeries}, {@link BarSeries},
+ * and {@link ScatterSeries}({@link EffectScatterSeries}) can be drawn in the grid.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#grid">Grid documentation</a>
+ */
 public class Grid extends ChartObservableObject
         implements HasPosition<Grid>, HasShadow<Grid> {
 

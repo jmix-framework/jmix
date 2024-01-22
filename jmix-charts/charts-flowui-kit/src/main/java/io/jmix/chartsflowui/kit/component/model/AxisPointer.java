@@ -19,6 +19,12 @@ package io.jmix.chartsflowui.kit.component.model;
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer;
 import io.jmix.chartsflowui.kit.component.model.shared.TriggerOnMode;
 
+/**
+ * The global option for {@code axisPointer}. AxisPointer is a tool for displaying
+ * reference line and axis value under mouse pointer. More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#axisPointer">AxisPointer documentation</a>
+ */
 public class AxisPointer extends AbstractAxisPointer<AxisPointer> {
 
     protected String id;

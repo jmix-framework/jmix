@@ -20,6 +20,11 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * The base class for tooltip components.
+ *
+ * @param <T> origin tooltip type
+ */
 public abstract class AbstractTooltip<T extends ChartObservableObject> extends ChartObservableObject
         implements HasPadding<T> {
 

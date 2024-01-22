@@ -18,32 +18,76 @@ package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 
+/**
+ * A component that has border.
+ *
+ * @param <T> origin class type
+ */
 public interface HasBorder<T> {
 
+    /**
+     * @return border color
+     */
     Color getBorderColor();
 
+    /**
+     * Sets a border color or replaces existing one.
+     *
+     * @param borderColor color to set
+     */
     void setBorderColor(Color borderColor);
 
+    /**
+     * @param borderColor color to set
+     * @return this
+     * @see HasBorder#setBorderColor(Color)
+     */
     @SuppressWarnings("unchecked")
     default T withBorderColor(Color borderColor) {
         setBorderColor(borderColor);
         return (T) this;
     }
 
+    /**
+     * @return border width in pixels
+     */
     Integer getBorderWidth();
 
+    /**
+     * Sets a border width or replaces existing one.
+     *
+     * @param borderWidth border width in pixels
+     */
     void setBorderWidth(Integer borderWidth);
 
+    /**
+     * @param borderWidth border width in pixels
+     * @return this
+     * @see HasBorder#setBorderWidth(Integer)
+     */
     @SuppressWarnings("unchecked")
     default T withBorderWidth(Integer borderWidth) {
         setBorderWidth(borderWidth);
         return (T) this;
     }
 
+    /**
+     * @return border radius of the text fragment
+     */
     Integer getBorderRadius();
 
+    /**
+     * Sets a border radius of the text fragment or replaces existing one.
+     *
+     * @param borderRadius border radius to set in pixels
+     */
     void setBorderRadius(Integer borderRadius);
 
+    /**
+     * @param borderRadius border radius to set in pixels
+     * @return this
+     * @see HasBorder#setBorderRadius(Integer)
+     */
     @SuppressWarnings("unchecked")
     default T withBorderRadius(Integer borderRadius) {
         setBorderRadius(borderRadius);

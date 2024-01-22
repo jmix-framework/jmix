@@ -451,7 +451,7 @@ public class JmixChart extends Component implements HasSize {
 
     /**
      * Sets a {@link DataSet} to the chart options or replaces existing one.
-     * Data set is the main data provider for the chart. All series added to the chat will use the data set.
+     * Data set is the main data provider for the chart. All series added to the chart will use the data set.
      * The only series that requires its own data set is the {@link GaugeSeries}.
      *
      * @param dataSet data set to set

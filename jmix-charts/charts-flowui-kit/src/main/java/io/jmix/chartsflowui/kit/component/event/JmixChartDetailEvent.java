@@ -17,8 +17,10 @@
 package io.jmix.chartsflowui.kit.component.event;
 
 import elemental.json.JsonArray;
+import elemental.json.JsonNull;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
+import elemental.json.impl.JreJsonNull;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.*;
@@ -153,20 +155,32 @@ public interface JmixChartDetailEvent<T> {
 
     default void convertClassFields(Object instance, JsonObject source, Class<?> ownerClazz) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
         List<Field> fields = getAllFields(ownerClazz);
+        JsonNull jsonNull = new JreJsonNull();
         for (Field field : fields) {
-            switch (getFieldClassName(field)) {
-                case "String", "Long", "Integer", "Boolean" -> convertPrimitiveField(field, source, instance, ownerClazz);
-                case "List" -> {
-                    Method getter = source.getClass().getMethod("getArray", String.class);
-                    JsonArray fieldValue = (JsonArray) getter.invoke(source, field.getName());
-                    convertList(field, fieldValue, instance, ownerClazz);
+            Method checker = source.getClass().getMethod("get", String.class);
+            JsonValue value = (JsonValue) checker.invoke(source, field.getName());
+            if (value != null && !value.jsEquals(jsonNull)) {
+                switch (getFieldClassName(field)) {
+                    case "String", "Long", "Integer", "Boolean" ->
+                            convertPrimitiveField(field, source, instance, ownerClazz);
+                    case "List" -> {
+                        Method getter = source.getClass().getMethod("getArray", String.class);
+                        Object result = getter.invoke(source, field.getName());
+                        if (result instanceof JsonArray) {
+                            JsonArray fieldValue = (JsonArray) result;
+                            convertList(field, fieldValue, instance, ownerClazz);
+                        }
+                    }
+                    case "Map" -> {
+                        Method getter = source.getClass().getMethod("getObject", String.class);
+                        Object result = (JsonObject) getter.invoke(source, field.getName());
+                        if (result instanceof JsonObject) {
+                            JsonObject fieldValue = (JsonObject) result;
+                            convertMsp(field, fieldValue, instance, ownerClazz);
+                        }
+                    }
+                    default -> convertClass(field, source, instance, ownerClazz);
                 }
-                case "Map" -> {
-                    Method getter = source.getClass().getMethod("getObject", String.class);
-                    JsonObject fieldValue = (JsonObject) getter.invoke(source, field.getName());
-                    convertMsp(field, fieldValue, instance, ownerClazz);
-                }
-                default -> convertClass(field, source, instance, ownerClazz);
             }
         }
     }

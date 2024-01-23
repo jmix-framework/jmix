@@ -10,5 +10,6 @@
     "intField": 15,
     "boolField": false,
     "longField": 18,
-  }
+  },
+  "nullField": null,
 }

@@ -17,7 +17,13 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 
+import java.util.List;
+
 public class JmixChartDataZoomEventDetail extends JmixChartEventDetail {
+
+    private String dataZoomId;
+
+    private String from;
 
     private Integer start;
 
@@ -26,6 +32,32 @@ public class JmixChartDataZoomEventDetail extends JmixChartEventDetail {
     private Integer startValue;
 
     private Integer endValue;
+
+    private List<JmixChartDataZoomEventDetail> batch;
+
+    public String getDataZoomId() {
+        return dataZoomId;
+    }
+
+    public void setDataZoomId(String dataZoomId) {
+        this.dataZoomId = dataZoomId;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public List<JmixChartDataZoomEventDetail> getBatch() {
+        return batch;
+    }
+
+    public void setBatch(List<JmixChartDataZoomEventDetail> batch) {
+        this.batch = batch;
+    }
 
     public Integer getStart() {
         return start;

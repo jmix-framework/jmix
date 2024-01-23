@@ -11,6 +11,8 @@ public class JmixChartTestEventDetail extends JmixChartEventDetail {
 
     private TestDTO testDTO;
 
+    private String nullField;
+
     public Map<String, String> getTestMap() {
         return testMap;
     }
@@ -33,5 +35,13 @@ public class JmixChartTestEventDetail extends JmixChartEventDetail {
 
     public void setTestDTO(TestDTO testDTO) {
         this.testDTO = testDTO;
+    }
+
+    public String getNullField() {
+        return nullField;
+    }
+
+    public void setNullField(String nullField) {
+        this.nullField = nullField;
     }
 }

@@ -20,11 +20,11 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixDataZoomEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixChartDataZoomEventDetail;
 
 
 @DomEvent(JmixChartDataZoomEvent.EVENT_NAME)
-public class JmixChartDataZoomEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixDataZoomEventDetail> {
+public class JmixChartDataZoomEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartDataZoomEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "datazoom";
 

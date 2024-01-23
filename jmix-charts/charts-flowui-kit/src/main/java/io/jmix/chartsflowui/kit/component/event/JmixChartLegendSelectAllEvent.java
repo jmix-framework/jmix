@@ -20,11 +20,11 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixLegendSelectAllEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixChartLegendSelectAllEventDetail;
 
 
 @DomEvent(JmixChartLegendSelectAllEvent.EVENT_NAME)
-public class JmixChartLegendSelectAllEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixLegendSelectAllEventDetail> {
+public class JmixChartLegendSelectAllEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartLegendSelectAllEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "legendselectall";
 

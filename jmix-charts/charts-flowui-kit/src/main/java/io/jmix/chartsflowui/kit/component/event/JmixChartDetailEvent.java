@@ -42,23 +42,24 @@ public interface JmixChartDetailEvent<T> {
     }
 
     default String getFieldClassName(Field field) {
-        return field.getType().getName().replace(field.getType().getPackageName() + ".", "");
+        return getFieldClassName(field.getType());
+    }
+
+    default String getFieldClassName(Class type) {
+        return type.getName().replace(type.getPackageName() + ".", "");
     }
 
     default String getFieldGetterName(String fieldClassName) {
         return switch (fieldClassName) {
             case "Long", "Integer", "Double" -> "Number";
+            case "Boolean" -> "Boolean";
             default -> "String";
         };
     }
 
     default void convertPrimitiveField(Field field, JsonObject source, Object target, Class<?> ownerClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String fieldClassName = getFieldClassName(field);
-        String fieldGetterName = switch (fieldClassName) {
-            case "Long", "Integer", "Double" -> "Number";
-            case "Boolean" -> "Boolean";
-            default -> "String";
-        };
+        String fieldGetterName = getFieldGetterName(fieldClassName);
         if (source.hasKey(field.getName())) {
             Method getter = source.getClass().getMethod("get" + fieldGetterName, String.class);
             Object value = getter.invoke(source, field.getName());
@@ -84,6 +85,10 @@ public interface JmixChartDetailEvent<T> {
         setter.invoke(target, instance);
         String fieldClassName = getFieldClassName(field);
         String fieldGetterName = getFieldGetterName(fieldClassName);
+        if (genericType != null) {
+            fieldClassName = getFieldClassName(genericType);
+            fieldGetterName = getFieldGetterName(fieldClassName);
+        }
         for (int i = 0; i < source.length(); i++) {
             if (source.get(i) instanceof JsonObject && genericType != null) {
                 Object listItem = genericType.getConstructor().newInstance();
@@ -108,6 +113,10 @@ public interface JmixChartDetailEvent<T> {
         setter.invoke(target, instance);
         String fieldClassName = getFieldClassName(field);
         String fieldGetterName = getFieldGetterName(fieldClassName);
+        if (genericType != null) {
+            fieldClassName = getFieldClassName(genericType);
+            fieldGetterName = getFieldGetterName(fieldClassName);
+        }
         for (String key: source.keys()) {
             if (source.get(key) instanceof JsonObject && genericType != null) {
                 Object listItem = genericType.getConstructor().newInstance();

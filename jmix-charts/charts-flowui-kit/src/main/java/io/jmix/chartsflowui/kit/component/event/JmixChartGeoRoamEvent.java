@@ -20,11 +20,11 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixGeoRoamEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixChartGeoRoamEventDetail;
 
 
 @DomEvent(JmixChartGeoRoamEvent.EVENT_NAME)
-public class JmixChartGeoRoamEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixGeoRoamEventDetail> {
+public class JmixChartGeoRoamEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartGeoRoamEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "georoam";
 

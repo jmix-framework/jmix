@@ -20,11 +20,11 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixGlobalOutEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixChartGlobalOutEventDetail;
 
 
 @DomEvent(JmixChartGlobalOutEvent.EVENT_NAME)
-public class JmixChartGlobalOutEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixGlobalOutEventDetail> {
+public class JmixChartGlobalOutEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixChartGlobalOutEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "globalout";
 

@@ -20,10 +20,10 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixMouseDownEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixChartMouseDownEventDetail;
 
 @DomEvent(JmixChartMouseDownEvent.EVENT_NAME)
-public class JmixChartMouseDownEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixMouseDownEventDetail> {
+public class JmixChartMouseDownEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixChartMouseDownEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "mousedown";
 

@@ -20,11 +20,11 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixDataViewChangedEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixChartDataViewChangedEventDetail;
 
 
 @DomEvent(JmixChartDataViewChangedEvent.EVENT_NAME)
-public class JmixChartDataViewChangedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixDataViewChangedEventDetail> {
+public class JmixChartDataViewChangedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartDataViewChangedEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "dataviewchanged";
 

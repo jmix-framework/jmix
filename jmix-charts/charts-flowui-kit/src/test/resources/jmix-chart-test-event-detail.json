@@ -1,0 +1,14 @@
+{
+  "type": "test",
+  "testMap": {
+    "foo": "bar",
+    "baz": "bark",
+  },
+  "numbers": [2, 4, 18, 9, 10, 112],
+  "testDTO": {
+    "strField": "Hello",
+    "intField": 15,
+    "boolField": false,
+    "longField": 18,
+  }
+}

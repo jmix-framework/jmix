@@ -20,10 +20,10 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixTimelinePlayChangedEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixChartTimelinePlayChangedEventDetail;
 
 @DomEvent(JmixChartTimelinePlayChangedEvent.EVENT_NAME)
-public class JmixChartTimelinePlayChangedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixTimelinePlayChangedEventDetail> {
+public class JmixChartTimelinePlayChangedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartTimelinePlayChangedEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "timelineplaychanged";
 

@@ -20,12 +20,11 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixAxisAreaSelectedEventDetail;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixBrushEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixChartBrushEventDetail;
 
 
 @DomEvent(JmixChartBrushEvent.EVENT_NAME)
-public class JmixChartBrushEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixBrushEventDetail> {
+public class JmixChartBrushEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartBrushEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "brush";
 

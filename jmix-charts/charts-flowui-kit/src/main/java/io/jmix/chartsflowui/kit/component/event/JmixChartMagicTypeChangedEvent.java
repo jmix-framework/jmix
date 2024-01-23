@@ -20,11 +20,11 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixMagicTypeChangedEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixChartMagicTypeChangedEventDetail;
 
 
 @DomEvent(JmixChartMagicTypeChangedEvent.EVENT_NAME)
-public class JmixChartMagicTypeChangedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixMagicTypeChangedEventDetail> {
+public class JmixChartMagicTypeChangedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartMagicTypeChangedEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "magictypechanged";
 

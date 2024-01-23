@@ -25,8 +25,11 @@ import java.lang.reflect.*;
 import java.util.*;
 
 public interface JmixChartDetailEvent<T> {
+
     JsonObject getDetailJson();
+
     Object getDetail();
+
     void setDetail(Object detailObject);
 
     @SuppressWarnings("unchecked")
@@ -53,6 +56,7 @@ public interface JmixChartDetailEvent<T> {
         String fieldClassName = getFieldClassName(field);
         String fieldGetterName = switch (fieldClassName) {
             case "Long", "Integer", "Double" -> "Number";
+            case "Boolean" -> "Boolean";
             default -> "String";
         };
         if (source.hasKey(field.getName())) {
@@ -142,7 +146,7 @@ public interface JmixChartDetailEvent<T> {
         List<Field> fields = getAllFields(ownerClazz);
         for (Field field : fields) {
             switch (getFieldClassName(field)) {
-                case "String", "Long", "Integer" -> convertPrimitiveField(field, source, instance, ownerClazz);
+                case "String", "Long", "Integer", "Boolean" -> convertPrimitiveField(field, source, instance, ownerClazz);
                 case "List" -> {
                     Method getter = source.getClass().getMethod("getArray", String.class);
                     JsonArray fieldValue = (JsonArray) getter.invoke(source, field.getName());

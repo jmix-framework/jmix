@@ -24,7 +24,7 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixGlobalOutEventDetail;
 
 
 @DomEvent(JmixChartGlobalOutEvent.EVENT_NAME)
-public class JmixChartGlobalOutEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixGlobalOutEventDetail>  {
+public class JmixChartGlobalOutEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixGlobalOutEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "globalout";
 

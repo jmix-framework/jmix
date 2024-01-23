@@ -20,10 +20,12 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixMouseOutEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixSelectChangedEventDetail;
 
 
 @DomEvent(JmixChartSelectChangedEvent.EVENT_NAME)
-public class JmixChartSelectChangedEvent extends JmixChartEvent {
+public class JmixChartSelectChangedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixSelectChangedEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "selectchanged";
 

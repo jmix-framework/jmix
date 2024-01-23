@@ -20,10 +20,11 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixGlobalCursorTakenEventDetail;
 
 
 @DomEvent(JmixChartGlobalCursorTakenEvent.EVENT_NAME)
-public class JmixChartGlobalCursorTakenEvent extends JmixChartEvent {
+public class JmixChartGlobalCursorTakenEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixGlobalCursorTakenEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "globalcursortaken";
 

@@ -20,10 +20,11 @@ import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
+import io.jmix.chartsflowui.kit.component.event.dto.JmixGraphRoamEventDetail;
 
 
 @DomEvent(JmixChartGraphRoamEvent.EVENT_NAME)
-public class JmixChartGraphRoamEvent extends JmixChartEvent {
+public class JmixChartGraphRoamEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixGraphRoamEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "graphroam";
 

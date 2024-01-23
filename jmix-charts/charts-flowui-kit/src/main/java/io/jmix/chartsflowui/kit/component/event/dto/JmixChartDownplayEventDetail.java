@@ -17,6 +17,17 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 
-public class JmixChartDownplayEventDetail extends JmixChartEventDetail {
+import java.util.List;
 
+public class JmixChartDownplayEventDetail extends JmixChartDataEventDetail {
+
+    private List<JmixChartDownplayEventDetail> batch;
+
+    public List<JmixChartDownplayEventDetail> getBatch() {
+        return batch;
+    }
+
+    public void setBatch(List<JmixChartDownplayEventDetail> batch) {
+        this.batch = batch;
+    }
 }

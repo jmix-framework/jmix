@@ -17,6 +17,15 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 
-public class JmixChartRenderedEventDetail extends JmixChartEventDetail {
+public class JmixChartRenderedEventDetail {
 
+    private Double elapsedTime;
+
+    public Double getElapsedTime() {
+        return elapsedTime;
+    }
+
+    public void setElapsedTime(Double elapsedTime) {
+        this.elapsedTime = elapsedTime;
+    }
 }

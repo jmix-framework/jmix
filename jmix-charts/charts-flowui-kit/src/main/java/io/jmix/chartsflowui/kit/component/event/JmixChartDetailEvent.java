@@ -161,7 +161,7 @@ public interface JmixChartDetailEvent<T> {
             JsonValue value = (JsonValue) checker.invoke(source, field.getName());
             if (value != null && !value.jsEquals(jsonNull)) {
                 switch (getFieldClassName(field)) {
-                    case "String", "Long", "Integer", "Boolean" ->
+                    case "String", "Long", "Integer", "Boolean", "Double" ->
                             convertPrimitiveField(field, source, instance, ownerClazz);
                     case "List" -> {
                         Method getter = source.getClass().getMethod("getArray", String.class);

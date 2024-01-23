@@ -93,157 +93,162 @@ public class JmixChart extends Component implements HasSize {
         };
     }
 
-    public Registration addSingleClickListener(ComponentEventListener<JmixChartClickEvent> listener) {
+    public Registration addClickEventListener(ComponentEventListener<JmixChartClickEvent> listener) {
         eventRegistrations.put(JmixChartClickEvent.EVENT_NAME, getEventBus().addListener(JmixChartClickEvent.class, listener));
         return getRemovalCallback(JmixChartClickEvent.EVENT_NAME, JmixChartClickEvent.class);
 
     }
 
-    public Registration addDoubleClickListener(ComponentEventListener<JmixChartDoubleClickEvent> listener) {
+    public Registration addDoubleClickEventListener(ComponentEventListener<JmixChartDoubleClickEvent> listener) {
         eventRegistrations.put(JmixChartDoubleClickEvent.EVENT_NAME, getEventBus().addListener(JmixChartDoubleClickEvent.class, listener));
         return getRemovalCallback(JmixChartDoubleClickEvent.EVENT_NAME, JmixChartDoubleClickEvent.class);
     }
 
-    public Registration addMouseDownListener(ComponentEventListener<JmixChartMouseDownEvent> listener) {
+    public Registration addMouseDownEventListener(ComponentEventListener<JmixChartMouseDownEvent> listener) {
         eventRegistrations.put(JmixChartMouseDownEvent.EVENT_NAME, getEventBus().addListener(JmixChartMouseDownEvent.class, listener));
         return getRemovalCallback(JmixChartMouseDownEvent.EVENT_NAME, JmixChartMouseDownEvent.class);
     }
 
-    public Registration addMouseOutListener(ComponentEventListener<JmixChartMouseOutEvent> listener) {
+    public Registration addMouseMoveEventListener(ComponentEventListener<JmixChartMouseMoveEvent> listener) {
+        eventRegistrations.put(JmixChartMouseMoveEvent.EVENT_NAME, getEventBus().addListener(JmixChartMouseMoveEvent.class, listener));
+        return getRemovalCallback(JmixChartMouseMoveEvent.EVENT_NAME, JmixChartMouseMoveEvent.class);
+    }
+
+    public Registration addMouseOutEventListener(ComponentEventListener<JmixChartMouseOutEvent> listener) {
         eventRegistrations.put(JmixChartMouseOutEvent.EVENT_NAME, getEventBus().addListener(JmixChartMouseOutEvent.class, listener));
         return getRemovalCallback(JmixChartMouseOutEvent.EVENT_NAME, JmixChartMouseOutEvent.class);
     }
 
-    public Registration addMouseOverListener(ComponentEventListener<JmixChartMouseOverEvent> listener) {
+    public Registration addMouseOverEventListener(ComponentEventListener<JmixChartMouseOverEvent> listener) {
         eventRegistrations.put(JmixChartMouseOverEvent.EVENT_NAME, getEventBus().addListener(JmixChartMouseOverEvent.class, listener));
         return getRemovalCallback(JmixChartMouseOverEvent.EVENT_NAME, JmixChartMouseOverEvent.class);
     }
 
-    public Registration addMouseUpListener(ComponentEventListener<JmixChartMouseUpEvent> listener) {
+    public Registration addMouseUpEventListener(ComponentEventListener<JmixChartMouseUpEvent> listener) {
         eventRegistrations.put(JmixChartMouseUpEvent.EVENT_NAME, getEventBus().addListener(JmixChartMouseUpEvent.class, listener));
         return getRemovalCallback(JmixChartMouseUpEvent.EVENT_NAME, JmixChartMouseUpEvent.class);
     }
 
-    public Registration addGlobalOutListener(ComponentEventListener<JmixChartGlobalOutEvent> listener) {
+    public Registration addGlobalOutEventListener(ComponentEventListener<JmixChartGlobalOutEvent> listener) {
         eventRegistrations.put(JmixChartMouseOverEvent.EVENT_NAME, getEventBus().addListener(JmixChartGlobalOutEvent.class, listener));
         return getRemovalCallback(JmixChartGlobalOutEvent.EVENT_NAME, JmixChartGlobalOutEvent.class);
     }
 
-    public Registration addHighlightListener(ComponentEventListener<JmixChartHighlightEvent> listener) {
+    public Registration addHighlightEventListener(ComponentEventListener<JmixChartHighlightEvent> listener) {
         eventRegistrations.put(JmixChartHighlightEvent.EVENT_NAME, getEventBus().addListener(JmixChartHighlightEvent.class, listener));
         return getRemovalCallback(JmixChartHighlightEvent.EVENT_NAME, JmixChartHighlightEvent.class);
     }
 
-    public Registration addDownplayListener(ComponentEventListener<JmixChartDownplayEvent> listener) {
+    public Registration addDownplayEventListener(ComponentEventListener<JmixChartDownplayEvent> listener) {
         eventRegistrations.put(JmixChartDownplayEvent.EVENT_NAME, getEventBus().addListener(JmixChartDownplayEvent.class, listener));
         return getRemovalCallback(JmixChartDownplayEvent.EVENT_NAME, JmixChartDownplayEvent.class);
     }
 
-    public Registration addSelectChangedListener(ComponentEventListener<JmixChartSelectChangedEvent> listener) {
+    public Registration addSelectChangedEventListener(ComponentEventListener<JmixChartSelectChangedEvent> listener) {
         eventRegistrations.put(JmixChartSelectChangedEvent.EVENT_NAME, getEventBus().addListener(JmixChartSelectChangedEvent.class, listener));
         return getRemovalCallback(JmixChartSelectChangedEvent.EVENT_NAME, JmixChartSelectChangedEvent.class);
     }
-    public Registration addLegendSelectChangedListener(ComponentEventListener<JmixChartLegendSelectChangedEvent> listener) {
+    public Registration addLegendSelectChangedEventListener(ComponentEventListener<JmixChartLegendSelectChangedEvent> listener) {
         eventRegistrations.put(JmixChartLegendSelectChangedEvent.EVENT_NAME, getEventBus().addListener(JmixChartLegendSelectChangedEvent.class, listener));
         return getRemovalCallback(JmixChartLegendSelectChangedEvent.EVENT_NAME, JmixChartLegendSelectChangedEvent.class);
     }
-    public Registration addLegendSelectctedListener(ComponentEventListener<JmixChartLegendSelectedEvent> listener) {
+    public Registration addLegendSelectctedEventListener(ComponentEventListener<JmixChartLegendSelectedEvent> listener) {
         eventRegistrations.put(JmixChartLegendSelectedEvent.EVENT_NAME, getEventBus().addListener(JmixChartLegendSelectedEvent.class, listener));
         return getRemovalCallback(JmixChartLegendSelectedEvent.EVENT_NAME, JmixChartLegendSelectedEvent.class);
     }
-    public Registration addLegendUnselectctedListener(ComponentEventListener<JmixChartLegendUnselectedEvent> listener) {
+    public Registration addLegendUnselectctedEventListener(ComponentEventListener<JmixChartLegendUnselectedEvent> listener) {
         eventRegistrations.put(JmixChartLegendUnselectedEvent.EVENT_NAME, getEventBus().addListener(JmixChartLegendUnselectedEvent.class, listener));
         return getRemovalCallback(JmixChartLegendUnselectedEvent.EVENT_NAME, JmixChartLegendUnselectedEvent.class);
     }
-    public Registration addLegendSelectctAllListener(ComponentEventListener<JmixChartLegendSelectAllEvent> listener) {
+    public Registration addLegendSelectctAllEventListener(ComponentEventListener<JmixChartLegendSelectAllEvent> listener) {
         eventRegistrations.put(JmixChartLegendSelectAllEvent.EVENT_NAME, getEventBus().addListener(JmixChartLegendSelectAllEvent.class, listener));
         return getRemovalCallback(JmixChartLegendSelectAllEvent.EVENT_NAME, JmixChartLegendSelectAllEvent.class);
     }
-    public Registration addLegendInverseDelectListener(ComponentEventListener<JmixChartLegendInverseSelectEvent> listener) {
+    public Registration addLegendInverseDelectEventListener(ComponentEventListener<JmixChartLegendInverseSelectEvent> listener) {
         eventRegistrations.put(JmixChartLegendInverseSelectEvent.EVENT_NAME, getEventBus().addListener(JmixChartLegendInverseSelectEvent.class, listener));
         return getRemovalCallback(JmixChartLegendInverseSelectEvent.EVENT_NAME, JmixChartLegendInverseSelectEvent.class);
     }
-    public Registration addLegendScrollListener(ComponentEventListener<JmixChartLegendScrollEvent> listener) {
+    public Registration addLegendScrollEventListener(ComponentEventListener<JmixChartLegendScrollEvent> listener) {
         eventRegistrations.put(JmixChartLegendScrollEvent.EVENT_NAME, getEventBus().addListener(JmixChartLegendScrollEvent.class, listener));
         return getRemovalCallback(JmixChartLegendScrollEvent.EVENT_NAME, JmixChartLegendScrollEvent.class);
     }
-    public Registration addDataZoomListener(ComponentEventListener<JmixChartDataZoomEvent> listener) {
+    public Registration addDataZoomEventListener(ComponentEventListener<JmixChartDataZoomEvent> listener) {
         eventRegistrations.put(JmixChartDataZoomEvent.EVENT_NAME, getEventBus().addListener(JmixChartDataZoomEvent.class, listener));
         return getRemovalCallback(JmixChartDataZoomEvent.EVENT_NAME, JmixChartDataZoomEvent.class);
     }
-    public Registration addDataRangeSelectedListener(ComponentEventListener<JmixChartDataRangeSelectedEvent> listener) {
+    public Registration addDataRangeSelectedEventListener(ComponentEventListener<JmixChartDataRangeSelectedEvent> listener) {
         eventRegistrations.put(JmixChartDataRangeSelectedEvent.EVENT_NAME, getEventBus().addListener(JmixChartDataRangeSelectedEvent.class, listener));
         return getRemovalCallback(JmixChartDataRangeSelectedEvent.EVENT_NAME, JmixChartDataRangeSelectedEvent.class);
     }
-    public Registration addGraphRoamListener(ComponentEventListener<JmixChartGraphRoamEvent> listener) {
+    public Registration addGraphRoamEventListener(ComponentEventListener<JmixChartGraphRoamEvent> listener) {
         eventRegistrations.put(JmixChartGraphRoamEvent.EVENT_NAME, getEventBus().addListener(JmixChartGraphRoamEvent.class, listener));
         return getRemovalCallback(JmixChartGraphRoamEvent.EVENT_NAME, JmixChartGraphRoamEvent.class);
     }
-    public Registration addGeoRoamListener(ComponentEventListener<JmixChartGeoRoamEvent> listener) {
+    public Registration addGeoRoamEventListener(ComponentEventListener<JmixChartGeoRoamEvent> listener) {
         eventRegistrations.put(JmixChartGeoRoamEvent.EVENT_NAME, getEventBus().addListener(JmixChartGeoRoamEvent.class, listener));
         return getRemovalCallback(JmixChartGeoRoamEvent.EVENT_NAME, JmixChartGeoRoamEvent.class);
     }
-    public Registration addTreeRoamListener(ComponentEventListener<JmixChartTreeRoamEvent> listener) {
+    public Registration addTreeRoamEventListener(ComponentEventListener<JmixChartTreeRoamEvent> listener) {
         eventRegistrations.put(JmixChartTreeRoamEvent.EVENT_NAME, getEventBus().addListener(JmixChartTreeRoamEvent.class, listener));
         return getRemovalCallback(JmixChartTreeRoamEvent.EVENT_NAME, JmixChartTreeRoamEvent.class);
     }
-    public Registration addTimelineChangedListener(ComponentEventListener<JmixChartTimelineChangedEvent> listener) {
+    public Registration addTimelineChangedEventListener(ComponentEventListener<JmixChartTimelineChangedEvent> listener) {
         eventRegistrations.put(JmixChartTimelineChangedEvent.EVENT_NAME, getEventBus().addListener(JmixChartTimelineChangedEvent.class, listener));
         return getRemovalCallback(JmixChartTimelineChangedEvent.EVENT_NAME, JmixChartTimelineChangedEvent.class);
     }
-    public Registration addTimelinePlauChangedListener(ComponentEventListener<JmixChartTimelinePlayChangedEvent> listener) {
+    public Registration addTimelinePlayChangedEventListener(ComponentEventListener<JmixChartTimelinePlayChangedEvent> listener) {
         eventRegistrations.put(JmixChartTimelinePlayChangedEvent.EVENT_NAME, getEventBus().addListener(JmixChartTimelinePlayChangedEvent.class, listener));
         return getRemovalCallback(JmixChartTimelinePlayChangedEvent.EVENT_NAME, JmixChartTimelinePlayChangedEvent.class);
     }
-    public Registration addRestoreListener(ComponentEventListener<JmixChartRestoreEvent> listener) {
+    public Registration addRestoreEventListener(ComponentEventListener<JmixChartRestoreEvent> listener) {
         eventRegistrations.put(JmixChartRestoreEvent.EVENT_NAME, getEventBus().addListener(JmixChartRestoreEvent.class, listener));
         return getRemovalCallback(JmixChartRestoreEvent.EVENT_NAME, JmixChartRestoreEvent.class);
     }
-    public Registration addDataViewChangedListener(ComponentEventListener<JmixChartDataViewChangedEvent> listener) {
+    public Registration addDataViewChangedEventListener(ComponentEventListener<JmixChartDataViewChangedEvent> listener) {
         eventRegistrations.put(JmixChartDataViewChangedEvent.EVENT_NAME, getEventBus().addListener(JmixChartDataViewChangedEvent.class, listener));
         return getRemovalCallback(JmixChartDataViewChangedEvent.EVENT_NAME, JmixChartDataViewChangedEvent.class);
     }
-    public Registration addMagicTypeChangedListener(ComponentEventListener<JmixChartMagicTypeChangedEvent> listener) {
+    public Registration addMagicTypeChangedEventListener(ComponentEventListener<JmixChartMagicTypeChangedEvent> listener) {
         eventRegistrations.put(JmixChartMagicTypeChangedEvent.EVENT_NAME, getEventBus().addListener(JmixChartMagicTypeChangedEvent.class, listener));
         return getRemovalCallback(JmixChartMagicTypeChangedEvent.EVENT_NAME, JmixChartMagicTypeChangedEvent.class);
     }
-    public Registration addGeoSelectChangedListener(ComponentEventListener<JmixChartGeoSelectChangedEvent> listener) {
+    public Registration addGeoSelectChangedEventListener(ComponentEventListener<JmixChartGeoSelectChangedEvent> listener) {
         eventRegistrations.put(JmixChartGeoSelectChangedEvent.EVENT_NAME, getEventBus().addListener(JmixChartGeoSelectChangedEvent.class, listener));
         return getRemovalCallback(JmixChartGeoSelectChangedEvent.EVENT_NAME, JmixChartGeoSelectChangedEvent.class);
     }
-    public Registration addGeoSelectedListener(ComponentEventListener<JmixChartGeoSelectedEvent> listener) {
+    public Registration addGeoSelectedEventListener(ComponentEventListener<JmixChartGeoSelectedEvent> listener) {
         eventRegistrations.put(JmixChartGeoSelectedEvent.EVENT_NAME, getEventBus().addListener(JmixChartGeoSelectedEvent.class, listener));
         return getRemovalCallback(JmixChartGeoSelectedEvent.EVENT_NAME, JmixChartGeoSelectedEvent.class);
     }
-    public Registration addGeoUnselectedListener(ComponentEventListener<JmixChartGeoUnselectedEvent> listener) {
+    public Registration addGeoUnselectedEventListener(ComponentEventListener<JmixChartGeoUnselectedEvent> listener) {
         eventRegistrations.put(JmixChartGeoUnselectedEvent.EVENT_NAME, getEventBus().addListener(JmixChartGeoUnselectedEvent.class, listener));
         return getRemovalCallback(JmixChartGeoUnselectedEvent.EVENT_NAME, JmixChartGeoUnselectedEvent.class);
     }
-    public Registration addAxisAreaSelectedListener(ComponentEventListener<JmixChartAxisAreaSelectedEvent> listener) {
+    public Registration addAxisAreaSelectedEventListener(ComponentEventListener<JmixChartAxisAreaSelectedEvent> listener) {
         eventRegistrations.put(JmixChartAxisAreaSelectedEvent.EVENT_NAME, getEventBus().addListener(JmixChartAxisAreaSelectedEvent.class, listener));
         return getRemovalCallback(JmixChartAxisAreaSelectedEvent.EVENT_NAME, JmixChartAxisAreaSelectedEvent.class);
     }
-    public Registration addBrushListener(ComponentEventListener<JmixChartBrushEvent> listener) {
+    public Registration addBrushEventListener(ComponentEventListener<JmixChartBrushEvent> listener) {
         eventRegistrations.put(JmixChartBrushEvent.EVENT_NAME, getEventBus().addListener(JmixChartBrushEvent.class, listener));
         return getRemovalCallback(JmixChartBrushEvent.EVENT_NAME, JmixChartBrushEvent.class);
     }
-    public Registration addBrushEndListener(ComponentEventListener<JmixChartBrushEndEvent> listener) {
+    public Registration addBrushEndEventListener(ComponentEventListener<JmixChartBrushEndEvent> listener) {
         eventRegistrations.put(JmixChartBrushEndEvent.EVENT_NAME, getEventBus().addListener(JmixChartBrushEndEvent.class, listener));
         return getRemovalCallback(JmixChartBrushEndEvent.EVENT_NAME, JmixChartBrushEndEvent.class);
     }
-    public Registration addBrushSelectedListener(ComponentEventListener<JmixChartBrushSelectedEvent> listener) {
+    public Registration addBrushSelectedEventListener(ComponentEventListener<JmixChartBrushSelectedEvent> listener) {
         eventRegistrations.put(JmixChartBrushSelectedEvent.EVENT_NAME, getEventBus().addListener(JmixChartBrushSelectedEvent.class, listener));
         return getRemovalCallback(JmixChartBrushSelectedEvent.EVENT_NAME, JmixChartBrushSelectedEvent.class);
     }
-    public Registration addGlobalCursorTakendListener(ComponentEventListener<JmixChartGlobalCursorTakenEvent> listener) {
+    public Registration addGlobalCursorTakenEventListener(ComponentEventListener<JmixChartGlobalCursorTakenEvent> listener) {
         eventRegistrations.put(JmixChartGlobalCursorTakenEvent.EVENT_NAME, getEventBus().addListener(JmixChartGlobalCursorTakenEvent.class, listener));
         return getRemovalCallback(JmixChartGlobalCursorTakenEvent.EVENT_NAME, JmixChartGlobalCursorTakenEvent.class);
     }
-    public Registration addRenderedListener(ComponentEventListener<JmixChartRenderedEvent> listener) {
+    public Registration addRenderedEventListener(ComponentEventListener<JmixChartRenderedEvent> listener) {
         eventRegistrations.put(JmixChartRenderedEvent.EVENT_NAME, getEventBus().addListener(JmixChartRenderedEvent.class, listener));
         return getRemovalCallback(JmixChartRenderedEvent.EVENT_NAME, JmixChartRenderedEvent.class);
     }
-    public Registration addFinishedListener(ComponentEventListener<JmixChartFinishedEvent> listener) {
+    public Registration addFinishedEventListener(ComponentEventListener<JmixChartFinishedEvent> listener) {
         eventRegistrations.put(JmixChartFinishedEvent.EVENT_NAME, getEventBus().addListener(JmixChartFinishedEvent.class, listener));
         return getRemovalCallback(JmixChartFinishedEvent.EVENT_NAME, JmixChartFinishedEvent.class);
     }

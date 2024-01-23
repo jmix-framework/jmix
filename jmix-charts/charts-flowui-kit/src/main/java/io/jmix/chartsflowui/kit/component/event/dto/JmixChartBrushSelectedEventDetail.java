@@ -21,13 +21,63 @@ import java.util.List;
 
 public class JmixChartBrushSelectedEventDetail extends JmixChartEventDetail {
 
-    private List<JmixBrushBatch> batch;
+    private String brushId;
 
-    public List<JmixBrushBatch> getBatch() {
+    private Integer brushIndex;
+
+    private String brushName;
+
+    private List<JmixBrushArea> areas;
+
+    private List<JmixBrushSelected> selected;
+
+    private List<JmixChartBrushSelectedEventDetail> batch;
+
+    public String getBrushId() {
+        return brushId;
+    }
+
+    public void setBrushId(String brushId) {
+        this.brushId = brushId;
+    }
+
+    public Integer getBrushIndex() {
+        return brushIndex;
+    }
+
+    public void setBrushIndex(Integer brushIndex) {
+        this.brushIndex = brushIndex;
+    }
+
+    public String getBrushName() {
+        return brushName;
+    }
+
+    public void setBrushName(String brushName) {
+        this.brushName = brushName;
+    }
+
+    public List<JmixBrushArea> getAreas() {
+        return areas;
+    }
+
+    public void setAreas(List<JmixBrushArea> areas) {
+        this.areas = areas;
+    }
+
+    public List<JmixBrushSelected> getSelected() {
+        return selected;
+    }
+
+    public void setSelected(List<JmixBrushSelected> selected) {
+        this.selected = selected;
+    }
+
+    public List<JmixChartBrushSelectedEventDetail> getBatch() {
         return batch;
     }
 
-    public void setBatch(List<JmixBrushBatch> batch) {
+    public void setBatch(List<JmixChartBrushSelectedEventDetail> batch) {
         this.batch = batch;
     }
 }

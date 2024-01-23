@@ -17,6 +17,17 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 
-public class JmixChartHighlightEventDetail extends JmixChartEventDetail {
+import java.util.List;
 
+public class JmixChartHighlightEventDetail extends JmixChartDataEventDetail {
+
+    private List<JmixChartHighlightEventDetail> batch;
+
+    public List<JmixChartHighlightEventDetail> getBatch() {
+        return batch;
+    }
+
+    public void setBatch(List<JmixChartHighlightEventDetail> batch) {
+        this.batch = batch;
+    }
 }

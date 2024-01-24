@@ -16,10 +16,7 @@
 
 package io.jmix.chartsflowui.kit.component.event;
 
-import elemental.json.JsonArray;
-import elemental.json.JsonNull;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
+import elemental.json.*;
 import elemental.json.impl.JreJsonNull;
 import org.apache.commons.lang3.StringUtils;
 
@@ -59,23 +56,39 @@ public interface JmixChartDetailEvent<T> {
         };
     }
 
-    default void convertPrimitiveField(Field field, JsonObject source, Object target, Class<?> ownerClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    default void convertPrimitiveField(Field field, JsonObject source, Object target, Class<?> ownerClazz)
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String fieldClassName = getFieldClassName(field);
         String fieldGetterName = getFieldGetterName(fieldClassName);
         if (source.hasKey(field.getName())) {
-            Method getter = source.getClass().getMethod("get" + fieldGetterName, String.class);
-            Object value = getter.invoke(source, field.getName());
-            Object convertedValue = switch (fieldClassName) {
-                case "Long" -> value.getClass().getMethod("longValue").invoke(value);
-                case "Integer" -> value.getClass().getMethod("intValue").invoke(value);
-                default -> value;
-            };
-            Method setter = ownerClazz.getMethod("set" + StringUtils.capitalize(field.getName()), Class.forName(field.getType().getName()));
-            setter.invoke(target, convertedValue);
+            Method checker = source.getClass().getMethod("get", String.class);
+            JsonValue value = (JsonValue) checker.invoke(source, field.getName());
+            Class<?> reqClazz = Class.forName("elemental.json.Json" + fieldGetterName);
+            if (value != null) {
+                Object convertedValue = null;
+                if (reqClazz.isInstance(value)) {
+                    Method getter = source.getClass().getMethod("get" + fieldGetterName, String.class);
+                    Object typedValue = getter.invoke(source, field.getName());
+                    convertedValue = switch (fieldClassName) {
+                        case "Long" -> typedValue.getClass().getMethod("longValue").invoke(typedValue);
+                        case "Integer" -> typedValue.getClass().getMethod("intValue").invoke(typedValue);
+                        default -> typedValue;
+                    };
+                } else if ("String".equals(fieldClassName)) {
+                    if (value instanceof JsonNumber) {
+                        convertedValue = value.asString();
+                    } else if (value instanceof JsonObject || value instanceof JsonArray) {
+                        convertedValue = value.toJson();
+                    }
+                }
+                Method setter = ownerClazz.getMethod("set" + StringUtils.capitalize(field.getName()), Class.forName(field.getType().getName()));
+                setter.invoke(target, convertedValue);
+            }
         }
     }
 
-    default void convertList(Field field, JsonArray source, Object target, Class<?> ownerClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    default void convertList(Field field, JsonArray source, Object target, Class<?> ownerClazz)
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
         Type type = field.getGenericType();
         Class<?> genericType = null;
         if (type instanceof ParameterizedType pt) {
@@ -103,7 +116,8 @@ public interface JmixChartDetailEvent<T> {
         }
     }
 
-    default void convertMsp(Field field, JsonObject source, Object target, Class<?> ownerClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    default void convertMap(Field field, JsonObject source, Object target, Class<?> ownerClazz)
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
         Type type = field.getGenericType();
         Class<?> genericType = null;
         if (type instanceof ParameterizedType pt) {
@@ -111,7 +125,8 @@ public interface JmixChartDetailEvent<T> {
         }
         Map<Object, Object> instance = new HashMap<>();
         Method setter = getAllMethods(ownerClazz).stream()
-                .filter(m -> m.getName().equals("set" + StringUtils.capitalize(field.getName()))).findAny().orElseThrow();
+                .filter(m -> m.getName().equals("set" + StringUtils.capitalize(field.getName())))
+                .findAny().orElseThrow();
         setter.invoke(target, instance);
         String fieldClassName = getFieldClassName(field);
         String fieldGetterName = getFieldGetterName(fieldClassName);
@@ -119,6 +134,7 @@ public interface JmixChartDetailEvent<T> {
             fieldClassName = getFieldClassName(genericType);
             fieldGetterName = getFieldGetterName(fieldClassName);
         }
+        Class<?> reqClazz = Class.forName("elemental.json.Json" + fieldGetterName);
         for (String key: source.keys()) {
             if (source.get(key) instanceof JsonObject && genericType != null) {
                 Object listItem = genericType.getConstructor().newInstance();
@@ -131,17 +147,27 @@ public interface JmixChartDetailEvent<T> {
         }
     }
 
-    default Object getPrimitiveValue(String fieldGetterName, String fieldClassName, JsonValue source) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method getter = source.getClass().getMethod("get" + fieldGetterName);
-        Object detailValue = getter.invoke(source);
-        return switch (fieldClassName) {
-            case "Long" -> detailValue.getClass().getMethod("longValue").invoke(detailValue);
-            case "Integer" -> detailValue.getClass().getMethod("intValue").invoke(detailValue);
-            default -> detailValue;
-        };
+    default Object getPrimitiveValue(String fieldGetterName, String fieldClassName, JsonValue source)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+        Class<?> reqClazz = Class.forName("elemental.json.Json" + fieldGetterName);
+        if (reqClazz.isInstance(source)) {
+            Method getter = source.getClass().getMethod("get" + fieldGetterName);
+            Object value = getter.invoke(source);
+            return switch (fieldClassName) {
+                case "Long" -> value.getClass().getMethod("longValue").invoke(value);
+                case "Integer" -> value.getClass().getMethod("intValue").invoke(value);
+                default -> value;
+            };
+        } else if ("String".equals(fieldClassName)) {
+            Method getter = source.getClass().getMethod("asString");
+            Object value = getter.invoke(source);
+            return value;
+        }
+        return null;
     }
 
-    default void convertClass(Field field, JsonObject source, Object target, Class<?> ownerClazz) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    default void convertClass(Field field, JsonObject source, Object target, Class<?> ownerClazz)
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> fieldClazz = Class.forName(field.getType().getName());
         Object instance = fieldClazz.getConstructor().newInstance();
         Method setter = ownerClazz.getMethod("set" + StringUtils.capitalize(field.getName()), Class.forName(field.getType().getName()));
@@ -153,7 +179,8 @@ public interface JmixChartDetailEvent<T> {
         convertClassFields(instance, fieldValue, fieldClazz);
     }
 
-    default void convertClassFields(Object instance, JsonObject source, Class<?> ownerClazz) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+    default void convertClassFields(Object instance, JsonObject source, Class<?> ownerClazz)
+            throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
         List<Field> fields = getAllFields(ownerClazz);
         JsonNull jsonNull = new JreJsonNull();
         for (Field field : fields) {
@@ -172,11 +199,13 @@ public interface JmixChartDetailEvent<T> {
                         }
                     }
                     case "Map" -> {
-                        Method getter = source.getClass().getMethod("getObject", String.class);
-                        Object result = (JsonObject) getter.invoke(source, field.getName());
-                        if (result instanceof JsonObject) {
-                            JsonObject fieldValue = (JsonObject) result;
-                            convertMsp(field, fieldValue, instance, ownerClazz);
+                        if (value instanceof JsonObject) {
+                            Method getter = source.getClass().getMethod("getObject", String.class);
+                            Object result = (JsonObject) getter.invoke(source, field.getName());
+                            if (result instanceof JsonObject) {
+                                JsonObject fieldValue = (JsonObject) result;
+                                convertMap(field, fieldValue, instance, ownerClazz);
+                            }
                         }
                     }
                     default -> convertClass(field, source, instance, ownerClazz);

@@ -25,6 +25,10 @@ public class JmixChartSelectEventDetail extends JmixChartEventDetail {
 
     private Map<String, Boolean> selected;
 
+    private Boolean isFromClick;
+
+    private Map<String, String> fromActionPayload;
+
     public String getName() {
         return name;
     }
@@ -39,5 +43,21 @@ public class JmixChartSelectEventDetail extends JmixChartEventDetail {
 
     public void setSelected(Map<String, Boolean> selected) {
         this.selected = selected;
+    }
+
+    public Boolean getIsFromClick() {
+        return isFromClick;
+    }
+
+    public void setIsFromClick(Boolean fromClick) {
+        isFromClick = fromClick;
+    }
+
+    public Map<String, String> getFromActionPayload() {
+        return fromActionPayload;
+    }
+
+    public void setFromActionPayload(Map<String, String> fromActionPayload) {
+        this.fromActionPayload = fromActionPayload;
     }
 }

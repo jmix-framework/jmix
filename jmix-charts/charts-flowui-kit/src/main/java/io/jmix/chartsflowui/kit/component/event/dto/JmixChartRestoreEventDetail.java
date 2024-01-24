@@ -19,4 +19,13 @@ package io.jmix.chartsflowui.kit.component.event.dto;
 
 public class JmixChartRestoreEventDetail extends JmixChartEventDetail {
 
+    private String from;
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
 }

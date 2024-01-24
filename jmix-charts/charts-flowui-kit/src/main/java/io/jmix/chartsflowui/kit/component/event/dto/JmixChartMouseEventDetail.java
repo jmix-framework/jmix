@@ -20,23 +20,32 @@ package io.jmix.chartsflowui.kit.component.event.dto;
 import java.util.List;
 import java.util.Map;
 
-public class JmixChartMouseEventDetail extends JmixChartEventDetail {
-    private String componentType;
-    private String componentSubType;
-    private Integer componentIndex;
-    private Integer seriesIndex;
+public class JmixChartMouseEventDetail extends JmixChartComponentEventDetail {
+
     private Integer xAxisIndex;
-    private String seriesName;
+
+    private Integer yAxisIndex;
+
     private String name;
-    private String seriesType;
+
     private String targetType;
+
     private String value;
+
+    private Double percent;
+
     private String color;
+
     private List<String> dimensionNames;
+
     private Map<String, String> encode;
+
     private List<String> $vars;
+
     private Integer tickIndex;
+
     private Integer dataIndex;
+
     private Map<String, String> data;
 
     public String getValue() {
@@ -45,6 +54,14 @@ public class JmixChartMouseEventDetail extends JmixChartEventDetail {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public Double getPercent() {
+        return percent;
+    }
+
+    public void setPercent(Double percent) {
+        this.percent = percent;
     }
 
     public String getColor() {
@@ -95,38 +112,6 @@ public class JmixChartMouseEventDetail extends JmixChartEventDetail {
         this.dataIndex = dataIndex;
     }
 
-    public String getComponentType() {
-        return componentType;
-    }
-
-    public void setComponentType(String componentType) {
-        this.componentType = componentType;
-    }
-
-    public String getComponentSubType() {
-        return componentSubType;
-    }
-
-    public void setComponentSubType(String componentSubType) {
-        this.componentSubType = componentSubType;
-    }
-
-    public Integer getComponentIndex() {
-        return componentIndex;
-    }
-
-    public void setComponentIndex(Integer componentIndex) {
-        this.componentIndex = componentIndex;
-    }
-
-    public Integer getSeriesIndex() {
-        return seriesIndex;
-    }
-
-    public void setSeriesIndex(Integer seriesIndex) {
-        this.seriesIndex = seriesIndex;
-    }
-
     public Integer getXAxisIndex() {
         return xAxisIndex;
     }
@@ -135,12 +120,12 @@ public class JmixChartMouseEventDetail extends JmixChartEventDetail {
         this.xAxisIndex = xAxisIndex;
     }
 
-    public String getSeriesName() {
-        return seriesName;
+    public Integer getYAxisIndex() {
+        return yAxisIndex;
     }
 
-    public void setSeriesName(String seriesName) {
-        this.seriesName = seriesName;
+    public void setYAxisIndex(Integer yAxisIndex) {
+        this.yAxisIndex = yAxisIndex;
     }
 
     public String getName() {
@@ -149,14 +134,6 @@ public class JmixChartMouseEventDetail extends JmixChartEventDetail {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getSeriesType() {
-        return seriesType;
-    }
-
-    public void setSeriesType(String seriesType) {
-        this.seriesType = seriesType;
     }
 
     public String getTargetType() {

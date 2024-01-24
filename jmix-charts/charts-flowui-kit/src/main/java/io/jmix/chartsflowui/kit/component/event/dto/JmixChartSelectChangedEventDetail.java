@@ -17,9 +17,28 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 
-public class JmixChartSelectChangedEventDetail extends JmixChartSelectEventDetail {
+import java.util.List;
+import java.util.Map;
+
+public class JmixChartSelectChangedEventDetail extends JmixChartEventDetail {
+
+    private String name;
+
+    private List<String> selected;
 
     private String fromAction;
+
+    private Boolean isFromClick;
+
+    private Map<String, String> fromActionPayload;
+
+    public List<String> getSelected() {
+        return selected;
+    }
+
+    public void setSelected(List<String> selected) {
+        this.selected = selected;
+    }
 
     public String getFromAction() {
         return fromAction;
@@ -29,4 +48,27 @@ public class JmixChartSelectChangedEventDetail extends JmixChartSelectEventDetai
         this.fromAction = fromAction;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Boolean getIsFromClick() {
+        return isFromClick;
+    }
+
+    public void setIsFromClick(Boolean fromClick) {
+        isFromClick = fromClick;
+    }
+
+    public Map<String, String> getFromActionPayload() {
+        return fromActionPayload;
+    }
+
+    public void setFromActionPayload(Map<String, String> fromActionPayload) {
+        this.fromActionPayload = fromActionPayload;
+    }
 }

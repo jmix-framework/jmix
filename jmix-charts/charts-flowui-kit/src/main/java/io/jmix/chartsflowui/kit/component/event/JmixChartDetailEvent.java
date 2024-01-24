@@ -150,17 +150,24 @@ public interface JmixChartDetailEvent<T> {
     default Object getPrimitiveValue(String fieldGetterName, String fieldClassName, JsonValue source)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         Class<?> reqClazz = Class.forName("elemental.json.Json" + fieldGetterName);
+        Object value = null;
         if (reqClazz.isInstance(source)) {
             Method getter = source.getClass().getMethod("get" + fieldGetterName);
-            Object value = getter.invoke(source);
+            value = getter.invoke(source);
             return switch (fieldClassName) {
                 case "Long" -> value.getClass().getMethod("longValue").invoke(value);
                 case "Integer" -> value.getClass().getMethod("intValue").invoke(value);
                 default -> value;
             };
         } else if ("String".equals(fieldClassName)) {
-            Method getter = source.getClass().getMethod("asString");
-            Object value = getter.invoke(source);
+            if (source instanceof JsonNumber) {
+                value = source.asString();
+            } else if (source instanceof JsonObject || source instanceof JsonArray) {
+                value = source.toJson();
+            } else {
+                Method getter = source.getClass().getMethod("asString");
+                value = getter.invoke(source);
+            }
             return value;
         }
         return null;

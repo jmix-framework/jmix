@@ -16,6 +16,14 @@
 
 package io.jmix.chartsflowui.kit.component.model.datazoom;
 
+/**
+ * Inside data zoom functionalities is embedded inside coordinate systems,
+ * enable user to zoom or roam coordinate system by mouse dragging,
+ * mouse move or finger touch (in touch screen).
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#dataZoom-inside">InsideDataZoom documentation</a>
+ */
 public class InsideDataZoom extends AbstractDataZoom<InsideDataZoom> {
 
     protected Boolean disabled;

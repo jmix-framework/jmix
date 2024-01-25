@@ -18,6 +18,9 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 
+/**
+ * General label for components.
+ */
 public class Label extends AbstractText<Label>
         implements HasShadow<Label>, HasPadding<Label> {
 

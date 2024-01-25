@@ -20,6 +20,12 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.datazoom.AbstractDataZoom;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 
+/**
+ * A tool feature for zooming, which only supports rectangular coordinate by now.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#toolbox.feature.dataZoom">DataZoom documentation</a>
+ */
 public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
 
     protected Title title;
@@ -34,6 +40,9 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
 
     protected ItemStyle brushStyle;
 
+    /**
+     * A component for restored and zoomed title text.
+     */
     public static class Title extends ChartObservableObject {
 
         protected String zoom;
@@ -69,6 +78,9 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
         }
     }
 
+    /**
+     * A component for zooming and restore icon path.
+     */
     public static class Icon extends ChartObservableObject {
 
         protected String zoom;

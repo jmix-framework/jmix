@@ -20,6 +20,11 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasLineStyle;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 
+/**
+ * The base class for text with border.
+ *
+ * @param <T> origin bordered text style class type
+ */
 public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextStyle<T>> extends ChartObservableObject
         implements HasShadow<T>, HasLineStyle<T> {
 

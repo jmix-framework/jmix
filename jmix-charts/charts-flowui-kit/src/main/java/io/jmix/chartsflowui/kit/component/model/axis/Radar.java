@@ -17,12 +17,20 @@
 package io.jmix.chartsflowui.kit.component.model.axis;
 
 import io.jmix.chartsflowui.kit.component.model.*;
+import io.jmix.chartsflowui.kit.component.model.series.RadarSeries;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Coordinate for {@link RadarSeries}. Radar chart coordinate is different from polar coordinate, in that every axis
+ * indicator of the radar chart coordinate is an individual dimension.
+ * {@link Radar#indicators} are required to be displayed. More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#radar">Radar documentation</a>
+ */
 public class Radar extends ChartObservableObject {
 
     protected String id;
@@ -63,6 +71,9 @@ public class Radar extends ChartObservableObject {
 
     protected List<Indicator> indicators;
 
+    /**
+     * Radar render type.
+     */
     public enum Shape implements HasEnumId {
         POLYGON("polygon"),
         CIRCLE("circle");
@@ -89,6 +100,11 @@ public class Radar extends ChartObservableObject {
         }
     }
 
+    /**
+     * Name options for radar indicators.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#radar.axisName">Radar.axisName</a>
+     */
     public static class AxisName extends AbstractRichText<AxisName>
             implements HasBorder<AxisName>, HasShadow<AxisName>, HasPadding<AxisName> {
 
@@ -315,6 +331,12 @@ public class Radar extends ChartObservableObject {
         }
     }
 
+    /**
+     * Indicator of radar chart, which is used to assign multiple variables(dimensions) in radar chart.
+     * Required attribute to displaying radar coordinates.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#radar.indicator">Radar.indicator</a>
+     */
     public static class Indicator extends ChartObservableObject {
 
         protected String name;

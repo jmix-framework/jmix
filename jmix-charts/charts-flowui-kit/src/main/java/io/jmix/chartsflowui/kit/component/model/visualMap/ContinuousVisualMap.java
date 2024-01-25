@@ -18,6 +18,12 @@ package io.jmix.chartsflowui.kit.component.model.visualMap;
 
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 
+/**
+ * Visual map component for displaying data in continuous form.<br/>
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#visualMap-continuous">ContinuousVisualMap documentation</a>
+ */
 public class ContinuousVisualMap extends AbstractVisualMap<ContinuousVisualMap> {
 
     protected Boolean calculable;

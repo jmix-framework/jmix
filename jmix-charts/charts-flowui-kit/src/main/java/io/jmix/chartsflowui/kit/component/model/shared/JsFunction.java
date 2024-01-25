@@ -20,7 +20,11 @@ import java.io.Serializable;
 
 /**
  * JavaScript function definition.
+ * Must be determined by a specific pattern: <pre>{@code function($parameters$): {$code$};}</pre>
+ * Example:
+ * <pre>{@code new JsFunction("function(value) { return \"Value is \" + value };")}</pre>
  */
+@SuppressWarnings("ClassCanBeRecord")
 public class JsFunction implements Serializable {
 
     protected final String code;

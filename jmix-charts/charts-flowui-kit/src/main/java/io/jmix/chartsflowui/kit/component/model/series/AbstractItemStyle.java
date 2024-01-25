@@ -21,6 +21,11 @@ import io.jmix.chartsflowui.kit.component.model.HasBorder;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 
+/**
+ * The base class for series item style.
+ *
+ * @param <T> origin class type
+ */
 public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends ChartObservableObject
         implements HasBorder<T>, HasShadow<T> {
 

@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.series;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * The coordinate used in the series.
+ */
 public enum CoordinateSystem implements HasEnumId {
     CARTESIAN_2_D("cartesian2d"),
     POLAR("polar");

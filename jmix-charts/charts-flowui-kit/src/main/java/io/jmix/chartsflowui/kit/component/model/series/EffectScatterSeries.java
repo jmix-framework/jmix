@@ -24,6 +24,13 @@ import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 import jakarta.annotation.Nullable;
 
+/**
+ * The scatter (bubble) graph with ripple animation. The special animation effect can visually highlight some data.
+ * More detailed information is provided in the documentation.
+ *
+ * @see ScatterSeries
+ * @see <a href="https://echarts.apache.org/en/option.html#series-effectScatter">EffectScatterSeries documentation</a>
+ */
 public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSeries>
         implements HasSymbols<EffectScatterSeries> {
 
@@ -31,7 +38,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
 
     protected String effectType;
 
-    protected EffectType showEffectOn;
+    protected EffectOn showEffectOn;
 
     protected RippleEffect rippleEffect;
 
@@ -83,13 +90,16 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         super(SeriesType.EFFECT_SCATTER);
     }
 
-    public enum EffectType implements HasEnumId {
+    /**
+     * Enum of when to show the effect.
+     */
+    public enum EffectOn implements HasEnumId {
         RENDER("render"),
         EMPHASIS("emphasis");
 
         private final String id;
 
-        EffectType(String id) {
+        EffectOn(String id) {
             this.id = id;
         }
 
@@ -99,8 +109,8 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         }
 
         @Nullable
-        public static EffectType fromId(String id) {
-            for (EffectType at : EffectType.values()) {
+        public static EffectOn fromId(String id) {
+            for (EffectOn at : EffectOn.values()) {
                 if (at.getId().equals(id)) {
                     return at;
                 }
@@ -109,6 +119,9 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         }
     }
 
+    /**
+     * Related configurations component about ripple effect.
+     */
     public static class RippleEffect extends ChartObservableObject {
 
         protected Color color;
@@ -121,6 +134,9 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
 
         protected BrushType brushType;
 
+        /**
+         * The brush type for ripples.
+         */
         public enum BrushType implements HasEnumId {
             STROKE("stroke"),
             FILL("fill");
@@ -218,6 +234,11 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         }
     }
 
+    /**
+     * Configuration of label guideline.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-effectScatter.labelLine">EffectScatterSeries.labelLine</a>
+     */
     public static class LabelLine extends ChartObservableObject {
 
         protected Boolean show;
@@ -321,6 +342,9 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         }
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractEffectScatterElement<Emphasis> {
 
         protected Boolean disabled;
@@ -388,9 +412,15 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractEffectScatterElement<Blur> {
     }
 
+    /**
+     * Component to configure the selection state.
+     */
     public static class Select extends AbstractEffectScatterElement<Select> {
 
         protected Boolean disabled;
@@ -410,6 +440,11 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         }
     }
 
+    /**
+     * Base component for effect scatter elements.
+     *
+     * @param <T> origin element class type
+     */
     public static abstract class AbstractEffectScatterElement<T extends AbstractEffectScatterElement<T>>
             extends ChartObservableObject {
 
@@ -495,11 +530,11 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
-    public EffectType getShowEffectOn() {
+    public EffectOn getShowEffectOn() {
         return showEffectOn;
     }
 
-    public void setShowEffectOn(EffectType showEffectOn) {
+    public void setShowEffectOn(EffectOn showEffectOn) {
         this.showEffectOn = showEffectOn;
         markAsDirty();
     }
@@ -761,7 +796,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         return this;
     }
 
-    public EffectScatterSeries withShowEffectOn(EffectType showEffectOn) {
+    public EffectScatterSeries withShowEffectOn(EffectOn showEffectOn) {
         setShowEffectOn(showEffectOn);
         return this;
     }

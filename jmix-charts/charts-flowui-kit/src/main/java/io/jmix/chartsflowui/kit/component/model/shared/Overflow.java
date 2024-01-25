@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * Enum to define how to display text when it's overflow.
+ */
 public enum Overflow implements HasEnumId {
     NONE("none"),
     TRUNCATE("truncate"),

@@ -19,6 +19,11 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 
+/**
+ * The base class for area style.
+ *
+ * @param <T> origin area style class type
+ */
 public abstract class AbstractAreaStyle<T extends AbstractAreaStyle<T>> extends ChartObservableObject
         implements HasShadow<T> {
 

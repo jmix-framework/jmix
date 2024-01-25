@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Color selection component. There are predefined colors.
+ */
 @SuppressWarnings("unused")
 public final class Color implements Serializable {
 

@@ -22,6 +22,15 @@ import io.jmix.chartsflowui.kit.component.model.HasPosition;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 import jakarta.annotation.Nullable;
 
+/**
+ * Base class for component type for visual encoding.
+ * Multiple {@code visualMap} component could be defined in a chart instance, which enable
+ * that different dimensions of a series data are mapped to different visual channels.
+ * More detailed information is provided in the documentation.
+ *
+ * @param <T> origin class type
+ * @see <a href="https://echarts.apache.org/en/option.html#visualMap">VisualMap documentation</a>
+ */
 public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends ChartObservableObject
         implements HasPadding<T>, HasPosition<T> {
 
@@ -93,6 +102,9 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         this.type = type;
     }
 
+    /**
+     * The layout relationship between the graphical elements for pieces and their labels.
+     */
     public enum MapAlign implements HasEnumId {
         AUTO("auto"),
         LEFT("left"),
@@ -122,6 +134,13 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         }
     }
 
+    /**
+     * Controller for {@link VisualMapController#inRange} and {@link VisualMapController#outOfRange} properties.
+     * More detailed information is provided in the documentation.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#visualMap-piecewise.controller">PiecewiseVisualMap.controller documentation</a>
+     * @see <a href="https://echarts.apache.org/en/option.html#visualMap-continuous.controller">ContinuousVisualMap.controller documentation</a>
+     */
     public static class VisualMapController extends ChartObservableObject {
 
         protected VisualEffect inRange;

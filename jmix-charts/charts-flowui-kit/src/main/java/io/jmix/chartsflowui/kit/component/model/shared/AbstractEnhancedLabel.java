@@ -20,6 +20,11 @@ import io.jmix.chartsflowui.kit.component.model.HasAlign;
 import io.jmix.chartsflowui.kit.component.model.HasBorder;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 
+/**
+ * The base class for enhanced label.
+ *
+ * @param <T> origin enhanced label class type
+ */
 public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> extends AbstractRichText<T>
         implements HasShadow<T>, HasBorder<T>, HasAlign<T>, HasPadding<T> {
 

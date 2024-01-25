@@ -18,6 +18,12 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.*;
 
+/**
+ * Common rich text styles. Can be used in labels of series, axis or other components.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/tutorial.html#Rich%20Text">RichText documentation </a>
+ */
 public class RichStyle extends ChartObservableObject
         implements HasShadow<RichStyle>, HasBorder<RichStyle>, HasText<RichStyle>,
         HasPadding<RichStyle>, HasAlign<RichStyle> {

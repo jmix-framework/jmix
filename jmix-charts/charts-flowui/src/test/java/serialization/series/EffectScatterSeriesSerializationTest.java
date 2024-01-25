@@ -49,7 +49,7 @@ public class EffectScatterSeriesSerializationTest extends AbstractSerializationT
                 .withLegendHoverLink(false)
                 .withEffectType("ripple")
 
-                .withShowEffectOn(EffectScatterSeries.EffectType.EMPHASIS)
+                .withShowEffectOn(EffectScatterSeries.EffectOn.EMPHASIS)
                 .withRippleEffect(
                         new EffectScatterSeries.RippleEffect()
                                 .withColor(Color.IVORY)

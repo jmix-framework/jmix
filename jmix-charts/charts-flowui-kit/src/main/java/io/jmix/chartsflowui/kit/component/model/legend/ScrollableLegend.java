@@ -20,6 +20,13 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 
+/**
+ * Scrollable legend. It helps when too many legend items needed to be shown.
+ * More detailed information is provided in the documentation.
+ *
+ * @see Legend
+ * @see <a href="https://echarts.apache.org/en/option.html#legend">Legend documentation</a>
+ */
 public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
 
     protected Integer scrollDataIndex;
@@ -52,6 +59,9 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         super(LegendType.SCROLL);
     }
 
+    /**
+     * The icons of page button.
+     */
     public static class PageIcons extends ChartObservableObject {
 
         protected String[] horizontal;

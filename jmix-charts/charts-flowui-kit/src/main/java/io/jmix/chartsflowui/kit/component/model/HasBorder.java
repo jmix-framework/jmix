@@ -31,7 +31,7 @@ public interface HasBorder<T> {
     Color getBorderColor();
 
     /**
-     * Sets a border color or replaces existing one.
+     * Sets a border color or replaces an existing one.
      *
      * @param borderColor color to set
      */
@@ -54,7 +54,7 @@ public interface HasBorder<T> {
     Integer getBorderWidth();
 
     /**
-     * Sets a border width or replaces existing one.
+     * Sets a border width or replaces an existing one.
      *
      * @param borderWidth border width in pixels
      */
@@ -77,7 +77,7 @@ public interface HasBorder<T> {
     Integer getBorderRadius();
 
     /**
-     * Sets a border radius of the text fragment or replaces existing one.
+     * Sets a border radius of the text fragment or replaces an existing one.
      *
      * @param borderRadius border radius to set in pixels
      */

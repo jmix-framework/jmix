@@ -16,28 +16,74 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
+/**
+ * A component that has a space around content.
+ *
+ * @param <T> origin class type
+ */
 public interface HasPadding<T> {
 
+    /**
+     * @return space around content
+     */
     Padding getPadding();
 
+    /**
+     * Sets padding on each of the four sides or replaces an existing one. The unit is px.
+     *
+     * @param padding padding to set
+     */
     void setPadding(Integer padding);
 
+    /**
+     * Sets the top/bottom and left/right paddings or replaces an existing one. The unit is px.
+     *
+     * @param vertical   top and bottom padding to set
+     * @param horizontal left and right padding to set
+     */
     void setPadding(Integer vertical, Integer horizontal);
 
+    /**
+     * Sets each of the four paddings separately. The unit is px.
+     *
+     * @param top    top padding to set
+     * @param right  right padding to set
+     * @param bottom bottom padding to set
+     * @param left   left padding to set
+     */
     void setPadding(Integer top, Integer right, Integer bottom, Integer left);
 
+    /**
+     * @param padding padding to set
+     * @return this
+     * @see HasPadding#setPadding(Integer)
+     */
     @SuppressWarnings("unchecked")
     default T withPadding(Integer padding) {
         setPadding(padding);
         return (T) this;
     }
 
+    /**
+     * @param vertical   top and bottom padding to set
+     * @param horizontal left and right padding to set
+     * @return this
+     * @see HasPadding#setPadding(Integer, Integer)
+     */
     @SuppressWarnings("unchecked")
     default T withPadding(Integer vertical, Integer horizontal) {
         setPadding(vertical, horizontal);
         return (T) this;
     }
 
+    /**
+     * @param top    top padding to set
+     * @param right  right padding to set
+     * @param bottom bottom padding to set
+     * @param left   left padding to set
+     * @return this
+     * @see HasPadding#setPadding(Integer, Integer, Integer, Integer)
+     */
     @SuppressWarnings("unchecked")
     default T withPadding(Integer top, Integer right, Integer bottom, Integer left) {
         setPadding(top, right, bottom, left);

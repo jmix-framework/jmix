@@ -23,6 +23,12 @@ import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 import jakarta.annotation.Nullable;
 
+/**
+ * The pie chart is mainly used for showing proportion of different categories. Each arc length represents
+ * the proportion of data quantity. More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-pie">PieSeries documentation</a>
+ */
 public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         implements HasPosition<PieSeries> {
 
@@ -98,6 +104,9 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         super(SeriesType.PIE);
     }
 
+    /**
+     * A special mode which distinguishes data by radius.
+     */
     public enum RoseType implements HasEnumId {
         RADIUS("radius"),
         AREA("area");
@@ -124,6 +133,9 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         }
     }
 
+    /**
+     * An animation type for initializing data.
+     */
     public enum AnimationType implements HasEnumId {
         EXPANSION("expansion"),
         SCALE("scale");
@@ -150,6 +162,9 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         }
     }
 
+    /**
+     * An animation type for updating data.
+     */
     public enum AnimationUpdateType implements HasEnumId {
         TRANSITION("transition"),
         EXPANSION("expansion");
@@ -176,6 +191,10 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         }
     }
 
+    /**
+     * The style of visual guideline. Will show when {@link Label#setPosition(Label.Position.PositionType)}
+     * is set as {@link Label.Position.PositionType#OUTSIDE}.
+     */
     public static class LabelLine extends ChartObservableObject {
 
         protected Boolean show;
@@ -311,6 +330,9 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         }
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractPieElement<Emphasis> {
 
         protected Boolean disabled;
@@ -394,9 +416,15 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractPieElement<Blur> {
     }
 
+    /**
+     * Component to configure the selection state.
+     */
     public static class Selected extends AbstractPieElement<Selected> {
 
         protected Boolean disabled;
@@ -416,6 +444,11 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         }
     }
 
+    /**
+     * Base component for pie elements.
+     *
+     * @param <T> origin element class type
+     */
     public static abstract class AbstractPieElement<T extends AbstractPieElement<T>> extends ChartObservableObject {
 
         protected Label label;

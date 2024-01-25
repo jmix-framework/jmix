@@ -19,6 +19,13 @@ package io.jmix.chartsflowui.kit.component.model.datazoom;
 import io.jmix.chartsflowui.kit.component.model.*;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 
+/**
+ * Slider type data zoom component provides functions like
+ * data thumbnail, zoom, brush to select, drag to move, click to locate.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#dataZoom-slider">SliderDataZoom documentation</a>
+ */
 public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         implements HasPosition<SliderDataZoom> {
 
@@ -88,6 +95,11 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         super(DataZoomType.SLIDER);
     }
 
+    /**
+     * The style of data shadow.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#dataZoom-slider.dataBackground">SliderDataZoom.dataBackground</a>
+     */
     public static class DataBackground extends ChartObservableObject {
 
         protected LineStyle lineStyle;
@@ -131,6 +143,11 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         }
     }
 
+    /**
+     * Component to configure the highlighted state.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#dataZoom-slider.emphasis">SliderDataZoom.emphasis</a>
+     */
     public static class Emphasis extends ChartObservableObject {
 
         protected ItemStyle handleStyle;

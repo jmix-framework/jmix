@@ -18,6 +18,9 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 
+/**
+ * The separator between data and data description.
+ */
 public class Separator extends ChartObservableObject {
 
     protected String middle;

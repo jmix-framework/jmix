@@ -16,6 +16,12 @@
 
 package io.jmix.chartsflowui.kit.component.model.toolbox;
 
+/**
+ * A tool feature for restoring a chart options.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#toolbox.feature.restore">Restore documentation</a>
+ */
 public class RestoreFeature extends AbstractFeature<RestoreFeature> {
 
     protected String title;

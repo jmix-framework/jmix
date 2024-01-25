@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 
+/**
+ * Common style for shadow.
+ */
 public class ShadowStyle extends ChartObservableObject
         implements HasShadow<ShadowStyle> {
 

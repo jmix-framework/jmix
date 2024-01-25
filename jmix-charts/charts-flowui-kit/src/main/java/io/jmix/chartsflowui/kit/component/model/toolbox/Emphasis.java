@@ -21,10 +21,19 @@ import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 import jakarta.annotation.Nullable;
 
+/**
+ * The label configuration component.
+ */
 public class Emphasis extends ChartObservableObject {
 
     protected IconStyle iconStyle;
 
+    /**
+     * The label font style. It only appears when hovering on the icon.
+     * More detailed information is provided in the documentation.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#toolbox.feature.magicType.emphasis.iconStyle"></a>
+     */
     public static class IconStyle extends AbstractBorderedTextStyle<IconStyle>
             implements HasPadding<IconStyle> {
         protected TextPosition textPosition;
@@ -39,6 +48,9 @@ public class Emphasis extends ChartObservableObject {
 
         protected Padding padding;
 
+        /**
+         * Position of the title text.
+         */
         public enum TextPosition implements HasEnumId {
             LEFT("left"),
             RIGHT("right"),

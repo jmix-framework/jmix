@@ -20,6 +20,12 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import io.jmix.chartsflowui.kit.component.model.shared.Orientation;
 
+/**
+ * Boxplot is a convenient way of graphically depicting groups of numerical data through their quartiles.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-boxplot">BoxplotSeries documentation</a>
+ */
 public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
 
     protected CoordinateSystem coordinateSystem;
@@ -46,6 +52,9 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         super(SeriesType.BOXPLOT);
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractBoxplotElement<Emphasis> {
 
         protected Boolean disabled;
@@ -97,9 +106,15 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractBoxplotElement<Blur> {
     }
 
+    /**
+     * Component to configure the selection state.
+     */
     public static class Select extends AbstractBoxplotElement<Select> {
 
         protected Boolean disabled;
@@ -119,6 +134,11 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         }
     }
 
+    /**
+     * Base component for boxplot elements.
+     *
+     * @param <T> origin element class type
+     */
     public static abstract class AbstractBoxplotElement<T extends AbstractBoxplotElement<T>>
             extends ChartObservableObject {
 

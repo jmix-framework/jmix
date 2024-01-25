@@ -519,7 +519,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
 
         loadEnum(element, CoordinateSystem.class, "coordinateSystem", effectScatterSeries::setCoordinateSystem);
         loadString(element, "effectType", effectScatterSeries::setEffectType);
-        loadEnum(element, EffectScatterSeries.EffectType.class, "showEffectOn", effectScatterSeries::setShowEffectOn);
+        loadEnum(element, EffectScatterSeries.EffectOn.class, "showEffectOn", effectScatterSeries::setShowEffectOn);
         loadInteger(element, "xAxisIndex", effectScatterSeries::setXAxisIndex);
         loadInteger(element, "yAxisIndex", effectScatterSeries::setYAxisIndex);
         loadInteger(element, "polarIndex", effectScatterSeries::setPolarIndex);

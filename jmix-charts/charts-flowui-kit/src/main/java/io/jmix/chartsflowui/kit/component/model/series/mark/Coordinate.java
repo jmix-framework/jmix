@@ -16,6 +16,9 @@
 
 package io.jmix.chartsflowui.kit.component.model.series.mark;
 
+/**
+ * A class for describing coordinates in numerical and percentage representation.
+ */
 public class Coordinate {
 
     protected Double[] numberCoordinates;

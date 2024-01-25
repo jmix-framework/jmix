@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.visualMap;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * Type of component for visual encoding
+ */
 public enum VisualMapType implements HasEnumId {
     CONTINUOUS("continuous"),
     PIECEWISE("piecewise");

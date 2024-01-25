@@ -31,7 +31,7 @@ public interface HasLineStyle<T> {
     Cap getCap();
 
     /**
-     * Sets style for drawing line endpoints or replaces existing one.
+     * Sets style for drawing line endpoints or replaces an existing one.
      * More detailed information is provided in the documentation.
      *
      * @param cap cap style to set
@@ -56,7 +56,7 @@ public interface HasLineStyle<T> {
     Join getJoin();
 
     /**
-     * Sets a style that used to join two line segments where they intersect or replaces existing one.
+     * Sets a style that used to join two line segments where they intersect or replaces an existing one.
      * More detailed information is provided in the documentation.
      *
      * @param join style to set
@@ -81,7 +81,7 @@ public interface HasLineStyle<T> {
     Integer getMiterLimit();
 
     /**
-     * Sets miter limit ratio or replaces existing one. Only works when {@link Join} is set as {@link Join#MITER}.
+     * Sets miter limit ratio or replaces an existing one. Only works when {@link Join} is set as {@link Join#MITER}.
      * More detailed information is provided in the documentation.
      *
      * @param miterLimit miter limit to set

@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * Conditions to trigger tooltip.
+ */
 public enum TriggerOnMode implements HasEnumId {
     MOUSE_MOVE("mousemove"),
     CLICK("click"),

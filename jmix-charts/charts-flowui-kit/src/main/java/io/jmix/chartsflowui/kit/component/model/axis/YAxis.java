@@ -16,6 +16,12 @@
 
 package io.jmix.chartsflowui.kit.component.model.axis;
 
+/**
+ * The YAxis in cartesian(rectangular) coordinate.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#yAxis">YAxis documentation</a>
+ */
 public class YAxis extends AbstractCartesianAxis<YAxis> {
 
     public YAxis() {

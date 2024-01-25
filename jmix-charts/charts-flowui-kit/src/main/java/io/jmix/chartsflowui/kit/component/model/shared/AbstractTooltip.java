@@ -23,7 +23,7 @@ import jakarta.annotation.Nullable;
 /**
  * The base class for tooltip components.
  *
- * @param <T> origin tooltip type
+ * @param <T> origin tooltip class type
  */
 public abstract class AbstractTooltip<T extends ChartObservableObject> extends ChartObservableObject
         implements HasPadding<T> {

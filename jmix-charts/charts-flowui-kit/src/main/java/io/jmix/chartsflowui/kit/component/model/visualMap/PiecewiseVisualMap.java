@@ -24,6 +24,27 @@ import io.jmix.chartsflowui.kit.component.model.shared.SelectedMode;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Visual map component for displaying data in discrete form.<br/>
+ * Piecewise visualMap component works in one of the three modes:
+ * <ul>
+ *     <li>
+ *         <b>CONTINUOUS-AVERAGE</b>: the series data is continuous and is divided into pieces
+ *         averagely according to {@link PiecewiseVisualMap#splitNumber}.
+ *     </li>
+ *     <li>
+ *         <b>CONTINUOUS-CUSTOMIZED</b>: the series data is continuous and is divided into pieces
+ *         according to the given rule defined in {@link PiecewiseVisualMap#pieces}.
+ *     </li>
+ *     <li>
+ *         <b>CATEGORY</b>: the series data is discrete and is categorized
+ *         according to {@link PiecewiseVisualMap#categories}.
+ *     </li>
+ * </ul>
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#visualMap-piecewise">PiecewiseVisualMap documentation</a>
+ */
 public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
 
     protected Integer splitNumber;
@@ -48,6 +69,12 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
         super(VisualMapType.PIECEWISE);
     }
 
+    /**
+     * A component that used to customize how to slice continuous data, and some specific view style for some pieces.
+     * More detailed information is provided in the documentation.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#visualMap-piecewise.pieces">PiecewiseVisualMap.pieces documentation</a>
+     */
     public static class Piece extends ChartObservableObject {
 
         protected Double min;

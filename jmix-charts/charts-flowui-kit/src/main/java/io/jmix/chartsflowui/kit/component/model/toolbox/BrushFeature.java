@@ -16,10 +16,17 @@
 
 package io.jmix.chartsflowui.kit.component.model.toolbox;
 
+import io.jmix.chartsflowui.kit.component.model.Brush;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * A tool feature for brush-selecting. It can also be configured at {@link Brush#setToolboxes(Brush.Toolbox...)}.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#toolbox.feature.brush">Brush documentation</a>
+ */
 public class BrushFeature extends ToolboxFeature {
 
     protected BrushType[] types;
@@ -28,6 +35,9 @@ public class BrushFeature extends ToolboxFeature {
 
     protected Title title;
 
+    /**
+     * Buttons in toolbox that is related to brush includes.
+     */
     public enum BrushType implements HasEnumId {
         RECT("rect"),
         POLYGON("polygon"),
@@ -58,6 +68,9 @@ public class BrushFeature extends ToolboxFeature {
         }
     }
 
+    /**
+     * A component for icon path for each icon in brush toolbox.
+     */
     public static class Icon extends ChartObservableObject {
 
         protected String rect;
@@ -157,6 +170,9 @@ public class BrushFeature extends ToolboxFeature {
         }
     }
 
+    /**
+     * A component for title for each icon in brush toolbox.
+     */
     public static class Title extends ChartObservableObject {
 
         protected String rect;

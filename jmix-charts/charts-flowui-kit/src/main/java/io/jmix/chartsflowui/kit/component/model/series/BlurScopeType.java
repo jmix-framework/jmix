@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.series;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * The range of fade out when focus is enabled.
+ */
 public enum BlurScopeType implements HasEnumId {
     COORDINATE_SYSTEM("coordinateSystem"),
     SERIES("series"),

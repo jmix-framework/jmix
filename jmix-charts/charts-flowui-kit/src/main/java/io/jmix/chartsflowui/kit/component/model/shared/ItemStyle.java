@@ -16,5 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
+/**
+ * Common item style for bordered text.
+ */
 public class ItemStyle extends AbstractBorderedTextStyle<ItemStyle> {
 }

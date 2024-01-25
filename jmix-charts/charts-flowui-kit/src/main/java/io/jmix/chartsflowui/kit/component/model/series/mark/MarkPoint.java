@@ -22,6 +22,12 @@ import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Mark point in a chart. Used to mark any single values on the graph.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-line.markPoint">MarkPoint documentation</a>
+ */
 public class MarkPoint extends AbstractMark<MarkPoint>
         implements HasSymbols<MarkPoint> {
 
@@ -43,6 +49,9 @@ public class MarkPoint extends AbstractMark<MarkPoint>
 
     protected List<Point> data;
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractMarkElement<Emphasis> {
 
         protected Boolean disabled;
@@ -62,9 +71,15 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractMarkElement<Blur> {
     }
 
+    /**
+     * Point to display.
+     */
     public static class Point extends AbstractMarkElement<Point>
             implements HasSymbols<Point> {
 

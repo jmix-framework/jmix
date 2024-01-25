@@ -16,17 +16,19 @@
 
 package io.jmix.chartsflowui.kit.component.model.series;
 
+import io.jmix.chartsflowui.kit.component.model.DataSet;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkArea;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkLine;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkPoint;
 import jakarta.annotation.Nullable;
 
+/**
+ * Base class for series with Cartesian and polar coordinates.
+ *
+ * @param <T> origin series class type
+ */
 public abstract class AbstractAxisAwareSeries<T extends AbstractAxisAwareSeries<T>> extends AbstractSeries<T> {
-
-    protected AbstractAxisAwareSeries(SeriesType type) {
-        super(type);
-    }
 
     protected Encode encode;
 
@@ -42,6 +44,14 @@ public abstract class AbstractAxisAwareSeries<T extends AbstractAxisAwareSeries<
 
     protected MarkArea markArea;
 
+    protected AbstractAxisAwareSeries(SeriesType type) {
+        super(type);
+    }
+
+    /**
+     * SeriesLayoutBy specifies whether the column or the row of {@link DataSet} is mapped to the series,
+     * namely, the series is "layout" on columns or rows.
+     */
     public enum SeriesLayoutType implements HasEnumId {
         COLUMN("column"),
         ROW("row");

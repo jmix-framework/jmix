@@ -3029,6 +3029,8 @@
             <xs:enumeration value="LEFT"/>
             <xs:enumeration value="RIGHT"/>
             <xs:enumeration value="BOTTOM"/>
+            <xs:enumeration value="OUTSIDE"/>
+            <xs:enumeration value="CENTER"/>
             <xs:enumeration value="INSIDE"/>
             <xs:enumeration value="INSIDE_LEFT"/>
             <xs:enumeration value="INSIDE_RIGHT"/>

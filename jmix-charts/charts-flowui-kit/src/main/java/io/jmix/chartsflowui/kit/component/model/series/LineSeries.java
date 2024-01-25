@@ -20,8 +20,19 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
+import io.jmix.chartsflowui.kit.component.model.visualMap.PiecewiseVisualMap;
 import jakarta.annotation.Nullable;
 
+/**
+ * Line chart relates all the data points {@link LineSeries#symbol} by broken lines, which is used to show
+ * the trend of data changing. It could be used in both rectangular and polar coordinate.<br/>
+ * <b>Note</b>:  when {@link LineSeries#areaStyle} is set, area chart will be drawn.<br/>
+ * <b>Note</b>: with {@link PiecewiseVisualMap} component, line chart / area chart can have different colors
+ * on different sections.<br/>
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-line">LineSeries documentation</a>
+ */
 public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         implements HasSymbols<LineSeries>, HasStack<LineSeries> {
 
@@ -97,6 +108,11 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         super(SeriesType.LINE);
     }
 
+    /**
+     * Type of step line.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-line.step">LineSeries.step</a>
+     */
     public enum Step implements HasEnumId {
         START("start"),
         MIDDLE("middle"),
@@ -124,6 +140,9 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         }
     }
 
+    /**
+     * Type for maintaining the monotonicity on XAxis or YAxis.
+     */
     public enum SmoothMonotoneType implements HasEnumId {
         X("x"),
         Y("y");
@@ -150,6 +169,9 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         }
     }
 
+    /**
+     * Label component on the end of line.
+     */
     public static class EndLabel extends AbstractEnhancedLabel<EndLabel> {
 
         protected String formatter;
@@ -211,6 +233,9 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         }
     }
 
+    /**
+     * The style of area. Converts a line chart to an area chart.
+     */
     public static class AreaStyle extends ChartObservableObject
             implements HasShadow<AreaStyle> {
 
@@ -375,6 +400,9 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         }
     }
 
+    /**
+     * Component to configure label guide line.
+     */
     public static class LabelLine extends ChartObservableObject {
 
         protected Boolean show;
@@ -478,6 +506,9 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         }
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractLineElement<Emphasis> {
 
         protected Boolean disabled;
@@ -546,9 +577,15 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractLineElement<Blur> {
     }
 
+    /**
+     * Component to configure the selection state.
+     */
     public static class Select extends AbstractLineElement<Select> {
 
         protected Boolean disabled;
@@ -568,6 +605,11 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         }
     }
 
+    /**
+     * Base component for line elements.
+     *
+     * @param <T> origin element class type
+     */
     public static abstract class AbstractLineElement<T extends AbstractLineElement<T>> extends ChartObservableObject {
 
         protected Label label;

@@ -24,6 +24,12 @@ import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Mark line in a chart. Used to display borders, lines and so on.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-line.markLine">MarkLine documentation</a>
+ */
 public class MarkLine extends AbstractMark<MarkLine> {
 
     protected HasSymbols.Symbol[] symbol;
@@ -40,6 +46,9 @@ public class MarkLine extends AbstractMark<MarkLine> {
 
     protected Data data;
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractMarkLineElement<Emphasis> {
 
         protected Boolean disabled;
@@ -59,9 +68,42 @@ public class MarkLine extends AbstractMark<MarkLine> {
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractMarkLineElement<Blur> {
     }
 
+    /**
+     * Component to configure data for the mark line. The line can be configured with single point or two points.
+     * <ul>
+     *     <li>
+     *         Single point example:
+     *         <pre>{@code
+     *              <charts:markLine>
+     *                  <charts:data>
+     *                      // Max line
+     *                      <charts:singlePointLine type="MAX"/>
+     *                   </charts:data>
+     *              </charts:markLine>
+     *         }</pre>
+     *     </li>
+     *     <li>
+     *         Two points example:
+     *         <pre>{@code
+     *              <charts:markLine>
+     *                  <charts:data>
+     *                      // two points line
+     *                      <charts:pairPointLine>
+     *                          <charts:startPoint numberCoordinate="100, 200"/>
+     *                          <charts:endPoint stringCoordinate="50%, 25%"/>
+     *                      </charts:pairPointLine>
+     *                  </charts:data>
+     *              </charts:markLine>
+     *         }</pre>
+     *     </li>
+     * </ul>
+     */
     public static class Data extends ChartObservableObject {
 
         protected List<Point> singlePointLines;
@@ -167,6 +209,11 @@ public class MarkLine extends AbstractMark<MarkLine> {
         }
     }
 
+    /**
+     * Base class for mark line elements.
+     *
+     * @param <T> origin class type
+     */
     public static abstract class AbstractMarkLineElement<T extends AbstractMarkLineElement<T>>
             extends ChartObservableObject {
 
@@ -213,6 +260,9 @@ public class MarkLine extends AbstractMark<MarkLine> {
         }
     }
 
+    /**
+     * A class containing a pair of points, start and end.
+     */
     public static class PointPair {
 
         protected Point startPoint;
@@ -233,6 +283,9 @@ public class MarkLine extends AbstractMark<MarkLine> {
         }
     }
 
+    /**
+     * Component to configure mark line point.
+     */
     public static class Point extends AbstractMarkLineElement<Point>
             implements HasSymbols<Point> {
 

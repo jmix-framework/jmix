@@ -20,6 +20,12 @@ import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import jakarta.annotation.Nullable;
 
+/**
+ * A tool feature for exporting a chart to an image.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#toolbox.feature.saveAsImage">SaveAsImage documentation</a>
+ */
 public class SaveAsImageFeature extends AbstractFeature<SaveAsImageFeature> {
 
     protected SaveType type;
@@ -38,6 +44,9 @@ public class SaveAsImageFeature extends AbstractFeature<SaveAsImageFeature> {
 
     protected Integer pixelRatio;
 
+    /**
+     * Type of the exported image.
+     */
     public enum SaveType implements HasEnumId {
         PNG("png"),
         JPG("jpg"),

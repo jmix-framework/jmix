@@ -32,7 +32,7 @@ public interface HasText<T> {
     Color getTextBorderColor();
 
     /**
-     * Sets a stroke color of the text or replaces existing one.
+     * Sets a stroke color of the text or replaces an existing one.
      *
      * @param textBorderColor color to set
      */
@@ -55,7 +55,7 @@ public interface HasText<T> {
     Double getTextBorderWidth();
 
     /**
-     * Sets a stroke line width of the text or replaces existing one.
+     * Sets a stroke line width of the text or replaces an existing one.
      *
      * @param textBorderWidth line width to set in pixels
      */
@@ -78,7 +78,7 @@ public interface HasText<T> {
     String getTextBorderType();
 
     /**
-     * Sets a stroke line type of the text or replaces existing one.<br/>
+     * Sets a stroke line type of the text or replaces an existing one.<br/>
      * Possible values are:
      * <ul>
      *     <li> {@code solid} </li>
@@ -109,7 +109,7 @@ public interface HasText<T> {
     Integer getTextBorderDashOffset();
 
     /**
-     * Sets offset of the line dash or replaces existing one.
+     * Sets offset of the line dash or replaces an existing one.
      *
      * @param textBorderDashOffset offset of the line dash to set
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineDashOffset">CanvasRenderingContext2D.lineDashOffset [MDN]</a>
@@ -133,7 +133,7 @@ public interface HasText<T> {
     Integer getTextShadowBlur();
 
     /**
-     * Sets a depth of text shadow blur or replaces existing one.
+     * Sets a depth of text shadow blur or replaces an existing one.
      *
      * @param shadowBlur depth of text shadow blur
      */
@@ -156,7 +156,7 @@ public interface HasText<T> {
     Color getTextShadowColor();
 
     /**
-     * Sets a color of the text shadow or replaces existing one.
+     * Sets a color of the text shadow or replaces an existing one.
      *
      * @param shadowColor text shadow color to set
      */
@@ -179,7 +179,7 @@ public interface HasText<T> {
     Integer getTextShadowOffsetX();
 
     /**
-     * Sets horizontal offset for text shadow or replaces existing one.
+     * Sets horizontal offset for text shadow or replaces an existing one.
      *
      * @param shadowOffsetX offset to set in pixels
      */
@@ -202,7 +202,7 @@ public interface HasText<T> {
     Integer getTextShadowOffsetY();
 
     /**
-     * Sets vertical offset for text shadow or replaces existing one.
+     * Sets vertical offset for text shadow or replaces an existing one.
      *
      * @param shadowOffsetY offset to set in pixels
      */

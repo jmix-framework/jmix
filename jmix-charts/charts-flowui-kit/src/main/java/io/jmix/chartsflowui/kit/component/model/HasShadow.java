@@ -31,7 +31,7 @@ public interface HasShadow<T> {
     Integer getShadowBlur();
 
     /**
-     * Sets depth of shadow blur or replaces existing one.
+     * Sets depth of shadow blur or replaces an existing one.
      *
      * @param shadowBlur depth of shadow blur
      */
@@ -54,7 +54,7 @@ public interface HasShadow<T> {
     Color getShadowColor();
 
     /**
-     * Sets a color for shadow or replaces existing one.
+     * Sets a color for shadow or replaces an existing one.
      *
      * @param shadowColor color to set
      */
@@ -77,7 +77,7 @@ public interface HasShadow<T> {
     Integer getShadowOffsetX();
 
     /**
-     * Sets horizontal offset for shadow or replaces existing one.
+     * Sets horizontal offset for shadow or replaces an existing one.
      *
      * @param shadowOffsetX offset to set in pixels
      */
@@ -100,7 +100,7 @@ public interface HasShadow<T> {
     Integer getShadowOffsetY();
 
     /**
-     * Sets vertical offset for shadow or replaces existing one.
+     * Sets vertical offset for shadow or replaces an existing one.
      *
      * @param shadowOffsetY offset to set in pixels
      */

@@ -19,6 +19,11 @@ package io.jmix.chartsflowui.kit.component.model.axis;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 
+/**
+ * Options component related to axis line.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#xAxis.axisLine">AxisLine documentation</a>
+ */
 public class AxisLine extends ChartObservableObject {
 
     protected Boolean show;

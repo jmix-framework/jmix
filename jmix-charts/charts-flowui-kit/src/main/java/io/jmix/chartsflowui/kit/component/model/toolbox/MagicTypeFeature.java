@@ -20,6 +20,12 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * A tool feature to switch series type on the fly.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#toolbox.feature.magicType">MagicType documentation</a>
+ */
 public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
 
     protected MagicType[] types;
@@ -28,6 +34,9 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
 
     protected Icon icon;
 
+    /**
+     * Available series types for conversion.
+     */
     public enum MagicType implements HasEnumId {
         LINE("line"),
         BAR("bar"),
@@ -55,6 +64,11 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
         }
     }
 
+    /**
+     * Title for different magic types.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#toolbox.feature.magicType.title">MagicType.title documentation</a>
+     */
     public static class Title extends ChartObservableObject {
 
         protected String bar;
@@ -122,6 +136,11 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
         }
     }
 
+    /**
+     * Icon for different magic types.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#toolbox.feature.magicType.icon">MagicType.icon documentation</a>
+     */
     public static class Icon extends ChartObservableObject {
 
         protected String line;

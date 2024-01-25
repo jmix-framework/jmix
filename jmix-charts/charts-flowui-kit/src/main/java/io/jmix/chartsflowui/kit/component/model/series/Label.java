@@ -21,6 +21,12 @@ import io.jmix.chartsflowui.kit.component.model.shared.AbstractEnhancedLabel;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 import jakarta.annotation.Nullable;
 
+/**
+ * A text label to explain some information about a graphic element, such as value, name etc.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-line.label">SeriesLabel documentation</a>
+ */
 public class Label extends AbstractEnhancedLabel<Label> {
 
     protected Position position;
@@ -29,6 +35,9 @@ public class Label extends AbstractEnhancedLabel<Label> {
 
     protected JsFunction formatterFunction;
 
+    /**
+     * Component for label position. Can contain coordinates or a predefined position type.
+     */
     public static class Position {
 
         protected String[] coordinates;
@@ -43,11 +52,16 @@ public class Label extends AbstractEnhancedLabel<Label> {
             this.positionType = positionType;
         }
 
+        /**
+         * Predefined position type.
+         */
         public enum PositionType implements HasEnumId {
             TOP("top"),
             LEFT("left"),
             RIGHT("right"),
             BOTTOM("bottom"),
+            OUTSIDE("outside"),
+            CENTER("center"),
             INSIDE("inside"),
             INSIDE_LEFT("insideLeft"),
             INSIDE_RIGHT("insideRight"),

@@ -19,6 +19,11 @@ package io.jmix.chartsflowui.kit.component.model.axis;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * The base class for Cartesian axes.
+ *
+ * @param <T> origin class type
+ */
 public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> extends AbstractAxis<T>
         implements HasAxisName<T> {
 
@@ -48,6 +53,9 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         super(type);
     }
 
+    /**
+     * Position of Cartesian axis.
+     */
     public enum Position implements HasEnumId {
         TOP("top"),
         BOTTOM("bottom");

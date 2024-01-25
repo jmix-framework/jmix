@@ -32,7 +32,7 @@ public interface HasAlign<T> {
     Align getAlign();
 
     /**
-     * Sets horizontal alignment of component or replaces existing one.
+     * Sets horizontal alignment of component or replaces an existing one.
      *
      * @param align alignment to set
      */
@@ -55,7 +55,7 @@ public interface HasAlign<T> {
     VerticalAlign getVerticalAlign();
 
     /**
-     * Sets vertical alignment of component or replaces existing one.
+     * Sets vertical alignment of component or replaces an existing one.
      *
      * @param verticalAlign alignment to set
      */

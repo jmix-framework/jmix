@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * General orientation of any content.
+ */
 public enum Orientation implements HasEnumId {
     HORIZONTAL("horizontal"),
     VERTICAL("vertical");

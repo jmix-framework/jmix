@@ -16,6 +16,12 @@
 
 package io.jmix.chartsflowui.kit.component.model.axis;
 
+/**
+ * The XAxis in cartesian(rectangular) coordinate.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#xAxis">XAxis documentation</a>
+ */
 public class XAxis extends AbstractCartesianAxis<XAxis> {
 
     public XAxis() {

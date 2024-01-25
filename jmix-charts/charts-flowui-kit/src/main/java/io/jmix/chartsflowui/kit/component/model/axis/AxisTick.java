@@ -20,6 +20,11 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 
+/**
+ * Options component related to axis tick.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#xAxis.axisTick">AxisTick documentation</a>
+ */
 public class AxisTick extends ChartObservableObject {
 
     protected Boolean show;

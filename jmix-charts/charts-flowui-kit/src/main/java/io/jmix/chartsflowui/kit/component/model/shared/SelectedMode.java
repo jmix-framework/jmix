@@ -19,6 +19,10 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * Selected mode of legend or series, which controls whether series can be toggled displaying by clicking legends.
+ * It is enabled by default, and you may set it to be false to disable it.
+ */
 public enum SelectedMode implements HasEnumId {
     DISABLED("false"),
     SINGLE("single"),

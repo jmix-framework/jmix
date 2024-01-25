@@ -18,6 +18,11 @@ package io.jmix.chartsflowui.kit.component.model.toolbox;
 
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 
+/**
+ * A base class for toolbox feature.
+ *
+ * @param <T> origin class type
+ */
 public abstract class AbstractFeature<T extends AbstractFeature<T>> extends ToolboxFeature {
 
     protected Boolean show;

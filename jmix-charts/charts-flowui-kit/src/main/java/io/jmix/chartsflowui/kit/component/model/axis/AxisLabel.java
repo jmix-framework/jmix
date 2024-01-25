@@ -21,6 +21,11 @@ import io.jmix.chartsflowui.kit.component.model.HasBorder;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 
+/**
+ * Options component related to axis label.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#xAxis.axisLabel">AxisLabel documentation</a>
+ */
 public class AxisLabel extends AbstractRichText<AxisLabel>
         implements HasAlign<AxisLabel>, HasShadow<AxisLabel>, HasPadding<AxisLabel>, HasBorder<AxisLabel> {
 

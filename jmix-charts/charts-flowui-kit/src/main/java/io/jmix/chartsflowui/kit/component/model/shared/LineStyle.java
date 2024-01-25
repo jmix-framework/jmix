@@ -20,6 +20,9 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasLineStyle;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 
+/**
+ * Common style for the line.
+ */
 public class LineStyle extends ChartObservableObject
         implements HasShadow<LineStyle>, HasLineStyle<LineStyle> {
 

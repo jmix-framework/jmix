@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.series;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 
+/**
+ * Configuration component of label guideline for elements for series.
+ */
 public class ElementLabelLine extends ChartObservableObject {
 
     protected Boolean show;

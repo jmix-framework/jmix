@@ -20,6 +20,11 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 
+/**
+ * The base class for axis.
+ *
+ * @param <T> origin class type
+ */
 public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObservableObject {
 
     protected String id;

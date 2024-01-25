@@ -12,4 +12,6 @@
     "longField": 18,
   },
   "nullField": null,
+  "named": "value",
+  "ignored": "value",
 }

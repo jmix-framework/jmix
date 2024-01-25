@@ -16,10 +16,13 @@
 
 package io.jmix.chartsflowui.kit.component.event;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import elemental.json.*;
 import elemental.json.impl.JreJsonNull;
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -56,19 +59,36 @@ public interface JmixChartDetailEvent<T> {
         };
     }
 
+    default String getFieldName(Field field) {
+        JsonProperty jsonAnnotation = field.getAnnotation(JsonProperty.class);
+        if (jsonAnnotation != null && jsonAnnotation.value() != null && !"".equals(jsonAnnotation.value())) {
+            return jsonAnnotation.value();
+        }
+        return field.getName();
+    }
+
+    default boolean isFieldIgnored(Field field) {
+        JsonIgnore jsonAnnotation = field.getAnnotation(JsonIgnore.class);
+        if (jsonAnnotation != null && jsonAnnotation.value()) {
+            return jsonAnnotation.value();
+        }
+        return false;
+    }
+
     default void convertPrimitiveField(Field field, JsonObject source, Object target, Class<?> ownerClazz)
             throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        String fieldName = getFieldName(field);
         String fieldClassName = getFieldClassName(field);
         String fieldGetterName = getFieldGetterName(fieldClassName);
-        if (source.hasKey(field.getName())) {
+        if (source.hasKey(fieldName)) {
             Method checker = source.getClass().getMethod("get", String.class);
-            JsonValue value = (JsonValue) checker.invoke(source, field.getName());
+            JsonValue value = (JsonValue) checker.invoke(source, fieldName);
             Class<?> reqClazz = Class.forName("elemental.json.Json" + fieldGetterName);
             if (value != null) {
                 Object convertedValue = null;
                 if (reqClazz.isInstance(value)) {
                     Method getter = source.getClass().getMethod("get" + fieldGetterName, String.class);
-                    Object typedValue = getter.invoke(source, field.getName());
+                    Object typedValue = getter.invoke(source, fieldName);
                     convertedValue = switch (fieldClassName) {
                         case "Long" -> typedValue.getClass().getMethod("longValue").invoke(typedValue);
                         case "Integer" -> typedValue.getClass().getMethod("intValue").invoke(typedValue);
@@ -181,7 +201,7 @@ public interface JmixChartDetailEvent<T> {
         setter.invoke(target, instance);
 
         Method getter = source.getClass().getMethod("getObject", String.class);
-        JsonObject fieldValue = (JsonObject) getter.invoke(source, field.getName());
+        JsonObject fieldValue = (JsonObject) getter.invoke(source, getFieldName(field));
 
         convertClassFields(instance, fieldValue, fieldClazz);
     }
@@ -191,15 +211,19 @@ public interface JmixChartDetailEvent<T> {
         List<Field> fields = getAllFields(ownerClazz);
         JsonNull jsonNull = new JreJsonNull();
         for (Field field : fields) {
+            if (isFieldIgnored(field)) {
+                continue;
+            }
             Method checker = source.getClass().getMethod("get", String.class);
-            JsonValue value = (JsonValue) checker.invoke(source, field.getName());
+            String fieldName = getFieldName(field);
+            JsonValue value = (JsonValue) checker.invoke(source, fieldName);
             if (value != null && !value.jsEquals(jsonNull)) {
                 switch (getFieldClassName(field)) {
                     case "String", "Long", "Integer", "Boolean", "Double" ->
                             convertPrimitiveField(field, source, instance, ownerClazz);
                     case "List" -> {
                         Method getter = source.getClass().getMethod("getArray", String.class);
-                        Object result = getter.invoke(source, field.getName());
+                        Object result = getter.invoke(source, fieldName);
                         if (result instanceof JsonArray) {
                             JsonArray fieldValue = (JsonArray) result;
                             convertList(field, fieldValue, instance, ownerClazz);
@@ -208,7 +232,7 @@ public interface JmixChartDetailEvent<T> {
                     case "Map" -> {
                         if (value instanceof JsonObject) {
                             Method getter = source.getClass().getMethod("getObject", String.class);
-                            Object result = (JsonObject) getter.invoke(source, field.getName());
+                            Object result = (JsonObject) getter.invoke(source, fieldName);
                             if (result instanceof JsonObject) {
                                 JsonObject fieldValue = (JsonObject) result;
                                 convertMap(field, fieldValue, instance, ownerClazz);

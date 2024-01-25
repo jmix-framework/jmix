@@ -1,3 +1,5 @@
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartEventDetail;
 
 import java.util.List;
@@ -12,6 +14,12 @@ public class JmixChartTestEventDetail extends JmixChartEventDetail {
     private TestDTO testDTO;
 
     private String nullField;
+
+    @JsonProperty("named")
+    private String alterNamed;
+
+    @JsonIgnore
+    private String ignored;
 
     public Map<String, String> getTestMap() {
         return testMap;
@@ -43,5 +51,21 @@ public class JmixChartTestEventDetail extends JmixChartEventDetail {
 
     public void setNullField(String nullField) {
         this.nullField = nullField;
+    }
+
+    public String getAlterNamed() {
+        return alterNamed;
+    }
+
+    public void setAlterNamed(String alterNamed) {
+        this.alterNamed = alterNamed;
+    }
+
+    public String getIgnored() {
+        return ignored;
+    }
+
+    public void setIgnored(String ignored) {
+        this.ignored = ignored;
     }
 }

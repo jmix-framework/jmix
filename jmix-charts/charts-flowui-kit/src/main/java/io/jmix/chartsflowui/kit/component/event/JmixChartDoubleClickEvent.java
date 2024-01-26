@@ -25,7 +25,7 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartDoubleClickEventDet
 
 
 @DomEvent(JmixChartDoubleClickEvent.EVENT_NAME)
-public class JmixChartDoubleClickEvent extends AbstractChartMouseClickEvent<JmixChartDoubleClickEventDetail> {
+public class JmixChartDoubleClickEvent extends AbstractChartMouseEvent<JmixChartDoubleClickEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "dblclick";
 

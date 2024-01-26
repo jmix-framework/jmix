@@ -17,14 +17,25 @@
 package io.jmix.chartsflowui.kit.component.event;
 
 import elemental.json.JsonObject;
+import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
+import io.jmix.chartsflowui.kit.component.event.dto.BaseChartEventDetail;
 
+public class AbstractChartMouseEvent<T extends BaseChartEventDetail> extends AbstractChartEvent<T> {
 
-public class JmixChartMouseEvent<T> extends AbstractChartEvent {
+    protected String value;
 
-    public JmixChartMouseEvent(JmixChart source, boolean fromClient,
-                               JsonObject detail, Class<T> detailClass) {
+    protected AbstractChartMouseEvent(JmixChart source, boolean fromClient,
+                                      JsonObject detail, JsonValue value, Class<T> detailClass) {
         super(source, fromClient, detail, detailClass);
+        this.value = value instanceof JsonObject ? value.toJson() : (value != null ? value.asString() : null);
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

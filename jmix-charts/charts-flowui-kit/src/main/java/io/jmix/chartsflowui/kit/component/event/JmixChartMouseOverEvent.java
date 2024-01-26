@@ -19,18 +19,20 @@ package io.jmix.chartsflowui.kit.component.event;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
+import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartMouseOverEventDetail;
 
 
 @DomEvent(JmixChartMouseOverEvent.EVENT_NAME)
-public class JmixChartMouseOverEvent extends AbstractChartEvent<JmixChartMouseOverEventDetail> {
+public class JmixChartMouseOverEvent extends AbstractChartMouseEvent<JmixChartMouseOverEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "mouseover";
 
     public JmixChartMouseOverEvent(JmixChart source, boolean fromClient,
-                                   @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail, JmixChartMouseOverEventDetail.class);
+                                   @EventData("event.detail") JsonObject detail,
+                                   @EventData("event.detail.value") JsonValue value) {
+        super(source, fromClient, detail, value, JmixChartMouseOverEventDetail.class);
     }
 
 }

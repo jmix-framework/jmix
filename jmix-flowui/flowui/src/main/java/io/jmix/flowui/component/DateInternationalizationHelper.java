@@ -80,4 +80,8 @@ public class DateInternationalizationHelper {
         Calendar calendar = Calendar.getInstance(locale);
         return calendar.getFirstDayOfWeek();
     }
+
+    public static int calenderDayOfWeekToVaadinDayOfWeek(int calenderDayOfWeek) {
+        return calenderDayOfWeek - 1;
+    }
 }

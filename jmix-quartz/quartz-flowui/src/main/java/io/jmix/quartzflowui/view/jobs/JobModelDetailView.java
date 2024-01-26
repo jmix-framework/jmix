@@ -221,9 +221,10 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
         // check for local key duplicates
         getEditedEntity().getTriggers().stream()
                 .filter(triggerModel -> getEditedEntity().getTriggers().stream()
-                        .filter(t -> TriggerKey.triggerKey(t.getTriggerName(),
-                                t.getTriggerGroup()).equals(
-                                TriggerKey.triggerKey(triggerModel.getTriggerName(), triggerModel.getTriggerGroup())))
+                        .filter(t -> !Strings.isNullOrEmpty(t.getTriggerName()))
+                        .filter(t -> TriggerKey.triggerKey(t.getTriggerName(), t.getTriggerGroup()).equals(
+                                TriggerKey.triggerKey(triggerModel.getTriggerName(), triggerModel.getTriggerGroup())
+                        ))
                         .count() > 1)
                 .filter(distinctByKey(t -> TriggerKey.triggerKey(t.getTriggerName(), t.getTriggerGroup())))
                 .forEach(triggerModel ->

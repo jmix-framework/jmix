@@ -232,20 +232,24 @@ public class JobModelDetailView extends StandardDetailView<JobModel> {
                     Strings.isNullOrEmpty(currentJobGroup) ? "DEFAULT" : currentJobGroup));
         }
         // check for local key duplicates
-        getEditedEntity().getTriggers().stream().filter(triggerModel -> getEditedEntity().getTriggers().stream()
-                .filter(t -> TriggerKey.triggerKey(t.getTriggerName(),
-                        t.getTriggerGroup()).equals(
-                                TriggerKey.triggerKey(triggerModel.getTriggerName(), triggerModel.getTriggerGroup())))
-                .count() > 1)
-            .filter(distinctByKey(t -> TriggerKey.triggerKey(t.getTriggerName(), t.getTriggerGroup())))
-            .forEach(triggerModel ->
-                errors.add(
-                    messageBundle.formatMessage(
-                        "triggerAlreadyExistsValidationMessage",
-                        triggerModel.getTriggerName(),
-                        Strings.isNullOrEmpty(triggerModel.getTriggerGroup()) ? "DEFAULT" :
-                                triggerModel.getTriggerGroup()))
-        );
+        getEditedEntity().getTriggers().stream()
+                .filter(triggerModel -> !Strings.isNullOrEmpty(triggerModel.getTriggerName()))
+                .filter(triggerModel -> {
+                    TriggerKey key = TriggerKey.triggerKey(triggerModel.getTriggerName(), triggerModel.getTriggerGroup());
+                    return getEditedEntity().getTriggers().stream()
+                            .filter(t -> !Strings.isNullOrEmpty(t.getTriggerName()))
+                            .filter(t -> TriggerKey.triggerKey(t.getTriggerName(), t.getTriggerGroup()).equals(key))
+                            .count() > 1;
+                })
+                .filter(distinctByKey(t -> TriggerKey.triggerKey(t.getTriggerName(), t.getTriggerGroup())))
+                .forEach(triggerModel ->
+                        errors.add(
+                                messageBundle.formatMessage(
+                                        "triggerAlreadyExistsValidationMessage",
+                                        triggerModel.getTriggerName(),
+                                        Strings.isNullOrEmpty(triggerModel.getTriggerGroup()) ? "DEFAULT" :
+                                                triggerModel.getTriggerGroup()))
+                );
 
         if (!replaceJobIfExists) { // create new job
             if (quartzService.checkJobExists(currentJobName, currentJobGroup)) {

@@ -69,6 +69,7 @@ public class JmixChartEvent extends ComponentEvent<JmixChart> {
                 throw new RuntimeException(e);
             }
         }
+        //noinspection unchecked
         return (T) detail;
     }
 

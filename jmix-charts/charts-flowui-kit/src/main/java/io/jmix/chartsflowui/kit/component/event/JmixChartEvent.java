@@ -31,7 +31,9 @@ public class JmixChartEvent extends ComponentEvent<JmixChart> {
     public static final String EVENT_NAME_PREFIX = "jmixchart";
 
     protected JsonObject detailJson;
+
     protected Object detail = null;
+
     protected String value;
 
     private final static ObjectMapper mapper = JsonMapper.builder()
@@ -49,16 +51,16 @@ public class JmixChartEvent extends ComponentEvent<JmixChart> {
         return detailJson;
     }
 
+    public void setDetailJson(JsonObject detailJson) {
+        this.detailJson = detailJson;
+    }
+
     public Object getDetail() {
         return detail;
     }
 
     public void setDetail(Object detail) {
         this.detail = detail;
-    }
-
-    public void setDetailJson(JsonObject detailJson) {
-        this.detailJson = detailJson;
     }
 
     public <T> T convertDetail(Class<T> detailClazz) {

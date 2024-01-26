@@ -22,6 +22,7 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartMouseDownEventDetail;
 
+
 @DomEvent(JmixChartMouseDownEvent.EVENT_NAME)
 public class JmixChartMouseDownEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixChartMouseDownEventDetail> {
 
@@ -33,9 +34,8 @@ public class JmixChartMouseDownEvent extends JmixChartMouseEvent implements Jmix
     }
 
     public JmixChartMouseDownEvent(JmixChart source, boolean fromClient,
-                                   @EventData("event.detail") JsonObject detail,
-                                   @EventData("event.detail.value") String value) {
-        super(source, fromClient, detail, value);
+                                   @EventData("event.detail") JsonObject detail) {
+        super(source, fromClient, detail);
     }
 
 }

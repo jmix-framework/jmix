@@ -14,9 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.chartsflowui.kit.component.event.dto;
+package io.jmix.chartsflowui.kit.component.event;
+
+import elemental.json.JsonObject;
+import io.jmix.chartsflowui.kit.component.JmixChart;
 
 
-public class JmixChartClickEventDetail extends JmixChartMouseClickEventDetail {
+public class JmixChartMouseClickEvent extends JmixChartMouseEvent {
 
+    public JmixChartMouseClickEvent(JmixChart source, boolean fromClient,
+                                    JsonObject detail, String value) {
+        super(source, fromClient, detail);
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

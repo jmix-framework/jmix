@@ -48,7 +48,6 @@ public class JmixChartClickEventTest {
         File file = new File(getClass().getResource("jmix-chart-click-event-detail.json").getFile());
         JsonObject detailJson = jsonFactory.parse(Files.readString(file.toPath()));
 
-
         JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detailJson, "0");
         JmixChartClickEventDetail detail = event.getDetail();
         assertEquals("2012-09-04", event.getDetail().getValue());

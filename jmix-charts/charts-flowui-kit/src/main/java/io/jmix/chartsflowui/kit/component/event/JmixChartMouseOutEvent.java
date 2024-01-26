@@ -34,9 +34,8 @@ public class JmixChartMouseOutEvent extends JmixChartMouseEvent implements JmixC
     }
 
     public JmixChartMouseOutEvent(JmixChart source, boolean fromClient,
-                                  @EventData("event.detail") JsonObject detail,
-                                  @EventData("event.detail.value") String value) {
-        super(source, fromClient, detail, value);
+                                  @EventData("event.detail") JsonObject detail) {
+        super(source, fromClient, detail);
     }
 
 }

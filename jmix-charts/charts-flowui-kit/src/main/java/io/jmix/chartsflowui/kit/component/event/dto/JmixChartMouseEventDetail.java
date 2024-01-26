@@ -30,8 +30,6 @@ public class JmixChartMouseEventDetail extends JmixChartComponentEventDetail {
 
     private String targetType;
 
-    private String value;
-
     private Double percent;
 
     private String color;
@@ -47,14 +45,6 @@ public class JmixChartMouseEventDetail extends JmixChartComponentEventDetail {
     private Integer dataIndex;
 
     private Map<String, String> data;
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
 
     public Double getPercent() {
         return percent;

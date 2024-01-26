@@ -16,9 +16,6 @@
 
 package io.jmix.chartsflowui.kit.component.event;
 
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.DomEvent;
-import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 
@@ -26,13 +23,8 @@ import io.jmix.chartsflowui.kit.component.JmixChart;
 public class JmixChartMouseEvent extends JmixChartEvent {
 
     public JmixChartMouseEvent(JmixChart source, boolean fromClient,
-                               JsonObject detail,
-                               String value) {
+                               JsonObject detail) {
         super(source, fromClient, detail);
-        this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

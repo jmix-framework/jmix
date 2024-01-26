@@ -24,7 +24,7 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartClickEventDetail;
 
 
 @DomEvent(JmixChartClickEvent.EVENT_NAME)
-public class JmixChartClickEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixChartClickEventDetail> {
+public class JmixChartClickEvent extends JmixChartMouseClickEvent implements JmixChartDetailEvent<JmixChartClickEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "click";
 

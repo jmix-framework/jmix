@@ -28,6 +28,11 @@ public class JmixChartDataViewChangedEvent extends JmixChartEvent implements Jmi
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "dataviewchanged";
 
+    @Override
+    public JmixChartDataViewChangedEventDetail getDetail() {
+        return convertDetail(JmixChartDataViewChangedEventDetail.class);
+    }
+
     public JmixChartDataViewChangedEvent(JmixChart source, boolean fromClient,
                                  @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

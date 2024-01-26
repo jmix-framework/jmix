@@ -28,6 +28,11 @@ public class JmixChartMouseOverEvent extends JmixChartMouseEvent implements Jmix
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "mouseover";
 
+    @Override
+    public JmixChartMouseOverEventDetail getDetail() {
+        return convertDetail(JmixChartMouseOverEventDetail.class);
+    }
+
     public JmixChartMouseOverEvent(JmixChart source, boolean fromClient,
                                    @EventData("event.detail") JsonObject detail,
                                    @EventData("event.detail.value") String value) {

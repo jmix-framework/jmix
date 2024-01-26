@@ -28,6 +28,11 @@ public class JmixChartLegendInverseSelectEvent extends JmixChartEvent implements
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "legendinverseselect";
 
+    @Override
+    public JmixChartLegendInverseSelectEventDetail getDetail() {
+        return convertDetail(JmixChartLegendInverseSelectEventDetail.class);
+    }
+
     public JmixChartLegendInverseSelectEvent(JmixChart source, boolean fromClient,
                                              @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

@@ -28,6 +28,11 @@ public class JmixChartGlobalOutEvent extends JmixChartMouseEvent implements Jmix
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "globalout";
 
+    @Override
+    public JmixChartGlobalOutEventDetail getDetail() {
+        return convertDetail(JmixChartGlobalOutEventDetail.class);
+    }
+
     public JmixChartGlobalOutEvent(JmixChart source, boolean fromClient,
                                    @EventData("event.detail") JsonObject detail,
                                    @EventData("event.detail.value") String value) {

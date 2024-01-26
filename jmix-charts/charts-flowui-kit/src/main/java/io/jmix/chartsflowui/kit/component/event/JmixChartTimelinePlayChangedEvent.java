@@ -27,6 +27,11 @@ public class JmixChartTimelinePlayChangedEvent extends JmixChartEvent implements
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "timelineplaychanged";
 
+    @Override
+    public JmixChartTimelinePlayChangedEventDetail getDetail() {
+        return convertDetail(JmixChartTimelinePlayChangedEventDetail.class);
+    }
+
     public JmixChartTimelinePlayChangedEvent(JmixChart source, boolean fromClient,
                                              @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

@@ -16,8 +16,13 @@
 
 package io.jmix.chartsflowui.kit.component.event;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.vaadin.flow.component.ComponentEvent;
-import elemental.json.JsonObject;
+import elemental.json.*;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 
 
@@ -28,6 +33,11 @@ public class JmixChartEvent extends ComponentEvent<JmixChart> {
     protected JsonObject detailJson;
     protected Object detail = null;
     protected String value;
+
+    private final static ObjectMapper mapper = JsonMapper.builder()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true)
+            .build();
 
     public JmixChartEvent(JmixChart source, boolean fromClient,
                           JsonObject detail) {
@@ -50,4 +60,16 @@ public class JmixChartEvent extends ComponentEvent<JmixChart> {
     public void setDetailJson(JsonObject detailJson) {
         this.detailJson = detailJson;
     }
+
+    public <T> T convertDetail(Class<T> detailClazz) {
+        if (detail == null) {
+            try {
+                detail = mapper.readValue(detailJson.toJson(), detailClazz);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return (T) detail;
+    }
+
 }

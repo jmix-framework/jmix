@@ -21,8 +21,4 @@ archivesBaseName = 'jmix-charts-flowui-kit'
 
 dependencies {
     api project(':flowui-kit')
-    testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }

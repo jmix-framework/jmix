@@ -28,6 +28,11 @@ public class JmixChartLegendSelectAllEvent extends JmixChartEvent implements Jmi
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "legendselectall";
 
+    @Override
+    public JmixChartLegendSelectAllEventDetail getDetail() {
+        return convertDetail(JmixChartLegendSelectAllEventDetail.class);
+    }
+
     public JmixChartLegendSelectAllEvent(JmixChart source, boolean fromClient,
                                          @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

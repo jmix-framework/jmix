@@ -27,6 +27,11 @@ public class JmixChartMouseDownEvent extends JmixChartMouseEvent implements Jmix
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "mousedown";
 
+    @Override
+    public JmixChartMouseDownEventDetail getDetail() {
+        return convertDetail(JmixChartMouseDownEventDetail.class);
+    }
+
     public JmixChartMouseDownEvent(JmixChart source, boolean fromClient,
                                    @EventData("event.detail") JsonObject detail,
                                    @EventData("event.detail.value") String value) {

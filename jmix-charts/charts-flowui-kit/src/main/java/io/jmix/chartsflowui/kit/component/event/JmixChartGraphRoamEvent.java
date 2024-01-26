@@ -28,6 +28,11 @@ public class JmixChartGraphRoamEvent extends JmixChartEvent implements JmixChart
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "graphroam";
 
+    @Override
+    public JmixChartGraphRoamEventDetail getDetail() {
+        return convertDetail(JmixChartGraphRoamEventDetail.class);
+    }
+
     public JmixChartGraphRoamEvent(JmixChart source, boolean fromClient,
                                    @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

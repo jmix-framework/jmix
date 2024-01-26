@@ -28,6 +28,11 @@ public class JmixChartGeoUnselectedEvent extends JmixChartEvent implements JmixC
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "geounselected";
 
+    @Override
+    public JmixChartGeoUnselectedEventDetail getDetail() {
+        return convertDetail(JmixChartGeoUnselectedEventDetail.class);
+    }
+
     public JmixChartGeoUnselectedEvent(JmixChart source, boolean fromClient,
                                        @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

@@ -28,6 +28,11 @@ public class JmixChartSelectChangedEvent extends JmixChartEvent implements JmixC
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "selectchanged";
 
+    @Override
+    public JmixChartSelectChangedEventDetail getDetail() {
+        return convertDetail(JmixChartSelectChangedEventDetail.class);
+    }
+
     public JmixChartSelectChangedEvent(JmixChart source, boolean fromClient,
                                        @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

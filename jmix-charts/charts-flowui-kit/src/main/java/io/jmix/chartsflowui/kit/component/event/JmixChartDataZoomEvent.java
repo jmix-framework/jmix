@@ -28,6 +28,11 @@ public class JmixChartDataZoomEvent extends JmixChartEvent implements JmixChartD
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "datazoom";
 
+    @Override
+    public JmixChartDataZoomEventDetail getDetail() {
+        return convertDetail(JmixChartDataZoomEventDetail.class);
+    }
+
     public JmixChartDataZoomEvent(JmixChart source, boolean fromClient,
                                   @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

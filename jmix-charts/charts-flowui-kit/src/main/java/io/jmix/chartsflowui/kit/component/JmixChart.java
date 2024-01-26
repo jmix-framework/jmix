@@ -82,7 +82,7 @@ public class JmixChart extends Component implements HasSize {
 
     }
 
-    public Registration getRemovalCallback(String eventName, Class clazz) {
+    protected Registration getRemovalCallback(String eventName, Class clazz) {
         return () -> {
             eventRegistrations.get(eventName).remove();
             if (!getEventBus().hasListener(clazz)
@@ -96,7 +96,6 @@ public class JmixChart extends Component implements HasSize {
     public Registration addClickEventListener(ComponentEventListener<JmixChartClickEvent> listener) {
         eventRegistrations.put(JmixChartClickEvent.EVENT_NAME, getEventBus().addListener(JmixChartClickEvent.class, listener));
         return getRemovalCallback(JmixChartClickEvent.EVENT_NAME, JmixChartClickEvent.class);
-
     }
 
     public Registration addDoubleClickEventListener(ComponentEventListener<JmixChartDoubleClickEvent> listener) {
@@ -251,10 +250,6 @@ public class JmixChart extends Component implements HasSize {
     public Registration addFinishedEventListener(ComponentEventListener<JmixChartFinishedEvent> listener) {
         eventRegistrations.put(JmixChartFinishedEvent.EVENT_NAME, getEventBus().addListener(JmixChartFinishedEvent.class, listener));
         return getRemovalCallback(JmixChartFinishedEvent.EVENT_NAME, JmixChartFinishedEvent.class);
-    }
-
-    public void fireJmixChartEvent(JmixChartEvent event) {
-        getEventBus().fireEvent(event);
     }
 
     public void setNativeJson(String json) {

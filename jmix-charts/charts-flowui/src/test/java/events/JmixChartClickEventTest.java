@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License). Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
+package events;
+
 import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.JmixChartClickEvent;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartClickEventDetail;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -27,49 +30,52 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JmixChartClickEventTest {
 
+    JmixChart chart;
+
+    JsonFactory jsonFactory = new JreJsonFactory();
+
+    @BeforeEach
+    void setup() {
+        chart = new JmixChart();
+    }
+
     @Test
     public void loadDetailTest() throws IOException {
-        JmixChart chart = new JmixChart();
-        JsonFactory jsonFactory = new JreJsonFactory();
         File file = new File(getClass().getResource("jmix-chart-click-event-detail.json").getFile());
-        JsonObject detail = jsonFactory.parse(Files.readString(file.toPath()));
+        JsonObject detailJson = jsonFactory.parse(Files.readString(file.toPath()));
 
 
-        JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detail, "0");
-        assertEquals("2012-09-04", event.loadDetail().getValue());
+        JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detailJson, "0");
+        JmixChartClickEventDetail detail = event.getDetail();
+        assertEquals("2012-09-04", event.getDetail().getValue());
     }
 
     @Test
     public void mapDetailTest() throws IOException {
-        JmixChart chart = new JmixChart();
-        JsonFactory jsonFactory = new JreJsonFactory();
         File file = new File(getClass().getResource("jmix-chart-click-event-detail.json").getFile());
         JsonObject detail = jsonFactory.parse(Files.readString(file.toPath()));
 
-
         JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detail, "0");
-        JmixChartClickEventDetail eventDetail = event.mapDetail(JmixChartClickEventDetail.class);
+        JmixChartClickEventDetail eventDetail = (JmixChartClickEventDetail) event.convertDetail(JmixChartClickEventDetail.class);
         assertEquals("2012-09-04", eventDetail.getValue());
     }
 
     @Test
     public void mapTestDetailTest() throws IOException {
-        JmixChart chart = new JmixChart();
-        JsonFactory jsonFactory = new JreJsonFactory();
         File file = new File(getClass().getResource("jmix-chart-test-event-detail.json").getFile());
         JsonObject detail = jsonFactory.parse(Files.readString(file.toPath()));
 
-
         JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detail, "0");
-        JmixChartTestEventDetail eventDetail = event.mapDetail(JmixChartTestEventDetail.class);
+        JmixChartTestEventDetail eventDetail = (JmixChartTestEventDetail) event.convertDetail(JmixChartTestEventDetail.class);
         assertEquals("bar", eventDetail.getTestMap().get("foo"));
         assertEquals(4, eventDetail.getNumbers().get(1));
         assertEquals(false, eventDetail.getTestDTO().getBoolField());
-        assertEquals(null, eventDetail.getNullField());
+        assertNull(eventDetail.getNullField());
         assertEquals("value", eventDetail.getAlterNamed());
-        assertEquals(null, eventDetail.getIgnored());
+        assertNull(eventDetail.getIgnored());
     }
 }

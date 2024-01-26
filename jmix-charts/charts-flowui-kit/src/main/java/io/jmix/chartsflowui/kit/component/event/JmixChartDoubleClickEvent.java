@@ -28,6 +28,11 @@ public class JmixChartDoubleClickEvent extends JmixChartMouseEvent implements Jm
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "dblclick";
 
+    @Override
+    public JmixChartDoubleClickEventDetail getDetail() {
+        return convertDetail(JmixChartDoubleClickEventDetail.class);
+    }
+
     public JmixChartDoubleClickEvent(JmixChart source, boolean fromClient,
                                      @EventData("event.detail") JsonObject detail,
                                      @EventData("event.detail.value") String value) {

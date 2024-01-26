@@ -28,6 +28,11 @@ public class JmixChartMouseOutEvent extends JmixChartMouseEvent implements JmixC
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "mouseout";
 
+    @Override
+    public JmixChartMouseOutEventDetail getDetail() {
+        return convertDetail(JmixChartMouseOutEventDetail.class);
+    }
+
     public JmixChartMouseOutEvent(JmixChart source, boolean fromClient,
                                   @EventData("event.detail") JsonObject detail,
                                   @EventData("event.detail.value") String value) {

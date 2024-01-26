@@ -28,6 +28,11 @@ public class JmixChartAxisAreaSelectedEvent extends JmixChartEvent implements Jm
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "axisareaselected";
 
+    @Override
+    public JmixChartAxisAreaSelectedEventDetail getDetail() {
+        return convertDetail(JmixChartAxisAreaSelectedEventDetail.class);
+    }
+
     public JmixChartAxisAreaSelectedEvent(JmixChart source, boolean fromClient,
                                           @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

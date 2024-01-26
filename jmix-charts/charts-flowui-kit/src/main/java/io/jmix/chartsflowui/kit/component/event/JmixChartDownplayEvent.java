@@ -28,6 +28,11 @@ public class JmixChartDownplayEvent extends JmixChartEvent implements JmixChartD
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "downplay";
 
+    @Override
+    public JmixChartDownplayEventDetail getDetail() {
+        return convertDetail(JmixChartDownplayEventDetail.class);
+    }
+
     public JmixChartDownplayEvent(JmixChart source, boolean fromClient,
                                   @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

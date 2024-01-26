@@ -28,6 +28,11 @@ public class JmixChartBrushSelectedEvent extends JmixChartEvent implements JmixC
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "brushselected";
 
+    @Override
+    public JmixChartBrushSelectedEventDetail getDetail() {
+        return convertDetail(JmixChartBrushSelectedEventDetail.class);
+    }
+
     public JmixChartBrushSelectedEvent(JmixChart source, boolean fromClient,
                                        @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

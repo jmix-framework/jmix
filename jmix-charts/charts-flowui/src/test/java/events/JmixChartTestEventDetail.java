@@ -1,3 +1,5 @@
+package events;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartEventDetail;
@@ -11,7 +13,7 @@ public class JmixChartTestEventDetail extends JmixChartEventDetail {
 
     private List<Integer> numbers;
 
-    private TestDTO testDTO;
+    private TestDto testDTO;
 
     private String nullField;
 
@@ -37,11 +39,11 @@ public class JmixChartTestEventDetail extends JmixChartEventDetail {
         this.numbers = numbers;
     }
 
-    public TestDTO getTestDTO() {
+    public TestDto getTestDTO() {
         return testDTO;
     }
 
-    public void setTestDTO(TestDTO testDTO) {
+    public void setTestDTO(TestDto testDTO) {
         this.testDTO = testDTO;
     }
 

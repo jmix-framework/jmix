@@ -22,11 +22,15 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartTimelineChangedEventDetail;
 
-
 @DomEvent(JmixChartTimelineChangedEvent.EVENT_NAME)
 public class JmixChartTimelineChangedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartTimelineChangedEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "timelinechanged";
+
+    @Override
+    public JmixChartTimelineChangedEventDetail getDetail() {
+        return convertDetail(JmixChartTimelineChangedEventDetail.class);
+    }
 
     public JmixChartTimelineChangedEvent(JmixChart source, boolean fromClient,
                                          @EventData("event.detail") JsonObject detail) {

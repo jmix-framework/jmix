@@ -28,6 +28,11 @@ public class JmixChartGeoRoamEvent extends JmixChartEvent implements JmixChartDe
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "georoam";
 
+    @Override
+    public JmixChartGeoRoamEventDetail getDetail() {
+        return convertDetail(JmixChartGeoRoamEventDetail.class);
+    }
+
     public JmixChartGeoRoamEvent(JmixChart source, boolean fromClient,
                                  @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

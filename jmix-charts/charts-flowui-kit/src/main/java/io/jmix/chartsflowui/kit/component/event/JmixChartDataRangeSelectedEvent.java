@@ -28,6 +28,11 @@ public class JmixChartDataRangeSelectedEvent extends JmixChartEvent implements J
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "datarangeselected";
 
+    @Override
+    public JmixChartDataRangeSelectedEventDetail getDetail() {
+        return convertDetail(JmixChartDataRangeSelectedEventDetail.class);
+    }
+
     public JmixChartDataRangeSelectedEvent(JmixChart source, boolean fromClient,
                                            @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

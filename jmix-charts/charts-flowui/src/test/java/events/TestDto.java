@@ -1,4 +1,6 @@
-public class TestDTO {
+package events;
+
+public class TestDto {
 
     private String strField;
 

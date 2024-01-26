@@ -28,6 +28,11 @@ public class JmixChartGlobalCursorTakenEvent extends JmixChartEvent implements J
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "globalcursortaken";
 
+    @Override
+    public JmixChartGlobalCursorTakenEventDetail getDetail() {
+        return convertDetail(JmixChartGlobalCursorTakenEventDetail.class);
+    }
+
     public JmixChartGlobalCursorTakenEvent(JmixChart source, boolean fromClient,
                                            @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

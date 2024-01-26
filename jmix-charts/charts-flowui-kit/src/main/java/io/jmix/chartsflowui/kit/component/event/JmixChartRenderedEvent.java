@@ -28,6 +28,11 @@ public class JmixChartRenderedEvent extends JmixChartEvent implements JmixChartD
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "rendered";
 
+    @Override
+    public JmixChartRenderedEventDetail getDetail() {
+        return convertDetail(JmixChartRenderedEventDetail.class);
+    }
+
     public JmixChartRenderedEvent(JmixChart source, boolean fromClient,
                                   @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail);

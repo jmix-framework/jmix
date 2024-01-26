@@ -81,7 +81,7 @@ public class DateInternationalizationHelper {
         return calendar.getFirstDayOfWeek();
     }
 
-    public static int calenderDayOfWeekToVaadinDayOfWeek(int calenderDayOfWeek) {
+    public static int calendarDayOfWeekToVaadinDayOfWeek(int calenderDayOfWeek) {
         return calenderDayOfWeek - 1;
     }
 }

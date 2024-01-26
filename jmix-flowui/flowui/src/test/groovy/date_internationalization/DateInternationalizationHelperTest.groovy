@@ -142,7 +142,7 @@ class DateInternationalizationHelperTest extends FlowuiTestSpecification {
     @Unroll
     def "should return #vaadinDayOfWeek as vaadinDayOfWeek for #calenderDayOfWeek as calenderDayOfWeek"() {
         expect:
-        DateInternationalizationHelper.calenderDayOfWeekToVaadinDayOfWeek(calenderDayOfWeek) == vaadinDayOfWeek
+        DateInternationalizationHelper.calendarDayOfWeekToVaadinDayOfWeek(calenderDayOfWeek) == vaadinDayOfWeek
 
         where:
         calenderDayOfWeek  || vaadinDayOfWeek

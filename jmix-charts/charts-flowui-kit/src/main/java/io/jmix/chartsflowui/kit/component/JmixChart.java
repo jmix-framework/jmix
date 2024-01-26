@@ -237,7 +237,7 @@ public class JmixChart extends Component implements HasSize {
         getEventBus().fireEvent(event);
     }
 
-    public Registration addLegendSelectctedEventListener(ComponentEventListener<JmixChartLegendSelectedEvent> listener) {
+    public Registration addLegendSelectedEventListener(ComponentEventListener<JmixChartLegendSelectedEvent> listener) {
         eventRegistrations.put(JmixChartLegendSelectedEvent.EVENT_NAME,
                 getEventBus().addListener(JmixChartLegendSelectedEvent.class, listener));
         return getRemovalCallback(JmixChartLegendSelectedEvent.EVENT_NAME, JmixChartLegendSelectedEvent.class);
@@ -249,7 +249,7 @@ public class JmixChart extends Component implements HasSize {
         getEventBus().fireEvent(event);
     }
 
-    public Registration addLegendUnselectctedEventListener(ComponentEventListener<JmixChartLegendUnselectedEvent> listener) {
+    public Registration addLegendUnselectedEventListener(ComponentEventListener<JmixChartLegendUnselectedEvent> listener) {
         eventRegistrations.put(JmixChartLegendUnselectedEvent.EVENT_NAME,
                 getEventBus().addListener(JmixChartLegendUnselectedEvent.class, listener));
         return getRemovalCallback(JmixChartLegendUnselectedEvent.EVENT_NAME, JmixChartLegendUnselectedEvent.class);

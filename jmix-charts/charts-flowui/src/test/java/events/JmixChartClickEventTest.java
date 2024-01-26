@@ -72,7 +72,7 @@ public class JmixChartClickEventTest {
         JmixChartTestEventDetail eventDetail = event.convertDetail(JmixChartTestEventDetail.class);
         assertEquals("bar", eventDetail.getTestMap().get("foo"));
         assertEquals(4, eventDetail.getNumbers().get(1));
-        assertEquals(false, eventDetail.getTestDTO().getBoolField());
+        assertEquals(false, eventDetail.getTestDto().getBoolField());
         assertNull(eventDetail.getNullField());
         assertEquals("value", eventDetail.getAlterNamed());
         assertNull(eventDetail.getIgnored());

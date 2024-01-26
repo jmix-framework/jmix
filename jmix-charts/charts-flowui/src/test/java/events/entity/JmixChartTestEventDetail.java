@@ -29,7 +29,7 @@ public class JmixChartTestEventDetail extends BaseChartEventDetail {
 
     private List<Integer> numbers;
 
-    private TestDto testDTO;
+    private TestDto testDto;
 
     private String nullField;
 
@@ -55,12 +55,12 @@ public class JmixChartTestEventDetail extends BaseChartEventDetail {
         this.numbers = numbers;
     }
 
-    public TestDto getTestDTO() {
-        return testDTO;
+    public TestDto getTestDto() {
+        return testDto;
     }
 
-    public void setTestDTO(TestDto testDTO) {
-        this.testDTO = testDTO;
+    public void setTestDto(TestDto testDto) {
+        this.testDto = testDto;
     }
 
     public String getNullField() {

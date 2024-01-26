@@ -147,7 +147,7 @@ public class JmixChart extends Component implements HasSize {
         return getRemovalCallback(JmixChartMouseOutEvent.EVENT_NAME, JmixChartMouseOutEvent.class);
     }
 
-    protected void fireMouseOutvent(JmixChartMouseOutEvent domEvent) {
+    protected void fireMouseOutEvent(JmixChartMouseOutEvent domEvent) {
         JmixChartMouseOutEvent event = new JmixChartMouseOutEvent(domEvent.getSource(), true,
                 domEvent.getDetailJson());
         getEventBus().fireEvent(event);
@@ -183,8 +183,8 @@ public class JmixChart extends Component implements HasSize {
         return getRemovalCallback(JmixChartGlobalOutEvent.EVENT_NAME, JmixChartGlobalOutEvent.class);
     }
 
-    protected void fireMouseOutEvent(JmixChartMouseOutEvent domEvent) {
-        JmixChartMouseOutEvent event = new JmixChartMouseOutEvent(domEvent.getSource(), true,
+    protected void fireGlobalOutEvent(JmixChartGlobalOutEvent domEvent) {
+        JmixChartGlobalOutEvent event = new JmixChartGlobalOutEvent(domEvent.getSource(), true,
                 domEvent.getDetailJson());
         getEventBus().fireEvent(event);
     }

@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartLegendInverseSelect
 
 
 @DomEvent(JmixChartLegendInverseSelectEvent.EVENT_NAME)
-public class JmixChartLegendInverseSelectEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartLegendInverseSelectEventDetail> {
+public class JmixChartLegendInverseSelectEvent extends AbstractChartEvent<JmixChartLegendInverseSelectEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "legendinverseselect";
 
-    @Override
-    public JmixChartLegendInverseSelectEventDetail getDetail() {
-        return convertDetail(JmixChartLegendInverseSelectEventDetail.class);
-    }
-
     public JmixChartLegendInverseSelectEvent(JmixChart source, boolean fromClient,
                                              @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartLegendInverseSelectEventDetail.class);
     }
 
 }

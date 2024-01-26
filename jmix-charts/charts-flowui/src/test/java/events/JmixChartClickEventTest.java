@@ -19,6 +19,7 @@ package events;
 import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
 import elemental.json.impl.JreJsonFactory;
+import events.entity.JmixChartTestEventDetail;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.JmixChartClickEvent;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartClickEventDetail;
@@ -39,7 +40,7 @@ public class JmixChartClickEventTest {
     JsonFactory jsonFactory = new JreJsonFactory();
 
     @BeforeEach
-    void setup() {
+    protected void setup() {
         chart = new JmixChart();
     }
 
@@ -48,8 +49,7 @@ public class JmixChartClickEventTest {
         File file = new File(getClass().getResource("jmix-chart-click-event-detail.json").getFile());
         JsonObject detailJson = jsonFactory.parse(Files.readString(file.toPath()));
 
-        JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detailJson, "0");
-        JmixChartClickEventDetail detail = event.getDetail();
+        JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detailJson, null);
         assertEquals("2012-09-04", event.getDetail().getValue());
     }
 
@@ -58,8 +58,8 @@ public class JmixChartClickEventTest {
         File file = new File(getClass().getResource("jmix-chart-click-event-detail.json").getFile());
         JsonObject detail = jsonFactory.parse(Files.readString(file.toPath()));
 
-        JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detail, "0");
-        JmixChartClickEventDetail eventDetail = (JmixChartClickEventDetail) event.convertDetail(JmixChartClickEventDetail.class);
+        JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detail, null);
+        JmixChartClickEventDetail eventDetail = event.getDetail();
         assertEquals("2012-09-04", eventDetail.getValue());
     }
 
@@ -68,8 +68,8 @@ public class JmixChartClickEventTest {
         File file = new File(getClass().getResource("jmix-chart-test-event-detail.json").getFile());
         JsonObject detail = jsonFactory.parse(Files.readString(file.toPath()));
 
-        JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detail, "0");
-        JmixChartTestEventDetail eventDetail = (JmixChartTestEventDetail) event.convertDetail(JmixChartTestEventDetail.class);
+        JmixChartClickEvent event = new JmixChartClickEvent(chart, true, detail, null);
+        JmixChartTestEventDetail eventDetail = event.convertDetail(JmixChartTestEventDetail.class);
         assertEquals("bar", eventDetail.getTestMap().get("foo"));
         assertEquals(4, eventDetail.getNumbers().get(1));
         assertEquals(false, eventDetail.getTestDTO().getBoolField());

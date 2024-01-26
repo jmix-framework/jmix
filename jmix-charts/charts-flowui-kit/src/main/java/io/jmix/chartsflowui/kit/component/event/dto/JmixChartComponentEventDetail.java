@@ -17,10 +17,7 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 
-import java.util.List;
-import java.util.Map;
-
-public class JmixChartComponentEventDetail extends JmixChartEventDetail {
+public class JmixChartComponentEventDetail extends BaseChartEventDetail {
 
     private String componentType;
 

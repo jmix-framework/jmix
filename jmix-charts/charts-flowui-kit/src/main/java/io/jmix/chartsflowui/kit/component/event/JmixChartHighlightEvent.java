@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartHighlightEventDetai
 
 
 @DomEvent(JmixChartHighlightEvent.EVENT_NAME)
-public class JmixChartHighlightEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartHighlightEventDetail> {
+public class JmixChartHighlightEvent extends AbstractChartEvent<JmixChartHighlightEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "highlight";
 
-    @Override
-    public JmixChartHighlightEventDetail getDetail() {
-        return convertDetail(JmixChartHighlightEventDetail.class);
-    }
-
     public JmixChartHighlightEvent(JmixChart source, boolean fromClient,
                                    @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartHighlightEventDetail.class);
     }
 
 }

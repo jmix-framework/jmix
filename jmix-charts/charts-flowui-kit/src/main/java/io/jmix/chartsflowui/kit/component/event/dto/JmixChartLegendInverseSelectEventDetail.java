@@ -19,7 +19,7 @@ package io.jmix.chartsflowui.kit.component.event.dto;
 
 import java.util.Map;
 
-public class JmixChartLegendInverseSelectEventDetail extends JmixChartEventDetail {
+public class JmixChartLegendInverseSelectEventDetail extends BaseChartEventDetail {
 
     private Map<String, Boolean> selected;
 

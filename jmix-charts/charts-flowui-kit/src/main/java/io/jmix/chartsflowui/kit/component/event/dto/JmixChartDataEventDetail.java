@@ -17,7 +17,7 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 
-public class JmixChartDataEventDetail extends JmixChartEventDetail {
+public class JmixChartDataEventDetail extends BaseChartEventDetail {
 
     private Integer seriesIndex;
 

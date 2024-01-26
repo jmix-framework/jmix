@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartGlobalOutEventDetai
 
 
 @DomEvent(JmixChartGlobalOutEvent.EVENT_NAME)
-public class JmixChartGlobalOutEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixChartGlobalOutEventDetail> {
+public class JmixChartGlobalOutEvent extends AbstractChartEvent<JmixChartGlobalOutEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "globalout";
 
-    @Override
-    public JmixChartGlobalOutEventDetail getDetail() {
-        return convertDetail(JmixChartGlobalOutEventDetail.class);
-    }
-
     public JmixChartGlobalOutEvent(JmixChart source, boolean fromClient,
                                    @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartGlobalOutEventDetail.class);
     }
 
 }

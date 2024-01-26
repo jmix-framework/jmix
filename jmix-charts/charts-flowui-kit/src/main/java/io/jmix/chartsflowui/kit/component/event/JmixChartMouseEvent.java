@@ -20,11 +20,11 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 
 
-public class JmixChartMouseEvent extends JmixChartEvent {
+public class JmixChartMouseEvent<T> extends AbstractChartEvent {
 
     public JmixChartMouseEvent(JmixChart source, boolean fromClient,
-                               JsonObject detail) {
-        super(source, fromClient, detail);
+                               JsonObject detail, Class<T> detailClass) {
+        super(source, fromClient, detail, detailClass);
     }
 
 }

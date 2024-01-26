@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartGlobalCursorTakenEv
 
 
 @DomEvent(JmixChartGlobalCursorTakenEvent.EVENT_NAME)
-public class JmixChartGlobalCursorTakenEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartGlobalCursorTakenEventDetail> {
+public class JmixChartGlobalCursorTakenEvent extends AbstractChartEvent<JmixChartGlobalCursorTakenEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "globalcursortaken";
 
-    @Override
-    public JmixChartGlobalCursorTakenEventDetail getDetail() {
-        return convertDetail(JmixChartGlobalCursorTakenEventDetail.class);
-    }
-
     public JmixChartGlobalCursorTakenEvent(JmixChart source, boolean fromClient,
                                            @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartGlobalCursorTakenEventDetail.class);
     }
 
 }

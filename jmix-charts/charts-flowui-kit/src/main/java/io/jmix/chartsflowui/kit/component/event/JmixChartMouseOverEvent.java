@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartMouseOverEventDetai
 
 
 @DomEvent(JmixChartMouseOverEvent.EVENT_NAME)
-public class JmixChartMouseOverEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixChartMouseOverEventDetail> {
+public class JmixChartMouseOverEvent extends AbstractChartEvent<JmixChartMouseOverEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "mouseover";
 
-    @Override
-    public JmixChartMouseOverEventDetail getDetail() {
-        return convertDetail(JmixChartMouseOverEventDetail.class);
-    }
-
     public JmixChartMouseOverEvent(JmixChart source, boolean fromClient,
                                    @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartMouseOverEventDetail.class);
     }
 
 }

@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartLegendScrollEventDe
 
 
 @DomEvent(JmixChartLegendScrollEvent.EVENT_NAME)
-public class JmixChartLegendScrollEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartLegendScrollEventDetail> {
+public class JmixChartLegendScrollEvent extends AbstractChartEvent<JmixChartLegendScrollEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "legendscroll";
 
-    @Override
-    public JmixChartLegendScrollEventDetail getDetail() {
-        return convertDetail(JmixChartLegendScrollEventDetail.class);
-    }
-
     public JmixChartLegendScrollEvent(JmixChart source, boolean fromClient,
                                       @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartLegendScrollEventDetail.class);
     }
 
 }

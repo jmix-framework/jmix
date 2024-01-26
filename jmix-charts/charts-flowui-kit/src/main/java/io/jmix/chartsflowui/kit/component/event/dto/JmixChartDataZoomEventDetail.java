@@ -19,7 +19,7 @@ package io.jmix.chartsflowui.kit.component.event.dto;
 
 import java.util.List;
 
-public class JmixChartDataZoomEventDetail extends JmixChartEventDetail {
+public class JmixChartDataZoomEventDetail extends BaseChartEventDetail {
 
     private String dataZoomId;
 

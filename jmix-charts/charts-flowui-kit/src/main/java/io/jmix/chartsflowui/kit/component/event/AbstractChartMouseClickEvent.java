@@ -16,26 +16,26 @@
 
 package io.jmix.chartsflowui.kit.component.event;
 
-import com.vaadin.flow.component.DomEvent;
-import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
+import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.chartsflowui.kit.component.event.dto.JmixChartTreeRoamEventDetail;
+import io.jmix.chartsflowui.kit.component.event.dto.BaseChartEventDetail;
 
+public class AbstractChartMouseClickEvent<T extends BaseChartEventDetail> extends AbstractChartEvent<T> {
 
-@DomEvent(JmixChartTreeRoamEvent.EVENT_NAME)
-public class JmixChartTreeRoamEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartTreeRoamEventDetail> {
+    protected String value;
 
-    public static final String EVENT_NAME = EVENT_NAME_PREFIX + "treeroam";
-
-    @Override
-    public JmixChartTreeRoamEventDetail getDetail() {
-        return convertDetail(JmixChartTreeRoamEventDetail.class);
+    protected AbstractChartMouseClickEvent(JmixChart source, boolean fromClient,
+                                           JsonObject detail, JsonValue value, Class<T> detailClass) {
+        super(source, fromClient, detail, detailClass);
+        this.value = value instanceof JsonObject ? value.toJson() : (value != null ? value.asString() : null);
     }
 
-    public JmixChartTreeRoamEvent(JmixChart source, boolean fromClient,
-                                  @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+    public String getValue() {
+        return value;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

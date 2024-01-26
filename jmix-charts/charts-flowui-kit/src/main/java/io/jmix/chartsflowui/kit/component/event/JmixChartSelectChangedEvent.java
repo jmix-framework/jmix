@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartSelectChangedEventD
 
 
 @DomEvent(JmixChartSelectChangedEvent.EVENT_NAME)
-public class JmixChartSelectChangedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartSelectChangedEventDetail> {
+public class JmixChartSelectChangedEvent extends AbstractChartEvent<JmixChartSelectChangedEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "selectchanged";
 
-    @Override
-    public JmixChartSelectChangedEventDetail getDetail() {
-        return convertDetail(JmixChartSelectChangedEventDetail.class);
-    }
-
     public JmixChartSelectChangedEvent(JmixChart source, boolean fromClient,
                                        @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartSelectChangedEventDetail.class);
     }
 
 }

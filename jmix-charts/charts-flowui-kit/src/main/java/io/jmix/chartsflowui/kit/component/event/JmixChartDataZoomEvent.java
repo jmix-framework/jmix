@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartDataZoomEventDetail
 
 
 @DomEvent(JmixChartDataZoomEvent.EVENT_NAME)
-public class JmixChartDataZoomEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartDataZoomEventDetail> {
+public class JmixChartDataZoomEvent extends AbstractChartEvent<JmixChartDataZoomEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "datazoom";
 
-    @Override
-    public JmixChartDataZoomEventDetail getDetail() {
-        return convertDetail(JmixChartDataZoomEventDetail.class);
-    }
-
     public JmixChartDataZoomEvent(JmixChart source, boolean fromClient,
                                   @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartDataZoomEventDetail.class);
     }
 
 }

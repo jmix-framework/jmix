@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartFinishedEventDetail
 
 
 @DomEvent(JmixChartFinishedEvent.EVENT_NAME)
-public class JmixChartFinishedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartFinishedEventDetail> {
+public class JmixChartFinishedEvent  extends AbstractChartEvent<JmixChartFinishedEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "finished";
 
-    @Override
-    public JmixChartFinishedEventDetail getDetail() {
-        return convertDetail(JmixChartFinishedEventDetail.class);
-    }
-
     public JmixChartFinishedEvent(JmixChart source, boolean fromClient,
                                   @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartFinishedEventDetail.class);
     }
 
 }

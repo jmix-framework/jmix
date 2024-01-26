@@ -24,55 +24,49 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.vaadin.flow.component.ComponentEvent;
 import elemental.json.*;
 import io.jmix.chartsflowui.kit.component.JmixChart;
+import io.jmix.chartsflowui.kit.component.event.dto.BaseChartEventDetail;
 
 
-public class JmixChartEvent extends ComponentEvent<JmixChart> {
+public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends ComponentEvent<JmixChart> {
 
     public static final String EVENT_NAME_PREFIX = "jmixchart";
 
     protected JsonObject detailJson;
 
-    protected Object detail = null;
-
-    protected String value;
+    protected T detail;
+    protected Class<T> detailClass;
 
     private final static ObjectMapper mapper = JsonMapper.builder()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true)
             .build();
 
-    public JmixChartEvent(JmixChart source, boolean fromClient,
-                          JsonObject detail) {
+    public AbstractChartEvent(JmixChart source, boolean fromClient,
+                              JsonObject detail, Class<T> detailClass) {
         super(source, fromClient);
         this.detailJson = detail;
+        this.detailClass = detailClass;
     }
 
     public JsonObject getDetailJson() {
         return detailJson;
     }
 
-    public void setDetailJson(JsonObject detailJson) {
-        this.detailJson = detailJson;
-    }
-
-    public Object getDetail() {
+    public T getDetail() {
+        if (detail == null) {
+            detail = convertDetail(detailClass);
+        }
         return detail;
     }
 
-    public void setDetail(Object detail) {
-        this.detail = detail;
-    }
-
-    public <T> T convertDetail(Class<T> detailClazz) {
-        if (detail == null) {
-            try {
-                detail = mapper.readValue(detailJson.toJson(), detailClazz);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+    public <M> M convertDetail(Class<M> clazz) {
+        M converted = null;
+        try {
+            converted = mapper.readValue(detailJson.toJson(), clazz);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
-        //noinspection unchecked
-        return (T) detail;
+        return converted;
     }
 
 }

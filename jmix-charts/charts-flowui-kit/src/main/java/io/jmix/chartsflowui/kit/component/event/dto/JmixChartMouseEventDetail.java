@@ -28,6 +28,8 @@ public class JmixChartMouseEventDetail extends JmixChartComponentEventDetail {
 
     private String name;
 
+    protected Object value;
+
     private String targetType;
 
     private Double percent;
@@ -36,15 +38,15 @@ public class JmixChartMouseEventDetail extends JmixChartComponentEventDetail {
 
     private List<String> dimensionNames;
 
-    private Map<String, String> encode;
+    private Map<String, Object> encode;
 
-    private List<String> $vars;
+    private List<Object> $vars;
 
     private Integer tickIndex;
 
     private Integer dataIndex;
 
-    private Map<String, String> data;
+    private Map<String, Object> data;
 
     public Double getPercent() {
         return percent;
@@ -70,19 +72,35 @@ public class JmixChartMouseEventDetail extends JmixChartComponentEventDetail {
         this.dimensionNames = dimensionNames;
     }
 
-    public Map<String, String> getEncode() {
+    public Integer getxAxisIndex() {
+        return xAxisIndex;
+    }
+
+    public void setxAxisIndex(Integer xAxisIndex) {
+        this.xAxisIndex = xAxisIndex;
+    }
+
+    public Integer getyAxisIndex() {
+        return yAxisIndex;
+    }
+
+    public void setyAxisIndex(Integer yAxisIndex) {
+        this.yAxisIndex = yAxisIndex;
+    }
+
+    public Map<String, Object> getEncode() {
         return encode;
     }
 
-    public void setEncode(Map<String, String> encode) {
+    public void setEncode(Map<String, Object> encode) {
         this.encode = encode;
     }
 
-    public List<String> get$vars() {
+    public List<Object> get$vars() {
         return $vars;
     }
 
-    public void set$vars(List<String> $vars) {
+    public void set$vars(List<Object> $vars) {
         this.$vars = $vars;
     }
 
@@ -126,6 +144,14 @@ public class JmixChartMouseEventDetail extends JmixChartComponentEventDetail {
         this.name = name;
     }
 
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
     public String getTargetType() {
         return targetType;
     }
@@ -134,11 +160,11 @@ public class JmixChartMouseEventDetail extends JmixChartComponentEventDetail {
         this.targetType = targetType;
     }
 
-    public Map<String, String> getData() {
+    public Map<String, Object> getData() {
         return data;
     }
 
-    public void setData(Map<String, String> data) {
+    public void setData(Map<String, Object> data) {
         this.data = data;
     }
 }

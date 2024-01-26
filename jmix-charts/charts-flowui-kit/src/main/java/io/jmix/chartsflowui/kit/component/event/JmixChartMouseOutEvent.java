@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartMouseOutEventDetail
 
 
 @DomEvent(JmixChartMouseOutEvent.EVENT_NAME)
-public class JmixChartMouseOutEvent extends JmixChartMouseEvent implements JmixChartDetailEvent<JmixChartMouseOutEventDetail> {
+public class JmixChartMouseOutEvent extends AbstractChartEvent<JmixChartMouseOutEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "mouseout";
 
-    @Override
-    public JmixChartMouseOutEventDetail getDetail() {
-        return convertDetail(JmixChartMouseOutEventDetail.class);
-    }
-
     public JmixChartMouseOutEvent(JmixChart source, boolean fromClient,
                                   @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartMouseOutEventDetail.class);
     }
 
 }

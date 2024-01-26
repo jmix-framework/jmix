@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartLegendSelectedEvent
 
 
 @DomEvent(JmixChartLegendSelectedEvent.EVENT_NAME)
-public class JmixChartLegendSelectedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartLegendSelectedEventDetail> {
+public class JmixChartLegendSelectedEvent extends AbstractChartEvent<JmixChartLegendSelectedEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "legendselected";
 
-    @Override
-    public JmixChartLegendSelectedEventDetail getDetail() {
-        return convertDetail(JmixChartLegendSelectedEventDetail.class);
-    }
-
     public JmixChartLegendSelectedEvent(JmixChart source, boolean fromClient,
                                         @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartLegendSelectedEventDetail.class);
     }
 
 }

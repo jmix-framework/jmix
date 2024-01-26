@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartMagicTypeChangedEve
 
 
 @DomEvent(JmixChartMagicTypeChangedEvent.EVENT_NAME)
-public class JmixChartMagicTypeChangedEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartMagicTypeChangedEventDetail> {
+public class JmixChartMagicTypeChangedEvent extends AbstractChartEvent<JmixChartMagicTypeChangedEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "magictypechanged";
 
-    @Override
-    public JmixChartMagicTypeChangedEventDetail getDetail() {
-        return convertDetail(JmixChartMagicTypeChangedEventDetail.class);
-    }
-
     public JmixChartMagicTypeChangedEvent(JmixChart source, boolean fromClient,
                                  @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartMagicTypeChangedEventDetail.class);
     }
 
 }

@@ -20,7 +20,7 @@ package io.jmix.chartsflowui.kit.component.event.dto;
 import java.util.List;
 import java.util.Map;
 
-public class JmixChartSelectChangedEventDetail extends JmixChartEventDetail {
+public class JmixChartSelectChangedEventDetail extends BaseChartEventDetail {
 
     private String name;
 
@@ -30,7 +30,7 @@ public class JmixChartSelectChangedEventDetail extends JmixChartEventDetail {
 
     private Boolean isFromClick;
 
-    private Map<String, String> fromActionPayload;
+    private Map<String, Object> fromActionPayload;
 
     public List<String> getSelected() {
         return selected;
@@ -64,11 +64,11 @@ public class JmixChartSelectChangedEventDetail extends JmixChartEventDetail {
         isFromClick = fromClick;
     }
 
-    public Map<String, String> getFromActionPayload() {
+    public Map<String, Object> getFromActionPayload() {
         return fromActionPayload;
     }
 
-    public void setFromActionPayload(Map<String, String> fromActionPayload) {
+    public void setFromActionPayload(Map<String, Object> fromActionPayload) {
         this.fromActionPayload = fromActionPayload;
     }
 }

@@ -19,24 +19,20 @@ package io.jmix.chartsflowui.kit.component.event;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
+import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartDoubleClickEventDetail;
 
 
 @DomEvent(JmixChartDoubleClickEvent.EVENT_NAME)
-public class JmixChartDoubleClickEvent extends JmixChartMouseClickEvent implements JmixChartDetailEvent<JmixChartDoubleClickEventDetail> {
+public class JmixChartDoubleClickEvent extends AbstractChartMouseClickEvent<JmixChartDoubleClickEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "dblclick";
 
-    @Override
-    public JmixChartDoubleClickEventDetail getDetail() {
-        return convertDetail(JmixChartDoubleClickEventDetail.class);
-    }
-
     public JmixChartDoubleClickEvent(JmixChart source, boolean fromClient,
                                      @EventData("event.detail") JsonObject detail,
-                                     @EventData("event.detail.value") String value) {
-        super(source, fromClient, detail, value);
+                                     @EventData("event.detail.value") JsonValue value) {
+        super(source, fromClient, detail, value, JmixChartDoubleClickEventDetail.class);
     }
 
 }

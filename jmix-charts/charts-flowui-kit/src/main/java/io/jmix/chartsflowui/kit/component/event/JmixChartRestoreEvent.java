@@ -24,18 +24,13 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartRestoreEventDetail;
 
 
 @DomEvent(JmixChartRestoreEvent.EVENT_NAME)
-public class JmixChartRestoreEvent extends JmixChartEvent implements JmixChartDetailEvent<JmixChartRestoreEventDetail> {
+public class JmixChartRestoreEvent extends AbstractChartEvent<JmixChartRestoreEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "restore";
 
-    @Override
-    public JmixChartRestoreEventDetail getDetail() {
-        return convertDetail(JmixChartRestoreEventDetail.class);
-    }
-
     public JmixChartRestoreEvent(JmixChart source, boolean fromClient,
                                  @EventData("event.detail") JsonObject detail) {
-        super(source, fromClient, detail);
+        super(source, fromClient, detail, JmixChartRestoreEventDetail.class);
     }
 
 }

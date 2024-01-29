@@ -32,4 +32,104 @@ public interface StudioChartsElementsGroups {
             target = {"io.jmix.chartsflowui.kit.component.model.shared.AbstractRichText"}
     )
     void rich();
+
+    @StudioElementsGroup(
+            name = "Grid",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.Grid",
+            xmlElement = "grid",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.component.Chart"}
+    )
+    void grid();
+
+    @StudioElementsGroup(
+            name = "XAxes",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.axis.XAxis",
+            xmlElement = "xAxes",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.component.Chart"}
+    )
+    void xAxes();
+
+    @StudioElementsGroup(
+            name = "YAxes",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.axis.YAxis",
+            xmlElement = "yAxes",
+            xmlnsAlias = "charts",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.component.Chart"}
+    )
+    void yAxes();
+
+    @StudioElementsGroup(
+            name = "Indicators",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.axis.Radar.Indicator",
+            xmlElement = "indicators",
+            xmlnsAlias = "charts",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.kit.component.model.axis.Radar"}
+    )
+    void indicators();
+
+    @StudioElementsGroup(
+            name = "DataZoom",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.datazoom.AbstractDataZoom",
+            xmlElement = "dataZoom",
+            xmlnsAlias = "charts",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.component.Chart"}
+    )
+    void dataZoom();
+
+    @StudioElementsGroup(
+            name = "VisualMap",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap",
+            xmlElement = "visualMap",
+            xmlnsAlias = "charts",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.component.Chart"}
+    )
+    void visualMap();
+
+    @StudioElementsGroup(
+            name = "Pieces",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.visualMap.PiecewiseVisualMap.Piece",
+            xmlElement = "pieces",
+            xmlnsAlias = "charts",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.kit.component.model.visualMap.PiecewiseVisualMap"}
+    )
+    void pieces();
+
+    @StudioElementsGroup(
+            name = "Features",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.ToolboxFeature",
+            xmlElement = "features",
+            xmlnsAlias = "charts",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.kit.component.model.toolbox.Toolbox"}
+    )
+    void toolboxFeatures();
+
+    @StudioElementsGroup(
+            name = "Decals",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.shared.Decal",
+            target = {"io.jmix.chartsflowui.kit.component.model.Aria.Decal"},
+            xmlElement = "decals",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void ariaDecals();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,68 +16,24 @@
 
 package io.jmix.chartsflowui.kit.meta;
 
-import io.jmix.chartsflowui.kit.component.model.Aria;
-import io.jmix.chartsflowui.kit.component.model.Brush;
-import io.jmix.chartsflowui.kit.component.model.ChartOptions;
-import io.jmix.chartsflowui.kit.component.model.Grid;
-import io.jmix.chartsflowui.kit.component.model.Title;
-import io.jmix.chartsflowui.kit.component.model.Tooltip;
-import io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis;
-import io.jmix.chartsflowui.kit.component.model.axis.AngleAxis;
-import io.jmix.chartsflowui.kit.component.model.axis.AxisLabel;
-import io.jmix.chartsflowui.kit.component.model.axis.AxisLine;
-import io.jmix.chartsflowui.kit.component.model.axis.AxisTick;
-import io.jmix.chartsflowui.kit.component.model.axis.HasAxisName;
-import io.jmix.chartsflowui.kit.component.model.axis.MinorSplitLine;
-import io.jmix.chartsflowui.kit.component.model.axis.MinorTick;
-import io.jmix.chartsflowui.kit.component.model.axis.Polar;
-import io.jmix.chartsflowui.kit.component.model.axis.Radar;
-import io.jmix.chartsflowui.kit.component.model.axis.RadiusAxis;
-import io.jmix.chartsflowui.kit.component.model.axis.SplitArea;
-import io.jmix.chartsflowui.kit.component.model.axis.SplitLine;
-import io.jmix.chartsflowui.kit.component.model.axis.XAxis;
-import io.jmix.chartsflowui.kit.component.model.axis.YAxis;
+import io.jmix.chartsflowui.kit.component.model.*;
+import io.jmix.chartsflowui.kit.component.model.axis.*;
 import io.jmix.chartsflowui.kit.component.model.datazoom.InsideDataZoom;
 import io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom;
 import io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend;
 import io.jmix.chartsflowui.kit.component.model.legend.Legend;
 import io.jmix.chartsflowui.kit.component.model.legend.ScrollableLegend;
-import io.jmix.chartsflowui.kit.component.model.series.AbstractSeries;
-import io.jmix.chartsflowui.kit.component.model.series.BarSeries;
-import io.jmix.chartsflowui.kit.component.model.series.BoxplotSeries;
-import io.jmix.chartsflowui.kit.component.model.series.CandlestickSeries;
-import io.jmix.chartsflowui.kit.component.model.series.EffectScatterSeries;
-import io.jmix.chartsflowui.kit.component.model.series.ElementLabelLine;
-import io.jmix.chartsflowui.kit.component.model.series.Encode;
-import io.jmix.chartsflowui.kit.component.model.series.FunnelSeries;
-import io.jmix.chartsflowui.kit.component.model.series.ItemStyleWithDecal;
-import io.jmix.chartsflowui.kit.component.model.series.LineSeries;
-import io.jmix.chartsflowui.kit.component.model.series.PieSeries;
-import io.jmix.chartsflowui.kit.component.model.series.RadarSeries;
-import io.jmix.chartsflowui.kit.component.model.series.ScatterSeries;
+import io.jmix.chartsflowui.kit.component.model.series.*;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkArea;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkLine;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkPoint;
-import io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip;
-import io.jmix.chartsflowui.kit.component.model.shared.AreaStyle;
-import io.jmix.chartsflowui.kit.component.model.shared.Decal;
-import io.jmix.chartsflowui.kit.component.model.shared.HasSymbols;
-import io.jmix.chartsflowui.kit.component.model.shared.InnerTooltip;
-import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
-import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 import io.jmix.chartsflowui.kit.component.model.shared.Label;
-import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
-import io.jmix.chartsflowui.kit.component.model.shared.RichStyle;
-import io.jmix.chartsflowui.kit.component.model.shared.Separator;
-import io.jmix.chartsflowui.kit.component.model.shared.ShadowStyle;
-import io.jmix.chartsflowui.kit.component.model.shared.TextStyle;
-import io.jmix.chartsflowui.kit.component.model.shared.VisualEffect;
+import io.jmix.chartsflowui.kit.component.model.shared.*;
+import io.jmix.chartsflowui.kit.component.model.toolbox.*;
+import io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap;
 import io.jmix.chartsflowui.kit.component.model.visualMap.ContinuousVisualMap;
 import io.jmix.chartsflowui.kit.component.model.visualMap.PiecewiseVisualMap;
-import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit(studioClassloaderDependencies = "io.jmix.charts:jmix-charts-flowui-kit")
 public interface StudioChartsElements {
@@ -94,7 +50,7 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "duration", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "cubicIn", type = StudioPropertyType.STRING)
+                    @StudioProperty(xmlAttribute = "easing", type = StudioPropertyType.STRING)
             }
     )
     ChartOptions.StateAnimation stateAnimation();
@@ -134,10 +90,12 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
-                            options = {"NORMAL", "ITALIC", "OBLIQUE"}),
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
@@ -168,7 +126,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
@@ -196,13 +155,15 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textShadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUM_CLASS,
+                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
-                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}),
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
                     @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING)
             }
     )
@@ -225,18 +186,22 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "link", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "target", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Title$Target",
-                            options = {"SELF", "BLANK"}),
+                            options = {"SELF", "BLANK"}
+                    ),
                     @StudioProperty(xmlAttribute = "subtext", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "sublink", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "subtarget", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Title$Target",
-                            options = {"SELF", "BLANK"}),
+                            options = {"SELF", "BLANK"}
+                    ),
                     @StudioProperty(xmlAttribute = "textAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Title$TextAlign",
-                            options = {"AUTO", "LEFT", "RIGHT", "CENTER"}),
+                            options = {"AUTO", "LEFT", "RIGHT", "CENTER"}
+                    ),
                     @StudioProperty(xmlAttribute = "textVerticalAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Title$TextVerticalAlign",
-                            options = {"AUTO", "TOP", "BOTTOM", "MIDDLE"}),
+                            options = {"AUTO", "TOP", "BOTTOM", "MIDDLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "triggerEvent", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "itemGap", type = StudioPropertyType.INTEGER),
@@ -270,7 +235,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -295,7 +261,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderRadius", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
@@ -323,7 +290,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER)
             }
@@ -365,19 +333,22 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
-                            options = {"NORMAL", "ITALIC", "OBLIQUE"}),
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUM_CLASS,
+                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
-                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}),
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -402,7 +373,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
@@ -431,7 +403,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER)
@@ -452,7 +425,8 @@ public interface StudioChartsElements {
             properties = {
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
-                            options = {"LEFT", "RIGHT", "CENTER"}),
+                            options = {"LEFT", "RIGHT", "CENTER"}
+                    ),
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -477,19 +451,22 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
-                            options = {"NORMAL", "ITALIC", "OBLIQUE"}),
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUM_CLASS,
+                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
-                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}),
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -514,7 +491,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
@@ -543,12 +521,14 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "verticalAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VerticalAlign",
-                            options = {"TOP", "BOTTOM", "MIDDLE"}),
+                            options = {"TOP", "BOTTOM", "MIDDLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER)
             }
     )
@@ -566,7 +546,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
-                            options = {"LEFT", "RIGHT", "CENTER"}),
+                            options = {"LEFT", "RIGHT", "CENTER"}
+                    ),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -591,7 +572,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -616,7 +598,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderRadius", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
@@ -645,12 +628,14 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
-                            options = {"NORMAL", "ITALIC", "OBLIQUE"}),
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
@@ -680,7 +665,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
@@ -707,7 +693,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.INTEGER),
@@ -736,133 +723,180 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "verticalAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VerticalAlign",
-                            options = {"TOP", "BOTTOM", "MIDDLE"}),
+                            options = {"TOP", "BOTTOM", "MIDDLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER)
             }
     )
     RichStyle richStyle();
 
     @StudioElement(
-            //todo brush
             name = "Brush",
             classFqn = "io.jmix.chartsflowui.kit.component.model.Brush",
+            target = {"io.jmix.chartsflowui.component.Chart"},
             xmlElement = "brush",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    //todo this is array of enums
-                    //todo just add options?
-                    @StudioProperty(xmlAttribute = "toolboxes", type = StudioPropertyType.VALUES_LIST),
-                    //todo brushlink
-
+                    @StudioProperty(xmlAttribute = "toolboxes", type = StudioPropertyType.VALUES_LIST,
+                            options = {"RECT", "POLYGON", "LINE_X", "LINE_Y", "KEEP", "CLEAR"}),
+                    @StudioProperty(xmlAttribute = "brushLinkIndexes", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "brushLinkMode", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.BrushSelectMode",
+                            options = {"ALL", "NONE"}),
                     @StudioProperty(xmlAttribute = "seriesIndex", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.SeriesIndex",
-                            options = {"ALL", "ARRAY", "NUMBER"}),
+                            options = {"ALL", "ARRAY", "NUMBER"}
+                    ),
+                    @StudioProperty(xmlAttribute = "geoIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "geoIndexes", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "geoIndexMode", type = StudioPropertyType.ENUMERATION, classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.BrushSelectMode",
+                            options = {"ALL", "NONE"}),
+                    @StudioProperty(xmlAttribute = "xAxisIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "xAxisIndexes", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "xAxisIndexMode", type = StudioPropertyType.ENUMERATION, classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.BrushSelectMode",
+                            options = {"ALL", "NONE"}),
+                    @StudioProperty(xmlAttribute = "yAxisIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "yAxisIndexes", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "yAxisIndexMode", type = StudioPropertyType.ENUMERATION, classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.BrushSelectMode",
+                            options = {"ALL", "NONE"}),
                     @StudioProperty(xmlAttribute = "brushType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.BrushType",
-                            options = {"RECT", "POLYGON", "LINE_X", "LINE_Y"}),
+                            options = {"RECT", "POLYGON", "LINE_X", "LINE_Y"}
+                    ),
                     @StudioProperty(xmlAttribute = "brushMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.BrushMode",
-                            options = {"SINGLE", "MULTIPLE"}),
+                            options = {"SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "transformable", type = StudioPropertyType.BOOLEAN),
-                    ///todo brushStyle
                     @StudioProperty(xmlAttribute = "throttleType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.ThrottleType",
-                            options = {"DEBOUNCE", "FIX_RATE"}),
+                            options = {"DEBOUNCE", "FIX_RATE"}
+                    ),
                     @StudioProperty(xmlAttribute = "throttleDelay", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "removeOnClick", type = StudioPropertyType.BOOLEAN),
-                    //todo
-                    //            protected VisualEffect inBrush;
-
-                    //            protected VisualEffect outOfBrush;
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
             }
     )
     Brush brush();
 
     @StudioElement(
-            //todo brush
-            name = "GeoIndex",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.IndexItem",
+            name = "BrushStyle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.BrushStyle",
             target = {"io.jmix.chartsflowui.kit.component.model.Brush"},
-            xmlElement = "geoIndex",
+            xmlElement = "brushStyle",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "singleIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "indexes", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "brushSelectMode", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.BrushSelectMode",
-                            options = {"ALL", "NONE"}),
+                    @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
             }
     )
-    Brush.IndexItem geoIndex();
+    Brush.BrushStyle brushBrushStyle();
 
     @StudioElement(
-            //todo brush
-            name = "XAxisIndex",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.IndexItem",
-            target = {"io.jmix.chartsflowui.kit.component.model.Brush"},
-            xmlElement = "xAxisIndex",
-            xmlns = "http://jmix.io/schema/charts/ui",
-            xmlnsAlias = "charts",
-            visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "singleIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "indexes", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "brushSelectMode", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.BrushSelectMode",
-                            options = {"ALL", "NONE"}),
-            }
-    )
-    Brush.IndexItem xAxisIndex();
-
-    @StudioElement(
-            //todo brush
-            name = "YAxisIndex",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.IndexItem",
-            target = {"io.jmix.chartsflowui.kit.component.model.Brush"},
-            xmlElement = "yAxisIndex",
-            xmlns = "http://jmix.io/schema/charts/ui",
-            xmlnsAlias = "charts",
-            visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "singleIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "indexes", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "brushSelectMode", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.Brush.BrushSelectMode",
-                            options = {"ALL", "NONE"}),
-            }
-    )
-    Brush.IndexItem yAxisIndex();
-
-    //todo visual effect what to do with arrays
-    //duplicate for each of the versions in different classes
-    //todo add target
-    @StudioElement(
-            name = "VisualEffect",
+            name = "InBrush",
             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VisualEffect",
-            xmlElement = "yAxisIndex",
+            target = {"io.jmix.chartsflowui.kit.component.model.Brush"},
+            xmlElement = "inBrush",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.VALUES_LIST,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "colorAlpha", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colorLightness", type = StudioPropertyType.VALUES_LIST),
@@ -870,16 +904,170 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "colorHue", type = StudioPropertyType.VALUES_LIST),
             }
     )
-    VisualEffect visualEffect();
+    VisualEffect inBrush();
 
-    //todo add targets and check classes
+    @StudioElement(
+            name = "OutBrush",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VisualEffect",
+            target = {"io.jmix.chartsflowui.kit.component.model.Brush"},
+            xmlElement = "outBrush",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.VALUES_LIST,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "colorAlpha", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colorLightness", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colorSaturation", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colorHue", type = StudioPropertyType.VALUES_LIST),
+            }
+    )
+    VisualEffect outBrush();
+
+    @StudioElement(
+            name = "InRange",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VisualEffect",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap",
+                    "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap.VisualMapController"
+            },
+            xmlElement = "inRange",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.VALUES_LIST,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "colorAlpha", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colorLightness", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colorSaturation", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colorHue", type = StudioPropertyType.VALUES_LIST),
+            }
+    )
+    VisualEffect inRange();
+
+    @StudioElement(
+            name = "OutRange",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VisualEffect",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap",
+                    "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap.VisualMapController"
+            },
+            xmlElement = "outRange",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.VALUES_LIST,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "colorAlpha", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colorLightness", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colorSaturation", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colorHue", type = StudioPropertyType.VALUES_LIST),
+            }
+    )
+    VisualEffect outRange();
+
     @StudioElement(
             name = "Tooltip",
             classFqn = "io.jmix.chartsflowui.kit.component.model.Tooltip",
-            target = "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend",
+                    "io.jmix.chartsflowui.component.Chart",
+                    "io.jmix.chartsflowui.kit.component.model.toolbox.Toolbox"
+            },
             xmlElement = "tooltip",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -887,26 +1075,100 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "alwaysShowContent", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "triggerOn", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.TriggerOnMode",
-                            options = {"MOUSE_MOVE", "CLICK", "MOUSE_MOVE_CLICK", "NONE"}),
+                            options = {"MOUSE_MOVE", "CLICK", "MOUSE_MOVE_CLICK", "NONE"}
+                    ),
                     @StudioProperty(xmlAttribute = "showDelay", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "hideDelay", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enterable", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "renderMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Tooltip.RenderMode",
-                            options = {"HTML", "RICH_TEXT"}),
+                            options = {"HTML", "RICH_TEXT"}
+                    ),
                     @StudioProperty(xmlAttribute = "confine", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "appendToBody", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "transitionDuration", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "order", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Tooltip.OrderType",
-                            options = {"SERIES_ASC", "SERIES_DESC", "VALUE_ASC", "VALUE_DESC"}),})
+                            options = {"SERIES_ASC", "SERIES_DESC", "VALUE_ASC", "VALUE_DESC"}
+                    ),
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "trigger", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.Trigger",
+                            options = {"ITEM", "AXIS", "NONE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "position", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.Position.ItemTriggerPosition",
+                            options = {"INSIDE", "TOP", "LEFT", "RIGHT", "BOTTOM"}
+                    ),
+                    @StudioProperty(xmlAttribute = "positionCoordinates", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "valueFormatter", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "valueFormatterFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "extraCssText", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST)
+            }
+    )
     Tooltip tooltip();
 
     @StudioElement(
-            name = "Grid",
+            name = "GridItem",
             classFqn = "io.jmix.chartsflowui.kit.component.model.Grid",
-            xmlElement = "grid",
+            xmlElement = "gridItem",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             visible = true,
@@ -947,7 +1209,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -972,7 +1235,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
@@ -999,18 +1263,222 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
-            })
-    Grid grid();
+            }
+    )
+    Grid gridItem();
+
+    @StudioElement(
+            name = "TextStyle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.TextStyle",
+            target = {"io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend"},
+            xmlElement = "textStyle",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "borderRadius", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "textShadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER)
+            }
+    )
+    AbstractLegend.TextStyle legendTextStyle();
 
     @StudioElement(
             name = "ScrollableLegend",
             classFqn = "io.jmix.chartsflowui.kit.component.model.legend.ScrollableLegend",
             xmlElement = "scrollableLegend",
+            target = {"io.jmix.chartsflowui.component.Chart"},
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -1026,21 +1494,23 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
-                            options = {"HORIZONTAL", "VERTICAL"}),
+                            options = {"HORIZONTAL", "VERTICAL"}
+                    ),
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.Align",
-                            options = {"AUTO", "LEFT", "RIGHT"}),
+                            options = {"AUTO", "LEFT", "RIGHT"}
+                    ),
                     @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "itemGap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "itemWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "itemHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
-// todo
-//            protected JsFunction formatterFunction;
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "inactiveColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1065,7 +1535,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "inactiveBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1090,14 +1561,10 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "inactiveBorderWidth", type = StudioPropertyType.INTEGER),
-                    // todo
-                    //            protected Map<String, Boolean> selectedSeries;
-                    //todo
-                    //            protected TextStyle textStyle;
-                    //todo
-                    // protected Tooltip tooltip;
+                    @StudioProperty(xmlAttribute = "unselectedSeries", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -1123,7 +1590,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1148,7 +1616,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderRadius", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
@@ -1176,27 +1645,26 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
-                    //todo
-                    //            protected Emphasis emphasis;
                     @StudioProperty(xmlAttribute = "selector", type = StudioPropertyType.BOOLEAN),
-                    //todo
-                    //            protected SelectorLabel selectorLabel;
                     @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.Position",
-                            options = {"START", "END"}),
+                            options = {"START", "END"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectorItemGap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "selectorButtonGap", type = StudioPropertyType.INTEGER),
-                    //todo abstractlegend above
                     @StudioProperty(xmlAttribute = "scrollDataIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "pageButtonItemGap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "pageButtonGap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "pageButtonPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.Position",
-                            options = {"START", "END"}),
+                            options = {"START", "END"}
+                    ),
                     @StudioProperty(xmlAttribute = "pageFormatter", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "pageFormatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "pageIconColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1221,7 +1689,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "pageIconInactiveColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1246,22 +1715,23 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "pageIconSize", type = StudioPropertyType.INTEGER),
-// todo
-//            protected io.jmix.chartsflowui.kit.component.model.shared.TextStyle pageTextStyle;
                     @StudioProperty(xmlAttribute = "animation", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "animationDurationUpdate", type = StudioPropertyType.INTEGER),
-            })
-        //todo make two different legends
+            }
+    )
     ScrollableLegend scrollableLegend();
 
     @StudioElement(
             name = "Legend",
             classFqn = "io.jmix.chartsflowui.kit.component.model.legend.Legend",
+            target = {"io.jmix.chartsflowui.component.Chart"},
             xmlElement = "legend",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -1277,21 +1747,23 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
-                            options = {"HORIZONTAL", "VERTICAL"}),
+                            options = {"HORIZONTAL", "VERTICAL"}
+                    ),
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.Align",
-                            options = {"AUTO", "LEFT", "RIGHT"}),
+                            options = {"AUTO", "LEFT", "RIGHT"}
+                    ),
                     @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "itemGap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "itemWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "itemHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
-// todo
-//            protected JsFunction formatterFunction;
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "inactiveColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1316,7 +1788,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "inactiveBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1341,14 +1814,10 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "inactiveBorderWidth", type = StudioPropertyType.INTEGER),
-                    // todo
-                    //            protected Map<String, Boolean> selectedSeries;
-                    //todo
-                    //            protected TextStyle textStyle;
-                    //todo
-                    // protected Tooltip tooltip;
+                    @StudioProperty(xmlAttribute = "unselectedSeries", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -1374,7 +1843,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1399,7 +1869,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderRadius", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
@@ -1427,83 +1898,19 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
-                    // todo
-                    //            protected Emphasis emphasis;
                     @StudioProperty(xmlAttribute = "selector", type = StudioPropertyType.BOOLEAN),
-                    // todo
-                    //            protected SelectorLabel selectorLabel;
                     @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.Position",
-                            options = {"START", "END"}),
+                            options = {"START", "END"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectorItemGap", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "selectorButtonGap", type = StudioPropertyType.INTEGER),
-                    //todo abstractlegend above
-                    @StudioProperty(xmlAttribute = "scrollDataIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "pageButtonItemGap", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "pageButtonGap", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "pageButtonPosition", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.Position",
-                            options = {"START", "END"}),
-                    @StudioProperty(xmlAttribute = "pageFormatter", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "pageIconColor", type = StudioPropertyType.OPTIONS,
-                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
-                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
-                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
-                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
-                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
-                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
-                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
-                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
-                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
-                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
-                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
-                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
-                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
-                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
-                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
-                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
-                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
-                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
-                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
-                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
-                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
-                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
-                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-                    @StudioProperty(xmlAttribute = "pageIconInactiveColor", type = StudioPropertyType.OPTIONS,
-                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
-                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
-                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
-                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
-                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
-                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
-                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
-                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
-                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
-                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
-                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
-                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
-                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
-                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
-                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
-                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
-                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
-                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
-                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
-                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
-                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
-                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
-                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-                    @StudioProperty(xmlAttribute = "pageIconSize", type = StudioPropertyType.INTEGER),
-// todo
-//            protected io.jmix.chartsflowui.kit.component.model.shared.TextStyle pageTextStyle;
-                    @StudioProperty(xmlAttribute = "animation", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "animationDurationUpdate", type = StudioPropertyType.INTEGER),
-            })
+                    @StudioProperty(xmlAttribute = "selectorButtonGap", type = StudioPropertyType.INTEGER)
+            }
+    )
     Legend legend();
 
     @StudioElement(
@@ -1513,23 +1920,182 @@ public interface StudioChartsElements {
             xmlElement = "pageIcons",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    ScrollableLegend.PageIcons pageIcons();
+
+    @StudioElement(
+            name = "HorizontalPageIcons",
+            target = "io.jmix.chartsflowui.kit.component.model.legend.ScrollableLegend.PageIcons",
+            xmlElement = "horizontal",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "horizontal", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "vertical", type = StudioPropertyType.VALUES_LIST),
-            })
-    ScrollableLegend.PageIcons pageIcons();
+                    @StudioProperty(xmlAttribute = "prevPageIcon", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "nextPageIcon", type = StudioPropertyType.STRING, required = true)
+            }
+    )
+    void horizontalPageIcons();
 
-    //todo check targets
+    @StudioElement(
+            name = "VerticalPageIcons",
+            target = "io.jmix.chartsflowui.kit.component.model.legend.ScrollableLegend.PageIcons",
+            xmlElement = "vertical",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "prevPageIcon", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "nextPageIcon", type = StudioPropertyType.STRING, required = true)
+            }
+    )
+    void verticalPageIcons();
+
+    @StudioElement(
+            name = "PageTextStyle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.TextStyle",
+            xmlElement = "pageTextStyle",
+            target = {"io.jmix.chartsflowui.kit.component.model.legend.ScrollableLegend"},
+            xmlns = "http://jmix.io/schema/charts/ui",
+            unlimitedCount = false,
+            xmlnsAlias = "charts",
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textShadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
+                    @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING),
+            }
+    )
+    TextStyle pageTextStyle();
+
+    @StudioElement(
+            name = "Emphasis",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.Emphasis",
+            target = {"io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend"},
+            xmlElement = "emphasis",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    AbstractLegend.Emphasis legendEmphasis();
+
     @StudioElement(
             name = "SelectorLabel",
             classFqn = "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.SelectorLabel",
-            target = {"io.jmix.chartsflowui.kit.component.model.legend.ScrollableLegend",
-                    "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.Emphasis"},
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend",
+                    "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend.Emphasis"
+            },
             xmlElement = "selectorLabel",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -1567,7 +2133,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1592,7 +2159,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
@@ -1622,25 +2190,122 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
-
-            })
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textShadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
+                    @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING)
+            }
+    )
     AbstractLegend.SelectorLabel selectorLabel();
 
-    //todo add targets
-    // these should be different objects?
-    //  protected ItemStyle handleStyle;
-    //  protected ItemStyle moveHandleStyle;
     @StudioElement(
             name = "ItemStyle",
             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.ItemStyle",
-            target = {"io.jmix.chartsflowui.kit.component.model.legend.ScrollableLegend"},
+            target = {"io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend"},
             xmlElement = "itemStyle",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -1668,7 +2333,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1693,17 +2359,20 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
+                    @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
-                            options = {"BUTT", "ROUND", "SQUARE"}),
-                    @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
-                            options = {"BEVEL", "ROUND", "MITER"}),
-                    @StudioProperty(xmlAttribute = "borderMiterLimit", type = StudioPropertyType.INTEGER),
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Join",
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
+                    @StudioProperty(xmlAttribute = "miterLimit", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -1729,44 +2398,591 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
-            })
+            }
+    )
     ItemStyle itemStyle();
 
-    //todo add targets and make copies?
     @StudioElement(
-            name = "JsFunction",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.JsFunction",
-            xmlElement = "jsFunction",
+            name = "HandleStyle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.ItemStyle",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom",
+                    "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom.Emphasis",
+                    "io.jmix.chartsflowui.kit.component.model.visualMap.ContinuousVisualMap"
+            },
+            xmlElement = "handleStyle",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "code", type = StudioPropertyType.STRING),
-            })
-    JsFunction jsFunction();
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Join",
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
+                    @StudioProperty(xmlAttribute = "miterLimit", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
+            }
+    )
+    ItemStyle handleStyle();
 
+    @StudioElement(
+            name = "IndicatorStyle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.ItemStyle",
+            target = {"io.jmix.chartsflowui.kit.component.model.visualMap.ContinuousVisualMap"},
+            xmlElement = "indicatorStyle",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Join",
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
+                    @StudioProperty(xmlAttribute = "miterLimit", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
+            }
+    )
+    ItemStyle indicatorStyle();
 
-    //todo string[] is StudioPropertyType.VALUES_LIST
+    @StudioElement(
+            name = "MoveHandleStyle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.ItemStyle",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom",
+                    "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom.Emphasis"
+            },
+            xmlElement = "moveHandleStyle",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Join",
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
+                    @StudioProperty(xmlAttribute = "miterLimit", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
+            }
+    )
+    ItemStyle moveHandleStyle();
+
+    @StudioElement(
+            name = "BrushStyle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.ItemStyle",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom",
+                    "io.jmix.chartsflowui.kit.component.model.toolbox.DataZoomFeature"
+            },
+            xmlElement = "brushStyle",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Join",
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
+                    @StudioProperty(xmlAttribute = "miterLimit", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
+            }
+    )
+    ItemStyle brushStyle();
+
+    @StudioElement(
+            name = "IconStyle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.ItemStyle",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.toolbox.Toolbox",
+                    "io.jmix.chartsflowui.kit.component.model.toolbox.AbstractFeature"
+            },
+            xmlElement = "iconStyle",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Join",
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
+                    @StudioProperty(xmlAttribute = "miterLimit", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
+            }
+    )
+    ItemStyle iconStyle();
+
     @StudioElement(
             name = "Polar",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.Polar",
+            target = {"io.jmix.chartsflowui.component.Chart"},
             xmlElement = "polar",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "center", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "radius", type = StudioPropertyType.VALUES_LIST),
-            })
+                    @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "center", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "radius", type = StudioPropertyType.STRING)
+            }
+    )
     Polar polar();
 
     @StudioElement(
@@ -1777,19 +2993,24 @@ public interface StudioChartsElements {
             xmlElement = "tooltip",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "trigger", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.Trigger",
-                            options = {"ITEM", "AXIS", "NONE"}),
-                    //todo protected AxisPointer axisPointer;
-
+                            options = {"ITEM", "AXIS", "NONE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "position", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.Position.ItemTriggerPosition",
+                            options = {"INSIDE", "TOP", "LEFT", "RIGHT", "BOTTOM"}
+                    ),
+                    @StudioProperty(xmlAttribute = "positionCoordinates", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "valueFormatter", type = StudioPropertyType.STRING),
-                    //todo protected JsFunction formatterFunction;
-                    //todo protected JsFunction valueFormatterFunction;
+                    @StudioProperty(xmlAttribute = "valueFormatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1814,7 +3035,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1839,82 +3061,201 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-                    //todo protected TextStyle textStyle;
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "extraCssText", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
-
-
-            })
+                    @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST)
+            }
+    )
     InnerTooltip innerTooltip();
 
-    @StudioElement(
-            name = "Position",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.Position",
-            xmlElement = "position",
-            target = "io.jmix.chartsflowui.kit.component.model.shared.InnerTooltip",
-            xmlns = "http://jmix.io/schema/charts/ui",
-            xmlnsAlias = "charts",
-            visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "coordinates", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "trigger", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.Position.ItemTriggerPosition",
-                            options = {"INSIDE", "TOP", "LEFT", "RIGHT", "BOTTOM"}),
-
-            })
-    AbstractTooltip.Position position();
-
-    //todo targets
     @StudioElement(
             name = "AxisPointer",
             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer",
             xmlElement = "axisPointer",
-            target = {"io.jmix.chartsflowui.kit.component.model.shared.InnerTooltip",},
+            target = {"io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip"},
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer.IndicatorType",
-                            options = {"LINE", "SHADOW", "NONE", "CROSS"}),
+                            options = {"LINE", "SHADOW", "NONE", "CROSS"}
+                    ),
                     @StudioProperty(xmlAttribute = "axis", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer.AxisType",
-                            options = {"X", "Y", "RADIUS", "ANGLE"}),
+                            options = {"X", "Y", "RADIUS", "ANGLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "snap", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
-                    // protected LineStyle lineStyle;
-                    //        protected LineStyle crossStyle;
-                    // protected JsFunction animationDurationFunction;
-                    // protected JsFunction animationDurationUpdateFunction;
-                    // protected JsFunction animationDelayUpdateFunction;
                     @StudioProperty(xmlAttribute = "animation", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "animationThreshold", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "animationDuration", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "animationDurationFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationEasing", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelay", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "animationDelayFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDurationUpdate", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "animationDurationUpdateFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationEasingUpdate", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.INTEGER),
-            })
-    AbstractTooltip.AxisPointer axisPointer();
+                    @StudioProperty(xmlAttribute = "animationDelayUpdateFunction", type = StudioPropertyType.STRING)
+            }
+    )
+    AbstractTooltip.AxisPointer tooltipAxisPointer();
 
+    @StudioElement(
+            name = "AxisPointer",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis.AxisPointer",
+            xmlElement = "axisPointer",
+            target = {"io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"},
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer.IndicatorType",
+                            options = {"LINE", "SHADOW", "NONE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "snap", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "triggerEmphasis", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "triggerTooltip", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "status", type = StudioPropertyType.BOOLEAN)
+            }
+    )
+    AbstractAxis.AxisPointer axisAxisPointer();
+
+    @StudioElement(
+            name = "AxisPointer",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.AxisPointer",
+            xmlElement = "axisPointer",
+            target = {"io.jmix.chartsflowui.component.Chart"},
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer.IndicatorType",
+                            options = {"LINE", "SHADOW", "NONE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "snap", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "triggerOn", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.TriggerOnMode",
+                            options = {"MOUSE_MOVE", "CLICK", "MOUSE_MOVE_CLICK", "NONE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "triggerEmphasis", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "triggerTooltip", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "status", type = StudioPropertyType.BOOLEAN)
+            }
+    )
+    AxisPointer globalAxisPointer();
+
+    @StudioElement(
+            name = "Handle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer.Handle",
+            target = {"io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer"},
+            xmlElement = "handle",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "size", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "margin", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                    @StudioProperty(xmlAttribute = "throttle", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER)
+            }
+    )
+    AbstractAxisPointer.Handle axisPointerHandle();
 
     @StudioElement(
             name = "Label",
             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Label",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer",
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer"
+            },
             xmlElement = "label",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "precision", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "margin", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
@@ -1941,7 +3282,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -1966,7 +3308,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
@@ -1993,11 +3336,10 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
-                    //todo  protected JsFunction formatterFunction;
-                    // AbstractText  next
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -2022,10 +3364,12 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
-                            options = {"NORMAL", "ITALIC", "OBLIQUE"}),
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
@@ -2056,7 +3400,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
@@ -2084,23 +3429,28 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textShadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
-                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}),
-                    @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING),
-            })
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
+                    @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING)
+            }
+    )
     Label label();
 
     @StudioElement(
             name = "Radar",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+            target = {"io.jmix.chartsflowui.component.Chart"},
             xmlElement = "radar",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -2111,18 +3461,60 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "radius", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "startAngle", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "nameGap", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "shape", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
+                    @StudioProperty(xmlAttribute = "splitNumber", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shape", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.Radar.Shape",
-                            options = {"POLYGON", "CIRCLE"}),
+                            options = {"POLYGON", "CIRCLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "silent", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "triggerEvent", type = StudioPropertyType.BOOLEAN),
-                    //   todo list of objects protected List<Indicator> indicators;
-            })
+            }
+    )
     Radar radar();
 
-    //todo AxisName extends AbstractRichText<AxisName>
+    @StudioElement(
+            name = "Indicator",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.Radar.Indicator",
+            xmlElement = "indicator",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+            }
+    )
+    Radar.Indicator indicator();
+
     @StudioElement(
             name = "AxisName",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.Radar.AxisName",
@@ -2130,11 +3522,13 @@ public interface StudioChartsElements {
             xmlElement = "axisName",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -2159,7 +3553,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -2184,7 +3579,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
@@ -2214,13 +3610,11 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
-//                    todo  protected JsFunction formatterFunction;
-                    // AbstractRichText  next
-                    // todo map???? protected Map<String, RichStyle> richStyles;
                     // AbstractText  next
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -2246,10 +3640,12 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
-                            options = {"NORMAL", "ITALIC", "OBLIQUE"}),
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
@@ -2280,7 +3676,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
@@ -2308,40 +3705,52 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textShadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
-                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}),
-                    @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING),
-            })
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
+                    @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING)
+            }
+    )
     Radar.AxisName axisName();
 
     @StudioElement(
             name = "SplitArea",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.SplitArea",
-            target = "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"
+            },
             xmlElement = "splitArea",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "interval", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "intervalFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
-//                    todo  protected JsFunction intervalFunction;
-            })
+            }
+    )
     SplitArea splitArea();
 
     @StudioElement(
             name = "AreaStyle",
             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AreaStyle",
-            target = "io.jmix.chartsflowui.kit.component.model.axis.SplitArea",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.axis.SplitArea",
+                    "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom.DataBackground"
+            },
             xmlElement = "areaStyle",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -2370,22 +3779,52 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
-//                    todo  protected Color[] colors;
-            })
+                    @StudioProperty(xmlAttribute = "colors", type = StudioPropertyType.VALUES_LIST,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    )
+            }
+    )
     AreaStyle areaStyle();
 
-    //todo add targets
     @StudioElement(
             name = "AxisLine",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisLine",
-            target = "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"
+            },
             xmlElement = "axisLine",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -2395,69 +3834,81 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "symbols", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "symbolsSize", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "symbolsSize", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "symbolsOffset", type = StudioPropertyType.INTEGER),
-//                    todo  protected LineStyle lineStyle;
-            })
+                    @StudioProperty(xmlAttribute = "symbolsOffset", type = StudioPropertyType.STRING),
+            }
+    )
     AxisLine axisLine();
-    //todo targets
-
 
     @StudioElement(
             name = "SplitLine",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.SplitLine",
-            target = "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"
+            },
             xmlElement = "splitLine",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "interval", type = StudioPropertyType.VALUES_LIST),
-//                    protected JsFunction intervalFunction;
-            })
-    SplitLine splitLine();
-
-    @StudioElement(
-            name = "MinorSplitLine",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.MinorSplitLine",
-            target = "io.jmix.chartsflowui.kit.component.model.axis.Radar",
-            xmlElement = "minorSplitLine",
-            xmlns = "http://jmix.io/schema/charts/ui",
-            xmlnsAlias = "charts",
-            visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
-            })
-    MinorSplitLine minorSplitLine();
-
-
-    @StudioElement(
-            name = "AxisLabel",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisLabel",
-            target = "io.jmix.chartsflowui.kit.component.model.axis.Radar",
-            xmlElement = "axisLabel",
-            xmlns = "http://jmix.io/schema/charts/ui",
-            xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "interval", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "intervalFunction", type = StudioPropertyType.STRING),
+            }
+    )
+    SplitLine splitLine();
+
+    @StudioElement(
+            name = "MinorSplitLine",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.MinorSplitLine",
+            target = {"io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"},
+            xmlElement = "minorSplitLine",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+            }
+    )
+    MinorSplitLine minorSplitLine();
+
+    @StudioElement(
+            name = "AxisLabel",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisLabel",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"
+            },
+            xmlElement = "axisLabel",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "interval", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "intervalFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "inside", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "rotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "margin", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "showMinLabel", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "showMaxLabel", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "hideOverlap", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
-                            options = {"LEFT", "RIGHT", "CENTER"}),
+                            options = {"LEFT", "RIGHT", "CENTER"}
+                    ),
                     @StudioProperty(xmlAttribute = "verticalAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VerticalAlign",
-                            options = {"TOP", "BOTTOM", "MIDDLE"}),
+                            options = {"TOP", "BOTTOM", "MIDDLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -2482,7 +3933,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -2507,7 +3959,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
@@ -2537,69 +3990,178 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
-//                    todo  protected JsFunction intervalFunction;
-//                     protected JsFunction formatterFunction;
-//                     protected JsFunction colorFunction;
-            })
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "colorFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textShadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
+                    @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING)
+            }
+    )
     AxisLabel axisLabel();
 
-    //todo add targets
     @StudioElement(
             name = "AxisTick",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisTick",
-            target = "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"
+            },
             xmlElement = "axisTick",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "alignWithLabel", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "interval", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "intervalFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "inside", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "length", type = StudioPropertyType.INTEGER),
-//                    todo  protected JsFunction intervalFunction;
-            })
+                    @StudioProperty(xmlAttribute = "length", type = StudioPropertyType.INTEGER)
+            }
+    )
     AxisTick axisTick();
 
-    //todo targets
     @StudioElement(
             name = "MinorTick",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.MinorTick",
-            target = "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+            target = {"io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"},
             xmlElement = "minorTick",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "splitNumber", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "length", type = StudioPropertyType.INTEGER),
-//                    todo  protected JsFunction intervalFunction;
-            })
+                    @StudioProperty(xmlAttribute = "length", type = StudioPropertyType.INTEGER)
+            }
+    )
     MinorTick minorTick();
 
-    //todo add targets including series
     @StudioElement(
             name = "LineStyle",
             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.LineStyle",
-            target = {"io.jmix.chartsflowui.kit.component.model.axis.AxisTick",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.axis.AxisTick",
                     "io.jmix.chartsflowui.kit.component.model.axis.MinorTick",
                     "io.jmix.chartsflowui.kit.component.model.axis.SplitLine",
                     "io.jmix.chartsflowui.kit.component.model.axis.MinorSplitLine",
                     "io.jmix.chartsflowui.kit.component.model.series.BarSeries.LabelLine",
                     "io.jmix.chartsflowui.kit.component.model.series.LineSeries",
                     "io.jmix.chartsflowui.kit.component.model.series.LineSeries.LabelLine",
-                    "io.jmix.chartsflowui.kit.component.model.axis.AxisLine"},
+                    "io.jmix.chartsflowui.kit.component.model.axis.AxisLine",
+                    "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom.DataBackground",
+                    "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend",
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer",
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer"
+            },
             xmlElement = "lineStyle",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -2627,52 +4189,139 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "dashOffset", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
-                            options = {"BUTT", "ROUND", "SQUARE"}),
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
                     @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Join",
-                            options = {"BEVEL", "ROUND", "MITER"}),
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
                     @StudioProperty(xmlAttribute = "miterLimit", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.INTEGER), @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
-                    options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
-                            "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
-                            "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
-                            "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
-                            "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
-                            "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
-                            "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
-                            "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
-                            "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
-                            "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
-                            "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
-                            "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
-                            "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
-                            "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
-                            "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
-                            "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
-                            "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
-                            "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
-                            "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
-                            "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
-                            "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
-                            "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
-                            "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                            "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
-            })
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE)
+            }
+    )
     LineStyle lineStyle();
 
-    //todo what to do with yAxis?
+    @StudioElement(
+            name = "CrossStyle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.LineStyle",
+            target = {"io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer"},
+            xmlElement = "crossStyle",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Join",
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
+                    @StudioProperty(xmlAttribute = "miterLimit", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE)
+            }
+    )
+    LineStyle crossStyle();
+
     @StudioElement(
             name = "XAxis",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.XAxis",
             xmlElement = "xAxis",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
@@ -2685,26 +4334,31 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "alignTicks", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "position", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AbstractCartesianAxis.Position",
-                            options = {"TOP", "BOTTOM"}),
+                            options = {"TOP", "BOTTOM"}
+                    ),
                     @StudioProperty(xmlAttribute = "offset", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "nameGap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "nameLocation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AbstractCartesianAxis.NameLocation",
-                            options = {"END", "CENTER", "START"}),
-                    @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "silent", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "triggerEvent", type = StudioPropertyType.BOOLEAN),
-                    //todo protected NameTextStyle nameTextStyle;
+                            options = {"END", "CENTER", "START"}
+                    ),
                     @StudioProperty(xmlAttribute = "nameGap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "nameRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "inverse", type = StudioPropertyType.BOOLEAN),
                     // AbstractAxis here
-                    // todo protected JsFunction minFunction; and million another jsFunctions
+                    @StudioProperty(xmlAttribute = "minFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "maxFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDurationFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDelayFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDurationUpdateFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDelayUpdateFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisType",
-                            options = {"CATEGORY", "VALUE", "TIME", "LOG"}),
+                            options = {"CATEGORY", "VALUE", "TIME", "LOG"}
+                    ),
+                    @StudioProperty(xmlAttribute = "categoryBoundaryGap", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "nonCategoryBoundaryGap", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
@@ -2725,12 +4379,13 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
-            })
+            }
+    )
     XAxis xAxis();
 
     @StudioElement(
             name = "YAxis",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.Radar",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.YAxis",
             xmlElement = "yAxis",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
@@ -2743,26 +4398,35 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "alignTicks", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "position", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AbstractCartesianAxis.Position",
-                            options = {"TOP", "BOTTOM"}),
+                            options = {"TOP", "BOTTOM"}
+                    ),
                     @StudioProperty(xmlAttribute = "offset", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "nameGap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "nameLocation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AbstractCartesianAxis.NameLocation",
-                            options = {"END", "CENTER", "START"}),
+                            options = {"END", "CENTER", "START"}
+                    ),
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "silent", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "triggerEvent", type = StudioPropertyType.BOOLEAN),
-                    //todo protected NameTextStyle nameTextStyle;
                     @StudioProperty(xmlAttribute = "nameGap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "nameRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "inverse", type = StudioPropertyType.BOOLEAN),
                     // AbstractAxis here
-                    // todo protected JsFunction minFunction; and million another jsFunctions
+                    @StudioProperty(xmlAttribute = "minFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "maxFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDurationFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDelayFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDurationUpdateFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDelayUpdateFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisType",
-                            options = {"CATEGORY", "VALUE", "TIME", "LOG"}),
+                            options = {"CATEGORY", "VALUE", "TIME", "LOG"}
+                    ),
+                    @StudioProperty(xmlAttribute = "categoryBoundaryGap", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "nonCategoryBoundaryGap", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
@@ -2783,30 +4447,37 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
-            })
+            }
+    )
     YAxis yAxis();
 
     @StudioElement(
             name = "AngleAxis",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AngleAxis",
+            target = {"io.jmix.chartsflowui.component.Chart"},
             xmlElement = "angleAxis",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-
                     @StudioProperty(xmlAttribute = "startAngle", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "clockwise", type = StudioPropertyType.BOOLEAN),
-                    //todo protected NameTextStyle nameTextStyle;
-                    // AbstractPolarAxis here
                     @StudioProperty(xmlAttribute = "polarIndex", type = StudioPropertyType.INTEGER),
-                    // AbstractAxis here
-                    // todo protected JsFunction minFunction; and million another jsFunctions
+                    @StudioProperty(xmlAttribute = "minFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "maxFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDurationFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDelayFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDurationUpdateFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDelayUpdateFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisType",
-                            options = {"CATEGORY", "VALUE", "TIME", "LOG"}),
+                            options = {"CATEGORY", "VALUE", "TIME", "LOG"}
+                    ),
+                    @StudioProperty(xmlAttribute = "categoryBoundaryGap", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "nonCategoryBoundaryGap", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
@@ -2826,16 +4497,19 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationEasingUpdate", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
-            })
+                    @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER)
+            }
+    )
     AngleAxis angleAxis();
 
     @StudioElement(
             name = "RadiusAxis",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.RadiusAxis",
+            target = {"io.jmix.chartsflowui.component.Chart"},
             xmlElement = "radiusAxis",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -2846,16 +4520,22 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "inverse", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "nameLocation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.HasAxisName.NameLocation",
-                            options = {"END", "CENTER", "START"}),
-                    //todo protected NameTextStyle nameTextStyle;
-                    // AbstractPolarAxis here
+                            options = {"END", "CENTER", "START"}
+                    ),
                     @StudioProperty(xmlAttribute = "polarIndex", type = StudioPropertyType.INTEGER),
-                    // AbstractAxis here
-                    // todo protected JsFunction minFunction; and million another jsFunctions
+                    @StudioProperty(xmlAttribute = "minFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "maxFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDurationFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDelayFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDurationUpdateFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "animationDelayUpdateFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisType",
-                            options = {"CATEGORY", "VALUE", "TIME", "LOG"}),
+                            options = {"CATEGORY", "VALUE", "TIME", "LOG"}
+                    ),
+                    @StudioProperty(xmlAttribute = "categoryBoundaryGap", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "nonCategoryBoundaryGap", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
@@ -2875,68 +4555,230 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationEasingUpdate", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
-            })
+                    @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER)
+            }
+    )
     RadiusAxis radiusAxis();
 
-    //todo add targets for all axes
     @StudioElement(
             name = "NameTextStyle",
             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.HasAxisName.NameTextStyle",
-            target = {"io.jmix.chartsflowui.kit.component.model.axis.RadiusAxis",
-                    "io.jmix.chartsflowui.kit.component.model.axis.XAxis",
-                    "io.jmix.chartsflowui.kit.component.model.axis.YAxis",
-            },
+            target = {"io.jmix.chartsflowui.kit.component.model.axis.HasAxisName"},
             xmlElement = "nameTextStyle",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    // AbstractCartesianAxis here
-                    @StudioProperty(xmlAttribute = "categoryGap", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "nonCategoryGap", type = StudioPropertyType.VALUES_LIST),
-            })
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "textShadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
+                            options = {"LEFT", "RIGHT", "CENTER"}
+                    ),
+                    @StudioProperty(xmlAttribute = "verticalAlign", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VerticalAlign",
+                            options = {"TOP", "BOTTOM", "MIDDLE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "borderRadius", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER)
+            }
+    )
     HasAxisName.NameTextStyle nameTextStyle();
-
-    @StudioElement(
-            name = "BoundaryGap",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis.BoundaryGap",
-            xmlElement = "boundaryGap",
-            target = "",
-            xmlns = "http://jmix.io/schema/charts/ui",
-            xmlnsAlias = "charts",
-            visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    // AbstractCartesianAxis here
-                    @StudioProperty(xmlAttribute = "categoryGap", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "nonCategoryGap", type = StudioPropertyType.VALUES_LIST),
-            })
-    AbstractAxis.BoundaryGap boundaryGap();
-
-    @StudioElement(
-            name = "Separator",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Separator",
-            target = {"io.jmix.chartsflowui.kit.component.model.Aria.Label.Series.Multiple",
-                    "io.jmix.chartsflowui.kit.component.model.Aria.Label.Data"},
-            xmlElement = "separator",
-            xmlns = "http://jmix.io/schema/charts/ui",
-            xmlnsAlias = "charts",
-            visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "middle", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "end", type = StudioPropertyType.STRING),
-            })
-    Separator separator();
 
     @StudioElement(
             name = "ShadowStyle",
             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.ShadowStyle",
-            xmlElement = "separator",
+            xmlElement = "shadowStyle",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer",
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer"
+            },
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -2968,7 +4810,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -2993,12 +4836,11 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-            })
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    )
+            }
+    )
     ShadowStyle shadowStyle();
-
-    // todo
-    // =============================================DATAZOOM================================
 
     @StudioElement(
             name = "InsideDataZoom",
@@ -3010,14 +4852,14 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    //todo array of integers
                     @StudioProperty(xmlAttribute = "xAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "yAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "radiusAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "angleAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "filterMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.datazoom.AbstractDataZoom.FilterMode",
-                            options = {"FILTER", "WEAK_FILTER", "EMPTY", "NONE"}),
+                            options = {"FILTER", "WEAK_FILTER", "EMPTY", "NONE"}
+                    ),
                     @StudioProperty(xmlAttribute = "start", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "end", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "startValue", type = StudioPropertyType.STRING),
@@ -3028,42 +4870,40 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "maxValueSpan", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
-                            options = {"HORIZONTAL", "VERTICAL", "EMPTY", "NONE"}),
+                            options = {"HORIZONTAL", "VERTICAL"}
+                    ),
                     @StudioProperty(xmlAttribute = "zoomLock", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "throttle", type = StudioPropertyType.INTEGER),
-                    //todo
-                    //            protected RangeMode[] rangeMode; is this correct?
-                    @StudioProperty(xmlAttribute = "rangeMode",
-                            type = StudioPropertyType.VALUES_LIST,
-                            options = {"VALUE", "PERCENT"}),
-                    //////////================InsideDataZoom
+                    @StudioProperty(xmlAttribute = "rangeMode", type = StudioPropertyType.VALUES_LIST,
+                            options = {"VALUE", "PERCENT"}
+                    ),
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "zoomOnMouseWheel", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "moveOnMouseMove", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "moveOnMouseWheel", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "preventDefaultMouseMove", type = StudioPropertyType.BOOLEAN),
-            })
+                    @StudioProperty(xmlAttribute = "preventDefaultMouseMove", type = StudioPropertyType.BOOLEAN)
+            }
+    )
     InsideDataZoom insideDataZoom();
-
 
     @StudioElement(
             name = "SliderDataZoom",
             classFqn = "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom",
-            xmlElement = "insideDataZoom",
+            xmlElement = "sliderDataZoom",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    //todo array of integers
                     @StudioProperty(xmlAttribute = "xAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "yAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "radiusAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "angleAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "filterMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.datazoom.AbstractDataZoom.FilterMode",
-                            options = {"FILTER", "WEAK_FILTER", "EMPTY", "NONE"}),
+                            options = {"FILTER", "WEAK_FILTER", "EMPTY", "NONE"}
+                    ),
                     @StudioProperty(xmlAttribute = "start", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "end", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "startValue", type = StudioPropertyType.STRING),
@@ -3074,17 +4914,14 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "maxValueSpan", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
-                            options = {"HORIZONTAL", "VERTICAL", "EMPTY", "NONE"}),
+                            options = {"HORIZONTAL", "VERTICAL"}
+                    ),
                     @StudioProperty(xmlAttribute = "zoomLock", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "throttle", type = StudioPropertyType.INTEGER),
-                    //todo
-                    //            protected RangeMode[] rangeMode; is this correct?
-                    @StudioProperty(xmlAttribute = "rangeMode",
-                            type = StudioPropertyType.VALUES_LIST,
+                    @StudioProperty(xmlAttribute = "rangeMode", type = StudioPropertyType.VALUES_LIST,
                             options = {"VALUE", "PERCENT"}),
-                    //////////================SliderDataZoom
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                    @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
                                     "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
@@ -3108,11 +4945,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-                    //todo
-                    //            protected DataBackground dataBackground;
-                    //            protected DataBackground selectedDataBackground;
-
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "fillerColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -3137,7 +4971,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -3162,36 +4997,70 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderRadius", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "handleIcon", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "handleSize", type = StudioPropertyType.STRING),
-                    // todo
-                    //  protected ItemStyle handleStyle;
-                    //  protected ItemStyle moveHandleStyle;
-                    //         protected JsFunction labelFormatterFunction;
-                    //         protected TextStyle textStyle;
-                    //         protected ItemStyle brushStyle;
-                    //         protected Emphasis emphasis;
-                    // emphasis consists of two ItemStyles
                     @StudioProperty(xmlAttribute = "moveHandleIcon", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "moveHandleSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "labelPrecision", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "labelFormatter", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "showDetail", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "showDataShadow", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "realtime", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "labelFormatterFunction", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "showDetail", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "showDataShadow", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "realtime", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "left", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "top", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "right", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "bottom", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "bottom", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "brushSelect", type = StudioPropertyType.BOOLEAN),
-            })
+                    @StudioProperty(xmlAttribute = "brushSelect", type = StudioPropertyType.BOOLEAN)
+            }
+    )
     SliderDataZoom sliderDataZoom();
+
+    @StudioElement(
+            name = "DataBackground",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom.DataBackground",
+            target = {"io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom"},
+            xmlElement = "dataBackground",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    SliderDataZoom.DataBackground dataBackground();
+
+    @StudioElement(
+            name = "SelectedDataBackground",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom.DataBackground",
+            target = {"io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom"},
+            xmlElement = "selectedDataBackground",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    SliderDataZoom.DataBackground selectedDataBackground();
+
+    @StudioElement(
+            name = "Emphasis",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom.Emphasis",
+            target = {"io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom"},
+            xmlElement = "emphasis",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    SliderDataZoom.Emphasis sliderDataZoomEmphasis();
 
     @StudioElement(
             name = "ContinuousVisualMap",
@@ -3203,32 +5072,22 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    //todo array of integers
-                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.visualMap.VisualMapType",
-                            options = {"CONTINUOUS", "PIECEWISE"}),
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "inverse", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "precision", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "precision", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "itemWidth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "itemHeight", type = StudioPropertyType.DOUBLE),
-                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.visualMap.VisualMapType",
-                            options = {"AUTO", "LEFT", "TOP", "BOTTOM", "RIGHT"}),
+                    @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap.MapAlign",
+                            options = {"AUTO", "LEFT", "TOP", "BOTTOM", "RIGHT"}
+                    ),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "textGap", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "dimension", type = StudioPropertyType.STRING),
-                    //todo Integer[] seriesIndex
                     @StudioProperty(xmlAttribute = "seriesIndex", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "hoverLink", type = StudioPropertyType.BOOLEAN),
-                    // todo
-                    // protected VisualEffect inRange;
-                    // protected VisualEffect outOfRange;
-                    // protected VisualMapController controller;
-                    //  protected TextStyle textStyle;
-                    //  protected JsFunction formatterFunction;
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "left", type = StudioPropertyType.STRING),
@@ -3238,9 +5097,11 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
-                            options = {"HORIZONTAL", "VERTICAL"}),
+                            options = {"HORIZONTAL", "VERTICAL"}
+                    ),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -3265,7 +5126,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -3290,19 +5152,17 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "calculable", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "range", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "realtime", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "handleIcon", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "handleSize", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "indicatorIcon", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "indicatorSize", type = StudioPropertyType.STRING),
-
-//            protected ItemStyle indicatorStyle;
-//           protected ItemStyle handleStyle;
-            })
+                    @StudioProperty(xmlAttribute = "indicatorSize", type = StudioPropertyType.STRING)
+            }
+    )
     ContinuousVisualMap continuousVisualMap();
 
     @StudioElement(
@@ -3315,32 +5175,22 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    //todo array of integers
-                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.visualMap.VisualMapType",
-                            options = {"CONTINUOUS", "PIECEWISE"}),
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "inverse", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "precision", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "precision", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "itemWidth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "itemHeight", type = StudioPropertyType.DOUBLE),
-                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.visualMap.VisualMapType",
-                            options = {"AUTO", "LEFT", "TOP", "BOTTOM", "RIGHT"}),
+                    @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap.MapAlign",
+                            options = {"AUTO", "LEFT", "TOP", "BOTTOM", "RIGHT"}
+                    ),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "textGap", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "dimension", type = StudioPropertyType.STRING),
-                    //todo Integer[] seriesIndex
                     @StudioProperty(xmlAttribute = "seriesIndex", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "hoverLink", type = StudioPropertyType.BOOLEAN),
-                    // todo
-                    // protected VisualEffect inRange;
-                    // protected VisualEffect outOfRange;
-                    // protected VisualMapController controller;
-                    //  protected TextStyle textStyle;
-                    //  protected JsFunction formatterFunction;
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "left", type = StudioPropertyType.STRING),
@@ -3350,9 +5200,11 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
-                            options = {"HORIZONTAL", "VERTICAL"}),
+                            options = {"HORIZONTAL", "VERTICAL"}
+                    ),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -3377,7 +5229,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -3402,37 +5255,96 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
 
                     @StudioProperty(xmlAttribute = "splitNumber", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "pieces", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "categories", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "minOpen", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "maxOpen", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "showLabel", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "itemGap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "itemSymbol", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.SymbolType",
                             options = {"CIRCLE", "RECTANGLE", "ROUND_RECTANGLE", "PIN", "TRIANGLE", "DIAMOND",
-                                    "ARROW", "NONE"}),
-            })
+                                    "ARROW", "NONE"}
+                    )
+            }
+    )
     PiecewiseVisualMap piecewiseVisualMap();
 
-    //todo targets
+    @StudioElement(
+            name = "Piece",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.visualMap.PiecewiseVisualMap.Piece",
+            xmlElement = "piece",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    )
+            }
+    )
+    PiecewiseVisualMap.Piece piece();
+
+    @StudioElement(
+            name = "Controller",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap.VisualMapController",
+            xmlElement = "controller",
+            target = {"io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap"},
+            xmlns = "http://jmix.io/schema/charts/ui",
+            unlimitedCount = false,
+            xmlnsAlias = "charts",
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    AbstractVisualMap.VisualMapController visualMapController();
+
     @StudioElement(
             name = "TextStyle",
             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.TextStyle",
             xmlElement = "textStyle",
-            target = {"io.jmix.chartsflowui.kit.component.model.visualMap.PiecewiseVisualMap",
-                    "io.jmix.chartsflowui.kit.component.model.visualMap.ContinuousVisualMap",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.series.AbstractSeries.Tooltip",
+                    "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap",
                     "io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom",
-                    "io.jmix.chartsflowui.kit.component.model.shared.InnerTooltip",
-                    "io.jmix.chartsflowui.kit.component.model.legend.Legend",
-                    "io.jmix.chartsflowui.kit.component.model.legend.ScrollableLegend"},
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip"
+            },
             xmlns = "http://jmix.io/schema/charts/ui",
+            unlimitedCount = false,
             xmlnsAlias = "charts",
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
@@ -3461,10 +5373,12 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
-                            options = {"NORMAL", "ITALIC", "OBLIQUE"}),
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
@@ -3495,7 +5409,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
@@ -3523,19 +5438,20 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textShadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
-                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}),
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
                     @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING),
-            })
+            }
+    )
     TextStyle textStyle();
-    //===============================================SERIES=============================================
 
-    //todo move to group?
     @StudioElement(
             name = "Series",
             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractSeries",
@@ -3546,7 +5462,8 @@ public interface StudioChartsElements {
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-            })
+            }
+    )
     AbstractSeries<?> series();
 
     @StudioElement(
@@ -3560,26 +5477,30 @@ public interface StudioChartsElements {
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.CoordinateSystem",
-                            options = {"CARTESIAN_2_D", "POLAR"}),
+                            options = {"CARTESIAN_2_D", "POLAR"}
+                    ),
                     @StudioProperty(xmlAttribute = "xAxisIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "yAxisIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "polarIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "clip", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "sampling", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.SamplingType",
-                            options = {"LARGEST_TRIANGLE_THREE_BUCKET", "AVERAGE", "MAX", "MIN", "SUM"}),
+                            options = {"LARGEST_TRIANGLE_THREE_BUCKET", "AVERAGE", "MAX", "MIN", "SUM"}
+                    ),
                     @StudioProperty(xmlAttribute = "showSymbol", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "showAllSymbol", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "step", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.LineSeries.Step",
-                            options = {"START", "MIDDLE", "END"}),
+                            options = {"START", "MIDDLE", "END"}
+                    ),
                     @StudioProperty(xmlAttribute = "connectNulls", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "triggerLineEvent", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "cursor", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "smooth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "smoothMonotone", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.LineSeries.SmoothMonotoneType",
-                            options = {"X", "Y"}),
+                            options = {"X", "Y"}
+                    ),
                     @StudioProperty(xmlAttribute = "animation", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "animationThreshold", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "animationDurationUpdate", type = StudioPropertyType.INTEGER),
@@ -3594,31 +5515,37 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "symbolType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.SymbolType",
                             options = {"CIRCLE", "RECTANGLE", "ROUND_RECTANGLE", "PIN", "TRIANGLE", "DIAMOND",
-                                    "ARROW", "NONE"}),
+                                    "ARROW", "NONE"}
+                    ),
                     @StudioProperty(xmlAttribute = "stack", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "stackStrategy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.HasStack.StackStrategy",
-                            options = {"SAME_SIGN", "ALL", "POSITIVE", "NEGATIVE"}),
+                            options = {"SAME_SIGN", "ALL", "POSITIVE", "NEGATIVE"}
+                    ),
                     //axisAwareSeries here
 
                     @StudioProperty(xmlAttribute = "legendHoverLink", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "seriesLayoutBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
-                            options = {"COLUMN", "ROW"}),
+                            options = {"COLUMN", "ROW"}
+                    ),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
                     // AbstractSeries here
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.SeriesType",
                             options = {"LINE", "BAR", "PIE", "SCATTER", "EFFECT_SCATTER",
-                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}),
+                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}
+                    ),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
-                            options = {"SERIES", "DATA"}),
+                            options = {"SERIES", "DATA"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "dataGroupId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -3626,7 +5553,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDuration", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "animationEasing", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelay", type = StudioPropertyType.INTEGER),
-            })
+            }
+    )
     LineSeries lineSeries();
 // <xs:sequence minOccurs="0">
 //                    <xs:element name="endLabel" type="lineSeriesEndLabelType"/>
@@ -3680,7 +5608,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -3705,7 +5634,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
@@ -3732,7 +5662,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -3759,10 +5690,12 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontStyle", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
-                            options = {"NORMAL", "ITALIC", "OBLIQUE"}),
+                            options = {"NORMAL", "ITALIC", "OBLIQUE"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
@@ -3793,7 +5726,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textBorderWidth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "textBorderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "textBorderDashOffset", type = StudioPropertyType.INTEGER),
@@ -3821,16 +5755,19 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "textShadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
-                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}),
+                            options = {"NONE", "TRUNCATE", "BREAK", "BREAK_ALL"}
+                    ),
                     @StudioProperty(xmlAttribute = "ellipsis", type = StudioPropertyType.STRING),
 
-            })
+            }
+    )
     LineSeries.EndLabel endLabel();
 
     @StudioElement(
@@ -3867,7 +5804,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -3892,16 +5830,19 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
-                            options = {"BUTT", "ROUND", "SQUARE"}),
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
-                            options = {"BEVEL", "ROUND", "MITER"}),
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderMiterLimit", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
@@ -3928,11 +5869,13 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
-            })
+            }
+    )
     LineSeries.ItemStyle lineSeriesItemStyle();
 
     @StudioElement(
@@ -3969,7 +5912,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "originType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.LineSeries.AreaStyle.Origin.OriginType",
-                            options = {"AUTO", "START", "END"}),
+                            options = {"AUTO", "START", "END"}
+                    ),
                     @StudioProperty(xmlAttribute = "originValue", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -3996,7 +5940,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -4021,7 +5966,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
@@ -4085,10 +6031,12 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.FocusType",
-                            options = {"NONE", "SELF", "SERIES"}),
+                            options = {"NONE", "SELF", "SERIES"}
+                    ),
                     @StudioProperty(xmlAttribute = "blurScope", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.BlurScopeType",
-                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}),
+                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}
+                    ),
             }
     )
     LineSeries.Emphasis lineSeriesEmphasis();
@@ -4144,7 +6092,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -4169,7 +6118,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
@@ -4188,18 +6138,21 @@ public interface StudioChartsElements {
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.CoordinateSystem",
-                            options = {"CARTESIAN_2_D", "POLAR"}),
+                            options = {"CARTESIAN_2_D", "POLAR"}
+                    ),
                     @StudioProperty(xmlAttribute = "xAxisIndexes", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "yAxisIndexes", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "polarIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "sampling", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.SamplingType",
-                            options = {"LARGEST_TRIANGLE_THREE_BUCKET", "AVERAGE", "MAX", "MIN", "SUM"}),
+                            options = {"LARGEST_TRIANGLE_THREE_BUCKET", "AVERAGE", "MAX", "MIN", "SUM"}
+                    ),
                     @StudioProperty(xmlAttribute = "stack", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "clip", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "stackStrategy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.HasStack.StackStrategy",
-                            options = {"SAME_SIGN", "ALL", "POSITIVE", "NEGATIVE"}),
+                            options = {"SAME_SIGN", "ALL", "POSITIVE", "NEGATIVE"}
+                    ),
                     @StudioProperty(xmlAttribute = "roundCap", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "realtimeSort", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "showBackground", type = StudioPropertyType.BOOLEAN),
@@ -4229,28 +6182,33 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationEasingUpdate", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "progressiveChunkMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ProgressiveChunkMode",
-                            options = {"SEQUENTIAL", "MOD"}),
+                            options = {"SEQUENTIAL", "MOD"}
+                    ),
 
                     //axisAwareSeries here
 
                     @StudioProperty(xmlAttribute = "legendHoverLink", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "seriesLayoutBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
-                            options = {"COLUMN", "ROW"}),
+                            options = {"COLUMN", "ROW"}
+                    ),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
                     // AbstractSeries here
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.SeriesType",
                             options = {"LINE", "BAR", "PIE", "SCATTER", "EFFECT_SCATTER",
-                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}),
+                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}
+                    ),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
-                            options = {"SERIES", "DATA"}),
+                            options = {"SERIES", "DATA"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "dataGroupId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -4266,7 +6224,8 @@ public interface StudioChartsElements {
 //                    <xs:element name="markLine" type="markLineType"/>
 //                    <xs:element name="markArea" type="markAreaType"/>
 //                </xs:sequence>
-            })
+            }
+    )
     BarSeries barSeries();
 
     @StudioElement(
@@ -4281,7 +6240,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "hideOverlap", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "moveOverlap", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractSeries.LabelLayout.MoveOverlapPosition",
-                            options = {"SHIFT_X", "SHIFT_Y"}),
+                            options = {"SHIFT_X", "SHIFT_Y"}
+                    ),
                     @StudioProperty(xmlAttribute = "x", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "y", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "dx", type = StudioPropertyType.INTEGER),
@@ -4292,14 +6252,17 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
-                            options = {"LEFT", "RIGHT", "CENTER"}),
+                            options = {"LEFT", "RIGHT", "CENTER"}
+                    ),
                     @StudioProperty(xmlAttribute = "verticalAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VerticalAlign",
-                            options = {"TOP", "BOTTOM", "MIDDLE"}),
+                            options = {"TOP", "BOTTOM", "MIDDLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "draggable", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "labelLinePoints", type = StudioPropertyType.VALUES_LIST),
-            })
+            }
+    )
     AbstractSeries.LabelLayout labelLayout();
 
     @StudioElement(
@@ -4309,6 +6272,7 @@ public interface StudioChartsElements {
             xmlElement = "tooltip",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
@@ -4338,7 +6302,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -4363,12 +6328,14 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
 
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "extraCssText", type = StudioPropertyType.STRING),
-            })
+            }
+    )
     AbstractSeries.Tooltip seriesTooltip();
 
 //     protected MarkPoint markPoint;
@@ -4394,11 +6361,13 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "symbolType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.SymbolType",
                             options = {"CIRCLE", "RECTANGLE", "ROUND_RECTANGLE", "PIN", "TRIANGLE", "DIAMOND",
-                                    "ARROW", "NONE"}),
+                                    "ARROW", "NONE"}
+                    ),
                     @StudioProperty(xmlAttribute = "clip", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "stackStrategy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.HasStack.StackStrategy",
-                            options = {"SAME_SIGN", "ALL", "POSITIVE", "NEGATIVE"}),
+                            options = {"SAME_SIGN", "ALL", "POSITIVE", "NEGATIVE"}
+                    ),
                     @StudioProperty(xmlAttribute = "roundCap", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "realtimeSort", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "showBackground", type = StudioPropertyType.BOOLEAN),
@@ -4414,7 +6383,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.STRING),
                     // todo ????? protected List<Point> data;
 
-            })
+            }
+    )
     MarkPoint markPoint();
 
     @StudioElement(
@@ -4435,11 +6405,13 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "symbolType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.SymbolType",
                             options = {"CIRCLE", "RECTANGLE", "ROUND_RECTANGLE", "PIN", "TRIANGLE", "DIAMOND",
-                                    "ARROW", "NONE"}),
+                                    "ARROW", "NONE"}
+                    ),
                     @StudioProperty(xmlAttribute = "clip", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "stackStrategy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.HasStack.StackStrategy",
-                            options = {"SAME_SIGN", "ALL", "POSITIVE", "NEGATIVE"}),
+                            options = {"SAME_SIGN", "ALL", "POSITIVE", "NEGATIVE"}
+                    ),
                     @StudioProperty(xmlAttribute = "roundCap", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "realtimeSort", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "showBackground", type = StudioPropertyType.BOOLEAN),
@@ -4455,7 +6427,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.STRING),
 
 
-            })
+            }
+    )
     MarkLine markLine();
 
     @StudioElement(
@@ -4483,7 +6456,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.STRING),
 
 
-            })
+            }
+    )
     MarkArea markArea();
 
     //todo  Blur Emphasis are AbstractMarkLineElement
@@ -4498,7 +6472,8 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
-            })
+            }
+    )
     MarkLine.Emphasis markLineEmphasis();
 
     // todo blur element only has AbstractMarkLineElement fields which target it
@@ -4511,7 +6486,8 @@ public interface StudioChartsElements {
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-            })
+            }
+    )
     MarkLine.Blur markLineBlur();
 
     @StudioElement(
@@ -4524,7 +6500,8 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
-            })
+            }
+    )
     MarkPoint.Emphasis markPointEmphasis();
 
     // todo blur element only has AbstractMarkLineElement fields which target it
@@ -4538,7 +6515,8 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
-            })
+            }
+    )
     MarkPoint.Blur markPointBlur();
 
     @StudioElement(
@@ -4551,7 +6529,8 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
-            })
+            }
+    )
     MarkArea.Emphasis markAreaEmphasis();
 
     // todo blur element only has AbstractMarkLineElement fields which target it
@@ -4565,9 +6544,9 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
-            })
+            }
+    )
     MarkArea.Blur markAreaBlur();
-
 
     //todo series label   CHECK NAMING
     // targets all mark stuff
@@ -4581,18 +6560,19 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
-//                protected JsFunction formatterFunction;
-//AbstractEnhancedLabel
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "distance", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "rotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "offset", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
-                            options = {"LEFT", "RIGHT", "CENTER"}),
+                            options = {"LEFT", "RIGHT", "CENTER"}
+                    ),
                     @StudioProperty(xmlAttribute = "verticalAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VerticalAlign",
-                            options = {"TOP", "BOTTOM", "MIDDLE"}),
+                            options = {"TOP", "BOTTOM", "MIDDLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -4617,7 +6597,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -4642,7 +6623,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
@@ -4672,12 +6654,18 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
-//todo richstyles map
-            })
+                    @StudioProperty(xmlAttribute = "position", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.Position.ItemTriggerPosition",
+                            options = {"INSIDE", "TOP", "LEFT", "RIGHT", "BOTTOM"}
+                    ),
+                    @StudioProperty(xmlAttribute = "positionCoordinates", type = StudioPropertyType.STRING)
+            }
+    )
     io.jmix.chartsflowui.kit.component.model.series.Label seriesLabel();
 
     @StudioElement(
@@ -4695,9 +6683,11 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.Label.Position.PositionType",
                             options = {"TOP", "LEFT", "RIGHT", "BOTTOM",
                                     "INSIDE", "INSIDE_LEFT", "INSIDE_RIGHT", "INSIDE_TOP", "INSIDE_BOTTOM",
-                                    "INSIDE_TOP_LEFT", "INSIDE_BOTTOM_LEFT", "INSIDE_TOP_RIGHT", "INSIDE_BOTTOM_RIGHT"}),
+                                    "INSIDE_TOP_LEFT", "INSIDE_BOTTOM_LEFT", "INSIDE_TOP_RIGHT", "INSIDE_BOTTOM_RIGHT"}
+                    ),
 //                protected JsFunction formatterFunction;
-            })
+            }
+    )
     io.jmix.chartsflowui.kit.component.model.series.Label.Position labelPosition();
 
 
@@ -4719,7 +6709,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "tooltip", type = StudioPropertyType.VALUES_LIST),
 
-            })
+            }
+    )
     Encode encode();
 
     @StudioElement(
@@ -4734,7 +6725,8 @@ public interface StudioChartsElements {
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.CoordinateSystem",
-                            options = {"CARTESIAN_2_D", "POLAR"}),
+                            options = {"CARTESIAN_2_D", "POLAR"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "borderRadius", type = StudioPropertyType.INTEGER),
@@ -4766,7 +6758,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -4791,7 +6784,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -4816,8 +6810,10 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-            })
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+            }
+    )
     BarSeries.BackgroundStyle backgroundStyle();
 
     @StudioElement(
@@ -4870,7 +6866,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -4895,16 +6892,19 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
-                            options = {"BUTT", "ROUND", "SQUARE"}),
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
-                            options = {"BEVEL", "ROUND", "MITER"}),
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
                     @StudioProperty(xmlAttribute = "borderMiterLimit", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
@@ -4931,13 +6931,14 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
-            })
+            }
+    )
     ItemStyleWithDecal itemStyleWithDecal();
-
 
     @StudioElement(
             name = "Decal",
@@ -4950,8 +6951,15 @@ public interface StudioChartsElements {
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
+                    @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.SymbolType",
+                            options = {"CIRCLE", "RECTANGLE", "ROUND_RECTANGLE", "TRIANGLE", "DIAMOND", "PIN", "ARROW", "NONE"}),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "symbolKeepAspect", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "dashGapX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "dashGapY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "dashArrayX", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "dashArrayY", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "rotation", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "maxTileWidth", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "maxTileHeight", type = StudioPropertyType.INTEGER),
@@ -4979,7 +6987,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -5004,64 +7013,11 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-            })
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+            }
+    )
     Decal decal();
-
-    @StudioElement(
-            name = "Symbol",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.Symbol",
-            target = {"io.jmix.chartsflowui.kit.component.model.shared.Decal",
-                    "io.jmix.chartsflowui.kit.component.model.series.mark.MarkPoint"},
-            xmlElement = "symbol",
-            xmlns = "http://jmix.io/schema/charts/ui",
-            xmlnsAlias = "charts",
-            visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.SymbolType",
-                            options = {"CIRCLE", "RECTANGLE", "ROUND_RECTANGLE", "PIN", "TRIANGLE", "DIAMOND",
-                                    "ARROW", "NONE"}),
-
-            })
-    HasSymbols.Symbol symbol();
-
-    @StudioElement(
-            name = "DashArray",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Decal.DashArray",
-            target = "io.jmix.chartsflowui.kit.component.model.shared.Decal",
-            xmlElement = "dashArrayX",
-
-            xmlns = "http://jmix.io/schema/charts/ui",
-            xmlnsAlias = "charts",
-            visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "number", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "array", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "twoDimensionalArray", type = StudioPropertyType.VALUES_LIST),
-
-            })
-    Decal.DashArray dashArrayX();
-
-    @StudioElement(
-            name = "DashArray",
-            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Decal.DashArray",
-            target = "io.jmix.chartsflowui.kit.component.model.shared.Decal",
-            xmlElement = "dashArrayY",
-            xmlns = "http://jmix.io/schema/charts/ui",
-            xmlnsAlias = "charts",
-            visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "number", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "array", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "twoDimensionalArray", type = StudioPropertyType.VALUES_LIST),
-
-            })
-    Decal.DashArray dashArrayY();
 
     @StudioElement(
             name = "PieSeries",
@@ -5091,7 +7047,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "minShowLabelAngle", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "selectorPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.PieSeries.RoseType",
-                            options = {"RADIUS", "AREA"}),
+                            options = {"RADIUS", "AREA"}
+                    ),
                     @StudioProperty(xmlAttribute = "avoidLabelOverlap", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "stillShowZeroSum", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "percentPrecision", type = StudioPropertyType.INTEGER),
@@ -5104,10 +7061,12 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animation", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "animationType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.PieSeries.AnimationType",
-                            options = {"EXPANSION", "SCALE"}),
+                            options = {"EXPANSION", "SCALE"}
+                    ),
                     @StudioProperty(xmlAttribute = "animationTypeUpdate", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.PieSeries.AnimationUpdateType",
-                            options = {"TRANSITION", "EXPANSION"}),
+                            options = {"TRANSITION", "EXPANSION"}
+                    ),
                     @StudioProperty(xmlAttribute = "animationThreshold", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "animationDurationUpdate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "animationEasingUpdate", type = StudioPropertyType.STRING),
@@ -5116,21 +7075,25 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "legendHoverLink", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "seriesLayoutBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
-                            options = {"COLUMN", "ROW"}),
+                            options = {"COLUMN", "ROW"}
+                    ),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
                     // AbstractSeries here
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.SeriesType",
                             options = {"LINE", "BAR", "PIE", "SCATTER", "EFFECT_SCATTER",
-                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}),
+                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}
+                    ),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
-                            options = {"SERIES", "DATA"}),
+                            options = {"SERIES", "DATA"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "dataGroupId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -5138,7 +7101,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDuration", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "animationEasing", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelay", type = StudioPropertyType.INTEGER),
-            })
+            }
+    )
     PieSeries pieSeries();
 
     @StudioElement(
@@ -5179,11 +7143,14 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "scaleSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.FocusType",
-                            options = {"NONE", "SELF", "SERIES"}),
+                            options = {"NONE", "SELF", "SERIES"}
+                    ),
                     @StudioProperty(xmlAttribute = "blurScope", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.BlurScopeType",
-                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}),
-            })
+                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}
+                    ),
+            }
+    )
     PieSeries.Emphasis pieSeriesEmphasis();
 
     @StudioElement(
@@ -5195,7 +7162,8 @@ public interface StudioChartsElements {
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-            })
+            }
+    )
     PieSeries.Blur pieSeriesBlur();
 
     @StudioElement(
@@ -5208,7 +7176,8 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
-            })
+            }
+    )
     PieSeries.Selected pieSeriesSelected();
 
 
@@ -5224,7 +7193,8 @@ public interface StudioChartsElements {
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.CoordinateSystem",
-                            options = {"CARTESIAN_2_D", "POLAR"}),
+                            options = {"CARTESIAN_2_D", "POLAR"}
+                    ),
                     @StudioProperty(xmlAttribute = "xAxisIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "yAxisIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "polarIndex", type = StudioPropertyType.INTEGER),
@@ -5251,27 +7221,32 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "symbolType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.SymbolType",
                             options = {"CIRCLE", "RECTANGLE", "ROUND_RECTANGLE", "PIN", "TRIANGLE", "DIAMOND",
-                                    "ARROW", "NONE"}),
+                                    "ARROW", "NONE"}
+                    ),
                     //axisAwareSeries here
 
                     @StudioProperty(xmlAttribute = "legendHoverLink", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "seriesLayoutBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
-                            options = {"COLUMN", "ROW"}),
+                            options = {"COLUMN", "ROW"}
+                    ),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
                     // AbstractSeries here
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.SeriesType",
                             options = {"LINE", "BAR", "PIE", "SCATTER", "EFFECT_SCATTER",
-                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}),
+                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}
+                    ),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
-                            options = {"SERIES", "DATA"}),
+                            options = {"SERIES", "DATA"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "dataGroupId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -5279,7 +7254,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDuration", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "animationEasing", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelay", type = StudioPropertyType.INTEGER),
-            })
+            }
+    )
     ScatterSeries scatterSeries();
 
 
@@ -5316,11 +7292,14 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.FocusType",
-                            options = {"NONE", "SELF", "SERIES"}),
+                            options = {"NONE", "SELF", "SERIES"}
+                    ),
                     @StudioProperty(xmlAttribute = "blurScope", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.BlurScopeType",
-                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}),
-            })
+                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}
+                    ),
+            }
+    )
     ScatterSeries.Emphasis scatterSeriesEmphasis();
 
     @StudioElement(
@@ -5332,7 +7311,8 @@ public interface StudioChartsElements {
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-            })
+            }
+    )
     ScatterSeries.Blur scatterSeriesBlur();
 
     @StudioElement(
@@ -5345,7 +7325,8 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
-            })
+            }
+    )
     ScatterSeries.Select scatterSeriesSelect();
 
 
@@ -5370,10 +7351,12 @@ public interface StudioChartsElements {
 //                </xs:sequence>
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.CoordinateSystem",
-                            options = {"CARTESIAN_2_D", "POLAR"}),
+                            options = {"CARTESIAN_2_D", "POLAR"}
+                    ),
                     @StudioProperty(xmlAttribute = "showEffectOn", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.EffectScatterSeries.EffectOn",
-                            options = {"RENDER", "EMPHASIS"}),
+                            options = {"RENDER", "EMPHASIS"}
+                    ),
                     @StudioProperty(xmlAttribute = "effectType", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "xAxisIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "yAxisIndex", type = StudioPropertyType.INTEGER),
@@ -5397,27 +7380,32 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "symbolType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.SymbolType",
                             options = {"CIRCLE", "RECTANGLE", "ROUND_RECTANGLE", "PIN", "TRIANGLE", "DIAMOND",
-                                    "ARROW", "NONE"}),
+                                    "ARROW", "NONE"}
+                    ),
                     //axisAwareSeries here
 
                     @StudioProperty(xmlAttribute = "legendHoverLink", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "seriesLayoutBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
-                            options = {"COLUMN", "ROW"}),
+                            options = {"COLUMN", "ROW"}
+                    ),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
                     // AbstractSeries here
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.SeriesType",
                             options = {"LINE", "BAR", "PIE", "SCATTER", "EFFECT_SCATTER",
-                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}),
+                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}
+                    ),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
-                            options = {"SERIES", "DATA"}),
+                            options = {"SERIES", "DATA"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "dataGroupId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -5426,7 +7414,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationEasing", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelay", type = StudioPropertyType.INTEGER),
 
-            })
+            }
+    )
     EffectScatterSeries effectScatter();
 
     @StudioElement(
@@ -5463,14 +7452,17 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "number", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "period", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "brushType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.EffectScatterSeries.RippleEffect.BrushType",
-                            options = {"STROKE", "FILL"}),
-            })
+                            options = {"STROKE", "FILL"}
+                    ),
+            }
+    )
     EffectScatterSeries.RippleEffect rippleEffect();
 
     @StudioElement(
@@ -5506,11 +7498,14 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.FocusType",
-                            options = {"NONE", "SELF", "SERIES"}),
+                            options = {"NONE", "SELF", "SERIES"}
+                    ),
                     @StudioProperty(xmlAttribute = "blurScope", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.BlurScopeType",
-                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}),
-            })
+                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}
+                    ),
+            }
+    )
     EffectScatterSeries.Emphasis effectScatterSeriesEmphasis();
 
     @StudioElement(
@@ -5522,7 +7517,8 @@ public interface StudioChartsElements {
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-            })
+            }
+    )
     EffectScatterSeries.Blur effectScatterSeriesBlur();
 
     @StudioElement(
@@ -5535,7 +7531,8 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
-            })
+            }
+    )
     EffectScatterSeries.Select effectScatterSeriesSelect();
 
     @StudioElement(
@@ -5573,20 +7570,24 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "symbolType", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.SymbolType",
                             options = {"CIRCLE", "RECTANGLE", "ROUND_RECTANGLE", "PIN", "TRIANGLE", "DIAMOND",
-                                    "ARROW", "NONE"}),
+                                    "ARROW", "NONE"}
+                    ),
                     // AbstractSeries here
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.SeriesType",
                             options = {"LINE", "BAR", "PIE", "SCATTER", "EFFECT_SCATTER",
-                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}),
+                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}
+                    ),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
-                            options = {"SERIES", "DATA"}),
+                            options = {"SERIES", "DATA"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "dataGroupId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -5595,7 +7596,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationEasing", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelay", type = StudioPropertyType.INTEGER),
 
-            })
+            }
+    )
     RadarSeries radarSeries();
 
     @StudioElement(
@@ -5633,7 +7635,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -5658,7 +7661,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
@@ -5679,11 +7683,14 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.FocusType",
-                            options = {"NONE", "SELF", "SERIES"}),
+                            options = {"NONE", "SELF", "SERIES"}
+                    ),
                     @StudioProperty(xmlAttribute = "blurScope", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.BlurScopeType",
-                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}),
-            })
+                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}
+                    ),
+            }
+    )
     RadarSeries.Emphasis radarSeriesEmphasis();
 
     @StudioElement(
@@ -5695,7 +7702,8 @@ public interface StudioChartsElements {
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-            })
+            }
+    )
     RadarSeries.Blur radarSeriesBlur();
 
     @StudioElement(
@@ -5708,7 +7716,8 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
-            })
+            }
+    )
     RadarSeries.Select radarSeriesSelect();
 
     @StudioElement(
@@ -5730,13 +7739,15 @@ public interface StudioChartsElements {
 
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.CoordinateSystem",
-                            options = {"CARTESIAN_2_D", "POLAR"}),
+                            options = {"CARTESIAN_2_D", "POLAR"}
+                    ),
                     @StudioProperty(xmlAttribute = "xAxisIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "yAxisIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "hoverAnimation", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "layout", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
-                            options = {"HORIZONTAL", "VERTICAL"}),
+                            options = {"HORIZONTAL", "VERTICAL"}
+                    ),
                     @StudioProperty(xmlAttribute = "hoverAnimation", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "barWidth", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "barMaxWidth", type = StudioPropertyType.STRING),
@@ -5747,29 +7758,34 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "progressiveThreshold", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "progressiveChunkMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ProgressiveChunkMode",
-                            options = {"SEQUENTIAL", "MOD"}),
+                            options = {"SEQUENTIAL", "MOD"}
+                    ),
                     @StudioProperty(xmlAttribute = "clip", type = StudioPropertyType.BOOLEAN),
                     //axisAwareSeries here
 
                     @StudioProperty(xmlAttribute = "legendHoverLink", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "seriesLayoutBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
-                            options = {"COLUMN", "ROW"}),
+                            options = {"COLUMN", "ROW"}
+                    ),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
 
                     // AbstractSeries here
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.SeriesType",
                             options = {"LINE", "BAR", "PIE", "SCATTER", "EFFECT_SCATTER",
-                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}),
+                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}
+                    ),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
-                            options = {"SERIES", "DATA"}),
+                            options = {"SERIES", "DATA"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "dataGroupId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -5778,7 +7794,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationEasing", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelay", type = StudioPropertyType.INTEGER),
 
-            })
+            }
+    )
     CandlestickSeries candlestickSeries();
 
     //todo add baseCandlestickSeriesElement
@@ -5794,11 +7811,14 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.FocusType",
-                            options = {"NONE", "SELF", "SERIES"}),
+                            options = {"NONE", "SELF", "SERIES"}
+                    ),
                     @StudioProperty(xmlAttribute = "blurScope", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.BlurScopeType",
-                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}),
-            })
+                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}
+                    ),
+            }
+    )
     CandlestickSeries.Emphasis candlestickSeriesEmphasis();
 
     @StudioElement(
@@ -5810,7 +7830,8 @@ public interface StudioChartsElements {
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-            })
+            }
+    )
     CandlestickSeries.Blur candlestickSeriesBlur();
 
     @StudioElement(
@@ -5823,7 +7844,8 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
-            })
+            }
+    )
     CandlestickSeries.Select candlestickSeriesSelect();
 
     @StudioElement(
@@ -5859,7 +7881,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "bearishColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -5884,7 +7907,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "bullishBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -5909,7 +7933,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "bearishBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -5934,7 +7959,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "dojiBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -5959,7 +7985,8 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
 
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
@@ -5988,11 +8015,13 @@ public interface StudioChartsElements {
                                     "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
-                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
                     @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER)
 
-            })
+            }
+    )
     CandlestickSeries.ItemStyle candlestickSeriesItemStyle();
 
 
@@ -6023,17 +8052,20 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
-                            options = {"HORIZONTAL", "VERTICAL"}),
+                            options = {"HORIZONTAL", "VERTICAL"}
+                    ),
                     @StudioProperty(xmlAttribute = "minSize", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "maxSize", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "sort", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.FunnelSeries.SortType",
-                            options = {"ASCENDING", "DESCENDING","NONE"}),
+                            options = {"ASCENDING", "DESCENDING", "NONE"}
+                    ),
                     @StudioProperty(xmlAttribute = "sortFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "gap", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "funnelAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
-                            options = {"LEFT", "RIGHT","CENTER"}),
+                            options = {"LEFT", "RIGHT", "CENTER"}
+                    ),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animation", type = StudioPropertyType.BOOLEAN),
@@ -6051,22 +8083,26 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "legendHoverLink", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "seriesLayoutBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
-                            options = {"COLUMN", "ROW"}),
+                            options = {"COLUMN", "ROW"}
+                    ),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
 
                     // AbstractSeries here
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.SeriesType",
                             options = {"LINE", "BAR", "PIE", "SCATTER", "EFFECT_SCATTER",
-                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}),
+                                    "RADAR", "BOXPLOT", "CANDLESTICK", "FUNNEL", "GAUGE"}
+                    ),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
-                            options = {"SERIES", "DATA"}),
+                            options = {"SERIES", "DATA"}
+                    ),
                     @StudioProperty(xmlAttribute = "selectedMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.SelectedMode",
-                            options = {"DISABLED", "SINGLE", "MULTIPLE"}),
+                            options = {"DISABLED", "SINGLE", "MULTIPLE"}
+                    ),
                     @StudioProperty(xmlAttribute = "dataGroupId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -6075,8 +8111,10 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationEasing", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelay", type = StudioPropertyType.INTEGER),
 
-            })
+            }
+    )
     FunnelSeries funnelSeries();
+
     @StudioElement(
             name = "LabelLine",
             classFqn = "io.jmix.chartsflowui.kit.component.model.series.FunnelSeries.LabelLine",
@@ -6093,6 +8131,7 @@ public interface StudioChartsElements {
             }
     )
     FunnelSeries.LabelLine funnelSeriesLabelLine();
+
     //todo add baseFunnelSeriesElement
     @StudioElement(
             name = "Emphasis",
@@ -6106,11 +8145,14 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.FocusType",
-                            options = {"NONE", "SELF", "SERIES"}),
+                            options = {"NONE", "SELF", "SERIES"}
+                    ),
                     @StudioProperty(xmlAttribute = "blurScope", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.BlurScopeType",
-                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}),
-            })
+                            options = {"COORDINATE_SYSTEM", "SERIES", "GLOBAL"}
+                    ),
+            }
+    )
     FunnelSeries.Emphasis funnelSeriesEmphasis();
 
     @StudioElement(
@@ -6122,7 +8164,8 @@ public interface StudioChartsElements {
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-            })
+            }
+    )
     FunnelSeries.Blur funnelSeriesBlur();
 
     @StudioElement(
@@ -6135,12 +8178,9 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
-            })
+            }
+    )
     FunnelSeries.Select funnelSeriesSelect();
-
-
-
-    //////////////////////////================================ARIA========================================
 
     @StudioElement(
             name = "Aria",
@@ -6149,12 +8189,13 @@ public interface StudioChartsElements {
             xmlElement = "aria",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
-
-            })
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN)
+            }
+    )
     Aria aria();
 
     @StudioElement(
@@ -6164,12 +8205,14 @@ public interface StudioChartsElements {
             xmlElement = "label",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.STRING),
-            })
+                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.LOCALIZED_STRING),
+            }
+    )
     Aria.Label ariaLabel();
 
     @StudioElement(
@@ -6179,12 +8222,14 @@ public interface StudioChartsElements {
             xmlElement = "general",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "withTitle", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "withoutTitle", type = StudioPropertyType.STRING),
-            })
+                    @StudioProperty(xmlAttribute = "withTitle", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "withoutTitle", type = StudioPropertyType.LOCALIZED_STRING),
+            }
+    )
     Aria.Label.General general();
 
     @StudioElement(
@@ -6194,11 +8239,13 @@ public interface StudioChartsElements {
             xmlElement = "series",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "maxCount", type = StudioPropertyType.INTEGER),
-            })
+                    @StudioProperty(xmlAttribute = "maxCount", type = StudioPropertyType.INTEGER)
+            }
+    )
     Aria.Label.Series ariaLabelSeries();
 
     @StudioElement(
@@ -6208,13 +8255,15 @@ public interface StudioChartsElements {
             xmlElement = "single",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "prefix", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "withName", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "withoutName", type = StudioPropertyType.STRING),
-            })
+                    @StudioProperty(xmlAttribute = "prefix", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "withName", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "withoutName", type = StudioPropertyType.LOCALIZED_STRING),
+            }
+    )
     Aria.Label.Series.Single single();
 
     @StudioElement(
@@ -6224,34 +8273,37 @@ public interface StudioChartsElements {
             xmlElement = "multiple",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "prefix", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "withName", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "withoutName", type = StudioPropertyType.STRING),
-            })
+                    @StudioProperty(xmlAttribute = "prefix", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "withName", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "withoutName", type = StudioPropertyType.LOCALIZED_STRING),
+            }
+    )
     Aria.Label.Series.Multiple multiple();
 
     @StudioElement(
             name = "Data",
             classFqn = "io.jmix.chartsflowui.kit.component.model.Aria.Label.Data",
             target = {"io.jmix.chartsflowui.kit.component.model.Aria.Label"},
-            xmlElement = "multiple",
+            xmlElement = "data",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "maxCount", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "allData", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "partialData", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "withName", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "withoutName", type = StudioPropertyType.STRING),
-            })
+                    @StudioProperty(xmlAttribute = "allData", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "partialData", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "withName", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "withoutName", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
     Aria.Label.Data ariaLabelData();
 
-    //todo transfer to groups?
     @StudioElement(
             name = "Decal",
             classFqn = "io.jmix.chartsflowui.kit.component.model.Aria.Decal",
@@ -6259,21 +8311,701 @@ public interface StudioChartsElements {
             xmlElement = "decal",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            unlimitedCount = false,
             visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
-//                    todo add as a group?
-//                     <xs:element name="decals">
-                    //                <xs:complexType>
-                    //                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                    //                        <xs:element name="decal" type="decalType"/>
-                    //                    </xs:sequence>
-                    //                </xs:complexType>
-                    //            </xs:element>
-
-            })
+            }
+    )
     Aria.Decal ariaDecal();
 
+    @StudioElement(
+            name = "Separator",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Separator",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.Aria.Label.Series.Multiple",
+                    "io.jmix.chartsflowui.kit.component.model.Aria.Label.Data"
+            },
+            xmlElement = "separator",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "middle", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "end", type = StudioPropertyType.STRING),
+            }
+    )
+    Separator separator();
 
+    @StudioElement(
+            name = "Toolbox",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.Toolbox",
+            target = {"io.jmix.chartsflowui.component.Chart"},
+            xmlElement = "toolbox",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
+                            options = {"HORIZONTAL", "VERTICAL"}),
+                    @StudioProperty(xmlAttribute = "itemSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "itemGap", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "showTitle", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "left", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "top", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "right", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "bottom", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.STRING)
+            }
+    )
+    Toolbox toolbox();
+
+    @StudioElement(
+            name = "Emphasis",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.Emphasis",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.toolbox.Toolbox",
+                    "io.jmix.chartsflowui.kit.component.model.toolbox.AbstractFeature"
+            },
+            xmlElement = "emphasis",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    Emphasis toolboxEmphasis();
+
+    @StudioElement(
+            name = "IconStyle",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.Emphasis.IconStyle",
+            target = {"io.jmix.chartsflowui.kit.component.model.toolbox.Emphasis"},
+            xmlElement = "iconStyle",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "textPosition", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.Emphasis.IconStyle.TextPosition",
+                            options = {"LEFT", "RIGHT", "TOP", "BOTTOM"}),
+                    @StudioProperty(xmlAttribute = "textFill", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textAlign", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
+                            options = {"LEFT", "RIGHT", "CENTER"}),
+                    @StudioProperty(xmlAttribute = "textBackgroundColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "textBorderRadius", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "borderType", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "borderDashOffset", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Cap",
+                            options = {"BUTT", "ROUND", "SQUARE"}
+                    ),
+                    @StudioProperty(xmlAttribute = "join", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.HasLineStyle.Join",
+                            options = {"BEVEL", "ROUND", "MITER"}
+                    ),
+                    @StudioProperty(xmlAttribute = "miterLimit", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "shadowOffsetX", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "shadowOffsetY", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "opacity", type = StudioPropertyType.DOUBLE),
+            }
+    )
+    Emphasis.IconStyle toolboxEmphasisIconStyle();
+
+    @StudioElement(
+            name = "BrushFeature",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.BrushFeature",
+            xmlElement = "brush",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "types", type = StudioPropertyType.VALUES_LIST,
+                            options = {"RECT", "POLYGON", "LINE_X", "LINE_Y", "KEEP", "CLEAR"})
+            }
+    )
+    BrushFeature brushFeature();
+
+    @StudioElement(
+            name = "Icon",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.BrushFeature.Icon",
+            target = {"io.jmix.chartsflowui.kit.component.model.toolbox.BrushFeature"},
+            xmlElement = "icon",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            unlimitedCount = false,
+            xmlnsAlias = "charts",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "rect", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "polygon", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "lineX", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "lineY", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "keep", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "clear", type = StudioPropertyType.STRING)
+            }
+    )
+    BrushFeature.Icon brushFeatureIcon();
+
+    @StudioElement(
+            name = "Title",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.BrushFeature.Title",
+            target = {"io.jmix.chartsflowui.kit.component.model.toolbox.BrushFeature"},
+            xmlElement = "title",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "rect", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "polygon", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "lineX", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "lineY", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "keep", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "clear", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    BrushFeature.Title brushFeatureTitle();
+
+    @StudioElement(
+            name = "RestoreFeature",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.RestoreFeature",
+            xmlElement = "restore",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING),
+            }
+    )
+    RestoreFeature restoreFeature();
+
+    @StudioElement(
+            name = "MagicTypeFeature",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.MagicTypeFeature",
+            xmlElement = "magicType",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "types", type = StudioPropertyType.VALUES_LIST,
+                            options = {"LINE", "BAR", "STACK"})
+            }
+    )
+    MagicTypeFeature magicTypeFeature();
+
+    @StudioElement(
+            name = "Icon",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.MagicTypeFeature.Icon",
+            target = {"io.jmix.chartsflowui.kit.component.model.toolbox.MagicTypeFeature"},
+            xmlElement = "icon",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "line", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "bar", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "stack", type = StudioPropertyType.STRING)
+            }
+    )
+    MagicTypeFeature.Icon magicTypeFeatureIcon();
+
+    @StudioElement(
+            name = "Title",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.MagicTypeFeature.Title",
+            target = {"io.jmix.chartsflowui.kit.component.model.toolbox.MagicTypeFeature"},
+            xmlElement = "title",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "line", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "bar", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "stack", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "tiled", type = StudioPropertyType.LOCALIZED_STRING),
+            }
+    )
+    MagicTypeFeature.Title magicTypeFeatureTitle();
+
+    @StudioElement(
+            name = "DataZoomFeature",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.DataZoomFeature",
+            xmlElement = "dataZoom",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "filterMode", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.datazoom.AbstractDataZoom.FilterMode",
+                            options = {"FILTER", "WEAK_FILTER", "EMPTY", "NONE"}),
+                    @StudioProperty(xmlAttribute = "xAxisIndexes", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "yAxisIndexes", type = StudioPropertyType.VALUES_LIST)
+            }
+    )
+    DataZoomFeature dataZoomFeature();
+
+    @StudioElement(
+            name = "Icon",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.DataZoomFeature.Icon",
+            target = {"io.jmix.chartsflowui.kit.component.model.toolbox.DataZoomFeature"},
+            xmlElement = "icon",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "zoom", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "back", type = StudioPropertyType.STRING)
+            }
+    )
+    DataZoomFeature.Icon dataZoomFeatureIcon();
+
+    @StudioElement(
+            name = "Title",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.DataZoomFeature.Title",
+            target = {"io.jmix.chartsflowui.kit.component.model.toolbox.DataZoomFeature"},
+            xmlElement = "title",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "zoom", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "back", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    DataZoomFeature.Title dataZoomFeatureTitle();
+
+    @StudioElement(
+            name = "SaveAsImageFeature",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.SaveAsImageFeature",
+            xmlElement = "saveAsImage",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.SaveAsImageFeature.SaveType",
+                            options = {"PNG", "JPG", "SVG"}),
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "connectedBackgroundColor", type = StudioPropertyType.OPTIONS,
+                            options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
+                                    "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
+                                    "CHARTREUSE", "CHOCOLATE", "CORAL", "CORNFLOWERBLUE", "CORNSILK", "CRIMSON", "CYAN",
+                                    "DARKBLUE", "DARKCYAN", "DARKGOLDENROD", "DARKGRAY", "DARKGREY", "DARKGREEN",
+                                    "DARKKHAKI", "DARKMAGENTA", "DARKOLIVEGREEN", "DARKORANGE", "DARKORCHID", "DARKRED",
+                                    "DARKSALMON", "DARKSEAGREEN", "DARKSLATEBLUE", "DARKSLATEGRAY", "DARKSLATEGREY",
+                                    "DARKTURQUOISE", "DARKVIOLET", "DEEPPINK", "DEEPSKYBLUE", "DIMGRAY", "DIMGREY",
+                                    "DODGERBLUE", "FIREBRICK", "FLORALWHITE", "FORESTGREEN", "FUCHSIA", "GAINSBORO",
+                                    "GHOSTWHITE", "GOLD", "GOLDENROD", "GRAY", "GREY", "GREEN", "GREENYELLOW",
+                                    "HONEYDEW", "HOTPINK", "INDIANRED", "INDIGO", "IVORY", "KHAKI", "LAVENDER",
+                                    "LAVENDERBLUSH", "LAWNGREEN", "LEMONCHIFFON", "LIGHTBLUE", "LIGHTCORAL",
+                                    "LIGHTCYAN", "LIGHTGOLDENRODYELLOW", "LIGHTGRAY", "LIGHTGREY", "LIGHTGREEN",
+                                    "LIGHTPINK", "LIGHTSALMON", "LIGHTSEAGREEN", "LIGHTSKYBLUE", "LIGHTSLATEGRAY",
+                                    "LIGHTSLATEGREY", "LIGHTSTEELBLUE", "LIGHTYELLOW", "LIME", "LIMEGREEN", "LINEN",
+                                    "MAGENTA", "MAROON", "MEDIUMAQUAMARINE", "MEDIUMBLUE", "MEDIUMORCHID",
+                                    "MEDIUMPURPLE", "MEDIUMSEAGREEN", "MEDIUMSLATEBLUE", "MEDIUMSPRINGGREEN",
+                                    "MEDIUMTURQUOISE", "MEDIUMVIOLETRED", "MIDNIGHTBLUE", "MINTCREAM", "MISTYROSE",
+                                    "MOCCASIN", "NAVAJOWHITE", "NAVY", "OLDLACE", "OLIVE", "OLIVEDRAB", "ORANGE",
+                                    "ORANGERED", "ORCHID", "PALEGOLDENROD", "PALEGREEN", "PALETURQUOISE",
+                                    "PALEVIOLETRED", "PAPAYAWHIP", "PEACHPUFF", "PERU", "PINK", "PLUM", "POWDERBLUE",
+                                    "PURPLE", "RED", "ROSYBROWN", "ROYALBLUE", "SADDLEBROWN", "SALMON", "SANDYBROWN",
+                                    "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
+                                    "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
+                                    "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}
+                    ),
+                    @StudioProperty(xmlAttribute = "excludeComponents", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "pixelRatio", type = StudioPropertyType.INTEGER)
+            }
+    )
+    SaveAsImageFeature saveAsImageFeature();
+
+    @StudioElement(
+            name = "DataSet",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.DataSet",
+            target = {"io.jmix.chartsflowui.component.Chart"},
+            xmlElement = "dataSet",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID)
+            }
+    )
+    DataSet dataSet();
+
+    @SuppressWarnings("rawtypes")
+    @StudioElement(
+            name = "DataSource",
+            classFqn = "io.jmix.chartsflowui.kit.component.model.DataSet.Source",
+            target = {"io.jmix.chartsflowui.kit.component.model.DataSet"},
+            xmlElement = "source",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF,
+                            required = true, typeParameter = "T"),
+                    @StudioProperty(xmlAttribute = "categoryField", type = StudioPropertyType.PROPERTY_REF),
+                    @StudioProperty(xmlAttribute = "valueFields", type = StudioPropertyType.VALUES_LIST)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "categoryField"
+                    )
+            }
+    )
+    DataSet.Source dataSource();
+
+    @StudioElement(
+            name = "Formatter function",
+            xmlElement = "formatterFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip",
+                    "io.jmix.chartsflowui.kit.component.model.shared.Label",
+                    "io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AxisLabel",
+                    "io.jmix.chartsflowui.kit.component.model.axis.Radar.AxisName",
+                    "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap"
+            },
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void formatterFunction();
+
+    @StudioElement(
+            name = "Value formatter function",
+            xmlElement = "valueFormatterFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip"
+            },
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void valueFormatterFunction();
+
+    @StudioElement(
+            name = "Label formatter function",
+            xmlElement = "labelFormatterFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {"io.jmix.chartsflowui.kit.component.model.datazoom.SliderDataZoom"},
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void labelFormatterFunction();
+
+    @StudioElement(
+            name = "Animation duration function",
+            xmlElement = "animationDurationFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"
+            },
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void animationDurationFunction();
+
+    @StudioElement(
+            name = "Animation delay function",
+            xmlElement = "animationDelayFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"
+            },
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void animationDelayFunction();
+
+    @StudioElement(
+            name = "Animation duration update function",
+            xmlElement = "animationDurationUpdateFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"
+            },
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void animationDurationUpdateFunction();
+
+    @StudioElement(
+            name = "Animation delay update function",
+            xmlElement = "animationDelayUpdateFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.AxisPointer",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"
+            },
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void animationDelayUpdateFunction();
+
+    @StudioElement(
+            name = "Page formatter function",
+            xmlElement = "pageFormatterFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {"io.jmix.chartsflowui.kit.component.model.legend.ScrollableLegend"},
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void pageFormatterFunction();
+
+    @StudioElement(
+            name = "Max function",
+            xmlElement = "maxFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {"io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"},
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void maxFunction();
+
+    @StudioElement(
+            name = "Min function",
+            xmlElement = "minFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {"io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis"},
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void minFunction();
+
+    @StudioElement(
+            name = "Interval function",
+            xmlElement = "intervalFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.axis.AxisTick",
+                    "io.jmix.chartsflowui.kit.component.model.axis.AxisLabel",
+                    "io.jmix.chartsflowui.kit.component.model.axis.SplitLine",
+                    "io.jmix.chartsflowui.kit.component.model.axis.SplitArea"
+            },
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void intervalFunction();
+
+    @StudioElement(
+            name = "Color function",
+            xmlElement = "colorFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {
+                    "io.jmix.chartsflowui.kit.component.model.axis.AxisLabel"
+
+            },
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void colorFunction();
+
+    @StudioElement(
+            name = "NativeJson",
+            xmlElement = "nativeJson",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {"io.jmix.chartsflowui.component.Chart"},
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void nativeJson();
 }

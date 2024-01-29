@@ -19,6 +19,11 @@ package io.jmix.chartsflowui.kit.component.model.series.mark;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.series.Label;
 
+/**
+ * Base class for mark point, mark line and mark area.
+ *
+ * @param <T> origin class type
+ */
 public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObservableObject {
 
     protected Boolean silent;

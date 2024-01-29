@@ -19,6 +19,13 @@ package io.jmix.chartsflowui.kit.component.model.axis;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.InnerTooltip;
 
+/**
+ * Polar coordinate which can be used in scatter and line chart. Every polar coordinate
+ * has an {@link AngleAxis} and a {@link RadiusAxis}.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#polar">Polar documentation</a>
+ */
 public class Polar extends ChartObservableObject {
 
     protected String id;

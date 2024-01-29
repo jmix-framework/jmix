@@ -670,7 +670,7 @@ public class ChartsSeriesXmlLoadTest extends AbstractXmlLoadTest {
 
         assertEquals(ColorBy.DATA, effectScatterSeries.getColorBy());
         assertEquals("ripple", effectScatterSeries.getEffectType());
-        assertEquals(EffectScatterSeries.EffectType.RENDER, effectScatterSeries.getShowEffectOn());
+        assertEquals(EffectScatterSeries.EffectOn.RENDER, effectScatterSeries.getShowEffectOn());
 
         EffectScatterSeries.RippleEffect rippleEffect = effectScatterSeries.getRippleEffect();
         assertEquals(BLACK, rippleEffect.getColor());

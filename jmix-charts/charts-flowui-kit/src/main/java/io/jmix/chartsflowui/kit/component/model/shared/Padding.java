@@ -16,6 +16,9 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
+/**
+ * Common space around content.
+ */
 public class Padding {
 
     protected Integer top;

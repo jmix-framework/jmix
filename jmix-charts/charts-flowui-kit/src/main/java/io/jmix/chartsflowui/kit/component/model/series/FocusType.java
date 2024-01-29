@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.series;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * Fade out type of other data to focus the highlighted.
+ */
 public enum FocusType implements HasEnumId {
     NONE("none"),
     SELF("self"),

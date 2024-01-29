@@ -23,6 +23,11 @@ import io.jmix.chartsflowui.kit.component.model.shared.*;
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.Position.ItemTriggerPosition;
 import jakarta.annotation.Nullable;
 
+/**
+ * The base class for any series.
+ *
+ * @param <T> origin series class type
+ */
 public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartObservableObject {
 
     protected SeriesType type;
@@ -55,6 +60,9 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
 
     protected Tooltip tooltip;
 
+    /**
+     * Unified layout configuration component of labels.
+     */
     public static class LabelLayout extends ChartObservableObject
             implements HasAlign<LabelLayout> {
 
@@ -86,6 +94,9 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
 
         protected Integer[][] labelLinePoints;
 
+        /**
+         * Enum to move the overlapped labels to avoid overlapping.
+         */
         public enum MoveOverlapPosition implements HasEnumId {
             SHIFT_X("shiftX"),
             SHIFT_Y("shiftY");
@@ -303,6 +314,9 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         }
     }
 
+    /**
+     * Tooltip component for series.
+     */
     public static class Tooltip extends ChartObservableObject
             implements HasPadding<Tooltip> {
 

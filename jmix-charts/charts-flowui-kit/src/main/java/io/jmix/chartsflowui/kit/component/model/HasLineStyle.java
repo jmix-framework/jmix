@@ -18,38 +18,91 @@ package io.jmix.chartsflowui.kit.component.model;
 
 import jakarta.annotation.Nullable;
 
+/**
+ * A component that has line style.
+ *
+ * @param <T> origin class type
+ */
 public interface HasLineStyle<T> {
 
+    /**
+     * @return Style for drawing line endpoints
+     */
     Cap getCap();
 
+    /**
+     * Sets style for drawing line endpoints or replaces an existing one.
+     * More detailed information is provided in the documentation.
+     *
+     * @param cap cap style to set
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineCap">CanvasRenderingContext2D.lineCap [MDN]</a>
+     */
     void setCap(Cap cap);
 
+    /**
+     * @param cap style to set
+     * @return this
+     * @see HasLineStyle#setCap(Cap)
+     */
     @SuppressWarnings("unchecked")
     default T withCap(Cap cap) {
         setCap(cap);
         return (T) this;
     }
 
+    /**
+     * @return style that used to join two line segments where they intersect
+     */
     Join getJoin();
 
+    /**
+     * Sets a style that used to join two line segments where they intersect or replaces an existing one.
+     * More detailed information is provided in the documentation.
+     *
+     * @param join style to set
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineJoin">CanvasRenderingContext2D.lineJoin [MDN]</a>
+     */
     void setJoin(Join join);
 
+    /**
+     * @param join join style to set
+     * @return this
+     * @see HasLineStyle#setJoin(Join)
+     */
     @SuppressWarnings("unchecked")
     default T withJoin(Join join) {
         setJoin(join);
         return (T) this;
     }
 
+    /**
+     * @return miter limit ratio
+     */
     Integer getMiterLimit();
 
+    /**
+     * Sets miter limit ratio or replaces an existing one. Only works when {@link Join} is set as {@link Join#MITER}.
+     * More detailed information is provided in the documentation.
+     *
+     * @param miterLimit miter limit to set
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/miterLimit">CanvasRenderingContext2D.miterLimit [MDN]</a>
+     */
     void setMiterLimit(Integer miterLimit);
 
+    /**
+     * @param miterLimit miter limit to set
+     * @return this
+     * @see HasLineStyle#setMiterLimit(Integer)
+     */
     @SuppressWarnings("unchecked")
     default T withMiterLimit(Integer miterLimit) {
         setMiterLimit(miterLimit);
         return (T) this;
     }
 
+    /**
+     * Style for drawing line endpoints.
+     */
     enum Cap implements HasEnumId {
         BUTT("butt"),
         ROUND("round"),
@@ -77,6 +130,9 @@ public interface HasLineStyle<T> {
         }
     }
 
+    /**
+     * Style for joining two line segments where they intersect.
+     */
     enum Join implements HasEnumId {
         BEVEL("bevel"),
         ROUND("round"),

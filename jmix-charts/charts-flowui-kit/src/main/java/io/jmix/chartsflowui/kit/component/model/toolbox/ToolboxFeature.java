@@ -18,6 +18,9 @@ package io.jmix.chartsflowui.kit.component.model.toolbox;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 
+/**
+ * The base configuration component for each tool in {@link Toolbox}.
+ */
 public abstract class ToolboxFeature extends ChartObservableObject {
 
     protected abstract String getFeatureName();

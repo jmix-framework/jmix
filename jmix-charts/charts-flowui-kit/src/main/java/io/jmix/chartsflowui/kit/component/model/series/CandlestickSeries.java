@@ -21,6 +21,12 @@ import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.Orientation;
 
+/**
+ * A candlestick chart is a style of financial chart used to describe price movements
+ * of a security, derivative or currency. More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-candlestick">CandlestickSeries documentation</a>
+ */
 public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries> {
 
     protected CoordinateSystem coordinateSystem;
@@ -63,6 +69,11 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         super(SeriesType.CANDLESTICK);
     }
 
+    /**
+     * Item style of candlestick.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-candlestick.itemStyle">CandlestickSeries.itemStyle</a>
+     */
     public static class ItemStyle extends ChartObservableObject
             implements HasShadow<ItemStyle> {
 
@@ -231,6 +242,9 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         }
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractCandlestickElement<Emphasis> {
 
         protected Boolean disabled;
@@ -282,9 +296,15 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractCandlestickElement<Blur> {
     }
 
+    /**
+     * Component to configure the selection state.
+     */
     public static class Select extends AbstractCandlestickElement<Select> {
 
         protected Boolean disabled;
@@ -304,6 +324,12 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         }
     }
 
+
+    /**
+     * Base component for candlestick elements.
+     *
+     * @param <T> origin element class type
+     */
     public static abstract class AbstractCandlestickElement<T extends AbstractCandlestickElement<T>>
             extends ChartObservableObject {
 

@@ -16,5 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
+/**
+ * Common font style for text.
+ */
 public class TextStyle extends AbstractText<TextStyle> {
 }

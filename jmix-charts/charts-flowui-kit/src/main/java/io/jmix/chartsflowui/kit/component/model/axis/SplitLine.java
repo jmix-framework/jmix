@@ -17,9 +17,13 @@
 package io.jmix.chartsflowui.kit.component.model.axis;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
+import io.jmix.chartsflowui.kit.component.model.Grid;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 
+/**
+ * Split line of axis in {@link Grid} area.
+ */
 public class SplitLine extends ChartObservableObject {
 
     protected Boolean show;

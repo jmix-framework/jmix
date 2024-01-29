@@ -19,6 +19,12 @@ package io.jmix.chartsflowui.kit.component.model.series;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 
+/**
+ * Radar chart is mainly used to show multi-variable data, such as the analysis
+ * of a football player's varied attributes. More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-radar">RadarSeries documentation</a>
+ */
 public class RadarSeries extends AbstractSeries<RadarSeries>
         implements HasSymbols<RadarSeries> {
 
@@ -60,6 +66,9 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         super(SeriesType.RADAR);
     }
 
+    /**
+     * Component to configure area filling style.
+     */
     public static class AreaStyle extends AbstractAreaStyle<AreaStyle> {
 
         protected Color color;
@@ -79,6 +88,9 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         }
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractRadarElement<Emphasis> {
 
         protected Boolean disabled;
@@ -130,9 +142,15 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractRadarElement<Blur> {
     }
 
+    /**
+     * Component to configure the selection state.
+     */
     public static class Select extends AbstractRadarElement<Select> {
 
         protected Boolean disabled;
@@ -152,6 +170,11 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         }
     }
 
+    /**
+     * Base component for radar elements.
+     *
+     * @param <T> origin element class type
+     */
     public static abstract class AbstractRadarElement<T extends AbstractRadarElement<T>>
             extends ChartObservableObject {
 

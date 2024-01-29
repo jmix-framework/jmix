@@ -20,6 +20,11 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 
+/**
+ * The base class for axis.
+ *
+ * @param <T> origin class type
+ */
 public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObservableObject {
 
     protected String id;
@@ -100,6 +105,22 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         this.type = type;
     }
 
+    /**
+     * The boundary gap on both sides of a coordinate axis. The option and behavior of category axes
+     * and non-category axes are different.
+     * <ul>
+     *     <li>
+     *         The {@code boundaryGap} of category axis can be set to either {@code true} or {@code false}.
+     *     </li>
+     *     <li>
+     *         For non-category axis, including time, numerical value, and log axes,
+     *         {@code boundaryGap} is an array of two values, representing
+     *         the spanning range between minimum and maximum value.
+     *         The value can be set in numeric value or relative percentage, which becomes
+     *         invalid after setting {@link AbstractAxis#min} and {@link AbstractAxis#max}.
+     *     </li>
+     * </ul>
+     */
     public static class BoundaryGap {
 
         protected Boolean categoryGap;
@@ -123,6 +144,9 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         }
     }
 
+    /**
+     * AxisPointer component for the axis.
+     */
     public static class AxisPointer extends AbstractAxisPointer<AxisPointer> {
     }
 

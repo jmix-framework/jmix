@@ -18,6 +18,9 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 
+/**
+ * The style of the decal pattern.
+ */
 public class Decal extends ChartObservableObject {
 
     protected HasSymbols.Symbol symbol;
@@ -40,6 +43,33 @@ public class Decal extends ChartObservableObject {
 
     protected Integer maxTileHeight;
 
+    /**
+     * DashArray controls the horizontal pattern.<br/>
+     * Possible values:
+     * <ul>
+     *     <li>
+     *         If it is of type {@link DashArray#number}, it means that the pattern and the blank space
+     *         are of this value respectively. For example, {@code 5} means the pattern with width 5 is displayed first,
+     *         then 5 pixels empty, then the pattern with width 5 is displayed.
+     *     </li>
+     *     <li>
+     *         n the case of {@link DashArray#array} type, it means that the pattern and empty space are loops
+     *         of an array of values. For example: {@code [5, 10, 2, 6]} means the pattern is 5 pixels wide,
+     *         then 10 pixels empty, then the pattern is 2 pixels wide, then 6 pixels empty,
+     *         then the pattern is 5 pixels wide.
+     *     </li>
+     *     <li>
+     *         If of type {@link DashArray#twoDimensionalArray}, it means that each row is a loop with an array
+     *         of values for the pattern and blank space. For example: {@code [10, [2, 5]]} means that the first
+     *         line will be 10 pixels by 10 pixels and empty space, the second line will be 2 pixels by 2 pixels
+     *         and empty space, and the third line will be 10 pixels by 10 pixels and empty space.
+     *     </li>
+     * </ul>
+     * <p>
+     * More detailed information is provided in the documentation.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#legend.itemStyle.decal">Decal documentation</a>
+     */
     public static class DashArray {
 
         protected Integer number;

@@ -18,6 +18,11 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.*;
 
+/**
+ * The base class for text components.
+ *
+ * @param <T> origin text class type
+ */
 public abstract class AbstractText<T extends AbstractText<T>> extends ChartObservableObject
         implements HasText<T> {
 

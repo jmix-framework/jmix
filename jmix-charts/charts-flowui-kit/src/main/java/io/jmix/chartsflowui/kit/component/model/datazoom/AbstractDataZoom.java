@@ -21,6 +21,15 @@ import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.shared.Orientation;
 import jakarta.annotation.Nullable;
 
+/**
+ * Base component witch used for zooming a specific area in the chart.
+ * More detailed information is provided in the documentation.
+ *
+ * @param <T> origin class type
+ * @see InsideDataZoom
+ * @see SliderDataZoom
+ * @see <a href="https://echarts.apache.org/en/option.html#dataZoom">DataZoom documentation</a>
+ */
 public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObservableObject {
 
     protected final DataZoomType type;
@@ -65,6 +74,11 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         this.type = type;
     }
 
+    /**
+     * Filtering mode options.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#dataZoom-inside.filterMode">FilterMode documentation</a>
+     */
     public enum FilterMode implements HasEnumId {
         FILTER("filter"),
         WEAK_FILTER("weakFilter"),
@@ -93,6 +107,11 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         }
     }
 
+    /**
+     * Settings for decoding range values.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#dataZoom-inside.rangeMode">RangeMode documentation</a>
+     */
     public enum RangeMode implements HasEnumId {
         VALUE("value"),
         PERCENT("percent");

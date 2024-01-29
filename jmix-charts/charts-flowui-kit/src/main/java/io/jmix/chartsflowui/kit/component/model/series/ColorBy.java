@@ -16,9 +16,13 @@
 
 package io.jmix.chartsflowui.kit.component.model.series;
 
+import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * The policy to take color from {@link JmixChart#getColorPalette()}.
+ */
 public enum ColorBy implements HasEnumId {
     SERIES("series"),
     DATA("data");

@@ -19,6 +19,11 @@ package io.jmix.chartsflowui.kit.component.model.legend;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * Type of legend.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#legend.type">Legend.type</a>
+ */
 public enum LegendType implements HasEnumId {
     PLAIN("plain"),
     SCROLL("scroll");

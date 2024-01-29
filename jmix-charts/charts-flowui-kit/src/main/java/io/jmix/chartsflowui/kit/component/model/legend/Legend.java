@@ -16,6 +16,14 @@
 
 package io.jmix.chartsflowui.kit.component.model.legend;
 
+/**
+ * Legend component shows symbol, color and name of different series.
+ * You can click legends to toggle displaying series in the chart.
+ * More detailed information is provided in the documentation.
+ *
+ * @see ScrollableLegend
+ * @see <a href="https://echarts.apache.org/en/option.html#legend">Legend documentation</a>
+ */
 public class Legend extends AbstractLegend<Legend> {
 
     public Legend() {

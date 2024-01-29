@@ -18,6 +18,9 @@ package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.JmixChart;
 
+/**
+ * Base class for data-aware chart options.
+ */
 public abstract class ChartDataObservableObject extends ChartObservableObject {
 
     protected JmixChart chart;

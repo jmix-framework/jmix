@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.series;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
+import io.jmix.chartsflowui.kit.component.model.DataSet;
 import io.jmix.chartsflowui.kit.component.model.HasBorder;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkArea;
@@ -29,6 +30,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Gauge charts use needles to show information as a reading on a dial.<br/>
+ * <b>Note</b>: Note: Gauge series is the only series that requires an independent description of data
+ * in a {@link GaugeSeries#data}. All other series use the {@link DataSet} as a data provider.<br/>
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-gauge">GaugeSeries documentation</a>
+ */
 public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
     protected String[] center;
@@ -93,6 +102,9 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         super(SeriesType.GAUGE);
     }
 
+    /**
+     * Data item to describe series data.
+     */
     public static class DataItem extends ChartObservableObject {
 
         protected Title title;
@@ -188,6 +200,11 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         }
     }
 
+    /**
+     * The related configuration about the axis line of gauge chart.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-gauge.axisLine">GaugeSeries.axisLine</a>
+     */
     public static class AxisLine extends ChartObservableObject {
 
         protected Boolean show;
@@ -196,6 +213,11 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
         protected LineStyle lineStyle;
 
+        /**
+         * The style of the axis line of gauge chart.
+         *
+         * @see <a href="https://echarts.apache.org/en/option.html#series-gauge.axisLine.lineStyle">GaugeSeries.axisLine.lineStyle</a>
+         */
         public static class LineStyle extends ChartObservableObject
                 implements HasShadow<LineStyle> {
 
@@ -367,6 +389,11 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         }
     }
 
+    /**
+     * Component that used to show current progress.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-gauge.progress">GaugeSeries.progress</a>
+     */
     public static class Progress extends ChartObservableObject {
 
         protected Boolean show;
@@ -470,6 +497,11 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         }
     }
 
+    /**
+     * The style of split line.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-gauge.splitLine">GaugeSeries.splitLine</a>
+     */
     public static class SplitLine extends ChartObservableObject {
 
         protected Boolean show;
@@ -541,6 +573,11 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         }
     }
 
+    /**
+     * The tick line style.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-gauge.axisTick">GaugeSeries.axisTick</a>
+     */
     public static class AxisTick extends ChartObservableObject {
 
         protected Boolean show;
@@ -628,6 +665,11 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         }
     }
 
+    /**
+     * Gauge chart pointer.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-gauge.pointer">GaugeSeries.pointer</a>
+     */
     public static class Pointer extends ChartObservableObject {
 
         protected Boolean show;
@@ -763,6 +805,11 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         }
     }
 
+    /**
+     * The fixed point of a pointer in a dial.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-gauge.anchor">GaugeSeries.anchor</a>
+     */
     public static class Anchor extends ChartObservableObject {
 
         protected Boolean show;
@@ -882,6 +929,9 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         }
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends ChartObservableObject {
 
         protected Boolean disabled;
@@ -921,9 +971,15 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         }
     }
 
+    /**
+     * Component to configure the title of gauge chart.
+     */
     public static class Title extends AbstractGaugeText<Title> {
     }
 
+    /**
+     * The detail about gauge chart which is used to show data.
+     */
     public static class Detail extends AbstractGaugeText<Detail> {
 
         protected String formatter;
@@ -969,6 +1025,11 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         }
     }
 
+    /**
+     * Base class for gauge text components.
+     *
+     * @param <T> origin text component class type
+     */
     public abstract static class AbstractGaugeText<T extends AbstractGaugeText<T>> extends AbstractRichText<T>
             implements HasShadow<T>, HasPadding<T>, HasBorder<T> {
 

@@ -21,6 +21,12 @@ import io.jmix.chartsflowui.kit.component.model.shared.HasSymbols;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 
+/**
+ * Scatter (bubble) chart. The scatter series in rectangular coordinate could be used to present
+ * the relation between {@code X} and {@code Y}. More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-scatter">ScatterSeries documenation</a>
+ */
 public class ScatterSeries extends AbstractAxisAwareSeries<ScatterSeries>
         implements HasSymbols<ScatterSeries> {
 
@@ -82,6 +88,9 @@ public class ScatterSeries extends AbstractAxisAwareSeries<ScatterSeries>
         super(SeriesType.SCATTER);
     }
 
+    /**
+     * Component to configure label guide line.
+     */
     public static class LabelLine extends ChartObservableObject {
 
         protected Boolean show;
@@ -185,6 +194,9 @@ public class ScatterSeries extends AbstractAxisAwareSeries<ScatterSeries>
         }
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractScatterElement<Emphasis> {
 
         protected Boolean disabled;
@@ -252,9 +264,15 @@ public class ScatterSeries extends AbstractAxisAwareSeries<ScatterSeries>
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractScatterElement<Blur> {
     }
 
+    /**
+     * Component to configure the selection state.
+     */
     public static class Select extends AbstractScatterElement<Select> {
 
         protected Boolean disabled;
@@ -274,6 +292,11 @@ public class ScatterSeries extends AbstractAxisAwareSeries<ScatterSeries>
         }
     }
 
+    /**
+     * Base component for scatter elements.
+     *
+     * @param <T> origin element class type
+     */
     public static abstract class AbstractScatterElement<T extends AbstractScatterElement<T>>
             extends ChartObservableObject {
 

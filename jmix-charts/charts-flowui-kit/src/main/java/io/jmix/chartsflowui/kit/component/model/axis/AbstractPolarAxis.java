@@ -16,6 +16,11 @@
 
 package io.jmix.chartsflowui.kit.component.model.axis;
 
+/**
+ * The base class for polar axes.
+ *
+ * @param <T> origin class type
+ */
 public abstract class AbstractPolarAxis<T extends AbstractPolarAxis<T>> extends AbstractAxis<T> {
 
     protected Integer polarIndex;

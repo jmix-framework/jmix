@@ -18,6 +18,35 @@ package io.jmix.chartsflowui.kit.component.model.series;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 
+/**
+ * Define what is encoded to for each dimension of data.<br/>
+ * Chart example:
+ * <pre>{@code
+ *    <charts:chart id="chart" height="100%" width="100%">
+ *      <charts:dataSet>
+ *          <charts:source dataContainer="stockDataDc" categoryField="date"
+ *                         valueFields="open, close, low, high, volume"/>
+ *      </charts:dataSet>
+ *
+ *      // ...
+ *
+ *      <charts:series>
+ *          // Use only the values open, close, low, high for the series.
+ *          <charts:candlestick>
+ *              <charts:encode x="date" y="open, close, low, high"/>
+ *          </charts:candlestick>
+ *
+ *          // Use only volume value for the series.
+ *          <charts:bar>
+ *              <charts:encode x="date" y="volume"/>
+ *          </charts:bar>
+ *      </charts:series>
+ *    </charts:chart>
+ * }</pre>
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-line.encode">Encode documentation</a>
+ */
 public class Encode extends ChartObservableObject {
 
     protected String[] x;

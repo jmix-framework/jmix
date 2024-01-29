@@ -19,6 +19,11 @@ package io.jmix.chartsflowui.kit.component.model;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 import jakarta.annotation.Nullable;
 
+/**
+ * Title component, including main title and subtitle. More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#title">Title documentation</a>
+ */
 public class Title extends ChartObservableObject
         implements HasShadow<Title>, HasPosition<Title>, HasPadding<Title>, HasBorder<Title> {
 
@@ -83,13 +88,15 @@ public class Title extends ChartObservableObject
     public Title() {
     }
 
-    public Title(String text) {
-        this.text = text;
-    }
-
+    /**
+     * Font style for {@link Title#text}.
+     */
     public static class TextStyle extends AbstractRichText<TextStyle> {
     }
 
+    /**
+     * Font style for {@link Title#subtext}.
+     */
     public static class SubtextStyle extends AbstractRichText<SubtextStyle>
             implements HasAlign<SubtextStyle> {
 
@@ -120,6 +127,9 @@ public class Title extends ChartObservableObject
         }
     }
 
+    /**
+     * The mode for opening the {@link Title#text} or {@link Title#subtext} hyperlink on the specified tab.
+     */
     public enum Target implements HasEnumId {
         SELF("self"),
         BLANK("blank");
@@ -146,6 +156,9 @@ public class Title extends ChartObservableObject
         }
     }
 
+    /**
+     * The horizontal align of the component (including {@link Title#text} and {@link Title#subtext}).
+     */
     public enum TextAlign implements HasEnumId {
         AUTO("auto"),
         LEFT("left"),
@@ -174,6 +187,9 @@ public class Title extends ChartObservableObject
         }
     }
 
+    /**
+     * The vertical align of the component (including {@link Title#text} and {@link Title#subtext}).
+     */
     public enum TextVerticalAlign implements HasEnumId {
         AUTO("auto"),
         TOP("top"),

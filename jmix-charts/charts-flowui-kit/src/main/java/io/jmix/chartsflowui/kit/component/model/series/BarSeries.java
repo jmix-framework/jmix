@@ -22,6 +22,12 @@ import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 
+/**
+ * Bar chart shows different data through the height of a bar, which is used in rectangular coordinate
+ * with at least 1 category axis. More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-bar">BarSeries documentation</a>
+ */
 public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         implements HasStack<BarSeries> {
 
@@ -99,6 +105,11 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         super(SeriesType.BAR);
     }
 
+    /**
+     * Background style of each bar. Only works if {@link BarSeries#showBackground} is set to {@code true}.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-bar.backgroundStyle">BarSeries.backgroundStyle</a>
+     */
     public static class BackgroundStyle extends ChartObservableObject
             implements HasShadow<BackgroundStyle>, HasBorder<BackgroundStyle> {
 
@@ -242,6 +253,11 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         }
     }
 
+    /**
+     * Configuration component of label guideline.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-bar.labelLine">BarSeries.labelLine</a>
+     */
     public static class LabelLine extends ChartObservableObject {
 
         protected Boolean show;
@@ -281,9 +297,17 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         }
     }
 
+    /**
+     * Item style of bar.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#series-bar.itemStyle">BarSeries.itemStyle</a>
+     */
     public static class ItemStyle extends AbstractItemStyle<ItemStyle> {
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractBarElement<Emphasis> {
 
         protected Boolean disabled;
@@ -335,9 +359,15 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractBarElement<Blur> {
     }
 
+    /**
+     * Component to configure the selection state.
+     */
     public static class Select extends AbstractBarElement<Select> {
 
         protected Boolean disabled;
@@ -357,6 +387,11 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         }
     }
 
+    /**
+     * Base component for bar elements.
+     *
+     * @param <T> origin element class type
+     */
     public static abstract class AbstractBarElement<T extends AbstractBarElement<T>>
             extends ChartObservableObject {
 
@@ -784,6 +819,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         setClip(clip);
         return this;
     }
+
     public BarSeries withRoundCap(Boolean roundCap) {
         setRoundCap(roundCap);
         return this;

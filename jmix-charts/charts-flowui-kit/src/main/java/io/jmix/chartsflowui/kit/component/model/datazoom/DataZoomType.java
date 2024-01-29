@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.datazoom;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * Type of data zoom component.
+ */
 public enum DataZoomType implements HasEnumId {
     INSIDE("inside"),
     SLIDER("slider");

@@ -18,6 +18,9 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 
+/**
+ * Component for defining visual channels that will be displayed based on data values that are in the selected range.
+ */
 public class VisualEffect extends ChartObservableObject {
 
     protected String[] symbol;

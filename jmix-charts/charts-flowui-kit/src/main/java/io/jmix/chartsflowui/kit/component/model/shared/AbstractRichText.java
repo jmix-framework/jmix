@@ -19,6 +19,11 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The base class for text with rich option.
+ *
+ * @param <T> origin rich text class type
+ */
 public abstract class AbstractRichText<T extends AbstractRichText<T>> extends AbstractText<T> {
 
     protected Map<String, RichStyle> richStyles;

@@ -19,6 +19,18 @@ package io.jmix.chartsflowui.kit.component.model.series;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * Chunk approach, optional values:
+ * <ul>
+ *     <li>
+ *         {@code 'sequential'}: slice data by data index.
+ *     </li>
+ *     <li>
+ *         {@code 'mod'}: slice data by mod, which make the data items of each chunk coming from all over the data,
+ *         bringing better visual effect while progressive rendering.
+ *     </li>
+ * </ul>
+ */
 public enum ProgressiveChunkMode implements HasEnumId {
     SEQUENTIAL("sequential"),
     MOD("mod");

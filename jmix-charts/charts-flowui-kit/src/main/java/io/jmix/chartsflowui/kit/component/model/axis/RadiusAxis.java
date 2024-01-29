@@ -16,6 +16,12 @@
 
 package io.jmix.chartsflowui.kit.component.model.axis;
 
+/**
+ * Radial axis of polar coordinate.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#radiusAxis">RadiusAxis documentation</a>
+ */
 public class RadiusAxis extends AbstractPolarAxis<RadiusAxis> implements HasAxisName<RadiusAxis> {
 
     protected String name;

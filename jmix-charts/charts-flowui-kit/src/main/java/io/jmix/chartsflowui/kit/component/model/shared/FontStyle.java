@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * Common predefined font style.
+ */
 public enum FontStyle implements HasEnumId {
     NORMAL("normal"),
     ITALIC("italic"),

@@ -19,22 +19,53 @@ package io.jmix.chartsflowui.kit.component.model;
 import io.jmix.chartsflowui.kit.component.model.shared.Align;
 import io.jmix.chartsflowui.kit.component.model.shared.VerticalAlign;
 
+/**
+ * A component that has alignment.
+ *
+ * @param <T>
+ */
 public interface HasAlign<T> {
 
+    /**
+     * @return horizontal alignment of component
+     */
     Align getAlign();
 
+    /**
+     * Sets horizontal alignment of component or replaces an existing one.
+     *
+     * @param align alignment to set
+     */
     void setAlign(Align align);
 
+    /**
+     * @param align alignment to set
+     * @return this
+     * @see HasAlign#setAlign(Align)
+     */
     @SuppressWarnings("unchecked")
     default T withAlign(Align align) {
         setAlign(align);
         return (T) this;
     }
 
+    /**
+     * @return vertical alignment of component
+     */
     VerticalAlign getVerticalAlign();
 
+    /**
+     * Sets vertical alignment of component or replaces an existing one.
+     *
+     * @param verticalAlign alignment to set
+     */
     void setVerticalAlign(VerticalAlign verticalAlign);
 
+    /**
+     * @param verticalAlign alignment to set
+     * @return this
+     * @see HasAlign#setVerticalAlign(VerticalAlign)
+     */
     @SuppressWarnings("unchecked")
     default T withVerticalAlign(VerticalAlign verticalAlign) {
         setVerticalAlign(verticalAlign);

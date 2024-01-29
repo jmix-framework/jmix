@@ -17,8 +17,14 @@
 package io.jmix.chartsflowui.kit.component.model.axis;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
+import io.jmix.chartsflowui.kit.component.model.Grid;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 
+/**
+ * Minor split lines of axis in the {@link Grid} area. It will align to the {@link MinorTick}.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#xAxis.minorSplitLine">MinotSplitLine documentation</a>
+ */
 public class MinorSplitLine extends ChartObservableObject {
 
     protected Boolean show;

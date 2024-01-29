@@ -28,6 +28,12 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Toolbox is a group of utility tools, which includes different features.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#toolbox">Toolbox documentation</a>
+ */
 public class Toolbox extends ChartObservableObject
         implements HasPosition<Toolbox> {
 
@@ -145,7 +151,9 @@ public class Toolbox extends ChartObservableObject
     }
 
     public void removeFeature(ToolboxFeature feature) {
-        if (features != null && features.containsValue(feature) && features.remove(feature.getFeatureName()) != null) {
+        if (features != null
+                && features.containsValue(feature)
+                && features.remove(feature.getFeatureName()) != null) {
             removeChild(feature);
         }
     }

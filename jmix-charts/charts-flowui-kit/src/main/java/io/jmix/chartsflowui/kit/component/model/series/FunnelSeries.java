@@ -22,6 +22,13 @@ import io.jmix.chartsflowui.kit.component.model.HasPosition;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 import jakarta.annotation.Nullable;
 
+/**
+ * A funnel chart is a graphical representation that resembles the shape of a funnel where each segment
+ * gets progressively narrower. The segments are arranged vertically to showcase a hierarchy.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-funnel">FunnelSeries documentation</a>
+ */
 public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         implements HasPosition<FunnelSeries> {
 
@@ -79,6 +86,9 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         super(SeriesType.FUNNEL);
     }
 
+    /**
+     * Data sorting type.
+     */
     public enum SortType implements HasEnumId {
         ASCENDING("ascending"),
         DESCENDING("descending"),
@@ -106,6 +116,11 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         }
     }
 
+    /**
+     * The visual guideline style of label. When {@link Label#setPosition(Label.Position.PositionType)} is set
+     * as {@link Label.Position.PositionType#LEFT} or {@link Label.Position.PositionType#RIGHT},
+     * the visual guideline will show.
+     */
     public static class LabelLine extends ChartObservableObject {
 
         protected Boolean show;
@@ -161,6 +176,9 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         }
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractFunnelElement<Emphasis> {
 
         protected Boolean disabled;
@@ -212,9 +230,15 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractFunnelElement<Blur> {
     }
 
+    /**
+     * Component to configure the selection state.
+     */
     public static class Select extends AbstractFunnelElement<Select> {
 
         protected Boolean disabled;
@@ -234,6 +258,11 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         }
     }
 
+    /**
+     * Base component for funnel elements.
+     *
+     * @param <T> origin element class type
+     */
     public static abstract class AbstractFunnelElement<T extends AbstractFunnelElement<T>>
             extends ChartObservableObject {
 

@@ -21,6 +21,11 @@ import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import jakarta.annotation.Nullable;
 
+/**
+ * The base class for axis pointer.
+ *
+ * @param <T> origin axis pointer class type
+ */
 public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends ChartObservableObject {
 
     protected Boolean show;

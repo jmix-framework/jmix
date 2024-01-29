@@ -21,6 +21,12 @@ import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Component that used to mark an area in chart. For example, mark a time interval.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#series-line.markArea">MarkArea documentation</a>
+ */
 public class MarkArea extends AbstractMark<MarkArea> {
 
     protected ItemStyle itemStyle;
@@ -31,6 +37,9 @@ public class MarkArea extends AbstractMark<MarkArea> {
 
     protected List<PointPair> data;
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends AbstractMarkElement<Emphasis> {
 
         protected Boolean disabled;
@@ -50,9 +59,15 @@ public class MarkArea extends AbstractMark<MarkArea> {
         }
     }
 
+    /**
+     * Component to configure the blur state.
+     */
     public static class Blur extends AbstractMarkElement<Blur> {
     }
 
+    /**
+     * A class containing a pair of points, left top point and right bottom point of area.
+     */
     public static class PointPair {
 
         protected MarkArea.Point leftTopPoint;
@@ -73,6 +88,9 @@ public class MarkArea extends AbstractMark<MarkArea> {
         }
     }
 
+    /**
+     * Component to configure mark area point.
+     */
     public static class Point extends AbstractMarkElement<Point> {
 
         protected PointDataType type;

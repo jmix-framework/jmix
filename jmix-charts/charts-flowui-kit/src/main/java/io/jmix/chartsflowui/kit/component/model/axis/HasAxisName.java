@@ -23,68 +23,154 @@ import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 import jakarta.annotation.Nullable;
 
+/**
+ * An axis that has name.
+ *
+ * @param <T> origin class type
+ */
 public interface HasAxisName<T> {
 
+    /**
+     * @return axis name
+     */
     String getName();
 
+    /**
+     * Sets an axis name or replaces an existing one.
+     *
+     * @param name axis name to set
+     */
     void setName(String name);
 
+    /**
+     * @return location of axis name
+     */
     NameLocation getNameLocation();
 
+    /**
+     * Sets a location of axis name or replaces an existing one.
+     *
+     * @param nameLocation location to set
+     */
     void setNameLocation(NameLocation nameLocation);
 
+    /**
+     * @return font text style of axis name
+     */
     NameTextStyle getNameTextStyle();
 
+    /**
+     * Sets a font text style of axis name or replaces an existing one.
+     *
+     * @param nameTextStyle text style to set
+     */
     void setNameTextStyle(NameTextStyle nameTextStyle);
 
+    /**
+     * @return gap between axis name and axis line. The unit is pixels.
+     */
     Integer getNameGap();
 
+    /**
+     * Sets gap between axis name and axis line or replaces an existing one.
+     *
+     * @param nameGap gap to set in pixels
+     */
     void setNameGap(Integer nameGap);
 
+    /**
+     * @return rotate degree of axis name
+     */
     Integer getNameRotate();
 
+    /**
+     * Sets a rotate degree of axis name or replaces an existing one.
+     *
+     * @param nameRotate rotate degree to set
+     */
     void setNameRotate(Integer nameRotate);
 
+    /**
+     * @return {@code true} if the axis is inverted, {@code false} otherwise
+     */
     Boolean getInverse();
 
+    /**
+     * Sets the inversion for the axis or replaces an existing one.
+     *
+     * @param inverse whether to inverse axis
+     */
     void setInverse(Boolean inverse);
 
+    /**
+     * @param name axis name to set
+     * @return this
+     * @see HasAxisName#setName(String)
+     */
     @SuppressWarnings("unchecked")
     default T withName(String name) {
         setName(name);
         return (T) this;
     }
 
+    /**
+     * @param nameLocation location to set
+     * @return this
+     * @see HasAxisName#setNameLocation(NameLocation)
+     */
     @SuppressWarnings("unchecked")
     default T withNameLocation(NameLocation nameLocation) {
         setNameLocation(nameLocation);
         return (T) this;
     }
 
+    /**
+     * @param nameTextStyle text style to set
+     * @return this
+     * @see HasAxisName#setNameTextStyle(NameTextStyle)
+     */
     @SuppressWarnings("unchecked")
     default T withNameTextStyle(NameTextStyle nameTextStyle) {
         setNameTextStyle(nameTextStyle);
         return (T) this;
     }
 
+    /**
+     * @param nameGap gap to set in pixels
+     * @return this
+     * @see HasAxisName#setNameGap(Integer)
+     */
     @SuppressWarnings("unchecked")
     default T withNameGap(Integer nameGap) {
         setNameGap(nameGap);
         return (T) this;
     }
 
+    /**
+     * @param nameRotate rotate degree to set
+     * @return this
+     * @see HasAxisName#setNameRotate(Integer)
+     */
     @SuppressWarnings("unchecked")
     default T withNameRotate(Integer nameRotate) {
         setNameRotate(nameRotate);
         return (T) this;
     }
 
+    /**
+     * @param inverse whether to inverse axis
+     * @return this
+     * @see HasAxisName#setInverse(Boolean)
+     */
     @SuppressWarnings("unchecked")
     default T withInverse(Boolean inverse) {
         setInverse(inverse);
         return (T) this;
     }
 
+    /**
+     * Predefined location for axis name.
+     */
     enum NameLocation implements HasEnumId {
         END("end"),
         CENTER("center"),
@@ -112,6 +198,9 @@ public interface HasAxisName<T> {
         }
     }
 
+    /**
+     *  Font text style of axis name.
+     */
     class NameTextStyle extends AbstractRichText<NameTextStyle>
             implements HasBorder<NameTextStyle>, HasShadow<NameTextStyle>,
             HasAlign<NameTextStyle>, HasPadding<NameTextStyle> {

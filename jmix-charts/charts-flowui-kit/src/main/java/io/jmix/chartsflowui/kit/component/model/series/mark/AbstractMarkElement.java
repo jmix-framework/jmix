@@ -20,6 +20,11 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.series.Label;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 
+/**
+ * Base class for mark elements.
+ *
+ * @param <T> origin element class type
+ */
 public abstract class AbstractMarkElement<T extends AbstractMarkElement<T>>
         extends ChartObservableObject {
 

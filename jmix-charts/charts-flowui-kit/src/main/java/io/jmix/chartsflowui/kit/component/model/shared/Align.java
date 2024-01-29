@@ -19,6 +19,9 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * The horizontal align of the component.
+ */
 public enum Align implements HasEnumId {
     LEFT("left"),
     RIGHT("right"),

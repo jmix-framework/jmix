@@ -19,6 +19,11 @@ package io.jmix.chartsflowui.kit.component.model.axis;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * Type of axis.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#xAxis.type">AxisType documentation</a>
+ */
 public enum AxisType implements HasEnumId {
     CATEGORY("category"),
     VALUE("value"),

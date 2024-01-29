@@ -16,5 +16,12 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
+import io.jmix.chartsflowui.kit.component.model.Tooltip;
+
+/**
+ * InnerTooltip component. Used to display some contextual information inside any other components.
+ *
+ * @see Tooltip
+ */
 public class InnerTooltip extends AbstractTooltip<InnerTooltip> {
 }

@@ -20,6 +20,12 @@ import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.VisualEffect;
 import jakarta.annotation.Nullable;
 
+/**
+ * Brush is an area-selecting component, with which user can select part of series from a chart to display in detail.
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#brush">Brush documentation</a>
+ */
 public class Brush extends ChartObservableObject {
 
     protected String id;
@@ -56,6 +62,9 @@ public class Brush extends ChartObservableObject {
 
     protected Integer z;
 
+    /**
+     * Mode for brush selecting.
+     */
     public enum BrushSelectMode implements HasEnumId {
         ALL("all"),
         NONE("none");
@@ -82,6 +91,9 @@ public class Brush extends ChartObservableObject {
         }
     }
 
+    /**
+     * Update type for brush selecting event.
+     */
     public enum ThrottleType implements HasEnumId {
         DEBOUNCE("debounce"),
         FIX_RATE("fixRate");
@@ -108,6 +120,9 @@ public class Brush extends ChartObservableObject {
         }
     }
 
+    /**
+     * Enum for assigns which of the series can use brush selecting.
+     */
     public enum SeriesIndex implements HasEnumId {
         ALL("all"),
         ARRAY("Array"),
@@ -135,6 +150,9 @@ public class Brush extends ChartObservableObject {
         }
     }
 
+    /**
+     * Brush selecting mode.
+     */
     public enum BrushMode implements HasEnumId {
         SINGLE("single"),
         MULTIPLE("multiple");
@@ -161,6 +179,9 @@ public class Brush extends ChartObservableObject {
         }
     }
 
+    /**
+     * Type of brush.
+     */
     public enum BrushType implements HasEnumId {
         RECT("rect"),
         POLYGON("polygon"),
@@ -189,6 +210,9 @@ public class Brush extends ChartObservableObject {
         }
     }
 
+    /**
+     * Buttons in toolbox that is related to brush includes.
+     */
     public enum Toolbox implements HasEnumId {
         RECT("rect"),
         POLYGON("polygon"),
@@ -219,6 +243,12 @@ public class Brush extends ChartObservableObject {
         }
     }
 
+    /**
+     * Links interaction between selected items in different series.
+     * More detailed information is provided in the documentation.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#brush.brushLink">BrushLink documentation</a>
+     */
     public static class BrushLink {
 
         protected Integer[] brushLinkIndexes;
@@ -242,6 +272,9 @@ public class Brush extends ChartObservableObject {
         }
     }
 
+    /**
+     * Index of item which can use brush selecting.
+     */
     public static class IndexItem {
 
         protected Integer singleIndex;
@@ -275,6 +308,11 @@ public class Brush extends ChartObservableObject {
         }
     }
 
+    /**
+     * Brush font style. More detailed information is provided in the documentation.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#brush.brushStyle">BrushStyle documentation</a>
+     */
     public static class BrushStyle extends ChartObservableObject {
 
         protected Integer borderWidth;

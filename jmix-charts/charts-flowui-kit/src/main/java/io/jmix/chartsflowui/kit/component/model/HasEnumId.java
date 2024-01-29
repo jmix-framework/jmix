@@ -16,6 +16,9 @@
 
 package io.jmix.chartsflowui.kit.component.model;
 
+/**
+ * Interface for enums supporting JSON serialization.
+ */
 public interface HasEnumId {
 
     String getId();

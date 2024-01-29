@@ -23,6 +23,13 @@ import jakarta.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Base class for legend component.
+ *
+ * @param <T> origin legend class type
+ * @see Legend
+ * @see ScrollableLegend
+ */
 @SuppressWarnings("unchecked")
 public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartObservableObject
         implements HasShadow<T>, HasPosition<T>, HasBorder<T>, HasPadding<T> {
@@ -119,6 +126,10 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         this.type = type;
     }
 
+    /**
+     * Legend marker and text aligning. By default, it automatically calculates
+     * from component location and orientation.
+     */
     public enum Align implements HasEnumId {
         AUTO("auto"),
         LEFT("left"),
@@ -146,6 +157,10 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         }
     }
 
+    /**
+     * The position of the selector button, which can be
+     * placed at the end or start of the legend component.
+     */
     public enum Position implements HasEnumId {
         START("start"),
         END("end");
@@ -172,6 +187,11 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         }
     }
 
+    /**
+     * Text font style for legend component.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#legend.textStyle">Legend.textStyle</a>
+     */
     public static class TextStyle extends AbstractRichText<TextStyle>
             implements HasShadow<TextStyle>, HasBorder<TextStyle>, HasPadding<TextStyle> {
 
@@ -340,6 +360,9 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         }
     }
 
+    /**
+     * Component to configure the emphasis state.
+     */
     public static class Emphasis extends ChartObservableObject {
 
         protected SelectorLabel selectorLabel;
@@ -363,6 +386,11 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         }
     }
 
+    /**
+     * The text label style of the selector button, which is displayed by default.
+     *
+     * @see <a href="https://echarts.apache.org/en/option.html#legend.selectorLabel">Legend.selectorLabel</a>
+     */
     public static class SelectorLabel extends AbstractEnhancedLabel<SelectorLabel> {
     }
 

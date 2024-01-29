@@ -19,6 +19,11 @@ package io.jmix.chartsflowui.kit.component.model.axis;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 
+/**
+ * Options component related minor ticks.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#xAxis.minorTick">MitorTick documentation</a>
+ */
 public class MinorTick extends ChartObservableObject {
 
     protected Boolean show;

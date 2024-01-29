@@ -16,6 +16,9 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
+/**
+ * Common style of area.
+ */
 public class AreaStyle extends AbstractAreaStyle<AreaStyle> {
 
     protected Color[] colors;

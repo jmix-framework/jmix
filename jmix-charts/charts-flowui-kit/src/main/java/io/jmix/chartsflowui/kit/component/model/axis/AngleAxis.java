@@ -16,6 +16,11 @@
 
 package io.jmix.chartsflowui.kit.component.model.axis;
 
+/**
+ * The angle axis in Polar Coordinate. More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#angleAxis">AngleAxis documentation</a>
+ */
 public class AngleAxis extends AbstractPolarAxis<AngleAxis> {
 
     protected Integer startAngle;

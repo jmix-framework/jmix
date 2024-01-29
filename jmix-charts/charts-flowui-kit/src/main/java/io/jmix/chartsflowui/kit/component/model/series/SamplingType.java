@@ -19,6 +19,10 @@ package io.jmix.chartsflowui.kit.component.model.series;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import jakarta.annotation.Nullable;
 
+/**
+ * The down-sampling strategy used when the data size is much larger than pixel size. It will improve the performance
+ * when turned on. Defaults to be turned off, indicating that all the data points will be drawn.
+ */
 public enum SamplingType implements HasEnumId {
     LARGEST_TRIANGLE_THREE_BUCKET("lttb"),
     AVERAGE("average"),

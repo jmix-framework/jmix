@@ -21,6 +21,14 @@ import io.jmix.chartsflowui.kit.component.model.shared.Separator;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Aria is options for the Accessible Rich Internet Applications Suite,
+ * which is dedicated to making web content and web applications accessible.<br/>
+ * It is turned off by default and needs to be turned on by setting {@link Aria#setEnabled(Boolean)} to {@code true}.<br/>
+ * More detailed information is provided in the documentation.
+ *
+ * @see <a href="https://echarts.apache.org/en/option.html#aria">Aria documentation</a>
+ */
 public class Aria extends ChartObservableObject {
 
     protected Boolean enabled;
@@ -29,6 +37,11 @@ public class Aria extends ChartObservableObject {
 
     protected Decal decal;
 
+    /**
+     * A component which contains the description of the chart.
+     * Can be automatically and intelligently generated based on the chart, data, title, etc.
+     * The description can also be modified through this component.
+     */
     public static class Label extends ChartObservableObject {
 
         protected Boolean enabled;
@@ -41,6 +54,9 @@ public class Aria extends ChartObservableObject {
 
         protected Data data;
 
+        /**
+         * A component for the overall description of the chart.
+         */
         public static class General extends ChartObservableObject {
 
             protected String withTitle;
@@ -76,6 +92,9 @@ public class Aria extends ChartObservableObject {
             }
         }
 
+        /**
+         * Series-related configuration component.
+         */
         public static class Series extends ChartObservableObject {
 
             protected Integer maxCount;
@@ -84,6 +103,11 @@ public class Aria extends ChartObservableObject {
 
             protected Multiple multiple;
 
+            /**
+             * Base component for the description labels.
+             *
+             * @param <T> origin description label class type
+             */
             public static abstract class AbstractLabel<T extends AbstractLabel<T>> extends ChartObservableObject {
 
                 protected String prefix;
@@ -138,9 +162,15 @@ public class Aria extends ChartObservableObject {
                 }
             }
 
+            /**
+             * The description component used when the chart contains only one series.
+             */
             public static class Single extends AbstractLabel<Single> {
             }
 
+            /**
+             * The description component used when the chart contains only multiple series.
+             */
             public static class Multiple extends AbstractLabel<Multiple> {
 
                 protected Separator separator;
@@ -215,6 +245,9 @@ public class Aria extends ChartObservableObject {
             }
         }
 
+        /**
+         * Data-related configuration component.
+         */
         public static class Data extends ChartObservableObject {
 
             protected Integer maxCount;
@@ -401,6 +434,9 @@ public class Aria extends ChartObservableObject {
         }
     }
 
+    /**
+     * Decal patterns configuration component.
+     */
     public static class Decal extends ChartObservableObject {
 
         protected Boolean show;

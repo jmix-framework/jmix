@@ -79,7 +79,7 @@ public interface UnconstrainedDataManager {
     EntitySet save(Object... entities);
 
     /**
-     * Saves collection of entities to their data stores.
+     * Saves a collection of entities to their data stores.
      *
      * @param entities entities to save
      * @return set of saved instances

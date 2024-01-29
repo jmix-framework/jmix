@@ -16,22 +16,21 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
-
 public class JmixChartComponentEventDetail extends BaseChartEventDetail {
 
-    private String componentType;
+    protected String componentType;
 
-    private String componentSubType;
+    protected String componentSubType;
 
-    private Integer componentIndex;
+    protected Integer componentIndex;
 
-    private Integer seriesIndex;
+    protected Integer seriesIndex;
 
-    private String seriesId;
+    protected String seriesId;
 
-    private String seriesName;
+    protected String seriesName;
 
-    private String seriesType;
+    protected String seriesType;
 
     public String getComponentType() {
         return componentType;
@@ -88,5 +87,4 @@ public class JmixChartComponentEventDetail extends BaseChartEventDetail {
     public void setSeriesType(String seriesType) {
         this.seriesType = seriesType;
     }
-
 }

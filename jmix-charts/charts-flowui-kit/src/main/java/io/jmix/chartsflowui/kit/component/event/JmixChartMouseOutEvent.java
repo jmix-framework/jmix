@@ -23,7 +23,6 @@ import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartMouseOutEventDetail;
 
-
 @DomEvent(JmixChartMouseOutEvent.EVENT_NAME)
 public class JmixChartMouseOutEvent extends AbstractChartMouseEvent<JmixChartMouseOutEventDetail> {
 
@@ -34,5 +33,4 @@ public class JmixChartMouseOutEvent extends AbstractChartMouseEvent<JmixChartMou
                                   @EventData("event.detail.value") JsonValue value) {
         super(source, fromClient, detail, value, JmixChartMouseOutEventDetail.class);
     }
-
 }

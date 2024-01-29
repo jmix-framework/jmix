@@ -16,16 +16,15 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
-
 import java.util.Map;
 
 public class JmixChartMagicTypeChangedEventDetail extends BaseChartEventDetail {
 
-    private String currentType;
+    protected String currentType;
 
-    private Map<String, Object> newOption;
+    protected Map<String, Object> newOption;
 
-    private String featureName;
+    protected String featureName;
 
     public String getCurrentType() {
         return currentType;
@@ -50,5 +49,4 @@ public class JmixChartMagicTypeChangedEventDetail extends BaseChartEventDetail {
     public void setFeatureName(String featureName) {
         this.featureName = featureName;
     }
-
 }

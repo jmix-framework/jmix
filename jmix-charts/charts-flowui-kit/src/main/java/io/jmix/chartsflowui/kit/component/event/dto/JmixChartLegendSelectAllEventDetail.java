@@ -16,12 +16,11 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
-
 import java.util.Map;
 
 public class JmixChartLegendSelectAllEventDetail extends BaseChartEventDetail {
 
-    private Map<String, Boolean> selected;
+    protected Map<String, Boolean> selected;
 
     public Map<String, Boolean> getSelected() {
         return selected;

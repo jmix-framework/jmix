@@ -16,18 +16,17 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
-
 import java.util.Map;
 
 public class JmixChartSelectEventDetail extends BaseChartEventDetail {
 
-    private String name;
+    protected String name;
 
-    private Map<String, Boolean> selected;
+    protected Map<String, Boolean> selected;
 
-    private Boolean isFromClick;
+    protected Boolean isFromClick;
 
-    private Map<String, Object> fromActionPayload;
+    protected Map<String, Object> fromActionPayload;
 
     public String getName() {
         return name;

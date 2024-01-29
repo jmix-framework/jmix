@@ -83,6 +83,7 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
         this.initApplicationThemeObserver();
 
         this._root = echarts.init(chart, this.theme);
+
         this._forwardEvents();
     }
 

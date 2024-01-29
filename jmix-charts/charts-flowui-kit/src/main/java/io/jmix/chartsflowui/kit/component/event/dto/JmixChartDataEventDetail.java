@@ -16,18 +16,17 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
-
 public class JmixChartDataEventDetail extends BaseChartEventDetail {
 
-    private Integer seriesIndex;
+    protected Integer seriesIndex;
 
-    private Integer dataIndexInside;
+    protected Integer dataIndexInside;
 
-    private Integer dataIndex;
+    protected Integer dataIndex;
 
-    private Boolean escapeConnect;
+    protected Boolean escapeConnect;
 
-    private Boolean notBlur;
+    protected Boolean notBlur;
 
     public Integer getSeriesIndex() {
         return seriesIndex;
@@ -68,5 +67,4 @@ public class JmixChartDataEventDetail extends BaseChartEventDetail {
     public void setNotBlur(Boolean notBlur) {
         this.notBlur = notBlur;
     }
-
 }

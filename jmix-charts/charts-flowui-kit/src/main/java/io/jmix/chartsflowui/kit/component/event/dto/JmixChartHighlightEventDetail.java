@@ -21,7 +21,7 @@ import java.util.List;
 
 public class JmixChartHighlightEventDetail extends JmixChartDataEventDetail {
 
-    private List<JmixChartHighlightEventDetail> batch;
+    protected List<JmixChartHighlightEventDetail> batch;
 
     public List<JmixChartHighlightEventDetail> getBatch() {
         return batch;

@@ -22,7 +22,6 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartRenderedEventDetail;
 
-
 @DomEvent(JmixChartRenderedEvent.EVENT_NAME)
 public class JmixChartRenderedEvent extends AbstractChartEvent<JmixChartRenderedEventDetail> {
 
@@ -32,5 +31,4 @@ public class JmixChartRenderedEvent extends AbstractChartEvent<JmixChartRendered
                                   @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail, JmixChartRenderedEventDetail.class);
     }
-
 }

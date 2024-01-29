@@ -22,10 +22,9 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.vaadin.flow.component.ComponentEvent;
-import elemental.json.*;
+import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.BaseChartEventDetail;
-
 
 public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends ComponentEvent<JmixChart> {
 
@@ -44,6 +43,7 @@ public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends
     public AbstractChartEvent(JmixChart source, boolean fromClient,
                               JsonObject detail, Class<T> detailClass) {
         super(source, fromClient);
+
         this.detailJson = detail;
         this.detailClass = detailClass;
     }
@@ -66,7 +66,7 @@ public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
         return converted;
     }
-
 }

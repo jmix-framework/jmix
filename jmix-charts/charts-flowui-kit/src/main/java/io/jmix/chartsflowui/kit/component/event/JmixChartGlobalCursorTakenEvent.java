@@ -22,7 +22,6 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartGlobalCursorTakenEventDetail;
 
-
 @DomEvent(JmixChartGlobalCursorTakenEvent.EVENT_NAME)
 public class JmixChartGlobalCursorTakenEvent extends AbstractChartEvent<JmixChartGlobalCursorTakenEventDetail> {
 
@@ -32,5 +31,4 @@ public class JmixChartGlobalCursorTakenEvent extends AbstractChartEvent<JmixChar
                                            @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail, JmixChartGlobalCursorTakenEventDetail.class);
     }
-
 }

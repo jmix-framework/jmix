@@ -16,7 +16,5 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
-
 public class JmixChartFinishedEventDetail extends BaseChartEventDetail {
-
 }

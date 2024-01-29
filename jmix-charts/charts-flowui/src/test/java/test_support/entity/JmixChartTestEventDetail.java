@@ -27,17 +27,17 @@ public class JmixChartTestEventDetail extends BaseChartEventDetail {
 
     protected Map<String, String> testMap;
 
-    private List<Integer> numbers;
+    protected List<Integer> numbers;
 
-    private TestDto testDto;
+    protected TestDto testDto;
 
-    private String nullField;
+    protected String nullField;
 
     @JsonProperty("named")
-    private String alterNamed;
+    protected String alterNamed;
 
     @JsonIgnore
-    private String ignored;
+    protected String ignored;
 
     public Map<String, String> getTestMap() {
         return testMap;
@@ -89,13 +89,13 @@ public class JmixChartTestEventDetail extends BaseChartEventDetail {
 
     public static class TestDto {
 
-        private String strField;
+        protected String strField;
 
-        private Integer intField;
+        protected Integer intField;
 
-        private Boolean boolField;
+        protected Boolean boolField;
 
-        private Long longField;
+        protected Long longField;
 
         public String getStrField() {
             return strField;

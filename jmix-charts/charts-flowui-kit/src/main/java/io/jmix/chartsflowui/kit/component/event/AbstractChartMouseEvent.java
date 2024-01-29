@@ -28,17 +28,15 @@ public class AbstractChartMouseEvent<T extends BaseChartEventDetail> extends Abs
     protected AbstractChartMouseEvent(JmixChart source, boolean fromClient,
                                       JsonObject detail, JsonValue value, Class<T> detailClass) {
         super(source, fromClient, detail, detailClass);
+
         if (value instanceof JsonObject) {
             this.value = value.toJson();
-        } else {
-            if (value != null) {
-                this.value = value.asString();
-            }
+        } else if (value != null) {
+            this.value = value.asString();
         }
     }
 
     public String getValue() {
         return value;
     }
-
 }

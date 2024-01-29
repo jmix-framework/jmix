@@ -16,37 +16,36 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
-
 import java.util.List;
 import java.util.Map;
 
 public class JmixChartMouseEventDetail extends JmixChartComponentEventDetail {
 
-    private Integer xAxisIndex;
+    protected Integer xAxisIndex;
 
-    private Integer yAxisIndex;
+    protected Integer yAxisIndex;
 
-    private String name;
+    protected String name;
 
     protected Object value;
 
-    private String targetType;
+    protected String targetType;
 
-    private Double percent;
+    protected Double percent;
 
-    private String color;
+    protected String color;
 
-    private List<String> dimensionNames;
+    protected List<String> dimensionNames;
 
-    private Map<String, Object> encode;
+    protected Map<String, Object> encode;
 
-    private List<Object> $vars;
+    protected List<Object> $vars;
 
-    private Integer tickIndex;
+    protected Integer tickIndex;
 
-    private Integer dataIndex;
+    protected Integer dataIndex;
 
-    private Map<String, Object> data;
+    protected Map<String, Object> data;
 
     public Double getPercent() {
         return percent;

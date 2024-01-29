@@ -84,16 +84,14 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
         this.initApplicationThemeObserver();
 
         this._root = echarts.init(chart, this.theme);
-
         this._forwardEvents();
-
     }
 
     _forwardEvents() {
         for (let eventName of JmixChart.forwardedEventNames) {
             this._root.on(eventName, (params) => {
                 const detail = { ...params, event: undefined };
-                const customEvent = new CustomEvent('jmixchart' + eventName,
+                const customEvent = new CustomEvent('jmix-chart:' + eventName,
                     { detail: detail });
                 this.dispatchEvent(customEvent);
             });
@@ -136,6 +134,7 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
         this._root = echarts.init(chart, this.theme);
         this._resetOptions();
         this._resetDataSet();
+        this._forwardEvents();
     }
 
     /**

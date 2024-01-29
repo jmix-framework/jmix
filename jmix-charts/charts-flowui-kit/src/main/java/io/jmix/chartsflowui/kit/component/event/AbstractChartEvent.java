@@ -29,7 +29,7 @@ import io.jmix.chartsflowui.kit.component.event.dto.BaseChartEventDetail;
 
 public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends ComponentEvent<JmixChart> {
 
-    public static final String EVENT_NAME_PREFIX = "jmixchart";
+    public static final String EVENT_NAME_PREFIX = "jmix-chart:";
 
     protected JsonObject detailJson;
 
@@ -59,10 +59,10 @@ public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends
         return detail;
     }
 
-    public <M> M convertDetail(Class<M> clazz) {
-        M converted = null;
+    public <M> M convertDetail(Class<M> detailClass) {
+        M converted;
         try {
-            converted = mapper.readValue(detailJson.toJson(), clazz);
+            converted = mapper.readValue(detailJson.toJson(), detailClass);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

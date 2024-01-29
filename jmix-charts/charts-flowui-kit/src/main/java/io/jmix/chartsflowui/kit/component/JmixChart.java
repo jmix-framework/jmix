@@ -79,13 +79,12 @@ public class JmixChart extends Component implements HasSize {
         serializer = createSerializer();
 
         initChartOptionsChangeListener();
-
     }
 
-    protected Registration getRemovalCallback(String eventName, Class clazz) {
+    protected Registration getRemovalCallback(String eventName, Class<? extends ComponentEvent<?>> eventClass) {
         return () -> {
             eventRegistrations.get(eventName).remove();
-            if (!getEventBus().hasListener(clazz)
+            if (!getEventBus().hasListener(eventClass)
                     && eventRegistrations.get(eventName) != null) {
                 eventRegistrations.get(eventName).remove();
                 eventRegistrations.remove(eventName);

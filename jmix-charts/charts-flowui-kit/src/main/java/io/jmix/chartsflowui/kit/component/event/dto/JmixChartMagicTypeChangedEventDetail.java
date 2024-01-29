@@ -35,6 +35,13 @@ public class JmixChartMagicTypeChangedEventDetail extends BaseChartEventDetail {
         this.currentType = currentType;
     }
 
+    public Map<String, Object> getNewOption() {
+        return newOption;
+    }
+
+    public void setNewOption(Map<String, Object> newOption) {
+        this.newOption = newOption;
+    }
 
     public String getFeatureName() {
         return featureName;
@@ -43,4 +50,5 @@ public class JmixChartMagicTypeChangedEventDetail extends BaseChartEventDetail {
     public void setFeatureName(String featureName) {
         this.featureName = featureName;
     }
+
 }

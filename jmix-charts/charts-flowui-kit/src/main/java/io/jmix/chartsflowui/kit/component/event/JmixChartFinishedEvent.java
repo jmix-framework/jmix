@@ -24,7 +24,7 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartFinishedEventDetail
 
 
 @DomEvent(JmixChartFinishedEvent.EVENT_NAME)
-public class JmixChartFinishedEvent  extends AbstractChartEvent<JmixChartFinishedEventDetail> {
+public class JmixChartFinishedEvent extends AbstractChartEvent<JmixChartFinishedEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "finished";
 

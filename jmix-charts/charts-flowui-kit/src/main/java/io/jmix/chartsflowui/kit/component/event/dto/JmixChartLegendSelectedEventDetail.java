@@ -56,6 +56,7 @@ public class JmixChartLegendSelectedEventDetail extends BaseChartEventDetail {
     public Boolean getFromClick() {
         return isFromClick;
     }
+
     public void setFromClick(Boolean fromClick) {
         isFromClick = fromClick;
     }

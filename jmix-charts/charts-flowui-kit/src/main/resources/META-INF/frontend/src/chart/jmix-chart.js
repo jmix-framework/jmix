@@ -65,11 +65,10 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
 
     static get forwardedEventNames() {
         return ['click', 'dblclick', 'mousedown', 'mousemove', 'mouseup', 'mouseover', 'mouseout', 'globalout',
-            'highlight', 'downplay', 'selectchanged', 'legendselectchanged', 'legendselected', 'legendunselected',
-            'legendselectall', 'legendinverseselect', 'legendscroll', 'datazoom', 'datarangeselected', 'graphroam',
-            'georoam', 'treeroam', 'timelinechanged', 'timelineplaychanged', 'restore', 'dataviewchanged',
-            'magictypechanged', 'geoselectchanged', 'geoselected', 'geounselected', 'axisareaselected',
-            'brush', 'brushend', 'brushselected', 'globalcursortaken', 'rendered', 'finished',
+            'highlight', 'selectchanged', 'legendselectchanged', 'legendselected', 'legendunselected',
+            'legendselectall', 'legendinverseselect', 'legendscroll', 'datazoom', 'restore',
+            'magictypechanged', 'axisareaselected', 'brush', 'brushend', 'brushselected', 'globalcursortaken',
+            'rendered', 'finished',
         ];
     }
 

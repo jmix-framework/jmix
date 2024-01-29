@@ -29,7 +29,7 @@ public class JmixChartMagicTypeChangedEvent extends AbstractChartEvent<JmixChart
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "magictypechanged";
 
     public JmixChartMagicTypeChangedEvent(JmixChart source, boolean fromClient,
-                                 @EventData("event.detail") JsonObject detail) {
+                                          @EventData("event.detail") JsonObject detail) {
         super(source, fromClient, detail, JmixChartMagicTypeChangedEventDetail.class);
     }
 

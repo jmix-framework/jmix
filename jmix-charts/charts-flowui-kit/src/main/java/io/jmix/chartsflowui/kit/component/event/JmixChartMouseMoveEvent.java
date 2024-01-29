@@ -25,7 +25,7 @@ import io.jmix.chartsflowui.kit.component.event.dto.JmixChartMouseMoveEventDetai
 
 
 @DomEvent(JmixChartMouseMoveEvent.EVENT_NAME)
-public class JmixChartMouseMoveEvent extends AbstractChartMouseEvent<JmixChartMouseMoveEventDetail>  {
+public class JmixChartMouseMoveEvent extends AbstractChartMouseEvent<JmixChartMouseMoveEventDetail> {
 
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "mousemove";
 

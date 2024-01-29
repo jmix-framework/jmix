@@ -19,7 +19,7 @@ package io.jmix.chartsflowui.kit.component.event.dto;
 
 public abstract class BaseChartEventDetail {
 
-    private String type;
+    protected String type;
 
     public String getType() {
         return type;

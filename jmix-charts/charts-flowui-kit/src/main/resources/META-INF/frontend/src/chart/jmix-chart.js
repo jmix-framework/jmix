@@ -63,6 +63,15 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
         }
     }
 
+    static get forwardedEventNames() {
+        return ['click', 'dblclick', 'mousedown', 'mousemove', 'mouseup', 'mouseover', 'mouseout', 'globalout',
+            'highlight', 'selectchanged', 'legendselectchanged', 'legendselected', 'legendunselected',
+            'legendselectall', 'legendinverseselect', 'legendscroll', 'datazoom', 'restore',
+            'magictypechanged', 'axisareaselected', 'brush', 'brushend', 'brushselected', 'globalcursortaken',
+            'rendered', 'finished',
+        ];
+    }
+
     /**
      * @protected
      */
@@ -74,6 +83,18 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
         this.initApplicationThemeObserver();
 
         this._root = echarts.init(chart, this.theme);
+        this._forwardEvents();
+    }
+
+    _forwardEvents() {
+        for (let eventName of JmixChart.forwardedEventNames) {
+            this._root.on(eventName, (params) => {
+                const detail = { ...params, event: undefined };
+                const customEvent = new CustomEvent('jmix-chart:' + eventName,
+                    { detail: detail });
+                this.dispatchEvent(customEvent);
+            });
+        }
     }
 
     initApplicationThemeObserver() {
@@ -112,6 +133,7 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
         this._root = echarts.init(chart, this.theme);
         this._resetOptions();
         this._resetDataSet();
+        this._forwardEvents();
     }
 
     /**

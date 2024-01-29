@@ -19,7 +19,7 @@ package events;
 import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
 import elemental.json.impl.JreJsonFactory;
-import events.entity.JmixChartTestEventDetail;
+import test_support.entity.JmixChartTestEventDetail;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.JmixChartClickEvent;
 import io.jmix.chartsflowui.kit.component.event.dto.JmixChartClickEventDetail;

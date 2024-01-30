@@ -66,7 +66,7 @@
                         animationDelayUpdate="0">
                     <charts:label
                             show="false"
-                            positionType="TOP"
+                            position="TOP"
                             distance="5"
                             rotate="0"
                             offset="0 5"
@@ -198,7 +198,7 @@
                                 opacity="0.9"/>
                         <charts:label
                                 show="false"
-                                positionType="TOP"
+                                position="TOP"
                                 distance="5"
                                 rotate="0"
                                 offset="0 5"
@@ -268,7 +268,7 @@
                                 opacity="0.9"/>
                         <charts:label
                                 show="false"
-                                positionType="TOP"
+                                position="TOP"
                                 distance="5"
                                 rotate="0"
                                 offset="0 5"
@@ -338,7 +338,7 @@
                                 opacity="0.9"/>
                         <charts:label
                                 show="false"
-                                positionType="TOP"
+                                position="TOP"
                                 distance="5"
                                 rotate="0"
                                 offset="0 5"

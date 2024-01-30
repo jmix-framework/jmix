@@ -1813,8 +1813,8 @@
 
                 <xs:attribute name="formatter" type="xs:string"/>
                 <xs:attribute name="formatterFunction" type="xs:string"/>
-                <xs:attribute name="positionType" type="seriesLabelPositionType"/>
-                <xs:attribute name="positionCoordinate" type="xs:string"/>
+                <xs:attribute name="position" type="seriesLabelPositionType"/>
+                <xs:attribute name="positionCoordinates" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

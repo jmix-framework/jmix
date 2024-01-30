@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,12 +124,72 @@ public interface StudioChartsElementsGroups {
     @StudioElementsGroup(
             name = "Decals",
             elementClassFqn = "io.jmix.chartsflowui.kit.component.model.shared.Decal",
-            target = {"io.jmix.chartsflowui.kit.component.model.Aria.Decal"},
             xmlElement = "decals",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             visible = true,
-            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.kit.component.model.Aria.Decal"}
     )
     void ariaDecals();
+
+    @StudioElementsGroup(
+            name = "Series",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractSeries",
+            xmlElement = "series",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.component.Chart"}
+    )
+    void series();
+
+    @StudioElementsGroup(
+            name = "Data",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.series.mark.MarkPoint.Point",
+            xmlElement = "data",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.kit.component.model.series.mark.MarkPoint"}
+    )
+    void markPointData();
+
+    @StudioElementsGroup(
+            name = "Data",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.series.mark.MarkArea.PointPair",
+            xmlElement = "data",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.kit.component.model.series.mark.MarkArea"}
+    )
+    void markAreaData();
+
+    @StudioElementsGroup(
+            name = "Data",
+            elementClassFqn = "io.jmix.chartsflowui.kit.component.model.series.GaugeSeries.DataItem",
+            xmlElement = "data",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.kit.component.model.series.GaugeSeries"}
+    )
+    void gaugeData();
+
+    @StudioElementsGroup(
+            name = "ColorPalette",
+            elementClassFqn = "io.jmix.chartsflowui.kit.meta.StudioChartColorPalette",
+            xmlElement = "colorPalette",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            visible = true,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
+            target = {"io.jmix.chartsflowui.kit.component.model.series.GaugeSeries.AxisLine.LineStyle"}
+    )
+    void gaugeColorPalette();
 }

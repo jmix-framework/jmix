@@ -85,7 +85,7 @@
                         animationDelayUpdate="0">
                     <charts:label
                             show="false"
-                            positionType="TOP"
+                            position="TOP"
                             distance="5"
                             rotate="0"
                             offset="0 5"
@@ -178,7 +178,7 @@
                             blurScope="COORDINATE_SYSTEM">
                         <charts:label
                                 show="false"
-                                positionType="TOP"
+                                position="TOP"
                                 distance="5"
                                 rotate="0"
                                 offset="0 5"
@@ -243,7 +243,7 @@
                     <charts:blur>
                         <charts:label
                                 show="false"
-                                positionType="TOP"
+                                position="TOP"
                                 distance="5"
                                 rotate="0"
                                 offset="0 5"
@@ -293,7 +293,7 @@
                     <charts:select disabled="false">
                         <charts:label
                                 show="false"
-                                positionType="TOP"
+                                position="TOP"
                                 distance="5"
                                 rotate="0"
                                 offset="0 5"
@@ -375,7 +375,7 @@
                             animationDelayUpdate="0">
                         <charts:label
                                 show="false"
-                                positionType="TOP"
+                                position="TOP"
                                 distance="5"
                                 rotate="0"
                                 offset="0 5"
@@ -428,7 +428,7 @@
                         <charts:emphasis disabled="false">
                             <charts:label
                                     show="false"
-                                    positionType="TOP"
+                                    position="TOP"
                                     distance="5"
                                     rotate="0"
                                     offset="0 5"
@@ -494,7 +494,7 @@
                             animationDelayUpdate="0">
                         <charts:label
                                 show="false"
-                                positionCoordinate="5, 15"
+                                positionCoordinates="5, 15"
                                 distance="5"
                                 rotate="0"
                                 offset="0 5"
@@ -546,7 +546,7 @@
                         <charts:emphasis disabled="false">
                             <charts:label
                                     show="false"
-                                    positionType="TOP"
+                                    position="TOP"
                                     distance="5"
                                     rotate="0"
                                     offset="0 5"
@@ -600,7 +600,7 @@
                     <charts:markArea silent="false">
                         <charts:label
                                 show="false"
-                                positionType="TOP"
+                                position="TOP"
                                 distance="5"
                                 rotate="0"
                                 offset="0 5"
@@ -653,7 +653,7 @@
                         <charts:emphasis disabled="false">
                             <charts:label
                                     show="false"
-                                    positionType="TOP"
+                                    position="TOP"
                                     distance="5"
                                     rotate="0"
                                     offset="0 5"
@@ -707,7 +707,7 @@
                         <charts:blur>
                             <charts:label
                                     show="false"
-                                    positionType="TOP"
+                                    position="TOP"
                                     distance="5"
                                     rotate="0"
                                     offset="0 5"

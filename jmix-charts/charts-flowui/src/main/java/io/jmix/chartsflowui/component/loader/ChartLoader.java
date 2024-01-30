@@ -1286,8 +1286,8 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
 
         loadString(labelElement, "formatter", label::setFormatter);
         chartLoaderSupport().loadJsFunction(labelElement, "formatterFunction", label::setFormatterFunction);
-        loadEnum(labelElement, PositionType.class, "positionType", label::setPosition);
-        chartLoaderSupport().loadStringPair(labelElement, "positionCoordinate", label::setPosition,
+        loadEnum(labelElement, PositionType.class, "position", label::setPosition);
+        chartLoaderSupport().loadStringPair(labelElement, "positionCoordinates", label::setPosition,
                 String.format(
                         "Position of %s must have two coordinates",
                         io.jmix.chartsflowui.kit.component.model.series.Label.class.getSimpleName()

@@ -65,6 +65,7 @@ import io.jmix.flowui.component.listbox.JmixMultiSelectListBox;
 import io.jmix.flowui.component.loginform.JmixLoginForm;
 import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
+import io.jmix.flowui.component.richtexteditor.RichTextEditor;
 import io.jmix.flowui.component.scroller.JmixScroller;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
@@ -76,6 +77,7 @@ import io.jmix.flowui.component.upload.JmixUpload;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
+import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -127,6 +129,7 @@ public class UiComponentsImpl implements UiComponents {
         register(JmixUpload.class, Upload.class);
         register(JmixMenuBar.class, MenuBar.class);
         register(JmixVirtualList.class, VirtualList.class);
+        register(RichTextEditor.class, JmixRichTextEditor.class);
     }
 
     @SuppressWarnings("unchecked")

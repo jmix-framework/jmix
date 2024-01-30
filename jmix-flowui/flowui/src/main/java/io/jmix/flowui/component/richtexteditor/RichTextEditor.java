@@ -43,10 +43,10 @@ public class RichTextEditor extends JmixRichTextEditor
     @Override
     public void afterPropertiesSet() throws Exception {
         fieldDelegate = createFieldDelegate();
-        applyLocalization();
+        initI18n();
     }
 
-    protected void applyLocalization() {
+    protected void initI18n() {
         Messages messages = applicationContext.getBean(Messages.class);
 
         RichTextEditorI18n i18n = new RichTextEditorI18n();

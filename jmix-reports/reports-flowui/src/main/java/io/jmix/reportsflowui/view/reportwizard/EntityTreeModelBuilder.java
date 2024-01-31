@@ -25,13 +25,13 @@ import io.jmix.reports.app.EntityTreeStructureInfo;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Component("report_EntityTreeModelBuilder")
@@ -39,17 +39,15 @@ import java.util.Set;
 public class EntityTreeModelBuilder {
 
     protected final MessageTools messageTools;
-    protected final ReportWizard reportWizard;
     protected final ReportsProperties reportsProperties;
     protected final Metadata metadata;
     protected final ExtendedEntities extendedEntities;
     protected final MetadataTools metadataTools;
 
-    public EntityTreeModelBuilder(MessageTools messageTools, ReportWizard reportWizard,
+    public EntityTreeModelBuilder(MessageTools messageTools,
                                   ReportsProperties reportsProperties, Metadata metadata,
                                   ExtendedEntities extendedEntities, MetadataTools metadataTools) {
         this.messageTools = messageTools;
-        this.reportWizard = reportWizard;
         this.reportsProperties = reportsProperties;
         this.metadata = metadata;
         this.extendedEntities = extendedEntities;
@@ -86,7 +84,7 @@ public class EntityTreeModelBuilder {
 
         MetaClass parentMetaClass = metadata.getClass(parentNode.getMetaClassName());
         for (MetaProperty metaProperty : parentMetaClass.getProperties()) {
-            if (!reportWizard.isPropertyAllowedForReportWizard(parentMetaClass, metaProperty)) {
+            if (!isPropertyAllowedForReportWizard(parentMetaClass, metaProperty)) {
                 continue;
             }
             if (metaProperty.getRange().isClass()) {
@@ -119,6 +117,27 @@ public class EntityTreeModelBuilder {
                 parentNode.getChildren().add(child);
             }
         }
+    }
+
+    protected boolean isPropertyAllowedForReportWizard(MetaClass metaClass, MetaProperty metaProperty) {
+        //here we can`t just to determine metaclass using property argument cause it can be an ancestor of it
+        List<String> propertiesBlackList = reportsProperties.getWizardPropertiesBlackList();
+        List<String> wizardPropertiesExcludedBlackList = reportsProperties.getWizardPropertiesExcludedBlackList();
+
+        MetaClass originalMetaClass = getOriginalMetaClass(metaClass);
+        MetaClass originalDomainMetaClass = getOriginalMetaClass(metaProperty.getDomain());
+        String classAndPropertyName = originalMetaClass.getName() + "." + metaProperty.getName();
+        return !(propertiesBlackList.contains(classAndPropertyName)
+                || (propertiesBlackList.contains(originalDomainMetaClass.getName() + "." + metaProperty.getName())
+                && !wizardPropertiesExcludedBlackList.contains(classAndPropertyName)));
+    }
+
+    protected MetaClass getOriginalMetaClass(MetaClass metaClass) {
+        MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
+        if (originalMetaClass == null) {
+            originalMetaClass = metaClass;
+        }
+        return originalMetaClass;
     }
 
     private String getTreeNodeInfo(EntityTreeNode node) {

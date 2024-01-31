@@ -57,13 +57,11 @@ public class EntityChangedEventManager {
     @Autowired
     private Metadata metadata;
     @Autowired
-    protected EclipselinkPersistenceSupport persistenceSupport;
-
-    @Autowired
     private ApplicationEventPublisher eventPublisher;
-
     @Autowired
     private ExtendedEntities extendedEntities;
+
+    private EclipselinkPersistenceSupport persistenceSupport;
 
     private static class AccumulatedInfoHolder extends ResourceHolderSupport {
 
@@ -75,6 +73,10 @@ public class EntityChangedEventManager {
         AccumulatedInfoSynchronization(AccumulatedInfoHolder resourceHolder) {
             super(resourceHolder, RESOURCE_KEY);
         }
+    }
+
+    protected void setPersistenceSupport(EclipselinkPersistenceSupport persistenceSupport) {
+        this.persistenceSupport = persistenceSupport;
     }
 
     private AccumulatedInfoHolder getAccumulatedInfoHolder() {

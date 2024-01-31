@@ -12,7 +12,7 @@
     10,
     112
   ],
-  "testDTO": {
+  "testDto": {
     "strField": "Hello",
     "intField": 15,
     "boolField": false,

@@ -1286,8 +1286,8 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
 
         loadString(labelElement, "formatter", label::setFormatter);
         chartLoaderSupport().loadJsFunction(labelElement, "formatterFunction", label::setFormatterFunction);
-        loadEnum(labelElement, PositionType.class, "positionType", label::setPosition);
-        chartLoaderSupport().loadStringPair(labelElement, "positionCoordinate", label::setPosition,
+        loadEnum(labelElement, PositionType.class, "position", label::setPosition);
+        chartLoaderSupport().loadStringPair(labelElement, "positionCoordinates", label::setPosition,
                 String.format(
                         "Position of %s must have two coordinates",
                         io.jmix.chartsflowui.kit.component.model.series.Label.class.getSimpleName()
@@ -2008,7 +2008,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
         RadiusAxis radiusAxis = new RadiusAxis();
 
         loadPolarAxis(radiusAxis, radiusAxisElement);
-        chartLoaderSupport().loadAxisNameAttributes(radiusAxis, radiusAxisElement);
+        chartLoaderSupport().loadAxisNameAttributes(radiusAxis, radiusAxisElement, this::loadAbstractRichText);
 
         chart.setRadiusAxis(radiusAxis);
     }
@@ -2784,7 +2784,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
     protected void loadIndicator(Radar radar, Element element) {
         Radar.Indicator indicator = new Radar.Indicator();
 
-        loadString(element, "name", indicator::setName);
+        loadResourceString(element, "name", context.getMessageGroup(), indicator::setName);
         loadInteger(element, "max", indicator::setMax);
         loadInteger(element, "min", indicator::setMin);
         chartLoaderSupport().loadColor(element, "color", indicator::setColor);
@@ -2812,7 +2812,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
 
     protected void loadCartesianAxis(AbstractCartesianAxis<?> axis, Element element) {
         loadAbstractAxis(axis, element);
-        chartLoaderSupport().loadAxisNameAttributes(axis, element);
+        chartLoaderSupport().loadAxisNameAttributes(axis, element, this::loadAbstractRichText);
 
         loadBoolean(element, "show", axis::setShow);
         loadInteger(element, "gridIndex", axis::setGridIndex);

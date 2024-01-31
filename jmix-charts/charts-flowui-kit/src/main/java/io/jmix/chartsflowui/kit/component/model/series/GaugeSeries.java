@@ -32,7 +32,7 @@ import java.util.Map;
 
 /**
  * Gauge charts use needles to show information as a reading on a dial.<br/>
- * <b>Note</b>: Note: Gauge series is the only series that requires an independent description of data
+ * <b>Note</b>: Gauge series is the only series that requires an independent description of data
  * in a {@link GaugeSeries#data}. All other series use the {@link DataSet} as a data provider.<br/>
  * More detailed information is provided in the documentation.
  *

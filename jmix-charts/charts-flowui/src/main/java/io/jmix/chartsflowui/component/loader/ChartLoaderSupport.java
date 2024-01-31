@@ -133,7 +133,8 @@ public class ChartLoaderSupport {
         loaderSupport.loadEnum(element, VerticalAlign.class, "verticalAlign", component::setVerticalAlign);
     }
 
-    public void loadAxisNameAttributes(HasAxisName<?> component, Element element) {
+    public void loadAxisNameAttributes(HasAxisName<?> component, Element element,
+                                       BiConsumer<AbstractRichText<?>, Element> richLoader) {
         loaderSupport.loadResourceString(element, "name", context.getMessageGroup(), component::setName);
         loaderSupport.loadEnum(element, HasAxisName.NameLocation.class, "nameLocation", component::setNameLocation);
         loaderSupport.loadInteger(element, "nameGap", component::setNameGap);
@@ -144,6 +145,7 @@ public class ChartLoaderSupport {
         if (nameTextStyleElement != null) {
             HasAxisName.NameTextStyle nameTextStyle = new HasAxisName.NameTextStyle();
 
+            richLoader.accept(nameTextStyle, nameTextStyleElement);
 
             loadColor(nameTextStyleElement, "backgroundColor", nameTextStyle::setBackgroundColor);
             loaderSupport.loadString(nameTextStyleElement, "borderType", nameTextStyle::setBorderType);

@@ -1188,29 +1188,33 @@
     </xs:complexType>
 
     <xs:complexType name="radarAxisNameType">
-        <xs:sequence minOccurs="0">
-            <xs:element name="formatterFunction">
-                <xs:complexType mixed="true"/>
-            </xs:element>
-        </xs:sequence>
+        <xs:complexContent>
+            <xs:extension base="baseRichText">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="formatterFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
+                </xs:sequence>
 
-        <xs:attribute name="show" type="xs:boolean"/>
-        <xs:attribute name="formatter" type="xs:string"/>
-        <xs:attribute name="formatterFunction" type="xs:string"/>
-        <xs:attribute name="borderType" type="xs:string"/>
-        <xs:attribute name="borderDashOffset" type="xs:integer"/>
-        <xs:attribute name="backgroundColor" type="colorType"/>
+                <xs:attribute name="show" type="xs:boolean"/>
+                <xs:attribute name="formatter" type="xs:string"/>
+                <xs:attribute name="formatterFunction" type="xs:string"/>
+                <xs:attribute name="borderType" type="xs:string"/>
+                <xs:attribute name="borderDashOffset" type="xs:integer"/>
+                <xs:attribute name="backgroundColor" type="colorType"/>
 
-        <xs:attributeGroup ref="hasBorder"/>
-        <xs:attributeGroup ref="hasShadow"/>
-        <xs:attributeGroup ref="hasPadding"/>
+                <xs:attributeGroup ref="hasBorder"/>
+                <xs:attributeGroup ref="hasShadow"/>
+                <xs:attributeGroup ref="hasPadding"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="indicatorsType">
         <xs:sequence minOccurs="0">
             <xs:element name="indicator">
                 <xs:complexType>
-                    <xs:attribute name="name" type="xs:string"/>
+                    <xs:attribute name="name" type="layout:resourceString"/>
                     <xs:attribute name="max" type="xs:integer"/>
                     <xs:attribute name="min" type="xs:integer"/>
                     <xs:attribute name="color" type="colorType"/>
@@ -1442,7 +1446,7 @@
             </xs:element>
 
             <xs:element name="inBrush" type="visualEffectType"/>
-            <xs:element name="outOfBrush" type="visualEffectType"/>
+            <xs:element name="outBrush" type="visualEffectType"/>
         </xs:sequence>
 
         <xs:attribute name="id" type="xs:string"/>
@@ -1809,8 +1813,8 @@
 
                 <xs:attribute name="formatter" type="xs:string"/>
                 <xs:attribute name="formatterFunction" type="xs:string"/>
-                <xs:attribute name="positionType" type="seriesLabelPositionType"/>
-                <xs:attribute name="positionCoordinate" type="xs:string"/>
+                <xs:attribute name="position" type="seriesLabelPositionType"/>
+                <xs:attribute name="positionCoordinates" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2553,14 +2557,18 @@
     </xs:complexType>
 
     <xs:complexType name="nameTextStyleType">
-        <xs:attribute name="backgroundColor" type="colorType"/>
-        <xs:attribute name="borderType" type="xs:string"/>
-        <xs:attribute name="borderDashOffset" type="xs:integer"/>
+        <xs:complexContent>
+            <xs:extension base="baseRichText">
+                <xs:attribute name="backgroundColor" type="colorType"/>
+                <xs:attribute name="borderType" type="xs:string"/>
+                <xs:attribute name="borderDashOffset" type="xs:integer"/>
 
-        <xs:attributeGroup ref="hasAlign"/>
-        <xs:attributeGroup ref="hasPadding"/>
-        <xs:attributeGroup ref="hasShadow"/>
-        <xs:attributeGroup ref="hasBorder"/>
+                <xs:attributeGroup ref="hasAlign"/>
+                <xs:attributeGroup ref="hasPadding"/>
+                <xs:attributeGroup ref="hasShadow"/>
+                <xs:attributeGroup ref="hasBorder"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="labelType">

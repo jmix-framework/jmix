@@ -113,6 +113,8 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     protected CollectionPropertyContainer<QueryParameter> queryParametersDc;
     @ViewComponent
+    protected JmixButton regionsRunBtn;
+    @ViewComponent
     protected VerticalLayout regionsVBox;
     @ViewComponent
     protected JmixButton addTabulatedRegionBtn;
@@ -230,6 +232,7 @@ public class ReportWizardCreatorView extends StandardView {
             updateRegionButtons();
             showAddRegion();
             updateFragmentChangeButtons();
+            regionsRunBtn.setVisible(getReportTypeGenerate() != ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
         } else if (vbox.equals(queryVBox)) {
             ReportData item = reportDataDc.getItem();
             String resultQuery = item.getQuery();
@@ -632,6 +635,28 @@ public class ReportWizardCreatorView extends StandardView {
     @Subscribe("regionDataGrid.edit")
     public void onRegionDataGridEditItemAction(ActionPerformedEvent event) {
         editRegion();
+    }
+
+    @Subscribe("regionsRunBtn")
+    public void onRegionsRunBtnClick(ClickEvent<Button> event) {
+        if (reportDataDc.getItem().getReportRegions().isEmpty()) {
+            notifications.create(messageBundle.getMessage("addRegionsWarn.message"))
+                    .withType(Notifications.Type.DEFAULT)
+                    .withPosition(Notification.Position.BOTTOM_END)
+                    .show();
+            return;
+        }
+
+        lastGeneratedTmpReport = buildReport(true);
+
+        if (lastGeneratedTmpReport != null) {
+            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(lastGeneratedTmpReport)
+                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
+            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
+                fluentRunner.inBackground(this);
+            }
+            fluentRunner.runAndShow();
+        }
     }
 
     @Install(to = "regionDataGrid.up", subject = "enabledRule")

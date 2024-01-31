@@ -25,7 +25,6 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 @StudioUiKit(studioClassloaderDependencies = "io.jmix.charts:jmix-charts-flowui-kit")
 public interface StudioChartsComponents {
 
-    // TODO: kd, add icon
     @StudioComponent(
             name = "Chart",
             classFqn = "io.jmix.chartsflowui.component.Chart",
@@ -33,6 +32,7 @@ public interface StudioChartsComponents {
             xmlElement = "chart",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
+            icon = "io/jmix/chartsflowui/kit/meta/icon/component/chart.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

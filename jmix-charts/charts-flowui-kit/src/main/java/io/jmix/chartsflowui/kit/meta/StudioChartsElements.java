@@ -46,7 +46,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "duration", type = StudioPropertyType.INTEGER),
@@ -63,7 +62,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -172,7 +170,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -294,7 +291,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -403,7 +399,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
@@ -516,7 +511,6 @@ public interface StudioChartsElements {
             xmlElement = "richStyle",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
@@ -711,7 +705,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -764,7 +757,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
@@ -830,7 +822,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
@@ -877,7 +868,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
@@ -927,7 +917,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
@@ -977,7 +966,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
@@ -1028,7 +1016,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "showContent", type = StudioPropertyType.BOOLEAN),
@@ -1124,7 +1111,6 @@ public interface StudioChartsElements {
             xmlElement = "gridItem",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -1229,7 +1215,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
@@ -1421,7 +1406,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -1662,7 +1646,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -1842,7 +1825,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     ScrollableLegend.PageIcons pageIcons();
@@ -1854,7 +1836,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "prevPageIcon", type = StudioPropertyType.STRING, required = true),
@@ -1870,7 +1851,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "prevPageIcon", type = StudioPropertyType.STRING, required = true),
@@ -1887,7 +1867,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             unlimitedCount = false,
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -1996,7 +1975,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     AbstractLegend.Emphasis legendEmphasis();
@@ -2012,7 +1990,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -2237,7 +2214,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -2345,7 +2321,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -2449,7 +2424,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -2556,7 +2530,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -2663,7 +2636,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -2770,7 +2742,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -2874,7 +2845,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -2895,7 +2865,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -2975,7 +2944,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
@@ -3010,7 +2978,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -3035,7 +3002,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING),
@@ -3064,7 +3030,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -3140,7 +3105,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -3334,7 +3298,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -3361,7 +3324,6 @@ public interface StudioChartsElements {
             xmlElement = "indicator",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING),
@@ -3404,7 +3366,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -3602,7 +3563,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "interval", type = StudioPropertyType.INTEGER),
@@ -3623,7 +3583,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
@@ -3695,7 +3654,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -3720,7 +3678,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -3738,7 +3695,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN)
@@ -3757,7 +3713,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -3970,7 +3925,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -3991,7 +3945,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -4034,7 +3987,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -4113,7 +4065,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -4190,7 +4141,6 @@ public interface StudioChartsElements {
             xmlElement = "xAxis",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -4249,7 +4199,6 @@ public interface StudioChartsElements {
             xmlElement = "yAxis",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -4314,7 +4263,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "startAngle", type = StudioPropertyType.INTEGER),
@@ -4364,7 +4312,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
 
@@ -4420,7 +4367,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -4621,7 +4567,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
@@ -4688,7 +4633,6 @@ public interface StudioChartsElements {
             xmlElement = "insideDataZoom",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -4729,7 +4673,6 @@ public interface StudioChartsElements {
             xmlElement = "sliderDataZoom",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -4862,7 +4805,6 @@ public interface StudioChartsElements {
             xmlElement = "dataBackground",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
@@ -4875,7 +4817,6 @@ public interface StudioChartsElements {
             xmlElement = "selectedDataBackground",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
@@ -4888,7 +4829,6 @@ public interface StudioChartsElements {
             xmlElement = "emphasis",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
@@ -4900,7 +4840,6 @@ public interface StudioChartsElements {
             xmlElement = "continuousVisualMap",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -4999,7 +4938,6 @@ public interface StudioChartsElements {
             xmlElement = "piecewiseVisualMap",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -5104,7 +5042,6 @@ public interface StudioChartsElements {
             xmlElement = "piece",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.DOUBLE),
@@ -5148,7 +5085,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             unlimitedCount = false,
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     AbstractVisualMap.VisualMapController visualMapController();
@@ -5166,7 +5102,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             unlimitedCount = false,
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -5273,7 +5208,6 @@ public interface StudioChartsElements {
             xmlElement = "line",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/element/lineSeries.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
@@ -5351,7 +5285,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
@@ -5556,7 +5489,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -5660,7 +5592,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -5764,7 +5695,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -5784,7 +5714,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "originType", type = StudioPropertyType.ENUMERATION,
@@ -5857,7 +5786,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     LineSeries.Blur lineSeriesBlur();
@@ -5870,7 +5798,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -5886,7 +5813,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
@@ -5915,7 +5841,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN)
@@ -5931,7 +5856,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -5998,7 +5922,6 @@ public interface StudioChartsElements {
             xmlElement = "bar",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/element/barSeries.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
@@ -6070,7 +5993,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
@@ -6092,7 +6014,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     BarSeries.Blur barSeriesBlur();
@@ -6105,7 +6026,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -6122,7 +6042,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "hideOverlap", type = StudioPropertyType.BOOLEAN),
@@ -6157,7 +6076,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "position", type = StudioPropertyType.ENUMERATION,
@@ -6234,7 +6152,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
@@ -6270,7 +6187,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
@@ -6303,7 +6219,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "silent", type = StudioPropertyType.BOOLEAN),
@@ -6330,7 +6245,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -6349,7 +6263,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     MarkLine.Blur markLineBlur();
@@ -6362,7 +6275,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     MarkLine.Data markLineData();
@@ -6374,7 +6286,6 @@ public interface StudioChartsElements {
             xmlElement = "singlePointLine",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
@@ -6410,7 +6321,6 @@ public interface StudioChartsElements {
             xmlElement = "pairPointLine",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     MarkLine.PointPair markLinePairPointLine();
@@ -6423,7 +6333,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
@@ -6460,7 +6369,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
@@ -6500,7 +6408,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -6516,7 +6423,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     MarkPoint.Blur markPointBlur();
@@ -6527,7 +6433,6 @@ public interface StudioChartsElements {
             xmlElement = "point",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
@@ -6564,7 +6469,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -6583,7 +6487,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     MarkArea.Blur markAreaBlur();
@@ -6595,7 +6498,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     MarkArea.PointPair markAreaPointPair();
@@ -6608,7 +6510,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
@@ -6634,7 +6535,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
@@ -6660,7 +6560,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
@@ -6881,7 +6780,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
@@ -7089,7 +6987,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "x", type = StudioPropertyType.VALUES_LIST),
@@ -7110,7 +7007,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
@@ -7210,7 +7106,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN)
@@ -7229,7 +7124,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -7326,7 +7220,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -7424,7 +7317,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.ENUMERATION,
@@ -7500,7 +7392,6 @@ public interface StudioChartsElements {
             xmlElement = "pie",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/element/pieSeries.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "geoIndex", type = StudioPropertyType.INTEGER),
@@ -7569,7 +7460,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -7591,7 +7481,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
@@ -7615,7 +7504,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     PieSeries.Blur pieSeriesBlur();
@@ -7628,7 +7516,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -7642,7 +7529,6 @@ public interface StudioChartsElements {
             xmlElement = "scatter",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/element/scatterSeries.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
@@ -7705,7 +7591,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -7725,7 +7610,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
@@ -7748,7 +7632,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     ScatterSeries.Blur scatterSeriesBlur();
@@ -7761,7 +7644,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -7775,7 +7657,6 @@ public interface StudioChartsElements {
             xmlElement = "effectScatter",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/element/scatterSeries.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
@@ -7838,7 +7719,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -7884,7 +7764,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -7904,7 +7783,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
@@ -7927,7 +7805,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     EffectScatterSeries.Blur effectScatterSeriesBlur();
@@ -7939,7 +7816,6 @@ public interface StudioChartsElements {
             xmlElement = "select",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -7953,7 +7829,6 @@ public interface StudioChartsElements {
             xmlElement = "radar",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/element/radarSeries.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "radarIndex", type = StudioPropertyType.INTEGER),
@@ -8001,7 +7876,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
@@ -8070,7 +7944,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
@@ -8092,7 +7965,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     RadarSeries.Blur radarSeriesBlur();
@@ -8105,7 +7977,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -8119,7 +7990,6 @@ public interface StudioChartsElements {
             xmlElement = "boxplot",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
@@ -8164,7 +8034,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
@@ -8186,7 +8055,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     BoxplotSeries.Blur boxplotSeriesBlur();
@@ -8199,7 +8067,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -8213,7 +8080,6 @@ public interface StudioChartsElements {
             xmlElement = "candlestick",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/element/candlestickSeries.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
@@ -8268,7 +8134,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
@@ -8290,7 +8155,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     CandlestickSeries.Blur candlestickSeriesBlur();
@@ -8303,7 +8167,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -8322,7 +8185,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "bullishColor", type = StudioPropertyType.OPTIONS,
@@ -8490,7 +8352,6 @@ public interface StudioChartsElements {
             xmlElement = "funnel",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/element/funnelSeries.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.INTEGER),
@@ -8551,7 +8412,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -8568,7 +8428,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
@@ -8590,7 +8449,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     FunnelSeries.Blur funnelSeriesBlur();
@@ -8603,7 +8461,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -8617,7 +8474,6 @@ public interface StudioChartsElements {
             xmlElement = "gauge",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/element/gaugeSeries.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "center", type = StudioPropertyType.VALUES_LIST),
@@ -8659,7 +8515,6 @@ public interface StudioChartsElements {
             xmlElement = "dataItem",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING),
@@ -8679,7 +8534,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -8877,7 +8731,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
@@ -9074,7 +8927,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -9091,7 +8943,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
@@ -9134,7 +8985,6 @@ public interface StudioChartsElements {
             xmlElement = "colorItem",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "range", type = StudioPropertyType.DOUBLE, required = true),
@@ -9175,7 +9025,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -9195,7 +9044,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -9213,7 +9061,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -9232,7 +9079,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -9254,7 +9100,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -9275,7 +9120,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN)
@@ -9291,7 +9135,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN)
@@ -9307,7 +9150,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
@@ -9324,7 +9166,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "withTitle", type = StudioPropertyType.LOCALIZED_STRING),
@@ -9341,7 +9182,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "maxCount", type = StudioPropertyType.INTEGER)
@@ -9357,7 +9197,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "prefix", type = StudioPropertyType.LOCALIZED_STRING),
@@ -9375,7 +9214,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "prefix", type = StudioPropertyType.LOCALIZED_STRING),
@@ -9393,7 +9231,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "maxCount", type = StudioPropertyType.INTEGER),
@@ -9413,7 +9250,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN)
@@ -9432,7 +9268,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "middle", type = StudioPropertyType.STRING),
@@ -9449,7 +9284,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
@@ -9483,7 +9317,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     Emphasis toolboxEmphasis();
@@ -9496,7 +9329,6 @@ public interface StudioChartsElements {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "textPosition", type = StudioPropertyType.ENUMERATION,

@@ -16,11 +16,7 @@
 
 package io.jmix.chartsflowui.kit.meta;
 
-import io.jmix.chartsflowui.kit.component.JmixChart;
-import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit(studioClassloaderDependencies = "io.jmix.charts:jmix-charts-flowui-kit")
 public interface StudioChartsComponents {
@@ -33,6 +29,12 @@ public interface StudioChartsComponents {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/component/chart.svg",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -119,5 +121,5 @@ public interface StudioChartsComponents {
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
             }
     )
-    JmixChart chart();
+    StudioChartPreview chart();
 }

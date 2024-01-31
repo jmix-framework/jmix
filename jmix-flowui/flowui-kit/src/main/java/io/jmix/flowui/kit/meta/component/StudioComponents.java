@@ -849,7 +849,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "datatype", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.core.metamodel.datatype.Datatype", options = {"date", "dateTime",
-                            "localDateTime", "offsetTime", "localTime", "offsetDateTime", "time", "localDate"}),
+                            "localDateTime", "offsetTime", "localTime", "offsetDateTime", "time", "localDate"}, typeParameter = "V"),
                     @StudioProperty(xmlAttribute = "dateFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "datePlaceholder", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,

@@ -1,11 +1,14 @@
 <%
 def handlers = []
 
-if (caller.name() == 'START_EVENT') {
+if (formType.name() == 'START_EVENT') {
     StringBuilder builder = new StringBuilder()
 
     builder.append("\n\t@io.jmix.flowui.view.Subscribe(id = \"startProcessBtn\", subject = \"clickListener\")\n")
     builder.append("\tprotected void onStartProcessBtnClick(com.vaadin.flow.component.ClickEvent<io.jmix.flowui.kit.component.button.JmixButton> event) {\n")
+    if (formTemplate.name() == 'ENTITY') {
+        builder.append("\t\tdataContext.save();\n")
+    }
     builder.append("\t\tprocessFormContext.processStarting()\n")
     builder.append("\t\t\t.saveInjectedProcessVariables()\n")
     builder.append("\t\t\t.start();\n")
@@ -13,30 +16,30 @@ if (caller.name() == 'START_EVENT') {
     builder.append("\t}\n")
 
     handlers << builder.toString()
-} else if (formType.name() != 'CUSTOM') {
+} else {
     StringBuilder builder = new StringBuilder()
     if (outputes == null || outputes.isEmpty()) {
         builder.append("\n\t@io.jmix.flowui.view.Subscribe(id = \"completeBtn\", subject = \"clickListener\")\n")
         builder.append("\tprotected void onCompleteBtnClick(com.vaadin.flow.component.ClickEvent<io.jmix.flowui.kit.component.button.JmixButton> event) {\n")
+        if (formTemplate.name() == 'ENTITY') {
+            builder.append("\t\tdataContext.save();\n")
+        }
         builder.append("\t\tprocessFormContext.taskCompletion()\n")
         builder.append("\t\t\t.saveInjectedProcessVariables()\n")
         builder.append("\t\t\t.complete();\n")
-        if (formType.name() == 'ENTITY') {
-            builder.append("\t\tdataManager.save(${entityVarName});\n")
-        }
         builder.append("\t\tcloseWithDefaultAction();\n")
         builder.append("\t}\n")
     } else {
         outputes.each { o ->
             builder.append("\n\t@io.jmix.flowui.view.Subscribe(id = \"${o.id}Btn\", subject = \"clickListener\")\n")
             builder.append("\tprotected void on${o.id.capitalize()}BtnClick(com.vaadin.flow.component.ClickEvent<io.jmix.flowui.kit.component.button.JmixButton> event) {\n")
+            if (formTemplate.name() == 'ENTITY') {
+                builder.append("\t\tdataContext.save();\n")
+            }
             builder.append("\t\tprocessFormContext.taskCompletion()\n")
             builder.append("\t\t\t.withOutcome(\"${o.id}\")\n")
             builder.append("\t\t\t.saveInjectedProcessVariables()\n")
             builder.append("\t\t\t.complete();\n")
-            if (formType.name() == 'ENTITY') {
-                builder.append("\t\tdataManager.save(${entityVarName});\n")
-            }
             builder.append("\t\tcloseWithDefaultAction();\n")
             builder.append("\t}\n")
         }

@@ -2,7 +2,7 @@
 def resultAnnotation = ''
 StringBuilder builder = new StringBuilder()
 builder.append("@io.jmix.bpmflowui.processform.annotation.ProcessForm")
-if (formType.name() != 'CUSTOM' && outputes && !outputes.isEmpty()) {
+if (outputes && !outputes.isEmpty()) {
     builder.append("(outcomes = {\n")
     def outcomes = []
     outputes.each { o ->

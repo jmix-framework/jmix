@@ -77,10 +77,10 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
 
         LoadContext<E> loadContext = createLoadContext();
 
-        if (delegate == null) {
-            if (!needLoad())
-                return;
+        if (!needLoad())
+            return;
 
+        if (delegate == null) {
             if (!sendPreLoadEvent(loadContext)) {
                 return;
             }
@@ -95,6 +95,9 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
                 return;
             }
             entity = delegate.apply(createLoadContext());
+            if (entity == null) {
+                return;
+            }
         }
 
         if (dataContext != null) {

@@ -23,7 +23,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.sys.ViewSupport;
-import io.jmix.flowui.view.DetailView;
 import io.jmix.flowui.view.DetailViewMode;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
@@ -83,14 +82,10 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
     @Override
     protected RouteParameters getRouteParameters(DetailViewNavigator<?> navigator) {
         return navigator.getRouteParameters().orElseGet(() -> {
-            if (metadataTools.isJpaEntity(navigator.getEntityClass())) {
-                return switch (navigator.getMode()) {
-                    case CREATE -> generateNewEntityRouteParameters(navigator);
-                    case EDIT -> generateEditEntityRouteParameters(navigator);
-                };
-            } else {
-                return RouteParameters.empty();
-            }
+            return switch (navigator.getMode()) {
+                case CREATE -> generateNewEntityRouteParameters(navigator);
+                case EDIT -> generateEditEntityRouteParameters(navigator);
+            };
         });
     }
 
@@ -99,16 +94,7 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
         if (navigator instanceof SupportsAfterViewNavigationHandler<?>
                 && ((SupportsAfterViewNavigationHandler<?>) navigator).getAfterNavigationHandler().isPresent()) {
             super.fireAfterViewNavigation(navigator, view);
-        } else if (isNeedToSetEntityToEdit(navigator, view)) {
-            Object entityToEdit = getEntityToEdit(navigator);
-            ((DetailView) view).setEntityToEdit(entityToEdit);
         }
-    }
-
-    protected boolean isNeedToSetEntityToEdit(DetailViewNavigator<?> navigator, View<?> view) {
-        return !metadataTools.isJpaEntity(navigator.getEntityClass())
-                && view instanceof DetailView
-                && navigator.getRouteParameters().isEmpty();
     }
 
     protected Object getEntityToEdit(DetailViewNavigator<?> navigator) {

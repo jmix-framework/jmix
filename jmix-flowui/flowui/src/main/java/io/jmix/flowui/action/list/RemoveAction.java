@@ -37,6 +37,8 @@ import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;
+
+import java.util.Collection;
 import java.util.function.Consumer;
 
 @ActionType(RemoveAction.ID)
@@ -52,6 +54,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     protected String confirmationHeader;
     protected Consumer<AfterActionPerformedEvent<E>> afterActionPerformedHandler;
     protected Consumer<ActionCancelledEvent<E>> actionCancelledHandler;
+    protected Consumer<Collection<E>> delegate;
 
     public RemoveAction() {
         this(ID);
@@ -146,6 +149,13 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
         this.actionCancelledHandler = actionCancelledHandler;
     }
 
+    /**
+     * Sets the delegate to be invoked instead of DataManager to remove the entities from a storage.
+     */
+    public void setDelegate(@Nullable Consumer<Collection<E>> delegate) {
+        this.delegate = delegate;
+    }
+
     @Override
     protected boolean isPermitted() {
         return checkRemovePermission() && super.isPermitted();
@@ -213,6 +223,10 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
 
         if (actionCancelledHandler != null) {
             builder = builder.onCancel(actionCancelledHandler);
+        }
+
+        if (delegate != null) {
+            builder = builder.withRemoveDelegate(delegate);
         }
 
         builder.remove();

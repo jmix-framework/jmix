@@ -17,11 +17,15 @@
 package entity_states
 
 import io.jmix.core.*
+import jakarta.persistence.EntityManagerFactory
 import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
+import test_support.entity.dto.TestNullableIdDto
+import test_support.entity.dto.TestUuidDto
 import test_support.entity.entity_extension.Client
+import test_support.entity.petclinic.Owner
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLineA
 import test_support.entity.sales.OrderLineB
@@ -33,6 +37,8 @@ import test_support.entity.sec.UserRole
 class EntityStatesTest extends DataSpec {
 
     @Autowired
+    Metadata metadata
+    @Autowired
     DataManager dataManager
     @Autowired
     EntityStates entityStates
@@ -40,10 +46,60 @@ class EntityStatesTest extends DataSpec {
     JdbcTemplate jdbcTemplate
     @Autowired
     FetchPlans fetchPlans
+    @Autowired
+    EntityManagerFactory entityManagerFactory
 
     void cleanup() {
         jdbcTemplate.update('delete from SALES_ORDER_LINE')
         jdbcTemplate.update('delete from SALES_ORDER')
+        jdbcTemplate.update('delete from APP_OWNER')
+    }
+
+    def "test isNew for JPA entities"() {
+        when:
+        def owner = metadata.create(Owner)
+
+        then:
+        entityStates.isNew(owner)
+
+        when:
+        def wasNewInsideTx = transaction.execute {
+            def em = entityManagerFactory.createEntityManager()
+            em.persist(owner)
+            return entityStates.isNew(owner)
+        }
+
+        then:
+        wasNewInsideTx
+        !entityStates.isNew(owner)
+    }
+
+    def "test isNew for DTO entities"() {
+        when:
+        def uuidDto = metadata.create(TestUuidDto)
+
+        then:
+        uuidDto.id != null
+        entityStates.isNew(uuidDto)
+
+        when:
+        entityStates.setNew(uuidDto, false)
+
+        then:
+        !entityStates.isNew(uuidDto)
+
+        when:
+        def nullableIdDto = metadata.create(TestNullableIdDto)
+
+        then:
+        nullableIdDto.id == null
+        entityStates.isNew(nullableIdDto)
+
+        when:
+        entityStates.setNew(nullableIdDto, false)
+
+        then:
+        !entityStates.isNew(nullableIdDto)
     }
 
     def "test getCurrentFetchPlan for object graph"() {

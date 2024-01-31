@@ -96,6 +96,9 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
             list = dataManager.loadList(loadContext);
         } else {
             list = delegate.apply(loadContext);
+            if (list == null) {
+                return false;
+            }
         }
 
         if (dataContext != null) {

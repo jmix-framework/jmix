@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="test">
+        <createTable tableName="TRANSPORT_COUNT">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TRANSPORT_COUNT"/>
+            </column>
+            <column name="YEAR_" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CARS" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MOTORCYCLES" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BICYCLES" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="test">
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="c081cbd4-6f56-4e12-a1c6-7d365f8c1ed3"/>
+            <column name="YEAR_" valueNumeric="1994"/>
+            <column name="CARS" valueNumeric="1587"/>
+            <column name="MOTORCYCLES" valueNumeric="650"/>
+            <column name="BICYCLES" valueNumeric="121"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="f4e3492b-5ea6-4dc5-9600-d42d104a176b"/>
+            <column name="YEAR_" valueNumeric="1995"/>
+            <column name="CARS" valueNumeric="1567"/>
+            <column name="MOTORCYCLES" valueNumeric="683"/>
+            <column name="BICYCLES" valueNumeric="146"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="b8a512a7-585b-4f48-8c7c-3dc6142addd1"/>
+            <column name="YEAR_" valueNumeric="1996"/>
+            <column name="CARS" valueNumeric="1617"/>
+            <column name="MOTORCYCLES" valueNumeric="691"/>
+            <column name="BICYCLES" valueNumeric="138"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="6bd5599e-95f7-47d8-abc6-8ea8676c3134"/>
+            <column name="YEAR_" valueNumeric="1997"/>
+            <column name="CARS" valueNumeric="1630"/>
+            <column name="MOTORCYCLES" valueNumeric="642"/>
+            <column name="BICYCLES" valueNumeric="127"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="35f887b5-c137-4d6e-b281-7baa18776ad0"/>
+            <column name="YEAR_" valueNumeric="1998"/>
+            <column name="CARS" valueNumeric="1660"/>
+            <column name="MOTORCYCLES" valueNumeric="699"/>
+            <column name="BICYCLES" valueNumeric="105"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="fd2e2323-91ea-4791-980c-5f93a6341625"/>
+            <column name="YEAR_" valueNumeric="1999"/>
+            <column name="CARS" valueNumeric="1683"/>
+            <column name="MOTORCYCLES" valueNumeric="721"/>
+            <column name="BICYCLES" valueNumeric="109"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="9655090a-b716-4ee9-94b8-96b63e351ede"/>
+            <column name="YEAR_" valueNumeric="2000"/>
+            <column name="CARS" valueNumeric="1691"/>
+            <column name="MOTORCYCLES" valueNumeric="737"/>
+            <column name="BICYCLES" valueNumeric="112"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="a1919ff9-37f4-4660-b09d-a6361c0463f1"/>
+            <column name="YEAR_" valueNumeric="2001"/>
+            <column name="CARS" valueNumeric="1298"/>
+            <column name="MOTORCYCLES" valueNumeric="680"/>
+            <column name="BICYCLES" valueNumeric="101"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="fbccfb2a-aa46-4588-8611-0aff4eef7e19"/>
+            <column name="YEAR_" valueNumeric="2002"/>
+            <column name="CARS" valueNumeric="1275"/>
+            <column name="MOTORCYCLES" valueNumeric="664"/>
+            <column name="BICYCLES" valueNumeric="97"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="ce2927ce-7422-4a62-bbf6-3b363ab01aa9"/>
+            <column name="YEAR_" valueNumeric="2003"/>
+            <column name="CARS" valueNumeric="1246"/>
+            <column name="MOTORCYCLES" valueNumeric="648"/>
+            <column name="BICYCLES" valueNumeric="93"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="cdc62347-50ba-469e-a1b3-b3c2e5c1196a"/>
+            <column name="YEAR_" valueNumeric="2004"/>
+            <column name="CARS" valueNumeric="1318"/>
+            <column name="MOTORCYCLES" valueNumeric="697"/>
+            <column name="BICYCLES" valueNumeric="111"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="3d4cc153-4a66-4372-893d-68c9aaa4186a"/>
+            <column name="YEAR_" valueNumeric="2005"/>
+            <column name="CARS" valueNumeric="1213"/>
+            <column name="MOTORCYCLES" valueNumeric="633"/>
+            <column name="BICYCLES" valueNumeric="87"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="ebbbbc3b-64e4-404b-a5df-8c70d865631a"/>
+            <column name="YEAR_" valueNumeric="2006"/>
+            <column name="CARS" valueNumeric="1199"/>
+            <column name="MOTORCYCLES" valueNumeric="621"/>
+            <column name="BICYCLES" valueNumeric="79"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="b08c4523-1b89-48f5-afa9-8df84c961305"/>
+            <column name="YEAR_" valueNumeric="2007"/>
+            <column name="CARS" valueNumeric="1110"/>
+            <column name="MOTORCYCLES" valueNumeric="210"/>
+            <column name="BICYCLES" valueNumeric="81"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="44940ee1-a50c-4e3d-9b31-00699a57bd2f"/>
+            <column name="YEAR_" valueNumeric="2008"/>
+            <column name="CARS" valueNumeric="1165"/>
+            <column name="MOTORCYCLES" valueNumeric="232"/>
+            <column name="BICYCLES" valueNumeric="75"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="3dc721e4-19c5-4b69-9dae-c780b62435d4"/>
+            <column name="YEAR_" valueNumeric="2009"/>
+            <column name="CARS" valueNumeric="1145"/>
+            <column name="MOTORCYCLES" valueNumeric="219"/>
+            <column name="BICYCLES" valueNumeric="88"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="a9096485-cf19-4972-9db9-b669547de8c5"/>
+            <column name="YEAR_" valueNumeric="2010"/>
+            <column name="CARS" valueNumeric="1163"/>
+            <column name="MOTORCYCLES" valueNumeric="201"/>
+            <column name="BICYCLES" valueNumeric="82"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="6c3e2d79-8266-42f3-9f6f-eaab33ea017b"/>
+            <column name="YEAR_" valueNumeric="2011"/>
+            <column name="CARS" valueNumeric="1180"/>
+            <column name="MOTORCYCLES" valueNumeric="285"/>
+            <column name="BICYCLES" valueNumeric="87"/>
+        </insert>
+        <insert tableName="TRANSPORT_COUNT">
+            <column name="ID" value="1f805b20-b11f-4652-b0e7-95c0c8386529"/>
+            <column name="YEAR_" valueNumeric="2012"/>
+            <column name="CARS" valueNumeric="1159"/>
+            <column name="MOTORCYCLES" valueNumeric="277"/>
+            <column name="BICYCLES" valueNumeric="71"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

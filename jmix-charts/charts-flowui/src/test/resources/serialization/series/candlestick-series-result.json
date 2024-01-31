@@ -1,0 +1,94 @@
+{
+  "series": [
+    {
+      "type": "candlestick",
+      "id": "candlestickId",
+      "xAxisIndex": 1,
+      "yAxisIndex": 2,
+      "name": "candlestickName",
+      "colorBy": "series",
+      "legendHoverLink": false,
+      "hoverAnimation": false,
+      "layout": "vertical",
+      "barWidth": "20%",
+      "barMinWidth": "15%",
+      "barMaxWidth": "20%",
+      "itemStyle": {
+        "color": "#FF1FF0",
+        "color0": "#F2FFF0",
+        "borderColor": "#F3FFF0",
+        "borderColor0": "#F4FFF0",
+        "borderColorDoji": "#F5FFF0",
+        "borderWidth": 1,
+        "shadowBlur": 12,
+        "shadowColor": "#F6FFF0",
+        "shadowOffsetX": 1,
+        "shadowOffsetY": 2,
+        "opacity": 0.5
+      },
+      "emphasis": {
+        "disabled": false,
+        "focus": "none",
+        "blurScope": "coordinateSystem",
+        "itemStyle": {
+          "color": "#FF1FF0",
+          "color0": "#F2FFF0",
+          "borderColor": "#F3FFF0",
+          "borderColor0": "#F4FFF0",
+          "borderColorDoji": "#F5FFF0",
+          "borderWidth": 1,
+          "shadowBlur": 12,
+          "shadowColor": "#F6FFF0",
+          "shadowOffsetX": 1,
+          "shadowOffsetY": 2,
+          "opacity": 0.5
+        }
+      },
+      "blur": {
+        "itemStyle": {
+          "color": "#FF1FF0",
+          "color0": "#F2FFF0",
+          "borderColor": "#F3FFF0",
+          "borderColor0": "#F4FFF0",
+          "borderColorDoji": "#F5FFF0",
+          "borderWidth": 1,
+          "shadowBlur": 12,
+          "shadowColor": "#F6FFF0",
+          "shadowOffsetX": 1,
+          "shadowOffsetY": 2,
+          "opacity": 0.5
+        }
+      },
+      "select": {
+        "disabled": false,
+        "itemStyle": {
+          "color": "#FF1FF0",
+          "color0": "#F2FFF0",
+          "borderColor": "#F3FFF0",
+          "borderColor0": "#F4FFF0",
+          "borderColorDoji": "#F5FFF0",
+          "borderWidth": 1,
+          "shadowBlur": 12,
+          "shadowColor": "#F6FFF0",
+          "shadowOffsetX": 1,
+          "shadowOffsetY": 2,
+          "opacity": 0.5
+        }
+      },
+      "selectedMode": false,
+      "large": false,
+      "largeThreshold": 700,
+      "progressive": 50000,
+      "progressiveThreshold": 1000,
+      "progressiveChunkMode": "sequential",
+      "dataGroupId": "group",
+      "clip": false,
+      "zlevel": 1,
+      "z": 2,
+      "silent": false,
+      "animationDuration": 400,
+      "animationEasing": "linear",
+      "animationDelay": 4
+    }
+  ]
+}

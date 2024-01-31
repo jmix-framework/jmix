@@ -1,0 +1,36 @@
+{
+  "series": [
+    {
+      "type": "boxplot",
+      "id": "boxplotId",
+      "name": "boxplotName",
+      "coordinateSystem": "cartesian2d",
+      "xAxisIndex": 1,
+      "yAxisIndex": 2,
+      "colorBy": "data",
+      "legendHoverLink": true,
+      "hoverAnimation": false,
+      "layout": "vertical",
+      "boxWidth": [
+        "5",
+        "50%"
+      ],
+      "emphasis": {
+        "disabled": false,
+        "focus": "none",
+        "blurScope": "coordinateSystem"
+      },
+      "select": {
+        "disabled": false
+      },
+      "selectedMode": false,
+      "dataGroupId": "group",
+      "zlevel": 1,
+      "z": 2,
+      "silent": true,
+      "animationDuration": 900,
+      "animationEasing": "elasticOut",
+      "animationDelay": 1
+    }
+  ]
+}

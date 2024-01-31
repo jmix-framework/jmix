@@ -118,6 +118,10 @@ dependencies {
         api "io.jmix.core:jmix-core:$freeVersion"
         api "io.jmix.core:jmix-core-starter:$freeVersion"
 
+        api "io.jmix.charts:jmix-charts-flowui:$freeVersion"
+        api "io.jmix.charts:jmix-charts-flowui-kit:$freeVersion"
+        api "io.jmix.charts:jmix-charts-flowui-starter:$freeVersion"
+
         api "io.jmix.dashboards:jmix-dashboards:$freeVersion"
         api "io.jmix.dashboards:jmix-dashboards-starter:$freeVersion"
         api "io.jmix.dashboards:jmix-dashboards-chart:$freeVersion"

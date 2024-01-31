@@ -1,0 +1,164 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:charts="http://jmix.io/schema/charts/ui">
+    <layout>
+        <charts:chart id="radiusAxisChartId">
+            <charts:radiusAxis
+                    id="radiusAxis"
+                    name="radiusAxis"
+                    inverse="false"
+                    nameRotate="0"
+                    nameGap="15"
+                    nameLocation="CENTER"
+                    polarIndex="0"
+                    nonCategoryBoundaryGap="0 10"
+                    min="0"
+                    minInterval="1"
+                    maxInterval="10"
+                    z="0"
+                    zLevel="0"
+                    scale="false"
+                    silent="true"
+                    triggerEvent="true"
+                    splitNumber="5"
+                    max="100"
+                    animationThreshold="1000"
+                    animationEasingUpdate="cubicOut"
+                    animationEasing="cubicOut"
+                    animationDurationUpdate="300"
+                    animationDuration="1000"
+                    animationDelayUpdate="0"
+                    animationDelay="0"
+                    animation="true"
+                    type="VALUE"
+                    interval="0"
+                    logBase="10"
+                    categoryBoundaryGap="true">
+                <charts:nameTextStyle
+                        shadowOffsetY="0"
+                        shadowOffsetX="0"
+                        shadowColor="BLACK"
+                        shadowBlur="1"
+                        borderWidth="1"
+                        borderColor="BLACK"
+                        backgroundColor="WHITE"
+                        padding="0 0"
+                        borderType="solid"
+                        borderRadius="5"
+                        borderDashOffset="0"
+                        verticalAlign="MIDDLE"
+                        align="CENTER"/>
+                <charts:splitArea
+                        show="true"
+                        interval="5">
+                    <charts:areaStyle
+                            shadowOffsetY="0"
+                            shadowOffsetX="0"
+                            shadowColor="BLACK"
+                            shadowBlur="1"
+                            opacity="0.9"
+                            colors="BLACK WHITE"/>
+                </charts:splitArea>
+
+                <charts:splitLine
+                        interval="0"
+                        show="false">
+                    <charts:lineStyle
+                            color="#000000"
+                            width="1"
+                            shadowBlur="0"
+                            miterLimit="0"
+                            shadowColor="BLACK"
+                            opacity="0.9"
+                            cap="ROUND"
+                            join="ROUND"
+                            shadowOffsetX="0"
+                            shadowOffsetY="0"/>
+                </charts:splitLine>
+
+                <charts:axisLine
+                        show="false"
+                        onZero="true"
+                        onZeroAxisIndex="0"
+                        symbols="none arrow"
+                        symbolsOffset="0 5"
+                        symbolsSize="5 10"/>
+                <charts:axisTick
+                        show="true"
+                        interval="5"
+                        alignWithLabel="true"
+                        inside="true"
+                        length="10">
+                    <charts:lineStyle
+                            color="#000000"
+                            width="1"
+                            shadowBlur="0"
+                            miterLimit="0"
+                            shadowColor="BLACK"
+                            opacity="0.9"
+                            cap="ROUND"
+                            join="ROUND"
+                            shadowOffsetX="0"
+                            shadowOffsetY="0"/>
+                </charts:axisTick>
+
+                <charts:axisLabel
+                        show="true"
+                        inside="true"
+                        interval="5"
+                        align="CENTER"
+                        verticalAlign="MIDDLE"
+                        borderDashOffset="0"
+                        borderRadius="5"
+                        borderType="solid"
+                        padding="0 5"
+                        backgroundColor="WHITE"
+                        borderColor="BLACK"
+                        borderWidth="1"
+                        shadowBlur="1"
+                        shadowColor="BLACK"
+                        shadowOffsetX="0"
+                        shadowOffsetY="0"
+                        height="100"
+                        width="200"
+                        overflow="BREAK"
+                        textShadowOffsetY="0"
+                        textShadowOffsetX="0"
+                        textShadowBlur="1"
+                        textShadowColor="BLACK"
+                        textBorderDashOffset="0"
+                        textBorderType="dashed"
+                        textBorderWidth="1"
+                        textBorderColor="BLACK"
+                        lineHeight="10"
+                        fontSize="12"
+                        fontFamily="sans-serif"
+                        fontWeight="500"
+                        fontStyle="ITALIC"
+                        color="BLACK"
+                        rotate="5"
+                        formatter="Line Y"
+                        ellipsis=".."
+                        hideOverlap="true"
+                        margin="0"
+                        showMaxLabel="true"
+                        showMinLabel="false"/>
+            </charts:radiusAxis>
+        </charts:chart>
+    </layout>
+</view>

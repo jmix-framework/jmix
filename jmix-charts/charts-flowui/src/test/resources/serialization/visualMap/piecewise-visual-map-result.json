@@ -1,0 +1,100 @@
+{
+  "visualMap": [
+    {
+      "type": "piecewise",
+      "id": "myVisualMap",
+      "min": 0,
+      "max": 100,
+      "text": [
+        "startText",
+        "endText"
+      ],
+      "inverse": false,
+      "precision": 0,
+      "itemWidth": 20,
+      "itemHeight": 140,
+      "align": "auto",
+      "textGap": 10,
+      "show": true,
+      "dimension": "value",
+      "seriesIndex": [
+        0
+      ],
+      "hoverLink": true,
+      "inRange": {
+        "color": [
+          "#FFFFF0"
+        ],
+        "symbolSize": [
+          30,
+          100
+        ]
+      },
+      "outOfRange": {
+        "color": [
+          "#FFFFF0"
+        ],
+        "symbolSize": [
+          30,
+          100
+        ]
+      },
+      "textStyle": {
+        "color": "#FFFFF0",
+        "fontSize": 12
+      },
+      "formatter": "value",
+      "zlevel": 10,
+      "z": 4,
+      "left": "center",
+      "top": "top",
+      "right": "auto",
+      "bottom": "auto",
+      "orient": "horizontal",
+      "padding": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "backgroundColor": "#FFFFF0",
+      "borderColor": "#FFFFF0",
+      "borderWidth": 1,
+      "controller": {
+        "inRange": {
+          "color": [
+            "#FFFFF0"
+          ],
+          "symbolSize": [
+            30,
+            100
+          ]
+        }
+      },
+      "categories": [
+        "demon hunter",
+        "not demon hunter",
+        "berserk"
+      ],
+      "minOpen": true,
+      "maxOpen": true,
+      "selectedMode": "multiple",
+      "showLabel": true,
+      "itemGap": 3,
+      "itemSymbol": "diamond",
+      "splitNumber": 1,
+      "pieces": [
+        {
+          "color": "#000000",
+          "value": 4,
+          "max": 14
+        },
+        {
+          "color": "#000000",
+          "value": 4,
+          "max": 14
+        }
+      ]
+    }
+  ]
+}

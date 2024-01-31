@@ -1,0 +1,56 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:charts="http://jmix.io/schema/charts/ui">
+    <data readOnly="true">
+        <collection id="transportDc" class="test_support.entity.TransportCount"
+                    fetchPlan="_local">
+            <loader id="transportDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from TransportCount e order by e.year]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <charts:chart id="dataSetChartId" width="100%" height="100%">
+            <charts:yAxes>
+                <charts:yAxis/>
+            </charts:yAxes>
+            <charts:xAxes>
+                <charts:xAxis categoryBoundaryGap="true"/>
+            </charts:xAxes>
+
+            <charts:dataSet>
+                <charts:source dataContainer="transportDc"
+                               categoryField="year" valueFields="cars, motorcycles, bicycles"/>
+            </charts:dataSet>
+
+            <charts:tooltip trigger="AXIS"/>
+            <charts:legend/>
+
+            <charts:series>
+                <charts:bar name="Cars" stack="stack"/>
+                <charts:bar name="Motorcycles" stack="stack"/>
+                <charts:bar name="Bicycles" stack="stack"/>
+            </charts:series>
+        </charts:chart>
+    </layout>
+</view>

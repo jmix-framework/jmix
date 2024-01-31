@@ -25,11 +25,7 @@ import javassist.bytecode.annotation.StringMemberValue;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class MetaModelUtil {
     public static final String ENTITY_TYPE = "io.jmix.core.Entity";
@@ -314,10 +310,28 @@ public class MetaModelUtil {
         CtClass current = field.getType();
         while (current != null) {
             classNames.add(current.getName());
-            classNames.addAll(Arrays.stream(current.getInterfaces()).map(CtClass::getName).collect(Collectors.toList()));
+            Set<CtClass> interfaces = new HashSet<>();
+            collectAllInterfaces(current, interfaces);
+            classNames.addAll(interfaces.stream().map(CtClass::getName).toList());
             current = current.getSuperclass();
         }
 
         return classNames.contains(Collection.class.getCanonicalName());
+    }
+
+    /**
+     * Method recursively walks through class (or interface) interfaces and populates the collection of interfaces
+     * hierarchy.
+     * <p>
+     * This is required for the case when the class implements an interface that in turn extends another interface. For
+     * example, in Java 21, {@code java.util.List} implements the {@code java.util.SequencedCollection}. The
+     * {@code java.util.SequencedCollection} extends the {@code java.util.Collection} interface. To determine whether a
+     * CtClass is a collection, we should analyze full interface hierarchy.
+     */
+    private static void collectAllInterfaces(CtClass aClass, Set<CtClass> interfaces) throws NotFoundException {
+        interfaces.add(aClass);
+        for (CtClass anInterface : aClass.getInterfaces()) {
+            collectAllInterfaces(anInterface, interfaces);
+        }
     }
 }

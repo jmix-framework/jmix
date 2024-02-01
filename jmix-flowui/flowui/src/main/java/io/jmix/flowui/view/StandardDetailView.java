@@ -101,10 +101,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private void onBeforeShow(BeforeShowEvent event) {
-        if (serializedEntityIdToEdit != null) {
-            setupEntityToEdit(serializedEntityIdToEdit);
-        }
-        getEditedEntityContainer().addItemChangeListener(this::itemChangeLockHandler);
+        setupEntityToEdit();
+        setupLockHandler();
     }
 
     private void onReady(ReadyEvent event) {
@@ -509,6 +507,20 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         setupEntityToEdit(entity);
     }
 
+    /**
+     * Invoked on {@link BeforeShowEvent} both when the view is opened by navigation and in dialog window.
+     */
+    protected void setupEntityToEdit() {
+        if (serializedEntityIdToEdit != null) {
+            setupEntityToEdit(serializedEntityIdToEdit);
+        }
+    }
+
+    /**
+     * Invoked when the view is opened by navigation.
+     *
+     * @param serializedEntityId serialized id of the edited entity or {@link #NEW_ENTITY_ID} when creating new entity
+     */
     protected void setupEntityToEdit(String serializedEntityId) {
         //noinspection unchecked
         Class<T> entityClass = (Class<T>) DetailViewTypeExtractor.extractEntityClass(getClass())
@@ -550,6 +562,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return primaryKeyProperty.getJavaType();
     }
 
+    /**
+     * Invoked when the view is opened in dialog window or when the view is opened by navigation
+     * and {@link #setEntityToEdit(Object)} method is called in {@code AfterViewNavigationEvent} handler.
+     *
+     * @param entityToEdit entity instance to edit. Can be a new instance when the entity is being created, see {@link EntityStates#isNew(Object)}.
+     */
     protected void setupEntityToEdit(T entityToEdit) {
         DataContext dataContext = getViewData().getDataContext();
 
@@ -626,6 +644,10 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         }
 
         return false;
+    }
+
+    private void setupLockHandler() {
+        getEditedEntityContainer().addItemChangeListener(this::itemChangeLockHandler);
     }
 
     private void itemChangeLockHandler(InstanceContainer.ItemChangeEvent<T> event) {

@@ -57,7 +57,7 @@ public class SimpleDataItem implements DataItem {
      *     <li>If any traversing property value is null,
      *     this method stops here and returns current value.</li>
      *     <li>Otherwise, method returns getter value.</li>
-     * </ol>
+     * </ul>
      */
     @Override
     public Object getValue(String path) {

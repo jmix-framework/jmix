@@ -1382,7 +1382,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
             markLine.setBlur(blur);
         }
 
-        Element dataElement = element.element("data");
+        Element dataElement = markLineElement.element("data");
         if (dataElement != null) {
             MarkLine.Data data = new MarkLine.Data();
 

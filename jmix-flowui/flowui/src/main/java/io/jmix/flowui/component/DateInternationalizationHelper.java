@@ -74,10 +74,14 @@ public class DateInternationalizationHelper {
      * Returns the first day of the week in the specified locale.
      *
      * @param locale the locale for which to retrieve the first day of the week
-     * @return the first day of the week as an integer (e.g., Calendar.SUNDAY)
+     * @return the first day of the week as an integer (e.g., 0 for sunday)
      */
     public static int getFirstDayOfWeek(Locale locale) {
         Calendar calendar = Calendar.getInstance(locale);
-        return calendar.getFirstDayOfWeek();
+        return calendarDayOfWeekToVaadinDayOfWeek(calendar.getFirstDayOfWeek());
+    }
+
+    private static int calendarDayOfWeekToVaadinDayOfWeek(int calenderDayOfWeek) {
+        return calenderDayOfWeek - 1;
     }
 }

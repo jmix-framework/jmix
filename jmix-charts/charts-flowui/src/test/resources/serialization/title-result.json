@@ -1,0 +1,110 @@
+{
+  "title": {
+    "id": "titleId",
+    "show": true,
+    "text": "titleText",
+    "link": "titleLink",
+    "target": "self",
+    "textStyle": {
+      "color": "#FFFFF0",
+      "fontStyle": "italic",
+      "fontWeight": "bold",
+      "fontFamily": "monospace",
+      "fontSize": 40,
+      "lineHeight": 56,
+      "width": 50,
+      "height": 47,
+      "textBorderColor": "#FFFFF0",
+      "textBorderWidth": 2.5,
+      "textBorderType": "dashed",
+      "textBorderDashOffset": 3,
+      "textShadowColor": "#FFFFF0",
+      "textShadowBlur": 4,
+      "textShadowOffsetX": 4,
+      "textShadowOffsetY": 5,
+      "overflow": "breakAll",
+      "ellipsis": "........",
+      "rich": {
+        "a": {
+          "color": "#FFFFF0",
+          "lineHeight": 10
+        },
+        "b": {
+          "backgroundColor": "#FFFFF0",
+          "height": 40
+        },
+        "x": {
+          "fontSize": 18,
+          "fontFamily": "Microsoft YaHei",
+          "borderColor": "#FFFFF0",
+          "borderRadius": 4
+        }
+      }
+    },
+    "subtext": "titleSubtext",
+    "sublink": "titleSublink",
+    "subtarget": "self",
+    "subtextStyle": {
+      "align": "center",
+      "verticalAlign": "top",
+      "color": "#FFFFF0",
+      "fontStyle": "italic",
+      "fontWeight": "bold",
+      "fontFamily": "monospace",
+      "fontSize": 40,
+      "lineHeight": 56,
+      "width": 50,
+      "height": 47,
+      "textBorderColor": "#FFFFF0",
+      "textBorderWidth": 2.5,
+      "textBorderType": "dashed",
+      "textBorderDashOffset": 3,
+      "textShadowColor": "#FFFFF0",
+      "textShadowBlur": 4,
+      "textShadowOffsetX": 4,
+      "textShadowOffsetY": 5,
+      "overflow": "breakAll",
+      "ellipsis": "........",
+      "rich": {
+        "a": {
+          "color": "#FFFFF0",
+          "lineHeight": 10
+        },
+        "b": {
+          "backgroundColor": "#FFFFF0",
+          "height": 40
+        },
+        "x": {
+          "fontSize": 18,
+          "fontFamily": "Microsoft YaHei",
+          "borderColor": "#FFFFF0",
+          "borderRadius": 4
+        }
+      }
+    },
+    "textAlign": "center",
+    "textVerticalAlign": "middle",
+    "triggerEvent": true,
+    "padding": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "itemGap": 123,
+    "zlevel": 4,
+    "z": 23,
+    "left": "30%",
+    "top": "30%",
+    "right": "30%",
+    "bottom": "30%",
+    "backgroundColor": "#FFFFF0",
+    "borderColor": "#FFFFF0",
+    "borderWidth": 4,
+    "borderRadius": 41,
+    "shadowBlur": 4,
+    "shadowColor": "#FFFFF0",
+    "shadowOffsetX": 31,
+    "shadowOffsetY": 321
+  }
+}

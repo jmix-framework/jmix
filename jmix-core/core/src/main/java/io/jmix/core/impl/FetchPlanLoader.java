@@ -27,6 +27,7 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -49,6 +50,7 @@ public class FetchPlanLoader {
 
     protected Metadata metadata;
 
+    @Lazy
     @Autowired
     protected FetchPlans fetchPlans;
 

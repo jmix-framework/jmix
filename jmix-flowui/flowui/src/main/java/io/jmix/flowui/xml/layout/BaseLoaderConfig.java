@@ -102,6 +102,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("gridColumnVisibility", GridColumnVisibilityLoader.class);
         loaders.put("menuFilterField", MenuFilterFieldLoader.class);
         loaders.put("horizontalMenu", HorizontalMenuLoader.class);
+        loaders.put("richTextEditor", RichTextEditorLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

@@ -131,7 +131,15 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
     }
 
     @Override
+    public EntitySet saveAll(Collection<?> entities) {
+        return save(new SaveContext().saving(entities));
+    }
+
+    @Override
     public <E> E save(E entity) {
+        if (entity instanceof Collection) {
+            throw new IllegalArgumentException("Use saveAll() method to save collection of entities");
+        }
         return save(new SaveContext().saving(entity))
                 .optional(entity)
                 .orElseThrow(() -> new NoResultException("Data store didn't return a saved entity"));

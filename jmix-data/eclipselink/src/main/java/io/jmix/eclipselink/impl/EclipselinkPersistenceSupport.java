@@ -30,6 +30,7 @@ import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.impl.*;
 import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
+import jakarta.annotation.PostConstruct;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
@@ -121,6 +122,12 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         Map<String, AfterCompleteTransactionListener> afterCompleteMap = applicationContext.getBeansOfType(AfterCompleteTransactionListener.class);
         afterCompleteTxListeners = new ArrayList<>(afterCompleteMap.values());
         afterCompleteTxListeners.sort(new OrderComparator());
+    }
+
+    @PostConstruct
+    protected void postConstruct() {
+        //Break circular dependencies
+        entityChangedEventManager.setPersistenceSupport(this);
     }
 
     /**

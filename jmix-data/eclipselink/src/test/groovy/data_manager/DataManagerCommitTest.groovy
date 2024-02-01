@@ -201,10 +201,17 @@ class DataManagerCommitTest extends DataSpec {
         saved1.contains(customer2)
         saved1.contains(order)
 
-        when: 'passing a single collection'
-        def savedList = dataManager.save([customer1, customer2])
+        when: 'incorrect saving of a single collection'
+        dataManager.save([customer1, customer2])
 
         then: 'another overloaded save() method is chosen which accepts and returns a single instance'
-        thrown(Exception)
+        thrown(IllegalArgumentException)
+
+        when: 'correct saving of a single collection'
+        def saved2 = dataManager.saveAll([customer1, customer2])
+
+        then:
+        saved2.contains(customer1)
+        saved2.contains(customer2)
     }
 }

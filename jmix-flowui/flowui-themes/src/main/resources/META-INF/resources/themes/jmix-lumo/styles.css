@@ -35,11 +35,14 @@
 @import url('component/jmix-menu-filter-field.css');
 @import url('component/jmix-horizontal-menu.css');
 @import url('component/jmix-grid-context-menu.css');
+@import url('component/jmix-rich-text-editor.css');
 
 @import url('component/vaadin-form-layout.css');
 @import url('component/vaadin-grid.css');
 @import url('component/vaadin-notification-card.css');
 @import url('component/vaadin-split-layout.css');
+
+@import url('icons/vaadin-icons/vaadin-icons.css');
 
 html {
   --jmix-lumo-warning-background-color: var(--lumo-warning-color);

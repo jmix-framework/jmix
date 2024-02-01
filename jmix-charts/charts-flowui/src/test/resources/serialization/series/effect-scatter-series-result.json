@@ -1,0 +1,70 @@
+{
+  "series": [
+    {
+      "type": "effectScatter",
+      "id": "effectScatterId",
+      "name": "effectScatterName",
+      "colorBy": "data",
+      "legendHoverLink": false,
+      "effectType": "ripple",
+      "showEffectOn": "emphasis",
+      "rippleEffect": {
+        "color": "#FFFFF0",
+        "number": 3,
+        "period": 4,
+        "scale": 2.5,
+        "brushType": "stroke"
+      },
+      "coordinateSystem": "cartesian2d",
+      "xAxisIndex": 1,
+      "yAxisIndex": 2,
+      "polarIndex": 3,
+      "geoIndex": 4,
+      "calendarIndex": 5,
+      "symbol": "diamond",
+      "symbolSize": 12,
+      "symbolRotate": 12,
+      "symbolKeepAspect": true,
+      "symbolOffset": [
+        "0",
+        "50%"
+      ],
+      "cursor": "pointer",
+      "labelLine": {
+        "show": true,
+        "showAbove": false,
+        "length2": 12,
+        "smooth": false,
+        "minTurnAngle": 32
+      },
+      "emphasis": {
+        "disabled": false,
+        "scale": 1.4,
+        "focus": "series",
+        "blurScope": "coordinateSystem"
+      },
+      "select": {
+        "disabled": false
+      },
+      "selectedMode": false,
+      "seriesLayoutBy": "column",
+      "datasetIndex": 1,
+      "encode": {
+        "x": ["2"],
+        "angle": ["3"]
+      },
+      "clip": false,
+      "zlevel": 11,
+      "z": 1,
+      "silent": false,
+      "animation": true,
+      "animationThreshold": 1501,
+      "animationDuration": 1500,
+      "animationEasing": "backOut",
+      "animationDelay": 15,
+      "animationDurationUpdate": 150,
+      "animationEasingUpdate": "cubicOut",
+      "animationDelayUpdate": 15
+    }
+  ]
+}

@@ -56,7 +56,7 @@
                   width="100px"
 
                   dataContainer="ordersDc">
-            <columns includeAll="true" exclude="number, amount, date">
+            <columns includeAll="true" exclude="number, amount, date, description">
             </columns>
         </dataGrid>
 
@@ -150,7 +150,7 @@
                       width="100px"
 
                       dataContainer="ordersDc" hierarchyProperty="number">
-            <columns includeAll="true" exclude="number, amount, date">
+            <columns includeAll="true" exclude="number, amount, date, description">
             </columns>
         </treeDataGrid>
 

@@ -1,0 +1,87 @@
+{
+  "aria": {
+    "enabled": true,
+    "label": {
+      "enabled": true,
+      "description": "This is a test chart description.",
+      "general": {
+        "withTitle": "This is a test chart about {title}.",
+        "withoutTitle": "This is a test chart."
+      },
+      "series": {
+        "maxCount": 5,
+        "single": {
+          "prefix": " with {seriesCount} series count.",
+          "withName": " with type {seriesType} named {seriesName}.",
+          "withoutName": " with type {seriesType}."
+        },
+        "multiple": {
+          "prefix": " It consists of {seriesCount} series count.",
+          "withName": " The {seriesId} series is a {seriesType} representing {seriesName}.",
+          "withoutName": " The {seriesId} series is a {seriesType}.",
+          "separator": {
+            "middle": ";",
+            "end": "."
+          }
+        }
+      },
+      "data": {
+        "maxCount": 5,
+        "allData": "whose data is --",
+        "partialData": "where the first {displayCnt} term is --",
+        "withName": "The data for {name} is {value}",
+        "withoutName": "{value}",
+        "separator": {
+          "middle": ",",
+          "end": ""
+        }
+      }
+    },
+    "decal": {
+      "show": true,
+      "decals": [
+        {
+          "symbol": "rect",
+          "symbolSize": 0.8,
+          "symbolKeepAspect": true,
+          "color": "#FFFFF0",
+          "backgroundColor": "#FFFFF0",
+          "dashArrayX": [
+            10,
+            [
+              2,
+              5
+            ],
+            [
+              8,
+              3,
+              6
+            ]
+          ],
+          "dashArrayY": [
+            5,
+            2
+          ],
+          "rotation": 0.5,
+          "maxTileWidth": 512,
+          "maxTileHeight": 512
+        },
+        {
+          "symbol": "circle",
+          "symbolSize": 0.6,
+          "symbolKeepAspect": false,
+          "color": "#FFFFF0",
+          "backgroundColor": "#FFFFF0",
+          "dashArrayX": [
+            5,
+            2
+          ],
+          "dashArrayY": 5,
+          "rotation": 0.3,
+          "maxTileWidth": 256,
+          "maxTileHeight": 256
+        }
+      ]
+    }
+  }
+}

@@ -67,12 +67,6 @@ public class SecurityConfiguration {
     private RememberMeProperties rememberMeProperties;
 
     @Autowired
-    private PersistentTokenRepository rememberMeTokenRepository;
-
-    @Autowired
-    private SessionRegistry sessionRegistry;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Bean(name = "sec_SecurityConstraintsRegistration")
@@ -86,7 +80,7 @@ public class SecurityConfiguration {
     }
 
     @Bean("sec_rememberMeServices")
-    public RememberMeServices rememberMeServices() {
+    public RememberMeServices rememberMeServices(PersistentTokenRepository rememberMeTokenRepository) {
         JmixRememberMeServices rememberMeServices =
                 new JmixRememberMeServices(rememberMeProperties.getKey(), userRepository, rememberMeTokenRepository);
         rememberMeServices.setTokenValiditySeconds(rememberMeProperties.getTokenValiditySeconds());
@@ -96,11 +90,11 @@ public class SecurityConfiguration {
 
     @Primary
     @Bean
-    public SessionAuthenticationStrategy sessionControlAuthenticationStrategy() {
-        return new CompositeSessionAuthenticationStrategy(strategies());
+    public SessionAuthenticationStrategy sessionControlAuthenticationStrategy(SessionRegistry sessionRegistry) {
+        return new CompositeSessionAuthenticationStrategy(strategies(sessionRegistry));
     }
 
-    protected List<SessionAuthenticationStrategy> strategies() {
+    protected List<SessionAuthenticationStrategy> strategies(SessionRegistry sessionRegistry) {
         RegisterSessionAuthenticationStrategy registerSessionAuthenticationStrategy
                 = new RegisterSessionAuthenticationStrategy(sessionRegistry);
         ConcurrentSessionControlAuthenticationStrategy concurrentSessionControlStrategy

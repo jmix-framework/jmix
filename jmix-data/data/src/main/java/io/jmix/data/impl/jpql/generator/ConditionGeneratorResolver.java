@@ -18,6 +18,7 @@ package io.jmix.data.impl.jpql.generator;
 
 import io.jmix.core.common.util.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 @Component("data_ConditionGeneratorResolver")
 public class ConditionGeneratorResolver {
 
+    @Lazy //Break circular dependencies
     @Autowired
     protected List<ConditionGenerator> conditionGenerators;
 

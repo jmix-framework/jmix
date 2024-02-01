@@ -1,0 +1,59 @@
+{
+  "polar": {
+    "id": "polarId",
+    "zlevel": 51,
+    "z": 5,
+    "center": [
+      "51%",
+      "47%"
+    ],
+    "radius": [
+      "25%",
+      "75%"
+    ],
+    "tooltip": {
+      "show": true,
+      "trigger": "axis",
+      "axisPointer":{
+        "type": "cross",
+        "axis": "radius",
+        "snap": true,
+        "z": 15,
+        "animation": true
+      },
+      "position": "left",
+      "formatter": "{b0}: {c0}<br />{b1}: {c1}",
+      "valueFormatter": "(value) => '$' + value.toFixed(2)",
+      "backgroundColor": "#FFFFF0",
+      "borderColor": "#FFFFF0",
+      "borderWidth": 213,
+      "padding": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "textStyle": {
+        "color": "#FFFFF0",
+        "fontStyle": "italic",
+        "fontWeight": "bold",
+        "fontFamily": "monospace",
+        "fontSize": 40,
+        "lineHeight": 56,
+        "width": 50,
+        "height": 47,
+        "textBorderColor": "#FFFFF0",
+        "textBorderWidth": 2.5,
+        "textBorderType": "dashed",
+        "textBorderDashOffset": 3,
+        "textShadowColor": "#FFFFF0",
+        "textShadowBlur": 4,
+        "textShadowOffsetX": 4,
+        "textShadowOffsetY": 5,
+        "overflow": "breakAll",
+        "ellipsis": "........"
+      },
+      "extraCssText": "box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);"
+    }
+  }
+}

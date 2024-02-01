@@ -1,0 +1,9 @@
+{
+  "angleAxis":
+    {
+      "type": "category",
+      "polarIndex": 42,
+      "startAngle": 45,
+      "clockwise": false
+    }
+}

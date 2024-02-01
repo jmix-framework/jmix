@@ -1,0 +1,363 @@
+{
+  "xAxis": [
+    {
+      "id": "axisId",
+      "show": true,
+      "gridIndex": 5,
+      "alignTicks": true,
+      "position": "top",
+      "offset": 15,
+      "type": "category",
+      "name": "xAxis",
+      "nameLocation": "start",
+      "nameTextStyle": {
+        "color": "#FFFFF0",
+        "fontStyle": "italic",
+        "fontWeight": "bold",
+        "fontFamily": "monospace",
+        "fontSize": 40,
+        "align": "center",
+        "verticalAlign": "top",
+        "lineHeight": 56,
+        "backgroundColor": "#FFFFF0",
+        "borderColor": "#FFFFF0",
+        "borderWidth": 4,
+        "borderType": "dashed",
+        "borderDashOffset": 51,
+        "borderRadius": 41,
+        "padding": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "shadowBlur": 4,
+        "shadowColor": "#FFFFF0",
+        "shadowOffsetX": 31,
+        "shadowOffsetY": 321,
+        "width": 50,
+        "height": 47,
+        "textBorderColor": "#FFFFF0",
+        "textBorderWidth": 2.5,
+        "textBorderType": "dashed",
+        "textBorderDashOffset": 3,
+        "textShadowColor": "#FFFFF0",
+        "textShadowBlur": 4,
+        "textShadowOffsetX": 4,
+        "textShadowOffsetY": 5,
+        "overflow": "breakAll",
+        "ellipsis": "........",
+        "rich": {
+          "a": {
+            "color": "#FFFFF0",
+            "lineHeight": 10
+          },
+          "b": {
+            "backgroundColor": "#FFFFF0",
+            "height": 40
+          },
+          "x": {
+            "fontSize": 18,
+            "fontFamily": "Microsoft YaHei",
+            "borderColor": "#FFFFF0",
+            "borderRadius": 4
+          }
+        }
+      },
+      "nameGap": 18,
+      "nameRotate": 90,
+      "inverse": true,
+      "boundaryGap": [
+        "20%",
+        "20%"
+      ],
+      "min": "12",
+      "max": "14",
+      "scale": true,
+      "splitNumber": 7,
+      "minInterval": 9,
+      "maxInterval": 16,
+      "interval": 10,
+      "logBase": 2,
+      "silent": true,
+      "triggerEvent": true,
+      "axisLine": {
+        "show": false,
+        "onZero": false,
+        "onZeroAxisIndex": 5,
+        "symbol": [
+          "diamond",
+          "arrow"
+        ],
+        "symbolSize": [
+          15,
+          10
+        ],
+        "symbolOffset": [
+          4,
+          1
+        ],
+        "lineStyle": {
+          "color": "#FFFFF0",
+          "width": 421,
+          "type": "dashed",
+          "dashOffset": 41,
+          "cap": "square",
+          "join": "miter",
+          "miterLimit": 41,
+          "shadowBlur": 59,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 12,
+          "shadowOffsetY": 24,
+          "opacity": 0.41
+        }
+      },
+      "axisTick": {
+        "show": false,
+        "alignWithLabel": true,
+        "interval": 15,
+        "inside": true,
+        "length": 10,
+        "lineStyle": {
+          "color": "#FFFFF0",
+          "width": 421,
+          "type": "dashed",
+          "dashOffset": 41,
+          "cap": "square",
+          "join": "miter",
+          "miterLimit": 41,
+          "shadowBlur": 59,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 12,
+          "shadowOffsetY": 24,
+          "opacity": 0.41
+        }
+      },
+      "minorTick": {
+        "show": true,
+        "splitNumber": 1,
+        "length": 10,
+        "lineStyle": {
+          "color": "#FFFFF0",
+          "width": 421,
+          "type": "dashed",
+          "dashOffset": 41,
+          "cap": "square",
+          "join": "miter",
+          "miterLimit": 41,
+          "shadowBlur": 59,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 12,
+          "shadowOffsetY": 24,
+          "opacity": 0.41
+        }
+      },
+      "axisLabel": {
+        "show": true,
+        "interval": 10,
+        "inside": true,
+        "rotate": 15,
+        "margin": 5,
+        "formatter": "{value} kg",
+        "showMinLabel": true,
+        "showMaxLabel": true,
+        "hideOverlap": true,
+        "color": "#FFFFF0",
+        "fontStyle": "italic",
+        "fontWeight": "bold",
+        "fontFamily": "monospace",
+        "fontSize": 40,
+        "align": "center",
+        "verticalAlign": "top",
+        "lineHeight": 56,
+        "backgroundColor": "#FFFFF0",
+        "borderColor": "#FFFFF0",
+        "borderWidth": 4,
+        "borderType": "dashed",
+        "borderDashOffset": 51,
+        "borderRadius": 41,
+        "padding": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "shadowColor": "#FFFFF0",
+        "shadowOffsetX": 12,
+        "shadowOffsetY": 24,
+        "width": 50,
+        "height": 47,
+        "textBorderColor": "#FFFFF0",
+        "textBorderWidth": 2.5,
+        "textBorderType": "dashed",
+        "textBorderDashOffset": 3,
+        "textShadowColor": "#FFFFF0",
+        "textShadowBlur": 4,
+        "textShadowOffsetX": 4,
+        "textShadowOffsetY": 5,
+        "overflow": "breakAll",
+        "ellipsis": "........",
+        "rich": {
+          "a": {
+            "color": "#FFFFF0",
+            "lineHeight": 10
+          },
+          "b": {
+            "backgroundColor": "#FFFFF0",
+            "height": 40
+          },
+          "x": {
+            "fontSize": 18,
+            "fontFamily": "Microsoft YaHei",
+            "borderColor": "#FFFFF0",
+            "borderRadius": 4
+          }
+        }
+      },
+      "splitLine": {
+        "show": true,
+        "interval": 15,
+        "lineStyle": {
+          "color": "#FFFFF0",
+          "width": 421,
+          "type": "dashed",
+          "dashOffset": 41,
+          "cap": "square",
+          "join": "miter",
+          "miterLimit": 41,
+          "shadowBlur": 59,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 12,
+          "shadowOffsetY": 24,
+          "opacity": 0.41
+        }
+      },
+      "minorSplitLine": {
+        "show": true,
+        "lineStyle": {
+          "color": "#FFFFF0",
+          "width": 421,
+          "type": "dashed",
+          "dashOffset": 41,
+          "cap": "square",
+          "join": "miter",
+          "miterLimit": 41,
+          "shadowBlur": 59,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 12,
+          "shadowOffsetY": 24,
+          "opacity": 0.41
+        }
+      },
+      "splitArea": {
+        "interval": 15,
+        "show": true,
+        "areaStyle": {
+          "color": [
+            "#FFFFF0",
+            "#FFFFF0"
+          ],
+          "shadowBlur": 59,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 12,
+          "shadowOffsetY": 24,
+          "opacity": 0.41
+        }
+      },
+      "axisPointer": {
+        "show": true,
+        "type": "shadow",
+        "snap": true,
+        "z": 15,
+        "label": {
+          "show": true,
+          "precision": 5,
+          "formatter": "{value} kg",
+          "margin": 5,
+          "color": "#FFFFF0",
+          "fontStyle": "italic",
+          "fontWeight": "bold",
+          "fontFamily": "monospace",
+          "fontSize": 40,
+          "lineHeight": 56,
+          "width": 50,
+          "height": 47,
+          "textBorderColor": "#FFFFF0",
+          "textBorderWidth": 2.5,
+          "textBorderType": "dashed",
+          "textBorderDashOffset": 3,
+          "textShadowColor": "#FFFFF0",
+          "textShadowBlur": 4,
+          "textShadowOffsetX": 4,
+          "textShadowOffsetY": 5,
+          "overflow": "breakAll",
+          "ellipsis": "........",
+          "padding": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "backgroundColor": "#FFFFF0",
+          "borderColor": "#FFFFF0",
+          "borderWidth": 4,
+          "shadowBlur": 15,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 12,
+          "shadowOffsetY": 24
+        },
+        "lineStyle": {
+          "color": "#FFFFF0",
+          "width": 421,
+          "type": "dashed",
+          "dashOffset": 41,
+          "cap": "square",
+          "join": "miter",
+          "miterLimit": 41,
+          "shadowBlur": 59,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 12,
+          "shadowOffsetY": 24,
+          "opacity": 0.41
+        },
+        "shadowStyle": {
+          "color": "#FFFFF0",
+          "shadowBlur": 15,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 15,
+          "shadowOffsetY": 61,
+          "opacity": 0.14
+        },
+        "triggerEmphasis": true,
+        "triggerTooltip": false,
+        "value": 1,
+        "status": false,
+        "handle": {
+          "show": true,
+          "icon": "jmix",
+          "size": [
+            15,
+            51
+          ],
+          "margin": 15,
+          "color": "#FFFFF0",
+          "throttle": 50,
+          "shadowBlur": 16,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 16,
+          "shadowOffsetY": 95
+        }
+      },
+      "animation": true,
+      "animationThreshold": 1501,
+      "animationDuration": 1500,
+      "animationEasing": "backOut",
+      "animationDelay": 15,
+      "animationDurationUpdate": 150,
+      "animationEasingUpdate": "cubicOut",
+      "animationDelayUpdate": 15,
+      "zlevel": 15,
+      "z": 12
+    }
+  ]
+}

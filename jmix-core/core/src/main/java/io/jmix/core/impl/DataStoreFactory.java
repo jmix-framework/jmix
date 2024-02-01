@@ -17,7 +17,6 @@
 package io.jmix.core.impl;
 
 import io.jmix.core.DataStore;
-import io.jmix.core.Stores;
 import io.jmix.core.datastore.DataStoreCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -35,14 +34,14 @@ public class DataStoreFactory {
 
     protected Map<String, DataStore> dataStores = new ConcurrentHashMap<>();
 
-    @Autowired(required = false)
-    protected Stores stores;
+    @Autowired
+    protected StoreDescriptorsRegistry descriptorsRegistry;
 
     @Autowired
     protected ApplicationContext applicationContext;
 
     public DataStore get(String name) {
-        String beanName = stores.get(name).getDescriptor().getBeanName();
+        String beanName = descriptorsRegistry.getStoreDescriptor(name).getBeanName();
         return dataStores.computeIfAbsent(name, key -> {
             DataStore dataStore = (DataStore) applicationContext.getBean(beanName);
             dataStore.setName(name);

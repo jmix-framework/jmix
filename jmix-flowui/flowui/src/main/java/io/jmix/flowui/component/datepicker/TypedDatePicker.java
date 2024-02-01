@@ -96,7 +96,8 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
                 .setWeekdays(getWeekdayNames(locale))
                 .setWeekdaysShort(getShortWeekdayNames(locale))
                 .setMonthNames(getMonthNames(locale))
-                .setFirstDayOfWeek(getFirstDayOfWeek(locale)));
+                .setFirstDayOfWeek(getFirstDayOfWeek(locale))
+        );
 
         attachValueChangeListener();
     }

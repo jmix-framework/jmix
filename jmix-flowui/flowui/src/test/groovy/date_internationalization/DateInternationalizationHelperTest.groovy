@@ -18,6 +18,7 @@ package date_internationalization
 
 import io.jmix.flowui.component.DateInternationalizationHelper
 import org.springframework.boot.test.context.SpringBootTest
+import spock.lang.Unroll
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
@@ -72,7 +73,7 @@ class DateInternationalizationHelperTest extends FlowuiTestSpecification {
         def actualFirstDayOfWeek = DateInternationalizationHelper.getFirstDayOfWeek(locale)
 
         then:
-        actualFirstDayOfWeek == Calendar.SUNDAY
+        actualFirstDayOfWeek == 0
     }
 
     def "should return correct month names for Russian locale"() {
@@ -124,6 +125,7 @@ class DateInternationalizationHelperTest extends FlowuiTestSpecification {
         def actualFirstDayOfWeek = DateInternationalizationHelper.getFirstDayOfWeek(locale)
 
         then:
-        actualFirstDayOfWeek == Calendar.MONDAY
+        actualFirstDayOfWeek == 1
     }
+
 }

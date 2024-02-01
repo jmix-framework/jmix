@@ -73,7 +73,7 @@ class DateInternationalizationHelperTest extends FlowuiTestSpecification {
         def actualFirstDayOfWeek = DateInternationalizationHelper.getFirstDayOfWeek(locale)
 
         then:
-        actualFirstDayOfWeek == Calendar.SUNDAY
+        actualFirstDayOfWeek == 0
     }
 
     def "should return correct month names for Russian locale"() {
@@ -125,30 +125,7 @@ class DateInternationalizationHelperTest extends FlowuiTestSpecification {
         def actualFirstDayOfWeek = DateInternationalizationHelper.getFirstDayOfWeek(locale)
 
         then:
-        actualFirstDayOfWeek == Calendar.MONDAY
+        actualFirstDayOfWeek == 1
     }
 
-    def "should return correct first day of the week for English locale"() {
-        given:
-        def locale = Locale.ENGLISH
-
-        when:
-        def actualFirstDayOfWeek = DateInternationalizationHelper.getFirstDayOfWeek(locale)
-
-        then:
-        actualFirstDayOfWeek == Calendar.SUNDAY
-    }
-
-    @Unroll
-    def "should return #vaadinDayOfWeek as vaadinDayOfWeek for #calenderDayOfWeek as calenderDayOfWeek"() {
-        expect:
-        DateInternationalizationHelper.calendarDayOfWeekToVaadinDayOfWeek(calenderDayOfWeek) == vaadinDayOfWeek
-
-        where:
-        calenderDayOfWeek  || vaadinDayOfWeek
-        Calendar.SUNDAY    || 0
-        Calendar.MONDAY    || 1
-        Calendar.WEDNESDAY || 3
-        Calendar.SATURDAY  || 6
-    }
 }

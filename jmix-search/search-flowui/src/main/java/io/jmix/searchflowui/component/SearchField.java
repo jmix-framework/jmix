@@ -38,17 +38,20 @@ import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.SearchStrategy;
+import io.jmix.search.searching.*;
+import io.jmix.search.searching.impl.SearchResultImpl;
 import io.jmix.searchflowui.view.result.SearchResultsView;
 import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.searchflowui.view.result.SearchResultsView.*;
@@ -73,6 +76,9 @@ public class SearchField extends CustomField<String>
     protected List<String> entities;
     protected OpenMode openMode;
     protected int searchSize;
+    protected Consumer<SearchCompletedEvent> searchResultHandler;
+    protected SearchStrategyManager searchStrategyManager;
+    protected EntitySearcher entitySearcher;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -94,6 +100,8 @@ public class SearchField extends CustomField<String>
         searchProperties = applicationContext.getBean(SearchProperties.class);
         viewNavigators = applicationContext.getBean(ViewNavigators.class);
         dialogWindows = applicationContext.getBean(DialogWindows.class);
+        searchStrategyManager = applicationContext.getBean(SearchStrategyManager.class);
+        entitySearcher = applicationContext.getBean(EntitySearcher.class);
     }
 
     protected void initComponent() {
@@ -179,8 +187,41 @@ public class SearchField extends CustomField<String>
                     .show();
         } else {
             String preparedSearchText = searchText.trim();
+            if (searchResultHandler != null) {
+                SearchContext searchContext = new SearchContext(preparedSearchText)
+                        .setSize(searchProperties.getSearchResultPageSize())
+                        .setEntities(getEntities());
+                SearchResult searchResult = entitySearcher.search(searchContext, searchStrategy);
+                searchResultHandler.accept(new SearchCompletedEvent(this, searchResult));
+            } else {
+                openSearchResultsWindow(preparedSearchText);
+            }
+        }
+    }
 
-            openSearchResultsWindow(preparedSearchText);
+    public void setSearchCompletedHandler(Consumer<SearchCompletedEvent> handler) {
+        this.searchResultHandler = handler;
+    }
+
+    public Consumer<SearchCompletedEvent> getSearchCompletedHandler() {
+        return searchResultHandler;
+    }
+
+    public static class SearchCompletedEvent {
+        protected SearchField source;
+        protected SearchResult searchResult;
+
+        public SearchCompletedEvent(SearchField source, SearchResult searchResult) {
+            this.source = source;
+            this.searchResult = searchResult;
+        }
+
+        public SearchResult getSearchResult() {
+            return searchResult;
+        }
+
+        public SearchField getSource() {
+            return source;
         }
     }
 

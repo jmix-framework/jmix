@@ -39,4 +39,6 @@ public @interface StudioActionsGroup {
     String[] target() default {};
 
     String[] unsupportedTarget() default {};
+
+    StudioProperty[] properties() default {};
 }

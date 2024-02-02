@@ -27,11 +27,26 @@ public class RangeInputLoader extends AbstractComponentLoader<RangeInput> {
 
     @Override
     public void loadComponent() {
+        componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
+
+        componentLoader().loadWidth(resultComponent, element);
+        componentLoader().loadHeight(resultComponent, element);
+        componentLoader().loadMinWidth(resultComponent, element);
+        componentLoader().loadMinHeight(resultComponent, element);
+        componentLoader().loadMaxWidth(resultComponent, element);
+        componentLoader().loadMaxHeight(resultComponent, element);
+
+        componentLoader().loadFocusableAttributes(resultComponent, element);
+        componentLoader().loadValueChangeMode(resultComponent, element);
+
+        componentLoader().loadValueAndElementAttributes(resultComponent, element);
+
         loadDouble(element, "min", resultComponent::setMin);
         loadDouble(element, "max", resultComponent::setMax);
         loadDouble(element, "step", resultComponent::setStep);
-        loadString(element, "orientation",
-                orientation -> resultComponent.setOrientation(RangeInput.Orientation.valueOf(orientation)));
+        loadEnum(element, RangeInput.Orientation.class, "orientation")
+                .ifPresent(resultComponent::setOrientation);
     }
 }

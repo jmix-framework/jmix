@@ -804,6 +804,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="rangeInputOrientationEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="HORIZONTAL"/>
+            <xs:enumeration value="VERTICAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="codeEditorTheme">
         <xs:restriction base="xs:string">
             <xs:enumeration value="AMBIANCE"/>
@@ -4223,11 +4230,19 @@
 
     <xs:complexType name="rangeInputComponent">
         <xs:complexContent>
-            <xs:extension base="baseHtmlComponent">
+            <xs:extension base="baseComponent">
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="max" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
-                <xs:attribute name="orientation" type="xs:string"/>
+                <xs:attribute name="orientation" type="rangeInputOrientationEnum"/>
+
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+                <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

@@ -4221,6 +4221,17 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="rangeInputComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlComponent">
+                <xs:attribute name="min" type="xs:double"/>
+                <xs:attribute name="max" type="xs:double"/>
+                <xs:attribute name="step" type="xs:double"/>
+                <xs:attribute name="orientation" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- Filters -->
 
     <!-- GenericFilter -->
@@ -4581,6 +4592,7 @@
                 <xs:element name="nativeLabel" type="labelComponent"/>
                 <xs:element name="nativeButton" type="nativeButtonComponent"/>
                 <xs:element name="nativeDetails" type="nativeDetailsComponent"/>
+                <xs:element name="rangeInput" type="rangeInputComponent"/>
                 <xs:element name="article" type="baseClickableHtmlContainer"/>
                 <xs:element name="input" type="inputHtmlComponent"/>
                 <xs:element name="image" type="imageComponent"/>

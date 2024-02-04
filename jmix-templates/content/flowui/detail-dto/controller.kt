@@ -20,13 +20,17 @@ class ${detailControllerName} : StandardDetailView<${entity.className}>() {
     @Install(to = "${dlId}", target = Target.DATA_LOADER)
     private fun ${dlId}LoadDelegate(loadContext: LoadContext<${entity.className}>): ${entity.className}? {
         val id = loadContext.id
-        // Here you can load the entity by id from an external storage
+        // Here you can load the entity by id from an external storage.
+        // Set the loaded entity to the not-new state using EntityStates.setNew(entity, false).
         return null
     }
 
     @Install(target = Target.DATA_CONTEXT)
     private fun saveDelegate(saveContext: SaveContext): MutableSet<Any> {
-        // Here you can save the entity to an external storage and return the saved instance
+        // Here you can save the entity to an external storage and return the saved instance.
+        // Set the returned entity to the not-new state using EntityStates.setNew(entity, false).
+        // If the new entity ID is assigned by the storage, set the ID to the original instance too 
+        // to let the framework match the saved instance with the original one.
         val savedEntity = editedEntity
         return mutableSetOf(savedEntity)
     }

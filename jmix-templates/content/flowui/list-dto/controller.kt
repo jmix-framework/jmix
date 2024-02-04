@@ -19,7 +19,13 @@ class ${viewControllerName} : StandardListView<${entity.className}>() {
 
     @Install(to = "${tableDl}", target = Target.DATA_LOADER)
     fun ${tableDl}LoadDelegate(loadContext: LoadContext<${entity.className}>): MutableList<${entity.className}> {
-        // Here you can load entities from an external store
+        // Here you can load entities from an external store.
+        // Set the loaded entities to the not-new state using EntityStates.setNew(entity, false).
         return mutableListOf()
+    }
+
+    @Install(to = "${tableId}.remove", subject = "delegate")
+    fun ${tableId}RemoveDelegate(entities: Collection<${entity.className}>) {
+        // Here you can remove entities from an external storage
     }
 }

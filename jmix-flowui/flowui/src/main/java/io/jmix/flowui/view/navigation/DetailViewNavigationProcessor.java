@@ -97,16 +97,6 @@ public class DetailViewNavigationProcessor extends AbstractNavigationProcessor<D
         }
     }
 
-    protected Object getEntityToEdit(DetailViewNavigator<?> navigator) {
-        return switch (navigator.getMode()) {
-            case CREATE -> metadata.create(navigator.getEntityClass());
-            case EDIT -> navigator.getEditedEntity().orElseThrow(() ->
-                    new IllegalStateException(String.format(
-                            "Detail View of %s cannot be open with mode EDIT, entity is not set",
-                            navigator.getEntityClass())));
-        };
-    }
-
     protected RouteParameters generateNewEntityRouteParameters(DetailViewNavigator<?> navigator) {
         return routeSupport.createRouteParameters("id", StandardDetailView.NEW_ENTITY_ID);
     }

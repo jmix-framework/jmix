@@ -21,7 +21,8 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     @Install(to = "${tableDl}", target = Target.DATA_LOADER)
     protected List<${entity.className}> ${tableDl}LoadDelegate(LoadContext<${entity.className}> loadContext) {
-        // Here you can load entities from an external storage
+        // Here you can load entities from an external storage.
+        // Set the loaded entities to the not-new state using EntityStates.setNew(entity, false).
         return List.of();
     }
 

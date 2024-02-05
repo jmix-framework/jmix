@@ -30,6 +30,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
+import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
@@ -2214,6 +2215,7 @@ public interface StudioComponents {
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "forgotPasswordButtonVisible", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "rememberMeVisible", type = StudioPropertyType.BOOLEAN),
@@ -2221,10 +2223,37 @@ public interface StudioComponents {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "localesVisible", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
+                            defaultValue = "true")
             }
     )
     EnhancedLoginForm loginForm();
+
+    @StudioComponent(
+            name = "LoginOverlay",
+            classFqn = "com.vaadin.flow.component.login.LoginOverlay",
+            category = "Components",
+            xmlElement = "loginOverlay",
+            icon = "io/jmix/flowui/kit/meta/icon/component/loginOverlay.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "forgotPasswordButtonVisible", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "opened", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+
+    )
+    LoginOverlay loginOverlay();
 
     @StudioComponent(
             name = "SimplePagination",

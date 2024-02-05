@@ -26,14 +26,7 @@ import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.AccessManager;
-import io.jmix.core.EntitySet;
-import io.jmix.core.EntityStates;
-import io.jmix.core.InstanceNameProvider;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
@@ -43,16 +36,9 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.accesscontext.UiEntityContext;
-import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
-import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.DataLoader;
-import io.jmix.flowui.model.HasLoader;
-import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.InstanceLoader;
-import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.RouteSupport;
@@ -90,15 +76,17 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private boolean showValidationErrors = true;
     private boolean crossFieldValidationEnabled = true;
-    private boolean readOnly = false;
+    private boolean readOnly;
 
     // whether user has edited entity after view opening
-    private boolean modifiedAfterOpen = false;
+    private boolean modifiedAfterOpen;
 
     private Boolean showSaveNotification;
-    private boolean saveActionPerformed = false;
+    private boolean saveActionPerformed;
 
-    protected boolean reloadSaved = false;
+    private boolean reloadEdited = true;
+
+    protected boolean reloadSaved;
 
     /**
      * Create views using {@link io.jmix.flowui.ViewNavigators} or {@link io.jmix.flowui.DialogWindows}.
@@ -519,12 +507,20 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         setupEntityToEdit(entity);
     }
 
+    /**
+     * Invoked on {@link BeforeShowEvent} both when the view is opened by navigation and in dialog window.
+     */
     protected void setupEntityToEdit() {
         if (serializedEntityIdToEdit != null) {
             setupEntityToEdit(serializedEntityIdToEdit);
         }
     }
 
+    /**
+     * Invoked when the view is opened by navigation.
+     *
+     * @param serializedEntityId serialized id of the edited entity or {@link #NEW_ENTITY_ID} when creating new entity
+     */
     protected void setupEntityToEdit(String serializedEntityId) {
         //noinspection unchecked
         Class<T> entityClass = (Class<T>) DetailViewTypeExtractor.extractEntityClass(getClass())
@@ -551,25 +547,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     protected void initExistingEntity(String serializedEntityId) {
-        if (!entityCanBeLoaded()) {
-            throw new GuiDevelopmentException(String.format(
-                    "Entity '%s' cannot be loaded by id '%s' " +
-                            "due to it is non-JPA entity or load delegate is not set. To correctly handle editing non-" +
-                            "JPA entities open editor in DIALOG mode. Another way is using 'routeParametersProvider'" +
-                            " in %s and installing load delegate in editor or overriding 'initExistingEntity' method",
-                    getEditedEntityContainer().getEntityMetaClass().getJavaClass().getSimpleName(),
-                    serializedEntityId, EditAction.class.getSimpleName()
-            ), getId().orElse(null));
-        }
-
         Object entityId = getUrlParamSerializer().deserialize(getSerializedIdType(), serializedEntityId);
         getEditedEntityLoader().setEntityId(entityId);
-    }
-
-    @SuppressWarnings("ConstantValue")
-    protected boolean entityCanBeLoaded() {
-        return getMetadataTools().isJpaEntity(getEditedEntityContainer().getEntityMetaClass())
-                || getEditedEntityLoader().getLoadDelegate() != null;
     }
 
     private Class<?> getSerializedIdType() {
@@ -583,20 +562,25 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         return primaryKeyProperty.getJavaType();
     }
 
+    /**
+     * Invoked when the view is opened in dialog window or when the view is opened by navigation
+     * and {@link #setEntityToEdit(Object)} method is called in {@code AfterViewNavigationEvent} handler.
+     *
+     * @param entityToEdit entity instance to edit. Can be a new instance when the entity is being created, see {@link EntityStates#isNew(Object)}.
+     */
     protected void setupEntityToEdit(T entityToEdit) {
         DataContext dataContext = getViewData().getDataContext();
 
         if (getEntityStates().isNew(entityToEdit) || doNotReloadEditedEntity()) {
-            // In case of DTO, this method is called after
-            // Modified Tracking is enabled, so we need to
-            // remember the original state and revert it after
-            // entity is set.
+            // If edited entity is set in AfterViewNavigationEvent handler, this method is called
+            // after setupModifiedTracking(), so we remember the original state and revert it after the entity is set.
             boolean modifiedAfterOpen = isModifiedAfterOpen();
 
             T mergedEntity = dataContext.merge(entityToEdit);
 
             DataContext parentDc = dataContext.getParent();
-            if (parentDc == null || !parentDc.contains(mergedEntity)) {
+            if (getEntityStates().isNew(entityToEdit) &&
+                    (parentDc == null || !parentDc.contains(mergedEntity))) {
                 fireEvent(new InitEntityEvent<>(this, mergedEntity));
             }
 
@@ -615,7 +599,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             return getEntityStates().isLoadedWithFetchPlan(entityToEdit, container.getFetchPlan());
         }
 
-        return false;
+        return !isReloadEdited();
     }
 
     private boolean isEntityModifiedInParentContext() {
@@ -855,6 +839,23 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      */
     protected Registration addValidationEventListener(ComponentEventListener<ValidationEvent> listener) {
         return getEventBus().addListener(ValidationEvent.class, listener);
+    }
+
+    /**
+     * @return true if the edited entity should be reloaded before setting to the data container.
+     */
+    protected boolean isReloadEdited() {
+        return reloadEdited;
+    }
+
+    /**
+     * Sets whether the edited entity should be reloaded before setting to the data container. True by default.
+     * <p>
+     * Set to false in the view constructor or {@code InitEvent} handler if the view is opened in dialog mode
+     * and the entity should not be loaded by ID from a data storage.
+     */
+    protected void setReloadEdited(boolean reloadEdited) {
+        this.reloadEdited = reloadEdited;
     }
 
     @Override

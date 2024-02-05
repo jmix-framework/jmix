@@ -84,6 +84,9 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
             list = dataManager.loadValues(loadContext);
         } else {
             list = delegate.apply(loadContext);
+            if (list == null) {
+                return;
+            }
         }
 
         if (dataContext != null) {

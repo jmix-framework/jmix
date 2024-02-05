@@ -86,6 +86,9 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
             }
         } else {
             result = delegate.apply(loadContext);
+            if (result == null) {
+                return;
+            }
         }
 
         container.setItem(result);

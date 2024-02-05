@@ -160,9 +160,16 @@
               advanced="true"
               dynamic="true"
               required="true"
-              valueTemplate="${entity.uncapitalizedClassName}/detail">
+              valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
         <dependency code="entity"/>
     </property>
+
+    <property caption="Detail view route parameter"
+              code="detailRouteParam"
+              propertyType="STRING"
+              advanced="true"
+              required="true"
+              defaultValue="id"/>
 
     <property caption="Parent menu item"
               code="menuItem"

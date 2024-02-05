@@ -50,6 +50,9 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <settings>
+            <component id="sendingMessageDataGrid"/>
+        </settings>
     </facets>
     <layout>
         <split width="100%" height="100%" splitterPosition="70" themeNames="splitter-spacing">

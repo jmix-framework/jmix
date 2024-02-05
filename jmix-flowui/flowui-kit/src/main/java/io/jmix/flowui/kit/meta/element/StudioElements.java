@@ -24,12 +24,7 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
-import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo;
-import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
-import io.jmix.flowui.kit.meta.StudioSupplyHandler;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit
 public interface StudioElements {
@@ -100,7 +95,8 @@ public interface StudioElements {
     @StudioElement(
             name = "AdditionalInformation",
             xmlElement = "additionalInformation",
-            target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
+            target = {"com.vaadin.flow.component.login.AbstractLogin"},
+            unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "message", type = StudioPropertyType.LOCALIZED_STRING)
             }
@@ -355,7 +351,8 @@ public interface StudioElements {
             name = "ErrorMessage",
             classFqn = "com.vaadin.flow.component.login.LoginI18n.ErrorMessage",
             xmlElement = "errorMessage",
-            target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
+            unlimitedCount = false,
+            target = {"com.vaadin.flow.component.login.AbstractLogin"},
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "message", type = StudioPropertyType.LOCALIZED_STRING),
@@ -369,6 +366,7 @@ public interface StudioElements {
             name = "Form",
             classFqn = "io.jmix.flowui.kit.component.loginform.JmixLoginI18n.JmixForm",
             xmlElement = "form",
+            unlimitedCount = false,
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
             properties = {
                     @StudioProperty(xmlAttribute = "forgotPassword", type = StudioPropertyType.LOCALIZED_STRING),
@@ -379,7 +377,63 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "username", type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
-    JmixLoginI18n.JmixForm loginForm();
+    JmixLoginI18n.JmixForm jmixLoginForm();
+
+    @StudioElement(
+            name = "Form",
+            classFqn = "com.vaadin.flow.component.login.LoginI18n.Form",
+            xmlElement = "form",
+            target = {"com.vaadin.flow.component.login.LoginOverlay"},
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "forgotPassword", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "password", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "submit", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "username", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    LoginI18n.Form loginForm();
+
+    @StudioElement(
+            name = "Header",
+            xmlElement = "header",
+            target = {"com.vaadin.flow.component.login.LoginOverlay"},
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    void loginHeader();
+
+    @StudioElement(
+            name = "Footer",
+            xmlElement = "footer",
+            target = {"com.vaadin.flow.component.login.LoginOverlay"},
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void loginFooter();
+
+    @StudioElement(
+            name = "CustomFormArea",
+            xmlElement = "customFormArea",
+            target = {"com.vaadin.flow.component.login.LoginOverlay"},
+            unlimitedCount = false,
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
+                            maxCount = 99999
+                    )
+            )
+    )
+    void loginCustomFormArea();
 
     @StudioElement(
             name = "GenericFilter",

@@ -3802,9 +3802,13 @@
     <xs:complexType name="loginOverlayComponent">
         <xs:complexContent>
             <xs:extension base="baseLoginComponent">
-                <xs:sequence>
-                    <xs:element name="header" type="loginHeaderType" minOccurs="0"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element name="header" type="loginHeaderType"/>
+                    <xs:element name="customFormArea" type="loginContentAreaType"/>
+                    <xs:element name="footer" type="loginContentAreaType"/>
                 </xs:sequence>
+
+                <xs:attribute name="opened" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3839,6 +3843,12 @@
     <xs:complexType name="loginHeaderType">
         <xs:attribute name="title" type="resourceString"/>
         <xs:attribute name="description" type="resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="loginContentAreaType">
+        <xs:sequence minOccurs="0">
+            <xs:group ref="layoutOrComponent"/>
+        </xs:sequence>
     </xs:complexType>
 
     <!-- Upload -->

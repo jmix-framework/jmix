@@ -44,11 +44,12 @@ public @interface StudioProperty {
      * should be used as the default value for the current property.
      * <p></p>
      * <b>Supported syntax:</b>
-     * <p>
-     *  1. parent:someParentProperty -
-     *     where someParentProperty should be replaced with property name.
-     *     <p>
-     *     For example: parent:sortable
+     * <ol>
+     *  <li>
+     *      {@code parent:someParentProperty} - where someParentProperty should be replaced with property name.
+     *      For example: {@code parent:sortable}
+     *  </li>
+     * </ol>
      */
     String defaultValueRef() default "";
 

@@ -35,6 +35,7 @@ public interface StudioElements {
             target = {"com.vaadin.flow.component.accordion.Accordion"},
             xmlElement = "accordionPanel",
             icon = "io/jmix/flowui/kit/meta/icon/element/tab.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/accordion.html#_accordionpanel",
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
@@ -63,6 +64,7 @@ public interface StudioElements {
             name = "ActionItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ActionItem",
             xmlElement = "actionItem",
+            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#actionItem",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
@@ -108,6 +110,7 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.component.grid.DataGridColumn",
             xmlElement = "column",
             icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#column",
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "autoWidth", type = StudioPropertyType.BOOLEAN,
@@ -150,6 +153,7 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             xmlElement = "editorActionsColumn",
             icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#editorActionsColumn",
             unlimitedCount = false,
             properties = {
                     @StudioProperty(xmlAttribute = "autoWidth", type = StudioPropertyType.BOOLEAN,
@@ -289,6 +293,7 @@ public interface StudioElements {
             xmlElement = "localDateRenderer",
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
             properties = {
                     @StudioProperty(xmlAttribute = "format",
                             type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -305,6 +310,7 @@ public interface StudioElements {
             xmlElement = "localDateTimeRenderer",
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
             properties = {
                     @StudioProperty(xmlAttribute = "format",
                             type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -321,6 +327,7 @@ public interface StudioElements {
             xmlElement = "numberRenderer",
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
             properties = {
                     @StudioProperty(xmlAttribute = "format",
                             type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -335,6 +342,7 @@ public interface StudioElements {
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = "componentItem",
+            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#componentItem",
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
                             qualifiedName = StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN,
@@ -456,6 +464,7 @@ public interface StudioElements {
             target = {"com.vaadin.flow.component.tabs.Tabs", "io.jmix.flowui.component.tabsheet.JmixTabSheet"},
             xmlElement = "tab",
             icon = "io/jmix/flowui/kit/meta/icon/element/tab.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/tabs.html#tab",
             visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
@@ -479,6 +488,7 @@ public interface StudioElements {
             name = "TextItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.TextItem",
             xmlElement = "textItem",
+            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#textItem",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
@@ -491,6 +501,7 @@ public interface StudioElements {
             classFqn = "com.vaadin.flow.component.shared.Tooltip",
             icon = "io/jmix/flowui/kit/meta/icon/element/tooltip.svg",
             xmlElement = "tooltip",
+            documentationLink = "%VERSION%/flow-ui/vc/components/tooltip.html",
             unlimitedCount = false,
             target = {"io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.kit.component.button.JmixButton",
@@ -590,6 +601,7 @@ public interface StudioElements {
             name = "ResponsiveStep",
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveStep",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/formLayout.html#columns",
             properties = {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE, required = true),
                     @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
@@ -631,6 +643,7 @@ public interface StudioElements {
             name = "ResponsiveStep",
             classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
             xmlElement = "responsiveStep",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/formLayout.html#columns",
             properties = {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE, required = true),
                     @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
@@ -819,6 +832,7 @@ public interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
             unlimitedCount = false,
             target = {"io.jmix.flowui.component.combobox.JmixComboBox"},
+            documentationLink = "whats-new/index.html#fetching-items-in-dropdowns",
             unsupportedTarget = {
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
@@ -839,6 +853,7 @@ public interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
             unlimitedCount = false,
             target = {"io.jmix.flowui.component.combobox.EntityComboBox"},
+            documentationLink = "whats-new/index.html#fetching-items-in-dropdowns",
             unsupportedTarget = {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
@@ -859,6 +874,7 @@ public interface StudioElements {
             name = "ItemsQuery",
             xmlElement = "itemsQuery",
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
+            documentationLink = "whats-new/index.html#fetching-items-in-dropdowns",
             unlimitedCount = false,
             target = {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
@@ -884,6 +900,7 @@ public interface StudioElements {
             xmlElement = "prefix",
             target = {"com.vaadin.flow.component.shared.HasPrefix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
+            documentationLink = "whats-new/index.html#prefix-and-suffix-components",
             unlimitedCount = false,
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
@@ -899,6 +916,7 @@ public interface StudioElements {
             xmlElement = "suffix",
             target = {"com.vaadin.flow.component.shared.HasSuffix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
+            documentationLink = "whats-new/index.html#prefix-and-suffix-components",
             unlimitedCount = false,
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(

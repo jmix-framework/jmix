@@ -41,4 +41,9 @@ public @interface StudioActionsGroup {
     String[] unsupportedTarget() default {};
 
     StudioProperty[] properties() default {};
+
+    /**
+     * @see StudioComponent#documentationLink()
+     */
+    String documentationLink() default "";
 }

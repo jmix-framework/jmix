@@ -52,4 +52,9 @@ public @interface StudioElement {
     StudioSupplyHandler[] supplyHandlers() default {};
 
     StudioAvailableChildrenInfo availableChildren() default @StudioAvailableChildrenInfo();
+
+    /**
+     * @see StudioComponent#documentationLink()
+     */
+    String documentationLink() default "";
 }

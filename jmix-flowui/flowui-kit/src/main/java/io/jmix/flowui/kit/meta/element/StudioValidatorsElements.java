@@ -29,6 +29,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.Validator",
             xmlElement = "custom",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#custom-validator",
             properties = {
                     @StudioProperty(
                             xmlAttribute = "bean",
@@ -48,6 +49,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.DecimalMaxValidator",
             xmlElement = "decimalMax",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DecimalMaxValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -86,6 +88,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.DecimalMinValidator",
             xmlElement = "decimalMin",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DecimalMinValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -138,6 +141,7 @@ public interface StudioValidatorsElements {
             },
             xmlElement = "digits",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DigitsValidator",
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -161,6 +165,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.DoubleMaxValidator",
             xmlElement = "doubleMax",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DoubleMaxValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -199,6 +204,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.DoubleMinValidator",
             xmlElement = "doubleMin",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DoubleMinValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -237,6 +243,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.EmailValidator",
             xmlElement = "email",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#EmailValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -263,6 +270,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.FutureValidator",
             xmlElement = "future",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#FutureValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
@@ -299,6 +307,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.FutureOrPresentValidator",
             xmlElement = "futureOrPresent",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#FutureOrPresentValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
@@ -335,6 +344,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.MaxValidator",
             xmlElement = "max",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#MaxValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -368,6 +378,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.MinValidator",
             xmlElement = "min",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#MinValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -401,6 +412,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.NegativeOrZeroValidator",
             xmlElement = "negativeOrZero",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NegativeOrZeroValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -428,6 +440,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.NegativeValidator",
             xmlElement = "negative",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NegativeValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -455,6 +468,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.NotBlankValidator",
             xmlElement = "notBlank",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NotBlankValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -481,6 +495,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.NotEmptyValidator",
             xmlElement = "notEmpty",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NotEmptyValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -505,6 +520,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.NotNullValidator",
             xmlElement = "notNull",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NotNullValidator",
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -519,6 +535,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.PastOrPresentValidator",
             xmlElement = "pastOrPresent",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PastOrPresentValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
@@ -555,6 +572,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.PastValidator",
             xmlElement = "past",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PastValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
@@ -591,6 +609,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.PositiveOrZeroValidator",
             xmlElement = "positiveOrZero",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PositiveOrZeroValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -618,6 +637,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.PositiveValidator",
             xmlElement = "positive",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PositiveValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -645,6 +665,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.RegexpValidator",
             xmlElement = "regexp",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#RegexpValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
@@ -676,6 +697,7 @@ public interface StudioValidatorsElements {
             classFqn = "io.jmix.flowui.component.validation.SizeValidator",
             xmlElement = "size",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#SizeValidator",
             unsupportedTarget = {
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",

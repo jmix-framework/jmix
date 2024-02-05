@@ -30,6 +30,7 @@ public interface StudioBulkEditorActions {
             description = "Changes attribute values for several entity instances at once",
             classFqn = "io.jmix.bulkeditor.action.BulkEditAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/bulk-edit/index.html#usage",
             availableInViewWizard = true,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,

@@ -41,4 +41,6 @@ public interface GroovyScriptParametersProvider {
      * @return map of objects
      */
     Map<String, Object> getParametersForValidationParameters();
+
+    Map<String, Object> getParametersForFormatterParameters();
 }

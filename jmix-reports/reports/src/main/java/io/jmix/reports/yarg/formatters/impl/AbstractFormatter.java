@@ -16,8 +16,8 @@
 package io.jmix.reports.yarg.formatters.impl;
 
 import com.google.common.base.Preconditions;
+import io.jmix.reports.libintegration.GroovyScriptParametersProvider;
 import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
-import io.jmix.reports.yarg.util.groovy.DefaultScriptingImpl;
 import io.jmix.reports.yarg.exception.ReportFormattingException;
 import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.exception.ReportingInterruptedException;
@@ -31,6 +31,7 @@ import io.jmix.reports.yarg.util.groovy.Scripting;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -65,7 +66,11 @@ public abstract class AbstractFormatter implements ReportFormatter {
     protected OutputStream outputStream;
     protected Set<ReportOutputType> supportedOutputTypes = new HashSet<>();
     protected DefaultFormatProvider defaultFormatProvider;
-    protected Scripting scripting = new DefaultScriptingImpl();
+
+    @Autowired
+    GroovyScriptParametersProvider groovyScriptParametersProvider;
+    @Autowired
+    protected Scripting scripting;
 
     /**
      * Chain of responsibility for content inliners
@@ -128,7 +133,9 @@ public abstract class AbstractFormatter implements ReportFormatter {
         String formatString = getFormatString(parameterName, fullParameterName);
         if (formatString != null) {
             if (Boolean.TRUE.equals(isGroovyScript(parameterName, fullParameterName))) {
-                valueString = scripting.evaluateGroovy(formatString, Collections.singletonMap(VALUE, value));
+                Map<String, Object> params = groovyScriptParametersProvider.getParametersForFormatterParameters();
+                params.put(VALUE, value);
+                valueString = scripting.evaluateGroovy(formatString, params);
             } else if (formatString.startsWith("class:")) {
                 String className = formatString.replaceFirst("class:", "");
                 ValueFormat valueFormat;

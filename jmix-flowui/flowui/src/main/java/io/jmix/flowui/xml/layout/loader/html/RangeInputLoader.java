@@ -31,12 +31,7 @@ public class RangeInputLoader extends AbstractComponentLoader<RangeInput> {
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
 
-        componentLoader().loadWidth(resultComponent, element);
-        componentLoader().loadHeight(resultComponent, element);
-        componentLoader().loadMinWidth(resultComponent, element);
-        componentLoader().loadMinHeight(resultComponent, element);
-        componentLoader().loadMaxWidth(resultComponent, element);
-        componentLoader().loadMaxHeight(resultComponent, element);
+        componentLoader().loadSizeAttributes(resultComponent, element);
 
         componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadValueChangeMode(resultComponent, element);

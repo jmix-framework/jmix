@@ -22,6 +22,7 @@ import com.vaadin.flow.component.HtmlContainer
 import com.vaadin.flow.component.html.AnchorTarget
 import com.vaadin.flow.component.html.IFrame
 import com.vaadin.flow.component.html.OrderedList
+import com.vaadin.flow.component.html.RangeInput
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.data.value.ValueChangeMode
 import component_xml_load.screen.HtmlView
@@ -63,7 +64,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
         where:
         container << ["article", "aside", "descriptionList", "term", "description", "div", "emphasis", "footer", "h1",
-                      "h2", "h3", "h4", "h5", "h6", "header", "listItem", "p", "pre", "section", "span",
+                      "h2", "h3", "h4", "h5", "h6", "header", "listItem", "p", "pre", "rangeInput", "section", "span",
                       "unorderedList", "anchor", "htmlObject", "label", "main", "nav", "orderedList"]
     }
 
@@ -248,6 +249,35 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             title.get() == "detailsTitle"
             content instanceof Span
             (content as Span).text == "nativeDetailsContent"
+        }
+    }
+
+    def "Load rangeInput from XML"() {
+        when: "Open the HtmlView"
+        def htmlView = navigateToView(HtmlView.class)
+
+        then: "RangeInput attributes will be loaded"
+        verifyAll(htmlView.rangeInputId) {
+            id.get() == "rangeInputId"
+            ariaLabel.get() == "ariaLabelString"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
+            enabled
+            height == "50px"
+            max == 100
+            maxHeight == "55px"
+            maxWidth == "120px"
+            min == 10
+            minHeight == "40px"
+            minWidth == "80px"
+            orientation == RangeInput.Orientation.VERTICAL
+            readOnly
+            step == 5
+            tabIndex == 3
+            valueChangeMode == ValueChangeMode.ON_CHANGE
+            valueChangeTimeout == 50
+            visible
+            width == "100px"
         }
     }
 }

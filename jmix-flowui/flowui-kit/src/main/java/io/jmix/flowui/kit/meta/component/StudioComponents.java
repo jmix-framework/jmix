@@ -98,6 +98,7 @@ public interface StudioComponents {
             classFqn = "com.vaadin.flow.component.icon.Icon",
             category = "Components",
             xmlElement = "icon",
+            icon = "io/jmix/flowui/kit/meta/icon/component/icon.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -122,6 +123,7 @@ public interface StudioComponents {
             classFqn = "com.vaadin.flow.component.icon.SvgIcon",
             category = "Components",
             xmlElement = "svgIcon",
+            icon = "io/jmix/flowui/kit/meta/icon/component/svgIcon.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -147,6 +149,7 @@ public interface StudioComponents {
             classFqn = "com.vaadin.flow.component.icon.FontIcon",
             category = "Components",
             xmlElement = "fontIcon",
+            icon = "io/jmix/flowui/kit/meta/icon/component/fontIcon.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -174,6 +177,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.textfield.JmixBigDecimalField",
             category = "Components",
             xmlElement = "bigDecimalField",
+            icon = "io/jmix/flowui/kit/meta/icon/component/bigDecimalField.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -697,6 +701,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.kit.component.combobutton.ComboButton",
             category = "Components",
             xmlElement = "comboButton",
+            icon = "io/jmix/flowui/kit/meta/icon/component/comboButton.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -813,6 +818,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
             category = "Components",
             xmlElement = "dateTimePicker",
+            icon = "io/jmix/flowui/kit/meta/icon/component/datePicker.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -876,6 +882,7 @@ public interface StudioComponents {
             classFqn = "com.vaadin.flow.component.applayout.DrawerToggle",
             category = "Components",
             xmlElement = "drawerToggle",
+            icon = "io/jmix/flowui/kit/meta/icon/component/drawerToggle.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -910,6 +917,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.textfield.JmixEmailField",
             category = "Components",
             xmlElement = "emailField",
+            icon = "io/jmix/flowui/kit/meta/icon/component/emailField.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1294,6 +1302,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.textfield.JmixIntegerField",
             category = "Components",
             xmlElement = "integerField",
+            icon = "io/jmix/flowui/kit/meta/icon/component/integerField.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1381,6 +1390,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.textfield.JmixNumberField",
             category = "Components",
             xmlElement = "numberField",
+            icon = "io/jmix/flowui/kit/meta/icon/component/numberField.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1648,6 +1658,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.select.JmixSelect",
             category = "Components",
             xmlElement = "select",
+            icon = "io/jmix/flowui/kit/meta/icon/component/select.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1757,6 +1768,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.listbox.JmixListBox",
             category = "Components",
             xmlElement = "listBox",
+            icon = "io/jmix/flowui/kit/meta/icon/component/listBox.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1799,6 +1811,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.listbox.JmixMultiSelectListBox",
             category = "Components",
             xmlElement = "multiSelectListBox",
+            icon = "io/jmix/flowui/kit/meta/icon/component/listBox.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -2016,6 +2029,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.timepicker.TypedTimePicker",
             category = "Components",
             xmlElement = "timePicker",
+            icon = "io/jmix/flowui/kit/meta/icon/component/timePicker.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -2192,6 +2206,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.loginform.JmixLoginForm",
             category = "Components",
             xmlElement = "loginForm",
+            icon = "io/jmix/flowui/kit/meta/icon/component/loginForm.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -2460,6 +2475,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter",
             category = "Components",
             xmlElement = "propertyFilter",
+            icon = "io/jmix/flowui/kit/meta/icon/component/propertyFilter.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -2523,6 +2539,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
             category = "Components",
             xmlElement = "jpqlFilter",
+            icon = "io/jmix/flowui/kit/meta/icon/component/jpqlFilter.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -2815,6 +2832,7 @@ public interface StudioComponents {
             classFqn = "io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility",
             category = "Components",
             xmlElement = "gridColumnVisibility",
+            icon = "io/jmix/flowui/kit/meta/icon/component/gridColumnVisibility.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

@@ -39,13 +39,11 @@ import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.*;
-import io.jmix.search.searching.impl.SearchResultImpl;
 import io.jmix.searchflowui.view.result.SearchResultsView;
 import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -76,8 +74,10 @@ public class SearchField extends CustomField<String>
     protected List<String> entities;
     protected OpenMode openMode;
     protected int searchSize;
+    /**
+     * allows to bind custom results handler to replace standart dialog/view opening behaviour
+     */
     protected Consumer<SearchCompletedEvent> searchResultHandler;
-    protected SearchStrategyManager searchStrategyManager;
     protected EntitySearcher entitySearcher;
 
     @Override
@@ -100,7 +100,6 @@ public class SearchField extends CustomField<String>
         searchProperties = applicationContext.getBean(SearchProperties.class);
         viewNavigators = applicationContext.getBean(ViewNavigators.class);
         dialogWindows = applicationContext.getBean(DialogWindows.class);
-        searchStrategyManager = applicationContext.getBean(SearchStrategyManager.class);
         entitySearcher = applicationContext.getBean(EntitySearcher.class);
     }
 
@@ -207,24 +206,6 @@ public class SearchField extends CustomField<String>
         return searchResultHandler;
     }
 
-    public static class SearchCompletedEvent {
-        protected SearchField source;
-        protected SearchResult searchResult;
-
-        public SearchCompletedEvent(SearchField source, SearchResult searchResult) {
-            this.source = source;
-            this.searchResult = searchResult;
-        }
-
-        public SearchResult getSearchResult() {
-            return searchResult;
-        }
-
-        public SearchField getSource() {
-            return source;
-        }
-    }
-
     @Override
     public String getValue() {
         return root.getValue();
@@ -261,4 +242,23 @@ public class SearchField extends CustomField<String>
     public void setSearchSize(int searchSize) {
         this.searchSize = searchSize;
     }
+
+    public static class SearchCompletedEvent {
+        protected SearchField source;
+        protected SearchResult searchResult;
+
+        public SearchCompletedEvent(SearchField source, SearchResult searchResult) {
+            this.source = source;
+            this.searchResult = searchResult;
+        }
+
+        public SearchResult getSearchResult() {
+            return searchResult;
+        }
+
+        public SearchField getSource() {
+            return source;
+        }
+    }
+
 }

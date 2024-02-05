@@ -134,7 +134,8 @@ public class ReportRestControllerManager {
         Report report = loadReportInternal(entityId);
         final ReportRunRestBody body;
         try {
-            body = createGson().fromJson(bodyJson, ReportRunRestBody.class);
+            body = Optional.ofNullable(createGson().fromJson(bodyJson, ReportRunRestBody.class))
+                    .orElse(new ReportRunRestBody());
         } catch (JsonSyntaxException e) {
             throw new RestAPIException("Invalid JSON body",
                     e.getMessage(),

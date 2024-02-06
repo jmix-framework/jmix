@@ -68,7 +68,7 @@ public abstract class AbstractFormatter implements ReportFormatter {
     protected DefaultFormatProvider defaultFormatProvider;
 
     @Autowired
-    GroovyScriptParametersProvider groovyScriptParametersProvider;
+    protected GroovyScriptParametersProvider groovyScriptParametersProvider;
     @Autowired
     protected Scripting scripting;
 

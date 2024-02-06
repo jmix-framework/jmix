@@ -656,7 +656,6 @@ public interface StudioElements {
 
     @StudioElement(
             name = "PropertyFilter",
-            classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter",
             xmlElement = "propertyFilter",
             target = {
                     "io.jmix.flowui.component.logicalfilter.GroupFilter",

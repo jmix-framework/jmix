@@ -16,5 +16,53 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
-public class ChartLegendSelectChangedEventDetail extends ChartSelectEventDetail {
+import io.jmix.chartsflowui.kit.component.event.ChartLegendSelectChangedEvent;
+
+import java.util.Map;
+
+/**
+ * @see ChartLegendSelectChangedEvent
+ */
+public class ChartLegendSelectChangedEventDetail extends BaseChartEventDetail {
+
+    protected String name;
+
+    protected Map<String, Boolean> selected;
+
+    protected Boolean isFromClick;
+
+    protected Map<String, Object> fromActionPayload;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Map<String, Boolean> getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Map<String, Boolean> selected) {
+        this.selected = selected;
+    }
+
+    public Boolean getIsFromClick() {
+        return isFromClick;
+    }
+
+    public void setIsFromClick(Boolean fromClick) {
+        isFromClick = fromClick;
+    }
+
+    public Map<String, Object> getFromActionPayload() {
+        return fromActionPayload;
+    }
+
+    public void setFromActionPayload(Map<String, Object> fromActionPayload) {
+        this.fromActionPayload = fromActionPayload;
+    }
+
 }

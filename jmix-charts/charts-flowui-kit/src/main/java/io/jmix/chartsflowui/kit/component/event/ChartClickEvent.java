@@ -23,6 +23,9 @@ import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartClickEventDetail;
 
+/**
+ * Event fired after clicking on chart series elements.
+ */
 @DomEvent(ChartClickEvent.EVENT_NAME)
 public class ChartClickEvent extends AbstractChartMouseEvent<ChartClickEventDetail> {
 

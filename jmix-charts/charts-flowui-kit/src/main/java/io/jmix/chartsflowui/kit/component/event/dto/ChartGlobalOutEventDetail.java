@@ -16,5 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
+import io.jmix.chartsflowui.kit.component.event.ChartGlobalOutEvent;
+
+/**
+ * @see ChartGlobalOutEvent
+ */
 public class ChartGlobalOutEventDetail extends BaseChartEventDetail {
 }

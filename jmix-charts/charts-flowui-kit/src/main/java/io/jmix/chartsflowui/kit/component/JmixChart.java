@@ -981,41 +981,12 @@ public class JmixChart extends Component implements HasSize {
         return getRemovalCallback(ChartGlobalOutEvent.EVENT_NAME, ChartGlobalOutEvent.class);
     }
 
-    public Registration addHighlightEventListener(ComponentEventListener<ChartHighlightEvent> listener) {
-        Registration eventRegistration = getEventBus().addListener(ChartHighlightEvent.class, listener);
-        eventRegistrations.put(ChartHighlightEvent.EVENT_NAME, eventRegistration);
-
-        return getRemovalCallback(ChartHighlightEvent.EVENT_NAME, ChartHighlightEvent.class);
-    }
-
-    public Registration addSelectChangedEventListener(ComponentEventListener<ChartSelectChangedEvent> listener) {
-        Registration eventRegistration = getEventBus().addListener(ChartSelectChangedEvent.class, listener);
-        eventRegistrations.put(ChartSelectChangedEvent.EVENT_NAME, eventRegistration);
-
-        return getRemovalCallback(ChartSelectChangedEvent.EVENT_NAME, ChartSelectChangedEvent.class);
-    }
-
     public Registration addLegendSelectChangedEventListener(
             ComponentEventListener<ChartLegendSelectChangedEvent> listener) {
         Registration eventRegistration = getEventBus().addListener(ChartLegendSelectChangedEvent.class, listener);
         eventRegistrations.put(ChartLegendSelectChangedEvent.EVENT_NAME, eventRegistration);
 
         return getRemovalCallback(ChartLegendSelectChangedEvent.EVENT_NAME, ChartLegendSelectChangedEvent.class);
-    }
-
-    public Registration addLegendSelectedEventListener(ComponentEventListener<ChartLegendSelectedEvent> listener) {
-        Registration eventRegistration = getEventBus().addListener(ChartLegendSelectedEvent.class, listener);
-        eventRegistrations.put(ChartLegendSelectedEvent.EVENT_NAME, eventRegistration);
-
-        return getRemovalCallback(ChartLegendSelectedEvent.EVENT_NAME, ChartLegendSelectedEvent.class);
-    }
-
-    public Registration addLegendUnselectedEventListener(
-            ComponentEventListener<ChartLegendUnselectedEvent> listener) {
-        Registration eventRegistration = getEventBus().addListener(ChartLegendUnselectedEvent.class, listener);
-        eventRegistrations.put(ChartLegendUnselectedEvent.EVENT_NAME, eventRegistration);
-
-        return getRemovalCallback(ChartLegendUnselectedEvent.EVENT_NAME, ChartLegendUnselectedEvent.class);
     }
 
     public Registration addLegendSelectAllEventListener(
@@ -1061,14 +1032,6 @@ public class JmixChart extends Component implements HasSize {
         eventRegistrations.put(ChartMagicTypeChangedEvent.EVENT_NAME, eventRegistration);
 
         return getRemovalCallback(ChartMagicTypeChangedEvent.EVENT_NAME, ChartMagicTypeChangedEvent.class);
-    }
-
-    public Registration addAxisAreaSelectedEventListener(
-            ComponentEventListener<ChartAxisAreaSelectedEvent> listener) {
-        Registration eventRegistration = getEventBus().addListener(ChartAxisAreaSelectedEvent.class, listener);
-        eventRegistrations.put(ChartAxisAreaSelectedEvent.EVENT_NAME, eventRegistration);
-
-        return getRemovalCallback(ChartAxisAreaSelectedEvent.EVENT_NAME, ChartAxisAreaSelectedEvent.class);
     }
 
     public Registration addGlobalCursorTakenEventListener(

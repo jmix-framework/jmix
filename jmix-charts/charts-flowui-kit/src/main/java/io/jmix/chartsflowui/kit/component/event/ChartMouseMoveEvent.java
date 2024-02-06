@@ -23,6 +23,9 @@ import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartMouseMoveEventDetail;
 
+/**
+ * Event is fired when the user moves the cursor.
+ */
 @DomEvent(ChartMouseMoveEvent.EVENT_NAME)
 public class ChartMouseMoveEvent extends AbstractChartMouseEvent<ChartMouseMoveEventDetail> {
 

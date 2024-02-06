@@ -23,6 +23,9 @@ import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartMouseOutEventDetail;
 
+/**
+ * Event is fired after the user moves the cursor out of the chart series element.
+ */
 @DomEvent(ChartMouseOutEvent.EVENT_NAME)
 public class ChartMouseOutEvent extends AbstractChartMouseEvent<ChartMouseOutEventDetail> {
 

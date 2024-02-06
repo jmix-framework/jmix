@@ -19,7 +19,10 @@ package io.jmix.chartsflowui.kit.component.event.dto;
 import java.util.List;
 import java.util.Map;
 
-public class ChartMouseEventDetail extends ChartComponentEventDetail {
+/**
+ * Base detail for mouse events.
+ */
+public abstract class AbstractChartMouseEventDetail extends AbstractChartComponentEventDetail {
 
     protected Integer xAxisIndex;
 
@@ -47,6 +50,8 @@ public class ChartMouseEventDetail extends ChartComponentEventDetail {
 
     protected Map<String, Object> data;
 
+    protected Integer singleData;
+
     public Double getPercent() {
         return percent;
     }
@@ -69,22 +74,6 @@ public class ChartMouseEventDetail extends ChartComponentEventDetail {
 
     public void setDimensionNames(List<String> dimensionNames) {
         this.dimensionNames = dimensionNames;
-    }
-
-    public Integer getxAxisIndex() {
-        return xAxisIndex;
-    }
-
-    public void setxAxisIndex(Integer xAxisIndex) {
-        this.xAxisIndex = xAxisIndex;
-    }
-
-    public Integer getyAxisIndex() {
-        return yAxisIndex;
-    }
-
-    public void setyAxisIndex(Integer yAxisIndex) {
-        this.yAxisIndex = yAxisIndex;
     }
 
     public Map<String, Object> getEncode() {
@@ -165,5 +154,13 @@ public class ChartMouseEventDetail extends ChartComponentEventDetail {
 
     public void setData(Map<String, Object> data) {
         this.data = data;
+    }
+
+    public Integer getSingleData() {
+        return singleData;
+    }
+
+    public void setSingleData(Integer singleData) {
+        this.singleData = singleData;
     }
 }

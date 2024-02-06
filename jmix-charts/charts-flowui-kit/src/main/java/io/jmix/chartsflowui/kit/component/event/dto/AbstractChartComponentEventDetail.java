@@ -16,7 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
-public class ChartComponentEventDetail extends BaseChartEventDetail {
+/**
+ * Base detail for component aware events.
+ */
+public abstract class AbstractChartComponentEventDetail extends BaseChartEventDetail {
 
     protected String componentType;
 

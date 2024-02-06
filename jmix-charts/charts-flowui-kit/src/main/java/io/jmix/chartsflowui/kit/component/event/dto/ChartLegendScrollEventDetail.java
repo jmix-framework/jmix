@@ -16,6 +16,11 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
+import io.jmix.chartsflowui.kit.component.event.ChartLegendScrollEvent;
+
+/**
+ * @see ChartLegendScrollEvent
+ */
 public class ChartLegendScrollEventDetail extends BaseChartEventDetail {
 
     protected Integer scrollDataIndex;

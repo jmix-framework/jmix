@@ -16,8 +16,13 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
+import io.jmix.chartsflowui.kit.component.event.ChartLegendInverseSelectEvent;
+
 import java.util.Map;
 
+/**
+ * @see ChartLegendInverseSelectEvent
+ */
 public class ChartLegendInverseSelectEventDetail extends BaseChartEventDetail {
 
     protected Map<String, Boolean> selected;

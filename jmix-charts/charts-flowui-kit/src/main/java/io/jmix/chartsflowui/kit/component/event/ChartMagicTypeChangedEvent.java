@@ -21,7 +21,13 @@ import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartMagicTypeChangedEventDetail;
+import io.jmix.chartsflowui.kit.component.model.toolbox.MagicTypeFeature;
 
+/**
+ * Event fired when magic type in a toolbox changes.
+ *
+ * @see MagicTypeFeature#setTypes(MagicTypeFeature.MagicType...)
+ */
 @DomEvent(ChartMagicTypeChangedEvent.EVENT_NAME)
 public class ChartMagicTypeChangedEvent extends AbstractChartEvent<ChartMagicTypeChangedEventDetail> {
 

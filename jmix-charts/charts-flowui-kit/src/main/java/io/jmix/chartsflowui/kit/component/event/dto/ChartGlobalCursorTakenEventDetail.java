@@ -16,5 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
+import io.jmix.chartsflowui.kit.component.event.ChartGlobalCursorTakenEvent;
+
+/**
+ * @see ChartGlobalCursorTakenEvent
+ */
 public class ChartGlobalCursorTakenEventDetail extends BaseChartEventDetail {
 }

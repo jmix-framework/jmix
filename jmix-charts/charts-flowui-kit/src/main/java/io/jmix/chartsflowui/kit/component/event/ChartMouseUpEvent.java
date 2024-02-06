@@ -23,6 +23,9 @@ import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartMouseUpEventDetail;
 
+/**
+ * Event if fired after the user releases click.
+ */
 @DomEvent(ChartMouseUpEvent.EVENT_NAME)
 public class ChartMouseUpEvent extends AbstractChartMouseEvent<ChartMouseUpEventDetail> {
 

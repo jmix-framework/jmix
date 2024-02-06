@@ -22,6 +22,9 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartGlobalOutEventDetail;
 
+/**
+ * Event fired if the mouse cursor moves outside the component.
+ */
 @DomEvent(ChartGlobalOutEvent.EVENT_NAME)
 public class ChartGlobalOutEvent extends AbstractChartEvent<ChartGlobalOutEventDetail> {
 

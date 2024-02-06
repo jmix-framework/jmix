@@ -21,7 +21,12 @@ import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.BaseChartEventDetail;
 
-public class AbstractChartMouseEvent<T extends BaseChartEventDetail> extends AbstractChartEvent<T> {
+/**
+ * Base chart event for mouse.
+ *
+ * @param <T> origin event detail type
+ */
+public abstract class AbstractChartMouseEvent<T extends BaseChartEventDetail> extends AbstractChartEvent<T> {
 
     protected String value;
 

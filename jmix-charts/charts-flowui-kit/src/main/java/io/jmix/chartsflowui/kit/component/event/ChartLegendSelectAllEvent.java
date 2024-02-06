@@ -22,6 +22,9 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartLegendSelectAllEventDetail;
 
+/**
+ * Event fired after selecting all selectors.
+ */
 @DomEvent(ChartLegendSelectAllEvent.EVENT_NAME)
 public class ChartLegendSelectAllEvent extends AbstractChartEvent<ChartLegendSelectAllEventDetail> {
 

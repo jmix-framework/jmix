@@ -22,6 +22,9 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartLegendSelectChangedEventDetail;
 
+/**
+ * Event will be fired when users toggle legend selector in legend component.
+ */
 @DomEvent(ChartLegendSelectChangedEvent.EVENT_NAME)
 public class ChartLegendSelectChangedEvent extends AbstractChartEvent<ChartLegendSelectChangedEventDetail> {
 

@@ -26,19 +26,24 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.BaseChartEventDetail;
 
+/**
+ * Base chart event class. Stores an {@link AbstractChartEvent#detailJson} object containing the event context.
+ *
+ * @param <T> origin event class type
+ */
 public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends ComponentEvent<JmixChart> {
 
     public static final String EVENT_NAME_PREFIX = "jmix-chart:";
-
-    protected JsonObject detailJson;
-
-    protected T detail;
-    protected Class<T> detailClass;
 
     private final static ObjectMapper mapper = JsonMapper.builder()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true)
             .build();
+
+    protected JsonObject detailJson;
+
+    protected T detail;
+    protected Class<T> detailClass;
 
     public AbstractChartEvent(JmixChart source, boolean fromClient,
                               JsonObject detail, Class<T> detailClass) {
@@ -48,10 +53,21 @@ public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends
         this.detailClass = detailClass;
     }
 
+    /**
+     * {@code detailJson} can be used for independent parsing if the predefined mapping doesn't match.
+     *
+     * @return {@link JsonObject} describing the context of the event that occurred on the client-side.
+     */
     public JsonObject getDetailJson() {
         return detailJson;
     }
 
+    /**
+     * Lazily returns an event detail object. Implemented in a lazy way due to the fact that the event stream
+     * can be loaded and because of this, parsing all the details can cause performance issues.
+     *
+     * @return POJO describing the event
+     */
     public T getDetail() {
         if (detail == null) {
             detail = convertDetail(detailClass);
@@ -59,12 +75,21 @@ public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends
         return detail;
     }
 
-    public <M> M convertDetail(Class<M> detailClass) {
+    /**
+     * Deserializes the incoming event JSON object into a POJO.
+     *
+     * @param detailClass the class of the resulting POJO object
+     * @param <M>         resulting POJO class type
+     * @return POJO describing the event if the parse was successful
+     * @throws IllegalArgumentException if parsing fails
+     */
+    protected <M> M convertDetail(Class<M> detailClass) {
         M converted;
         try {
             converted = mapper.readValue(detailJson.toJson(), detailClass);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            String message = String.format("Unparsable JsonObject for the '%s'", detailClass.getSimpleName());
+            throw new IllegalArgumentException(message, e);
         }
 
         return converted;

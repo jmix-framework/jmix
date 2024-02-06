@@ -26,6 +26,10 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
 
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.security.MessageDigest
+
 import static io.jmix.gradle.DescriptorGenerationUtils.CONVERTERS_LIST_PROPERTY
 import static io.jmix.gradle.MetaModelUtil.*
 
@@ -50,11 +54,20 @@ class EnhancingAction implements Action<Task> {
 
         ClassesInfo classesInfo = collectClasses(project, sourceSet)
 
-        constructDescriptors(project, sourceSet, classesInfo)
+        boolean entitiesEnhancingRequired = !project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing ||
+                entityClassesChangedSinceLastBuild(project, sourceSet, classesInfo)
 
-        persistenceProviderEnhancing().run(project, sourceSet, classesInfo.allStores())
+        if (entitiesEnhancingRequired) {
+            constructDescriptors(project, sourceSet, classesInfo)
+            persistenceProviderEnhancing().run(project, sourceSet, classesInfo.allStores())
+            runJmixEnhancing(project, sourceSet, classesInfo)
 
-        runJmixEnhancing(project, sourceSet, classesInfo)
+            if (project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing) {
+                saveEnhancedEntityClassesForNextBuild(project, sourceSet, classesInfo)
+            }
+        } else {
+            project.logger.lifecycle "Entities enhancing was skipped, because entity classes haven't been changed since the last build"
+        }
     }
 
     protected ClassesInfo collectClasses(Project project, SourceSet sourceSet) {
@@ -239,6 +252,71 @@ class EnhancingAction implements Action<Task> {
                 }
             }
         }
+    }
+
+    /**
+     * Copies enhanced entity classes to the temp directory, e.g. "build/tmp/entitiesEnhancing/prev/com/company/entity"
+     * On the next project build, entities classes from the "build" directory will be compared with the saved ones to
+     * find out if entities have been changed since the last compilation.
+     */
+    protected void saveEnhancedEntityClassesForNextBuild(Project project, sourceSet, ClassesInfo classesInfo) {
+        String javaOutputDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
+        for (className in classesInfo.getAllEntities()) {
+            def classFileName = className.replace('.', '/') + '.class'
+            def classFile = new File(javaOutputDir, classFileName)
+
+            // skip files from dependencies, copy only classes from `javaOutputDir`
+            if (classFile.exists()) {
+                def outputDir = "${getPreviousEntityEnhancingResultDir(project)}/${classFileName.substring(0, classFileName.lastIndexOf("/"))}"
+                project.copy {
+                    from classFile
+                    into outputDir
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if entity classes in a project build directory and entity classes saved during last project build are not
+     * the same
+     */
+    protected boolean entityClassesChangedSinceLastBuild(Project project, SourceSet sourceSet, ClassesInfo classesInfo) {
+        String prevDirectory = getPreviousEntityEnhancingResultDir(project)
+        if (!Files.exists(Paths.get(prevDirectory))) return true
+
+        String javaOutputDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
+        for (className in classesInfo.getAllEntities()) {
+            def classFileName = className.replace('.', '/') + '.class'
+            def classFile = new File(javaOutputDir, classFileName)
+
+            // skip files from dependencies, analyze only classes from `javaOutputDir`
+            if (classFile.exists()) {
+                //if there is any new entity class then enhancing step must be executed
+                def prevPath = Paths.get("$prevDirectory/$classFileName")
+                if (!Files.exists(prevPath)) return true
+
+                def checkSum1 = checkSum(classFile)
+                def checkSum2 = checkSum(prevPath.toFile())
+
+                //if checksums are different then this means that entity class has been changed
+                if (checkSum1 != checkSum2) return true
+            }
+        }
+
+        return false
+    }
+
+    protected String checkSum(File file) {
+        byte[] data = Files.readAllBytes(file.toPath())
+        byte[] hash = MessageDigest.getInstance("MD5").digest(data)
+        return new BigInteger(1, hash).toString(16)
+    }
+
+    /**
+     * Returns a string with a path to temp directory where enhanced entity classes should be copied to
+     */
+    protected String getPreviousEntityEnhancingResultDir(Project project) {
+        return "$project.buildDir/tmp/entitiesEnhancing/prev"
     }
 
     static ClassPool createClassPool(Project project, sourceSet) {

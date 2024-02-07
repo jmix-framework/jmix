@@ -298,6 +298,7 @@ public class TypedTextField<V> extends TextField
             } catch (ConversionException e) {
                 setErrorMessage(e.getLocalizedMessage());
                 fieldDelegate.setConversionInvalid(true);
+                fieldDelegate.updateInvalidState();
             }
         }
     }

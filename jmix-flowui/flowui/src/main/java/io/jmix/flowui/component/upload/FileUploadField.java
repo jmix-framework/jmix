@@ -113,7 +113,6 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
 
     @Override
     public boolean isInvalid() {
-        validate();
         return fieldDelegate.isInvalid();
     }
 
@@ -250,7 +249,7 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
     }
 
     protected void onValueChange(ComponentValueChangeEvent<FileUploadField, byte[]> event) {
-        isInvalid();
+        validate();
     }
 
     @Override
@@ -266,11 +265,5 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
     protected void applyI18nDefaults() {
         JmixUploadI18N i18nDefaults = applicationContext.getBean(UploadFieldI18NSupport.class).getI18nUploadField();
         setI18n(i18nDefaults);
-    }
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-        isInvalid();
     }
 }

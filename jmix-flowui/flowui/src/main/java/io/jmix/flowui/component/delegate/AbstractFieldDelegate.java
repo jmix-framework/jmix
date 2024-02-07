@@ -234,8 +234,6 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
     public void setConversionInvalid(boolean conversionInvalid) {
         this.conversionInvalid = conversionInvalid;
-
-        updateInvalidState();
     }
 
     public void updateInvalidState() {

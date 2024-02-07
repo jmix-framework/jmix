@@ -50,6 +50,9 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <settings>
+            <component id="sendingMessageDataGrid"/>
+        </settings>
     </facets>
     <layout>
         <split width="100%" height="100%" splitterPosition="70" themeNames="splitter-spacing">
@@ -61,23 +64,7 @@
                     <gridColumnVisibility id="sendingMessageDataGridColumnVisibility"
                                           dataGrid="sendingMessageDataGrid"
                                           text="msg://sendingMessageView.sendingMessageDataGrid.columnVisibility"
-                                          icon="COG">
-                        <menuItem refColumn="address"/>
-                        <menuItem refColumn="cc"/>
-                        <menuItem refColumn="bcc"/>
-                        <menuItem refColumn="from"/>
-                        <menuItem refColumn="subject"/>
-                        <menuItem refColumn="status"/>
-                        <menuItem refColumn="bodyContentType"/>
-                        <menuItem refColumn="createTs"/>
-                        <menuItem refColumn="dateSent"/>
-                        <menuItem refColumn="updateTs"/>
-                        <menuItem refColumn="attachmentsName"/>
-                        <menuItem refColumn="attemptsLimit"/>
-                        <menuItem refColumn="deadline"/>
-                        <menuItem refColumn="attemptsMade"/>
-                        <menuItem refColumn="important"/>
-                    </gridColumnVisibility>
+                                          icon="COG"/>
                     <simplePagination id="pagination" dataLoader="sendingMessagesDl"/>
                 </hbox>
                 <dataGrid id="sendingMessageDataGrid" width="100%" dataContainer="sendingMessagesDc"
@@ -89,17 +76,17 @@
                                 type="list_itemTracking" icon="lumo:reload"/>
                     </actions>
                     <columns resizable="true">
-                        <column property="address" sortable="false" autoWidth="true"/>
-                        <column property="cc"/>
-                        <column property="bcc"/>
+                        <column property="address" autoWidth="true" sortable="false"/>
+                        <column property="cc" autoWidth="true"/>
+                        <column property="bcc" autoWidth="true"/>
                         <column property="from" autoWidth="true"/>
-                        <column property="subject" width="300px"/>
+                        <column property="subject" autoWidth="true"/>
                         <column property="status" autoWidth="true"/>
-                        <column property="bodyContentType" width="180px"/>
+                        <column property="bodyContentType" autoWidth="true"/>
                         <column property="createTs" autoWidth="true"/>
                         <column property="dateSent" autoWidth="true"/>
                         <column property="updateTs" autoWidth="true"/>
-                        <column property="attachmentsName" sortable="false" width="180px"/>
+                        <column property="attachmentsName" autoWidth="true" sortable="false"/>
                         <column property="attemptsLimit" autoWidth="true"/>
                         <column property="deadline" autoWidth="true"/>
                         <column property="attemptsMade" autoWidth="true"/>

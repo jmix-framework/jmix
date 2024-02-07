@@ -67,6 +67,7 @@ public interface StudioComponents {
             classFqn = "com.vaadin.flow.component.avatar.Avatar",
             category = "Components",
             xmlElement = "avatar",
+            icon = "io/jmix/flowui/kit/meta/icon/component/avatar.svg",
             documentationLink = "%VERSION%/flow-ui/vc/components/avatar.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,

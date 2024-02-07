@@ -41,7 +41,6 @@ public class RangeInputLoader extends AbstractComponentLoader<RangeInput> {
         loadDouble(element, "min", resultComponent::setMin);
         loadDouble(element, "max", resultComponent::setMax);
         loadDouble(element, "step", resultComponent::setStep);
-        loadEnum(element, RangeInput.Orientation.class, "orientation")
-                .ifPresent(resultComponent::setOrientation);
+        loadEnum(element, RangeInput.Orientation.class, "orientation", resultComponent::setOrientation);
     }
 }

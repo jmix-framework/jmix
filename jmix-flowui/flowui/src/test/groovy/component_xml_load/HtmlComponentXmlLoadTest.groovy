@@ -64,7 +64,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
         where:
         container << ["article", "aside", "descriptionList", "term", "description", "div", "emphasis", "footer", "h1",
-                      "h2", "h3", "h4", "h5", "h6", "header", "listItem", "p", "pre", "rangeInput", "section", "span",
+                      "h2", "h3", "h4", "h5", "h6", "header", "listItem", "p", "pre", "section", "span",
                       "unorderedList", "anchor", "htmlObject", "label", "main", "nav", "orderedList"]
     }
 

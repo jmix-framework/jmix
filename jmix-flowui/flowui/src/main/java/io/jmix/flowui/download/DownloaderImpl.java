@@ -136,7 +136,6 @@ public class DownloaderImpl implements Downloader {
                          String resourceName,
                          @Nullable DownloadFormat downloadFormat) {
         checkUIAccess();
-
         checkFileExists(dataProvider);
 
         boolean showNewWindow = this.newWindow;

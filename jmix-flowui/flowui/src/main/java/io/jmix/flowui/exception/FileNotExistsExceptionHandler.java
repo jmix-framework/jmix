@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.download;
+package io.jmix.flowui.exception;
 
 import io.jmix.core.FileStorageException;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.exception.AbstractUiExceptionHandler;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
 @Component
 public class FileNotExistsExceptionHandler extends AbstractUiExceptionHandler {
+
     private final Notifications notifications;
     private final Messages messages;
 
@@ -50,7 +50,6 @@ public class FileNotExistsExceptionHandler extends AbstractUiExceptionHandler {
 
         notifications.create(formattedMessage)
                 .withType(Notifications.Type.ERROR)
-                .withDuration(3000)
                 .show();
     }
 }

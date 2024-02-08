@@ -191,6 +191,13 @@ public class FlowuiSecurityConfiguration {
         urlRegistry.requestMatchers(
                 getDefaultHttpSecurityPermitMatcher(getUrlMapping())).permitAll();
 
+        //We need such request matcher here in order to permit access to login page when a query parameter is passed.
+        //For example, in case of using the multi-tenancy add-on we need to pass the query parameter: /login?tenantId=mytenant
+        //By default, only access to /login is allowed and access to /login?someParam=someVal is blocked. The request
+        //matcher below allows access to login view with any query parameter.
+        String loginPath = getLoginPath();
+        urlRegistry.requestMatchers(request -> loginPath.equals(request.getRequestURI())).permitAll();
+
         // Permit default Spring framework error page (/error)
         MvcRequestMatcher.Builder mvcRequestMatcherBuilder = new MvcRequestMatcher.Builder(applicationContext.getBean(HandlerMappingIntrospector.class));
         MvcRequestMatcher errorPageRequestMatcher = mvcRequestMatcherBuilder.pattern(serverProperties.getError().getPath());
@@ -410,5 +417,34 @@ public class FlowuiSecurityConfiguration {
             path = path.substring(1);
         }
         return urlMapping + "/" + path;
+    }
+
+    protected String getLoginPath() {
+        String loginViewId = uiProperties.getLoginViewId();
+        Class<? extends View<?>> loginViewClass =
+                viewRegistry.getViewInfo(loginViewId).getControllerClass();
+
+        Optional<Route> route = AnnotationReader.getAnnotationFor(loginViewClass, Route.class);
+
+        if (route.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Unable find a @Route annotation on the login view "
+                            + loginViewClass.getName());
+        }
+
+        if (!(applicationContext instanceof WebApplicationContext)) {
+            throw new RuntimeException(
+                    "VaadinWebSecurity cannot be used without WebApplicationContext.");
+        }
+
+        VaadinServletContext vaadinServletContext = new VaadinServletContext(
+                ((WebApplicationContext) applicationContext).getServletContext());
+        String loginPath = RouteUtil.getRoutePath(vaadinServletContext, loginViewClass);
+        if (!loginPath.startsWith("/")) {
+            loginPath = "/" + loginPath;
+        }
+        loginPath = applyUrlMapping(loginPath);
+
+        return loginPath;
     }
 }

@@ -42,7 +42,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
@@ -136,6 +136,7 @@ public class DownloaderImpl implements Downloader {
                          String resourceName,
                          @Nullable DownloadFormat downloadFormat) {
         checkUIAccess();
+        checkFileExists(dataProvider);
 
         boolean showNewWindow = this.newWindow;
 
@@ -244,6 +245,17 @@ public class DownloaderImpl implements Downloader {
         }
     }
 
+    protected void checkFileExists(DownloadDataProvider dataProvider) {
+        if (!(dataProvider instanceof FileRefDownloadDataProvider)) {
+            return;
+        }
+
+        FileRef fileRef = ((FileRefDownloadDataProvider) dataProvider).fileReference;
+        if (!fileStorage.fileExists(fileRef)) {
+            throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND, fileRef.toString());
+        }
+    }
+
     protected boolean handleFileNotFoundException(JmixFileDownloader.FileNotFoundContext fileNotFoundEvent) {
         Exception exception = fileNotFoundEvent.getException();
         VaadinResponse response = fileNotFoundEvent.getResponse();
@@ -274,9 +286,10 @@ public class DownloaderImpl implements Downloader {
         response.setStatus(SC_NOT_FOUND);
         response.setHeader("Content-Type", "text/html; charset=utf-8");
 
-        PrintWriter writer = response.getWriter();
-        writer.write("<h1 style=\"font-size:40px;\">404</h1><p style=\"font-size: 25px\">" + message + "</p>");
-        writer.flush();
+        String outputStr = "<h1 style=\"font-size:40px;\">404</h1><p style=\"font-size: 25px\">" + message + "</p>";
+        byte[] outputBytes = outputStr.getBytes(StandardCharsets.UTF_8);
+        response.getOutputStream().write(outputBytes);
+        response.getOutputStream().flush();
     }
 
     protected String normalize(String originString) {

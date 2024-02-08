@@ -2,7 +2,7 @@ package ${packageName};
 
 import ${entity.fqn};<%if (!api.jmixProjectModule.isApplication()) {%>
 import io.jmix.flowui.view.DefaultMainViewParent;<%} else {%>
-import ${module_basePackage}.view.main.MainView;
+import ${routeLayout.getControllerFqn()};
 <%}%>import com.vaadin.flow.router.Route;
 import io.jmix.core.LoadContext;
 import io.jmix.flowui.view.*;
@@ -12,7 +12,7 @@ import java.util.List;
 
 <%if (classComment) {%>
 ${classComment}
-<%}%>@Route(value = "${listRoute}", layout = <%if (!api.jmixProjectModule.isApplication()) {%> DefaultMainViewParent.class <%} else {%>MainView.class<%}%>)
+<%}%>@Route(value = "${listRoute}", layout = <%if (!api.jmixProjectModule.isApplication()) {%> DefaultMainViewParent.class <%} else {%>${routeLayout.getControllerClassName()}.class<%}%>)
 @ViewController("${viewId}")
 @ViewDescriptor("${viewDescriptorName}.xml")
 @LookupComponent("${tableId}")

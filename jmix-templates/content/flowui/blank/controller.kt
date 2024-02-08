@@ -3,7 +3,7 @@ package ${packageName}
 <%if (!api.jmixProjectModule.isApplication()) {%>
 import io.jmix.flowui.view.DefaultMainViewParent
 <%} else {%>
-import ${module_basePackage}.view.main.MainView
+import ${routeLayout.getControllerFqn()}
 <%}%>import com.vaadin.flow.router.Route
 <%if (controllerName != "StandardView") {
 %>import io.jmix.flowui.view.StandardView<%
@@ -16,7 +16,7 @@ import io.jmix.flowui.view.ViewDescriptor
 
 <%if (classComment) {%>
         ${classComment}
-<%}%>@Route(value = "${route}", layout = <%if (!api.jmixProjectModule.isApplication()) {%> DefaultMainViewParent::class <%} else {%>MainView::class<%}%>)
+<%}%>@Route(value = "${route}", layout = <%if (!api.jmixProjectModule.isApplication()) {%> DefaultMainViewParent::class <%} else {%>${routeLayout.getControllerClassName()}::class<%}%>)
 @ViewController("${id}")
 @ViewDescriptor("${descriptorName}.xml")
 class ${controllerName} : ${superClass}() {

@@ -94,6 +94,12 @@
               required="true"
               defaultValue="id"/>
 
+    <property caption="View route layout"
+              code="routeLayout"
+              propertyType="FLOW_VIEW_ROUTE_LAYOUT"
+              visible="false"
+              advanced="true"/>
+
     <source fileExt="xml"
             name="descriptor"/>
     <source fileExt="java"

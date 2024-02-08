@@ -2160,6 +2160,8 @@
                         <xs:restriction>
                             <xs:enumeration value="TOP"/>
                             <xs:enumeration value="BOTTOM"/>
+                            <xs:enumeration value="RIGHT"/>
+                            <xs:enumeration value="LEFT"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>

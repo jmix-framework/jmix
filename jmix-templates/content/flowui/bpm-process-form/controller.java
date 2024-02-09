@@ -1,6 +1,9 @@
 <%
 def processAnnotation = api.processSnippet('bpm_processFormAnnotation.xml',
     ['outputes': processFormOutcomes,
+     'injects': bpmInjects,
+     'entity': entity != null ? entity : entityObject,
+     'entityVarName': studioUtils.nullize(entityVarName) != null ? entityVarName : entityObjectName,
      'formTemplate': processFormTemplate,
      'api': api])
 def processComponents = api.processSnippet('bpm_components.xml',

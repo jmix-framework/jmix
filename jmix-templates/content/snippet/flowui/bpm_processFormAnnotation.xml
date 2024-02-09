@@ -2,13 +2,37 @@
 def resultAnnotation = ''
 StringBuilder builder = new StringBuilder()
 builder.append("@io.jmix.bpmflowui.processform.annotation.ProcessForm")
-if (outputes && !outputes.isEmpty()) {
+def outputesIsNotEmpty = outputes && !outputes.isEmpty()
+def injectsIsNotEmpty = injects && !injects.isEmpty()
+def entityIsNotEmpty = entityVarName && entity
+if (outputesIsNotEmpty) {
     builder.append("(outcomes = {\n")
     def outcomes = []
     outputes.each { o ->
         outcomes << "\t@io.jmix.bpmflowui.processform.annotation.Outcome(id = \"${o.id}\")"
     }
     builder.append(outcomes.join(",\n"))
+    if (injectsIsNotEmpty || entityIsNotEmpty) {
+        builder.append("\n}")
+    } else {
+        builder.append("\n})")
+    }
+
+}
+if (injectsIsNotEmpty || entityIsNotEmpty) {
+    if (!outputesIsNotEmpty) {
+        builder.append("(outputVariables = {\n")
+    } else {
+        builder.append(", outputVariables = {\n")
+    }
+    def variables = []
+    injects.each { i ->
+        variables << "\t@io.jmix.bpmflowui.processform.annotation.OutputVariable(name = \"${i.getVariableName()}\", type = ${api.getGenericType(i.getClassName())}.class)"
+    }
+    if (entityVarName && entity) {
+        variables << "\t@io.jmix.bpmflowui.processform.annotation.OutputVariable(name = \"${entityVarName}\", type = ${entity.getFqn()}.class)"
+    }
+    builder.append(variables.join(",\n"))
     builder.append("\n})")
 }
 resultAnnotation = builder.toString()

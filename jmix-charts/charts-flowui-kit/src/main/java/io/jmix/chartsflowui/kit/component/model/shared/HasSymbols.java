@@ -92,6 +92,29 @@ public interface HasSymbols<T> {
     void setSymbolSize(Integer symbolSize);
 
     /**
+     * @return callback function for symbol size
+     */
+    JsFunction getSymbolSizeFunction();
+
+    /**
+     * Sets a callback function for symbol size or replaces an existing one.
+     *
+     * @param symbolSizeFunction symbol size callback function
+     */
+    void setSymbolSizeFunction(JsFunction symbolSizeFunction);
+
+    /**
+     * @param symbolSizeFunction symbol size callback function
+     * @return this
+     * @see HasSymbols#setSymbolSizeFunction(JsFunction)
+     */
+    @SuppressWarnings("unchecked")
+    default T withSymbolSizeFunction(JsFunction symbolSizeFunction) {
+        setSymbolSizeFunction(symbolSizeFunction);
+        return (T) this;
+    }
+
+    /**
      * @param symbolSize symbol size to set
      * @return this
      * @see HasSymbols#setSymbolSize(Integer)

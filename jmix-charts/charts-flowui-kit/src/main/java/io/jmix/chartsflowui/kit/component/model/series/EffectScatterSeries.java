@@ -18,10 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.series;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import io.jmix.chartsflowui.kit.component.model.shared.Color;
-import io.jmix.chartsflowui.kit.component.model.shared.HasSymbols;
-import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
-import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
+import io.jmix.chartsflowui.kit.component.model.shared.*;
 import jakarta.annotation.Nullable;
 
 /**
@@ -59,6 +56,8 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
     protected HasSymbols.Symbol symbol;
 
     protected Integer symbolSize;
+
+    protected JsFunction symbolSizeFunction;
 
     protected Integer symbolRotate;
 
@@ -640,6 +639,17 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
     @Override
     public void setSymbolSize(Integer symbolSize) {
         this.symbolSize = symbolSize;
+        markAsDirty();
+    }
+
+    @Override
+    public JsFunction getSymbolSizeFunction() {
+        return symbolSizeFunction;
+    }
+
+    @Override
+    public void setSymbolSizeFunction(JsFunction symbolSizeFunction) {
+        this.symbolSizeFunction = symbolSizeFunction;
         markAsDirty();
     }
 

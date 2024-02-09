@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.series.mark;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.series.Label;
 import io.jmix.chartsflowui.kit.component.model.shared.HasSymbols;
+import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 
 import java.util.ArrayList;
@@ -313,6 +314,8 @@ public class MarkLine extends AbstractMark<MarkLine> {
 
         protected Integer symbolSize;
 
+        protected JsFunction symbolSizeFunction;
+
         protected Integer symbolRotate;
 
         protected Boolean symbolKeepAspect;
@@ -443,6 +446,17 @@ public class MarkLine extends AbstractMark<MarkLine> {
         @Override
         public void setSymbolSize(Integer symbolSize) {
             this.symbolSize = symbolSize;
+            markAsDirty();
+        }
+
+        @Override
+        public JsFunction getSymbolSizeFunction() {
+            return symbolSizeFunction;
+        }
+
+        @Override
+        public void setSymbolSizeFunction(JsFunction symbolSizeFunction) {
+            this.symbolSizeFunction = symbolSizeFunction;
             markAsDirty();
         }
 

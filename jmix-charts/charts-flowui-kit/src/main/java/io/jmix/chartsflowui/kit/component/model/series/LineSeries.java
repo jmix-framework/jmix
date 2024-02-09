@@ -56,6 +56,8 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
 
     protected Integer symbolSize;
 
+    protected JsFunction symbolSizeFunction;
+
     protected Integer symbolRotate;
 
     protected Boolean symbolKeepAspect;
@@ -878,6 +880,17 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
     @Override
     public void setSymbolSize(Integer symbolSize) {
         this.symbolSize = symbolSize;
+        markAsDirty();
+    }
+
+    @Override
+    public JsFunction getSymbolSizeFunction() {
+        return symbolSizeFunction;
+    }
+
+    @Override
+    public void setSymbolSizeFunction(JsFunction symbolSizeFunction) {
+        this.symbolSizeFunction = symbolSizeFunction;
         markAsDirty();
     }
 

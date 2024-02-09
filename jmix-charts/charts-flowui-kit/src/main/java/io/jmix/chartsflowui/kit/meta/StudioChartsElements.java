@@ -5239,6 +5239,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "symbolSizeFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolKeepAspect", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "symbolOffset", type = StudioPropertyType.STRING),
@@ -6156,6 +6157,7 @@ public interface StudioChartsElements {
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "symbolSizeFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolKeepAspect", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "symbolOffset", type = StudioPropertyType.STRING),
@@ -6303,6 +6305,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "symbolSizeFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolKeepAspect", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "symbolOffset", type = StudioPropertyType.STRING),
@@ -6350,6 +6353,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "symbolSizeFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolKeepAspect", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "symbolOffset", type = StudioPropertyType.STRING),
@@ -6386,6 +6390,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "symbolSizeFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolKeepAspect", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "symbolOffset", type = StudioPropertyType.STRING),
@@ -6447,6 +6452,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "y", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "symbolSizeFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolKeepAspect", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "symbolOffset", type = StudioPropertyType.STRING),
@@ -7552,6 +7558,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "symbolSizeFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolKeepAspect", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "symbolOffset", type = StudioPropertyType.STRING),
@@ -7680,6 +7687,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "symbolSizeFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolKeepAspect", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "symbolOffset", type = StudioPropertyType.STRING),
@@ -7709,7 +7717,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelay", type = StudioPropertyType.INTEGER)
             }
     )
-    EffectScatterSeries effectScatter();
+    EffectScatterSeries effectScatterSeries();
 
     @StudioElement(
             name = "RippleEffect",
@@ -7839,6 +7847,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "symbolSizeFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "symbolRotate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "symbolKeepAspect", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "symbolOffset", type = StudioPropertyType.STRING),
@@ -9932,6 +9941,17 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     void sortFunction();
+
+    @StudioElement(
+            name = "Symbol size function",
+            xmlElement = "symbolSizeFunction",
+            xmlns = "http://jmix.io/schema/charts/ui",
+            xmlnsAlias = "charts",
+            target = {"io.jmix.chartsflowui.kit.component.model.shared.HasSymbols"},
+            unlimitedCount = false,
+            icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void symbolSizeFunction();
 
     @StudioElement(
             name = "NativeJson",

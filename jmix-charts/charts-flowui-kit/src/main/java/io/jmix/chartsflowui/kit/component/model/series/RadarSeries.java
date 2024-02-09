@@ -34,6 +34,8 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
 
     protected Integer symbolSize;
 
+    protected JsFunction symbolSizeFunction;
+
     protected Integer symbolRotate;
 
     protected Boolean symbolKeepAspect;
@@ -297,6 +299,17 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
     @Override
     public void setSymbolSize(Integer symbolSize) {
         this.symbolSize = symbolSize;
+        markAsDirty();
+    }
+
+    @Override
+    public JsFunction getSymbolSizeFunction() {
+        return symbolSizeFunction;
+    }
+
+    @Override
+    public void setSymbolSizeFunction(JsFunction symbolSizeFunction) {
+        this.symbolSizeFunction = symbolSizeFunction;
         markAsDirty();
     }
 

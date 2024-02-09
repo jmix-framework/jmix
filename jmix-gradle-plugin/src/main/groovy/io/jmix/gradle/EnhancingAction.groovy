@@ -16,7 +16,6 @@
 
 package io.jmix.gradle
 
-
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.NotFoundException
@@ -26,6 +25,7 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
 
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.security.MessageDigest
@@ -63,7 +63,7 @@ class EnhancingAction implements Action<Task> {
             runJmixEnhancing(project, sourceSet, classesInfo)
 
             if (project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing) {
-                saveEnhancedEntityClassesForNextBuild(project, sourceSet, classesInfo)
+                saveEntityClassesChecksumForNextBuild(project, sourceSet, classesInfo)
             }
         } else {
             project.logger.lifecycle "Entities enhancing was skipped, because entity classes haven't been changed since the last build"
@@ -255,68 +255,68 @@ class EnhancingAction implements Action<Task> {
     }
 
     /**
-     * Copies enhanced entity classes to the temp directory, e.g. "build/tmp/entitiesEnhancing/prev/com/company/entity"
-     * On the next project build, entities classes from the "build" directory will be compared with the saved ones to
-     * find out if entities have been changed since the last compilation.
+     * Evaluates a checksum of enhanced entity classes and saves it to the file.
+     * <p>
+     * On the next project build, the checksum of entities classes from the "build" directory will be compared with the
+     * checksum saved to the file to find out if entities have been changed since the last compilation.
      */
-    protected void saveEnhancedEntityClassesForNextBuild(Project project, sourceSet, ClassesInfo classesInfo) {
+    protected void saveEntityClassesChecksumForNextBuild(Project project, sourceSet, ClassesInfo classesInfo) {
+        def allEntityClassesChecksum = evaluateEntityClassesChecksum(sourceSet, classesInfo)
+        Files.write(Paths.get(getEntitiesChecksumFilePath(project)),
+                allEntityClassesChecksum.getBytes(StandardCharsets.UTF_8))
+    }
+
+    /**
+     * Evaluates a single checksum for all entity classes (of the current project) extracted from the ClassesInfo.
+     */
+    protected String evaluateEntityClassesChecksum(sourceSet, ClassesInfo classesInfo) {
+        StringBuilder sb = new StringBuilder()
         String javaOutputDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
-        for (className in classesInfo.getAllEntities()) {
+        Collection<String> allEntities = classesInfo.getAllEntities()
+        allEntities.sort()
+        for (className in allEntities) {
             def classFileName = className.replace('.', '/') + '.class'
             def classFile = new File(javaOutputDir, classFileName)
 
             // skip files from dependencies, copy only classes from `javaOutputDir`
             if (classFile.exists()) {
-                def outputDir = "${getPreviousEntityEnhancingResultDir(project)}/${classFileName.substring(0, classFileName.lastIndexOf("/"))}"
-                project.copy {
-                    from classFile
-                    into outputDir
-                }
+                sb.append(checkSum(classFile))
             }
         }
+        return checkSum(sb.toString().getBytes(StandardCharsets.UTF_8))
     }
 
     /**
-     * Checks if entity classes in a project build directory and entity classes saved during last project build are not
-     * the same
+     * Checks if entity classes in a project build directory and entity classes from last project build are not
+     * the same. Method compares the checksum of entity classes saved during previous compilation with the checksum of
+     * actual entity classes collection.
      */
     protected boolean entityClassesChangedSinceLastBuild(Project project, SourceSet sourceSet, ClassesInfo classesInfo) {
-        String prevDirectory = getPreviousEntityEnhancingResultDir(project)
-        if (!Files.exists(Paths.get(prevDirectory))) return true
-
-        String javaOutputDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
-        for (className in classesInfo.getAllEntities()) {
-            def classFileName = className.replace('.', '/') + '.class'
-            def classFile = new File(javaOutputDir, classFileName)
-
-            // skip files from dependencies, analyze only classes from `javaOutputDir`
-            if (classFile.exists()) {
-                //if there is any new entity class then enhancing step must be executed
-                def prevPath = Paths.get("$prevDirectory/$classFileName")
-                if (!Files.exists(prevPath)) return true
-
-                def checkSum1 = checkSum(classFile)
-                def checkSum2 = checkSum(prevPath.toFile())
-
-                //if checksums are different then this means that entity class has been changed
-                if (checkSum1 != checkSum2) return true
-            }
+        def path = Paths.get(getEntitiesChecksumFilePath(project))
+        if (!Files.exists(path)) {
+            //previous entity classes checksum was not saved
+            return true
         }
-
-        return false
+        def prevChecksum = Files.readString(path)
+        def currentChecksum = evaluateEntityClassesChecksum(sourceSet, classesInfo)
+        return prevChecksum != currentChecksum
     }
 
     protected String checkSum(File file) {
         byte[] data = Files.readAllBytes(file.toPath())
+        return checkSum(data)
+    }
+
+    protected String checkSum(byte[] data) {
         byte[] hash = MessageDigest.getInstance("MD5").digest(data)
         return new BigInteger(1, hash).toString(16)
     }
 
     /**
-     * Returns a string with a path to temp directory where enhanced entity classes should be copied to
+     * Returns a string with a path to a file where entity classes checksum will be stored to.
      */
-    protected String getPreviousEntityEnhancingResultDir(Project project) {
-        return "$project.buildDir/tmp/entitiesEnhancing/prev"
+    protected String getEntitiesChecksumFilePath(Project project) {
+        return "$project.buildDir/tmp/entitiesEnhancing/entities.checksum"
     }
 
     static ClassPool createClassPool(Project project, sourceSet) {

@@ -17,7 +17,6 @@
 package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.DevelopmentException;
 import io.jmix.core.Metadata;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
@@ -61,6 +60,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     protected int sortIndex;
     protected int pageableIndex;
     protected int fetchPlanIndex;
+    protected int jmixContextIndex;
 
     protected Map<String, Serializable> queryHints;
     protected String fetchPlan = io.jmix.core.FetchPlan.LOCAL;
@@ -77,7 +77,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         this.queryHints = Collections.unmodifiableMap(MethodMetadataHelper.determineQueryHints(method));
 
         processSpecialParameters();
-        setFetchPlan(method);
+        processFetchPlanAnnotation(method);
     }
 
     @Override
@@ -89,17 +89,11 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         return dataManager;
     }
 
-    private void setFetchPlan(Method method) {
+    private void processFetchPlanAnnotation(Method method) {
         FetchPlan fetchPlanAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, FetchPlan.class);
         if (fetchPlanAnnotation != null) {
-            if (fetchPlanIndex != -1) {
-                throw new DevelopmentException(
-                        String.format("@FetchPlan annotation and FetchPlan parameter (%d) cannot be used at the same time. Method: %s",
-                                fetchPlanIndex, formatMethod(method)));
-            }
             fetchPlan = fetchPlanAnnotation.value();
         }
-
     }
 
     protected Map<String, Object> buildNamedParametersMap(Object[] values) {
@@ -116,11 +110,11 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         pageableIndex = parameters.getPageableIndex();
         sortIndex = parameters.getSortIndex();
         fetchPlanIndex = parameters.getFetchPlanIndex();
+        jmixContextIndex = parameters.getJmixArgsIndex();
     }
 
     protected static String formatMethod(Method method) {
         return method.getDeclaringClass().getName() + '#' + method.getName();
-
     }
 
     @Override
@@ -129,6 +123,6 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     }
 
     protected String getQueryDescription() {
-        return String.format("fetchPlan:'%s'; fetchPlanIndex:'%s'; sortIndex:'%s'; pageableIndex:'%s'", fetchPlan, fetchPlanIndex, sortIndex, pageableIndex);
+        return String.format("fetchPlan:'%s'; fetchPlanIndex:'%s'; jmixArgsIndex:'%s'; sortIndex:'%s'; pageableIndex:'%s'", fetchPlan, fetchPlanIndex, jmixContextIndex, sortIndex, pageableIndex);
     }
 }

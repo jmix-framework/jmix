@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repository
+package repository.conditions
 
 import io.jmix.core.impl.repository.query.utils.ConditionTransformer
 import io.jmix.core.querycondition.Condition

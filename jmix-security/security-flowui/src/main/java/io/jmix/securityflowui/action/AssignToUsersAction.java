@@ -21,7 +21,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.DataManager;
 import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
-import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.core.querycondition.UIConditions;
 import io.jmix.core.security.UserRepository;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
@@ -156,13 +156,13 @@ public class AssignToUsersAction<E extends BaseRoleModel>
 
     protected void configureViewLoader(DataLoader loader) {
         List<String> excludedUsernames = dataManager.load(RoleAssignmentEntity.class)
-                .condition(PropertyCondition.equal(ROLE_CODE_PROPERTY, selectedItem.getCode()))
+                .condition(UIConditions.equal(ROLE_CODE_PROPERTY, selectedItem.getCode()))
                 .list()
                 .stream()
                 .map(RoleAssignmentEntity::getUsername)
                 .collect(Collectors.toUnmodifiableList());
 
-        loader.setCondition(PropertyCondition.notInList(USERNAME_PROPERTY, excludedUsernames));
+        loader.setCondition(UIConditions.notInList(USERNAME_PROPERTY, excludedUsernames));
     }
 
     protected DataLoader findViewLoader(View<?> view, Class<?> userClass) {

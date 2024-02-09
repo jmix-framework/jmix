@@ -63,7 +63,7 @@ public class ConditionXmlLoader {
         factories.put("jpql",
                 element -> {
                     if (element.getName().equals("jpql")) {
-                        JpqlCondition jpqlCondition = new JpqlCondition();
+                        JpqlCondition jpqlCondition = UIConditions.jpqlCondition();
 
                         Element whereElement = element.element("where");
                         if (whereElement != null) {

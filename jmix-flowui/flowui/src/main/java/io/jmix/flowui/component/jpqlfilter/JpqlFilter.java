@@ -20,11 +20,12 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.querycondition.JpqlCondition;
+import io.jmix.core.querycondition.UIConditions;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.model.DataLoader;
 import org.apache.commons.lang3.StringUtils;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -66,7 +67,7 @@ public class JpqlFilter<V> extends SingleFilterComponentBase<V> {
 
     @Override
     protected JpqlCondition createQueryCondition() {
-        return new JpqlCondition();
+        return UIConditions.jpqlCondition();
     }
 
     @Override

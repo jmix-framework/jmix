@@ -22,7 +22,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.core.querycondition.UIConditions;
 import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.Actions;
@@ -193,11 +193,11 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
         String username = currentUserSubstitution.getEffectiveUser().getUsername();
         return dataManager.load(FilterConfiguration.class)
                 .condition(LogicalCondition.and()
-                        .add(PropertyCondition.equal("configurationId", configurationId))
-                        .add(PropertyCondition.equal("componentId", componentId))
+                        .add(UIConditions.equal("configurationId", configurationId))
+                        .add(UIConditions.equal("componentId", componentId))
                         .add(LogicalCondition.or()
-                                .add(PropertyCondition.isSet("username", false))
-                                .add(PropertyCondition.equal("username", username))))
+                                .add(UIConditions.isSet("username", false))
+                                .add(UIConditions.equal("username", username))))
                 .optional()
                 .orElse(null);
     }
@@ -208,10 +208,10 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
 
         return dataManager.load(FilterConfiguration.class)
                 .condition(LogicalCondition.and()
-                        .add(PropertyCondition.equal("componentId", filterComponentId))
+                        .add(UIConditions.equal("componentId", filterComponentId))
                         .add(LogicalCondition.or()
-                                .add(PropertyCondition.isSet("username", false))
-                                .add(PropertyCondition.equal("username", username))))
+                                .add(UIConditions.isSet("username", false))
+                                .add(UIConditions.equal("username", username))))
                 .list();
     }
 

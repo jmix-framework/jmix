@@ -41,13 +41,14 @@ public class TestCoreProperties extends CoreProperties {
                               boolean legacyFetchPlanSerializationAttributeName,
                               boolean triggerFilesEnabled,
                               Duration triggerFilesProcessInterval,
-                              boolean roundDecimalValueByFormat) {
+                              boolean roundDecimalValueByFormat,
+                              boolean skipNullOrEmptyConditionsByDefault) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
                 entitySerializationTokenRequired, entitySerializationTokenEncryptionKey,
                 legacyFetchPlanSerializationAttributeName, triggerFilesEnabled, triggerFilesProcessInterval,
-                roundDecimalValueByFormat);
+                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault);
     }
 
     public static Builder builder() {
@@ -74,6 +75,7 @@ public class TestCoreProperties extends CoreProperties {
         boolean triggerFilesEnabled = true;
         Duration triggerFilesProcessInterval = Duration.ofSeconds(5000);
         boolean roundDecimalValueByFormat = true;
+        boolean skipNullOrEmptyConditionsByDefault = false;
 
         public Builder setWebHostName(String webHostName) {
             this.webHostName = webHostName;
@@ -170,6 +172,11 @@ public class TestCoreProperties extends CoreProperties {
             return this;
         }
 
+        public Builder setSkipNullOrEmptyConditionsByDefault(boolean skipNullOrEmptyConditionsByDefault) {
+            this.skipNullOrEmptyConditionsByDefault = skipNullOrEmptyConditionsByDefault;
+            return this;
+        }
+
         public TestCoreProperties build() {
             return new TestCoreProperties(
                     this.webHostName,
@@ -190,7 +197,8 @@ public class TestCoreProperties extends CoreProperties {
                     this.legacyFetchPlanSerializationAttributeName,
                     this.triggerFilesEnabled,
                     this.triggerFilesProcessInterval,
-                    this.roundDecimalValueByFormat);
+                    this.roundDecimalValueByFormat,
+                    this.skipNullOrEmptyConditionsByDefault);
         }
     }
 }

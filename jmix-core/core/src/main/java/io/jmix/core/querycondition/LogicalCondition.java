@@ -17,6 +17,7 @@
 package io.jmix.core.querycondition;
 
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 
 /**
@@ -110,10 +111,10 @@ public class LogicalCondition implements Condition {
 
     @Nullable
     @Override
-    public Condition actualize(Set<String> actualParameters) {
+    public Condition actualize(Set<String> actualParameters, boolean defaultSkipNullOrEmpty ) {
         LogicalCondition copy = new LogicalCondition(type);
         for (Condition condition : conditions) {
-            Condition actualized = condition.actualize(actualParameters);
+            Condition actualized = condition.actualize(actualParameters, defaultSkipNullOrEmpty);
             if (actualized != null) {
                 copy.add(actualized);
             }

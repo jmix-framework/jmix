@@ -20,14 +20,14 @@ import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.core.querycondition.UIConditions;
 import io.jmix.dataimport.DuplicateEntityManager;
 import io.jmix.dataimport.configuration.UniqueEntityConfiguration;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -42,9 +42,9 @@ public class DuplicateEntityManagerImpl implements DuplicateEntityManager {
         configuration.getEntityPropertyNames().forEach(propertyName -> {
             Object propertyValue = EntityValues.getValueEx(entity, propertyName);
             if (propertyValue != null) {
-                condition.add(PropertyCondition.equal(propertyName, propertyValue));
+                condition.add(UIConditions.equal(propertyName, propertyValue));
             } else {
-                condition.add(PropertyCondition.isSet(propertyName, false));
+                condition.add(UIConditions.isSet(propertyName, false));
             }
         });
         return loadByCondition(entity.getClass(), fetchPlan, condition);
@@ -101,9 +101,9 @@ public class DuplicateEntityManagerImpl implements DuplicateEntityManager {
         LogicalCondition condition = LogicalCondition.and();
         propertyValues.forEach((propertyName, propertyValue) -> {
             if (propertyValue != null) {
-                condition.add(PropertyCondition.equal(propertyName, propertyValue));
+                condition.add(UIConditions.equal(propertyName, propertyValue));
             } else {
-                condition.add(PropertyCondition.isSet(propertyName, false));
+                condition.add(UIConditions.isSet(propertyName, false));
             }
         });
         return loadByCondition(entityClass, fetchPlan, condition);

@@ -19,6 +19,8 @@ package io.jmix.core.impl.repository.query;
 import io.jmix.core.Sort;
 import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -26,8 +28,8 @@ import org.springframework.data.domain.*;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
-
 import org.springframework.lang.Nullable;
+
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Stream;
@@ -44,6 +46,13 @@ public class JmixListQuery extends JmixStructuredQuery {
 
     @Override
     public Object execute(Object[] parameters) {
+        JmixDataRepositoryContext jmixDataRepositoryContext = jmixContextIndex == -1 ? null :
+                (JmixDataRepositoryContext) parameters[jmixContextIndex];
+
+        if (jmixDataRepositoryContext != null && jmixDataRepositoryContext.condition() != null) {
+            conditions = LogicalCondition.and(conditions, jmixDataRepositoryContext.condition());
+        }
+        //todo taimanov: use LoadContext
         FluentLoader.ByCondition<?> loader = dataManager.load(metadata.getDomainType())
                 .condition(conditions)
                 .hints(queryHints)
@@ -51,8 +60,14 @@ public class JmixListQuery extends JmixStructuredQuery {
 
         if (fetchPlanIndex != -1) {
             loader.fetchPlan((FetchPlan) parameters[fetchPlanIndex]);
+        } else if (jmixDataRepositoryContext != null && jmixDataRepositoryContext.fetchPlan() != null) {
+            loader.fetchPlan(jmixDataRepositoryContext.fetchPlan());
         } else {
             loader.fetchPlan(fetchPlan);
+        }
+
+        if (jmixDataRepositoryContext != null) {
+            loader.hints(jmixDataRepositoryContext.hints());
         }
 
         if (maxResults != null) {

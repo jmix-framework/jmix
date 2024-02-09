@@ -20,14 +20,13 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import io.jmix.core.DataManager
-import io.jmix.core.querycondition.PropertyCondition
+import io.jmix.core.querycondition.UIConditions
+import jakarta.persistence.LockModeType
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.TestAppender
 import test_support.entity.sales.Customer
-
-import jakarta.persistence.LockModeType
 
 class DataManagerPessimisticLockTest extends DataSpec {
 
@@ -98,7 +97,7 @@ class DataManagerPessimisticLockTest extends DataSpec {
         when:
         appender.clearMessages()
         customer = dataManager.load(Customer)
-                .condition(PropertyCondition.equal('id', customer1.id))
+                .condition(UIConditions.equal('id', customer1.id))
                 .lockMode(LockModeType.PESSIMISTIC_WRITE)
                 .one()
 

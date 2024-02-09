@@ -21,6 +21,7 @@ import io.jmix.core.Id;
 import io.jmix.core.IdSerialization;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
+import io.jmix.core.querycondition.UIConditions;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.jpqlfilter.JpqlFilterSupport;
 import io.jmix.flowui.model.CollectionLoader;
@@ -86,7 +87,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
 
     @Override
     protected Condition createQueryCondition() {
-        JpqlCondition fullTextCondition = new JpqlCondition();
+        JpqlCondition fullTextCondition = UIConditions.jpqlCondition();
         this.correctWhere = "{E}.id in ?";
         fullTextCondition.setWhere(correctWhere);
         fullTextCondition.setJoin("");

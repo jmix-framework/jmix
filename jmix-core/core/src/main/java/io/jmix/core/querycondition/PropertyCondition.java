@@ -18,8 +18,8 @@ package io.jmix.core.querycondition;
 
 import com.google.common.base.Strings;
 import org.apache.commons.collections4.CollectionUtils;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -31,7 +31,7 @@ import java.util.TreeSet;
  * Use one of the static methods like {@link #equal(String, Object)}, {@link #greater(String, Object)} to create
  * property conditions.
  */
-public class PropertyCondition implements Condition {
+public class PropertyCondition extends SkippableCondition<PropertyCondition> {
 
     private String property;
 
@@ -235,8 +235,9 @@ public class PropertyCondition implements Condition {
 
     @Nullable
     @Override
-    public Condition actualize(Set<String> actualParameters) {
-        if (actualParameters.containsAll(getParameters())) {
+    public Condition actualize(Set<String> actualParameters, boolean defaultSkipNullOrEmpty) {
+        applyDefaultSkipNullOrEmpty(defaultSkipNullOrEmpty);
+        if (!skipNullOrEmpty || actualParameters.containsAll(getParameters())) {
             return this;
         }
 
@@ -268,13 +269,14 @@ public class PropertyCondition implements Condition {
         pc.setOperation(this.operation);
         pc.setParameterName(this.parameterName);
         pc.setParameterValue(this.parameterValue);
+        pc.setSkipNullOrEmpty(this.skipNullOrEmpty);
         return pc;
     }
 
     @Override
     public Set<String> getExcludedParameters(Set<String> actualParameters) {
         Set<String> excludedParameters = new TreeSet<>();
-        if (actualParameters.containsAll(getParameters())) {
+        if (!skipNullOrEmpty || actualParameters.containsAll(getParameters())) {
             return excludedParameters;
         }
 

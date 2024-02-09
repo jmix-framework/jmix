@@ -17,7 +17,7 @@
 package data_manager
 
 import io.jmix.core.*
-import io.jmix.core.querycondition.PropertyCondition
+import io.jmix.core.querycondition.UIConditions
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.TestAppEntity
@@ -301,7 +301,7 @@ class DataManagerTest extends DataSpec {
         when:
 
         def list = dataManager.load(Product)
-                .condition(PropertyCondition.equal("quantity", 100))
+                .condition(UIConditions.equal("quantity", 100))
                 .list()
 
         then:
@@ -312,7 +312,7 @@ class DataManagerTest extends DataSpec {
 
         def list1 = dataManager.load(Product)
                 .query("e.quantity = ?1", 100)
-                .condition(PropertyCondition.equal("name", "p1"))
+                .condition(UIConditions.equal("name", "p1"))
                 .list()
 
         then:
@@ -351,7 +351,7 @@ class DataManagerTest extends DataSpec {
         when:
 
         def list = dataManager.load(OrderLineA)
-                .condition(PropertyCondition.equal("product.quantity", 100))
+                .condition(UIConditions.equal("product.quantity", 100))
                 .list()
 
         then:
@@ -362,7 +362,7 @@ class DataManagerTest extends DataSpec {
 
         def list1 = dataManager.load(OrderLineA)
                 .query("e.quantity = ?1", 100)
-                .condition(PropertyCondition.equal("product.name", "p1"))
+                .condition(UIConditions.equal("product.name", "p1"))
                 .list()
 
         then:

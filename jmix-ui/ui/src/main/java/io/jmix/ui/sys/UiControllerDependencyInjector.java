@@ -570,8 +570,9 @@ public class UiControllerDependencyInjector {
 
         } else if (annotationClass == Value.class) {
             AutowireCapableBeanFactory autowireCapableBeanFactory = applicationContext.getAutowireCapableBeanFactory();
-            return ((AbstractBeanFactory) autowireCapableBeanFactory)
+            String stringValue = ((AbstractBeanFactory) autowireCapableBeanFactory)
                     .resolveEmbeddedValue(element.getAnnotation(Value.class).value());
+            return ((AbstractBeanFactory) autowireCapableBeanFactory).getConversionService().convert(stringValue, type);
 
         } else if (ScreenFragment.class.isAssignableFrom(type)) {
             // Injecting inner fragment controller

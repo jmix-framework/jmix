@@ -171,8 +171,18 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
     }
 
     @Override
+    public <V extends View<?>> Consumer<AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
     public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
         viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
     }
 
     public void setTransformation(Function<Collection<E>, Collection<E>> transformation) {

@@ -42,9 +42,17 @@ public interface DynAttrStudioComponents {
                             type = StudioPropertyType.DATA_CONTAINER_REF,
                             required = true),
                     @StudioProperty(
-                            name = "fieldWidth",
-                            xmlAttribute = "fieldWidth",
+                            name = "width",
+                            xmlAttribute = "width",
                             type = StudioPropertyType.STRING),
+                    @StudioProperty(
+                            name = "categoryFieldVisible",
+                            xmlAttribute = "categoryFieldVisible",
+                            type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(
+                            name = "visible",
+                            xmlAttribute = "visible",
+                            type = StudioPropertyType.BOOLEAN),
             })
     Div dynamicAttributesPanel();
 }

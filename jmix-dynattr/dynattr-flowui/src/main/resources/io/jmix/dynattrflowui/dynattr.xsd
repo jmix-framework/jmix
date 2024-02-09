@@ -15,7 +15,9 @@
         <xs:attributeGroup ref="layout:hasId"/>
 
         <xs:attribute name="dataContainer" type="xs:string" use="required"/>
-        <xs:attribute name="fieldWidth" type="xs:string"/>
+        <xs:attribute name="width" type="xs:string"/>
+        <xs:attribute name="categoryFieldVisible" type="xs:boolean"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:element name="dynamicAttributesPanel" type="dynamicAttributesPanel"/>

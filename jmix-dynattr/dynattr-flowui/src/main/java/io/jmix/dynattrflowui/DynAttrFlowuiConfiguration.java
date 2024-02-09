@@ -25,7 +25,7 @@ import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattrflowui.panel.DynamicAttributesPanel;
+import io.jmix.dynattrflowui.panel.DynamicAttributesPanelImpl;
 import io.jmix.dynattrflowui.panel.DynamicAttributesPanelLoader;
 import io.jmix.dynattrflowui.propertyfilter.DynAttrPropertyFilterSupport;
 import io.jmix.flowui.FlowuiConfiguration;
@@ -69,8 +69,8 @@ public class DynAttrFlowuiConfiguration {
 
     @Bean
     public ComponentRegistration dynamicAttributesPanel() {
-        return ComponentRegistrationBuilder.create(DynamicAttributesPanel.class)
-                .withComponentLoader(DynamicAttributesPanel.NAME, DynamicAttributesPanelLoader.class)
+        return ComponentRegistrationBuilder.create(DynamicAttributesPanelImpl.class)
+                .withComponentLoader(DynamicAttributesPanelImpl.NAME, DynamicAttributesPanelLoader.class)
                 .build();
     }
 }

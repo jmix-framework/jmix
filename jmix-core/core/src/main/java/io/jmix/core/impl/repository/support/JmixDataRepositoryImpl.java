@@ -220,6 +220,17 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
         return new PageImpl<>(results, pageable, total);
     }
 
+    @Override
+    public <S extends T> S save(S entity, FetchPlan fetchPlan) {
+        if (!fetchPlan.getEntityClass().isAssignableFrom(entity.getClass())) {
+            throw new IllegalArgumentException(
+                    String.format("FetchPlan '%s' cannot be used for entity with class '%s'",
+                            fetchPlan,
+                            entity.getClass()));
+        }
+        return getDataManager().save(new SaveContext().saving(entity, fetchPlan)).get(entity);
+    }
+
     protected UnconstrainedDataManager getDataManager() {
         return methodMetadataAccessor.getCrudMethodMetadata().isApplyConstraints() ? dataManager : unconstrainedDataManager;
     }

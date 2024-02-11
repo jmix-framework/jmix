@@ -113,4 +113,12 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * @return a page of entities
      */
     Page<T> findAll(Pageable pageable, @Nullable FetchPlan fetchPlan);
+
+    /**
+     * Saves the {@code entity} and returns saved instance loaded with specified {@code fetchPlan}.
+     * @param entity entity to save. Must not be null
+     * @param fetchPlan {@link FetchPlan} to reload saved entity with. Must be applicable to {@code entity}
+     * @throws IllegalArgumentException if {@code fetchPlan} is not applicable to entity
+     */
+    <S extends T> S save(S entity, FetchPlan fetchPlan);
 }

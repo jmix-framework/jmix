@@ -16,6 +16,7 @@
 
 package io.jmix.core.repository;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.annotation.Experimental;
 import org.springframework.data.domain.Page;
@@ -148,4 +149,9 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * @throws IllegalArgumentException if {@code fetchPlan} is not applicable to entity
      */
     <S extends T> S save(S entity, FetchPlan fetchPlan);
+
+    /**
+     * @return {@link DataManager} to use in default methods.
+     */
+    DataManager getDataManager();
 }

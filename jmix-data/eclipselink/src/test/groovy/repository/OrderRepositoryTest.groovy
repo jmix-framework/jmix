@@ -465,4 +465,11 @@ class OrderRepositoryTest extends DataSpec {
         count == 2 //numbers: 111,null
     }
 
+    void 'default method test'() {
+        when:
+        SalesOrder order = orderRepository.getByExtractedNumber("Use number 111 please")
+        then:
+        order.number== "111"
+    }
+
 }

@@ -16,6 +16,7 @@
 
 package io.jmix.core.repository;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -113,4 +114,9 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * @return a page of entities
      */
     Page<T> findAll(Pageable pageable, @Nullable FetchPlan fetchPlan);
+
+    /**
+     * @return {@link DataManager} to use in default methods.
+     */
+    DataManager getDataManager();
 }

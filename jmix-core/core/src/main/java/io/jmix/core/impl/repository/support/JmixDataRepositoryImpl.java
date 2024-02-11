@@ -67,7 +67,7 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
 
     @Override
     public T create() {
-        return getDataManager().create(domainClass);
+        return getSuitableDataManager().create(domainClass);
     }
 
 
@@ -97,12 +97,16 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
             return Collections.emptyList();
         }
 
-        return getDataManager().load(domainClass).ids(toCollection(ids)).hints(getHints()).fetchPlan(fetchPlan).list();
+        return getSuitableDataManager().load(domainClass)
+                .ids(toCollection(ids))
+                .hints(getHints())
+                .fetchPlan(fetchPlan)
+                .list();
     }
 
     @Override
     public <S extends T> S save(S entity) {
-        return getDataManager().save(entity);
+        return getSuitableDataManager().save(entity);
     }
 
 
@@ -138,12 +142,12 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
 
     @Override
     public long count() {
-        return getDataManager().getCount(new LoadContext<>(metadata.getClass(domainClass)).setHints(getHints()));
+        return getSuitableDataManager().getCount(new LoadContext<>(metadata.getClass(domainClass)).setHints(getHints()));
     }
 
     @Override
     public void deleteById(ID id) {
-        deleteInternal(getDataManager().getReference(Id.of(id, domainClass)));
+        deleteInternal(getSuitableDataManager().getReference(Id.of(id, domainClass)));
     }
 
     @Override
@@ -175,7 +179,7 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
     }
 
     protected void deleteInternal(Object... entities) {
-        getDataManager().save(new SaveContext().removing(entities).setHints(getHints()));
+        getSuitableDataManager().save(new SaveContext().removing(entities).setHints(getHints()));
     }
 
     public Class<T> getDomainClass() {
@@ -216,12 +220,17 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
                 .setQuery(new LoadContext.Query(String.format("select e from %s e", metaClass.getName())))
                 .setHints(getHints());
 
-        long total = getDataManager().getCount(context);
+        long total = getSuitableDataManager().getCount(context);
         return new PageImpl<>(results, pageable, total);
     }
 
-    protected UnconstrainedDataManager getDataManager() {
+    protected UnconstrainedDataManager getSuitableDataManager() {
         return methodMetadataAccessor.getCrudMethodMetadata().isApplyConstraints() ? dataManager : unconstrainedDataManager;
+    }
+
+    @Override
+    public DataManager getDataManager(){
+        return dataManager;
     }
 
     protected Map<String, Serializable> getHints() {
@@ -229,11 +238,11 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
     }
 
     protected FluentLoader.ByCondition<T> allLoader() {
-        return getDataManager().load(domainClass).all().hints(getHints());
+        return getSuitableDataManager().load(domainClass).all().hints(getHints());
     }
 
     protected FluentLoader.ById<T> idLoader(ID id) {
-        return getDataManager().load(domainClass).id(id).hints(getHints());
+        return getSuitableDataManager().load(domainClass).id(id).hints(getHints());
     }
 
     protected Collection<ID> toCollection(Iterable<ID> ids) {

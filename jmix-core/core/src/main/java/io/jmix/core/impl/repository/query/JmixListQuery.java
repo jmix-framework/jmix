@@ -52,7 +52,7 @@ public class JmixListQuery extends JmixStructuredQuery {
         if (jmixDataRepositoryContext != null && jmixDataRepositoryContext.condition() != null) {
             conditions = LogicalCondition.and(conditions, jmixDataRepositoryContext.condition());
         }
-        //todo taimanov: use LoadContext
+
         FluentLoader.ByCondition<?> loader = dataManager.load(metadata.getDomainType())
                 .condition(conditions)
                 .hints(queryHints)

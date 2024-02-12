@@ -29,6 +29,8 @@ import java.util.Map;
 
 
 /**
+ * Accumulates jmix-specific parameters. Supported by standard {@link JmixDataRepository} methods and as query parameter.
+ *
  * @param fetchPlan {@link FetchPlan} to load entities with. Default value: {@link FetchPlan#BASE}
  * @param condition {@link Condition} to filter entities
  * @param hints query hints, e.g. from {@code io.jmix.data.PersistenceHints}

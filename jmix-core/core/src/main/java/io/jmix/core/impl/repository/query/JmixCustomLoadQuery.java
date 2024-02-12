@@ -89,7 +89,7 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
     @Override
     public Object execute(Object[] parameters) {
         UnconstrainedDataManager dataManager = getDataManager();
-        //todo taimanov: rework through LoadContext
+
         FluentLoader.ByQuery<?> query = dataManager
                 .load(metadata.getDomainType())
                 .query(this.query)
@@ -116,11 +116,11 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
             query.hints(jmixDataRepositoryContext.hints());
 
             if (jmixDataRepositoryContext.condition() != null) {
-                 conditionQuery = query.condition(jmixDataRepositoryContext.condition());
+                conditionQuery = query.condition(jmixDataRepositoryContext.condition());
             }
         }
 
-        if(conditionQuery==null){
+        if (conditionQuery == null) {
             conditionQuery = query.condition(LogicalCondition.and());
         }
 

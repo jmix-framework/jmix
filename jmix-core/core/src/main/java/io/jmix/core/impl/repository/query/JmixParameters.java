@@ -25,17 +25,18 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * {@link Parameters} extension required to support {@link io.jmix.core.FetchPlan} special parameter.
+ * {@link Parameters} extension required to support {@link io.jmix.core.FetchPlan} and {@link JmixDataRepositoryContext}
+ * special parameters.
  */
 public class JmixParameters extends Parameters<JmixParameters, JmixParameter> {
 
     private final int fetchPlanIndex;
-    private final int jmixArgsIndex;
+    private final int jmixContextIndex;
 
     public JmixParameters(ParametersSource parametersSource) {
         super(parametersSource, JmixParameter::new);
         fetchPlanIndex = findParameterIndexByType(FetchPlan.class);
-        jmixArgsIndex = findParameterIndexByType(JmixDataRepositoryContext.class);
+        jmixContextIndex = findParameterIndexByType(JmixDataRepositoryContext.class);
     }
 
     protected int findParameterIndexByType(Class<?> clazz) {
@@ -52,7 +53,7 @@ public class JmixParameters extends Parameters<JmixParameters, JmixParameter> {
     private JmixParameters(List<JmixParameter> parameters) {
         super(parameters);
         fetchPlanIndex = findParameterIndexByType(FetchPlan.class);
-        jmixArgsIndex = findParameterIndexByType(JmixDataRepositoryContext.class);
+        jmixContextIndex = findParameterIndexByType(JmixDataRepositoryContext.class);
     }
 
     @Override
@@ -78,15 +79,15 @@ public class JmixParameters extends Parameters<JmixParameters, JmixParameter> {
     /**
      * @return whether {@link JmixDataRepositoryContext} argument is present in the {@link Method}'s parameter list
      */
-    public boolean hasJmixArgsIndex() {
-        return jmixArgsIndex != -1;
+    public boolean hasJmixContextIndex() {
+        return jmixContextIndex != -1;
     }
 
     /**
      * @return the index of the {@link JmixDataRepositoryContext} {@link Method} parameter if available. Will return {@literal -1} if there is
      * no {@link JmixDataRepositoryContext} argument in the {@link Method}'s parameter list.
      */
-    public int getJmixArgsIndex() {
-        return jmixArgsIndex;
+    public int getJmixContextIndex() {
+        return jmixContextIndex;
     }
 }

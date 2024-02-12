@@ -110,7 +110,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         pageableIndex = parameters.getPageableIndex();
         sortIndex = parameters.getSortIndex();
         fetchPlanIndex = parameters.getFetchPlanIndex();
-        jmixContextIndex = parameters.getJmixArgsIndex();
+        jmixContextIndex = parameters.getJmixContextIndex();
     }
 
     protected static String formatMethod(Method method) {

@@ -101,7 +101,7 @@ public class CoreProperties {
 
     /**
      *
-     * Whether JpqlCondition and Property condition should be skipped by default if property value is null or empty
+     * Whether JpqlCondition and PropertyСondition should be skipped by default if property value is null or empty
      * @see io.jmix.core.querycondition.SkippableCondition
      */
     boolean skipNullOrEmptyConditionsByDefault;

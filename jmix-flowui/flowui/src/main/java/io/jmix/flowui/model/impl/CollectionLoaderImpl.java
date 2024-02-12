@@ -28,7 +28,6 @@ import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
-import io.jmix.flowui.monitoring.UiMonitoring;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +71,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     protected Map<String, Serializable> hints = new HashMap<>();
     protected Function<LoadContext<E>, List<E>> delegate;
     protected EventHub events = new EventHub();
-    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider;
+    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
 
     @Nullable
     @Override

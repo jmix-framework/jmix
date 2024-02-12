@@ -60,7 +60,7 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     protected String storeName = Stores.MAIN;
     protected Function<ValueLoadContext, KeyValueEntity> delegate;
     protected EventHub events = new EventHub();
-    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider;
+    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
 
     @Nullable
     @Override

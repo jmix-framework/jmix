@@ -16,13 +16,20 @@
 
 package io.jmix.flowui.monitoring;
 
+import io.jmix.flowui.model.DataLoader;
 import org.springframework.lang.Nullable;
 
 /**
- * Static info about {@link io.jmix.flowui.model.DataLoader} that will be used as monitoring tags.
+ * Static info about {@link DataLoader} that will be used as monitoring tags.
  *
  * @param viewId   id of the view containing target data loader
  * @param loaderId id of the target data loader
  */
-public record DataLoaderMonitoringInfo(@Nullable String viewId, String loaderId) {
+public record DataLoaderMonitoringInfo(@Nullable String viewId, @Nullable String loaderId) {
+
+    private static final DataLoaderMonitoringInfo EMPTY = new DataLoaderMonitoringInfo(null, null);
+
+    public static DataLoaderMonitoringInfo empty() {
+        return EMPTY;
+    }
 }

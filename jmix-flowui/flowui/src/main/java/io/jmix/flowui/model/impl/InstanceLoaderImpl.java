@@ -64,7 +64,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     protected Map<String, Serializable> hints = new HashMap<>();
     protected Function<LoadContext<E>, E> delegate;
     protected EventHub events = new EventHub();
-    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider;
+    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
 
     @Nullable
     @Override

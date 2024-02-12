@@ -22,8 +22,6 @@ import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 
-import java.util.Objects;
-
 public class UiMonitoring {
 
     private static final String NOT_AVAILABLE_TAG_VALUE = "N/A";
@@ -47,7 +45,10 @@ public class UiMonitoring {
         if (!canDataLoaderBeMonitored(lifeCycle, info)) {
             return;
         }
-        sample.stop(createDataLoaderTimer(meterRegistry, lifeCycle, handleNullTag(info.viewId()), info.loaderId()));
+        sample.stop(createDataLoaderTimer(
+                        meterRegistry, lifeCycle, handleNullTag(info.viewId()), handleNullTag(info.loaderId())
+                )
+        );
     }
 
     public static void stopViewTimerSample(Timer.Sample sample,
@@ -58,7 +59,7 @@ public class UiMonitoring {
             return;
         }
 
-        sample.stop(createViewTimer(meterRegistry, lifeCycle, Objects.requireNonNull(viewId)));
+        sample.stop(createViewTimer(meterRegistry, lifeCycle, handleNullTag(viewId)));
     }
 
     protected static Timer createViewTimer(MeterRegistry meterRegistry, ViewLifeCycle lifeCycle, String viewId) {
@@ -87,6 +88,10 @@ public class UiMonitoring {
         return lifeCycle != null && !StringUtils.isBlank(viewId);
     }
 
+    /**
+     * Prevents null from being tag value.
+     * Actual sanity check should be performed before and prevent monitoring at all.
+     */
     protected static String handleNullTag(@Nullable String tag) {
         return tag == null ? NOT_AVAILABLE_TAG_VALUE : tag;
     }

@@ -52,11 +52,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.sql.Time;
 import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -748,7 +744,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
             cell.setCellValue(date);
 
-            if (Objects.equals(Time.class, javaClass)) {
+            if (Objects.equals(java.sql.Time.class, javaClass)) {
                 cell.setCellStyle(timeFormatCellStyle);
             } else if (Objects.equals(java.sql.Date.class, javaClass)) {
                 cell.setCellStyle(dateFormatCellStyle);
@@ -759,34 +755,34 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 String str = datatypeRegistry.get(Date.class).format(date);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
-        } else if (cellValue instanceof LocalTime) {
-            LocalTime time = (LocalTime) cellValue;
+        } else if (cellValue instanceof java.time.LocalTime) {
+            java.time.LocalTime time = (java.time.LocalTime) cellValue;
 
-            cell.setCellValue(Time.valueOf(time));
+            cell.setCellValue(java.sql.Time.valueOf(time));
             cell.setCellStyle(timeFormatCellStyle);
 
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
-                String str = datatypeRegistry.get(LocalTime.class).format(time);
+                String str = datatypeRegistry.get(java.time.LocalTime.class).format(time);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
-        } else if (cellValue instanceof LocalDate) {
-            LocalDate date = (LocalDate) cellValue;
+        } else if (cellValue instanceof java.time.LocalDate) {
+            java.time.LocalDate date = (java.time.LocalDate) cellValue;
 
             cell.setCellValue(date);
             cell.setCellStyle(dateFormatCellStyle);
 
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
-                String str = datatypeRegistry.get(LocalDate.class).format(date);
+                String str = datatypeRegistry.get(java.time.LocalDate.class).format(date);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
-        } else if (cellValue instanceof LocalDateTime) {
-            LocalDateTime dateTime = (LocalDateTime) cellValue;
+        } else if (cellValue instanceof java.time.LocalDateTime) {
+            java.time.LocalDateTime dateTime = (java.time.LocalDateTime) cellValue;
 
             cell.setCellValue(dateTime);
             cell.setCellStyle(dateTimeFormatCellStyle);
 
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
-                String str = datatypeRegistry.get(LocalDateTime.class).format(dateTime);
+                String str = datatypeRegistry.get(java.time.LocalDateTime.class).format(dateTime);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
         } else if (cellValue instanceof Boolean) {

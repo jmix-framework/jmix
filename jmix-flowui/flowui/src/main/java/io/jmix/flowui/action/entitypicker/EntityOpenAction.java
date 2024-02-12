@@ -174,8 +174,18 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     }
 
     @Override
+    public <V extends View<?>> Consumer<DialogWindow.AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
     public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
         viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
     }
 
     @SuppressWarnings("unchecked")

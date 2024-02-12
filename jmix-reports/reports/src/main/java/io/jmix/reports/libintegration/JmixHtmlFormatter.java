@@ -16,33 +16,34 @@
 
 package io.jmix.reports.libintegration;
 
-import io.jmix.reports.yarg.exception.ReportFormattingException;
-import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
-import io.jmix.reports.yarg.formatters.impl.HtmlFormatter;
-import io.jmix.reports.yarg.formatters.impl.pdf.HtmlToPdfConverter;
-import io.jmix.reports.yarg.formatters.impl.pdf.ITextPdfConverter;
-import io.jmix.reports.yarg.structure.BandData;
-import com.itextpdf.text.Image;
+import com.lowagie.text.Image;
 import freemarker.ext.util.WrapperTemplateModel;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
 import freemarker.template.TemplateScalarModel;
 import io.jmix.core.*;
 import io.jmix.reports.ReportsProperties;
+import io.jmix.reports.yarg.exception.ReportFormattingException;
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
+import io.jmix.reports.yarg.formatters.impl.HtmlFormatter;
+import io.jmix.reports.yarg.formatters.impl.pdf.HtmlToPdfConverter;
+import io.jmix.reports.yarg.formatters.impl.pdf.ITextPdfConverter;
+import io.jmix.reports.yarg.structure.BandData;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.pdf.ITextFSImage;
 import org.xhtmlrenderer.pdf.ITextOutputDevice;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.ITextUserAgent;
 import org.xhtmlrenderer.resource.ImageResource;
 
-import org.springframework.lang.Nullable;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -58,9 +59,9 @@ import static java.lang.String.format;
 @Component("report_JmixHtmlFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JmixHtmlFormatter extends HtmlFormatter {
-    protected static final String JMIX_FONTS_DIR = "/jmix/fonts";
 
     public static final String RESOURCE_PREFIX = "resource://";
+    protected static final String JMIX_FONTS_DIR = "/jmix/fonts";
 
     @Autowired
     protected Messages messages;
@@ -99,8 +100,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
             loadFonts(converter);
 
             ResourcesITextUserAgentCallback userAgentCallback =
-                    new ResourcesITextUserAgentCallback(renderer.getOutputDevice());
-            userAgentCallback.setSharedContext(renderer.getSharedContext());
+                    new ResourcesITextUserAgentCallback(renderer.getOutputDevice(), renderer.getSharedContext());
 
             renderer.getSharedContext().setUserAgentCallback(userAgentCallback);
 
@@ -124,132 +124,6 @@ public class JmixHtmlFormatter extends HtmlFormatter {
         if (StringUtils.isNotBlank(reportsProperties.getPdfFontsDirectory())) {
             File systemFontsDir = new File(reportsProperties.getPdfFontsDirectory());
             loadFontsFromDirectory(converter, systemFontsDir);
-        }
-    }
-
-    protected class ResourcesITextUserAgentCallback extends ITextUserAgent {
-
-        public ResourcesITextUserAgentCallback(ITextOutputDevice outputDevice) {
-            super(outputDevice);
-        }
-
-        @Override
-        public ImageResource getImageResource(String uri) {
-            FileRef fileRef = getFileRef(uri);
-            if (fileRef != null) {
-                ImageResource resource;
-                resource = (ImageResource) _imageCache.get(uri);
-                if (resource == null) {
-                    resource = createImageResource(uri);
-                    if (resource != null) {
-                        _imageCache.put(uri, resource);
-                    }
-                }
-
-                if (resource != null) {
-                    ITextFSImage image = (ITextFSImage) resource.getImage();
-
-                    Image imageObject;
-                    // use reflection for access to internal image
-                    try {
-                        Field imagePrivateField = image.getClass().getDeclaredField("_image");
-                        imagePrivateField.setAccessible(true);
-
-                        imageObject = (Image) imagePrivateField.get(image);
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        throw new ReportFormattingException("Error while clone internal image in Itext");
-                    }
-
-                    resource = new ImageResource(uri, new ITextFSImage(imageObject));
-                } else {
-                    resource = new ImageResource(uri, null);
-                }
-
-                return resource;
-            } else if (StringUtils.startsWith(uri, RESOURCE_PREFIX)) {
-                ImageResource resource = createImageResource(uri);
-                if (resource == null) {
-                    resource = new ImageResource(uri, null);
-                }
-                return resource;
-            }
-
-            return super.getImageResource(uri);
-        }
-
-        @Nullable
-        protected ImageResource createImageResource(String uri) {
-            ImageResource resource = null;
-            InputStream is = resolveAndOpenStream(uri);
-            if (is != null) {
-                try {
-                    Image image = Image.getInstance(IOUtils.toByteArray(is));
-
-                    scaleToOutputResolution(image);
-                    resource = new ImageResource(uri, new ITextFSImage(image));
-                    //noinspection unchecked
-                } catch (Exception e) {
-                    throw wrapWithReportingException(
-                            format("Can't read image file; unexpected problem for URI '%s'", uri), e);
-                } finally {
-                    IOUtils.closeQuietly(is);
-                }
-            }
-            return resource;
-        }
-
-        protected void scaleToOutputResolution(Image image) {
-            float factor = getSharedContext().getDotsPerPixel();
-            image.scaleAbsolute(image.getPlainWidth() * factor, image.getPlainHeight() * factor);
-        }
-
-        @Override
-        @Nullable
-        protected InputStream resolveAndOpenStream(String uri) {
-            FileRef fileRef = getFileRef(uri);
-            if (fileRef != null) {
-                try {
-                    return fileStorageLocator.getByName(fileRef.getStorageName()).openStream(fileRef);
-                } catch (FileStorageException e) {
-                    throw wrapWithReportingException(
-                            format("An error occurred while loading file with URI [%s] from file storage", uri), e);
-                }
-            } else if (StringUtils.startsWith(uri, RESOURCE_PREFIX)) {
-                String resolvedUri = resolveResourcePrefix(uri);
-                return resources.getResourceAsStream(resolvedUri);
-            } else {
-                return getInputStream(uri);
-            }
-        }
-
-        @Nullable
-        protected FileRef getFileRef(String uri) {
-            try {
-                return FileRef.fromString(uri);
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
-        }
-
-        protected InputStream getInputStream(String uri) {
-            uri = resolveURI(uri);
-            InputStream inputStream;
-            try {
-                URL url = new URL(uri);
-                URLConnection urlConnection = url.openConnection();
-                urlConnection.setConnectTimeout(reportsProperties.getHtmlExternalResourcesTimeoutSec() * 1000);
-                inputStream = urlConnection.getInputStream();
-            } catch (SocketTimeoutException e) {
-                throw new ReportFormattingException(format("Loading resource [%s] has been stopped by timeout", uri), e);
-            } catch (MalformedURLException e) {
-                throw new ReportFormattingException(format("Bad URL given: [%s]", uri), e);
-            } catch (FileNotFoundException e) {
-                throw new ReportFormattingException(format("Resource at URL [%s] not found", uri));
-            } catch (IOException e) {
-                throw new ReportFormattingException(format("An IO problem occurred while loading resource [%s]", uri), e);
-            }
-
-            return inputStream;
         }
     }
 
@@ -337,5 +211,134 @@ public class JmixHtmlFormatter extends HtmlFormatter {
 
     protected void throwIncorrectArgType(String methodName, int argIdx, String type) throws TemplateModelException {
         throw new TemplateModelException(format("Incorrect argument[%s] type for method %s. Expected type %s", argIdx, methodName, type));
+    }
+
+    protected class ResourcesITextUserAgentCallback extends ITextUserAgent {
+
+        private SharedContext sharedContext;
+
+        public ResourcesITextUserAgentCallback(ITextOutputDevice outputDevice, SharedContext sharedContext) {
+            super(outputDevice, sharedContext.getDotsPerPixel());
+            this.sharedContext = sharedContext;
+        }
+
+        @Override
+        public ImageResource getImageResource(String uri) {
+            FileRef fileRef = getFileRef(uri);
+            if (fileRef != null) {
+                ImageResource resource;
+                resource = _imageCache.get(uri);
+                if (resource == null) {
+                    resource = createImageResource(uri);
+                    if (resource != null) {
+                        _imageCache.put(uri, resource);
+                    }
+                }
+
+                if (resource != null) {
+                    ITextFSImage image = (ITextFSImage) resource.getImage();
+
+                    Image imageObject;
+                    // use reflection for access to internal image
+                    try {
+                        Field imagePrivateField = image.getClass().getDeclaredField("_image");
+                        imagePrivateField.setAccessible(true);
+
+                        imageObject = (Image) imagePrivateField.get(image);
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        throw new ReportFormattingException("Error while clone internal image in Itext");
+                    }
+
+                    resource = new ImageResource(uri, new ITextFSImage(imageObject));
+                } else {
+                    resource = new ImageResource(uri, null);
+                }
+
+                return resource;
+            } else if (StringUtils.startsWith(uri, RESOURCE_PREFIX)) {
+                ImageResource resource = createImageResource(uri);
+                if (resource == null) {
+                    resource = new ImageResource(uri, null);
+                }
+                return resource;
+            }
+
+            return super.getImageResource(uri);
+        }
+
+        @Nullable
+        protected ImageResource createImageResource(String uri) {
+            ImageResource resource = null;
+            InputStream is = resolveAndOpenStream(uri);
+            if (is != null) {
+                try {
+                    Image image = Image.getInstance(IOUtils.toByteArray(is));
+
+                    scaleToOutputResolution(image);
+                    resource = new ImageResource(uri, new ITextFSImage(image));
+                    //noinspection unchecked
+                } catch (Exception e) {
+                    throw wrapWithReportingException(
+                            format("Can't read image file; unexpected problem for URI '%s'", uri), e);
+                } finally {
+                    IOUtils.closeQuietly(is);
+                }
+            }
+            return resource;
+        }
+
+        protected void scaleToOutputResolution(Image image) {
+            float factor = sharedContext.getDotsPerPixel();
+            image.scaleAbsolute(image.getPlainWidth() * factor, image.getPlainHeight() * factor);
+        }
+
+        @Override
+        @Nullable
+        protected InputStream resolveAndOpenStream(String uri) {
+            FileRef fileRef = getFileRef(uri);
+            if (fileRef != null) {
+                try {
+                    return fileStorageLocator.getByName(fileRef.getStorageName()).openStream(fileRef);
+                } catch (FileStorageException e) {
+                    throw wrapWithReportingException(
+                            format("An error occurred while loading file with URI [%s] from file storage", uri), e);
+                }
+            } else if (StringUtils.startsWith(uri, RESOURCE_PREFIX)) {
+                String resolvedUri = resolveResourcePrefix(uri);
+                return resources.getResourceAsStream(resolvedUri);
+            } else {
+                return getInputStream(uri);
+            }
+        }
+
+        @Nullable
+        protected FileRef getFileRef(String uri) {
+            try {
+                return FileRef.fromString(uri);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+
+        protected InputStream getInputStream(String uri) {
+            uri = resolveURI(uri);
+            InputStream inputStream;
+            try {
+                URL url = new URL(uri);
+                URLConnection urlConnection = url.openConnection();
+                urlConnection.setConnectTimeout(reportsProperties.getHtmlExternalResourcesTimeoutSec() * 1000);
+                inputStream = urlConnection.getInputStream();
+            } catch (SocketTimeoutException e) {
+                throw new ReportFormattingException(format("Loading resource [%s] has been stopped by timeout", uri), e);
+            } catch (MalformedURLException e) {
+                throw new ReportFormattingException(format("Bad URL given: [%s]", uri), e);
+            } catch (FileNotFoundException e) {
+                throw new ReportFormattingException(format("Resource at URL [%s] not found", uri));
+            } catch (IOException e) {
+                throw new ReportFormattingException(format("An IO problem occurred while loading resource [%s]", uri), e);
+            }
+
+            return inputStream;
+        }
     }
 }

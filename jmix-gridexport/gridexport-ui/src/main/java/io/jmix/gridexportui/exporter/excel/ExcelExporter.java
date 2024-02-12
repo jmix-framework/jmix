@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.gridexportui.action.ExportAction;
 import io.jmix.gridexportui.exporter.AbstractTableExporter;
@@ -72,6 +73,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
     private static final int SPACE_COUNT = 10;
 
     public static final int MAX_ROW_COUNT = SpreadsheetVersion.EXCEL2007.getMaxRows();
+    private final CurrentAuthentication currentAuthentication;
 
     protected Workbook wb;
 
@@ -99,9 +101,10 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
     @Autowired
     public ExcelExporter(GridExportProperties gridExportProperties,
-                         AllRecordsExporter allRecordsExporter) {
+                         AllRecordsExporter allRecordsExporter, CurrentAuthentication currentAuthentication) {
         this.gridExportProperties = gridExportProperties;
         this.allRecordsExporter = allRecordsExporter;
+        this.currentAuthentication = currentAuthentication;
     }
 
     protected void createWorkbookWithSheet() {
@@ -710,7 +713,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             } else {
                 try {
                     str = datatype.format(n);
-                    Number result = (Number) datatype.parse(str);
+                    Number result = (Number) datatype.parse(str, currentAuthentication.getLocale());
                     if (result != null) {
                         if (n instanceof Integer || n instanceof Long || n instanceof Byte || n instanceof Short) {
                             cell.setCellValue(result.longValue());

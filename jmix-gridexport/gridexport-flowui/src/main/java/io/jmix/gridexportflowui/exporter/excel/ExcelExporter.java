@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -69,6 +70,8 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     public static final int MAX_ROW_COUNT = SpreadsheetVersion.EXCEL2007.getMaxRows();
 
+    private final CurrentAuthentication currentAuthentication;
+
     protected Workbook wb;
 
     protected Font boldFont;
@@ -97,10 +100,11 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     public ExcelExporter(GridExportProperties gridExportProperties,
                          AllRecordsExporter allRecordsExporter,
-                         Notifications notifications) {
+                         Notifications notifications, CurrentAuthentication currentAuthentication) {
         this.gridExportProperties = gridExportProperties;
         this.allRecordsExporter = allRecordsExporter;
         this.notifications = notifications;
+        this.currentAuthentication = currentAuthentication;
     }
 
     protected void createWorkbookWithSheet() {
@@ -395,7 +399,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             } else {
                 try {
                     str = datatype.format(n);
-                    Number result = (Number) datatype.parse(str);
+                    Number result = (Number) datatype.parse(str, currentAuthentication.getLocale());
                     if (result != null) {
                         if (n instanceof Integer || n instanceof Long || n instanceof Byte || n instanceof Short) {
                             cell.setCellValue(result.longValue());

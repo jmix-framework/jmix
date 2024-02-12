@@ -56,7 +56,7 @@ public class OpenedDialogWindows {
      * @return list of {@link View}s
      */
     public List<View<?>> getDialogs(UI ui) {
-        return openedDialogs.getOrDefault(ui, Collections.emptyList());
+        return Collections.unmodifiableList(openedDialogs.getOrDefault(ui, Collections.emptyList()));
     }
 
     @EventListener

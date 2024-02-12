@@ -77,6 +77,28 @@ class DynAttrStringUtilsTest extends Specification {
         convertedCamelCase == "screamingSnakeCaseString"
     }
 
+    def "toCamelCase in space case"() {
+        given:
+        String pascalCaseString = "space case string"
+
+        when:
+        String convertedCamelCase = DynAttrStringUtils.toCamelCase(pascalCaseString, delimiters)
+
+        then:
+        convertedCamelCase == "spaceCaseString"
+    }
+
+    def "toCamelCase in half-capitalized Space case"() {
+        given:
+        String pascalCaseString = "Space case String"
+
+        when:
+        String convertedCamelCase = DynAttrStringUtils.toCamelCase(pascalCaseString, delimiters)
+
+        then:
+        convertedCamelCase == "spaceCaseString"
+    }
+
     def "toCamelCase in Capitalized_Snake_Case"() {
         given:
         String pascalCaseString = "Capitalized_Snake_Case_STRING"
@@ -138,6 +160,28 @@ class DynAttrStringUtilsTest extends Specification {
 
         when:
         boolean isNotCamelCase = !DynAttrStringUtils.isCamelCase(pascalCaseString)
+
+        then:
+        isNotCamelCase
+    }
+
+    def "isCamelCase in space case"() {
+        given:
+        String pascalCaseString = "space case string"
+
+        when:
+        String isNotCamelCase = !DynAttrStringUtils.isCamelCase(pascalCaseString)
+
+        then:
+        isNotCamelCase
+    }
+
+    def "isCamelCase in half-capitalized Space case"() {
+        given:
+        String pascalCaseString = "Space case String"
+
+        when:
+        String isNotCamelCase = !DynAttrStringUtils.isCamelCase(pascalCaseString)
 
         then:
         isNotCamelCase

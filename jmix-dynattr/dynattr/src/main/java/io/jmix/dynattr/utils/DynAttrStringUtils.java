@@ -42,8 +42,8 @@ public final class DynAttrStringUtils {
      * <p>
      * This method ensures that the camelCase or PascalCase format is preserved when transforming a string into camelCase.
      * For example, 'camelCase' will not be transformed into 'camelcase'.
-     *
-     * @apiNote This method is designed to prevent unintentional conversion of camelCase or PascalCase strings into lowercase.
+     * <p>
+     * This method is designed to prevent unintentional conversion of camelCase or PascalCase strings into lowercase.
      * It is recommended for cases where maintaining the original case is crucial.
      *
      * @param str        The input string to convert.
@@ -59,8 +59,6 @@ public final class DynAttrStringUtils {
             return CaseUtils.toCamelCase(str, false, delimiters);
         }
     }
-
-
 
     /**
      * Checks if a string is in camelCase format.

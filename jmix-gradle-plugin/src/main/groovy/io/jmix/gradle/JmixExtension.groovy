@@ -91,5 +91,13 @@ class JmixExtension {
          * </pre>
          */
         List<String> jpaConverters = []
+
+        /**
+         * The property indicates whether entity classes enhancing should be skipped in case there were no modifications
+         * in entities since the last build. If set to "true" the plugin will check whether entity classes have been
+         * changed since last build, and if they haven't been changed then enhancing step will be skipped. If set to
+         * false, then entities enhancing steps will be executed on each classes compilation.
+         */
+        boolean skipUnmodifiedEntitiesEnhancing = true
     }
 }

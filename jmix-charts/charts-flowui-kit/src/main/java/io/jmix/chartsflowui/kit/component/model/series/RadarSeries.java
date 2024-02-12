@@ -314,6 +314,12 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
     }
 
     @Override
+    public void setSymbolSizeFunction(String symbolSizeFunction) {
+        this.symbolSizeFunction = new JsFunction(symbolSizeFunction);
+        markAsDirty();
+    }
+
+    @Override
     public Integer getSymbolRotate() {
         return symbolRotate;
     }

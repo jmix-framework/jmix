@@ -459,6 +459,12 @@ public class ScatterSeries extends AbstractAxisAwareSeries<ScatterSeries>
     }
 
     @Override
+    public void setSymbolSizeFunction(String symbolSizeFunction) {
+        this.symbolSizeFunction = new JsFunction(symbolSizeFunction);
+        markAsDirty();
+    }
+
+    @Override
     public JsFunction getSymbolSizeFunction() {
         return symbolSizeFunction;
     }

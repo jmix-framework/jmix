@@ -6084,6 +6084,7 @@ public interface StudioChartsElements {
                             options = {"INSIDE", "TOP", "LEFT", "RIGHT", "BOTTOM"}),
                     @StudioProperty(xmlAttribute = "positionCoordinates", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "formatter", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "formatterFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "valueFormatter", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -9784,7 +9785,8 @@ public interface StudioChartsElements {
                     "io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap",
                     "io.jmix.chartsflowui.kit.component.model.series.Label",
                     "io.jmix.chartsflowui.kit.component.model.series.LineSeries.EndLabel",
-                    "io.jmix.chartsflowui.kit.component.model.series.GaugeSeries.Detail"
+                    "io.jmix.chartsflowui.kit.component.model.series.GaugeSeries.Detail",
+                    "io.jmix.chartsflowui.kit.component.model.series.AbstractSeries.Tooltip"
             },
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"

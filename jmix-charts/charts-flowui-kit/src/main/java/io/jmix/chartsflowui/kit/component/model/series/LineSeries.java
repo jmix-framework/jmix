@@ -895,6 +895,12 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
     }
 
     @Override
+    public void setSymbolSizeFunction(String symbolSizeFunction) {
+        this.symbolSizeFunction = new JsFunction(symbolSizeFunction);
+        markAsDirty();
+    }
+
+    @Override
     public Integer getSymbolRotate() {
         return symbolRotate;
     }

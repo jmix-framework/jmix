@@ -27,6 +27,7 @@ import org.gradle.api.tasks.SourceSet
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.MessageDigest
 
@@ -262,8 +263,11 @@ class EnhancingAction implements Action<Task> {
      */
     protected void saveEntityClassesChecksumForNextBuild(Project project, sourceSet, ClassesInfo classesInfo) {
         def allEntityClassesChecksum = evaluateEntityClassesChecksum(sourceSet, classesInfo)
-        Files.write(Paths.get(getEntitiesChecksumFilePath(project)),
-                allEntityClassesChecksum.getBytes(StandardCharsets.UTF_8))
+        Path checksumFilePath = getEntitiesChecksumFilePath(project)
+        if (!Files.exists(checksumFilePath.getParent())) {
+            Files.createDirectories(checksumFilePath.getParent())
+        }
+        Files.write(checksumFilePath, allEntityClassesChecksum.getBytes(StandardCharsets.UTF_8))
     }
 
     /**
@@ -292,12 +296,12 @@ class EnhancingAction implements Action<Task> {
      * actual entity classes collection.
      */
     protected boolean entityClassesChangedSinceLastBuild(Project project, SourceSet sourceSet, ClassesInfo classesInfo) {
-        def path = Paths.get(getEntitiesChecksumFilePath(project))
-        if (!Files.exists(path)) {
+        Path entitiesChecksumFilePath = getEntitiesChecksumFilePath(project)
+        if (!Files.exists(entitiesChecksumFilePath)) {
             //previous entity classes checksum was not saved
             return true
         }
-        def prevChecksum = Files.readString(path)
+        def prevChecksum = Files.readString(entitiesChecksumFilePath)
         def currentChecksum = evaluateEntityClassesChecksum(sourceSet, classesInfo)
         return prevChecksum != currentChecksum
     }
@@ -313,10 +317,10 @@ class EnhancingAction implements Action<Task> {
     }
 
     /**
-     * Returns a string with a path to a file where entity classes checksum will be stored to.
+     * Returns a path to a file where entity classes checksum will be stored to.
      */
-    protected String getEntitiesChecksumFilePath(Project project) {
-        return "$project.buildDir/tmp/entitiesEnhancing/entities.checksum"
+    protected Path getEntitiesChecksumFilePath(Project project) {
+        return Paths.get("$project.buildDir/tmp/entitiesEnhancing/entities.checksum")
     }
 
     static ClassPool createClassPool(Project project, sourceSet) {

@@ -127,7 +127,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
         }
     }
 
-    protected String resolveResourcePrefix(String uri) {
+    protected String resolveResourceUri(String uri) {
         return uri.replace(RESOURCE_PREFIX, "");
     }
 
@@ -304,7 +304,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
                             format("An error occurred while loading file with URI [%s] from file storage", uri), e);
                 }
             } else if (StringUtils.startsWith(uri, RESOURCE_PREFIX)) {
-                String resolvedUri = resolveResourcePrefix(uri);
+                String resolvedUri = resolveResourceUri(uri);
                 return resources.getResourceAsStream(resolvedUri);
             } else {
                 return getInputStream(uri);

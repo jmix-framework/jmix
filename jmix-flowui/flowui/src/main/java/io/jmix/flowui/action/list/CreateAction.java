@@ -25,6 +25,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.UiEntityContext;
+import io.jmix.flowui.action.impl.ActionHandlerValidator;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
@@ -156,8 +157,18 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     }
 
     @Override
+    public <V extends View<?>> Consumer<AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
     public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
         viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
     }
 
     /**
@@ -178,6 +189,11 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
         this.initializer = initializer;
     }
 
+    @Nullable
+    public Consumer<E> getInitializer() {
+        return initializer;
+    }
+
     /**
      * Sets the handler to be invoked when the detail view saves the new entity.
      * <p>
@@ -193,6 +209,11 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
      */
     public void setAfterSaveHandler(@Nullable Consumer<E> afterSaveHandler) {
         this.afterSaveHandler = afterSaveHandler;
+    }
+
+    @Nullable
+    public Consumer<E> getAfterSaveHandler() {
+        return afterSaveHandler;
     }
 
     /**
@@ -213,6 +234,11 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
         this.transformation = transformation;
     }
 
+    @Nullable
+    public Function<E, E> getTransformation() {
+        return transformation;
+    }
+
     /**
      * Sets the new entity supplier. The supplier should return a new entity instance.
      * <p>
@@ -230,6 +256,11 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
      */
     public void setNewEntitySupplier(@Nullable Supplier<E> newEntitySupplier) {
         this.newEntitySupplier = newEntitySupplier;
+    }
+
+    @Nullable
+    public Supplier<E> getNewEntitySupplier() {
+        return newEntitySupplier;
     }
 
     @Autowired
@@ -301,6 +332,8 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
 
         navigator = viewInitializer.initNavigator(navigator);
 
+        ActionHandlerValidator.validate(this, OpenMode.NAVIGATION);
+
         navigator.navigate();
     }
 
@@ -335,6 +368,8 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
                 }
             });
         }
+
+        ActionHandlerValidator.validate(this, OpenMode.DIALOG);
 
         dialogWindow.open();
     }

@@ -129,11 +129,15 @@ public final class ViewControllerUtils {
         return view.addQueryParametersChangeListener(listener);
     }
 
-    public static <T> Registration addInitEntityEvent(StandardDetailView<T> view, ComponentEventListener<StandardDetailView.InitEntityEvent<T>> listener) {
+    public static <T> Registration addInitEntityEventListener(StandardDetailView<T> view, ComponentEventListener<StandardDetailView.InitEntityEvent<T>> listener) {
         return view.addInitEntityListener(listener);
     }
 
-    public static Registration addBeforeShowEvent(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
+    public static Registration addBeforeShowEventListener(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
         return view.addBeforeShowListener(listener);
+    }
+
+    public static Registration addValidationEventListener(StandardDetailView<?> view, ComponentEventListener<StandardDetailView.ValidationEvent> listener) {
+        return view.addValidationEventListener(listener);
     }
 }

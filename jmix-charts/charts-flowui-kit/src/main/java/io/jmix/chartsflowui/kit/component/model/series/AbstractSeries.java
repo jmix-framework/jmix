@@ -324,6 +324,8 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
 
         protected String formatter;
 
+        protected JsFunction formatterFunction;
+
         protected String valueFormatter;
 
         protected Color backgroundColor;
@@ -360,6 +362,20 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
 
         public void setFormatter(String formatter) {
             this.formatter = formatter;
+            markAsDirty();
+        }
+
+        public JsFunction getFormatterFunction() {
+            return formatterFunction;
+        }
+
+        public void setFormatterFunction(JsFunction formatterFunction) {
+            this.formatterFunction = formatterFunction;
+            markAsDirty();
+        }
+
+        public void setFormatterFunction(String formatterFunction) {
+            this.formatterFunction = new JsFunction(formatterFunction);
             markAsDirty();
         }
 
@@ -456,6 +472,16 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
 
         public Tooltip withFormatter(String formatter) {
             setFormatter(formatter);
+            return this;
+        }
+
+        public Tooltip withFormatterFunction(JsFunction formatterFunction) {
+            setFormatterFunction(formatterFunction);
+            return this;
+        }
+
+        public Tooltip withFormatterFunction(String formatterFunction) {
+            setFormatterFunction(formatterFunction);
             return this;
         }
 

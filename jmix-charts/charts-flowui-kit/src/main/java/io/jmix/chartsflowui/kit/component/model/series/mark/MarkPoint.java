@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.series.mark;
 
 import io.jmix.chartsflowui.kit.component.model.shared.HasSymbols;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
+import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,8 @@ public class MarkPoint extends AbstractMark<MarkPoint>
     protected HasSymbols.Symbol symbol;
 
     protected Integer symbolSize;
+
+    protected JsFunction symbolSizeFunction;
 
     protected Integer symbolRotate;
 
@@ -100,6 +103,8 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         protected HasSymbols.Symbol symbol;
 
         protected Integer symbolSize;
+
+        protected JsFunction symbolSizeFunction;
 
         protected Integer symbolRotate;
 
@@ -202,6 +207,23 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         @Override
         public void setSymbolSize(Integer symbolSize) {
             this.symbolSize = symbolSize;
+            markAsDirty();
+        }
+
+        @Override
+        public JsFunction getSymbolSizeFunction() {
+            return symbolSizeFunction;
+        }
+
+        @Override
+        public void setSymbolSizeFunction(JsFunction symbolSizeFunction) {
+            this.symbolSizeFunction = symbolSizeFunction;
+            markAsDirty();
+        }
+
+        @Override
+        public void setSymbolSizeFunction(String symbolSizeFunction) {
+            this.symbolSizeFunction = new JsFunction(symbolSizeFunction);
             markAsDirty();
         }
 
@@ -322,6 +344,23 @@ public class MarkPoint extends AbstractMark<MarkPoint>
     @Override
     public void setSymbolSize(Integer symbolSize) {
         this.symbolSize = symbolSize;
+        markAsDirty();
+    }
+
+    @Override
+    public JsFunction getSymbolSizeFunction() {
+        return symbolSizeFunction;
+    }
+
+    @Override
+    public void setSymbolSizeFunction(JsFunction symbolSizeFunction) {
+        this.symbolSizeFunction = symbolSizeFunction;
+        markAsDirty();
+    }
+
+    @Override
+    public void setSymbolSizeFunction(String symbolSizeFunction) {
+        this.symbolSizeFunction = new JsFunction(symbolSizeFunction);
         markAsDirty();
     }
 

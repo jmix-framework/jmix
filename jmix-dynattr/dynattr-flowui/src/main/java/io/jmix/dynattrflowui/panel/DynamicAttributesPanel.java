@@ -16,6 +16,7 @@
 
 package io.jmix.dynattrflowui.panel;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
@@ -42,6 +43,9 @@ import io.jmix.flowui.data.value.ContainerValueSourceProvider;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.view.StandardDetailView;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.ViewValidation;
 import org.hibernate.validator.internal.metadata.facets.Validatable;
 
@@ -58,7 +62,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     protected final UiComponents uiComponents;
     protected final Messages messages;
     protected final DynAttrMetadata dynAttrMetadata;
-    protected final ViewValidation validate;
+    protected final ViewValidation viewValidation;
     protected InstanceContainer<?> instanceContainer;
     protected VerticalLayout rootLayout;
     protected VerticalLayout categoryFieldBox;
@@ -72,13 +76,12 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
                                   UiComponents uiComponents,
                                   Messages messages,
                                   DynAttrMetadata dynAttrMetadata,
-                                  ViewValidation validate) {
+                                  ViewValidation viewValidation) {
         this.uiComponentsGenerator = uiComponentsGenerator;
         this.uiComponents = uiComponents;
         this.messages = messages;
         this.dynAttrMetadata = dynAttrMetadata;
-        this.validate = validate;
-    }
+        this.viewValidation = viewValidation;
 
 
     protected VerticalLayout initDynAttrContent() {
@@ -110,6 +113,21 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
 
         return rootLayout;
     }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        View<?> view = UiComponentUtils.findView(this);
+        if(view instanceof StandardDetailView<?> detailView) {
+            ViewControllerUtils.addValidationEventListener(detailView, this::onValidation);
+        }
+
+        super.onAttach(attachEvent);
+    }
+
+    protected void onValidation(StandardDetailView.ValidationEvent validationEvent) {
+        validationEvent.addErrors(viewValidation.validateUiComponents(propertiesForm));
+    }
+
 
     @Override
     protected VerticalLayout initContent() {

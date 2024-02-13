@@ -16,7 +16,6 @@
 
 package io.jmix.dynattrflowui.panel;
 
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
@@ -82,7 +81,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         this.messages = messages;
         this.dynAttrMetadata = dynAttrMetadata;
         this.viewValidation = viewValidation;
-
+    }
 
     protected VerticalLayout initDynAttrContent() {
         rootLayout = uiComponents.create(VerticalLayout.class);
@@ -117,7 +116,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         View<?> view = UiComponentUtils.findView(this);
-        if(view instanceof StandardDetailView<?> detailView) {
+        if (view instanceof StandardDetailView<?> detailView) {
             ViewControllerUtils.addValidationEventListener(detailView, this::onValidation);
         }
 
@@ -125,7 +124,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     }
 
     protected void onValidation(StandardDetailView.ValidationEvent validationEvent) {
-        validationEvent.addErrors(viewValidation.validateUiComponents(propertiesForm));
+        validationEvent.addErrors(viewValidation.validateUiComponents(dynamicAttributesForm));
     }
 
 
@@ -324,7 +323,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         Collection<Component> components = UiComponentUtils.getOwnComponents(dynamicAttributesForm);
         for (Component component : components) {
             if (component instanceof Validatable) {
-                ValidationErrors validationErrors = validate.validateUiComponents(component);
+                ValidationErrors validationErrors = viewValidation.validateUiComponents(component);
                 if (!validationErrors.isEmpty())
                     return false;
             }

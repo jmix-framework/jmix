@@ -107,24 +107,24 @@ public class ReportTableView extends StandardView {
     protected String templateCode;
     protected Map<String, Object> reportParameters;
     protected InputParametersFragment inputParametersFrame;
-    protected ReportOutputDocument document;
+    protected ReportOutputDocument reportOutputDocument;
 
     /**
-     * @deprecated use {@link #document}
+     * @deprecated use {@link #reportOutputDocument}
      */
-    @Deprecated(since = "2.1.3", forRemoval = true)
+    @Deprecated(since = "2.2.0", forRemoval = true)
     protected Report report;
 
     /**
-     * @deprecated use {@link #document}
+     * @deprecated use {@link #reportOutputDocument}
      */
-    @Deprecated(since = "2.1.3", forRemoval = true)
+    @Deprecated(since = "2.2.0", forRemoval = true)
     protected byte[] tableData;
 
     /**
-     * @deprecated use {@link #setDocument(ReportOutputDocument)}
+     * @deprecated use {@link #setReportOutputDocument(ReportOutputDocument)}
      */
-    @Deprecated(since = "2.1.3", forRemoval = true)
+    @Deprecated(since = "2.2.0", forRemoval = true)
     public void setReport(Report report) {
         this.report = report;
     }
@@ -138,15 +138,15 @@ public class ReportTableView extends StandardView {
     }
 
     /**
-     * @deprecated use {@link #setDocument(ReportOutputDocument)}
+     * @deprecated use {@link #setReportOutputDocument(ReportOutputDocument)}
      */
-    @Deprecated(since = "2.1.3", forRemoval = true)
+    @Deprecated(since = "2.2.0", forRemoval = true)
     public void setTableData(byte[] tableData) {
         this.tableData = tableData;
     }
 
-    public void setDocument(ReportOutputDocument document) {
-        this.document = document;
+    public void setReportOutputDocument(ReportOutputDocument reportOutputDocument) {
+        this.reportOutputDocument = reportOutputDocument;
     }
 
     @Subscribe("reportEntityComboBox")
@@ -159,8 +159,8 @@ public class ReportTableView extends StandardView {
         reportsDl.load();
         reportForm.setVisible(false);
 
-        if (document != null) {
-            drawTables(document);
+        if (reportOutputDocument != null) {
+            drawTables(reportOutputDocument);
         } else {
             JmixTableData dto = (JmixTableData) serialization.deserialize(tableData);
             drawTables(dto);
@@ -168,8 +168,8 @@ public class ReportTableView extends StandardView {
 
         if (report != null) {
             openReportParameters(report);
-        } else if (document != null) {
-            openReportParameters((Report) document.getReport());
+        } else if (reportOutputDocument != null) {
+            openReportParameters((Report) reportOutputDocument.getReport());
         }
     }
 
@@ -232,7 +232,7 @@ public class ReportTableView extends StandardView {
     /**
      * @deprecated use {@link #drawTables(ReportOutputDocument)}
      */
-    @Deprecated(since = "2.1.3", forRemoval = true)
+    @Deprecated(since = "2.2.0", forRemoval = true)
     protected void drawTables(JmixTableData dto) {
         Map<String, List<KeyValueEntity>> data = dto.getData();
         Map<String, Set<JmixTableData.ColumnInfo>> headerMap = dto.getHeaders();
@@ -249,7 +249,7 @@ public class ReportTableView extends StandardView {
             if (CollectionUtils.isNotEmpty(keyValueEntities)) {
                 KeyValueCollectionContainer container = createContainer(dataSetName, keyValueEntities, headerMap);
                 DataGrid<KeyValueEntity> dataGrid = createTable(dataSetName, container, headerMap);
-                HorizontalLayout buttonsPanel = createButtonsPanel(document, dataGrid);
+                HorizontalLayout buttonsPanel = createButtonsPanel(reportOutputDocument, dataGrid);
 
                 VerticalLayout verticalLayout = uiComponents.create(VerticalLayout.class);
                 verticalLayout.setPadding(false);
@@ -322,8 +322,8 @@ public class ReportTableView extends StandardView {
         columnInfos.forEach(columnInfo -> {
             Class javaClass = columnInfo.getColumnClass();
             if (Entity.class.isAssignableFrom(javaClass) ||
-                    EnumClass.class.isAssignableFrom(javaClass) ||
-                    datatypeRegistry.find(javaClass) != null) {
+                EnumClass.class.isAssignableFrom(javaClass) ||
+                datatypeRegistry.find(javaClass) != null) {
                 collectionContainer.addProperty(columnInfo.getKey(), javaClass);
             }
         });

@@ -293,7 +293,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
                     .build();
 
             ReportTableView reportTableView = showReportTableViewDialogWindow.getView();
-            reportTableView.setDocument(document);
+            reportTableView.setReportOutputDocument(document);
             reportTableView.setTemplateCode(templateCode);
             reportTableView.setReportParameters(params);
             showReportTableViewDialogWindow.open();

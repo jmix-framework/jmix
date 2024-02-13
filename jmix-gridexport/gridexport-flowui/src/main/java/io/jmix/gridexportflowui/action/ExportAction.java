@@ -105,10 +105,21 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
         return (T) dataGridExporter;
     }
 
+    /**
+     * Sets a file name.
+     *
+     * @param fileName a file name
+     */
     public void setFileName(String fileName) {
         dataGridExporter.setFileName(fileName);
     }
 
+    /**
+     * Sets a file name.
+     *
+     * @param fileName a file name
+     * @return builder
+     */
     @SuppressWarnings("unchecked")
     public <T> T withFileName(String fileName) {
         setFileName(fileName);

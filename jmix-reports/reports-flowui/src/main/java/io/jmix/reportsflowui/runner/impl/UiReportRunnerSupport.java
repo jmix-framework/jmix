@@ -21,7 +21,6 @@ import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.reports.entity.JmixReportOutputType;
-import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
@@ -56,7 +55,7 @@ public class UiReportRunnerSupport {
                     .build();
 
             ReportTableView reportTableView = showReportTableViewDialogWindow.getView();
-            reportTableView.setDocument(document);
+            reportTableView.setReportOutputDocument(document);
             reportTableView.setTemplateCode(templateCode);
             reportTableView.setReportParameters(params);
             showReportTableViewDialogWindow.open();

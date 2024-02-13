@@ -335,16 +335,16 @@ dependencies {
         api "xalan:xalan:$xalanVersion"
         api "xalan:serializer:$xalanVersion"
 
-        api 'com.itextpdf:itextpdf:5.5.13.3'
+        api 'com.github.librepdf:openpdf:1.3.39'
 
         def poiVersion = '5.2.3'
         api "org.apache.poi:poi:$poiVersion"
         api "org.apache.poi:poi-ooxml:$poiVersion"
         api "org.apache.poi:poi-scratchpad:$poiVersion"
 
-        def xhtmlrendererVersion = '9.1.22'
+        def xhtmlrendererVersion = '9.4.0'
         api "org.xhtmlrenderer:flying-saucer-core:$xhtmlrendererVersion"
-        api "org.xhtmlrenderer:flying-saucer-pdf-itext5:$xhtmlrendererVersion"
+        api "org.xhtmlrenderer:flying-saucer-pdf-openpdf:$xhtmlrendererVersion"
 
         def openhtmltopdfVersion = '1.0.10'
         api "com.openhtmltopdf:openhtmltopdf-core:$openhtmltopdfVersion"
@@ -383,8 +383,6 @@ dependencies {
                 strictly '16.2'
             }
         }
-
-        api 'com.opencsv:opencsv:5.5.2'
 
         api 'io.vavr:vavr:0.9.3'
         api 'org.jetbrains:annotations:22.0.0'

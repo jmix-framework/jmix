@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package component.button;
+package component.button
 
-import io.jmix.flowui.Actions;
+import io.jmix.flowui.Actions
 import io.jmix.flowui.UiComponents
-import io.jmix.flowui.action.entitypicker.EntityClearAction
-import io.jmix.flowui.action.entitypicker.EntityLookupAction
-import io.jmix.flowui.action.entitypicker.EntityOpenAction
 import io.jmix.flowui.action.list.AddAction
-import io.jmix.flowui.component.combobox.EntityComboBox
-import io.jmix.flowui.kit.action.Action
-import io.jmix.flowui.kit.component.button.JmixButton;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import test_support.spec.FlowuiTestSpecification;
+import io.jmix.flowui.kit.component.button.JmixButton
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-public class JmixButtonTest extends FlowuiTestSpecification {
+class JmixButtonTest extends FlowuiTestSpecification {
 
     @Autowired
     Actions actions
@@ -39,9 +34,9 @@ public class JmixButtonTest extends FlowuiTestSpecification {
     UiComponents uiComponents
 
     def "setAction method copy icon from Action"() {
-        def addButton = uiComponents.create(JmixButton);
-        def editButton = uiComponents.create(JmixButton);
-        def removeButton = uiComponents.create(JmixButton);
+        def addButton = uiComponents.create(JmixButton)
+        def editButton = uiComponents.create(JmixButton)
+        def removeButton = uiComponents.create(JmixButton)
 
         def addAction = actions.create(AddAction.ID)
 
@@ -56,11 +51,11 @@ public class JmixButtonTest extends FlowuiTestSpecification {
         removeButton.getIcon() != null
 
         addButton.getIcon().getElement().getAttribute("icon") ==
-                addAction.getIcon().getElement().getAttribute("icon");
+                addAction.getIcon().getElement().getAttribute("icon")
         editButton.getIcon().getElement().getAttribute("icon") ==
-                addAction.getIcon().getElement().getAttribute("icon");
+                addAction.getIcon().getElement().getAttribute("icon")
         removeButton.getIcon().getElement().getAttribute("icon") ==
-                addAction.getIcon().getElement().getAttribute("icon");
+                addAction.getIcon().getElement().getAttribute("icon")
 
         addButton.getIcon() != editButton.getIcon()
         addButton.getIcon() != removeButton.getIcon()

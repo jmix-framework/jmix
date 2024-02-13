@@ -152,7 +152,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
             }
         }
 
-        if (component.isEmpty() && component.isRequiredIndicatorVisible()) {
+        if (isEmptyAndRequired()) {
             setComponentRequiredErrorState();
             throw new ComponentValidationException(getRequiredErrorMessage(), component);
         }
@@ -234,6 +234,12 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
     public void setConversionInvalid(boolean conversionInvalid) {
         this.conversionInvalid = conversionInvalid;
+
+        if (explicitlyInvalid || conversionInvalid || isEmptyAndRequired()) {
+            updateInvalidState();
+        } else {
+            setInvalidInternal(false);
+        }
     }
 
     public void updateInvalidState() {
@@ -295,5 +301,9 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
     protected String formatMessage(String key, Object... params) {
         return messages.formatMessage("", key, params);
+    }
+
+    protected boolean isEmptyAndRequired() {
+        return component.isEmpty() && component.isRequiredIndicatorVisible();
     }
 }

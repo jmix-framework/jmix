@@ -19,7 +19,6 @@ package data_manager
 import io.jmix.core.DataManager
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
-import io.jmix.core.querycondition.UIConditions
 import io.jmix.data.impl.jpql.generator.ConditionGenerationContext
 import io.jmix.data.impl.jpql.generator.PropertyConditionGenerator
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,7 +49,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         when:
 
         def list = dataManager.load(TestAppEntity)
-                .condition(UIConditions.startsWith("name", "one"))
+                .condition(PropertyCondition.startsWith("name", "one").skipNullOrEmpty())
                 .list()
 
         then:
@@ -71,7 +70,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         when:
 
         def list = dataManager.load(TestAppEntity)
-                .condition(UIConditions.endsWith("name", "one"))
+                .condition(PropertyCondition.endsWith("name", "one").skipNullOrEmpty())
                 .list()
 
         then:
@@ -92,7 +91,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         when:
 
         def list = dataManager.load(TestAppEntity)
-                .condition(UIConditions.contains("name", "test"))
+                .condition(PropertyCondition.contains("name", "test").skipNullOrEmpty())
                 .list()
 
         then:
@@ -119,8 +118,8 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def list = dataManager.load(TestAppEntity)
                 .condition(
                         LogicalCondition.and()
-                                .add(UIConditions.contains("name", "one"))
-                                .add(UIConditions.contains("name", "two"))
+                                .add(PropertyCondition.contains("name", "one").skipNullOrEmpty())
+                                .add(PropertyCondition.contains("name", "two").skipNullOrEmpty())
                 )
                 .list()
 
@@ -143,7 +142,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
 
         def list = dataManager.load(TestAppEntity)
                 .query("select e from test_TestAppEntity e")
-                .condition(UIConditions.propertyConditionWithValue("name", PropertyCondition.Operation.CONTAINS, "two"))
+                .condition(PropertyCondition.createWithValue("name", PropertyCondition.Operation.CONTAINS, "two").skipNullOrEmpty())
                 .list()
 
         then:
@@ -167,7 +166,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         when:
 
         def list = dataManager.load(TestAppEntity)
-                .condition(UIConditions.inList("name", ["test one", "test two"]))
+                .condition(PropertyCondition.inList("name", ["test one", "test two"]).skipNullOrEmpty())
                 .list()
 
         then:
@@ -192,7 +191,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         when:
 
         def list = dataManager.load(TestAppEntity)
-                .condition(UIConditions.notInList("name", ["test one", "test two"]))
+                .condition(PropertyCondition.notInList("name", ["test one", "test two"]).skipNullOrEmpty())
                 .list()
 
         then:
@@ -223,7 +222,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def list = dataManager.load(TestAppEntity)
                 .condition(
                         LogicalCondition.and()
-                                .add(UIConditions.isCollectionEmpty("items", false))
+                                .add(PropertyCondition.isCollectionEmpty("items", false).skipNullOrEmpty())
                 )
                 .list()
 
@@ -255,7 +254,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def list = dataManager.load(TestAppEntity)
                 .condition(
                         LogicalCondition.and()
-                                .add(UIConditions.isCollectionEmpty("items", true))
+                                .add(PropertyCondition.isCollectionEmpty("items", true).skipNullOrEmpty())
                 )
                 .list()
 
@@ -285,7 +284,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         when:
 
         def list = dataManager.load(TestAppEntity)
-                .condition(UIConditions.memberOfCollection("items", appEntityItem1))
+                .condition(PropertyCondition.memberOfCollection("items", appEntityItem1).skipNullOrEmpty())
                 .list()
 
         then:
@@ -314,7 +313,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         when:
 
         def list = dataManager.load(TestAppEntity)
-                .condition(UIConditions.notMemberOfCollection("items", appEntityItem1))
+                .condition(PropertyCondition.notMemberOfCollection("items", appEntityItem1).skipNullOrEmpty())
                 .list()
 
         then:
@@ -345,8 +344,8 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def list = dataManager.load(TestAppEntity)
                 .condition(
                         LogicalCondition.and()
-                                .add(UIConditions.contains("items.name", "one"))
-                                .add(UIConditions.contains("items.name", "two"))
+                                .add(PropertyCondition.contains("items.name", "one").skipNullOrEmpty())
+                                .add(PropertyCondition.contains("items.name", "two").skipNullOrEmpty())
                 )
                 .list()
 
@@ -358,7 +357,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
         list = dataManager.load(TestAppEntity)
                 .condition(
                         LogicalCondition.and()
-                                .add(UIConditions.contains("items.appEntity.name", "two"))
+                                .add(PropertyCondition.contains("items.appEntity.name", "two").skipNullOrEmpty())
                 )
                 .list()
 
@@ -382,7 +381,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
     def "PropertyCondition generator join to one test"() {
         when:
 
-        def property = UIConditions.equal("appEntity.name","Test")
+        def property = PropertyCondition.equal("appEntity.name","Test").skipNullOrEmpty()
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntityItem"
         context.entityAlias = "e"
@@ -396,7 +395,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
     def "PropertyCondition generator join to many test"() {
         when:
 
-        def property = UIConditions.equal("items.name","Test")
+        def property = PropertyCondition.equal("items.name","Test").skipNullOrEmpty()
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntity"
         context.entityAlias = "e"
@@ -410,7 +409,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
     def "PropertyCondition generator join to one and many test"() {
         when:
 
-        def property = UIConditions.equal("appEntity.items.name","Test")
+        def property = PropertyCondition.equal("appEntity.items.name","Test").skipNullOrEmpty()
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntityItem"
         context.entityAlias = "e"
@@ -424,7 +423,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
     def "PropertyCondition generator multiple join to many test"() {
         when:
 
-        def property = UIConditions.equal("items.appEntity.items.name","Test")
+        def property = PropertyCondition.equal("items.appEntity.items.name","Test").skipNullOrEmpty()
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntity"
         context.entityAlias = "e"
@@ -438,7 +437,7 @@ class DataManagerPropertyConditionTest extends DataSpec {
     def "PropertyCondition generator multiple join to one and many test"() {
         when:
 
-        def property = UIConditions.equal("appEntity.items.appEntity.items.name","Test")
+        def property = PropertyCondition.equal("appEntity.items.appEntity.items.name","Test").skipNullOrEmpty()
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntityItem"
         context.entityAlias = "e"

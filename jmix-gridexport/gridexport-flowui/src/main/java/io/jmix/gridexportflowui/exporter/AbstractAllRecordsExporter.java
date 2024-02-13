@@ -23,7 +23,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.core.querycondition.UIConditions;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.model.*;
@@ -126,8 +125,9 @@ public abstract class AbstractAllRecordsExporter {
             wrappingCondition.add(condition);
         }
 
-        PropertyCondition lastPkCondition = UIConditions.propertyConditionWithParameterName(primaryKeyName,
-                PropertyCondition.Operation.GREATER, LAST_LOADED_PK_CONDITION_PARAMETER_NAME);
+        PropertyCondition lastPkCondition = PropertyCondition.createWithParameterName(primaryKeyName,
+                        PropertyCondition.Operation.GREATER, LAST_LOADED_PK_CONDITION_PARAMETER_NAME)
+                .skipNullOrEmpty();
         wrappingCondition.add(lastPkCondition);
         query.setCondition(wrappingCondition);
         query.setFirstResult(0);

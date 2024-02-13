@@ -18,7 +18,6 @@ package query_params
 
 import io.jmix.core.DataManager
 import io.jmix.core.querycondition.PropertyCondition
-import io.jmix.core.querycondition.UIConditions
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.TestQueryParamValueProvider
@@ -67,7 +66,7 @@ class QueryParamValueProvidersTest extends DataSpec {
 
         when:
         def customer1 = dataManager.load(Customer)
-                .condition(UIConditions.propertyConditionWithParameterName('name', PropertyCondition.Operation.EQUAL, 'test_customerName'))
+                .condition(PropertyCondition.createWithParameterName('name', PropertyCondition.Operation.EQUAL, 'test_customerName').skipNullOrEmpty())
                 .one()
 
         then:

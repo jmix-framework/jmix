@@ -20,7 +20,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.core.querycondition.UIConditions;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.dataimport.DuplicateEntityManager;
 import io.jmix.dataimport.configuration.UniqueEntityConfiguration;
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,9 +42,9 @@ public class DuplicateEntityManagerImpl implements DuplicateEntityManager {
         configuration.getEntityPropertyNames().forEach(propertyName -> {
             Object propertyValue = EntityValues.getValueEx(entity, propertyName);
             if (propertyValue != null) {
-                condition.add(UIConditions.equal(propertyName, propertyValue));
+                condition.add(PropertyCondition.equal(propertyName, propertyValue).skipNullOrEmpty());
             } else {
-                condition.add(UIConditions.isSet(propertyName, false));
+                condition.add(PropertyCondition.isSet(propertyName, false).skipNullOrEmpty());
             }
         });
         return loadByCondition(entity.getClass(), fetchPlan, condition);
@@ -101,9 +101,9 @@ public class DuplicateEntityManagerImpl implements DuplicateEntityManager {
         LogicalCondition condition = LogicalCondition.and();
         propertyValues.forEach((propertyName, propertyValue) -> {
             if (propertyValue != null) {
-                condition.add(UIConditions.equal(propertyName, propertyValue));
+                condition.add(PropertyCondition.equal(propertyName, propertyValue).skipNullOrEmpty());
             } else {
-                condition.add(UIConditions.isSet(propertyName, false));
+                condition.add(PropertyCondition.isSet(propertyName, false).skipNullOrEmpty());
             }
         });
         return loadByCondition(entityClass, fetchPlan, condition);

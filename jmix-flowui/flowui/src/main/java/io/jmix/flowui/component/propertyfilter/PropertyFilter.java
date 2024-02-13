@@ -26,7 +26,6 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.core.querycondition.UIConditions;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -233,7 +232,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
     @Override
     protected PropertyCondition createQueryCondition() {
-        return UIConditions.propertyCondition();
+        return new PropertyCondition().skipNullOrEmpty();
     }
 
     /**

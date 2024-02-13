@@ -43,7 +43,8 @@ public abstract class SkippableCondition<T extends SkippableCondition<T>> implem
     }
 
     /**
-     * Make this condition to be skipped if parameter is absent, null or empty
+     * Make this condition to be skipped if parameter is absent, null or empty.
+     * Allows to skip filtering if no value specified in UI component.
      */
     public T skipNullOrEmpty() {
         skipNullOrEmpty = true;

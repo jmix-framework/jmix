@@ -20,7 +20,6 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.core.querycondition.UIConditions;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import jakarta.persistence.TemporalType;
@@ -104,8 +103,8 @@ public class NullParamTest {
         // SELECT ... FROM SALES_ORDER WHERE ((AMOUNT = ?) AND (DELETE_TS IS NULL))
         List<Order> orders = dataManager.load(Order.class)
                 .condition(LogicalCondition.and(
-                        UIConditions.propertyConditionWithParameterName("amount", PropertyCondition.Operation.EQUAL, "amount"),
-                        UIConditions.propertyConditionWithParameterName("number", PropertyCondition.Operation.EQUAL, "number")))
+                        PropertyCondition.createWithParameterName("amount", PropertyCondition.Operation.EQUAL, "amount").skipNullOrEmpty(),
+                        PropertyCondition.createWithParameterName("number", PropertyCondition.Operation.EQUAL, "number").skipNullOrEmpty()))
                 .parameter("amount", MAGIC_NUM)
                 .parameter("number", null)
                 .list();
@@ -114,8 +113,8 @@ public class NullParamTest {
         // SELECT ... FROM SALES_ORDER WHERE ((AMOUNT = ?) AND (DELETE_TS IS NULL))
         orders = dataManager.load(Order.class)
                 .condition(LogicalCondition.and(
-                        UIConditions.propertyConditionWithParameterName("amount", PropertyCondition.Operation.EQUAL, "amount"),
-                        UIConditions.propertyConditionWithParameterName("date", PropertyCondition.Operation.EQUAL, "date")))
+                        PropertyCondition.createWithParameterName("amount", PropertyCondition.Operation.EQUAL, "amount").skipNullOrEmpty(),
+                        PropertyCondition.createWithParameterName("date", PropertyCondition.Operation.EQUAL, "date").skipNullOrEmpty()))
                 .parameter("amount", MAGIC_NUM)
                 .parameter("date", null, TemporalType.DATE)
                 .list();

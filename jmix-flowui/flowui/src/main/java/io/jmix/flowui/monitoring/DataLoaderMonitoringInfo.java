@@ -29,6 +29,9 @@ public record DataLoaderMonitoringInfo(@Nullable String viewId, @Nullable String
 
     private static final DataLoaderMonitoringInfo EMPTY = new DataLoaderMonitoringInfo(null, null);
 
+    /**
+     * Returns stub objects with null values. Monitoring records will not be created based on this info.
+     */
     public static DataLoaderMonitoringInfo empty() {
         return EMPTY;
     }

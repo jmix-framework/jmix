@@ -43,6 +43,7 @@ public class ViewDataImpl implements ViewData {
     protected Map<String, DataLoader> loaders = new LinkedHashMap<>();
 
     @Override
+    @Nullable
     public String getViewId() {
         return viewId;
     }

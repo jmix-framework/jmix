@@ -37,6 +37,7 @@ import test_support.UiTestConfiguration
 import ui_controller_dependency_injector.screen.AutowireFacetDialogActionTestScreen
 import ui_controller_dependency_injector.screen.AutowireToFieldsTestScreen
 import ui_controller_dependency_injector.screen.AutowireToSettersTestScreen
+import ui_controller_dependency_injector.screen.ValueAnnotationTestScreen
 import ui_controller_dependency_injector.screen.WindowParamTestScreen
 
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
@@ -132,5 +133,19 @@ class UiControllerDependencyInjectorTest extends ScreenSpecification {
 
         screen.testFragment.okFragmentInputDialog != null
         screen.testFragment.okFragmentOptionDialog != null
+    }
+
+    def "Dependency injector supports Value annotation for different data types"() {
+        showTestMainScreen()
+
+        when: "Screen is loaded"
+
+        def screen = getScreens().create(ValueAnnotationTestScreen)
+        screen.show()
+
+        then: "All fields with value annotation should be initialized"
+
+        screen.integerField == 10
+        screen.stringField == "100"
     }
 }

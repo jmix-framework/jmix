@@ -51,6 +51,7 @@ import org.springframework.beans.factory.support.AbstractBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.convert.ConversionService;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
@@ -62,6 +63,7 @@ import java.lang.reflect.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -570,8 +572,14 @@ public class UiControllerDependencyInjector {
 
         } else if (annotationClass == Value.class) {
             AutowireCapableBeanFactory autowireCapableBeanFactory = applicationContext.getAutowireCapableBeanFactory();
-            return ((AbstractBeanFactory) autowireCapableBeanFactory)
+            String stringValue = ((AbstractBeanFactory) autowireCapableBeanFactory)
                     .resolveEmbeddedValue(element.getAnnotation(Value.class).value());
+            ConversionService conversionService = ((AbstractBeanFactory) autowireCapableBeanFactory)
+                    .getConversionService();
+            if (conversionService == null) {
+                return stringValue;
+            }
+            return conversionService.convert(stringValue, type);
 
         } else if (ScreenFragment.class.isAssignableFrom(type)) {
             // Injecting inner fragment controller

@@ -136,4 +136,8 @@ public final class ViewControllerUtils {
     public static Registration addBeforeShowEvent(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
         return view.addBeforeShowListener(listener);
     }
+
+    public static void addValidationEventListener(StandardDetailView<?> view, ComponentEventListener<StandardDetailView.ValidationEvent> listener) {
+        view.addValidationEventListener(listener);
+    }
 }

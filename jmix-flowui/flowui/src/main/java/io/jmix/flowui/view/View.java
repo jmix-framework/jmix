@@ -24,15 +24,23 @@ import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.monitoring.UiMonitoring;
+import io.jmix.flowui.monitoring.ViewLifeCycle;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.WebBrowserTools;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static io.jmix.flowui.monitoring.UiMonitoring.*;
+import static io.jmix.flowui.monitoring.ViewLifeCycle.*;
+import static io.micrometer.core.instrument.Timer.*;
 
 /**
  * Base class for UI views.
@@ -54,6 +62,7 @@ public class View<T extends Component> extends Composite<T>
         implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver, HasDynamicTitle {
 
     private ApplicationContext applicationContext;
+    private MeterRegistry meterRegistry;
 
     private ViewData viewData;
     private ViewActions viewActions;
@@ -85,6 +94,11 @@ public class View<T extends Component> extends Composite<T>
         this.applicationContext = applicationContext;
     }
 
+    @Autowired
+    protected void setMeterRegistry(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+    }
+
     @Override
     public void setId(String id) {
         super.setId(id);
@@ -97,7 +111,9 @@ public class View<T extends Component> extends Composite<T>
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
+        Sample sample = start(meterRegistry);
         fireEvent(new ReadyEvent(this));
+        stopViewTimerSample(sample, meterRegistry, READY, getId().orElse(null));
 
         ViewOpenedEvent viewOpenedEvent = new ViewOpenedEvent(this);
         applicationContext.publishEvent(viewOpenedEvent);
@@ -106,7 +122,10 @@ public class View<T extends Component> extends Composite<T>
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         fireEvent(new QueryParametersChangeEvent(this, event.getLocation().getQueryParameters()));
+
+        Sample sample = startTimerSample(meterRegistry);
         fireEvent(new BeforeShowEvent(this));
+        stopViewTimerSample(sample, meterRegistry, BEFORE_SHOW, getId().orElse(null));
     }
 
     @Override
@@ -115,7 +134,10 @@ public class View<T extends Component> extends Composite<T>
             if (!closeActionPerformed) {
                 CloseAction closeAction = new NavigateCloseAction(event);
                 BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
+
+                Sample beforeCloseSample = startTimerSample(meterRegistry);
                 fireEvent(beforeCloseEvent);
+                stopViewTimerSample(beforeCloseSample, meterRegistry, BEFORE_CLOSE, getId().orElse(null));
 
                 if (beforeCloseEvent.isClosePrevented()) {
                     closeActionPerformed = false;
@@ -125,7 +147,9 @@ public class View<T extends Component> extends Composite<T>
                 removeViewAttributes();
 
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
+                Sample afterCloseSample = startTimerSample(meterRegistry);
                 fireEvent(afterCloseEvent);
+                stopViewTimerSample(afterCloseSample, meterRegistry, AFTER_CLOSE, getId().orElse(null));
 
                 ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
                 applicationContext.publishEvent(viewClosedEvent);

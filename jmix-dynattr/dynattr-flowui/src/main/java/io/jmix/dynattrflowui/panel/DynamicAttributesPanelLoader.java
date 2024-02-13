@@ -24,11 +24,11 @@ import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 
 @Internal
-public class DynamicAttributesPanelLoader extends AbstractComponentLoader<DynamicAttributesPanelImpl> {
+public class DynamicAttributesPanelLoader extends AbstractComponentLoader<DynamicAttributesPanel> {
     @SuppressWarnings("NullableProblems")
     @Override
-    public DynamicAttributesPanelImpl createComponent() {
-        return factory.create(DynamicAttributesPanelImpl.class);
+    public DynamicAttributesPanel createComponent() {
+        return factory.create(DynamicAttributesPanel.class);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
         loadCategoryFieldsVisible(resultComponent, element);
     }
 
-    private void loadCategoryFieldsVisible(DynamicAttributesPanelImpl resultComponent, Element element) {
+    private void loadCategoryFieldsVisible(DynamicAttributesPanel resultComponent, Element element) {
         String fieldWidth = element.attributeValue("categoryFieldVisible");
         if (!Strings.isNullOrEmpty(fieldWidth)) {
             resultComponent.setCategoryFieldVisible(Boolean.parseBoolean(fieldWidth));
@@ -46,7 +46,7 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
     }
 
 
-    protected void loadDataContainer(DynamicAttributesPanelImpl resultComponent, Element element) {
+    protected void loadDataContainer(DynamicAttributesPanel resultComponent, Element element) {
         String containerId = element.attributeValue("dataContainer");
         if (Strings.isNullOrEmpty(containerId)) {
             throw new GuiDevelopmentException("DynamicAttributesPanel element doesn't have 'dataContainer' attribute",
@@ -56,7 +56,7 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
         resultComponent.setInstanceContainer(container);
     }
 
-    protected void loadWidth(DynamicAttributesPanelImpl resultComponent, Element element) {
+    protected void loadWidth(DynamicAttributesPanel resultComponent, Element element) {
         String fieldWidth = element.attributeValue("width");
         if (!Strings.isNullOrEmpty(fieldWidth)) {
             resultComponent.setWidth(fieldWidth);

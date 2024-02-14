@@ -16,12 +16,7 @@
 
 package io.jmix.gridexportflowui.exporter;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.Id;
-import io.jmix.core.LoadContext;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.Sort;
-import io.jmix.core.ValueLoadContext;
+import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -30,11 +25,7 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.DataUnit;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionLoader;
-import io.jmix.flowui.model.DataLoader;
-import io.jmix.flowui.model.HasLoader;
-import io.jmix.flowui.model.KeyValueCollectionLoader;
+import io.jmix.flowui.model.*;
 import io.jmix.gridexportflowui.GridExportProperties;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -135,7 +126,8 @@ public abstract class AbstractAllRecordsExporter {
         }
 
         PropertyCondition lastPkCondition = PropertyCondition.createWithParameterName(primaryKeyName,
-                PropertyCondition.Operation.GREATER, LAST_LOADED_PK_CONDITION_PARAMETER_NAME);
+                        PropertyCondition.Operation.GREATER, LAST_LOADED_PK_CONDITION_PARAMETER_NAME)
+                .skipNullOrEmpty();
         wrappingCondition.add(lastPkCondition);
         query.setCondition(wrappingCondition);
         query.setFirstResult(0);

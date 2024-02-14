@@ -33,8 +33,8 @@ import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.model.DataLoader;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
@@ -232,7 +232,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
     @Override
     protected PropertyCondition createQueryCondition() {
-        return new PropertyCondition();
+        return new PropertyCondition().skipNullOrEmpty();
     }
 
     /**

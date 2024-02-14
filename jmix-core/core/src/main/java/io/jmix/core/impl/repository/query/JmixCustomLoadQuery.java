@@ -18,6 +18,8 @@ package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.core.repository.Query;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.*;
@@ -33,6 +35,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static io.jmix.core.impl.repository.query.utils.LoaderHelper.springToJmixSort;
 
 /**
  * {@link RepositoryQuery} for query methods annotated with {@link Query @Query}.
@@ -92,8 +96,12 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
                 .parameters(buildNamedParametersMap(parameters))
                 .hints(queryHints);
 
+        JmixDataRepositoryContext jmixDataRepositoryContext = jmixContextIndex != -1 ? (JmixDataRepositoryContext) parameters[jmixContextIndex] : null;
+
         if (fetchPlanIndex != -1) {
             query.fetchPlan((FetchPlan) parameters[fetchPlanIndex]);
+        } else if (jmixDataRepositoryContext != null && jmixDataRepositoryContext.fetchPlan() != null) {
+            query.fetchPlan(jmixDataRepositoryContext.fetchPlan());
         } else {
             query.fetchPlan(fetchPlan);
         }
@@ -102,10 +110,24 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
             query.sort(LoaderHelper.springToJmixSort((Sort) parameters[sortIndex]));
         }
 
-        return considerPagingAndProcess(query, parameters);
+        FluentLoader.ByCondition<?> conditionQuery = null;
+
+        if (jmixDataRepositoryContext != null) {
+            query.hints(jmixDataRepositoryContext.hints());
+
+            if (jmixDataRepositoryContext.condition() != null) {
+                conditionQuery = query.condition(jmixDataRepositoryContext.condition());
+            }
+        }
+
+        if (conditionQuery == null) {
+            conditionQuery = query.condition(LogicalCondition.and());
+        }
+
+        return considerPagingAndProcess(conditionQuery, parameters);
     }
 
-    protected Object considerPagingAndProcess(FluentLoader.ByQuery<?> loader, Object[] parameters) {
+    protected Object considerPagingAndProcess(FluentLoader.ByCondition<?> loader, Object[] parameters) {
         Class<?> returnType = method.getReturnType();
         if (Slice.class.isAssignableFrom(returnType)) {
             if (pageableIndex == -1) {
@@ -114,7 +136,8 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
 
             Pageable pageable = (Pageable) parameters[pageableIndex];
 
-            LoaderHelper.applyPageableForQueryLoader(loader, pageable);
+            LoaderHelper.applyPageableForConditionLoader(loader, pageable);
+            loader.sort(springToJmixSort(pageable.getSort()));
 
             if (Page.class.isAssignableFrom(returnType)) {
                 LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))

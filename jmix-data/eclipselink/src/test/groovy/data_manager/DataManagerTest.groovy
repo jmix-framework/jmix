@@ -301,7 +301,7 @@ class DataManagerTest extends DataSpec {
         when:
 
         def list = dataManager.load(Product)
-                .condition(PropertyCondition.equal("quantity", 100))
+                .condition(PropertyCondition.equal("quantity", 100).skipNullOrEmpty())
                 .list()
 
         then:
@@ -312,7 +312,7 @@ class DataManagerTest extends DataSpec {
 
         def list1 = dataManager.load(Product)
                 .query("e.quantity = ?1", 100)
-                .condition(PropertyCondition.equal("name", "p1"))
+                .condition(PropertyCondition.equal("name", "p1").skipNullOrEmpty())
                 .list()
 
         then:
@@ -351,7 +351,7 @@ class DataManagerTest extends DataSpec {
         when:
 
         def list = dataManager.load(OrderLineA)
-                .condition(PropertyCondition.equal("product.quantity", 100))
+                .condition(PropertyCondition.equal("product.quantity", 100).skipNullOrEmpty())
                 .list()
 
         then:
@@ -362,7 +362,7 @@ class DataManagerTest extends DataSpec {
 
         def list1 = dataManager.load(OrderLineA)
                 .query("e.quantity = ?1", 100)
-                .condition(PropertyCondition.equal("product.name", "p1"))
+                .condition(PropertyCondition.equal("product.name", "p1").skipNullOrEmpty())
                 .list()
 
         then:

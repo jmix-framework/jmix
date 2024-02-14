@@ -15,6 +15,7 @@
         <xs:attributeGroup ref="layout:hasId"/>
 
         <xs:attribute name="dataContainer" type="xs:string" use="required"/>
+        <xs:attribute name="categoryFieldVisible" type="xs:boolean"/>
         <xs:attribute name="fieldWidth" type="xs:string"/>
     </xs:complexType>
 

@@ -330,7 +330,6 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected AbstractField<?, ?> createBooleanField(ComponentGenerationContext context, AttributeDefinition attribute) {
         JmixCheckbox component = uiComponents.create(JmixCheckbox.class);
 
-        // todo setValidators(component, attribute); JmixCheckbox - has no validators
         setValueSource(component, context);
 
         return component;

@@ -51,6 +51,7 @@ import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.utils.DataProviderUtils;
+import io.jmix.dynattr.utils.DynAttrStringUtils;
 import io.jmix.dynattrflowui.utils.DynAttrUiHelper;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.*;
@@ -892,10 +893,10 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             }
             char[] delimiters = {' ', '.', '_', '-', '\t'};
 
-            String categoryNameInCamelCaseUncapitalized = CaseUtils.toCamelCase(categoryName, false, delimiters);
-            String attributeNameInCamelCaseUncapitalized = CaseUtils.toCamelCase(attribute.getName(), false, delimiters);
+            String categoryNameInCamelCaseUncapitalized = DynAttrStringUtils.toCamelCase(categoryName, delimiters);
+            String attributeNameInCamelCaseUncapitalized = DynAttrStringUtils.toCamelCase(attribute.getName(), delimiters);
 
-            String resultCodeName = Strings.isNullOrEmpty(categoryNameInCamelCaseUncapitalized) ?
+            String resultCodeName = !Strings.isNullOrEmpty(categoryNameInCamelCaseUncapitalized) ?
                     categoryNameInCamelCaseUncapitalized + StringUtils.capitalize(attributeNameInCamelCaseUncapitalized) :
                     attributeNameInCamelCaseUncapitalized;
 

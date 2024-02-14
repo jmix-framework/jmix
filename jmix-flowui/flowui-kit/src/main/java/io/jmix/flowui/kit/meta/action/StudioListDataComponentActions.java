@@ -30,7 +30,7 @@ public interface StudioListDataComponentActions {
             description = "Creates an entity instance using its detail view",
             classFqn = "io.jmix.flowui.action.list.CreateAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
-            documentationLink = "%VERSION/flow-ui/actions/list-actions.html#list_create",
+            documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_create",
             availableInViewWizard = true,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
@@ -66,7 +66,7 @@ public interface StudioListDataComponentActions {
             description = "Edits an entity instance using its detail view",
             classFqn = "io.jmix.flowui.action.list.EditAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
-            documentationLink = "%VERSION/flow-ui/actions/list-actions.html#list_edit",
+            documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_edit",
             availableInViewWizard = true,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
@@ -108,7 +108,7 @@ public interface StudioListDataComponentActions {
             description = "Removes an entity instance from the list and from the database",
             classFqn = "io.jmix.flowui.action.list.RemoveAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
-            documentationLink = "%VERSION/flow-ui/actions/list-actions.html#list_remove",
+            documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_remove",
             availableInViewWizard = true,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
@@ -148,7 +148,7 @@ public interface StudioListDataComponentActions {
             description = "Adds entities to the list using a lookup view",
             classFqn = "io.jmix.flowui.action.list.AddAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
-            documentationLink = "%VERSION/flow-ui/actions/list-actions.html#list_add",
+            documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_add",
             availableInViewWizard = true,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
@@ -181,7 +181,7 @@ public interface StudioListDataComponentActions {
             description = "Excludes entities from the list. The excluded entities are not deleted.",
             classFqn = "io.jmix.flowui.action.list.ExcludeAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
-            documentationLink = "%VERSION/flow-ui/actions/list-actions.html#list_exclude",
+            documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_exclude",
             availableInViewWizard = true,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
@@ -220,7 +220,7 @@ public interface StudioListDataComponentActions {
             description = "Opens a detail view for an entity instance in read-only mode",
             classFqn = "io.jmix.flowui.action.list.ReadAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
-            documentationLink = "%VERSION/flow-ui/actions/list-actions.html#list_read",
+            documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_read",
             availableInViewWizard = true,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
@@ -262,7 +262,7 @@ public interface StudioListDataComponentActions {
             description = "Reloads a list of entities from the database",
             classFqn = "io.jmix.flowui.action.list.RefreshAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
-            documentationLink = "%VERSION/flow-ui/actions/list-actions.html#list_refresh",
+            documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_refresh",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
+import org.springframework.data.domain.Sort
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
 import test_support.entity.repository.Address

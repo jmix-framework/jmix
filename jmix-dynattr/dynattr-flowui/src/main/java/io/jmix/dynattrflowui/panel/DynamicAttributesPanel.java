@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -274,6 +274,15 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         if (event.getItem() == null) {
             propertiesForm.removeAll();
         }
+    }
+
+    /**
+     * Sets the visibility of the category field.
+     *
+     * @param visible true to make the category field visible, false otherwise
+     */
+    public void setCategoryFieldVisible(boolean visible) {
+        categoryFieldBox.setVisible(visible);
     }
 
     /**

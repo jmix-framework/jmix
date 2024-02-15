@@ -441,6 +441,10 @@ dependencies {
             }
         }
 
+        api 'ch.qos.logback:logback-access:1.2.13'
+        api 'ch.qos.logback:logback-classic:1.2.13'
+        api 'ch.qos.logback:logback-core:1.2.13'
+
         api 'com.opencsv:opencsv:5.5.2'
 
         api 'io.vavr:vavr:0.9.3'
@@ -452,6 +456,14 @@ dependencies {
         api 'xerces:xercesImpl:2.12.2'
 
         api 'com.hazelcast:hazelcast:5.3.2'
+
+        api 'org.apache.tomcat:tomcat-annotations-api:9.0.83'
+        api 'org.apache.tomcat:tomcat-jdbc:9.0.83'
+        api 'org.apache.tomcat:tomcat-jsp-api:9.0.83'
+        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.83'
+        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.83'
+        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.83'
+        api 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.83'
 
         api 'com.nimbusds:oauth2-oidc-sdk:9.43.3'
 

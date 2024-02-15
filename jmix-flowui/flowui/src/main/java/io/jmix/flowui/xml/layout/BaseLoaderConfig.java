@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.RangeInput;
 import io.jmix.flowui.xml.layout.loader.component.*;
 import io.jmix.flowui.xml.layout.loader.container.*;
 import io.jmix.flowui.xml.layout.loader.html.*;
@@ -102,6 +103,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("gridColumnVisibility", GridColumnVisibilityLoader.class);
         loaders.put("menuFilterField", MenuFilterFieldLoader.class);
         loaders.put("horizontalMenu", HorizontalMenuLoader.class);
+        loaders.put("richTextEditor", RichTextEditorLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);
@@ -110,6 +112,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("image", ImageLoader.class);
         loaders.put("iframe", IFrameLoader.class);
         loaders.put("html", HtmlLoader.class);
+        loaders.put("rangeInput", RangeInputLoader.class);
 
         /* Containers */
         loaders.put("h1", H1Loader.class);
@@ -144,5 +147,6 @@ public abstract class BaseLoaderConfig {
         loaders.put("label", LabelLoader.class);
         loaders.put("nativeLabel", NativeLabelLoader.class);
         loaders.put("nativeButton", NativeButtonLoader.class);
+        loaders.put("nativeDetails", NativeDetailsLoader.class);
     }
 }

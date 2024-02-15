@@ -43,4 +43,9 @@ public @interface StudioAction {
     StudioProperty[] properties() default {};
 
     StudioPropertiesItem[] items() default {};
+
+    /**
+     * @see StudioComponent#documentationLink()
+     */
+    String documentationLink() default "";
 }

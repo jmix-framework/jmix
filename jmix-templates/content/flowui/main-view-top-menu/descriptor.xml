@@ -11,9 +11,12 @@
                   classNames="jmix-main-view-top-menu-navigation-bar-box">
                 <header id="navigationHeader"
                         classNames="jmix-main-view-top-menu-header">
-                    <image id="logoImage"
-                           resource="icons/icon.png"
-                           classNames="jmix-main-view-top-menu-logo"/>
+                    <anchor href="."
+                            classNames="jmix-main-view-top-menu-logo-container">
+                        <image id="logoImage"
+                               resource="icons/icon.png"
+                               classNames="jmix-main-view-top-menu-logo"/>
+                    </anchor>
                     <nav id="navigation"
                          classNames="jmix-main-view-top-menu-navigation">
                         <horizontalMenu id="horizontalMenu"

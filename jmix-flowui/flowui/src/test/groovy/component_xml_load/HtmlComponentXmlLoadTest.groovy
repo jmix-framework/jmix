@@ -22,6 +22,8 @@ import com.vaadin.flow.component.HtmlContainer
 import com.vaadin.flow.component.html.AnchorTarget
 import com.vaadin.flow.component.html.IFrame
 import com.vaadin.flow.component.html.OrderedList
+import com.vaadin.flow.component.html.RangeInput
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.data.value.ValueChangeMode
 import component_xml_load.screen.HtmlView
 import org.springframework.boot.test.context.SpringBootTest
@@ -144,7 +146,7 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
         }
 
         where:
-        component << ["hr", "iframe", "param"]
+        component << ["hr", "iframe", "param", "nativeDetails"]
     }
 
     def "Load specific hr attributes from XML"() {
@@ -233,6 +235,49 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             name == "nameString"
             title.get() == "paramTitle"
             value.get() == "paramValueString"
+        }
+    }
+
+    def "Load specific nativeDetails attributes from XML"() {
+        when: "Open the HtmlView"
+        def htmlView = navigateToView(HtmlView)
+
+        then: "Specific nativeDetails attributes will be loaded"
+        verifyAll(htmlView.nativeDetailsId) {
+            open
+            summaryText == "detailsSummaryText"
+            title.get() == "detailsTitle"
+            content instanceof Span
+            (content as Span).text == "nativeDetailsContent"
+        }
+    }
+
+    def "Load rangeInput from XML"() {
+        when: "Open the HtmlView"
+        def htmlView = navigateToView(HtmlView.class)
+
+        then: "RangeInput attributes will be loaded"
+        verifyAll(htmlView.rangeInputId) {
+            id.get() == "rangeInputId"
+            ariaLabel.get() == "ariaLabelString"
+            classNames.containsAll(["cssClassName1", "cssClassName2"])
+            style.get("color") == "red"
+            enabled
+            height == "50px"
+            max == 100
+            maxHeight == "55px"
+            maxWidth == "120px"
+            min == 10
+            minHeight == "40px"
+            minWidth == "80px"
+            orientation == RangeInput.Orientation.VERTICAL
+            readOnly
+            step == 5
+            tabIndex == 3
+            valueChangeMode == ValueChangeMode.ON_CHANGE
+            valueChangeTimeout == 50
+            visible
+            width == "100px"
         }
     }
 }

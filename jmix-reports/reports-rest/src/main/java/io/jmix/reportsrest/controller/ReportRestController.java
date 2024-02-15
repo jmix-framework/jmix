@@ -63,10 +63,6 @@ public class ReportRestController {
     @PostMapping(value = "/run/{entityId}")
     public void runReport(@PathVariable String entityId,
                           @RequestBody(required = false) String body, HttpServletResponse response) {
-        if (Strings.isNullOrEmpty(body)) {
-            throw new RestAPIException("Run report error", "Required request body is missing", HttpStatus.BAD_REQUEST);
-        }
-
         ReportRestResult result = controllerManager.runReport(entityId, body);
 
         try {

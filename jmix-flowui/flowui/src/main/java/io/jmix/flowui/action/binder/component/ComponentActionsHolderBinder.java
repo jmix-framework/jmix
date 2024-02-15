@@ -25,6 +25,7 @@ import io.jmix.flowui.kit.action.Action;
 
 import java.util.function.BiFunction;
 
+@Deprecated(since = "2.2", forRemoval = true)
 public interface ComponentActionsHolderBinder<C extends Component> {
 
     boolean supports(Component component);

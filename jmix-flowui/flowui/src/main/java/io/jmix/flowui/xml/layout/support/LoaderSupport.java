@@ -19,9 +19,9 @@ package io.jmix.flowui.xml.layout.support;
 import com.google.common.base.Strings;
 import io.jmix.core.MessageTools;
 import org.dom4j.Element;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -40,7 +40,8 @@ public class LoaderSupport {
     /**
      * Returns an {@link Optional} with the attribute value from
      * the given element for the attribute with the given name,
-     * otherwise an empty {@code Optional}.
+     * otherwise an empty {@code Optional}. Also returns an empty
+     * {@code Optional} if the attribute value is the empty string.
      *
      * @param element       the element to obtain value
      * @param attributeName the name of the attribute value to be returned
@@ -48,8 +49,23 @@ public class LoaderSupport {
      * specified attribute exists in the element, otherwise an empty {@link Optional}
      */
     public Optional<String> loadString(Element element, String attributeName) {
+        return loadString(element, attributeName, true);
+    }
+
+    /**
+     * Returns an {@link Optional} with the attribute value from
+     * the given element for the attribute with the given name,
+     * otherwise an empty {@code Optional}.
+     *
+     * @param element       the element to obtain value
+     * @param attributeName the name of the attribute value to be returned
+     * @param emptyToNull   whether to return an empty {@code Optional} for empty string
+     * @return an {@link Optional} with a present {@link String} value if the
+     * specified attribute exists in the element, otherwise an empty {@link Optional}
+     */
+    public Optional<String> loadString(Element element, String attributeName, boolean emptyToNull) {
         String attributeValue = element.attributeValue(attributeName);
-        return Optional.ofNullable(Strings.emptyToNull(attributeValue));
+        return Optional.ofNullable(emptyToNull ? Strings.emptyToNull(attributeValue) : attributeValue);
     }
 
     /**
@@ -113,8 +129,37 @@ public class LoaderSupport {
                 .map(stringValue -> Enum.valueOf(type, stringValue));
     }
 
+    /**
+     * Returns an {@link Optional} with the localized message defined in
+     * the attribute value from the given element for the attribute with
+     * the given name, otherwise an empty {@code Optional}. Also returns
+     * an empty {@code Optional} if the attribute value is the empty string.
+     *
+     * @param element       the element to obtain value
+     * @param attributeName the name of the attribute value to be returned
+     * @param messageGroup  message group to use
+     * @return an {@link Optional} with a present localized {@link String} value if the
+     * specified attribute exists in the element, otherwise an empty {@link Optional}
+     */
     public Optional<String> loadResourceString(Element element, String attributeName, String messageGroup) {
-        return loadString(element, attributeName)
+        return loadResourceString(element, attributeName, messageGroup, true);
+    }
+
+    /**
+     * Returns an {@link Optional} with the localized message defined in
+     * the attribute value from the given element for the attribute with
+     * the given name, otherwise an empty {@code Optional}.
+     *
+     * @param element       the element to obtain value
+     * @param attributeName the name of the attribute value to be returned
+     * @param messageGroup  message group to use
+     * @param emptyToNull   whether to return an empty {@code Optional} for empty string
+     * @return an {@link Optional} with a present localized {@link String} value if the
+     * specified attribute exists in the element, otherwise an empty {@link Optional}
+     */
+    public Optional<String> loadResourceString(Element element, String attributeName,
+                                               String messageGroup, boolean emptyToNull) {
+        return loadString(element, attributeName, emptyToNull)
                 .map(stringValue -> loadResourceString(stringValue, messageGroup));
     }
 

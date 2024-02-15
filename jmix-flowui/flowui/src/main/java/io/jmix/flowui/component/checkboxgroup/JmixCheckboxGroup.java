@@ -275,9 +275,6 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
             Collection<V> value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
             setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
         }
-
-        // update invalid state
-        validate();
     }
 
     protected void fireCheckboxGroupValueChangeEvent(@Nullable Collection<V> oldValue, boolean isFromClient) {

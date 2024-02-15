@@ -35,6 +35,7 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
     public void loadComponent() {
         loadDataContainer(resultComponent, element);
         loadFieldWidth(resultComponent, element);
+        loadCategoryFieldsVisible(resultComponent, element);
     }
 
 
@@ -52,6 +53,13 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
         String fieldWidth = element.attributeValue("fieldWidth");
         if (!Strings.isNullOrEmpty(fieldWidth)) {
             resultComponent.setFieldWidth(fieldWidth);
+        }
+    }
+
+    private void loadCategoryFieldsVisible(DynamicAttributesPanel resultComponent, Element element) {
+        String fieldWidth = element.attributeValue("categoryFieldVisible");
+        if (!Strings.isNullOrEmpty(fieldWidth)) {
+            resultComponent.setCategoryFieldVisible(Boolean.parseBoolean(fieldWidth));
         }
     }
 }

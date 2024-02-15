@@ -1,0 +1,43 @@
+{
+  "dataZoom": [
+    {
+      "type": "inside",
+      "id": "insideDataZoomId",
+      "disabled": false,
+      "xAxisIndex": [
+        4
+      ],
+      "yAxisIndex": [
+        5
+      ],
+      "radiusAxisIndex": [
+        4,
+        5
+      ],
+      "angleAxisIndex": [
+        1,
+        6
+      ],
+      "filterMode": "weakFilter",
+      "start": 15,
+      "end": 98,
+      "startValue": "startValue",
+      "endValue": "endValue",
+      "minSpan": 40,
+      "maxSpan": 100,
+      "minValueSpan": "minValueSpan",
+      "maxValueSpan": "maxValueSpan",
+      "orient": "vertical",
+      "zoomLock": true,
+      "throttle": 500,
+      "rangeMode": [
+        "percent",
+        "value"
+      ],
+      "zoomOnMouseWheel": false,
+      "moveOnMouseMove": false,
+      "moveOnMouseWheel": true,
+      "preventDefaultMouseMove": false
+    }
+  ]
+}

@@ -25,6 +25,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.UiEntityContext;
+import io.jmix.flowui.action.impl.ActionHandlerValidator;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -151,8 +152,18 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
     }
 
     @Override
+    public <V extends View<?>> Consumer<DialogWindow.AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
     public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
         viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
     }
 
     /**
@@ -173,6 +184,11 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
         this.afterSaveHandler = afterSaveHandler;
     }
 
+    @Nullable
+    public Consumer<E> getAfterSaveHandler() {
+        return afterSaveHandler;
+    }
+
     /**
      * Sets the function to transform the saved in the detail view entity
      * (if "enable editing" action was executed) before setting it to the target data container.
@@ -191,6 +207,11 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
      */
     public void setTransformation(@Nullable Function<E, E> transformation) {
         this.transformation = transformation;
+    }
+
+    @Nullable
+    public Function<E, E> getTransformation() {
+        return transformation;
     }
 
     @Autowired
@@ -301,6 +322,8 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
             });
         }
 
+        ActionHandlerValidator.validate(this, OpenMode.DIALOG);
+
         dialogWindow.open();
     }
 
@@ -311,6 +334,8 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
                 .withReadOnly(true);
 
         navigator = viewInitializer.initNavigator(navigator);
+
+        ActionHandlerValidator.validate(this, OpenMode.NAVIGATION);
 
         navigator.navigate();
     }

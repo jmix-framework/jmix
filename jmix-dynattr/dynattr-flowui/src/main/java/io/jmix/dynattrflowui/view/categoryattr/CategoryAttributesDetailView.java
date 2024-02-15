@@ -51,6 +51,7 @@ import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.utils.DataProviderUtils;
+import io.jmix.dynattr.utils.DynAttrStringUtils;
 import io.jmix.dynattrflowui.utils.DynAttrUiHelper;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.*;
@@ -77,6 +78,7 @@ import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -918,7 +920,16 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             if (attribute.getCategory() != null) {
                 categoryName = StringUtils.defaultString(attribute.getCategory().getName());
             }
-            codeField.setValue(StringUtils.deleteWhitespace(categoryName + attribute.getName()));
+            char[] delimiters = {' ', '.', '_', '-', '\t'};
+
+            String categoryNameInCamelCaseUncapitalized = DynAttrStringUtils.toCamelCase(categoryName, delimiters);
+            String attributeNameInCamelCaseUncapitalized = DynAttrStringUtils.toCamelCase(attribute.getName(), delimiters);
+
+            String resultCodeName = !Strings.isNullOrEmpty(categoryNameInCamelCaseUncapitalized) ?
+                    categoryNameInCamelCaseUncapitalized + StringUtils.capitalize(attributeNameInCamelCaseUncapitalized) :
+                    attributeNameInCamelCaseUncapitalized;
+
+            codeField.setValue(resultCodeName);
         }
     }
 

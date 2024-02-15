@@ -118,7 +118,6 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
     @Override
     public boolean isInvalid() {
-        validate();
         return fieldDelegate.isInvalid();
     }
 
@@ -343,7 +342,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     }
 
     protected void onValueChange(ComponentValueChangeEvent<FileStorageUploadField, FileRef> event) {
-        isInvalid();
+        validate();
     }
 
     @Override
@@ -387,11 +386,5 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
         JmixUploadI18N i18nDefaults = applicationContext.getBean(UploadFieldI18NSupport.class)
                 .getI18nFileStorageUploadField();
         setI18n(i18nDefaults);
-    }
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-        isInvalid();
     }
 }

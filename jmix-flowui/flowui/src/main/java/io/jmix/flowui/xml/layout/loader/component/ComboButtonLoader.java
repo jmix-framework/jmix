@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
@@ -38,9 +39,25 @@ public class ComboButtonLoader extends AbstractDropdownButtonLoader<ComboButton>
 
     protected void loadAction(ComboButton component, Element element) {
         loadString(element, "action")
-                .ifPresent(actionId -> getComponentContext().addInitTask(
-                        new AssignActionInitTask<>(component, actionId, getComponentContext().getView())
-                ));
+                .ifPresent(actionId -> {
+                    AssignActionInitTask<ComboButton> task =
+                            new AssignActionInitTask<>(component, actionId, getComponentContext().getView());
+                    task.setAfterExecuteHandler(this::afterActionSet);
+                    getComponentContext().addInitTask(task);
+                });
+    }
+
+    protected void afterActionSet(Action action) {
+        loadVisible(resultComponent, element);
+        componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadIcon(element, resultComponent::setIcon);
+        componentLoader().loadThemeNames(resultComponent, element);
+
+        // set event if an 'empty' value to clear a value from the action
+        loadResourceString(element, "title", context.getMessageGroup(), false)
+                .ifPresent(resultComponent::setTitle);
+        loadResourceString(element, "text", context.getMessageGroup(), false)
+                .ifPresent(resultComponent::setText);
     }
 
     protected void loadDropdownIcon(ComboButton component, Element element) {

@@ -1,12 +1,10 @@
 package io.jmix.appsettings.impl;
 
+import io.jmix.appsettings.AppSettingsProperties;
 import io.jmix.appsettings.AppSettingsTools;
 import io.jmix.appsettings.defaults.*;
 import io.jmix.appsettings.entity.AppSettingsEntity;
-import io.jmix.core.DataManager;
-import io.jmix.core.Id;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -23,7 +21,6 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component("appset_AppSettingsTools")
@@ -41,12 +38,18 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
     protected DataManager dataManager;
 
     @Autowired
+    protected UnconstrainedDataManager unconstrainedDataManager;
+
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
+
+    @Autowired
+    protected AppSettingsProperties appSettingsProperties;
 
     @Override
     public <T extends AppSettingsEntity> T loadAppSettingsEntityFromDataStore(Class<T> clazz) {
         //only one record for T can exist at the same time in database with default identifier
-        return dataManager.load(clazz)
+        return getDataManagerForAppSettingsEntity().load(clazz)
                 .id(Id.of(1, clazz))
                 .optional().orElse(metadata.create(clazz, 1));
     }
@@ -105,6 +108,10 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
         }
 
         return null;
+    }
+
+    protected UnconstrainedDataManager getDataManagerForAppSettingsEntity() {
+        return appSettingsProperties.isCheckPermissionsForAppSettingsEntity() ? dataManager : unconstrainedDataManager;
     }
 
     @Override

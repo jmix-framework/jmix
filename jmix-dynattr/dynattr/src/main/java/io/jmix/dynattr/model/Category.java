@@ -87,7 +87,7 @@ public class Category implements Serializable {
     protected String entityType;
 
     @Column(name = "IS_DEFAULT")
-    protected Boolean isDefault;
+    protected Boolean isDefault = false;
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryAttribute.class)
     @OnDelete(DeletePolicy.CASCADE)

@@ -17,6 +17,7 @@
 package component.standarddetailview
 
 import com.vaadin.flow.component.UI
+import com.vaadin.flow.router.RouteParameters
 import component.standarddetailview.view.BlankTestView
 import component.standarddetailview.view.OrderDetailTestView
 import component.standarddetailview.view.TestCopyingSystemStateDetailTestView
@@ -66,9 +67,12 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
         entity.setName("test")
 
         navigators.detailView(TestCopyingSystemStateEntity)
-                .editEntity(entity)
                 .withViewClass(TestCopyingSystemStateDetailTestView)
                 .withBackwardNavigation(false)
+                .withRouteParameters(RouteParameters.empty())
+                .withAfterNavigationHandler {event ->
+                    event.view.setEntityToEdit(entity)
+                }
                 .navigate()
 
         then: """

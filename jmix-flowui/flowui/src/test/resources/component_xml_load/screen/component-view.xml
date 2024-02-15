@@ -962,6 +962,27 @@
             />
         </codeEditor>
 
+        <richTextEditor id="richTextEditor"
+                        height="50px"
+                        width="100px"
+                        maxHeight="55px"
+                        maxWidth="120px"
+                        minHeight="40px"
+                        minWidth="80px"
+                        classNames="cssClassName1, cssClassName2"
+                        css="color: red;"
+                        enabled="true"
+                        readOnly="true"
+                        label="labelString"
+                        helperText="helperTextString"
+                        valueChangeMode="TIMEOUT"
+                        themeNames="compact no-border"
+                        ariaLabel="ariaLabelString"
+                        visible="false"
+
+                        dataContainer="orderDc" property="description"
+        />
+
         <virtualList id="virtualListId"
                      classNames="cssClassName1, cssClassName2"
                      css="color: red;"

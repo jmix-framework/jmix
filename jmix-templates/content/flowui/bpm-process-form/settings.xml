@@ -1,61 +1,66 @@
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_blank.svg"
           order="1000"
-          name="Bpm process form">
+          name="BPMN process form">
     <tags>
         <tag>BPM</tag>
     </tags>
     <description>
-        <![CDATA[<html>Bpm process form.</html>]]>
+        <![CDATA[<html>BPMN process form.</html>]]>
     </description>
     <locMessages key="title" expressionKey="${studioUtils.decapitalize(controllerName)}.title">
         <message lang="default">
             <![CDATA[${studioUtils.makeScreenNaturalCaption(id, project)}]]>
         </message>
     </locMessages>
+    <locMessages key="description" expressionKey="${studioUtils.decapitalize(controllerName)}.description">
+        <message lang="default">
+            <![CDATA[${studioUtils.toString(bpmTaskDetails)}]]>
+        </message>
+    </locMessages>
+    <locMessages key="startProcess" expressionKey="${studioUtils.decapitalize(controllerName)}.startProcess">
+        <message lang="default">
+            <![CDATA[${processFormType.name() != 'START_EVENT' ? '' : 'Start process'}]]>
+        </message>
+    </locMessages>
+    <locMessages key="completeTask" expressionKey="${studioUtils.decapitalize(controllerName)}.completeTask">
+        <message lang="default">
+            <![CDATA[${processFormOutcomes != null && processFormOutcomes.isEmpty() && processFormType.name() != 'START_EVENT' ? 'Complete task' : ''}]]>
+        </message>
+    </locMessages>
 
     <steps>
         <step name="BPM process form" order="0"/>
-        <step name="Entity detail view fetch plan" order="1"
-              description="Detail view fetch plan determines entity attributes and associations to be loaded from the database and edited in the view components"
-              condition="${processFormType.name() == 'ENTITY'}">
-            <dependency code="processFormType"/>
+        <step name="Entity variable" order="1"
+              description="Select an existing entity variable from the process context or create a new one."
+              condition="${processFormTemplate.name() == 'ENTITY'}">
+            <dependency code="processFormTemplate"/>
         </step>
         <step name="BPM process form variables" order="2"
-              condition="${processFormType.name() in ['VARIABLE','ENTITY']}">
-            <dependency code="processFormType"/>
-        </step>
+              description="Select existing variables to display in the process form or create new ones."/>
         <step name="BPM process form outcomes" order="3"
-              condition="${processFormType.name() in ['VARIABLE','ENTITY'] &amp;&amp; processFormCaller.name() != 'START_EVENT'}">
+              description="Define the process form outcomes to generate task completion buttons."
+              condition="${processFormType != null &amp;&amp; processFormType.name() != 'START_EVENT'}">
             <dependency code="processFormType"/>
-            <dependency code="processFormCaller"/>
         </step>
     </steps>
+
+    <!--****************        Step 0:         ****************-->
 
     <property caption="Process id"
               code="processFormId"
               propertyType="PROCESS_FORM_ID"
+              visible="false"
               required="false"/>
 
-    <property caption="Process form type"
+    <property caption="Form template"
+              code="processFormTemplate"
+              propertyType="PROCESS_FORM_TEMPLATE"
+              required="true"/>
+
+    <property caption="Form type"
               code="processFormType"
-              propertyType="PROCESS_FORM_TYPE"
-              required="true"/>
-
-    <property caption="Process form caller"
-              code="processFormCaller"
-              propertyType="PROCESS_FORM_CALLER_COMPONENT"
-              required="true"/>
-
-    <property caption="Entity"
-              code="entity"
-              propertyType="PROCESS_FORM_ENTITY_DATA_OBJECT">
-        <dynamicAttribute name="enabled" source="${processFormType.name() == 'ENTITY'}">
-            <dependency code = "processFormType"/>
-        </dynamicAttribute>
-        <dynamicAttribute name="required" source="${processFormType.name() == 'ENTITY'}">
-            <dependency code = "processFormType"/>
-        </dynamicAttribute>
+              propertyType="PROCESS_FORM_TYPE">
     </property>
 
     <property caption="Descriptor name"
@@ -92,27 +97,80 @@
               advanced="true"
               dynamic="true"
               required="true"
-              valueTemplate="${api.evaluateScript('controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}">
+              valueTemplate="${descriptorName}">
         <dependency code="descriptorName"/>
     </property>
 
-    <property caption="Task name"
-              code="bpmTaskName"
-              propertyType="PROCESS_FORM_TASK_NAME"
-              advanced="true"
-              required="false">
-        <dynamicAttribute name="name" source="${processFormCaller.name() == 'START_EVENT' ? 'Event name' : 'Task name'}">
-            <dependency code = "processFormCaller"/>
-        </dynamicAttribute>
-    </property>
-
-    <property caption="Task details"
+    <property caption="Description"
               code="bpmTaskDetails"
               propertyType="PROCESS_FORM_TASK_DETAILS"
               advanced="true"
               required="false">
-        <dynamicAttribute name="name" source="${processFormCaller.name() == 'START_EVENT' ? 'Event details' : 'Task details'}">
-            <dependency code = "processFormCaller"/>
+    </property>
+
+<!--****************        Step 1:         ****************-->
+
+    <property caption="Process id"
+              code="processFormIdEntity"
+              step="1"
+              propertyType="PROCESS_FORM_ID"
+              visible="false"
+              required="false"/>
+
+    <property caption="Use existing variable"
+              code="useExistingVariable"
+              step="1"
+              propertyType="BOOLEAN"
+              dynamic="true"
+              valueTemplate="${processFormIdEntity != null &amp;&amp; !processFormIdEntity.id.isEmpty()}">
+        <dependency code="processFormIdEntity"/>
+    </property>
+
+    <property caption="Entity variable"
+              code="entityObject"
+              step="1"
+              propertyType="PROCESS_FORM_ENTITY_DATA_OBJECT">
+        <dynamicAttribute name="enabled" source="${useExistingVariable}">
+            <dependency code = "useExistingVariable"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="visible" source="${useExistingVariable}">
+            <dependency code = "useExistingVariable"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="required" source="${useExistingVariable}">
+            <dependency code = "useExistingVariable"/>
+        </dynamicAttribute>
+    </property>
+
+    <property caption="Entity"
+              code="entity"
+              step="1"
+              propertyType="ENTITY">
+        <dynamicAttribute name="enabled" source="${!useExistingVariable}">
+            <dependency code = "useExistingVariable"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="visible" source="${!useExistingVariable}">
+            <dependency code = "useExistingVariable"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="required" source="${!useExistingVariable}">
+            <dependency code = "useExistingVariable"/>
+        </dynamicAttribute>
+    </property>
+
+    <property caption="Variable name"
+              code="entityObjectName"
+              step="1"
+              propertyType="STRING"
+              dynamic="true"
+              valueTemplate="${entity.uncapitalizedClassName}Var">
+        <dependency code="entity"/>
+        <dynamicAttribute name="enabled" source="${!useExistingVariable}">
+            <dependency code = "useExistingVariable"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="visible" source="${!useExistingVariable}">
+            <dependency code = "useExistingVariable"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="required" source="${!useExistingVariable}">
+            <dependency code = "useExistingVariable"/>
         </dynamicAttribute>
     </property>
 
@@ -123,17 +181,23 @@
               relatedProperty="entity"
               required="false"/>
 
+    <!--****************        Step 2:         ****************-->
+
     <property caption="Process form variables"
               code="processFormVariables"
               step="2"
               propertyType="PROCESS_FORM_VARIABLES"
               required="false"/>
 
+    <!--****************        Step 3:         ****************-->
+
     <property caption="Process form outcomes"
               code="processFormOutcomes"
               step="3"
               propertyType="PROCESS_FORM_OUTCOMES"
               required="false"/>
+
+    <!--********************************************************-->
 
     <source fileExt="xml"
             name="descriptor"/>

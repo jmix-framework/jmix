@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
+@Deprecated(since = "2.2", forRemoval = true)
 @SuppressWarnings("rawtypes")
 @org.springframework.stereotype.Component("flowui_GridMenuItemActionBinder")
 @Order(JmixOrder.LOWEST_PRECEDENCE)

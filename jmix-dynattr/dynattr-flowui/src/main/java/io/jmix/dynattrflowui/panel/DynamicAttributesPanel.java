@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@
 package io.jmix.dynattrflowui.panel;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -35,6 +32,7 @@ import io.jmix.dynattr.model.Categorized;
 import io.jmix.dynattr.model.Category;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.ComponentGenerationContext;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.UiComponentsGenerator;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.formlayout.JmixFormLayout;
@@ -44,6 +42,9 @@ import io.jmix.flowui.data.value.ContainerValueSourceProvider;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.view.StandardDetailView;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.ViewValidation;
 
 import javax.annotation.Nullable;
@@ -61,7 +62,7 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
     protected final UiComponents uiComponents;
     protected final Messages messages;
     protected final DynAttrMetadata dynAttrMetadata;
-    protected final ViewValidation validate;
+    protected final ViewValidation viewValidation;
     protected InstanceContainer<?> instanceContainer;
     protected String fieldWidth = DEFAULT_FIELD_WIDTH;
     protected VerticalLayout rootPanel;
@@ -74,12 +75,12 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
                                   UiComponents uiComponents,
                                   Messages messages,
                                   DynAttrMetadata dynAttrMetadata,
-                                  ViewValidation validate) {
+                                  ViewValidation viewValidation) {
         this.uiComponentsGenerator = uiComponentsGenerator;
         this.uiComponents = uiComponents;
         this.messages = messages;
         this.dynAttrMetadata = dynAttrMetadata;
-        this.validate = validate;
+        this.viewValidation = viewValidation;
 
         rootPanel = uiComponents.create(VerticalLayout.class);
         rootPanel.setPadding(false);
@@ -107,6 +108,21 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         rootPanel.add(categoryFieldBox, propertiesForm);
         rootPanel.expand(propertiesForm);
     }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        View<?> view = UiComponentUtils.findView(this);
+        if(view instanceof StandardDetailView<?> detailView) {
+            ViewControllerUtils.addValidationEventListener(detailView, this::onValidation);
+        }
+
+        super.onAttach(attachEvent);
+    }
+
+    protected void onValidation(StandardDetailView.ValidationEvent validationEvent) {
+        validationEvent.addErrors(viewValidation.validateUiComponents(propertiesForm));
+    }
+
 
     @Override
     protected VerticalLayout initContent() {
@@ -258,6 +274,15 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         if (event.getItem() == null) {
             propertiesForm.removeAll();
         }
+    }
+
+    /**
+     * Sets the visibility of the category field.
+     *
+     * @param visible true to make the category field visible, false otherwise
+     */
+    public void setCategoryFieldVisible(boolean visible) {
+        categoryFieldBox.setVisible(visible);
     }
 
     /**

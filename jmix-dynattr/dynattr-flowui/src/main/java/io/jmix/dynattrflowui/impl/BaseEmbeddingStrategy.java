@@ -64,7 +64,7 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
 
                 List<AttributeDefinition> attributes = findVisibleAttributes(
                         entityMetaClass,
-                        getWindowId(owner), component.getId().orElseThrow());
+                        getWindowId(owner), component.getId().orElse(""));
 
                 if (!attributes.isEmpty()) {
                     setLoadDynamicAttributes(component);

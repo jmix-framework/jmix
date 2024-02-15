@@ -80,6 +80,8 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
                     keyCombination.getKey(),
                     keyCombination.getKeyModifiers());
 
+            shortcutRegistration.setResetFocusOnActiveElement(keyCombination.isResetFocusOnActiveElement());
+
             // Setting shortcut scope to a particular component(s) instead of global
             Component[] listenOnComponents = keyCombination.getListenOnComponents();
             if (listenOnComponents != null) {

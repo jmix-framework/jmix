@@ -20,8 +20,10 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.LockStatus;
 import io.jmix.flowui.view.StandardDetailView;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ActionType(DetailSaveAction.ID)
@@ -47,6 +49,15 @@ public class DetailSaveAction<E> extends OperationResultViewAction<DetailSaveAct
     @Autowired
     protected void setMessages(Messages messages) {
         this.text = messages.getMessage("actions.Save");
+    }
+
+    @Override
+    public void setShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+        if (shortcutCombination != null) {
+            shortcutCombination.setResetFocusOnActiveElement(true);
+        }
+
+        super.setShortcutCombination(shortcutCombination);
     }
 
     @Override

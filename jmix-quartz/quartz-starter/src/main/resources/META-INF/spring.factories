@@ -1,4 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=io.jmix.quartz.autoconfigure.QuartzAutoConfiguration
-
 org.springframework.boot.env.EnvironmentPostProcessor=io.jmix.quartz.autoconfigure.QuartzEnvironmentPostProcessor
 

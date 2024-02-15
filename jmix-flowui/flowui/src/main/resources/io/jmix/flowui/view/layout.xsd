@@ -804,6 +804,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="rangeInputOrientationEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="HORIZONTAL"/>
+            <xs:enumeration value="VERTICAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="codeEditorTheme">
         <xs:restriction base="xs:string">
             <xs:enumeration value="AMBIANCE"/>
@@ -1783,6 +1790,20 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="richTextEditorThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="no-border"/>
+                    <xs:enumeration value="compact"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="detailsThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -1797,7 +1818,7 @@
             </xs:simpleType>
         </xs:union>
     </xs:simpleType>
-    
+
     <xs:simpleType name="spacingThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -2610,10 +2631,16 @@
         <xs:attribute name="nullRepresentation" type="resourceString"/>
     </xs:complexType>
 
+    <xs:complexType name="numberRendererType">
+        <xs:attribute name="format" type="resourceString"/>
+        <xs:attribute name="numberFormat" type="resourceString"/>
+        <xs:attribute name="nullRepresentation" type="resourceString"/>
+    </xs:complexType>
+
     <xs:group name="renderers">
         <xs:sequence>
             <xs:choice>
-                <xs:element name="numberRenderer" minOccurs="0" type="formattableRendererType"/>
+                <xs:element name="numberRenderer" minOccurs="0" type="numberRendererType"/>
                 <xs:element name="localDateRenderer" minOccurs="0" type="formattableRendererType"/>
                 <xs:element name="localDateTimeRenderer" minOccurs="0" type="formattableRendererType"/>
             </xs:choice>
@@ -2691,6 +2718,37 @@
         <xs:attribute name="type" type="aggregationType"/>
         <xs:attribute name="strategyClass" type="xs:string"/>
         <xs:attribute name="cellTitle" type="resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="contextMenuType">
+        <xs:choice minOccurs="0">
+            <xs:element name="item" minOccurs="0" type="contextMenuItemType"/>
+            <xs:element name="separator" minOccurs="0"/>
+        </xs:choice>
+
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="css" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attributeGroup ref="hasEnabled"/>
+        <xs:attributeGroup ref="hasClassNames"/>
+    </xs:complexType>
+
+    <xs:complexType name="contextMenuItemType">
+        <xs:choice minOccurs="0">
+            <xs:element name="item" minOccurs="0" type="contextMenuItemType"/>
+            <xs:element name="separator" minOccurs="0"/>
+        </xs:choice>
+
+        <xs:attribute name="action" type="xs:string"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="css" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attributeGroup ref="hasEnabled"/>
+        <xs:attributeGroup ref="hasClassNames"/>
+        <xs:attributeGroup ref="hasText"/>
+        <xs:attributeGroup ref="hasIcon"/>
     </xs:complexType>
 
     <!-- Components -->
@@ -2852,6 +2910,8 @@
                                     <xs:element name="action" type="gridAction"/>
                                 </xs:choice>
                             </xs:sequence>
+
+                            <xs:attribute name="showInContextMenuEnabled" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="columns">
@@ -2867,6 +2927,7 @@
                             <xs:attribute name="resizable" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
+                    <xs:element name="contextMenu" minOccurs="0" type="contextMenuType"/>
                 </xs:all>
 
                 <xs:attribute name="pageSize" type="xs:integer"/>
@@ -3748,9 +3809,13 @@
     <xs:complexType name="loginOverlayComponent">
         <xs:complexContent>
             <xs:extension base="baseLoginComponent">
-                <xs:sequence>
-                    <xs:element name="header" type="loginHeaderType" minOccurs="0"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element name="header" type="loginHeaderType"/>
+                    <xs:element name="customFormArea" type="loginContentAreaType"/>
+                    <xs:element name="footer" type="loginContentAreaType"/>
                 </xs:sequence>
+
+                <xs:attribute name="opened" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3785,6 +3850,12 @@
     <xs:complexType name="loginHeaderType">
         <xs:attribute name="title" type="resourceString"/>
         <xs:attribute name="description" type="resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="loginContentAreaType">
+        <xs:sequence minOccurs="0">
+            <xs:group ref="layoutOrComponent"/>
+        </xs:sequence>
     </xs:complexType>
 
     <!-- Upload -->
@@ -3920,7 +3991,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!--    VirtualList-->
+    <!-- VirtualList -->
     <xs:complexType name="virtualListComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
@@ -4006,6 +4077,25 @@
             <xs:enumeration value="CASE_INSENSITIVE"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <!-- RichTextEditorComponent -->
+    <xs:complexType name="richTextEditorComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+
+                <xs:attribute name="valueChangeMode" type="valueChangeModeEnum"/>
+                <xs:attribute name="themeNames" type="richTextEditorThemeNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
     <!-- HorizontalMenu -->
     <xs:complexType name="horizontalMenuComponent">
@@ -4133,6 +4223,39 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="nativeDetailsComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:group ref="layoutOrComponent"/>
+                </xs:sequence>
+
+                <xs:attribute name="open" type="xs:boolean"/>
+                <xs:attribute name="summaryText" type="resourceString"/>
+
+                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="rangeInputComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="min" type="xs:double"/>
+                <xs:attribute name="max" type="xs:double"/>
+                <xs:attribute name="step" type="xs:double"/>
+                <xs:attribute name="orientation" type="rangeInputOrientationEnum"/>
+
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+                <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
     <!-- Filters -->
 
@@ -4493,6 +4616,8 @@
                 <xs:element name="anchor" type="anchor"/>
                 <xs:element name="nativeLabel" type="labelComponent"/>
                 <xs:element name="nativeButton" type="nativeButtonComponent"/>
+                <xs:element name="nativeDetails" type="nativeDetailsComponent"/>
+                <xs:element name="rangeInput" type="rangeInputComponent"/>
                 <xs:element name="article" type="baseClickableHtmlContainer"/>
                 <xs:element name="input" type="inputHtmlComponent"/>
                 <xs:element name="image" type="imageComponent"/>
@@ -4566,6 +4691,7 @@
                 <xs:element name="gridColumnVisibility" type="gridColumnVisibilityComponent"/>
                 <xs:element name="menuFilterField" type="menuFilterFieldComponent"/>
                 <xs:element name="horizontalMenu" type="horizontalMenuComponent"/>
+                <xs:element name="richTextEditor" type="richTextEditorComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

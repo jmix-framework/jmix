@@ -86,7 +86,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
 
     @Override
     protected Condition createQueryCondition() {
-        JpqlCondition fullTextCondition = new JpqlCondition();
+        JpqlCondition fullTextCondition = new JpqlCondition().skipNullOrEmpty();
         this.correctWhere = "{E}.id in ?";
         fullTextCondition.setWhere(correctWhere);
         fullTextCondition.setJoin("");

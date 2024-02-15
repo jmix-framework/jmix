@@ -16,11 +16,11 @@
 
 package io.jmix.flowui.kit.meta;
 
-import com.vaadin.flow.component.HasComponents;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
+
+import com.vaadin.flow.component.HasComponents;
 
 @Target(ElementType.METHOD)
 @Inherited
@@ -29,14 +29,24 @@ public @interface StudioComponent {
     String name() default "";
 
     /**
-     * Fully-qualified name of component class
+     * Fully-qualified name of component class.
+     * This will be used as a type of injected field.
      */
     String classFqn() default "";
 
+    /**
+     * Category for Component Palette.
+     */
     String category() default "";
 
+    /**
+     * Icon for Component Palette and Component Inspector.
+     */
     String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";
 
+    /**
+     * Xml tag name.
+     */
     String xmlElement() default "";
 
     String xmlns() default "";
@@ -44,7 +54,7 @@ public @interface StudioComponent {
     String xmlnsAlias() default "";
 
     /**
-     * Describes the available place in the hierarchy.
+     * Describes the available place in the Component Hierarchy.
      * By default, components can be located inside layout or inside a component inherited from {@link HasComponents}
      */
     String availablePlaceRegExp() default "((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/initialLayout)))$)|(^view/layout$)" +
@@ -57,4 +67,15 @@ public @interface StudioComponent {
     StudioSupplyHandler[] supplyHandlers() default {};
 
     StudioAvailableChildrenInfo availableChildren() default @StudioAvailableChildrenInfo();
+
+    /**
+     * Link to the component documentation.
+     * <p>It can be of the following types:</p>
+     * <ol>
+     *  <li>The full link (starting with https).</li>
+     *  <li>Or part of the jmix documentation link (part after /jmix/).</li>
+     * </ol>
+     *  Studio also can resolve {@code %VERSION%}} placeholder.
+     */
+    String documentationLink() default "";
 }

@@ -30,6 +30,7 @@ public class EntityAttributeResourcePolicyModelDetailView extends StandardDetail
 
     @Subscribe
     public void onInit(InitEvent event) {
+        setReloadEdited(false);
         ComponentUtils.setItemsMap(entityField, resourcePolicyEditorUtils.getEntityOptionsMap());
         entityField.addValueChangeListener(this::onEntityFieldValueChange);
         attributeField.addValueChangeListener(this::onAttributeFieldValueChange);

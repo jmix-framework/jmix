@@ -142,6 +142,12 @@
         <dependency code="entity"/>
     </property>
 
+    <property caption="View route layout"
+              code="routeLayout"
+              propertyType="FLOW_VIEW_ROUTE_LAYOUT"
+              visible="false"
+              advanced="true"/>
+
     <!--sources-->
     <source fileExt="xml"
             name="descriptor"/>

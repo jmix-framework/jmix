@@ -24,7 +24,7 @@ import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.querycondition.*;
+import io.jmix.core.querycondition.Condition;
 import io.jmix.data.JmixQuery;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
@@ -32,15 +32,15 @@ import io.jmix.data.impl.jpql.generator.ConditionGenerationContext;
 import io.jmix.data.impl.jpql.generator.ConditionJpqlGenerator;
 import io.jmix.data.impl.jpql.generator.ParameterJpqlGenerator;
 import io.jmix.data.impl.jpql.generator.SortJpqlGenerator;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import org.springframework.lang.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.Query;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,6 +97,9 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
 
     @Autowired
     protected QueryParamValuesManager queryParamValuesManager;
+
+    @Autowired
+    protected CoreProperties coreProperties;
 
     public JpqlQueryBuilder setId(@Nullable Object id) {
         this.id = id;
@@ -253,8 +256,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                 }
             }
 
-            Condition actualized = condition.actualize(nonNullParamNames);
-
+            Condition actualized = condition.actualize(nonNullParamNames, coreProperties.isSkipNullOrEmptyConditionsByDefault());
             Set<String> excludedParameters = condition.getExcludedParameters(nonNullParamNames);
             resultParameters.entrySet().removeIf(e -> excludedParameters.contains(e.getKey()));
 

@@ -17,11 +17,15 @@
 package io.jmix.flowui.kit.component;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.icon.AbstractIcon;
+import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
@@ -29,6 +33,7 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.provider.HasListDataView;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.dom.ElementConstants;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
 import jakarta.annotation.Nullable;
@@ -37,8 +42,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class ComponentUtils {
+
+    private static final String SIZE_PATTERN_REGEXP =
+            "^(-?\\d*(?:\\.\\d+)?)(%|cm|mm|q|in|pc|pt|px|em|ex|ch|rem|lh|rlh|vw|vh|vmin|vmax|vb|vi|svw|svh|lvw|lvh|dvw|dvh)?$";
+    private static final Pattern SIZE_PATTERN = Pattern
+            .compile(SIZE_PATTERN_REGEXP, Pattern.CASE_INSENSITIVE);
 
     private ComponentUtils() {
     }
@@ -60,6 +72,80 @@ public final class ComponentUtils {
     @Nullable
     public static Icon convertToIcon(@Nullable VaadinIcon icon) {
         return icon != null ? icon.create() : null;
+    }
+
+
+    /**
+     * Creates a copy of icon component. For the moment only Icon, SvgIcon and FontIcon types are supported.
+     *
+     * @param icon icon component to copy
+     * @return icon component copy
+     */
+    public static Component copyIcon(Component icon) {
+        Component copy;
+        if (icon instanceof Icon iconComponent) {
+            copy = copyIconComponent(iconComponent);
+        } else if (icon instanceof SvgIcon svgIcon) {
+            copy = copySvgIcon(svgIcon);
+        } else if (icon instanceof FontIcon fontIcon) {
+            copy = copyFontIcon(fontIcon);
+        } else {
+            throw new IllegalArgumentException(icon.getClass().getSimpleName() + " is not supported");
+        }
+        return copy;
+    }
+
+    /**
+     * Creates a copy of icon component.
+     *
+     * @param icon icon component to copy
+     * @return icon component copy
+     */
+    public static Icon copyIconComponent(Icon icon) {
+        String iconAttribute = icon.getElement().getAttribute("icon");
+        if (iconAttribute == null) {
+            throw new IllegalArgumentException("Icon component doesn't contain 'icon' attribute");
+        }
+        Icon copy = parseIcon(iconAttribute);
+
+        copyAbstractIconAttributes(icon, copy);
+        return copy;
+    }
+
+    private static void copyAbstractIconAttributes(AbstractIcon<?> icon, AbstractIcon<?> iconCopy) {
+        iconCopy.setColor(icon.getColor());
+        iconCopy.setSize(icon.getStyle().get(ElementConstants.STYLE_WIDTH));
+        iconCopy.setTooltipText(icon.getTooltip().getText());
+        iconCopy.setVisible(icon.isVisible());
+        iconCopy.addClassNames(icon.getClassNames().toArray(new String[0]));
+    }
+
+    /**
+     * Creates a copy of svg icon component.
+     *
+     * @param svgIcon svg icon component to copy
+     * @return svg icon component copy
+     */
+    public static SvgIcon copySvgIcon(SvgIcon svgIcon) {
+        SvgIcon copy = new SvgIcon(svgIcon.getSrc(), svgIcon.getSymbol());
+        copyAbstractIconAttributes(svgIcon, copy);
+        return copy;
+    }
+
+    /**
+     * Creates a copy of font icon component.
+     *
+     * @param fontIcon font icon component to copy
+     * @return font icon component copy
+     */
+    public static FontIcon copyFontIcon(FontIcon fontIcon) {
+        FontIcon copy = new FontIcon(fontIcon.getIconClassNames());
+        copy.setFontFamily(fontIcon.getFontFamily());
+        copy.setCharCode(fontIcon.getCharCode());
+        copy.setLigature(fontIcon.getLigature());
+
+        copyAbstractIconAttributes(fontIcon, copy);
+        return copy;
     }
 
     /**
@@ -145,7 +231,27 @@ public final class ComponentUtils {
     }
 
     public static boolean isAutoSize(@Nullable String size) {
-        return "auto".equalsIgnoreCase(size);
+        // CSS attribute is removed if null or empty value passed,
+        // so default 'auto' size will be used.
+        if (Strings.isNullOrEmpty(size)) {
+            return true;
+        }
+        String trimmedSize = size.trim();
+        // If size is 'auto' value.
+        if ("auto".equalsIgnoreCase(trimmedSize)) {
+            return true;
+        }
+        // Check that size has correct value: numbers and supported unit size.
+        // If it does not, CSS will use 'auto' value.
+        Matcher matcher = SIZE_PATTERN.matcher(trimmedSize);
+        if (!matcher.find()) {
+            // Size is incorrect, will be used 'auto' value.
+            return true;
+        }
+        String sizeValue = matcher.group(1);
+        String sizeUnit = matcher.group(2);
+        // If at least one group is null or empty, size is incorrect
+        return Strings.isNullOrEmpty(sizeValue) || Strings.isNullOrEmpty(sizeUnit);
     }
 
     public static void setVisible(Component component, boolean visible) {
@@ -193,6 +299,7 @@ public final class ComponentUtils {
                                                         KeyCombination shortcutCombination) {
         ShortcutRegistration shortcutRegistration = component.addClickShortcut(shortcutCombination.getKey(),
                 shortcutCombination.getKeyModifiers());
+        shortcutRegistration.setResetFocusOnActiveElement(shortcutCombination.isResetFocusOnActiveElement());
 
         if (shortcutCombination.getListenOnComponents() != null) {
             shortcutRegistration.listenOn(shortcutCombination.getListenOnComponents());

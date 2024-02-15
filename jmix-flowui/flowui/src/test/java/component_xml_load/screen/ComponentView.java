@@ -30,6 +30,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
+import io.jmix.flowui.component.richtexteditor.RichTextEditor;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
@@ -194,4 +195,7 @@ public class ComponentView extends StandardView {
 
     @ViewComponent
     public JmixVirtualList<RoleType> virtualListItemsEnumId;
+
+    @ViewComponent
+    public RichTextEditor richTextEditor;
 }

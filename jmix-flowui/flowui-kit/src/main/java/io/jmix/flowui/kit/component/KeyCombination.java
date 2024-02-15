@@ -35,6 +35,7 @@ public class KeyCombination {
     protected final Key key;
     protected final KeyModifier[] keyModifiers;
     protected Component[] listenOnComponents;
+    protected boolean resetFocusOnActiveElement;
 
     protected KeyCombination(Key key, KeyModifier... keyModifiers) {
         this.key = key;
@@ -56,6 +57,24 @@ public class KeyCombination {
     @Nullable
     public Component[] getListenOnComponents() {
         return listenOnComponents;
+    }
+
+    /**
+     * @return {@code true} if the focus should be reset for the active focused element, {@code false} otherwise
+     */
+    public boolean isResetFocusOnActiveElement() {
+        return resetFocusOnActiveElement;
+    }
+
+    /**
+     * Reset the focus for active focused element. Lose focus (i.e., it’s blurred) and
+     * receive focus again before a shortcut is triggered for this key combination. This ensures any
+     * pending input value change events for that focused element are submitted before a shortcut is activated.<br/>
+     * The resetFocusOnActiveElement is {@code false} by default.
+     * @param resetFocusOnActiveElement whether to reset focus
+     */
+    public void setResetFocusOnActiveElement(boolean resetFocusOnActiveElement) {
+        this.resetFocusOnActiveElement = resetFocusOnActiveElement;
     }
 
     public static KeyCombination create(Key key, KeyModifier... keyModifiers) {

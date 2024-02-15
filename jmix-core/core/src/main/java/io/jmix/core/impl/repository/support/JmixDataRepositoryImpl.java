@@ -20,7 +20,9 @@ import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import io.jmix.core.impl.repository.support.method_metadata.CrudMethodMetadata;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.querycondition.Condition;
 import io.jmix.core.repository.JmixDataRepository;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -67,7 +69,7 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
 
     @Override
     public T create() {
-        return getDataManager().create(domainClass);
+        return getSuitableDataManager().create(domainClass);
     }
 
 
@@ -92,17 +94,30 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
     }
 
     @Override
+    public Iterable<T> findAll(JmixDataRepositoryContext context) {
+        FluentLoader.ByCondition<T> loader = conditionOrAllLoader(context.condition())
+                .fetchPlan(context.fetchPlan())
+                .hints(getHints())
+                .hints(context.hints());
+        return loader.list();
+    }
+
+    @Override
     public Iterable<T> findAll(Iterable<ID> ids, @Nullable FetchPlan fetchPlan) {
         if (!ids.iterator().hasNext()) {
             return Collections.emptyList();
         }
 
-        return getDataManager().load(domainClass).ids(toCollection(ids)).hints(getHints()).fetchPlan(fetchPlan).list();
+        return getSuitableDataManager().load(domainClass)
+                .ids(toCollection(ids))
+                .hints(getHints())
+                .fetchPlan(fetchPlan)
+                .list();
     }
 
     @Override
     public <S extends T> S save(S entity) {
-        return getDataManager().save(entity);
+        return getSuitableDataManager().save(entity);
     }
 
 
@@ -138,12 +153,12 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
 
     @Override
     public long count() {
-        return getDataManager().getCount(new LoadContext<>(metadata.getClass(domainClass)).setHints(getHints()));
+        return getSuitableDataManager().getCount(new LoadContext<>(metadata.getClass(domainClass)).setHints(getHints()));
     }
 
     @Override
     public void deleteById(ID id) {
-        deleteInternal(getDataManager().getReference(Id.of(id, domainClass)));
+        deleteInternal(getSuitableDataManager().getReference(Id.of(id, domainClass)));
     }
 
     @Override
@@ -175,7 +190,7 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
     }
 
     protected void deleteInternal(Object... entities) {
-        getDataManager().save(new SaveContext().removing(entities).setHints(getHints()));
+        getSuitableDataManager().save(new SaveContext().removing(entities).setHints(getHints()));
     }
 
     public Class<T> getDomainClass() {
@@ -193,47 +208,84 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
 
     @Override
     public Page<T> findAll(Pageable pageable) {
-        return findAll(pageable, null);
+        return findAll(pageable, (FetchPlan) null);
     }
 
     @Override
     public Iterable<T> findAll(Sort sort, @Nullable FetchPlan fetchPlan) {
-        return allLoader().sort(springToJmixSort(sort)).fetchPlan(fetchPlan).list();
+        return findAll(Pageable.unpaged(sort), fetchPlan);
     }
 
     @Override
     public Page<T> findAll(Pageable pageable, @Nullable FetchPlan fetchPlan) {
-        FluentLoader.ByCondition<T> loader = allLoader()
-                .fetchPlan(fetchPlan);
+        return findAll(pageable, JmixDataRepositoryContext.plan(fetchPlan).build());
+    }
+
+    @Override
+    public Page<T> findAll(Pageable pageable, JmixDataRepositoryContext jmixContext) {
+        FluentLoader.ByCondition<T> loader = conditionOrAllLoader(jmixContext.condition())
+                .fetchPlan(jmixContext.fetchPlan())
+                .hints(getHints())
+                .hints(jmixContext.hints());
 
         LoaderHelper.applyPageableForConditionLoader(loader, pageable);
         loader.sort(springToJmixSort(pageable.getSort()));
 
         List<T> results = loader.list();
 
-        MetaClass metaClass = metadata.getClass(domainClass);
-        LoadContext<T> context = new LoadContext<T>(metaClass)
-                .setQuery(new LoadContext.Query(String.format("select e from %s e", metaClass.getName())))
-                .setHints(getHints());
-
-        long total = getDataManager().getCount(context);
+        long total = count(jmixContext);
         return new PageImpl<>(results, pageable, total);
     }
 
-    protected UnconstrainedDataManager getDataManager() {
+    public long count(JmixDataRepositoryContext jmixContext) {
+        MetaClass metaClass = metadata.getClass(domainClass);
+        LoadContext<T> context = new LoadContext<>(metaClass);
+        context.setQuery(new LoadContext.Query(String.format("select e from %s e", metaClass.getName())));
+        if (jmixContext.condition() != null) {
+            //noinspection DataFlowIssue
+            context.getQuery().setCondition(jmixContext.condition());
+        }
+
+        Map<String, Serializable> hints = new HashMap<>(getHints());
+        hints.putAll(jmixContext.hints());
+        context.setHints(hints);
+        return getSuitableDataManager().getCount(context);
+    }
+
+    @Override
+    public <S extends T> S save(S entity, FetchPlan fetchPlan) {
+        if (!fetchPlan.getEntityClass().isAssignableFrom(entity.getClass())) {
+            throw new IllegalArgumentException(
+                    String.format("FetchPlan '%s' cannot be used for entity with class '%s'",
+                            fetchPlan,
+                            entity.getClass()));
+        }
+        return getSuitableDataManager().save(new SaveContext().saving(entity, fetchPlan)).get(entity);
+    }
+
+    protected UnconstrainedDataManager getSuitableDataManager() {
         return methodMetadataAccessor.getCrudMethodMetadata().isApplyConstraints() ? dataManager : unconstrainedDataManager;
+    }
+
+    @Override
+    public DataManager getDataManager(){
+        return dataManager;
     }
 
     protected Map<String, Serializable> getHints() {
         return methodMetadataAccessor.getCrudMethodMetadata().getQueryHints();
     }
 
+    protected FluentLoader.ByCondition<T> conditionOrAllLoader(@Nullable Condition condition) {
+        return condition == null ? allLoader() : getSuitableDataManager().load(domainClass).condition(condition).hints(getHints());
+    }
+
     protected FluentLoader.ByCondition<T> allLoader() {
-        return getDataManager().load(domainClass).all().hints(getHints());
+        return getSuitableDataManager().load(domainClass).all().hints(getHints());
     }
 
     protected FluentLoader.ById<T> idLoader(ID id) {
-        return getDataManager().load(domainClass).id(id).hints(getHints());
+        return getSuitableDataManager().load(domainClass).id(id).hints(getHints());
     }
 
     protected Collection<ID> toCollection(Iterable<ID> ids) {

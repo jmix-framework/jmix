@@ -45,77 +45,70 @@
                 icon="BAN"
                 shortcutCombination="${CLOSE_SHORTCUT}"/>
     </actions>
-    <layout>
-        <formLayout id="resourcesForm">
-            <responsiveSteps>
-                <responsiveStep minWidth="0" columns="1"/>
-                <responsiveStep minWidth="60em" columns="2"/>
-            </responsiveSteps>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="contentBox"
+            classNames="jmix-role-assigment-layout">
+        <flexLayout id="contentBox" classNames="jmix-role-assigment-content-wrapper">
+            <vbox id="resourceRolesWrapper" padding="false">
+                <h4 text="msg://resourceRoles.text"/>
+                <hbox id="resourceRoleButtonsPanel" classNames="buttons-panel">
+                    <button id="addResourceRoleBtn"
+                            action="resourceRoleAssignmentsTable.addResourceRole"/>
+                    <button id="removeResourceRoleBtn"
+                            action="resourceRoleAssignmentsTable.remove"/>
+                </hbox>
+                <dataGrid id="resourceRoleAssignmentsTable"
+                          dataContainer="resourceRoleAssignmentEntitiesDc"
+                          columnReorderingAllowed="true"
+                          minHeight="20em"
+                          selectionMode="MULTI">
+                    <actions>
+                        <action id="addResourceRole" type="list_add">
+                            <properties>
+                                <property name="viewClass"
+                                          value="io.jmix.securityflowui.view.resourcerole.ResourceRoleModelLookupView"/>
+                            </properties>
+                        </action>
+                        <action id="remove" type="list_remove"/>
+                    </actions>
+                    <columns resizable="true">
+                        <column property="roleCode"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
 
-            <details id="resourceRolesBox"
-                     summaryText="msg://resourceRoles.text"
-                     opened="true"
-                     width="100%">
-                <vbox id="resourceRolesWrapper" padding="false">
-                    <hbox id="resourceRoleButtonsPanel" classNames="buttons-panel">
-                        <button id="addResourceRoleBtn"
-                                action="resourceRoleAssignmentsTable.addResourceRole"/>
-                        <button id="removeResourceRoleBtn"
-                                action="resourceRoleAssignmentsTable.remove"/>
-                    </hbox>
-                    <dataGrid id="resourceRoleAssignmentsTable"
-                              dataContainer="resourceRoleAssignmentEntitiesDc"
-                              columnReorderingAllowed="true"
-                              selectionMode="MULTI">
-                        <actions>
-                            <action id="addResourceRole" type="list_add">
-                                <properties>
-                                    <property name="viewClass"
-                                              value="io.jmix.securityflowui.view.resourcerole.ResourceRoleModelLookupView"/>
-                                </properties>
-                            </action>
-                            <action id="remove" type="list_remove"/>
-                        </actions>
-                        <columns resizable="true">
-                            <column property="roleCode"/>
-                        </columns>
-                    </dataGrid>
-                </vbox>
-            </details>
+            <vbox id="rowLevelRolesWrapper" padding="false">
+                <h4 text="msg://rowLevelRoles.text"/>
+                <hbox id="rowLevelRoleButtonsPanel" classNames="buttons-panel">
+                    <button id="addRowLevelRoleBtn"
+                            action="rowLevelRoleAssignmentsTable.addRowLevelRole"/>
+                    <button id="removeRowLevelRoleBtn"
+                            action="rowLevelRoleAssignmentsTable.remove"/>
+                </hbox>
+                <dataGrid id="rowLevelRoleAssignmentsTable"
+                          dataContainer="rowLevelRoleAssignmentEntitiesDc"
+                          columnReorderingAllowed="true"
+                          minHeight="20em"
+                          selectionMode="MULTI">
+                    <actions>
+                        <action id="addRowLevelRole" type="list_add">
+                            <properties>
+                                <property name="viewClass"
+                                          value="io.jmix.securityflowui.view.rowlevelrole.RowLevelRoleModelLookupView"/>
+                            </properties>
+                        </action>
+                        <action id="remove" type="list_remove"/>
+                    </actions>
+                    <columns resizable="true">
+                        <column property="roleCode"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+        </flexLayout>
 
-            <details id="rowLevelRolesBox"
-                     summaryText="msg://rowLevelRoles.text"
-                     opened="true"
-                     width="100%">
-                <vbox id="rowLevelRolesWrapper" padding="false">
-                    <hbox id="rowLevelRoleButtonsPanel" classNames="buttons-panel">
-                        <button id="addRowLevelRoleBtn"
-                                action="rowLevelRoleAssignmentsTable.addRowLevelRole"/>
-                        <button id="removeRowLevelRoleBtn"
-                                action="rowLevelRoleAssignmentsTable.remove"/>
-                    </hbox>
-                    <dataGrid id="rowLevelRoleAssignmentsTable"
-                              dataContainer="rowLevelRoleAssignmentEntitiesDc"
-                              columnReorderingAllowed="true"
-                              selectionMode="MULTI">
-                        <actions>
-                            <action id="addRowLevelRole" type="list_add">
-                                <properties>
-                                    <property name="viewClass"
-                                              value="io.jmix.securityflowui.view.rowlevelrole.RowLevelRoleModelLookupView"/>
-                                </properties>
-                            </action>
-                            <action id="remove" type="list_remove"/>
-                        </actions>
-                        <columns resizable="true">
-                            <column property="roleCode"/>
-                        </columns>
-                    </dataGrid>
-                </vbox>
-            </details>
-        </formLayout>
-
-        <hbox id="detailActions">
+        <hbox id="detailActions"
+              classNames="px-m py-s bg-contrast-5">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>

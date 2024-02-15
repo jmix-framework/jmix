@@ -24,6 +24,7 @@ public class MenuResourcePolicyModelDetailView extends StandardDetailView<Resour
 
     @Subscribe
     public void onInit(InitEvent event) {
+        setReloadEdited(false);
         ComponentUtils.setItemsMap(resourceField, resourcePolicyEditorUtils.getMenuItemOptionsMap());
     }
 

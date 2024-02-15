@@ -25,6 +25,7 @@ public class SpecificResourcePolicyModelDetailView extends StandardDetailView<Re
 
     @Subscribe
     public void onInit(InitEvent event) {
+        setReloadEdited(false);
         List<String> specificPolicyNames = specificPolicyInfoRegistry.getSpecificPolicyInfos().stream()
                 .map(SpecificPolicyInfoRegistry.SpecificPolicyInfo::getName)
                 .sorted()

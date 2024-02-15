@@ -16,7 +16,6 @@
 
 package io.jmix.gradle
 
-
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.NotFoundException
@@ -25,6 +24,12 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
+
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.security.MessageDigest
 
 import static io.jmix.gradle.DescriptorGenerationUtils.CONVERTERS_LIST_PROPERTY
 import static io.jmix.gradle.MetaModelUtil.*
@@ -50,11 +55,20 @@ class EnhancingAction implements Action<Task> {
 
         ClassesInfo classesInfo = collectClasses(project, sourceSet)
 
-        constructDescriptors(project, sourceSet, classesInfo)
+        boolean entitiesEnhancingRequired = !project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing ||
+                entityClassesChangedSinceLastBuild(project, sourceSet, classesInfo)
 
-        persistenceProviderEnhancing().run(project, sourceSet, classesInfo.allStores())
+        if (entitiesEnhancingRequired) {
+            constructDescriptors(project, sourceSet, classesInfo)
+            persistenceProviderEnhancing().run(project, sourceSet, classesInfo.allStores())
+            runJmixEnhancing(project, sourceSet, classesInfo)
 
-        runJmixEnhancing(project, sourceSet, classesInfo)
+            if (project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing) {
+                saveEntityClassesChecksumForNextBuild(project, sourceSet, classesInfo)
+            }
+        } else {
+            project.logger.lifecycle "Entities enhancing was skipped, because entity classes haven't been changed since the last build"
+        }
     }
 
     protected ClassesInfo collectClasses(Project project, SourceSet sourceSet) {
@@ -239,6 +253,74 @@ class EnhancingAction implements Action<Task> {
                 }
             }
         }
+    }
+
+    /**
+     * Evaluates a checksum of enhanced entity classes and saves it to the file.
+     * <p>
+     * On the next project build, the checksum of entities classes from the "build" directory will be compared with the
+     * checksum saved to the file to find out if entities have been changed since the last compilation.
+     */
+    protected void saveEntityClassesChecksumForNextBuild(Project project, sourceSet, ClassesInfo classesInfo) {
+        def allEntityClassesChecksum = evaluateEntityClassesChecksum(sourceSet, classesInfo)
+        Path checksumFilePath = getEntitiesChecksumFilePath(project)
+        if (!Files.exists(checksumFilePath.getParent())) {
+            Files.createDirectories(checksumFilePath.getParent())
+        }
+        Files.write(checksumFilePath, allEntityClassesChecksum.getBytes(StandardCharsets.UTF_8))
+    }
+
+    /**
+     * Evaluates a single checksum for all entity classes (of the current project) extracted from the ClassesInfo.
+     */
+    protected String evaluateEntityClassesChecksum(sourceSet, ClassesInfo classesInfo) {
+        StringBuilder sb = new StringBuilder()
+        String javaOutputDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
+        Collection<String> allEntities = classesInfo.getAllEntities()
+        allEntities.sort()
+        for (className in allEntities) {
+            def classFileName = className.replace('.', '/') + '.class'
+            def classFile = new File(javaOutputDir, classFileName)
+
+            // skip files from dependencies, copy only classes from `javaOutputDir`
+            if (classFile.exists()) {
+                sb.append(checkSum(classFile))
+            }
+        }
+        return checkSum(sb.toString().getBytes(StandardCharsets.UTF_8))
+    }
+
+    /**
+     * Checks if entity classes in a project build directory and entity classes from last project build are not
+     * the same. Method compares the checksum of entity classes saved during previous compilation with the checksum of
+     * actual entity classes collection.
+     */
+    protected boolean entityClassesChangedSinceLastBuild(Project project, SourceSet sourceSet, ClassesInfo classesInfo) {
+        Path entitiesChecksumFilePath = getEntitiesChecksumFilePath(project)
+        if (!Files.exists(entitiesChecksumFilePath)) {
+            //previous entity classes checksum was not saved
+            return true
+        }
+        def prevChecksum = Files.readString(entitiesChecksumFilePath)
+        def currentChecksum = evaluateEntityClassesChecksum(sourceSet, classesInfo)
+        return prevChecksum != currentChecksum
+    }
+
+    protected String checkSum(File file) {
+        byte[] data = Files.readAllBytes(file.toPath())
+        return checkSum(data)
+    }
+
+    protected String checkSum(byte[] data) {
+        byte[] hash = MessageDigest.getInstance("MD5").digest(data)
+        return new BigInteger(1, hash).toString(16)
+    }
+
+    /**
+     * Returns a path to a file where entity classes checksum will be stored to.
+     */
+    protected Path getEntitiesChecksumFilePath(Project project) {
+        return Paths.get("$project.buildDir/tmp/entitiesEnhancing/entities.checksum")
     }
 
     static ClassPool createClassPool(Project project, sourceSet) {

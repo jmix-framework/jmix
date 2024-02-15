@@ -18,7 +18,6 @@ package io.jmix.flowui.xml.layout.inittask;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
-import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
@@ -31,12 +30,15 @@ import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 
 import org.springframework.lang.Nullable;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public abstract class AbstractAssignActionInitTask<C extends Component> implements ComponentLoader.InitTask {
 
     protected C component;
     protected String actionId;
     protected View<?> view;
+
+    protected Consumer<Action> afterExecuteHandler;
 
     public AbstractAssignActionInitTask(C component, String actionId, View<?> view) {
         this.component = component;
@@ -77,6 +79,7 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
             }
 
             addAction(context, action);
+            runAfterExecuteHandler(action);
         } else if (elements.length == 1) {
             String id = elements[0];
             Action action = getActionRecursively(context, id);
@@ -88,6 +91,7 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
                 }
             } else {
                 addAction(context, action);
+                runAfterExecuteHandler(action);
             }
         } else {
             throw new GuiDevelopmentException("Empty action name", context.getFullFrameId());
@@ -97,6 +101,16 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
     protected abstract boolean hasOwnAction(String id);
 
     protected abstract void addAction(ComponentContext context, Action action);
+
+    public void setAfterExecuteHandler(@Nullable Consumer<Action> afterExecuteHandler) {
+        this.afterExecuteHandler = afterExecuteHandler;
+    }
+
+    protected void runAfterExecuteHandler(Action action) {
+        if (afterExecuteHandler != null) {
+            afterExecuteHandler.accept(action);
+        }
+    }
 
     @Nullable
     protected Action getActionRecursively(ComponentContext context, String actionId) {

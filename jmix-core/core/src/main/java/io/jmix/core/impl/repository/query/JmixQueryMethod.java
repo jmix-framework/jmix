@@ -18,11 +18,14 @@ package io.jmix.core.impl.repository.query;
 
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
+import org.springframework.data.repository.query.Parameters;
+import org.springframework.data.repository.query.ParametersSource;
 import org.springframework.data.repository.query.QueryMethod;
 
 import java.lang.reflect.Method;
 
 /**
+ *
  * {@link QueryMethod} extension required to support {@link io.jmix.core.FetchPlan} special parameter.
  */
 public class JmixQueryMethod extends QueryMethod {
@@ -31,9 +34,13 @@ public class JmixQueryMethod extends QueryMethod {
         super(method, metadata, factory);
     }
 
-    @Override
+    @Override//todo taimanov: do not remove until it is required by single available constructor of QueryMethod
     protected JmixParameters createParameters(Method method) {
-        return new JmixParameters(method);
+        return new JmixParameters(ParametersSource.of(method));
     }
 
+    @Override
+    protected Parameters<?, ?> createParameters(ParametersSource parametersSource) {
+        return new JmixParameters(parametersSource);
+    }
 }

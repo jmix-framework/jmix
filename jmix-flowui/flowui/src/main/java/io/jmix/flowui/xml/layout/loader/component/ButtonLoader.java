@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -63,9 +64,25 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
 
     protected void loadAction(JmixButton component, Element element) {
         loadString(element, "action")
-                .ifPresent(actionId -> getComponentContext().addInitTask(
-                        new AssignActionInitTask<>(component, actionId, getComponentContext().getView())
-                ));
+                .ifPresent(actionId -> {
+                    AssignActionInitTask<JmixButton> task =
+                            new AssignActionInitTask<>(component, actionId, getComponentContext().getView());
+                    task.setAfterExecuteHandler(this::afterActionSet);
+                    getComponentContext().addInitTask(task);
+                });
+    }
+
+    protected void afterActionSet(Action action) {
+        loadVisible(resultComponent, element);
+        componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadIcon(element, resultComponent::setIcon);
+        componentLoader().loadThemeNames(resultComponent, element);
+
+        // set event if an 'empty' value to clear a value from the action
+        loadResourceString(element, "title", context.getMessageGroup(), false)
+                .ifPresent(resultComponent::setTitle);
+        loadResourceString(element, "text", context.getMessageGroup(), false)
+                .ifPresent(resultComponent::setText);
     }
 
     protected PrefixSuffixLoaderSupport getPrefixSuffixLoaderSupport() {

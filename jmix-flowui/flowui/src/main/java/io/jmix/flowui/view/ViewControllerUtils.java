@@ -141,4 +141,15 @@ public final class ViewControllerUtils {
     public static Registration addValidationEventListener(StandardDetailView<?> view, ComponentEventListener<StandardDetailView.ValidationEvent> listener) {
         return view.addValidationEventListener(listener);
     }
+
+    @Deprecated(since = "2.2", forRemoval = true)
+    public static <T> Registration addInitEntityEvent(StandardDetailView<T> view, ComponentEventListener<StandardDetailView.InitEntityEvent<T>> listener) {
+        return view.addInitEntityListener(listener);
+    }
+
+    @Deprecated(since = "2.2", forRemoval = true)
+    public static Registration addBeforeShowEvent(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
+        return view.addBeforeShowListener(listener);
+    }
+
 }

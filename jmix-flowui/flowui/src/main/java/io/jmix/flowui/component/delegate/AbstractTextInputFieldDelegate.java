@@ -122,9 +122,10 @@ public abstract class AbstractTextInputFieldDelegate<C extends AbstractField<?, 
     }
 
     @Override
-    protected void setupProperties(EntityValueSource<?, V> valueSource) {
-        if (component instanceof HasLengthLimited hasLengthLimitedComponent) {
-            dataAwareComponentsTools.setupLength(hasLengthLimitedComponent, valueSource);
+    protected void setupProperties(ValueSource<V> valueSource) {
+        if (component instanceof HasLengthLimited hasLengthLimitedComponent &&
+                valueSource instanceof EntityValueSource<?,?> entityValueSource) {
+            dataAwareComponentsTools.setupLength(hasLengthLimitedComponent, entityValueSource);
         }
     }
 

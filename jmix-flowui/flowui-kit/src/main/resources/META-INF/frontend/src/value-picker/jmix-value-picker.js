@@ -142,6 +142,10 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
 
         super._onInput(event);
     }
+
+    checkValidity() {
+        return !this.invalid && super.checkValidity();
+    }
 }
 
 defineCustomElement(JmixValuePicker);

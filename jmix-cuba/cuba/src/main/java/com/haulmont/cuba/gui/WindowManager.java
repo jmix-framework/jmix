@@ -268,6 +268,7 @@ public interface WindowManager {
         /**
          * In Desktop Client open a screen in new main window, in Web Client the same as new {@link #NEW_TAB}
          */
+        @Deprecated
         public static final OpenType NEW_WINDOW = new OpenType(OpenMode.NEW_WINDOW, false);
 
         private OpenMode openMode;

@@ -113,10 +113,13 @@ public interface DataLoader {
     /**
      * Sets function that provides monitoring info about this data loader.
      */
-    void setMonitoringInfoProvider(Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider);
+    default void setMonitoringInfoProvider(Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider) {
+    }
 
     /**
      * Returns function that provides monitoring info about this data loader.
      */
-    Function<DataLoader, DataLoaderMonitoringInfo> getMonitoringInfoProvider();
+    default Function<DataLoader, DataLoaderMonitoringInfo> getMonitoringInfoProvider() {
+        return __ -> DataLoaderMonitoringInfo.empty();
+    }
 }

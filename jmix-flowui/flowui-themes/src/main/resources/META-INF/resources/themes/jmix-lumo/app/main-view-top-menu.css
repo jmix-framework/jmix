@@ -39,6 +39,7 @@ vaadin-app-layout.jmix-main-view-top-menu-app-layout::part(navbar) {
 }
 
 .jmix-main-view-top-menu-logo-container {
+  display: flex;
   margin: 0 var(--lumo-space-m);
 }
 

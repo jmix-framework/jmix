@@ -16,9 +16,8 @@
 
 package component.delegate
 
-import com.vaadin.flow.component.textfield.IntegerField
+
 import com.vaadin.flow.shared.Registration
-import component_container.view.ComponentContainerView
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.delegate.IntegerFieldDelegate
 import io.jmix.flowui.component.textfield.JmixIntegerField

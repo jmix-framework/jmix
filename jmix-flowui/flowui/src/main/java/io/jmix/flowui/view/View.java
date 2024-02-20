@@ -20,6 +20,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -71,7 +72,6 @@ public class View<T extends Component> extends Composite<T>
     private Consumer<View<T>> closeDelegate;
 
     private boolean closeActionPerformed = false;
-    private boolean preventBrowserTabClosing = false;
 
     public View() {
         closeDelegate = createDefaultViewDelegate();
@@ -163,7 +163,7 @@ public class View<T extends Component> extends Composite<T>
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        if (preventBrowserTabClosing) {
+        if (getApplicationContext().getBean(UiViewProperties.class).isPreventBrowserTabClosing()) {
             WebBrowserTools.preventBrowserTabClosing(this);
         }
     }
@@ -178,7 +178,7 @@ public class View<T extends Component> extends Composite<T>
         }
         unregisterBackNavigation();
 
-        if (preventBrowserTabClosing) {
+        if (getApplicationContext().getBean(UiViewProperties.class).isPreventBrowserTabClosing()) {
             WebBrowserTools.allowBrowserTabClosing(this);
         }
     }
@@ -248,24 +248,6 @@ public class View<T extends Component> extends Composite<T>
         applicationContext.publishEvent(viewClosedEvent);
 
         return OperationResult.success();
-    }
-
-    /**
-     * @return whether this view prevents browser tab from accidentally closing
-     */
-    public boolean isPreventBrowserTabClosing() {
-        return preventBrowserTabClosing;
-    }
-
-    /**
-     * Sets whether this view must prevent browser tab from
-     * accidentally closing. Enabled by default.
-     *
-     * @param preventBrowserTabClosing whether this details view must prevent
-     *                                 browser tab from accidentally closing
-     */
-    public void setPreventBrowserTabClosing(boolean preventBrowserTabClosing) {
-        this.preventBrowserTabClosing = preventBrowserTabClosing;
     }
 
     Consumer<View<T>> getCloseDelegate() {

@@ -79,7 +79,6 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     protected void initExistingEntity(String mbeanObjectName) {
         String objectName = urlParamSerializer.deserialize(String.class, mbeanObjectName);
         ManagedBeanInfo managedBean = jmxControl.getManagedBean(objectName);
-        setPreventBrowserTabClosing(false);
 
         mbeanDc.setItem(managedBean);
 

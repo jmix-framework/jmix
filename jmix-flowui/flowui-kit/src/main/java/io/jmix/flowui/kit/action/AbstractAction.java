@@ -98,7 +98,7 @@ public abstract class AbstractAction implements Action {
     @Nullable
     @Override
     public Icon getIcon() {
-        return icon != null ? (Icon) ComponentUtils.copyIcon(icon) : null;
+        return icon != null ? ComponentUtils.copyIconComponent(icon) : null;
     }
 
     @Override

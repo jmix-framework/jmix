@@ -28,6 +28,7 @@ import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.security.UserRepository;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.core.usersubstitution.event.UiUserSubstitutionsChangedEvent;
@@ -43,6 +44,7 @@ import io.jmix.flowui.kit.component.main.UserIndicator;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
@@ -65,6 +67,9 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
     protected Dialogs dialogs;
     protected Messages messages;
     protected Actions actions;
+
+    @Autowired
+    protected UserRepository userRepository;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -110,9 +115,10 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         getContent().removeAll();
 
         UserDetails user = currentUserSubstitution.getAuthenticatedUser();
+        UserDetails updatedUser = userRepository.loadUserByUsername(user.getUsername());
 
         List<UserDetails> currentAndSubstitutedUsers = new LinkedList<>();
-        currentAndSubstitutedUsers.add(user);
+        currentAndSubstitutedUsers.add(updatedUser);
 
         List<UserDetails> additionalUsers = substitutionManager != null
                 ? substitutionManager.getCurrentSubstitutedUsers()
@@ -126,7 +132,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         updateUserIndicatorLabel(currentUserSubstitution.getEffectiveUser());
 
         getContent().add(userComponent);
-        getContent().setTitle(generateUserTitle(user));
+        getContent().setTitle(generateUserTitle(updatedUser));
     }
 
     protected Component createUserSelectionField(List<UserDetails> currentAndSubstitutedUsers) {

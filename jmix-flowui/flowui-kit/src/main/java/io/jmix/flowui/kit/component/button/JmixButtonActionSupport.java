@@ -24,7 +24,6 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import jakarta.annotation.Nullable;
 
 import java.beans.PropertyChangeEvent;
@@ -138,8 +137,7 @@ public class JmixButtonActionSupport {
 
     protected void updateIcon(boolean overrideComponentProperties) {
         if (button.getIcon() == null || overrideComponentProperties) {
-            button.setIcon(action.getIcon() == null ? null :
-                    ComponentUtils.copyIcon(action.getIcon()));
+            button.setIcon(action.getIcon());
         }
     }
 

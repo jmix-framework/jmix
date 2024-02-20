@@ -18,6 +18,7 @@ package io.jmix.flowui.kit.action;
 
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.event.EventBus;
 
@@ -97,7 +98,7 @@ public abstract class AbstractAction implements Action {
     @Nullable
     @Override
     public Icon getIcon() {
-        return icon;
+        return icon != null ? (Icon) ComponentUtils.copyIcon(icon) : null;
     }
 
     @Override

@@ -21,7 +21,6 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import jakarta.annotation.Nullable;
 
@@ -69,7 +68,7 @@ public class GridMenuItemActionSupport {
                 contextMenuItem.setVisible(action.isVisible());
                 menuItem.setTooltipText(action.getDescription());
                 if (isShowActionIconEnabled()) {
-                    menuItem.setPrefixComponent(createIconComponent(action.getIcon()));
+                    menuItem.setPrefixComponent(action.getIcon());
                 }
                 if (isShowActionShortcutEnabled()) {
                     menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
@@ -85,14 +84,6 @@ public class GridMenuItemActionSupport {
 
     protected boolean isShowActionIconEnabled() {
         return false;
-    }
-
-    @Nullable
-    protected Component createIconComponent(@Nullable Component actionIcon) {
-        if (actionIcon == null) {
-            return null;
-        }
-        return ComponentUtils.copyIcon(actionIcon);
     }
 
     protected boolean isShowActionShortcutEnabled() {

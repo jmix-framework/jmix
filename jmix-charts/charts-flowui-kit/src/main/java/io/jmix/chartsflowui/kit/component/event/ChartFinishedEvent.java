@@ -22,6 +22,9 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartFinishedEventDetail;
 
+/**
+ * Event fired when render finished, that is, when animation finished and progressive rendering finished too.
+ */
 @DomEvent(ChartFinishedEvent.EVENT_NAME)
 public class ChartFinishedEvent extends AbstractChartEvent<ChartFinishedEventDetail> {
 

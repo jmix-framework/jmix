@@ -804,6 +804,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="rangeInputOrientationEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="HORIZONTAL"/>
+            <xs:enumeration value="VERTICAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="codeEditorTheme">
         <xs:restriction base="xs:string">
             <xs:enumeration value="AMBIANCE"/>
@@ -3802,9 +3809,13 @@
     <xs:complexType name="loginOverlayComponent">
         <xs:complexContent>
             <xs:extension base="baseLoginComponent">
-                <xs:sequence>
-                    <xs:element name="header" type="loginHeaderType" minOccurs="0"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element name="header" type="loginHeaderType"/>
+                    <xs:element name="customFormArea" type="loginContentAreaType"/>
+                    <xs:element name="footer" type="loginContentAreaType"/>
                 </xs:sequence>
+
+                <xs:attribute name="opened" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3839,6 +3850,12 @@
     <xs:complexType name="loginHeaderType">
         <xs:attribute name="title" type="resourceString"/>
         <xs:attribute name="description" type="resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="loginContentAreaType">
+        <xs:sequence minOccurs="0">
+            <xs:group ref="layoutOrComponent"/>
+        </xs:sequence>
     </xs:complexType>
 
     <!-- Upload -->
@@ -4221,6 +4238,25 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="rangeInputComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="min" type="xs:double"/>
+                <xs:attribute name="max" type="xs:double"/>
+                <xs:attribute name="step" type="xs:double"/>
+                <xs:attribute name="orientation" type="rangeInputOrientationEnum"/>
+
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+                <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- Filters -->
 
     <!-- GenericFilter -->
@@ -4581,6 +4617,7 @@
                 <xs:element name="nativeLabel" type="labelComponent"/>
                 <xs:element name="nativeButton" type="nativeButtonComponent"/>
                 <xs:element name="nativeDetails" type="nativeDetailsComponent"/>
+                <xs:element name="rangeInput" type="rangeInputComponent"/>
                 <xs:element name="article" type="baseClickableHtmlContainer"/>
                 <xs:element name="input" type="inputHtmlComponent"/>
                 <xs:element name="image" type="imageComponent"/>

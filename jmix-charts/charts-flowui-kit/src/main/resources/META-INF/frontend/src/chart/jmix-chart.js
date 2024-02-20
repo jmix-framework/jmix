@@ -65,10 +65,8 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
 
     static get forwardedEventNames() {
         return ['click', 'dblclick', 'mousedown', 'mousemove', 'mouseup', 'mouseover', 'mouseout', 'globalout',
-            'highlight', 'selectchanged', 'legendselectchanged', 'legendselected', 'legendunselected',
-            'legendselectall', 'legendinverseselect', 'legendscroll', 'datazoom', 'restore',
-            'magictypechanged', 'axisareaselected', 'brush', 'brushend', 'brushselected', 'globalcursortaken',
-            'rendered', 'finished',
+            'legendselectchanged', 'legendselectall', 'legendinverseselect', 'legendscroll', 'datazoom', 'restore',
+            'magictypechanged', 'brush', 'brushend', 'brushselected', 'globalcursortaken', 'rendered', 'finished'
         ];
     }
 
@@ -90,9 +88,9 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
     _forwardEvents() {
         for (let eventName of JmixChart.forwardedEventNames) {
             this._root.on(eventName, (params) => {
-                const detail = { ...params, event: undefined };
+                const detail = this._normalizeEventDetail({...params, event: undefined});
                 const customEvent = new CustomEvent('jmix-chart:' + eventName,
-                    { detail: detail });
+                    {detail: detail});
                 this.dispatchEvent(customEvent);
             });
         }
@@ -284,6 +282,27 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
                 this._processNativeJsFunctions(options[propertyName]);
             }
         }
+    }
+
+    _normalizeEventDetail(detail) {
+        if (detail.type === 'click' || detail.type === 'dblclick'
+            || detail.type === 'mousedown' || detail.type === 'mousemove' || detail.type === 'mouseup'
+            || detail.type === 'mouseout' || detail.type === 'mouseover') {
+
+            if (!this._isObject(detail.data)) {
+                detail.singleData = detail.data;
+                detail.data = undefined;
+            }
+        }
+
+        return detail;
+    }
+
+    /**
+     * @private
+     */
+    _isObject(value) {
+        return typeof value === 'object';
     }
 }
 

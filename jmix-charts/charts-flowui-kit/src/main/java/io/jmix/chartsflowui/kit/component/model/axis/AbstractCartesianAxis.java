@@ -58,7 +58,9 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
      */
     public enum Position implements HasEnumId {
         TOP("top"),
-        BOTTOM("bottom");
+        BOTTOM("bottom"),
+        LEFT("left"),
+        RIGHT("right");
 
         private final String id;
 

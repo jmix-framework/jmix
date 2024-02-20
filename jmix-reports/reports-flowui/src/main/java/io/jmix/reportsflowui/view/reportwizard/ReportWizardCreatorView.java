@@ -49,8 +49,6 @@ import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
-import io.jmix.reportsflowui.runner.FluentUiReportRunner;
-import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.entitytreelist.EntityTreeNodeListView;
 import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
@@ -112,8 +110,6 @@ public class ReportWizardCreatorView extends StandardView {
     protected Span wizardDescriptionSpan;
     @ViewComponent
     protected CollectionPropertyContainer<QueryParameter> queryParametersDc;
-    @ViewComponent
-    protected JmixButton regionsRunBtn;
     @ViewComponent
     protected VerticalLayout regionsVBox;
     @ViewComponent
@@ -181,7 +177,6 @@ public class ReportWizardCreatorView extends StandardView {
     protected boolean needUpdateEntityModel = false;
     protected boolean entityTreeHasSimpleAttrs;
     protected boolean entityTreeHasCollections;
-    protected Report lastGeneratedTmpReport;
     protected List<VerticalLayout> fragmentsList;
     protected Map<VerticalLayout, String> fragmentDescriptionMap = new HashMap<>();
 
@@ -232,7 +227,6 @@ public class ReportWizardCreatorView extends StandardView {
             updateRegionButtons();
             showAddRegion();
             updateFragmentChangeButtons();
-            regionsRunBtn.setVisible(getReportTypeGenerate() != ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
         } else if (vbox.equals(queryVBox)) {
             ReportData item = reportDataDc.getItem();
             String resultQuery = item.getQuery();
@@ -295,7 +289,7 @@ public class ReportWizardCreatorView extends StandardView {
                     getReportTypeGenerate()));
         }
         if ("templateFileType".equals(event.getProperty())
-                && reportDataDc.getItem().getTemplateFileType() != null) {
+            && reportDataDc.getItem().getTemplateFileType() != null) {
             updateCorrectReportOutputType((TemplateFileType) event.getValue());
             updateDownloadTemplateFile();
             outputFileName.setTypedValue(generateOutputFileName(reportDataDc.getItem().getTemplateFileType().toString(),
@@ -459,10 +453,10 @@ public class ReportWizardCreatorView extends StandardView {
     public void onBeforeClose(BeforeCloseEvent event) {
         CloseAction closeAction = event.getCloseAction();
         boolean checkUnsavedChanges = closeAction instanceof ChangeTrackerCloseAction
-                && ((ChangeTrackerCloseAction) closeAction).isCheckForUnsavedChanges();
+                                      && ((ChangeTrackerCloseAction) closeAction).isCheckForUnsavedChanges();
 
         if (!event.closedWith(StandardOutcome.SAVE) && checkUnsavedChanges
-                && CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
+            && CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
             dialogs.createOptionDialog()
                     .withHeader(messageBundle.getMessage("dialogConfirmation.header"))
                     .withText(messageBundle.getMessage("beforeClose.interruptConfirm.text"))
@@ -528,8 +522,8 @@ public class ReportWizardCreatorView extends StandardView {
                     int index = oldName.lastIndexOf(prevEntityCaption);
                     if (index > -1) {
                         newName = StringUtils.substring(oldName, 0, index)
-                                + messageTools.getEntityCaption(value)
-                                + StringUtils.substring(oldName, index + prevEntityCaption.length(), oldName.length());
+                                  + messageTools.getEntityCaption(value)
+                                  + StringUtils.substring(oldName, index + prevEntityCaption.length(), oldName.length());
                     }
 
                     reportData.setName(newName);
@@ -635,28 +629,6 @@ public class ReportWizardCreatorView extends StandardView {
     @Subscribe("regionDataGrid.edit")
     public void onRegionDataGridEditItemAction(ActionPerformedEvent event) {
         editRegion();
-    }
-
-    @Subscribe("regionsRunBtn")
-    public void onRegionsRunBtnClick(ClickEvent<Button> event) {
-        if (reportDataDc.getItem().getReportRegions().isEmpty()) {
-            notifications.create(messageBundle.getMessage("addRegionsWarn.message"))
-                    .withType(Notifications.Type.DEFAULT)
-                    .withPosition(Notification.Position.BOTTOM_END)
-                    .show();
-            return;
-        }
-
-        lastGeneratedTmpReport = buildReport(true);
-
-        if (lastGeneratedTmpReport != null) {
-            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(lastGeneratedTmpReport)
-                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
-                fluentRunner.inBackground(this);
-            }
-            fluentRunner.runAndShow();
-        }
     }
 
     @Install(to = "regionDataGrid.up", subject = "enabledRule")
@@ -790,7 +762,7 @@ public class ReportWizardCreatorView extends StandardView {
             List<ReportRegion> items = reportRegionsDc.getMutableItems();
             ReportRegion currentItem = regionDataGrid.getSingleSelectedItem();
             if ((up && currentItem.getOrderNum() != 1) ||
-                    (!up && currentItem.getOrderNum() != items.size())) {
+                (!up && currentItem.getOrderNum() != items.size())) {
                 ReportRegion itemToSwap = IterableUtils.find(items,
                         e -> e.getOrderNum().equals(currentItem.getOrderNum() - (up ? 1 : -1)));
                 long currentPosition = currentItem.getOrderNum();
@@ -828,7 +800,7 @@ public class ReportWizardCreatorView extends StandardView {
     @Subscribe("outputFileFormat")
     public void onOutputFileFormatComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixComboBox<ReportOutputType>, ReportOutputType> event) {
         if (event.getOldValue() != null && event.getValue() != null
-                && StringUtils.isNotBlank(outputFileName.getValue())) {
+            && StringUtils.isNotBlank(outputFileName.getValue())) {
             ReportOutputType prevValue = event.getOldValue();
             ReportOutputType value = event.getValue();
             String prevOutputFileName = outputFileName.getValue();
@@ -1013,20 +985,6 @@ public class ReportWizardCreatorView extends StandardView {
     @Subscribe(id = "regionPropertiesDc", target = Target.DATA_CONTAINER)
     public void onRegionPropertiesDcCollectionChange(CollectionContainer.CollectionChangeEvent<RegionProperty> event) {
         regenerateQuery = true;
-    }
-
-    @Subscribe("queryRunBtn")
-    public void onQueryRunBtnClick(ClickEvent<Button> event) {
-        lastGeneratedTmpReport = buildReport(true);
-
-        if (lastGeneratedTmpReport != null) {
-            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(lastGeneratedTmpReport)
-                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
-                fluentRunner.inBackground(this);
-            }
-            fluentRunner.runAndShow();
-        }
     }
 
     @Subscribe("fullScreenTransformationBtn")

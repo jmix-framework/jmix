@@ -22,6 +22,9 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartRenderedEventDetail;
 
+/**
+ * Event is fired every time a component is rendered on the client-side.
+ */
 @DomEvent(ChartRenderedEvent.EVENT_NAME)
 public class ChartRenderedEvent extends AbstractChartEvent<ChartRenderedEventDetail> {
 

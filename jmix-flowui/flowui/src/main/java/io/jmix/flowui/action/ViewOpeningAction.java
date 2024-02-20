@@ -131,6 +131,9 @@ public interface ViewOpeningAction extends Action {
      */
     <V extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler);
 
+    @Nullable
+    <V extends View<?>> Consumer<DialogWindow.AfterCloseEvent<V>> getAfterCloseHandler();
+
     /**
      * Sets the view configurer. Use the configurer if you need to provide
      * parameters to the opened view through setters.
@@ -145,6 +148,9 @@ public interface ViewOpeningAction extends Action {
      * </pre>
      */
     <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer);
+
+    @Nullable
+    <V extends View<?>> Consumer<V> getViewConfigurer();
 
     @FunctionalInterface
     interface RouteParametersProvider {

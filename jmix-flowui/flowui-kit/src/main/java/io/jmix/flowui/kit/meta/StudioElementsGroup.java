@@ -53,4 +53,9 @@ public @interface StudioElementsGroup {
     boolean unlimitedCount() default false;
 
     StudioProperty[] properties() default {};
+
+    /**
+     * @see StudioComponent#documentationLink()
+     */
+    String documentationLink() default "";
 }

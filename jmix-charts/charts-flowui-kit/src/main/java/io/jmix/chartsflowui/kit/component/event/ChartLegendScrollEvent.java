@@ -21,7 +21,13 @@ import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartLegendScrollEventDetail;
+import io.jmix.chartsflowui.kit.component.model.legend.ScrollableLegend;
 
+/**
+ * Event fired after scrolling the scrollable legend.
+ *
+ * @see ScrollableLegend
+ */
 @DomEvent(ChartLegendScrollEvent.EVENT_NAME)
 public class ChartLegendScrollEvent extends AbstractChartEvent<ChartLegendScrollEventDetail> {
 

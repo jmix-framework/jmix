@@ -16,5 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
-public class ChartClickEventDetail extends ChartMouseEventDetail {
+import io.jmix.chartsflowui.kit.component.event.ChartClickEvent;
+
+/**
+ * @see ChartClickEvent
+ */
+public class ChartClickEventDetail extends AbstractChartMouseEventDetail {
 }

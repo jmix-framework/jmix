@@ -39,6 +39,7 @@ public interface StudioLayouts {
             category = "Layouts",
             xmlElement = "details",
             icon = "io/jmix/flowui/kit/meta/icon/layout/details.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/details.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -73,6 +74,7 @@ public interface StudioLayouts {
             category = "Layouts",
             xmlElement = "hbox",
             icon = "io/jmix/flowui/kit/meta/icon/layout/hbox.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/hbox.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -127,6 +129,7 @@ public interface StudioLayouts {
             category = "Layouts",
             xmlElement = "vbox",
             icon = "io/jmix/flowui/kit/meta/icon/layout/vbox.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/vbox.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -236,6 +239,7 @@ public interface StudioLayouts {
             category = "Layouts",
             xmlElement = "scroller",
             icon = "io/jmix/flowui/kit/meta/icon/layout/scroller.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/scroller.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -267,6 +271,7 @@ public interface StudioLayouts {
             category = "Layouts",
             xmlElement = "split",
             icon = "io/jmix/flowui/kit/meta/icon/layout/split.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/split.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -302,6 +307,7 @@ public interface StudioLayouts {
             category = "Layouts",
             xmlElement = "accordion",
             icon = "io/jmix/flowui/kit/meta/icon/layout/accordion.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/accordion.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -329,6 +335,7 @@ public interface StudioLayouts {
             category = "Layouts",
             xmlElement = "formLayout",
             icon = "io/jmix/flowui/kit/meta/icon/layout/formLayout.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/formLayout.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -362,6 +369,7 @@ public interface StudioLayouts {
             category = "Layouts",
             xmlElement = "tabSheet",
             icon = "io/jmix/flowui/kit/meta/icon/component/tabSheet.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/tabSheet.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

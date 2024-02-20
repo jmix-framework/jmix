@@ -21,7 +21,13 @@ import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartGlobalCursorTakenEventDetail;
+import io.jmix.chartsflowui.kit.component.model.Brush;
 
+/**
+ * Event fired when switch of the brush.
+ *
+ * @see Brush
+ */
 @DomEvent(ChartGlobalCursorTakenEvent.EVENT_NAME)
 public class ChartGlobalCursorTakenEvent extends AbstractChartEvent<ChartGlobalCursorTakenEventDetail> {
 

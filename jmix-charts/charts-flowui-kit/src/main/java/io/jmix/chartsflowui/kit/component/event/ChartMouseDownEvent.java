@@ -23,6 +23,9 @@ import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartMouseDownEventDetail;
 
+/**
+ * Event is fired after the user presses the click, regardless of whether releases it or not.
+ */
 @DomEvent(ChartMouseDownEvent.EVENT_NAME)
 public class ChartMouseDownEvent extends AbstractChartMouseEvent<ChartMouseDownEventDetail> {
 

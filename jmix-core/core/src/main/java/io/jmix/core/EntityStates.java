@@ -61,9 +61,9 @@ public class EntityStates {
      * Determines whether the instance is <em>New</em>, i.e. just created and not stored in database yet.
      *
      * @param entity entity instance
-     * @return - true if the instance is a new persistent entity, or if it is actually in Managed state
+     * @return - true if the instance is a new JPA entity, or if it is actually in Managed state
      * but newly-persisted in this transaction <br>
-     * - true if the instance is a new non-persistent entity never returned from DataManager <br>
+     * - true if the instance is not a JPA entity <br>
      * - false otherwise
      * @throws IllegalArgumentException if entity instance is null
      */
@@ -85,7 +85,7 @@ public class EntityStates {
      *
      * @param entity entity instance
      * @return - true if the instance is managed,<br>
-     * - false if it is New (and not yet persisted) or Detached, or if it is not a persistent entity
+     * - false if it is New (and not yet persisted) or Detached, or if it is not a JPA entity
      * @throws IllegalArgumentException if entity instance is null
      */
     public boolean isManaged(Object entity) {
@@ -107,7 +107,7 @@ public class EntityStates {
      *
      * @param entity entity instance
      * @return - true if the instance is detached,<br>
-     * - false if it is New or Managed, or if it is not a persistent entity
+     * - false if it is New or Managed, or if it is not a JPA entity
      * @throws IllegalArgumentException if entity instance is null
      */
     public boolean isDetached(Object entity) {
@@ -374,7 +374,19 @@ public class EntityStates {
     }
 
     /**
-     * Makes a newly constructed object detached. The detached object can be passed to {@code DataManager.commit()} or
+     * Manages the <em>New</em> state of the entity instance.
+     *
+     * @see #isNew(Object)
+     */
+    public void setNew(Object entity, boolean isNew) {
+        checkNotNullArgument(entity, "entity is null");
+        EntityPreconditions.checkEntityType(entity);
+
+        getUncheckedEntityEntry(entity).setNew(isNew);
+    }
+
+    /**
+     * Makes a newly constructed object detached. The detached object can be passed to {@code DataManager.save()} or
      * to {@code EntityManager.merge()} to save its state to the database.
      * <p>If an object with such ID does not exist in the database, a new object will be inserted.
      * <p>If the entity is {@code Versioned}, the version attribute should be equal to the latest version existing in

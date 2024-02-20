@@ -26,6 +26,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.UiEntityContext;
+import io.jmix.flowui.action.impl.ActionHandlerValidator;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
@@ -153,8 +154,18 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     @Override
+    public <V extends View<?>> Consumer<AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
     public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
         viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
     }
 
     /**
@@ -172,6 +183,11 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
      */
     public void setAfterSaveHandler(@Nullable Consumer<E> afterSaveHandler) {
         this.afterSaveHandler = afterSaveHandler;
+    }
+
+    @Nullable
+    public Consumer<E> getAfterSaveHandler() {
+        return afterSaveHandler;
     }
 
     /**
@@ -192,6 +208,11 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
      */
     public void setTransformation(@Nullable Function<E, E> transformation) {
         this.transformation = transformation;
+    }
+
+    @Nullable
+    public Function<E, E> getTransformation() {
+        return transformation;
     }
 
     @Autowired
@@ -327,6 +348,8 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
         navigator = viewInitializer.initNavigator(navigator);
 
+        ActionHandlerValidator.validate(this, OpenMode.NAVIGATION);
+
         navigator.navigate();
     }
 
@@ -352,6 +375,8 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
                 }
             });
         }
+
+        ActionHandlerValidator.validate(this, OpenMode.DIALOG);
 
         dialogWindow.open();
     }

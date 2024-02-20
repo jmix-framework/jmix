@@ -16,12 +16,13 @@
 
 package repository
 
-import io.jmix.core.DataManager
-import io.jmix.core.EntityStates
-import io.jmix.core.FetchPlans
-import io.jmix.core.Metadata
+import io.jmix.core.*
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
+import org.springframework.data.domain.Sort
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
 import test_support.entity.repository.Address
@@ -457,12 +458,52 @@ class OrderRepositoryTest extends DataSpec {
 
     }
 
+    void 'loading after save test'() {
+        setup:
+        Customer customer = metadata.create(Customer.class);
+        customer.setName("tmpCust")
+        customer.setAddress(new Address())
+        customer.getAddress().setCity("Best")
+
+        SalesOrder order = metadata.create(SalesOrder.class);
+        order.setCustomer(customer);
+        order.setNumber("111");
+        order.setDate(Date.from(LocalDate.parse("2010-01-01").atStartOfDay().toInstant(ZoneOffset.UTC)));
+
+        dataManager.save(customer, order)
+
+        when:
+        orderRepository.save(orderRepository.create(),fetchPlans.builder(Customer.class).build())
+        then:
+        thrown(IllegalArgumentException)
+
+        when:
+        SalesOrder loadedOrder = dataManager.load(Id.of(order)).fetchPlan(FetchPlan.LOCAL).one()
+        loadedOrder.number = "1111"
+        FetchPlan fetchPlanForSaving = fetchPlans.builder(SalesOrder).addAll("customer").build();
+        SalesOrder savedOrder = orderRepository.save(loadedOrder, fetchPlanForSaving)
+
+
+        then:
+        entityStates.isLoadedWithFetchPlan(savedOrder, fetchPlanForSaving)
+
+        cleanup:
+        dataManager.remove(savedOrder, customer)
+    }
+
     void testCountByIsNull() {
         when:
         long count = orderRepository.countByNumberInOrDateIsNull(["111", "-2"]);
 
         then:
         count == 2 //numbers: 111,null
+    }
+
+    void 'default method test'() {
+        when:
+        SalesOrder order = orderRepository.getByExtractedNumber("Use number 111 please")
+        then:
+        order.number== "111"
     }
 
 }

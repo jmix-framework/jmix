@@ -22,6 +22,9 @@ import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartDataZoomEventDetail;
 
+/**
+ * Event fired after the chart data range is zoomed .
+ */
 @DomEvent(ChartDataZoomEvent.EVENT_NAME)
 public class ChartDataZoomEvent extends AbstractChartEvent<ChartDataZoomEventDetail> {
 

@@ -23,6 +23,9 @@ import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartMouseOverEventDetail;
 
+/**
+ * Event is fired after the user hovers the cursor over an element of the chart series.
+ */
 @DomEvent(ChartMouseOverEvent.EVENT_NAME)
 public class ChartMouseOverEvent extends AbstractChartMouseEvent<ChartMouseOverEventDetail> {
 

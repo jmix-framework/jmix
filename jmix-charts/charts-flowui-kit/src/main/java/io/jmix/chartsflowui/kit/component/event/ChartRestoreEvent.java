@@ -21,7 +21,13 @@ import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartRestoreEventDetail;
+import io.jmix.chartsflowui.kit.component.model.toolbox.RestoreFeature;
 
+/**
+ * Event is fired after chart options resets.
+ *
+ * @see RestoreFeature
+ */
 @DomEvent(ChartRestoreEvent.EVENT_NAME)
 public class ChartRestoreEvent extends AbstractChartEvent<ChartRestoreEventDetail> {
 

@@ -45,4 +45,9 @@ public @interface StudioFacet {
     String availablePlaceRegExp() default "^((mainView)|(view))?(/facets)$";
 
     StudioProperty[] properties() default {};
+
+    /**
+     * @see StudioComponent#documentationLink()
+     */
+    String documentationLink() default "";
 }

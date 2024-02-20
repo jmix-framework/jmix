@@ -23,8 +23,8 @@ class Field {
 def createTag(variable) {
     def field = new Field()
     field.tag = api.getTagByBpmField(variable)
-    def fieldAttrs = [id: variable.id,
-        label: variable.caption]
+    def fieldAttrs = [id: variable.id.concat('Field'),
+        label: messageKeys['variable.'.concat(variable.id)]]
 
     def datatype = variable.type.datatype
     if (datatype != null) {
@@ -60,6 +60,11 @@ def createTag(variable) {
                 def entity = api.findEntity(fqn)
                 if (entity != null) {
                     entityName = entity.getName()
+                } else if (fqn.lastIndexOf(".") > 0) {
+                    entity = api.findEntityByName(fqn.substring(fqn.lastIndexOf(".") + 1))
+                    entityName = entity.getName()
+                } else {
+                    entityName = fqn
                 }
             }
         }
@@ -82,7 +87,7 @@ def createTag(variable) {
 
 def collectionAttributesTable = []
 def entityFormXml = ''
-if (formType.name() == 'ENTITY') {
+if (formTemplate.name() == 'ENTITY') {
     nestedCollectionDatasourceProperties.each { prop ->
         def binding = [
             'nestedDcProperty': prop,
@@ -100,7 +105,7 @@ if (formType.name() == 'ENTITY') {
          'asideLabelsPosition': false])
 }
 %>
-<%if (formType.name() == 'ENTITY') {%>${entityFormXml}
+<%if (formTemplate.name() == 'ENTITY') {%>${entityFormXml}
     <%collectionAttributesTable.each{table ->%>
         ${table}
     <%}%>

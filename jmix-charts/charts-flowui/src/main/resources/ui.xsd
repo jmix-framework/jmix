@@ -106,6 +106,10 @@
                     <xs:element name="emphasis" type="lineSeriesEmphasisType"/>
                     <xs:element name="blur" type="baseLineSeriesElement"/>
                     <xs:element name="select" type="lineSeriesSelectType"/>
+
+                    <xs:element name="symbolSizeFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
                 </xs:sequence>
 
                 <xs:attribute name="coordinateSystem" type="coordinateSystemType"/>
@@ -246,6 +250,10 @@
                     <xs:element name="emphasis" type="scatterSeriesEmphasisType"/>
                     <xs:element name="blur" type="baseScatterSeriesElement"/>
                     <xs:element name="select" type="scatterSeriesSelectType"/>
+
+                    <xs:element name="symbolSizeFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
                 </xs:sequence>
 
                 <xs:attribute name="coordinateSystem" type="coordinateSystemType"/>
@@ -282,6 +290,10 @@
                     <xs:element name="emphasis" type="effectScatterSeriesEmphasisType"/>
                     <xs:element name="blur" type="baseEffectScatterSeriesElement"/>
                     <xs:element name="select" type="effectScatterSeriesSelectType"/>
+
+                    <xs:element name="symbolSizeFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
                 </xs:sequence>
 
                 <xs:attribute name="coordinateSystem" type="coordinateSystemType"/>
@@ -316,6 +328,10 @@
                     <xs:element name="emphasis" type="radarSeriesEmphasisType"/>
                     <xs:element name="blur" type="baseRadarSeriesElement"/>
                     <xs:element name="select" type="radarSeriesSelectType"/>
+
+                    <xs:element name="symbolSizeFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
                 </xs:sequence>
 
                 <xs:attribute name="radarIndex" type="xs:integer"/>
@@ -1854,6 +1870,10 @@
     <xs:complexType name="seriesTooltipType">
         <xs:sequence minOccurs="0">
             <xs:element name="textStyle" type="baseText"/>
+
+            <xs:element name="formatterFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
         </xs:sequence>
 
         <xs:attribute name="position">
@@ -1869,6 +1889,7 @@
         </xs:attribute>
         <xs:attribute name="positionCoordinates" type="xs:string"/>
         <xs:attribute name="formatter" type="xs:string"/>
+        <xs:attribute name="formatterFunction" type="xs:string"/>
         <xs:attribute name="valueFormatter" type="xs:string"/>
         <xs:attribute name="backgroundColor" type="colorType"/>
         <xs:attribute name="borderColor" type="colorType"/>
@@ -1895,6 +1916,10 @@
                     <xs:element name="emphasis" type="markEmphasisType"/>
                     <xs:element name="blur" type="baseMarkElement"/>
                     <xs:element name="data" type="markPointDataType"/>
+
+                    <xs:element name="symbolSizeFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasSymbols"/>
@@ -1921,6 +1946,10 @@
             <xs:extension base="baseMarkElement">
                 <xs:sequence minOccurs="0">
                     <xs:element name="emphasis" type="markEmphasisType"/>
+
+                    <xs:element name="symbolSizeFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
                 </xs:sequence>
 
                 <xs:attribute name="name" type="xs:string"/>
@@ -1975,6 +2004,10 @@
                 <xs:sequence minOccurs="0">
                     <xs:element name="emphasis" type="markLineEmphasisType"/>
                     <xs:element name="blur" type="baseMarkLineElement"/>
+
+                    <xs:element name="symbolSizeFunction">
+                        <xs:complexType mixed="true"/>
+                    </xs:element>
                 </xs:sequence>
 
                 <xs:attribute name="type" type="pointDataType"/>
@@ -2160,6 +2193,8 @@
                         <xs:restriction>
                             <xs:enumeration value="TOP"/>
                             <xs:enumeration value="BOTTOM"/>
+                            <xs:enumeration value="RIGHT"/>
+                            <xs:enumeration value="LEFT"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
@@ -2820,6 +2855,7 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="symbolSize" type="xs:integer"/>
+        <xs:attribute name="symbolSizeFunction" type="xs:string"/>
         <xs:attribute name="symbolRotate" type="xs:integer"/>
         <xs:attribute name="symbolKeepAspect" type="xs:boolean"/>
         <xs:attribute name="symbolOffset" type="xs:string"/>

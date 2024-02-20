@@ -92,6 +92,7 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
 
     @Subscribe
     public void onInit(InitEvent event) {
+        setReloadEdited(false);
         ComponentUtils.setItemsMap(entityNameField, getEntityOptionsMap());
         docsLink.getStyle().set("margin-inline-start", "auto");
         detailActions.setAlignSelf(Alignment.CENTER, docsLink);

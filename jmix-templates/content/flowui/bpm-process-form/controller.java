@@ -1,19 +1,22 @@
 <%
 def processAnnotation = api.processSnippet('bpm_processFormAnnotation.xml',
     ['outputes': processFormOutcomes,
-     'formType': processFormType,
+     'injects': bpmInjects,
+     'entity': entity != null ? entity : entityObject,
+     'entityVarName': studioUtils.nullize(entityVarName) != null ? entityVarName : entityObjectName,
+     'formTemplate': processFormTemplate,
      'api': api])
 def processComponents = api.processSnippet('bpm_components.xml',
      ['injects': bpmInjects,
-     'formType': processFormType,
-     'entity': entity,
-     'entityVarName': entityVarName,
+     'formTemplate': processFormTemplate,
+     'entity': entity != null ? entity : entityObject,
+     'entityVarName': studioUtils.nullize(entityVarName) != null ? entityVarName : entityObjectName,
      'api': api])
 def processHandlers = api.processSnippet('bpm_handlers.xml',
     ['outputes': processFormOutcomes,
+     'formTemplate': processFormTemplate,
      'formType': processFormType,
-     'caller': processFormCaller,
-     'entityVarName': entityVarName,
+     'entityVarName': studioUtils.nullize(entityVarName) != null ? entityVarName : entityObjectName,
      'api': api])
 %>package ${packageName};
 

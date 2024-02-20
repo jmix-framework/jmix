@@ -1259,6 +1259,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
                 String.format("%s supports only horizontal and vertical position coordinates",
                         AbstractSeries.Tooltip.class.getSimpleName()));
         loadString(tooltipElement, "formatter", tooltip::setFormatter);
+        chartLoaderSupport().loadJsFunction(tooltipElement, "formatterFunction", tooltip::setFormatterFunction);
         loadString(tooltipElement, "valueFormatter", tooltip::setValueFormatter);
         chartLoaderSupport().loadColor(tooltipElement, "backgroundColor", tooltip::setBackgroundColor);
         chartLoaderSupport().loadColor(tooltipElement, "borderColor", tooltip::setBorderColor);
@@ -1382,7 +1383,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
             markLine.setBlur(blur);
         }
 
-        Element dataElement = element.element("data");
+        Element dataElement = markLineElement.element("data");
         if (dataElement != null) {
             MarkLine.Data data = new MarkLine.Data();
 

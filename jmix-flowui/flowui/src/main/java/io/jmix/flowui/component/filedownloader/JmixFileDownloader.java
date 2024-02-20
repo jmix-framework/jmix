@@ -16,19 +16,11 @@
 
 package io.jmix.flowui.component.filedownloader;
 
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.function.SerializableConsumer;
-import com.vaadin.flow.server.RequestHandler;
-import com.vaadin.flow.server.StreamResource;
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinResponse;
-import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import org.apache.logging.log4j.util.Strings;
@@ -125,7 +117,7 @@ public class JmixFileDownloader extends Composite<Anchor> {
 
     protected void runCommand(StreamResource resource) {
         contentWriter = (stream) -> {
-            try (stream) {
+            try {
                 resource.getWriter().accept(stream, VaadinSession.getCurrent());
             } catch (IOException e) {
                 throw new RuntimeException("Error copying stream");
@@ -164,9 +156,8 @@ public class JmixFileDownloader extends Composite<Anchor> {
                 try {
                     contentWriter.andThen(this::afterWriteHandler)
                             .accept(response.getOutputStream());
-
                     log.debug("response {} has been sent", response);
-                } catch (IOException e) {
+                } catch (IOException | RuntimeException e) {
                     if (!isViewDocumentRequest
                             || fileNotFoundExceptionHandler == null
                             || !fileNotFoundExceptionHandler.test(new FileNotFoundContext(e, response))) {
@@ -176,6 +167,8 @@ public class JmixFileDownloader extends Composite<Anchor> {
                         // exception is handled in listener
                         return true;
                     }
+                } finally {
+                    response.getOutputStream().close();
                 }
 
                 return true;

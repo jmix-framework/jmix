@@ -18,7 +18,6 @@ package date_internationalization
 
 import io.jmix.flowui.component.DateInternationalizationHelper
 import org.springframework.boot.test.context.SpringBootTest
-import spock.lang.Unroll
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest

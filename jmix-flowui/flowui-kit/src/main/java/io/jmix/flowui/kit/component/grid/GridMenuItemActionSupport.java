@@ -21,10 +21,10 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import jakarta.annotation.Nullable;
 
+import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
 public class GridMenuItemActionSupport {
@@ -68,12 +68,12 @@ public class GridMenuItemActionSupport {
                 contextMenuItem.setVisible(action.isVisible());
                 menuItem.setTooltipText(action.getDescription());
                 if (isShowActionIconEnabled()) {
-                    menuItem.setPrefixComponent(createIconComponent(action.getIcon()));
+                    menuItem.setPrefixComponent(action.getIcon());
                 }
                 if (isShowActionShortcutEnabled()) {
                     menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
                 }
-                actionPropertyChangeRegistration = addPropertyChangeListener();
+                actionPropertyChangeRegistration = action.addPropertyChangeListener(this::propertyChangeEventListener);
             }
             registration = contextMenuItem.addMenuItemClickListener(event ->
                     action.actionPerform(event.getSource()));
@@ -84,14 +84,6 @@ public class GridMenuItemActionSupport {
 
     protected boolean isShowActionIconEnabled() {
         return false;
-    }
-
-    @Nullable
-    protected Component createIconComponent(@Nullable Component actionIcon) {
-        if (actionIcon == null) {
-            return null;
-        }
-        return ComponentUtils.copyIcon(actionIcon);
     }
 
     protected boolean isShowActionShortcutEnabled() {
@@ -125,33 +117,31 @@ public class GridMenuItemActionSupport {
         }
     }
 
-    protected Registration addPropertyChangeListener() {
-        return action.addPropertyChangeListener(event -> {
-            String propertyName = event.getPropertyName();
-            GridMenuItem<?> contextMenuItem = menuItem.getMenuItem();
-            switch (propertyName) {
-                case Action.PROP_TEXT:
-                    menuItem.setText(action.getText());
-                    updateVisible();
-                    break;
-                case Action.PROP_ENABLED:
-                    if (contextMenuItem != null) {
-                        contextMenuItem.setEnabled(action.isEnabled());
-                    }
-                    break;
-                case Action.PROP_VISIBLE:
-                    updateVisible();
-                    break;
-                case Action.PROP_DESCRIPTION:
-                    menuItem.setTooltipText(action.getDescription());
-                case Action.PROP_ICON:
-                    menuItem.setPrefixComponent(action.getIcon());
-                    updateVisible();
-                case Action.PROP_SHORTCUT_COMBINATION:
-                    menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
-                    updateVisible();
-                default:
+    protected void propertyChangeEventListener(PropertyChangeEvent event) {
+        String propertyName = event.getPropertyName();
+        GridMenuItem<?> contextMenuItem = menuItem.getMenuItem();
+
+        switch (propertyName) {
+            case Action.PROP_TEXT -> {
+                menuItem.setText(action.getText());
+                updateVisible();
             }
-        });
+            case Action.PROP_ENABLED -> {
+                if (contextMenuItem != null) {
+                    contextMenuItem.setEnabled(action.isEnabled());
+                }
+            }
+            case Action.PROP_VISIBLE -> updateVisible();
+            case Action.PROP_DESCRIPTION -> menuItem.setTooltipText(action.getDescription());
+            case Action.PROP_ICON -> {
+                menuItem.setPrefixComponent(action.getIcon());
+                updateVisible();
+            }
+            case Action.PROP_SHORTCUT_COMBINATION -> {
+                menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
+                updateVisible();
+            }
+            default -> {/* do nothing */}
+        }
     }
 }

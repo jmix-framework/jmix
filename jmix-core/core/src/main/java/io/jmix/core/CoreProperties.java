@@ -16,9 +16,9 @@
 
 package io.jmix.core;
 
-import org.springframework.lang.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.lang.Nullable;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -99,6 +99,13 @@ public class CoreProperties {
      */
     boolean roundDecimalValueByFormat;
 
+    /**
+     *
+     * Whether JpqlCondition and PropertyСondition should be skipped by default if property value is null or empty
+     * @see io.jmix.core.querycondition.SkippableCondition
+     */
+    boolean skipNullOrEmptyConditionsByDefault;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -118,7 +125,8 @@ public class CoreProperties {
             @DefaultValue("false") boolean legacyFetchPlanSerializationAttributeName,
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
-            @DefaultValue("true") boolean roundDecimalValueByFormat) {
+            @DefaultValue("true") boolean roundDecimalValueByFormat,
+            @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -147,6 +155,7 @@ public class CoreProperties {
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
+        this.skipNullOrEmptyConditionsByDefault = skipNullOrEmptyConditionsByDefault;
     }
 
     public String getWebHostName() {
@@ -248,5 +257,13 @@ public class CoreProperties {
      */
     public boolean isRoundDecimalValueByFormat() {
         return roundDecimalValueByFormat;
+    }
+
+    /**
+     *
+     * @see #skipNullOrEmptyConditionsByDefault
+     */
+    public boolean isSkipNullOrEmptyConditionsByDefault() {
+        return skipNullOrEmptyConditionsByDefault;
     }
 }

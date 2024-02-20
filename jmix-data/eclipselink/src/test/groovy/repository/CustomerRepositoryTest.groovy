@@ -36,6 +36,8 @@ import com.google.common.collect.Lists
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlans
+import io.jmix.core.querycondition.PropertyCondition
+import io.jmix.core.repository.JmixDataRepositoryContext
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
@@ -214,6 +216,15 @@ class CustomerRepositoryTest extends DataSpec {
     void testFindCustomerByName() {
         when:
         List<Customer> customers = customerRepository.findByName(customer1.getName())
+        then:
+        customers.size() == 1
+        customers.get(0) == customer1
+    }
+
+    void testFindCustomerByCondition() {
+        when:
+        List<Customer> customers = customerRepository.findAll(
+                JmixDataRepositoryContext.of(PropertyCondition.equal("name", customer1.getName())))
         then:
         customers.size() == 1
         customers.get(0) == customer1

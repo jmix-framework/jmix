@@ -51,6 +51,7 @@ import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.utils.DataProviderUtils;
+import io.jmix.dynattr.utils.DynAttrStringUtils;
 import io.jmix.dynattrflowui.utils.DynAttrUiHelper;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.*;
@@ -84,6 +85,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -335,6 +337,34 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         tabSheet.addSelectedChangeListener(e -> refreshOnce());
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
+    }
+
+    @Install(to = "nameField", subject = "validator")
+    protected void nameFieldUniqueNameValidator(String value) {
+        validateUniqueStringOnAttribute(value, CategoryAttribute::getName, "notUniqueAttributeName");
+    }
+
+    @Install(to = "codeField", subject = "validator")
+    protected void codeFieldUniqueNameValidator(String value) {
+        validateUniqueStringOnAttribute(value, CategoryAttribute::getCode, "notUniqueAttributeCode");
+    }
+
+    protected void validateUniqueStringOnAttribute(String value,
+                                                   Function<CategoryAttribute, String> mapper,
+                                                   String messageKey) {
+        if(categoryAttributeDc.getItem().getCategory() == null ||
+                categoryAttributeDc.getItem().getCategory().getCategoryAttrs() == null) {
+            return;
+        }
+        List<CategoryAttribute> attributes = categoryAttributeDc.getItem()
+                .getCategory()
+                .getCategoryAttrs();
+        if (attributes.stream()
+                .filter(item -> !Objects.equals(categoryAttributeDc.getItem(), item))
+                .map(mapper)
+                .anyMatch(attrName -> Objects.equals(attrName, value))) {
+            throw new ValidationException(messages.getMessage(getClass(), messageKey));
+        }
     }
 
     @Subscribe("defaultEntityIdField")
@@ -892,10 +922,10 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             }
             char[] delimiters = {' ', '.', '_', '-', '\t'};
 
-            String categoryNameInCamelCaseUncapitalized = CaseUtils.toCamelCase(categoryName, false, delimiters);
-            String attributeNameInCamelCaseUncapitalized = CaseUtils.toCamelCase(attribute.getName(), false, delimiters);
+            String categoryNameInCamelCaseUncapitalized = DynAttrStringUtils.toCamelCase(categoryName, delimiters);
+            String attributeNameInCamelCaseUncapitalized = DynAttrStringUtils.toCamelCase(attribute.getName(), delimiters);
 
-            String resultCodeName = Strings.isNullOrEmpty(categoryNameInCamelCaseUncapitalized) ?
+            String resultCodeName = !Strings.isNullOrEmpty(categoryNameInCamelCaseUncapitalized) ?
                     categoryNameInCamelCaseUncapitalized + StringUtils.capitalize(attributeNameInCamelCaseUncapitalized) :
                     attributeNameInCamelCaseUncapitalized;
 

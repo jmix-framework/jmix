@@ -18,14 +18,16 @@ package io.jmix.gridexportflowui.action;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.action.ActionType;
+import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.gridexportflowui.exporter.excel.ExcelExporter;
 import org.springframework.context.ApplicationContext;
 
 /**
- * Action for export table content in XLSX format
+ * Action for export a {@link ListDataComponent} content in XLSX format.
  * <p>
- * Should be defined for a list component ({@code Table}, {@code DataGrid}, etc.).
+ * Should be defined for a {@link ListDataComponent} (e.g. {@link DataGrid}).
  */
 @ActionType(ExcelExportAction.ID)
 public class ExcelExportAction extends ExportAction {

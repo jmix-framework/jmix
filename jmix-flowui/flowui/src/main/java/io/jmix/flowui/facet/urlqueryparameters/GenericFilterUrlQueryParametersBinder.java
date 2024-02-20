@@ -33,6 +33,7 @@ import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.jpqlfilter.JpqlFilter;
 import io.jmix.flowui.component.logicalfilter.GroupFilter;
@@ -76,6 +77,8 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected SingleFilterSupport singleFilterSupport;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
 
+    protected Registration filterComponentsChangeRegistration;
+
     public GenericFilterUrlQueryParametersBinder(GenericFilter filter,
                                                  UrlParamSerializer urlParamSerializer,
                                                  ApplicationContext applicationContext) {
@@ -91,8 +94,6 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         uiComponents = applicationContext.getBean(UiComponents.class);
         filterUrlQueryParametersSupport = applicationContext.getBean(FilterUrlQueryParametersSupport.class);
     }
-
-    protected Registration filterComponentsChangeRegistration;
 
     protected void initComponent(GenericFilter filter) {
         filter.addConfigurationChangeListener(this::onConfigurationChanged);
@@ -194,7 +195,13 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         } else if (parameters.containsKey(getConditionParam())) {
             List<String> conditionParams = parameters.get(getConditionParam());
 
-            Configuration currentConfiguration = filter.getCurrentConfiguration();
+            // For cases where there is a default design-time configuration.
+            // The design-time configuration can't be modified, so an empty configuration is entered
+            // to be able to add conditions from the URL query parameters.
+            Configuration currentConfiguration = filter.getCurrentConfiguration() instanceof RunTimeConfiguration
+                    ? filter.getCurrentConfiguration()
+                    : filter.getEmptyConfiguration();
+
             LogicalFilterComponent<?> rootLogicalFilterComponent = currentConfiguration.getRootLogicalFilterComponent();
 
             List<FilterComponent> conditions = deserializeConditions(conditionParams,

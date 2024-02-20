@@ -16,7 +16,9 @@
 
 package io.jmix.core.repository;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.annotation.Experimental;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -82,6 +84,14 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      */
     Iterable<T> findAll(FetchPlan fetchPlan);
 
+    /**
+     * Returns all instances of the type {@code T} loaded by {@code context}
+     *
+     * @return entities by context
+     * @see JmixDataRepositoryContext
+     */
+    @Experimental
+    Iterable<T> findAll(JmixDataRepositoryContext context);
 
     /**
      * Returns all instances of the type {@code T} with the given IDs loaded according to {@code fetchPlan}
@@ -113,4 +123,35 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * @return a page of entities
      */
     Page<T> findAll(Pageable pageable, @Nullable FetchPlan fetchPlan);
+
+    /**
+     * Returns a {@link Page} of entities meeting the paging restriction provided in the {@code Pageable} object.
+     * Entities will be loaded according to passed {@code params}
+     *
+     * @param jmixContext {@link JmixDataRepositoryContext} to load entities.
+     * @return a page of entities
+     */
+    @Experimental
+    Page<T> findAll(Pageable pageable, JmixDataRepositoryContext jmixContext);
+
+    /**
+     * Returns the number of entities satisfying {@code context} available.
+     *
+     * @return the number of entities satisfying {@code context}.
+     */
+    @Experimental
+    long count(JmixDataRepositoryContext context);
+
+    /**
+     * Saves the {@code entity} and returns saved instance loaded with specified {@code fetchPlan}.
+     * @param entity entity to save. Must not be null
+     * @param fetchPlan {@link FetchPlan} to reload saved entity with. Must be applicable to {@code entity}
+     * @throws IllegalArgumentException if {@code fetchPlan} is not applicable to entity
+     */
+    <S extends T> S save(S entity, FetchPlan fetchPlan);
+
+    /**
+     * @return {@link DataManager} to use in default methods.
+     */
+    DataManager getDataManager();
 }

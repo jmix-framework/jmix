@@ -28,7 +28,8 @@ public interface StudioFormatterElements {
             name = "CollectionFormatter",
             classFqn = "io.jmix.flowui.component.formatter.CollectionFormatter",
             xmlElement = "collection",
-            icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg"
+            icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#collection-formatter"
     )
     void collectionFormatter();
 
@@ -37,6 +38,7 @@ public interface StudioFormatterElements {
             classFqn = "io.jmix.flowui.component.formatter.CustomFormatter",
             xmlElement = "custom",
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#custom-formatter",
             properties = {
                     @StudioProperty(xmlAttribute = "bean", type = StudioPropertyType.STRING, required = true)
             }
@@ -48,6 +50,7 @@ public interface StudioFormatterElements {
             classFqn = "io.jmix.flowui.component.formatter.DateFormatter",
             xmlElement = "date",
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#date-time-formatter",
             properties = {
                     @StudioProperty(xmlAttribute = "format", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
@@ -63,6 +66,7 @@ public interface StudioFormatterElements {
             classFqn = "io.jmix.flowui.component.formatter.NumberFormatter",
             xmlElement = "number",
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#number-formatter",
             properties = {
                     @StudioProperty(xmlAttribute = "format", type = StudioPropertyType.STRING)
             }

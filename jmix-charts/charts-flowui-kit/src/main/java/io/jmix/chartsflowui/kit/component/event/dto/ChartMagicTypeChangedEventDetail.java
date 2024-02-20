@@ -16,8 +16,13 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
+import io.jmix.chartsflowui.kit.component.event.ChartMagicTypeChangedEvent;
+
 import java.util.Map;
 
+/**
+ * @see ChartMagicTypeChangedEvent
+ */
 public class ChartMagicTypeChangedEventDetail extends BaseChartEventDetail {
 
     protected String currentType;

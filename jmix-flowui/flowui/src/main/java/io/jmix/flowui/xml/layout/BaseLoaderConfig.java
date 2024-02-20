@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.RangeInput;
 import io.jmix.flowui.xml.layout.loader.component.*;
 import io.jmix.flowui.xml.layout.loader.container.*;
 import io.jmix.flowui.xml.layout.loader.html.*;
@@ -111,6 +112,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("image", ImageLoader.class);
         loaders.put("iframe", IFrameLoader.class);
         loaders.put("html", HtmlLoader.class);
+        loaders.put("rangeInput", RangeInputLoader.class);
 
         /* Containers */
         loaders.put("h1", H1Loader.class);

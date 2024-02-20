@@ -166,6 +166,7 @@ public class ChartLoaderSupport {
         loaderSupport.loadInteger(element, "symbolSize", component::setSymbolSize);
         loaderSupport.loadInteger(element, "symbolRotate", component::setSymbolRotate);
         loaderSupport.loadBoolean(element, "symbolKeepAspect", component::setSymbolKeepAspect);
+        loadJsFunction(element, "symbolSizeFunction", component::setSymbolSizeFunction);
         loadStringPair(element, "symbolOffset", component::setSymbolOffset,
                 String.format(
                         String.format("%s supports only x and y symbols offset",

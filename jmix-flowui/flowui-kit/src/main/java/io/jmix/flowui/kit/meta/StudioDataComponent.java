@@ -39,4 +39,9 @@ public @interface StudioDataComponent {
     String availablePlaceRegExp() default "^((mainView)|(view))?(/data)$";
 
     StudioProperty[] properties() default {};
+
+    /**
+     * @see StudioComponent#documentationLink()
+     */
+    String documentationLink() default "";
 }

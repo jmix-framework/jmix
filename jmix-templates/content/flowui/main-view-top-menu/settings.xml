@@ -36,24 +36,33 @@
               defaultValue="main-view-top-menu"
               propertyType="DESCRIPTOR_NAME"
               required="true"
+              focused="true"
               sourceName="descriptor"/>
 
     <property caption="Controller name"
               code="controllerName"
               propertyType="CLASS_NAME"
-              defaultValue="MainViewTopMenu"
               required="true"
               sourceName="controller"
               dynamic="true"
-              valueTemplate="${api.evaluateScript('controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}"/>
+              valueTemplate="${api.evaluateScript('controllerNameByDescriptorName.groovy', ['descriptorName': descriptorName])}">
+        <dependency code="descriptorName"/>
+    </property>
 
     <property caption="View id"
               code="viewId"
               propertyType="SCREEN_ID"
-              defaultValue="MainViewTopMenu"
               required="true"
               dynamic="true"
-              valueTemplate="${api.evaluateScript('screenIdByDescriptorName.groovy', ['descriptorName': descriptorName, 'projectId': project_id])}"/>
+              valueTemplate="${api.evaluateScript('screenIdByDescriptorName.groovy', ['descriptorName': descriptorName, 'projectId': project_id])}">
+        <dependency code="descriptorName"/>
+    </property>
+
+    <property caption="Use as default main view"
+              code="updateLayoutProperty"
+              propertyType="BOOLEAN"
+              defaultValue="false"
+              preferences="true"/>
 
     <source fileExt="xml"
             name="descriptor"/>

@@ -128,4 +128,7 @@ public class HtmlView extends StandardView {
 
     @ViewComponent
     public NativeDetails nativeDetailsId;
+
+    @ViewComponent
+    public RangeInput rangeInputId;
 }

@@ -1,25 +1,23 @@
 <%
 def components = []
 StringBuilder builder = new StringBuilder()
-if (formType.name() != 'CUSTOM') {
-    injects.each { inject ->
-        builder.append("\n\t@io.jmix.bpmflowui.processform.annotation.ProcessVariable\n")
-        builder.append("\t@io.jmix.flowui.view.ViewComponent\n")
-        builder.append("\tprivate ${inject.getClassName()} ${inject.getVariableName()};")
-    }
-    if (formType.name() == 'ENTITY') {
-        builder.append("\n\t@io.jmix.bpmflowui.processform.annotation.ProcessVariable(name = \"${entityVarName}\")\n")
-        builder.append("\tprivate ${entity.getFqn()} ${entityVarName};\n")
-        builder.append("\t@org.springframework.beans.factory.annotation.Autowired\n")
-        builder.append("\tprivate io.jmix.core.DataManager dataManager;\n")
-        builder.append("\t@io.jmix.flowui.view.ViewComponent\n")
-        builder.append("\tprivate io.jmix.flowui.model.InstanceContainer<${entity.getFqn()}> ${entity.uncapitalizedClassName}Dc;\n")
-        builder.append("\n\t@io.jmix.flowui.view.Subscribe\n")
-        builder.append("\tpublic void onBeforeShow(final io.jmix.flowui.view.View.BeforeShowEvent event) {\n")
-        builder.append("\t\tif (${entityVarName} == null) {\n")
-        builder.append("\t\t\t${entityVarName} = dataManager.create(${entity.getFqn()}.class);\n\t\t}\n")
-        builder.append("\t\t${entity.uncapitalizedClassName}Dc.setItem(${entityVarName});\n\t}")
-    }
+injects.each { inject ->
+    builder.append("\n\t@io.jmix.bpmflowui.processform.annotation.ProcessVariable(name = \"${inject.getVariableName()}\")\n")
+    builder.append("\t@io.jmix.flowui.view.ViewComponent\n")
+    builder.append("\tprivate ${inject.getClassName()} ${inject.getVariableName()}Field;")
+}
+if (formTemplate.name() == 'ENTITY') {
+    builder.append("\n\t@io.jmix.bpmflowui.processform.annotation.ProcessVariable(name = \"${entityVarName}\")\n")
+    builder.append("\tprivate ${entity.getFqn()} ${entityVarName};\n")
+    builder.append("\t@io.jmix.flowui.view.ViewComponent\n")
+    builder.append("\tio.jmix.flowui.model.DataContext dataContext;\n")
+    builder.append("\t@io.jmix.flowui.view.ViewComponent\n")
+    builder.append("\tprivate io.jmix.flowui.model.InstanceContainer<${entity.getFqn()}> ${entity.uncapitalizedClassName}Dc;\n")
+    builder.append("\n\t@io.jmix.flowui.view.Subscribe\n")
+    builder.append("\tpublic void onBeforeShow(final io.jmix.flowui.view.View.BeforeShowEvent event) {\n")
+    builder.append("\t\tif (${entityVarName} == null) {\n")
+    builder.append("\t\t\t${entityVarName} = dataContext.create(${entity.getFqn()}.class);\n\t\t}\n")
+    builder.append("\t\t${entity.uncapitalizedClassName}Dc.setItem(dataContext.merge(${entityVarName}));\n\t}")
 }
 components << builder.toString()
 components.each {%>$it<%}%>

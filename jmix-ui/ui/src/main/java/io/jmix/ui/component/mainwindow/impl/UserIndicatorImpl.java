@@ -53,13 +53,11 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     protected UserSubstitutionManager substitutionManager;
     protected Dialogs dialogs;
     protected CurrentUserSubstitution currentUserSubstitution;
+    protected UserRepository userRepository;
 
     protected HasValue<UserDetails> userComponent;
 
     protected Formatter<? super UserDetails> userNameFormatter;
-
-    @Autowired
-    protected UserRepository userRepository;
 
     public UserIndicatorImpl() {
         addCreateListener(this::onCreate);
@@ -107,6 +105,11 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     @Autowired(required = false)
     public void setSubstitutionManager(UserSubstitutionManager substitutionManager) {
         this.substitutionManager = substitutionManager;
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Autowired

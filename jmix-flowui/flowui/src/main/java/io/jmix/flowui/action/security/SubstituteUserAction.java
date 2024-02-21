@@ -26,7 +26,6 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.UiProperties;
-import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.ExecutableAction;
@@ -80,8 +79,6 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
     protected UserDetails newSubstitutedUser;
     protected UserDetails prevSubstitutedUser;
 
-    protected boolean preventBrowserTabClosing;
-
     public SubstituteUserAction() {
         this(ID);
     }
@@ -125,11 +122,6 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
         mainViewId = uiProperties.getMainViewId();
     }
 
-    @Autowired
-    public void setUiViewProperties(UiViewProperties uiViewProperties) {
-        preventBrowserTabClosing = uiViewProperties.isPreventBrowserTabClosing();
-    }
-
     @Override
     public void actionPerform(Component component) {
         // if standard behaviour
@@ -151,7 +143,7 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
 
     protected void prepareViewToClose(View<?> view) {
         // Suppress page reload warning if necessary
-        if (preventBrowserTabClosing) {
+        if (view.isPreventBrowserTabClosing()) {
             // Required to open the dialog only after making an asynchronous js-function call
             WebBrowserTools.allowBrowserTabClosing(view)
                     .then(__ -> openDiscardCurrentViewDialog(view));
@@ -168,13 +160,14 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
                     .withActions(
                             new DialogAction(DialogAction.Type.YES)
                                     .withHandler(__ -> {
+                                        standardDetailView.setPreventBrowserTabClosing(false);
                                         standardDetailView.closeWithDiscard();
                                         doSubstituteUser();
                                     }),
                             new DialogAction(DialogAction.Type.CANCEL)
                                     .withHandler(__ -> {
                                         // Page reload warning suppression rollback
-                                        if (preventBrowserTabClosing) {
+                                        if (view.isPreventBrowserTabClosing()) {
                                             WebBrowserTools.preventBrowserTabClosing(standardDetailView);
                                         }
 

@@ -96,6 +96,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         addBeforeShowListener(this::onBeforeShow);
         addReadyListener(this::onReady);
         addBeforeCloseListener(this::onBeforeClose);
+
+        setPreventBrowserTabClosing(true);
     }
 
     private void onBeforeShow(BeforeShowEvent event) {

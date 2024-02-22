@@ -20,6 +20,7 @@ import com.vaadin.ui.Component;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.security.UserRepository;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.core.usersubstitution.event.UiUserSubstitutionsChangedEvent;
@@ -52,6 +53,7 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     protected UserSubstitutionManager substitutionManager;
     protected Dialogs dialogs;
     protected CurrentUserSubstitution currentUserSubstitution;
+    protected UserRepository userRepository;
 
     protected HasValue<UserDetails> userComponent;
 
@@ -106,6 +108,11 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     }
 
     @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
     public void setDialogs(Dialogs dialogs) {
         this.dialogs = dialogs;
     }
@@ -115,22 +122,23 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
         root.removeAll();
 
         UserDetails user = currentUserSubstitution.getAuthenticatedUser();
+        UserDetails updatedUser = userRepository.loadUserByUsername(user.getUsername());
 
         List<UserDetails> currentAndSubstitutedUsers = new LinkedList<>();
-        currentAndSubstitutedUsers.add(user);
+        currentAndSubstitutedUsers.add(updatedUser);
 
         List<UserDetails> additionalUsers = substitutionManager != null
                 ? substitutionManager.getCurrentSubstitutedUsers() : Collections.emptyList();
 
         currentAndSubstitutedUsers.addAll(additionalUsers);
 
-        if (additionalUsers.size() > 0) {
+        if (!additionalUsers.isEmpty()) {
             userComponent = createUserSelectionField(currentAndSubstitutedUsers);
         } else {
-            userComponent = createUserIndicator(currentUserSubstitution.getAuthenticatedUser());
+            userComponent = createUserIndicator(updatedUser);
         }
         root.add(userComponent);
-        root.setDescription(generateUserCaption(user));
+        root.setDescription(generateUserCaption(updatedUser));
 
         adjustWidth();
         adjustHeight();

@@ -44,6 +44,7 @@ public class QuartzService {
         List<JobModel> result = new ArrayList<>();
         try {
             List<JobKey> jobDetailsKeys = jobDetailsFinder.getJobDetailBeanKeys();
+            Set<String> predefinedJobKeys = jobDetailsFinder.getPredefinedJobKeys();
 
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.anyJobGroup())) {
                 try {
@@ -57,7 +58,16 @@ public class QuartzService {
                     jobModel.setJobClass(jobDetail.getJobClass().getName());
                     jobModel.setDescription(jobDetail.getDescription());
 
-                    jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
+                    if (jobDetailsKeys.contains(jobKey)) {
+                        jobModel.setJobSource(JobSource.PREDEFINED);
+                    } else {
+                        if (predefinedJobKeys.contains(jobKey.toString())) {
+                            scheduler.deleteJob(jobKey);
+                            continue;
+                        } else {
+                            jobModel.setJobSource(JobSource.USER_DEFINED);
+                        }
+                    }
 
                     List<TriggerModel> triggerModels = new ArrayList<>();
                     List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);

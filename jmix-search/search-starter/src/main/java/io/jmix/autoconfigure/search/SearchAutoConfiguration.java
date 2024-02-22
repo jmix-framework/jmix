@@ -17,6 +17,9 @@
 package io.jmix.autoconfigure.search;
 
 import com.google.common.base.Strings;
+import io.jmix.autoconfigure.search.job.predefined.EnqueueingSessionProcessingSystemJobKey;
+import io.jmix.autoconfigure.search.job.predefined.IndexingQueueProcessingSystemJobKey;
+import io.jmix.core.JmixKindBean;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.search.SearchConfiguration;
@@ -93,5 +96,14 @@ public class SearchAutoConfiguration {
             );
         }
         return credentialsProvider;
+    }
+
+    @Bean
+    public JmixKindBean createIndexingQueueProcessingSystemJob() {
+        return new IndexingQueueProcessingSystemJobKey();
+    }
+    @Bean
+    public JmixKindBean createEnqueueingSessionProcessingSystemJob() {
+        return new EnqueueingSessionProcessingSystemJobKey();
     }
 }

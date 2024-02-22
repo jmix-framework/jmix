@@ -21,16 +21,20 @@ import io.jmix.core.Stores;
 import io.jmix.core.ValueLoadContext;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.Condition;
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.HasLoader;
-import io.jmix.flowui.model.KeyValueContainer;
-import io.jmix.flowui.model.KeyValueInstanceLoader;
+import io.jmix.flowui.model.*;
+import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
+import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
+import io.jmix.flowui.monitoring.UiMonitoring;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,6 +48,9 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     @Autowired
     protected DataManager dataManager;
 
+    @Autowired
+    protected MeterRegistry meterRegistry;
+
     protected DataContext dataContext;
     protected KeyValueContainer container;
     protected String query;
@@ -53,6 +60,7 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     protected String storeName = Stores.MAIN;
     protected Function<ValueLoadContext, KeyValueEntity> delegate;
     protected EventHub events = new EventHub();
+    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
 
     @Nullable
     @Override
@@ -63,6 +71,17 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     @Override
     public void setDataContext(@Nullable DataContext dataContext) {
         this.dataContext = dataContext;
+    }
+
+    @Override
+    public void setMonitoringInfoProvider(Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider) {
+        Preconditions.checkNotNullArgument(monitoringInfoProvider);
+        this.monitoringInfoProvider = monitoringInfoProvider;
+    }
+
+    @Override
+    public Function<DataLoader, DataLoaderMonitoringInfo> getMonitoringInfoProvider() {
+        return monitoringInfoProvider;
     }
 
     @Override
@@ -79,6 +98,8 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
         }
 
         KeyValueEntity result = null;
+
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
         if (delegate == null) {
             List<KeyValueEntity> list = dataManager.loadValues(loadContext);
             if (!list.isEmpty()) {
@@ -90,6 +111,9 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
                 return;
             }
         }
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
 
         container.setItem(result);
         sendPostLoadEvent(result);
@@ -117,13 +141,26 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
 
     protected boolean sendPreLoadEvent(ValueLoadContext loadContext) {
         PreLoadEvent preLoadEvent = new PreLoadEvent(this, loadContext);
+
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
         events.publish(PreLoadEvent.class, preLoadEvent);
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.PRE_LOAD, info);
+
         return !preLoadEvent.isLoadPrevented();
     }
 
     protected void sendPostLoadEvent(@Nullable KeyValueEntity entity) {
         PostLoadEvent postLoadEvent = new PostLoadEvent(this, entity);
+
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
         events.publish(PostLoadEvent.class, postLoadEvent);
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.POST_LOAD, info);
     }
 
     @Override

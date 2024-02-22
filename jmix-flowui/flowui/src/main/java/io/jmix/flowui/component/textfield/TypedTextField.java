@@ -285,7 +285,7 @@ public class TypedTextField<V> extends TextField
     }
 
     protected void onValueChange(ComponentValueChangeEvent<TypedTextField<V>, String> event) {
-        if (event.isFromClient()) {
+        if (event.isFromClient() && !isVaadinValueChangeEnabled) {
             fieldDelegate.setConversionInvalid(false);
 
             String presValue = event.getValue();

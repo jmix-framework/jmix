@@ -45,6 +45,10 @@ public interface DynAttrStudioComponents {
                             name = "fieldWidth",
                             xmlAttribute = "fieldWidth",
                             type = StudioPropertyType.STRING),
+                    @StudioProperty(
+                            name = "categoryFieldVisible",
+                            xmlAttribute = "categoryFieldVisible",
+                            type = StudioPropertyType.BOOLEAN),
             })
     Div dynamicAttributesPanel();
 }

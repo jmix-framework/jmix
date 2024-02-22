@@ -66,7 +66,7 @@ class QueryParamValueProvidersTest extends DataSpec {
 
         when:
         def customer1 = dataManager.load(Customer)
-                .condition(PropertyCondition.createWithParameterName('name', PropertyCondition.Operation.EQUAL, 'test_customerName'))
+                .condition(PropertyCondition.createWithParameterName('name', PropertyCondition.Operation.EQUAL, 'test_customerName').skipNullOrEmpty())
                 .one()
 
         then:

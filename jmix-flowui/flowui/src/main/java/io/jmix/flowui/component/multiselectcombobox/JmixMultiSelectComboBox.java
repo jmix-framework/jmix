@@ -367,9 +367,6 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
             Collection<V> value = convertToModel(presValue);
             setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
         }
-
-        // update invalid state
-        validate();
     }
 
     protected void fireMultiSelectComboBoxValueChangeEvent(@Nullable Collection<V> oldValue, boolean isFromClient) {

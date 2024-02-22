@@ -193,11 +193,11 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
         String username = currentUserSubstitution.getEffectiveUser().getUsername();
         return dataManager.load(FilterConfiguration.class)
                 .condition(LogicalCondition.and()
-                        .add(PropertyCondition.equal("configurationId", configurationId))
-                        .add(PropertyCondition.equal("componentId", componentId))
+                        .add(PropertyCondition.equal("configurationId", configurationId).skipNullOrEmpty())
+                        .add(PropertyCondition.equal("componentId", componentId).skipNullOrEmpty())
                         .add(LogicalCondition.or()
-                                .add(PropertyCondition.isSet("username", false))
-                                .add(PropertyCondition.equal("username", username))))
+                                .add(PropertyCondition.isSet("username", false).skipNullOrEmpty())
+                                .add(PropertyCondition.equal("username", username).skipNullOrEmpty())))
                 .optional()
                 .orElse(null);
     }
@@ -208,10 +208,10 @@ public class UiDataGenericFilterSupport extends GenericFilterSupport {
 
         return dataManager.load(FilterConfiguration.class)
                 .condition(LogicalCondition.and()
-                        .add(PropertyCondition.equal("componentId", filterComponentId))
+                        .add(PropertyCondition.equal("componentId", filterComponentId).skipNullOrEmpty())
                         .add(LogicalCondition.or()
-                                .add(PropertyCondition.isSet("username", false))
-                                .add(PropertyCondition.equal("username", username))))
+                                .add(PropertyCondition.isSet("username", false).skipNullOrEmpty())
+                                .add(PropertyCondition.equal("username", username).skipNullOrEmpty())))
                 .list();
     }
 

@@ -16,7 +16,9 @@
 
 package io.jmix.core.querycondition;
 
+import io.jmix.core.CoreProperties;
 import org.springframework.lang.Nullable;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
@@ -33,10 +35,17 @@ public interface Condition extends Serializable {
     Collection<String> getParameters();
 
     /**
-     * Returns the condition if the argument contains all parameters specified in the condition.
+     * Checks whether the argument contains all parameters specified in the condition.
+     *
+     * @param defaultSkipNullOrEmpty default value for {@link SkippableCondition#skipNullOrEmpty},
+     *                               should be obtained using {@link CoreProperties#isSkipNullOrEmptyConditionsByDefault}
+     *
+     * @return the condition if {@link SkippableCondition#skipNullOrEmpty} is {@code false} or if {@code actualParameters}
+     * contains all parameters specified in the condition and these parameters are not null or empty.
+     * Otherwise returns {@code null}.
      */
     @Nullable
-    Condition actualize(Set<String> actualParameters);
+    Condition actualize(Set<String> actualParameters, boolean defaultSkipNullOrEmpty);
 
     /**
      * Returns a deep copy of this condition.

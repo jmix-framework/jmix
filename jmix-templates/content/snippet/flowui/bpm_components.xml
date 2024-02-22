@@ -17,7 +17,7 @@ if (formTemplate.name() == 'ENTITY') {
     builder.append("\tpublic void onBeforeShow(final io.jmix.flowui.view.View.BeforeShowEvent event) {\n")
     builder.append("\t\tif (${entityVarName} == null) {\n")
     builder.append("\t\t\t${entityVarName} = dataContext.create(${entity.getFqn()}.class);\n\t\t}\n")
-    builder.append("\t\t${entity.uncapitalizedClassName}Dc.setItem(${entityVarName});\n\t}")
+    builder.append("\t\t${entity.uncapitalizedClassName}Dc.setItem(dataContext.merge(${entityVarName}));\n\t}")
 }
 components << builder.toString()
 components.each {%>$it<%}%>

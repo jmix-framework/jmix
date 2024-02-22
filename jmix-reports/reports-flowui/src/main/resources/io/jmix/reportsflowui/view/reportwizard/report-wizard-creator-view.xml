@@ -65,7 +65,6 @@
                         <button id="addTabulatedRegionBtn"
                                 text="msg://tabulatedRegion"/>
                     </hbox>
-                    <button id="regionsRunBtn" text="msg://runReport"/>
                     <button id="regionsEditBtn" action="regionDataGrid.edit" text="msg://editRegion"/>
                     <button id="removeBtn" action="regionDataGrid.remove"/>
                     <button id="moveUpBtn" action="regionDataGrid.up"/>
@@ -107,8 +106,7 @@
                 </formLayout>
             </vbox>
             <vbox id="queryVBox" padding="false">
-                <div classNames="flex, justify-between, buttons-panel">
-                    <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
+                <div width="100%" classNames="flex, justify-end">
                     <button id="fullScreenTransformationBtn"
                             text="msg://fullScreen.title"
                             classNames="link"

@@ -222,6 +222,12 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         }
 
         @Override
+        public void setSymbolSizeFunction(String symbolSizeFunction) {
+            this.symbolSizeFunction = new JsFunction(symbolSizeFunction);
+            markAsDirty();
+        }
+
+        @Override
         public Integer getSymbolRotate() {
             return symbolRotate;
         }
@@ -349,6 +355,12 @@ public class MarkPoint extends AbstractMark<MarkPoint>
     @Override
     public void setSymbolSizeFunction(JsFunction symbolSizeFunction) {
         this.symbolSizeFunction = symbolSizeFunction;
+        markAsDirty();
+    }
+
+    @Override
+    public void setSymbolSizeFunction(String symbolSizeFunction) {
+        this.symbolSizeFunction = new JsFunction(symbolSizeFunction);
         markAsDirty();
     }
 

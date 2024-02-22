@@ -17,8 +17,8 @@
 package io.jmix.core.querycondition;
 
 import org.apache.commons.collections4.CollectionUtils;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 /**
  * Condition that represents JPQL query with "where" and optional "join" sections.
  */
-public class JpqlCondition implements Condition {
+public class JpqlCondition extends SkippableCondition<JpqlCondition> {
 
     public static final Pattern PARAMETER_PATTERN = Pattern.compile(":([\\w.$]+)");
 
@@ -103,7 +103,11 @@ public class JpqlCondition implements Condition {
 
     @Nullable
     @Override
-    public Condition actualize(Set<String> actualParameters) {
+    public Condition actualize(Set<String> actualParameters, boolean defaultSkipNullOrEmpty) {
+        applyDefaultSkipNullOrEmpty(defaultSkipNullOrEmpty);
+        if(!skipNullOrEmpty)
+            return this;
+
         for (Map.Entry<String, Object> parameter : parameterValuesMap.entrySet()) {
             if (!actualParameters.contains(parameter.getKey())
                     && (parameter.getValue() == null
@@ -122,11 +126,15 @@ public class JpqlCondition implements Condition {
         copy.setWhere(this.where);
         copy.setJoin(this.join);
         copy.setParameterValuesMap(this.parameterValuesMap);
+        copy.setSkipNullOrEmpty(this.skipNullOrEmpty);
         return copy;
     }
 
     @Override
     public Set<String> getExcludedParameters(Set<String> actualParameters) {
+        if(!skipNullOrEmpty)
+            return Collections.emptySet();
+
         Set<String> excludedParameters = new TreeSet<>();
         for (Map.Entry<String, Object> parameter : parameterValuesMap.entrySet()) {
             if (!actualParameters.contains(parameter.getKey())

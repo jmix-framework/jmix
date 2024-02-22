@@ -81,6 +81,12 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
         return params;
     }
 
+    @Override
+    public Map<String, Object> getParametersForFormatterParameters() {
+        Map<String, Object> params = getCommonParameters();
+        return params;
+    }
+
     protected Map<String, Object> getCommonParameters() {
         Map<String, Object> params = new HashMap<>();
 

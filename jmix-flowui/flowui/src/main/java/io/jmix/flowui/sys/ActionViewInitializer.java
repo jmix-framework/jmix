@@ -83,6 +83,10 @@ public class ActionViewInitializer {
         this.afterCloseHandler = (Consumer) afterCloseHandler;
     }
 
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return (Consumer) viewConfigurer;
+    }
+
     public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
         //noinspection unchecked
         this.viewConfigurer = (Consumer) viewConfigurer;

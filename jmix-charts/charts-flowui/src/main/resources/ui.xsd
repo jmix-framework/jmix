@@ -1870,6 +1870,10 @@
     <xs:complexType name="seriesTooltipType">
         <xs:sequence minOccurs="0">
             <xs:element name="textStyle" type="baseText"/>
+
+            <xs:element name="formatterFunction">
+                <xs:complexType mixed="true"/>
+            </xs:element>
         </xs:sequence>
 
         <xs:attribute name="position">
@@ -1885,6 +1889,7 @@
         </xs:attribute>
         <xs:attribute name="positionCoordinates" type="xs:string"/>
         <xs:attribute name="formatter" type="xs:string"/>
+        <xs:attribute name="formatterFunction" type="xs:string"/>
         <xs:attribute name="valueFormatter" type="xs:string"/>
         <xs:attribute name="backgroundColor" type="colorType"/>
         <xs:attribute name="borderColor" type="colorType"/>

@@ -23,6 +23,7 @@ import com.vaadin.flow.component.shared.HasClientValidation;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.HasValidationProperties;
 import com.vaadin.flow.data.binder.*;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.HasTitle;
 
@@ -287,6 +288,12 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     public Registration addValidationStatusChangeListener(ValidationStatusChangeListener<String> listener) {
         return addClientValidatedEventListener((event) ->
                 listener.validationStatusChanged(new ValidationStatusChangeEvent<>(this, !isInvalid())));
+    }
+
+    @Override
+    public void focus() {
+        Element element = getElement();
+        element.executeJs("setTimeout(function(){$0.setFocusManually()},0)", element);
     }
 
     protected void validate() {

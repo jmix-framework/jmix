@@ -1,6 +1,5 @@
 package io.jmix.quartz.util;
 
-import io.jmix.core.JmixKindBean;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component("quartz_QuartzJobDetailsFinder")
@@ -28,14 +26,6 @@ public class QuartzJobDetailsFinder {
                 .values().stream()
                 .map(JobDetail::getKey)
                 .collect(Collectors.toList());
-    }
-
-    public Set<String> getPredefinedJobKeys() {
-        return applicationContext.getBeansOfType(JmixKindBean.class)
-                .values().stream()
-                .filter(p -> ((JmixKindBean) p).getKind().equals("predefinedJobs"))
-                .map(JmixKindBean::getValue)
-                .collect(Collectors.toSet());
     }
 
 }

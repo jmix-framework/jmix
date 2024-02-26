@@ -33,44 +33,37 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import(SearchConfiguration.class)
 @ConditionalOnClass(Job.class)
+@ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
 public class IndexingQueueProcessingScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(IndexingQueueProcessingScheduleAutoConfiguration.class);
 
     public static final String JOB_NAME = "IndexingQueueProcessing";
 
+    public static final String JOB_TRIGGER_NAME = "IndexingQueueProcessingCronTrigger";
     public static final String JOB_GROUP = "DEFAULT";
 
     @Autowired
     protected SearchProperties searchProperties;
 
-    @ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
     @Bean("search_IndexingQueueProcessingJob")
     JobDetail indexingQueueProcessingJob() {
         return JobBuilder.newJob()
                 .ofType(IndexingQueueProcessingJob.class)
                 .storeDurably()
-                .withIdentity("IndexingQueueProcessing")
+                .withIdentity(JOB_NAME)
                 .build();
     }
 
-    @ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
     @Bean("search_IndexingQueueProcessingTrigger")
     Trigger indexingQueueProcessingTrigger(@Qualifier("search_IndexingQueueProcessingJob") JobDetail indexingQueueProcessingJob) {
         String cron = searchProperties.getIndexingQueueProcessingCron();
         log.info("Schedule Indexing Queue processing using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
-                .withIdentity("IndexingQueueProcessingCronTrigger")
+                .withIdentity(JOB_TRIGGER_NAME)
                 .forJob(indexingQueueProcessingJob)
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();
-    }
-
-    @ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true, havingValue = "false")
-    @Bean("search_indexingQueueProcessingJobCleaner")
-    JobCleaner indexingQueueProcessingJobCleaner() {
-        return new JobCleaner().withJobName(JOB_NAME)
-                .withJobGroup(JOB_GROUP);
     }
 }

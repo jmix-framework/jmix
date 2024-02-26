@@ -16,37 +16,31 @@
 
 package io.jmix.autoconfigure.search;
 
+import io.jmix.search.SearchConfiguration;
 import jakarta.annotation.PostConstruct;
+import org.quartz.Job;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Import;
 
-@Component
-public class JobCleaner {
+@AutoConfiguration
+@Import(SearchConfiguration.class)
+@ConditionalOnClass(Job.class)
+@ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true, havingValue = "false")
+public class IndexingQueueProcessingScheduleDisabledAutoConfiguration {
 
     @Autowired
     protected Scheduler scheduler;
 
-    private String jobName;
-
-    private String jobGroup;
-
-    public JobCleaner withJobName(String jobName) {
-        this.jobName = jobName;
-        return this;
-    }
-
-    public JobCleaner withJobGroup(String jobGroup) {
-        this.jobGroup = jobGroup;
-        return this;
-
-    }
-
     @PostConstruct
     void cleanJob() {
-        JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
+        JobKey jobKey = JobKey.jobKey(IndexingQueueProcessingScheduleAutoConfiguration.JOB_NAME,
+                IndexingQueueProcessingScheduleAutoConfiguration.JOB_GROUP);
         try {
             scheduler.deleteJob(jobKey);
         } catch (SchedulerException e) {

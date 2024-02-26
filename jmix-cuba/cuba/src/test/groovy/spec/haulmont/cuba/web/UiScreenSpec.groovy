@@ -21,11 +21,14 @@ import com.haulmont.cuba.core.global.UserSessionSource
 import com.haulmont.cuba.core.sys.AppProperties
 import com.haulmont.cuba.gui.UiComponents
 import com.haulmont.cuba.web.testsupport.WebTest
+import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticator
+import io.jmix.core.security.UserRepository
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.screen.Screen
 import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.userdetails.User
 
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 @WebTest
@@ -41,7 +44,7 @@ class UiScreenSpec extends ScreenSpecification {
     UserSessionSource sessionSource
 
     @Autowired
-    UiComponents cubaUiComponents;
+    UiComponents cubaUiComponents
 
     @Autowired
     SystemAuthenticator authenticator
@@ -49,6 +52,30 @@ class UiScreenSpec extends ScreenSpecification {
     @Override
     void setup() {
         exportScreensPackages(['com.haulmont.cuba.web.app.main'])
+
+        /**
+         * In UserIndicatorImpl#refreshUser we load current authenticated user from UserRepository.
+         * But UserRepository has empty users list.
+         * To prevent exception we add user with username "system".
+         */
+        def userRepository = applicationContext.getBean(UserRepository)
+        if (userRepository instanceof InMemoryUserRepository)  {
+            ((InMemoryUserRepository) userRepository).addUser(User.builder()
+                    .username("system")
+                    .password("")
+                    .authorities(Collections.emptyList())
+                    .build())
+        }
+    }
+
+    @Override
+    void cleanup() {
+        def userRepository = applicationContext.getBean(UserRepository)
+        if (userRepository instanceof InMemoryUserRepository) {
+            def system = ((InMemoryUserRepository) userRepository)
+                    .loadUserByUsername("system")
+            ((InMemoryUserRepository) userRepository).removeUser(system)
+        }
     }
 
     @Override

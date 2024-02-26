@@ -41,6 +41,7 @@ public class IndexingQueueProcessingScheduleAutoConfiguration {
     public static final String JOB_NAME = "IndexingQueueProcessing";
 
     public static final String JOB_TRIGGER_NAME = "IndexingQueueProcessingCronTrigger";
+
     public static final String JOB_GROUP = "DEFAULT";
 
     @Autowired

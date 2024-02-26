@@ -20,27 +20,27 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.UiViewProperties;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.model.ViewData;
-import io.jmix.flowui.monitoring.UiMonitoring;
-import io.jmix.flowui.monitoring.ViewLifeCycle;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.WebBrowserTools;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static io.jmix.flowui.monitoring.UiMonitoring.*;
+import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
+import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
 import static io.jmix.flowui.monitoring.ViewLifeCycle.*;
-import static io.micrometer.core.instrument.Timer.*;
+import static io.micrometer.core.instrument.Timer.Sample;
+import static io.micrometer.core.instrument.Timer.start;
 
 /**
  * Base class for UI views.
@@ -163,7 +163,7 @@ public class View<T extends Component> extends Composite<T>
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        if (preventBrowserTabClosing) {
+        if (isPreventBrowserTabClosing()) {
             WebBrowserTools.preventBrowserTabClosing(this);
         }
     }
@@ -178,7 +178,7 @@ public class View<T extends Component> extends Composite<T>
         }
         unregisterBackNavigation();
 
-        if (preventBrowserTabClosing) {
+        if (isPreventBrowserTabClosing()) {
             WebBrowserTools.allowBrowserTabClosing(this);
         }
     }
@@ -233,7 +233,6 @@ public class View<T extends Component> extends Composite<T>
                     .orElse(OperationResult.fail());
         }
 
-
         closeActionPerformed = true;
 
         closeDelegate.accept(this);
@@ -254,7 +253,8 @@ public class View<T extends Component> extends Composite<T>
      * @return whether this view prevents browser tab from accidentally closing
      */
     public boolean isPreventBrowserTabClosing() {
-        return preventBrowserTabClosing;
+        UiViewProperties properties = applicationContext.getBean(UiViewProperties.class);
+        return properties.isPreventBrowserTabClosing() && preventBrowserTabClosing;
     }
 
     /**

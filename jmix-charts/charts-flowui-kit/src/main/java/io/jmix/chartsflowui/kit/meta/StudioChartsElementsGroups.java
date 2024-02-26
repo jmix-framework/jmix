@@ -128,7 +128,6 @@ public interface StudioChartsElementsGroups {
             xmlElement = "decals",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     void ariaDecals();
@@ -140,7 +139,6 @@ public interface StudioChartsElementsGroups {
             xmlElement = "series",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     void series();
@@ -152,7 +150,6 @@ public interface StudioChartsElementsGroups {
             xmlElement = "data",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     void markPointData();
@@ -164,7 +161,6 @@ public interface StudioChartsElementsGroups {
             xmlElement = "data",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     void markAreaData();
@@ -176,7 +172,6 @@ public interface StudioChartsElementsGroups {
             xmlElement = "data",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     void gaugeData();
@@ -188,7 +183,6 @@ public interface StudioChartsElementsGroups {
             xmlElement = "colorPalette",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
-            visible = true,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg"
     )
     void gaugeColorPalette();

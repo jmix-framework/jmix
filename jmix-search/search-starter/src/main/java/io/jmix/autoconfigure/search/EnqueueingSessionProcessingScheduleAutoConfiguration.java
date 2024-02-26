@@ -33,14 +33,19 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import(SearchConfiguration.class)
 @ConditionalOnClass(Job.class)
-@ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
 public class EnqueueingSessionProcessingScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(EnqueueingSessionProcessingScheduleAutoConfiguration.class);
 
+    public static final String JOB_NAME = "EnqueueingSessionProcessing";
+
+    public static final String JOB_GROUP = "DEFAULT";
+
     @Autowired
     protected SearchProperties searchProperties;
 
+
+    @ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
     @Bean("search_EnqueueingSessionProcessingJob")
     JobDetail enqueueingSessionProcessingJob() {
         return JobBuilder.newJob()
@@ -50,6 +55,7 @@ public class EnqueueingSessionProcessingScheduleAutoConfiguration {
                 .build();
     }
 
+    @ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
     @Bean("search_EnqueueingSessionProcessingTrigger")
     Trigger enqueueingSessionProcessingTrigger(@Qualifier("search_EnqueueingSessionProcessingJob") JobDetail enqueueingSessionProcessingJob) {
         String cron = searchProperties.getEnqueueingSessionProcessingCron();
@@ -60,5 +66,12 @@ public class EnqueueingSessionProcessingScheduleAutoConfiguration {
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();
+    }
+
+    @ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true, havingValue = "false")
+    @Bean("search_enqueueingSessionProcessingJobCleaner")
+    JobCleaner enqueueingSessionProcessingJobCleaner() {
+        return new JobCleaner().withJobName(JOB_NAME)
+                .withJobGroup(JOB_GROUP);
     }
 }

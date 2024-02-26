@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,14 +33,18 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import(SearchConfiguration.class)
 @ConditionalOnClass(Job.class)
-@ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
 public class IndexingQueueProcessingScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(IndexingQueueProcessingScheduleAutoConfiguration.class);
 
+    public static final String JOB_NAME = "IndexingQueueProcessing";
+
+    public static final String JOB_GROUP = "DEFAULT";
+
     @Autowired
     protected SearchProperties searchProperties;
 
+    @ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
     @Bean("search_IndexingQueueProcessingJob")
     JobDetail indexingQueueProcessingJob() {
         return JobBuilder.newJob()
@@ -50,6 +54,7 @@ public class IndexingQueueProcessingScheduleAutoConfiguration {
                 .build();
     }
 
+    @ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
     @Bean("search_IndexingQueueProcessingTrigger")
     Trigger indexingQueueProcessingTrigger(@Qualifier("search_IndexingQueueProcessingJob") JobDetail indexingQueueProcessingJob) {
         String cron = searchProperties.getIndexingQueueProcessingCron();
@@ -60,5 +65,12 @@ public class IndexingQueueProcessingScheduleAutoConfiguration {
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();
+    }
+
+    @ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true, havingValue = "false")
+    @Bean("search_indexingQueueProcessingJobCleaner")
+    JobCleaner indexingQueueProcessingJobCleaner() {
+        return new JobCleaner().withJobName(JOB_NAME)
+                .withJobGroup(JOB_GROUP);
     }
 }

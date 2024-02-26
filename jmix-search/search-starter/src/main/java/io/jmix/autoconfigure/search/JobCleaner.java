@@ -16,6 +16,7 @@
 
 package io.jmix.autoconfigure.search;
 
+import jakarta.annotation.PostConstruct;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -28,7 +29,23 @@ public class JobCleaner {
     @Autowired
     protected Scheduler scheduler;
 
-    void cleanJob(String jobName, String jobGroup) {
+    private String jobName;
+
+    private String jobGroup;
+
+    public JobCleaner withJobName(String jobName) {
+        this.jobName = jobName;
+        return this;
+    }
+
+    public JobCleaner withJobGroup(String jobGroup) {
+        this.jobGroup = jobGroup;
+        return this;
+
+    }
+
+    @PostConstruct
+    void cleanJob() {
         JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
         try {
             scheduler.deleteJob(jobKey);

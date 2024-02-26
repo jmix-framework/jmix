@@ -233,7 +233,6 @@ public class View<T extends Component> extends Composite<T>
                     .orElse(OperationResult.fail());
         }
 
-
         closeActionPerformed = true;
 
         closeDelegate.accept(this);
@@ -266,7 +265,6 @@ public class View<T extends Component> extends Composite<T>
      *                                 browser tab from accidentally closing
      */
     public void setPreventBrowserTabClosing(boolean preventBrowserTabClosing) {
-
         this.preventBrowserTabClosing = preventBrowserTabClosing;
     }
 

@@ -846,7 +846,7 @@ public class ScreensImpl implements Screens {
             controller = invokeConstructor(screenClass);
         } catch (NoSuchMethodException | InstantiationException
                 | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Unable to create instance of screen class " + screenClass, e);
+            throw new RuntimeException("Unable to create instance of screen class " + screenClass);
         }
 
         return controller;

@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.formatter;
 
-import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
@@ -31,5 +30,5 @@ public interface Formatter<V> extends Function<V, String> {
      * @return formatted string
      */
     @Override
-    String apply(@Nullable V value);
+    String apply(V value);
 }

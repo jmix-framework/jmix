@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import(SearchConfiguration.class)
 @ConditionalOnClass(Job.class)
+@ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
 public class IndexingQueueProcessingScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(IndexingQueueProcessingScheduleAutoConfiguration.class);
@@ -40,7 +41,6 @@ public class IndexingQueueProcessingScheduleAutoConfiguration {
     @Autowired
     protected SearchProperties searchProperties;
 
-    @ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
     @Bean("search_IndexingQueueProcessingJob")
     JobDetail indexingQueueProcessingJob() {
         return JobBuilder.newJob()
@@ -50,7 +50,6 @@ public class IndexingQueueProcessingScheduleAutoConfiguration {
                 .build();
     }
 
-    @ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
     @Bean("search_IndexingQueueProcessingTrigger")
     Trigger indexingQueueProcessingTrigger(@Qualifier("search_IndexingQueueProcessingJob") JobDetail indexingQueueProcessingJob) {
         String cron = searchProperties.getIndexingQueueProcessingCron();

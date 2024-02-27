@@ -2,6 +2,7 @@ package io.jmix.quartz.service;
 
 import com.google.common.base.Strings;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.quartz.broken.BrokenJobDetail;
 import io.jmix.quartz.exception.QuartzJobSaveException;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
@@ -46,66 +47,75 @@ public class QuartzService {
             List<JobKey> jobDetailsKeys = jobDetailsFinder.getJobDetailBeanKeys();
 
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.anyJobGroup())) {
+                JobDetail jobDetail;
                 try {
-                    JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+                    jobDetail = scheduler.getJobDetail(jobKey);
 
-                    JobModel jobModel = dataManager.create(JobModel.class);
-                    jobModel.setJobName(jobKey.getName());
-                    jobModel.setJobGroup(jobKey.getGroup());
-                    jobModel.setJobDataParameters(getDataParamsOfJob(jobKey));
+                } catch (JobPersistenceException e) {
+                    if (e.getCause() instanceof ClassNotFoundException) {
+                        jobDetail = new BrokenJobDetail(jobKey);
+                    } else {
+                        continue;
+                    }
+                } catch (SchedulerException e) {
+                    log.error("Unable to fetch information about the job: {}", jobKey, e);
+                    continue;
+                }
 
-                    jobModel.setJobClass(jobDetail.getJobClass().getName());
-                    jobModel.setDescription(jobDetail.getDescription());
+                JobModel jobModel = dataManager.create(JobModel.class);
+                jobModel.setJobName(jobKey.getName());
+                jobModel.setJobGroup(jobKey.getGroup());
+                jobModel.setJobDataParameters(getDataParamsOfJob(jobKey));
 
-                    jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
+                jobModel.setJobClass(jobDetail.getJobClass().getName());
+                jobModel.setDescription(jobDetail.getDescription());
 
-                    List<TriggerModel> triggerModels = new ArrayList<>();
-                    List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
-                    if (!CollectionUtils.isEmpty(jobTriggers)) {
-                        boolean isActive = false;
-                        for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
-                            TriggerModel triggerModel = dataManager.create(TriggerModel.class);
-                            triggerModel.setTriggerName(trigger.getKey().getName());
-                            triggerModel.setTriggerGroup(trigger.getKey().getGroup());
-                            triggerModel.setScheduleType(trigger instanceof SimpleTrigger ? ScheduleType.SIMPLE : ScheduleType.CRON_EXPRESSION);
+                jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
+
+                List<TriggerModel> triggerModels = new ArrayList<>();
+                List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
+                if (!CollectionUtils.isEmpty(jobTriggers)) {
+                    boolean isActive = false;
+                    for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
+                        TriggerModel triggerModel = dataManager.create(TriggerModel.class);
+                        triggerModel.setTriggerName(trigger.getKey().getName());
+                        triggerModel.setTriggerGroup(trigger.getKey().getGroup());
+                        triggerModel.setScheduleType(trigger instanceof SimpleTrigger ? ScheduleType.SIMPLE : ScheduleType.CRON_EXPRESSION);
                             /*
                             Ignore startTime if it's in the past - during saving empty startTime will be set as 'now'.
                             This in combination with validation prevents case when scheduler reproduces all executions
                             from the startTime to the current moment after trigger is recreated (all triggers
                             a created with startTime not earlier than 'now')
                             */
-                            Date startTime = trigger.getStartTime();
-                            if (startTime.after(new Date())) {
-                                triggerModel.setStartDate(startTime);
-                            }
-                            triggerModel.setEndDate(trigger.getEndTime());
-                            triggerModel.setLastFireDate(trigger.getPreviousFireTime());
-                            triggerModel.setNextFireDate(trigger.getNextFireTime());
-                            triggerModel.setMisfireInstructionId(resolveMisfireInstructionId(trigger));
+                        Date startTime = trigger.getStartTime();
+                        if (startTime.after(new Date())) {
+                            triggerModel.setStartDate(startTime);
+                        }
+                        triggerModel.setEndDate(trigger.getEndTime());
+                        triggerModel.setLastFireDate(trigger.getPreviousFireTime());
+                        triggerModel.setNextFireDate(trigger.getNextFireTime());
+                        triggerModel.setMisfireInstructionId(resolveMisfireInstructionId(trigger));
 
-                            if (trigger instanceof CronTrigger) {
-                                triggerModel.setCronExpression(((CronTrigger) trigger).getCronExpression());
-                            } else if (trigger instanceof SimpleTrigger simpleTrigger) {
-                                triggerModel.setRepeatCount(simpleTrigger.getRepeatCount());
-                                triggerModel.setRepeatInterval(simpleTrigger.getRepeatInterval());
-                            }
-
-                            triggerModels.add(triggerModel);
-                            if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL
-                                    && scheduler.isStarted()
-                                    && !scheduler.isInStandbyMode()) {
-                                isActive = true;
-                            }
+                        if (trigger instanceof CronTrigger) {
+                            triggerModel.setCronExpression(((CronTrigger) trigger).getCronExpression());
+                        } else if (trigger instanceof SimpleTrigger simpleTrigger) {
+                            triggerModel.setRepeatCount(simpleTrigger.getRepeatCount());
+                            triggerModel.setRepeatInterval(simpleTrigger.getRepeatInterval());
                         }
 
-                        jobModel.setTriggers(triggerModels);
-                        jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                        triggerModels.add(triggerModel);
+                        if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL
+                                && scheduler.isStarted()
+                                && !scheduler.isInStandbyMode()) {
+                            isActive = true;
+                        }
                     }
 
-                    result.add(jobModel);
-                } catch (SchedulerException e) {
-                    log.error("Unable to fetch information about the job: {}", jobKey, e);
+                    jobModel.setTriggers(triggerModels);
+                    jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
                 }
+
+                result.add(jobModel);
             }
         } catch (SchedulerException e) {
             log.error("Unable to fetch information about active jobs", e);

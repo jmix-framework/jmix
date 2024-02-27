@@ -23,6 +23,7 @@ import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.dependency.CssImport;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
@@ -39,6 +40,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
+import io.jmix.quartz.broken.BrokenJob;
 import io.jmix.quartz.model.JobModel;
 import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
@@ -61,6 +63,10 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 @ViewDescriptor("job-model-list-view.xml")
 @LookupComponent("jobModelsTable")
 @DialogMode(width = "60em")
+@CssImport(
+        themeFor = "vaadin-grid",
+        value = "./styles/job-model-list-grid.css"
+)
 public class JobModelListView extends StandardListView<JobModel> {
 
     @ViewComponent
@@ -115,6 +121,7 @@ public class JobModelListView extends StandardListView<JobModel> {
                                 .format(entity.getNextFireDate()) : "").setResizable(false)
                 .setHeader(getHeaderForPropertyColumn("nextFireDate"))
                 .setAutoWidth(true);
+        jobModelsTable.setClassNameGenerator(entity -> isJobBroken(entity) ? "warn" : null);
     }
 
     private String getHeaderForPropertyColumn(String propertyName) {
@@ -204,22 +211,30 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @Install(to = "jobModelsTable.executeNow", subject = "enabledRule")
     protected boolean jobModelsTableExecuteNowEnabledRule() {
+        JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
         return !CollectionUtils.isEmpty(jobModelsTable.getSelectedItems())
-                && !isJobActive(jobModelsTable.getSingleSelectedItem());
+            && !isJobActive(selectedJobModel)
+            && !isJobBroken(selectedJobModel)
+        ;
     }
 
     @Install(to = "jobModelsTable.activate", subject = "enabledRule")
     protected boolean jobModelsTableActivateEnabledRule() {
         JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
         return selectedJobModel != null
-                && !isJobActive(selectedJobModel)
-                && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers());
+            && !isJobActive(selectedJobModel)
+            && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers())
+            && !isJobBroken(selectedJobModel)
+        ;
     }
 
     @Install(to = "jobModelsTable.deactivate", subject = "enabledRule")
     protected boolean jobModelsTableDeactivateEnabledRule() {
-        return (jobModelsTable.getSingleSelectedItem() != null)
-                && isJobActive(jobModelsTable.getSingleSelectedItem());
+        JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
+        return selectedJobModel != null
+            && isJobActive(selectedJobModel)
+            && !isJobBroken(selectedJobModel)
+        ;
     }
 
     @Install(to = "jobModelsTable.remove", subject = "enabledRule")
@@ -313,6 +328,10 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     protected boolean isJobActive(JobModel jobModel) {
         return jobModel != null && jobModel.getJobState() == JobState.NORMAL;
+    }
+
+    protected boolean isJobBroken(JobModel jobModel) {
+        return jobModel != null && BrokenJob.class.getName().equals(jobModel.getJobClass());
     }
 
     protected void onFilterFieldValueChange(ComponentEvent<?> event) {

@@ -1,5 +1,3 @@
 io.jmix.autoconfigure.search.SearchAutoConfiguration
 io.jmix.autoconfigure.search.IndexingQueueProcessingScheduleAutoConfiguration
-io.jmix.autoconfigure.search.IndexingQueueProcessingScheduleDisabledAutoConfiguration
 io.jmix.autoconfigure.search.EnqueueingSessionProcessingScheduleAutoConfiguration
-io.jmix.autoconfigure.search.EnqueueingSessionProcessingScheduleDisabledAutoConfiguration

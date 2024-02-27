@@ -19,6 +19,7 @@ package io.jmix.autoconfigure.search;
 import io.jmix.autoconfigure.search.job.EnqueueingSessionProcessingJob;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
+import jakarta.annotation.PostConstruct;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -33,7 +35,6 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import(SearchConfiguration.class)
 @ConditionalOnClass(Job.class)
-@ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
 public class EnqueueingSessionProcessingScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(EnqueueingSessionProcessingScheduleAutoConfiguration.class);
@@ -47,7 +48,11 @@ public class EnqueueingSessionProcessingScheduleAutoConfiguration {
     @Autowired
     protected SearchProperties searchProperties;
 
+    @Autowired
+    protected ApplicationContext applicationContext;
+
     @Bean("search_EnqueueingSessionProcessingJob")
+    @ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
     JobDetail enqueueingSessionProcessingJob() {
         return JobBuilder.newJob()
                 .ofType(EnqueueingSessionProcessingJob.class)
@@ -57,6 +62,7 @@ public class EnqueueingSessionProcessingScheduleAutoConfiguration {
     }
 
     @Bean("search_EnqueueingSessionProcessingTrigger")
+    @ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
     Trigger enqueueingSessionProcessingTrigger(@Qualifier("search_EnqueueingSessionProcessingJob") JobDetail enqueueingSessionProcessingJob) {
         String cron = searchProperties.getEnqueueingSessionProcessingCron();
         log.info("Schedule Enqueueing Session processing using default configuration with CRON expression '{}'", cron);
@@ -66,5 +72,18 @@ public class EnqueueingSessionProcessingScheduleAutoConfiguration {
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();
+    }
+
+    @PostConstruct
+    void cleanJob() {
+        if (!searchProperties.isUseDefaultEnqueueingSessionProcessingQuartzConfiguration()) {
+            JobKey jobKey = JobKey.jobKey(JOB_NAME, JOB_GROUP);
+            Scheduler scheduler = applicationContext.getBean(Scheduler.class);
+            try {
+                scheduler.deleteJob(jobKey);
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

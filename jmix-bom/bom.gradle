@@ -80,7 +80,8 @@ dependencies {
     constraints {
 
         // community add-ons
-
+        api 'gr.netmechanics.jmix:azurefs:2.2.0'
+        api 'gr.netmechanics.jmix:azurefs-starter:2.2.0'
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

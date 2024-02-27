@@ -30,8 +30,6 @@ import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.core.security.InMemoryUserRepository;
-import io.jmix.core.security.UserRepository;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
@@ -174,10 +172,5 @@ public class UiTestConfiguration {
                 .withComponentClass(TestEventPanel.class)
                 .withComponentLoaderClass(TestEventPanelLoader.class)
                 .build();
-    }
-
-    @Bean
-    public UserRepository userRepository() {
-        return new InMemoryUserRepository();
     }
 }

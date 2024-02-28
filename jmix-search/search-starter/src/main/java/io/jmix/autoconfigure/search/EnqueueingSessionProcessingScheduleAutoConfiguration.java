@@ -19,7 +19,6 @@ package io.jmix.autoconfigure.search;
 import io.jmix.autoconfigure.search.job.EnqueueingSessionProcessingJob;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
-import jakarta.annotation.PostConstruct;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +26,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.EventListener;
 
 @AutoConfiguration
 @Import(SearchConfiguration.class)
@@ -42,8 +43,6 @@ public class EnqueueingSessionProcessingScheduleAutoConfiguration {
     public static final String JOB_NAME = "EnqueueingSessionProcessing";
 
     public static final String JOB_TRIGGER_NAME = "EnqueueingSessionProcessingTrigger";
-
-    public static final String JOB_GROUP = "DEFAULT";
 
     @Autowired
     protected SearchProperties searchProperties;
@@ -74,15 +73,17 @@ public class EnqueueingSessionProcessingScheduleAutoConfiguration {
                 .build();
     }
 
-    @PostConstruct
+    @EventListener(ApplicationStartedEvent.class)
     void cleanJob() {
         if (!searchProperties.isUseDefaultEnqueueingSessionProcessingQuartzConfiguration()) {
-            JobKey jobKey = JobKey.jobKey(JOB_NAME, JOB_GROUP);
+            JobKey jobKey = JobKey.jobKey(JOB_NAME);
             Scheduler scheduler = applicationContext.getBean(Scheduler.class);
             try {
-                scheduler.deleteJob(jobKey);
+                if (scheduler.checkExists(jobKey)) {
+                    scheduler.deleteJob(jobKey);
+                }
             } catch (SchedulerException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Error cleaning disabled EnqueueingSessionProcessing quartz job", e);
             }
         }
     }

@@ -39,6 +39,9 @@ public class Customer extends BaseEntity {
     })
     protected Address address;
 
+    @Column(name = "NOTE")
+    protected String note;
+
     public void setAddress(Address address) {
         this.address = address;
     }
@@ -56,5 +59,12 @@ public class Customer extends BaseEntity {
         return name;
     }
 
+    public String getNote() {
+        return note;
+    }
 
+    public Customer setNote(String note) {
+        this.note = note;
+        return this;
+    }
 }

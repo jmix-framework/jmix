@@ -54,7 +54,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
 
     protected Metadata jmixMetadata;
 
-    protected Map<String, Integer> namedParametersBindings = new HashMap<>();
+    protected final Map<String, Integer> namedParametersBindings = new HashMap<>();
 
 
     protected int sortIndex;
@@ -62,8 +62,8 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     protected int fetchPlanIndex;
     protected int jmixContextIndex;
 
-    protected Map<String, Serializable> queryHints;
-    protected String fetchPlan = io.jmix.core.FetchPlan.LOCAL;
+    protected final Map<String, Serializable> queryHints;
+    protected final String fetchPlanByAnnotation;
 
     public JmixAbstractQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
         this.method = method;
@@ -77,7 +77,9 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         this.queryHints = Collections.unmodifiableMap(MethodMetadataHelper.determineQueryHints(method));
 
         processSpecialParameters();
-        processFetchPlanAnnotation(method);
+
+        FetchPlan fetchPlanAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, FetchPlan.class);
+        fetchPlanByAnnotation = fetchPlanAnnotation != null ? fetchPlanAnnotation.value() : io.jmix.core.FetchPlan.BASE;
     }
 
     @Override
@@ -87,13 +89,6 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
 
     public UnconstrainedDataManager getDataManager() {
         return dataManager;
-    }
-
-    private void processFetchPlanAnnotation(Method method) {
-        FetchPlan fetchPlanAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, FetchPlan.class);
-        if (fetchPlanAnnotation != null) {
-            fetchPlan = fetchPlanAnnotation.value();
-        }
     }
 
     protected Map<String, Object> buildNamedParametersMap(Object[] values) {
@@ -123,6 +118,6 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     }
 
     protected String getQueryDescription() {
-        return String.format("fetchPlan:'%s'; fetchPlanIndex:'%s'; jmixArgsIndex:'%s'; sortIndex:'%s'; pageableIndex:'%s'", fetchPlan, fetchPlanIndex, jmixContextIndex, sortIndex, pageableIndex);
+        return String.format("fetchPlan:'%s'; fetchPlanIndex:'%s'; jmixArgsIndex:'%s'; sortIndex:'%s'; pageableIndex:'%s'", fetchPlanByAnnotation, fetchPlanIndex, jmixContextIndex, sortIndex, pageableIndex);
     }
 }

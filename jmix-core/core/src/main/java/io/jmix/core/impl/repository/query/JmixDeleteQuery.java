@@ -17,6 +17,7 @@
 package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
 import io.jmix.core.SaveContext;
 import org.springframework.data.projection.ProjectionFactory;
@@ -28,8 +29,8 @@ import java.util.List;
 
 public class JmixDeleteQuery extends JmixListQuery {
 
-    public JmixDeleteQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
-        super(dataManager, jmixMetadata, method, metadata, factory, qryTree);
+    public JmixDeleteQuery(DataManager dataManager, Metadata jmixMetadata, FetchPlanRepository fetchPlanRepository, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
+        super(dataManager, jmixMetadata, fetchPlanRepository, method, metadata, factory, qryTree);
     }
 
     @Override

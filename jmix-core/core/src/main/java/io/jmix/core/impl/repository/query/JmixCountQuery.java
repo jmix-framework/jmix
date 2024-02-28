@@ -18,19 +18,13 @@ package io.jmix.core.impl.repository.query;
 
 
 import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
-import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.core.repository.JmixDataRepositoryContext;
 import jakarta.annotation.Nonnull;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 public class JmixCountQuery extends JmixStructuredQuery {
 
@@ -41,27 +35,7 @@ public class JmixCountQuery extends JmixStructuredQuery {
     @Override
     @Nonnull
     public Object execute(Object[] parameters) {
-        Map<String, Serializable> hints = new HashMap<>(queryHints);
-
-        JmixDataRepositoryContext jmixDataRepositoryContext = jmixContextIndex != -1 ? (JmixDataRepositoryContext) parameters[jmixContextIndex] : null;
-        if (jmixDataRepositoryContext != null) {
-            if (jmixDataRepositoryContext.condition() != null) {
-                conditions = LogicalCondition.and(conditions, jmixDataRepositoryContext.condition());
-            }
-            hints.putAll(jmixDataRepositoryContext.hints());
-        }
-
-        String entityName = jmixMetadata.getClass(metadata.getDomainType()).getName();
-
-        String queryString = String.format("select %s e from %s e", distinct ? "distinct" : "", entityName);
-
-        LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
-                .setQuery(new LoadContext.Query(queryString)
-                        .setCondition(conditions)
-                        .setParameters(buildNamedParametersMap(parameters)))
-                .setHints(hints);
-
-        return dataManager.getCount(context);
+        return dataManager.getCount(prepareStructuredQueryContext(parameters));
     }
 
 

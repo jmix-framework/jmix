@@ -103,7 +103,7 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
         } else if (jmixDataRepositoryContext != null && jmixDataRepositoryContext.fetchPlan() != null) {
             query.fetchPlan(jmixDataRepositoryContext.fetchPlan());
         } else {
-            query.fetchPlan(fetchPlan);
+            query.fetchPlan(fetchPlanByAnnotation);
         }
 
         if (sortIndex != -1) {

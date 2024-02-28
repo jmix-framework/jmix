@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,39 +26,65 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.EventListener;
 
 @AutoConfiguration
 @Import(SearchConfiguration.class)
 @ConditionalOnClass(Job.class)
-@ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
 public class IndexingQueueProcessingScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(IndexingQueueProcessingScheduleAutoConfiguration.class);
 
+    public static final String JOB_NAME = "IndexingQueueProcessing";
+
+    public static final String JOB_TRIGGER_NAME = "IndexingQueueProcessingCronTrigger";
+
     @Autowired
     protected SearchProperties searchProperties;
 
+    @Autowired
+    protected ApplicationContext applicationContext;
+
     @Bean("search_IndexingQueueProcessingJob")
+    @ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
     JobDetail indexingQueueProcessingJob() {
         return JobBuilder.newJob()
                 .ofType(IndexingQueueProcessingJob.class)
                 .storeDurably()
-                .withIdentity("IndexingQueueProcessing")
+                .withIdentity(JOB_NAME)
                 .build();
     }
 
     @Bean("search_IndexingQueueProcessingTrigger")
+    @ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
     Trigger indexingQueueProcessingTrigger(@Qualifier("search_IndexingQueueProcessingJob") JobDetail indexingQueueProcessingJob) {
         String cron = searchProperties.getIndexingQueueProcessingCron();
         log.info("Schedule Indexing Queue processing using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
-                .withIdentity("IndexingQueueProcessingCronTrigger")
+                .withIdentity(JOB_TRIGGER_NAME)
                 .forJob(indexingQueueProcessingJob)
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();
+    }
+
+    @EventListener(ApplicationStartedEvent.class)
+    void cleanJob() {
+        if (!searchProperties.isUseDefaultIndexingQueueProcessingQuartzConfiguration()) {
+            JobKey jobKey = JobKey.jobKey(JOB_NAME);
+            Scheduler scheduler = applicationContext.getBean(Scheduler.class);
+            try {
+                if (scheduler.checkExists(jobKey)) {
+                    scheduler.deleteJob(jobKey);
+                }
+            } catch (SchedulerException e) {
+                throw new RuntimeException("Error cleaning disabled IndexingQueueProcessing quartz job", e);
+            }
+        }
     }
 }

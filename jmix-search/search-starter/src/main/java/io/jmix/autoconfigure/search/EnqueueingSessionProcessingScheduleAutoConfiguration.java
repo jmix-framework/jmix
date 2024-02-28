@@ -26,39 +26,65 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.EventListener;
 
 @AutoConfiguration
 @Import(SearchConfiguration.class)
 @ConditionalOnClass(Job.class)
-@ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
 public class EnqueueingSessionProcessingScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(EnqueueingSessionProcessingScheduleAutoConfiguration.class);
 
+    public static final String JOB_NAME = "EnqueueingSessionProcessing";
+
+    public static final String JOB_TRIGGER_NAME = "EnqueueingSessionProcessingTrigger";
+
     @Autowired
     protected SearchProperties searchProperties;
 
+    @Autowired
+    protected ApplicationContext applicationContext;
+
     @Bean("search_EnqueueingSessionProcessingJob")
+    @ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
     JobDetail enqueueingSessionProcessingJob() {
         return JobBuilder.newJob()
                 .ofType(EnqueueingSessionProcessingJob.class)
                 .storeDurably()
-                .withIdentity("EnqueueingSessionProcessing")
+                .withIdentity(JOB_NAME)
                 .build();
     }
 
     @Bean("search_EnqueueingSessionProcessingTrigger")
+    @ConditionalOnProperty(name = "jmix.search.use-default-enqueueing-session-processing-quartz-configuration", matchIfMissing = true)
     Trigger enqueueingSessionProcessingTrigger(@Qualifier("search_EnqueueingSessionProcessingJob") JobDetail enqueueingSessionProcessingJob) {
         String cron = searchProperties.getEnqueueingSessionProcessingCron();
         log.info("Schedule Enqueueing Session processing using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
-                .withIdentity("EnqueueingSessionProcessingTrigger")
+                .withIdentity(JOB_TRIGGER_NAME)
                 .forJob(enqueueingSessionProcessingJob)
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();
+    }
+
+    @EventListener(ApplicationStartedEvent.class)
+    void cleanJob() {
+        if (!searchProperties.isUseDefaultEnqueueingSessionProcessingQuartzConfiguration()) {
+            JobKey jobKey = JobKey.jobKey(JOB_NAME);
+            Scheduler scheduler = applicationContext.getBean(Scheduler.class);
+            try {
+                if (scheduler.checkExists(jobKey)) {
+                    scheduler.deleteJob(jobKey);
+                }
+            } catch (SchedulerException e) {
+                throw new RuntimeException("Error cleaning disabled EnqueueingSessionProcessing quartz job", e);
+            }
+        }
     }
 }

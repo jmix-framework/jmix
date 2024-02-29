@@ -157,18 +157,19 @@ public class ReportTableView extends StandardView {
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         reportsDl.load();
-        reportForm.setVisible(false);
 
         if (reportOutputDocument != null) {
             drawTables(reportOutputDocument);
-        } else {
+        } else if (tableData != null) {
             JmixTableData dto = (JmixTableData) serialization.deserialize(tableData);
             drawTables(dto);
         }
 
         if (report != null) {
+            reportForm.setVisible(false);
             openReportParameters(report);
         } else if (reportOutputDocument != null) {
+            reportForm.setVisible(false);
             openReportParameters((Report) reportOutputDocument.getReport());
         }
     }

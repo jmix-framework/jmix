@@ -23,7 +23,6 @@ import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.component.dependency.CssImport;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
@@ -40,7 +39,6 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
-import io.jmix.quartz.broken.BrokenJob;
 import io.jmix.quartz.model.JobModel;
 import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
@@ -63,10 +61,6 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 @ViewDescriptor("job-model-list-view.xml")
 @LookupComponent("jobModelsTable")
 @DialogMode(width = "60em")
-@CssImport(
-        themeFor = "vaadin-grid",
-        value = "./styles/job-model-list-grid.css"
-)
 public class JobModelListView extends StandardListView<JobModel> {
 
     @ViewComponent
@@ -122,6 +116,14 @@ public class JobModelListView extends StandardListView<JobModel> {
                 .setHeader(getHeaderForPropertyColumn("nextFireDate"))
                 .setAutoWidth(true);
         jobModelsTable.setClassNameGenerator(entity -> isJobBroken(entity) ? "warn" : null);
+    }
+
+    @Install(to = "jobModelsTable.jobState", subject = "partNameGenerator")
+    protected String jobStatePartNameGenerator(final JobModel entity) {
+        return switch (entity.getJobState()) {
+            case INVALID -> "quartz-job-invalid";
+            default -> "quartz-job-valid";
+        };
     }
 
     private String getHeaderForPropertyColumn(String propertyName) {
@@ -331,7 +333,7 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     protected boolean isJobBroken(JobModel jobModel) {
-        return jobModel != null && BrokenJob.class.getName().equals(jobModel.getJobClass());
+        return jobModel != null && jobModel.getJobState() == JobState.INVALID;
     }
 
     protected void onFilterFieldValueChange(ComponentEvent<?> event) {

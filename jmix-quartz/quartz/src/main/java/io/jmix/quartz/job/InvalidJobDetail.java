@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.quartz.broken;
+package io.jmix.quartz.job;
 
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -22,12 +22,14 @@ import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 
-public class BrokenJobDetail implements JobDetail {
+public class InvalidJobDetail implements JobDetail {
 
     protected JobKey jobKey;
+    protected String description;
 
-    public BrokenJobDetail(JobKey jobKey) {
+    public InvalidJobDetail(JobKey jobKey, String description) {
         this.jobKey = jobKey;
+        this.description = description;
     }
 
     @Override
@@ -37,12 +39,12 @@ public class BrokenJobDetail implements JobDetail {
 
     @Override
     public String getDescription() {
-        return "Invalid Job";
+        return description;
     }
 
     @Override
     public Class<? extends Job> getJobClass() {
-        return BrokenJob.class;
+        return InvalidJob.class;
     }
 
     @Override

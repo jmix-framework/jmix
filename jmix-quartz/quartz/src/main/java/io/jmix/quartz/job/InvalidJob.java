@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-td.warn {
-    background-color: var(--lumo-error-color-10pct);
-    color: var(--lumo-error-color-50pct);
+package io.jmix.quartz.job;
+
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
+public class InvalidJob implements Job {
+    @Override
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        throw new JobExecutionException("Broken job must not be executed");
+    }
 }

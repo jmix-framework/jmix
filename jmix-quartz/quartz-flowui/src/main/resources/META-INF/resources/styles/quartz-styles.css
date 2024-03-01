@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package io.jmix.quartz.broken;
-
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
-public class BrokenJob implements Job {
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        throw new JobExecutionException("Broken job must not be executed");
-    }
+vaadin-grid::part(quartz-job-valid) {
+    background-color: var(--lumo-success-color-10pct);
+    color: var(--lumo-success-color-50pct);
+}
+vaadin-grid::part(quartz-job-invalid) {
+    background-color: var(--lumo-error-color-10pct);
+    color: var(--lumo-error-color-50pct);
 }

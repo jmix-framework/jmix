@@ -1,8 +1,9 @@
 package io.jmix.quartz.service;
 
 import com.google.common.base.Strings;
+import io.jmix.core.Messages;
 import io.jmix.core.UnconstrainedDataManager;
-import io.jmix.quartz.broken.BrokenJobDetail;
+import io.jmix.quartz.job.InvalidJobDetail;
 import io.jmix.quartz.exception.QuartzJobSaveException;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
@@ -38,6 +39,9 @@ public class QuartzService {
     @Autowired
     private UnconstrainedDataManager dataManager;
 
+    @Autowired
+    private Messages messages;
+
     /**
      * Returns information about all configured quartz jobs with related triggers
      */
@@ -48,13 +52,16 @@ public class QuartzService {
 
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.anyJobGroup())) {
                 JobDetail jobDetail;
+                JobModel jobModel = dataManager.create(JobModel.class);
                 try {
                     jobDetail = scheduler.getJobDetail(jobKey);
-
+                    jobModel.setJobClass(jobDetail.getJobClass().getName());
                 } catch (JobPersistenceException e) {
                     if (e.getCause() instanceof ClassNotFoundException) {
-                        jobDetail = new BrokenJobDetail(jobKey);
+                        jobDetail = new InvalidJobDetail(jobKey, messages.formatMessage("io.jmix.quartz.error", "jobClassNotFound", e.getCause().getMessage()));
+                        jobModel.setJobClass(e.getCause().getMessage());
                     } else {
+                        log.error("Job persistence error: {}", jobKey, e);
                         continue;
                     }
                 } catch (SchedulerException e) {
@@ -62,12 +69,10 @@ public class QuartzService {
                     continue;
                 }
 
-                JobModel jobModel = dataManager.create(JobModel.class);
                 jobModel.setJobName(jobKey.getName());
                 jobModel.setJobGroup(jobKey.getGroup());
                 jobModel.setJobDataParameters(getDataParamsOfJob(jobKey));
 
-                jobModel.setJobClass(jobDetail.getJobClass().getName());
                 jobModel.setDescription(jobDetail.getDescription());
 
                 jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
@@ -112,7 +117,11 @@ public class QuartzService {
                     }
 
                     jobModel.setTriggers(triggerModels);
-                    jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                    if (jobDetail instanceof InvalidJobDetail) {
+                        jobModel.setJobState(JobState.INVALID);
+                    } else {
+                        jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                    }
                 }
 
                 result.add(jobModel);

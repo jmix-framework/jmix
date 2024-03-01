@@ -115,7 +115,6 @@ public class JobModelListView extends StandardListView<JobModel> {
                                 .format(entity.getNextFireDate()) : "").setResizable(false)
                 .setHeader(getHeaderForPropertyColumn("nextFireDate"))
                 .setAutoWidth(true);
-        jobModelsTable.setClassNameGenerator(entity -> isJobBroken(entity) ? "warn" : null);
     }
 
     @Install(to = "jobModelsTable.jobState", subject = "partNameGenerator")

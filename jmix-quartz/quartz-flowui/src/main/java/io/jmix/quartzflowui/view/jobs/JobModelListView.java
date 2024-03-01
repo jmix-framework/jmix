@@ -215,7 +215,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
         return !CollectionUtils.isEmpty(jobModelsTable.getSelectedItems())
             && !isJobActive(selectedJobModel)
-            && !isJobBroken(selectedJobModel)
+            && !isJobInvalid(selectedJobModel)
         ;
     }
 
@@ -225,7 +225,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         return selectedJobModel != null
             && !isJobActive(selectedJobModel)
             && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers())
-            && !isJobBroken(selectedJobModel)
+            && !isJobInvalid(selectedJobModel)
         ;
     }
 
@@ -234,7 +234,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
         return selectedJobModel != null
             && isJobActive(selectedJobModel)
-            && !isJobBroken(selectedJobModel)
+            && !isJobInvalid(selectedJobModel)
         ;
     }
 
@@ -331,7 +331,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         return jobModel != null && jobModel.getJobState() == JobState.NORMAL;
     }
 
-    protected boolean isJobBroken(JobModel jobModel) {
+    protected boolean isJobInvalid(JobModel jobModel) {
         return jobModel != null && jobModel.getJobState() == JobState.INVALID;
     }
 

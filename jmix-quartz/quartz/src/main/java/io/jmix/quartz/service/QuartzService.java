@@ -58,10 +58,11 @@ public class QuartzService {
                     jobModel.setJobClass(jobDetail.getJobClass().getName());
                 } catch (JobPersistenceException e) {
                     if (e.getCause() instanceof ClassNotFoundException) {
-                        jobDetail = new InvalidJobDetail(jobKey, messages.formatMessage("io.jmix.quartz.error", "jobClassNotFound", e.getCause().getMessage()));
-                        jobModel.setJobClass(e.getCause().getMessage());
+                        jobDetail = new InvalidJobDetail(jobKey, e.getCause().getMessage(),
+                                messages.formatMessage(QuartzService.class,
+                                        "jobClassNotFound", e.getCause().getMessage()));
                     } else {
-                        log.error("Job persistence error: {}", jobKey, e);
+                        log.error("Unable to fetch information about the job: {}", jobKey, e);
                         continue;
                     }
                 } catch (SchedulerException e) {
@@ -75,6 +76,7 @@ public class QuartzService {
 
                 jobModel.setDescription(jobDetail.getDescription());
 
+                jobModel.setJobClass(getDisplayedClassName(jobModel, jobDetail));
                 jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
 
                 List<TriggerModel> triggerModels = new ArrayList<>();
@@ -131,6 +133,15 @@ public class QuartzService {
         }
 
         return result;
+    }
+
+    public String getDisplayedClassName(JobModel jobModel, JobDetail jobDetail) {
+        if (jobDetail instanceof InvalidJobDetail) {
+            return ((InvalidJobDetail) jobDetail).getOriginClassName();
+        } else {
+            return jobModel.getJobClass();
+        }
+
     }
 
     private String resolveMisfireInstructionId(Trigger trigger) {

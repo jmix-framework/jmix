@@ -13,11 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-vaadin-grid::part(quartz-job-valid) {
-    background-color: var(--lumo-success-color-10pct);
-    color: var(--lumo-success-color-50pct);
-}
 vaadin-grid::part(quartz-job-invalid) {
-    background-color: var(--lumo-error-color-10pct);
     color: var(--lumo-error-color-50pct);
 }

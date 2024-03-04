@@ -125,6 +125,11 @@ public class JobModelListView extends StandardListView<JobModel> {
         };
     }
 
+    @Install(to = "jobModelsTable.description", subject = "partNameGenerator")
+    protected String descriptionPartNameGenerator(final JobModel entity) {
+        return jobStatePartNameGenerator(entity);
+    }
+
     private String getHeaderForPropertyColumn(String propertyName) {
         return messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), propertyName);
     }

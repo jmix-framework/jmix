@@ -25,16 +25,28 @@ import org.quartz.JobKey;
 public class InvalidJobDetail implements JobDetail {
 
     protected JobKey jobKey;
+
+    protected String originClassName;
+
     protected String description;
 
-    public InvalidJobDetail(JobKey jobKey, String description) {
+    public InvalidJobDetail(JobKey jobKey, String originClassName, String description) {
         this.jobKey = jobKey;
+        this.originClassName = originClassName;
         this.description = description;
     }
 
     @Override
     public JobKey getKey() {
         return jobKey;
+    }
+
+    public String getOriginClassName() {
+        return originClassName;
+    }
+
+    public void setOriginClassName(String originClassName) {
+        this.originClassName = originClassName;
     }
 
     @Override
@@ -44,7 +56,7 @@ public class InvalidJobDetail implements JobDetail {
 
     @Override
     public Class<? extends Job> getJobClass() {
-        return InvalidJob.class;
+        return null;
     }
 
     @Override

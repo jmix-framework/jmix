@@ -62,7 +62,7 @@ public class NodeTasks implements FallibleCommand {
     // without depending on when they are added.
     private static final List<Class<? extends FallibleCommand>> commandOrder =
             Collections.unmodifiableList(Arrays.asList(
-                    TaskCopyThemes.class,
+                    TaskCopyRequiredFiles.class,
                     TaskGeneratePackageJson.class,
                     TaskGenerateIndexHtml.class,
                     TaskGenerateIndexTs.class,
@@ -106,9 +106,7 @@ public class NodeTasks implements FallibleCommand {
     public NodeTasks(Options options) {
         // Lock file is created in the project root folder and not in target/ so
         // that Maven does not remove it
-        lockFile = new File(options.getStudioFolder(), ".flow-node-tasks.lock")
-                .toPath();
-        commands.add(new TaskCopyThemes(options));
+        lockFile = new File(options.getStudioFolder(), ".flow-node-tasks.lock").toPath();
 
         ClassFinder classFinder = new ClassFinder.CachedClassFinder(
                 options.getClassFinder());
@@ -188,6 +186,7 @@ public class NodeTasks implements FallibleCommand {
 //                }
             }
 
+            commands.add(new TaskCopyRequiredFiles(options.getClassFinder(), frontendDependencies, options));
             TaskUpdatePackages packageUpdater = null;
             if (options.isEnablePackagesUpdate()
                     && options.getJarFrontendResourcesFolder() != null) {
@@ -400,9 +399,11 @@ public class NodeTasks implements FallibleCommand {
                                 + lockInfo.pid() + ") to finish",
                         e);
             } catch (Exception e) {
-                getLogger().error("Error waiting for another "
+                String errorMsg = "Error waiting for another "
                         + getClass().getSimpleName() + " process (pid: "
-                        + lockInfo.pid() + ") to finish", e);
+                        + lockInfo.pid() + ") to finish";
+                FrontendUtils.logInFile(errorMsg);
+                getLogger().error(errorMsg, e);
             }
         }
 

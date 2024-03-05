@@ -1,7 +1,9 @@
 package io.jmix.quartz.service;
 
 import com.google.common.base.Strings;
+import io.jmix.core.Messages;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.quartz.job.InvalidJobDetail;
 import io.jmix.quartz.exception.QuartzJobSaveException;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
@@ -37,6 +39,9 @@ public class QuartzService {
     @Autowired
     private UnconstrainedDataManager dataManager;
 
+    @Autowired
+    private Messages messages;
+
     /**
      * Returns information about all configured quartz jobs with related triggers
      */
@@ -46,72 +51,95 @@ public class QuartzService {
             List<JobKey> jobDetailsKeys = jobDetailsFinder.getJobDetailBeanKeys();
 
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.anyJobGroup())) {
+                JobDetail jobDetail;
                 try {
-                    JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+                    jobDetail = scheduler.getJobDetail(jobKey);
+                } catch (JobPersistenceException e) {
+                    if (e.getCause() instanceof ClassNotFoundException) {
+                        jobDetail = new InvalidJobDetail(jobKey, e.getCause().getMessage(),
+                                messages.formatMessage(QuartzService.class,
+                                        "jobClassNotFound", e.getCause().getMessage()));
+                    } else {
+                        log.error("Unable to fetch information about the job: {}", jobKey, e);
+                        continue;
+                    }
+                } catch (SchedulerException e) {
+                    log.error("Unable to fetch information about the job: {}", jobKey, e);
+                    continue;
+                }
+                JobModel jobModel = dataManager.create(JobModel.class);
+                jobModel.setJobName(jobKey.getName());
+                jobModel.setJobGroup(jobKey.getGroup());
+                jobModel.setJobDataParameters(getDataParamsOfJob(jobKey));
 
-                    JobModel jobModel = dataManager.create(JobModel.class);
-                    jobModel.setJobName(jobKey.getName());
-                    jobModel.setJobGroup(jobKey.getGroup());
-                    jobModel.setJobDataParameters(getDataParamsOfJob(jobKey));
+                jobModel.setDescription(jobDetail.getDescription());
 
-                    jobModel.setJobClass(jobDetail.getJobClass().getName());
-                    jobModel.setDescription(jobDetail.getDescription());
+                jobModel.setJobClass(getDisplayedClassName(jobDetail));
+                jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
 
-                    jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
-
-                    List<TriggerModel> triggerModels = new ArrayList<>();
-                    List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
-                    if (!CollectionUtils.isEmpty(jobTriggers)) {
-                        boolean isActive = false;
-                        for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
-                            TriggerModel triggerModel = dataManager.create(TriggerModel.class);
-                            triggerModel.setTriggerName(trigger.getKey().getName());
-                            triggerModel.setTriggerGroup(trigger.getKey().getGroup());
-                            triggerModel.setScheduleType(trigger instanceof SimpleTrigger ? ScheduleType.SIMPLE : ScheduleType.CRON_EXPRESSION);
+                List<TriggerModel> triggerModels = new ArrayList<>();
+                List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
+                if (!CollectionUtils.isEmpty(jobTriggers)) {
+                    boolean isActive = false;
+                    for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
+                        TriggerModel triggerModel = dataManager.create(TriggerModel.class);
+                        triggerModel.setTriggerName(trigger.getKey().getName());
+                        triggerModel.setTriggerGroup(trigger.getKey().getGroup());
+                        triggerModel.setScheduleType(trigger instanceof SimpleTrigger ? ScheduleType.SIMPLE : ScheduleType.CRON_EXPRESSION);
                             /*
                             Ignore startTime if it's in the past - during saving empty startTime will be set as 'now'.
                             This in combination with validation prevents case when scheduler reproduces all executions
                             from the startTime to the current moment after trigger is recreated (all triggers
                             a created with startTime not earlier than 'now')
                             */
-                            Date startTime = trigger.getStartTime();
-                            if (startTime.after(new Date())) {
-                                triggerModel.setStartDate(startTime);
-                            }
-                            triggerModel.setEndDate(trigger.getEndTime());
-                            triggerModel.setLastFireDate(trigger.getPreviousFireTime());
-                            triggerModel.setNextFireDate(trigger.getNextFireTime());
-                            triggerModel.setMisfireInstructionId(resolveMisfireInstructionId(trigger));
+                        Date startTime = trigger.getStartTime();
+                        if (startTime.after(new Date())) {
+                            triggerModel.setStartDate(startTime);
+                        }
+                        triggerModel.setEndDate(trigger.getEndTime());
+                        triggerModel.setLastFireDate(trigger.getPreviousFireTime());
+                        triggerModel.setNextFireDate(trigger.getNextFireTime());
+                        triggerModel.setMisfireInstructionId(resolveMisfireInstructionId(trigger));
 
-                            if (trigger instanceof CronTrigger) {
-                                triggerModel.setCronExpression(((CronTrigger) trigger).getCronExpression());
-                            } else if (trigger instanceof SimpleTrigger simpleTrigger) {
-                                triggerModel.setRepeatCount(simpleTrigger.getRepeatCount());
-                                triggerModel.setRepeatInterval(simpleTrigger.getRepeatInterval());
-                            }
-
-                            triggerModels.add(triggerModel);
-                            if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL
-                                    && scheduler.isStarted()
-                                    && !scheduler.isInStandbyMode()) {
-                                isActive = true;
-                            }
+                        if (trigger instanceof CronTrigger) {
+                            triggerModel.setCronExpression(((CronTrigger) trigger).getCronExpression());
+                        } else if (trigger instanceof SimpleTrigger simpleTrigger) {
+                            triggerModel.setRepeatCount(simpleTrigger.getRepeatCount());
+                            triggerModel.setRepeatInterval(simpleTrigger.getRepeatInterval());
                         }
 
-                        jobModel.setTriggers(triggerModels);
-                        jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                        triggerModels.add(triggerModel);
+                        if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL
+                                && scheduler.isStarted()
+                                && !scheduler.isInStandbyMode()) {
+                            isActive = true;
+                        }
                     }
 
-                    result.add(jobModel);
-                } catch (SchedulerException e) {
-                    log.error("Unable to fetch information about the job: {}", jobKey, e);
+                    jobModel.setTriggers(triggerModels);
+                    if (jobDetail instanceof InvalidJobDetail) {
+                        jobModel.setJobState(JobState.INVALID);
+                    } else {
+                        jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                    }
                 }
+
+                result.add(jobModel);
             }
         } catch (SchedulerException e) {
             log.error("Unable to fetch information about active jobs", e);
         }
 
         return result;
+    }
+
+    public String getDisplayedClassName(JobDetail jobDetail) {
+        if (jobDetail instanceof InvalidJobDetail) {
+            return ((InvalidJobDetail) jobDetail).getOriginClassName();
+        } else {
+            return jobDetail.getJobClass().getName();
+        }
+
     }
 
     private String resolveMisfireInstructionId(Trigger trigger) {

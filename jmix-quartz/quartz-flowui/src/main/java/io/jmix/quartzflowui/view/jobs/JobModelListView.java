@@ -117,6 +117,14 @@ public class JobModelListView extends StandardListView<JobModel> {
                 .setAutoWidth(true);
     }
 
+    @Install(to = "jobModelsTable.jobState", subject = "partNameGenerator")
+    protected String jobStatePartNameGenerator(final JobModel entity) {
+        return switch (entity.getJobState()) {
+            case INVALID -> "quartz-job-invalid";
+            default -> null;
+        };
+    }
+
     private String getHeaderForPropertyColumn(String propertyName) {
         return messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), propertyName);
     }
@@ -204,22 +212,30 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @Install(to = "jobModelsTable.executeNow", subject = "enabledRule")
     protected boolean jobModelsTableExecuteNowEnabledRule() {
+        JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
         return !CollectionUtils.isEmpty(jobModelsTable.getSelectedItems())
-                && !isJobActive(jobModelsTable.getSingleSelectedItem());
+            && !isJobActive(selectedJobModel)
+            && !isJobInvalid(selectedJobModel)
+        ;
     }
 
     @Install(to = "jobModelsTable.activate", subject = "enabledRule")
     protected boolean jobModelsTableActivateEnabledRule() {
         JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
         return selectedJobModel != null
-                && !isJobActive(selectedJobModel)
-                && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers());
+            && !isJobActive(selectedJobModel)
+            && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers())
+            && !isJobInvalid(selectedJobModel)
+        ;
     }
 
     @Install(to = "jobModelsTable.deactivate", subject = "enabledRule")
     protected boolean jobModelsTableDeactivateEnabledRule() {
-        return (jobModelsTable.getSingleSelectedItem() != null)
-                && isJobActive(jobModelsTable.getSingleSelectedItem());
+        JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
+        return selectedJobModel != null
+            && isJobActive(selectedJobModel)
+            && !isJobInvalid(selectedJobModel)
+        ;
     }
 
     @Install(to = "jobModelsTable.remove", subject = "enabledRule")
@@ -313,6 +329,10 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     protected boolean isJobActive(JobModel jobModel) {
         return jobModel != null && jobModel.getJobState() == JobState.NORMAL;
+    }
+
+    protected boolean isJobInvalid(JobModel jobModel) {
+        return jobModel != null && jobModel.getJobState() == JobState.INVALID;
     }
 
     protected void onFilterFieldValueChange(ComponentEvent<?> event) {

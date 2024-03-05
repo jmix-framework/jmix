@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.flowui.kit.meta.component.preview;
 
-group = 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-kit'
+import com.vaadin.flow.component.Component;
+import jakarta.annotation.Nullable;
+import org.dom4j.Element;
 
-dependencies {
-    api 'org.dom4j:dom4j'
-    api 'com.google.guava:guava'
-    api 'jakarta.annotation:jakarta.annotation-api'
-    api("com.vaadin:vaadin-core") {
-        exclude module: "vaadin-dev-server"
-    }
+public interface StudioPreviewComponentLoader {
+
+    boolean isSuitable(String...componentXmlNames);
+
+    @Nullable
+    Component load(Element componentElement, Element viewElement);
 }

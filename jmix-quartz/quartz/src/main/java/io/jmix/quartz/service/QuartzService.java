@@ -52,10 +52,8 @@ public class QuartzService {
 
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.anyJobGroup())) {
                 JobDetail jobDetail;
-                JobModel jobModel = dataManager.create(JobModel.class);
                 try {
                     jobDetail = scheduler.getJobDetail(jobKey);
-                    jobModel.setJobClass(jobDetail.getJobClass().getName());
                 } catch (JobPersistenceException e) {
                     if (e.getCause() instanceof ClassNotFoundException) {
                         jobDetail = new InvalidJobDetail(jobKey, e.getCause().getMessage(),
@@ -69,14 +67,14 @@ public class QuartzService {
                     log.error("Unable to fetch information about the job: {}", jobKey, e);
                     continue;
                 }
-
+                JobModel jobModel = dataManager.create(JobModel.class);
                 jobModel.setJobName(jobKey.getName());
                 jobModel.setJobGroup(jobKey.getGroup());
                 jobModel.setJobDataParameters(getDataParamsOfJob(jobKey));
 
                 jobModel.setDescription(jobDetail.getDescription());
 
-                jobModel.setJobClass(getDisplayedClassName(jobModel, jobDetail));
+                jobModel.setJobClass(getDisplayedClassName(jobDetail));
                 jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
 
                 List<TriggerModel> triggerModels = new ArrayList<>();
@@ -135,11 +133,11 @@ public class QuartzService {
         return result;
     }
 
-    public String getDisplayedClassName(JobModel jobModel, JobDetail jobDetail) {
+    public String getDisplayedClassName(JobDetail jobDetail) {
         if (jobDetail instanceof InvalidJobDetail) {
             return ((InvalidJobDetail) jobDetail).getOriginClassName();
         } else {
-            return jobModel.getJobClass();
+            return jobDetail.getJobClass().getName();
         }
 
     }

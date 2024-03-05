@@ -121,13 +121,8 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected String jobStatePartNameGenerator(final JobModel entity) {
         return switch (entity.getJobState()) {
             case INVALID -> "quartz-job-invalid";
-            default -> "quartz-job-valid";
+            default -> null;
         };
-    }
-
-    @Install(to = "jobModelsTable.description", subject = "partNameGenerator")
-    protected String descriptionPartNameGenerator(final JobModel entity) {
-        return jobStatePartNameGenerator(entity);
     }
 
     private String getHeaderForPropertyColumn(String propertyName) {

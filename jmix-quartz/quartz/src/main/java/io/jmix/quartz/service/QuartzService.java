@@ -81,6 +81,7 @@ public class QuartzService {
                 List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
                 if (!CollectionUtils.isEmpty(jobTriggers)) {
                     boolean isActive = false;
+                    boolean isRunning = false;
                     for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
                         TriggerModel triggerModel = dataManager.create(TriggerModel.class);
                         triggerModel.setTriggerName(trigger.getKey().getName());
@@ -115,12 +116,17 @@ public class QuartzService {
                             isActive = true;
                         }
                     }
-
                     jobModel.setTriggers(triggerModels);
+                    isRunning = scheduler.getCurrentlyExecutingJobs().stream()
+                            .filter(jctx -> jctx.getJobDetail().getKey().equals(jobKey)).findAny().isPresent();
                     if (jobDetail instanceof InvalidJobDetail) {
                         jobModel.setJobState(JobState.INVALID);
                     } else {
-                        jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                        if (isRunning) {
+                            jobModel.setJobState(JobState.RUNNING);
+                        } else {
+                            jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                        }
                     }
                 }
 
@@ -434,6 +440,14 @@ public class QuartzService {
         } catch (SchedulerException e) {
             log.warn("Unable to define if trigger with name {} and group {} exists", triggerName, triggerGroup, e);
             return false;
+        }
+    }
+
+    public void addTriggerListener(TriggerListener triggerListener) {
+        try {
+            scheduler.getListenerManager().addTriggerListener(triggerListener);
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
         }
     }
 }

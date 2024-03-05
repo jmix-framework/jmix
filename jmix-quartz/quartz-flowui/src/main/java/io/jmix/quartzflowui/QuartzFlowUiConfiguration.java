@@ -16,6 +16,7 @@
 
 package io.jmix.quartzflowui;
 
+import com.vaadin.flow.component.page.Push;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
@@ -35,6 +36,7 @@ import java.util.Collections;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {QuartzConfiguration.class, FlowuiConfiguration.class})
 @PropertySource(name = "io.jmix.quartzflowui", value = "classpath:/io/jmix/quartzflowui/module.properties")
+@Push
 public class QuartzFlowUiConfiguration {
 
     @Bean("flowui_quartz_QuartzViewControllers")

@@ -23,6 +23,7 @@ import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
@@ -31,12 +32,14 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.UiEventPublisher;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.JobModel;
@@ -44,9 +47,14 @@ import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
+import io.jmix.quartzflowui.event.QuartzDataChangedEvent;
 import org.apache.commons.collections4.CollectionUtils;
+import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
+import org.quartz.Trigger;
+import org.quartz.TriggerListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -54,6 +62,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.*;
+
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Route(value = "quartz/jobmodels", layout = DefaultMainViewParent.class)
@@ -62,6 +71,8 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 @LookupComponent("jobModelsTable")
 @DialogMode(width = "60em")
 public class JobModelListView extends StandardListView<JobModel> {
+
+    public static final String QUARTZ_DATA_CHANGED_LISTENER = "quartzTriggerStartStopListener";
 
     @ViewComponent
     protected DataGrid<JobModel> jobModelsTable;
@@ -92,10 +103,12 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected MessageTools messageTools;
     @Autowired
     private Metadata metadata;
-
+    @Autowired
+    protected UiEventPublisher uiEventPublisher;
     @Subscribe
     protected void onInit(View.InitEvent event) {
         initTable();
+        initDataChangedEventListener();
     }
 
     protected void initTable() {
@@ -129,6 +142,31 @@ public class JobModelListView extends StandardListView<JobModel> {
         return messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), propertyName);
     }
 
+    protected void initDataChangedEventListener() {
+        VaadinSession session = VaadinSession.getCurrent();
+        if (session == null) {
+            return;
+        }
+
+        UiEventsManager uiEventsManager = session.getAttribute(UiEventsManager.class);
+        if (uiEventsManager != null) {
+            uiEventsManager.addApplicationListener(this, this::onApplicationEvent);
+
+            // Remove on detach event
+            addDetachListener(event -> uiEventsManager.removeApplicationListeners(this));
+        }
+    }
+
+    protected void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof QuartzDataChangedEvent dataChangedEvent) {
+            onDataChangedEvent(dataChangedEvent);
+        }
+    }
+
+    protected void onDataChangedEvent(QuartzDataChangedEvent event) {
+        loadJobsData();
+    }
+
     @Subscribe
     protected void onBeforeShow(View.BeforeShowEvent event) {
         nameFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
@@ -136,9 +174,39 @@ public class JobModelListView extends StandardListView<JobModel> {
         groupFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         jobStateFilter.addValueChangeListener(this::onFilterFieldValueChange);
 
+        setupQuartzDataChangedListener();
+
         loadJobsData();
     }
 
+    protected void setupQuartzDataChangedListener() {
+        quartzService.addTriggerListener(new TriggerListener() {
+            @Override
+            public String getName() {
+                return QUARTZ_DATA_CHANGED_LISTENER;
+            }
+
+            @Override
+            public void triggerFired(Trigger trigger, JobExecutionContext jobExecutionContext) {
+                uiEventPublisher.publishEventForUsers(new QuartzDataChangedEvent(JobModelListView.this), null);
+            }
+
+            @Override
+            public boolean vetoJobExecution(Trigger trigger, JobExecutionContext jobExecutionContext) {
+                return false;
+            }
+
+            @Override
+            public void triggerMisfired(Trigger trigger) {
+
+            }
+
+            @Override
+            public void triggerComplete(Trigger trigger, JobExecutionContext jobExecutionContext, Trigger.CompletedExecutionInstruction completedExecutionInstruction) {
+                uiEventPublisher.publishEventForUsers(new QuartzDataChangedEvent(JobModelListView.this), null);
+            }
+        });
+    }
 
     protected List<JobModel> loadJobsData() {
         List<GridSortOrder<JobModel>> sorting = jobModelsTable.getSortOrder();

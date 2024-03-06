@@ -31,7 +31,7 @@ public class StandardStudioPreviewComponentLoader implements StudioPreviewCompon
 
     @Nullable
     @Override
-    public Component load(Element componentElement) {
+    public Component load(Element componentElement, Element viewElement) {
         return new Div("My div");
     }
 }

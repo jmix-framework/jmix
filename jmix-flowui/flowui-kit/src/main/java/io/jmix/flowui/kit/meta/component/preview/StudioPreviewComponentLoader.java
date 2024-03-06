@@ -23,7 +23,7 @@ import org.dom4j.Element;
 /**
  * Vaadin component loader for Studio view designer preview.
  * <h4>
- *     Register new loaders in {@code  META-INF/services/io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader}
+ *     Register new loaders via SPI in {@code META-INF/services/io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader}
  * </h4>
  * @see StudioPreviewComponentProvider
  */
@@ -32,7 +32,7 @@ public interface StudioPreviewComponentLoader {
     /**
      * Define a components xml tags that this loader can load.
      */
-    boolean isSuitable(String...componentXmlNames);
+    boolean isSuitable(String...componentTags);
 
     /**
      * Create vaadin component from component xml element.

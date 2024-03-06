@@ -25,8 +25,8 @@ import org.dom4j.Element;
 
 public class StandardStudioPreviewComponentLoader implements StudioPreviewComponentLoader {
     @Override
-    public boolean isSuitable(String... componentXmlNames) {
-        return Arrays.asList(componentXmlNames).contains("div");
+    public boolean isSuitable(String... componentTags) {
+        return Arrays.asList(componentTags).contains("div");
     }
 
     @Nullable

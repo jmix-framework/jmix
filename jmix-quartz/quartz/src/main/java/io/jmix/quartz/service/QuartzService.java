@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -49,7 +50,8 @@ public class QuartzService {
         List<JobModel> result = new ArrayList<>();
         try {
             List<JobKey> jobDetailsKeys = jobDetailsFinder.getJobDetailBeanKeys();
-
+            Map<JobKey, JobExecutionContext> runningJobs = scheduler.getCurrentlyExecutingJobs()
+                    .stream().collect(Collectors.toMap(jctx -> jctx.getJobDetail().getKey(), jctx -> jctx));
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.anyJobGroup())) {
                 JobDetail jobDetail;
                 try {
@@ -81,7 +83,6 @@ public class QuartzService {
                 List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
                 if (!CollectionUtils.isEmpty(jobTriggers)) {
                     boolean isActive = false;
-                    boolean isRunning = false;
                     for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
                         TriggerModel triggerModel = dataManager.create(TriggerModel.class);
                         triggerModel.setTriggerName(trigger.getKey().getName());
@@ -117,12 +118,10 @@ public class QuartzService {
                         }
                     }
                     jobModel.setTriggers(triggerModels);
-                    isRunning = scheduler.getCurrentlyExecutingJobs().stream()
-                            .filter(jctx -> jctx.getJobDetail().getKey().equals(jobKey)).findAny().isPresent();
                     if (jobDetail instanceof InvalidJobDetail) {
                         jobModel.setJobState(JobState.INVALID);
                     } else {
-                        if (isRunning) {
+                        if (runningJobs.containsKey(jobKey)) {
                             jobModel.setJobState(JobState.RUNNING);
                         } else {
                             jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);

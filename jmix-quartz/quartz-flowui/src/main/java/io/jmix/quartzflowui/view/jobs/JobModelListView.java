@@ -32,7 +32,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiEventPublisher;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.select.JmixSelect;
@@ -47,12 +46,11 @@ import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
-import io.jmix.quartzflowui.event.QuartzDataChangedEvent;
+import io.jmix.quartzflowui.event.QuartzJobEndEvent;
+import io.jmix.quartzflowui.event.QuartzJobStartEvent;
 import org.apache.commons.collections4.CollectionUtils;
-import org.quartz.JobExecutionContext;
+import org.quartz.JobDetail;
 import org.quartz.JobKey;
-import org.quartz.Trigger;
-import org.quartz.TriggerListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 
@@ -71,8 +69,6 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 @LookupComponent("jobModelsTable")
 @DialogMode(width = "60em")
 public class JobModelListView extends StandardListView<JobModel> {
-
-    public static final String QUARTZ_DATA_CHANGED_LISTENER = "quartzTriggerStartStopListener";
 
     @ViewComponent
     protected DataGrid<JobModel> jobModelsTable;
@@ -103,8 +99,7 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected MessageTools messageTools;
     @Autowired
     private Metadata metadata;
-    @Autowired
-    protected UiEventPublisher uiEventPublisher;
+
     @Subscribe
     protected void onInit(View.InitEvent event) {
         initTable();
@@ -158,13 +153,27 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     protected void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof QuartzDataChangedEvent dataChangedEvent) {
-            onDataChangedEvent(dataChangedEvent);
+        if (event instanceof QuartzJobStartEvent jobStartEvent) {
+            onJobStartEvent(jobStartEvent);
+        } else if (event instanceof QuartzJobEndEvent jobEndEvent) {
+            onJobEndEvent(jobEndEvent);
         }
     }
 
-    protected void onDataChangedEvent(QuartzDataChangedEvent event) {
-        loadJobsData();
+    protected void onJobStartEvent(QuartzJobStartEvent event) {
+        JobDetail jobDetail = (JobDetail) event.getSource();
+        jobModelsDc.getItems().stream().filter(jobModel ->
+                JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
+                .equals(jobDetail.getKey())).findAny()
+            .ifPresent(item -> item.setJobState(JobState.RUNNING));
+    }
+
+    protected void onJobEndEvent(QuartzJobEndEvent event) {
+        JobDetail jobDetail = (JobDetail) event.getSource();
+        jobModelsDc.getItems().stream().filter(jobModel ->
+                JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
+                .equals(jobDetail.getKey())).findAny()
+            .ifPresent(item -> item.setJobState(JobState.NORMAL));
     }
 
     @Subscribe
@@ -174,38 +183,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         groupFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         jobStateFilter.addValueChangeListener(this::onFilterFieldValueChange);
 
-        setupQuartzDataChangedListener();
-
         loadJobsData();
-    }
-
-    protected void setupQuartzDataChangedListener() {
-        quartzService.addTriggerListener(new TriggerListener() {
-            @Override
-            public String getName() {
-                return QUARTZ_DATA_CHANGED_LISTENER;
-            }
-
-            @Override
-            public void triggerFired(Trigger trigger, JobExecutionContext jobExecutionContext) {
-                uiEventPublisher.publishEventForUsers(new QuartzDataChangedEvent(JobModelListView.this), null);
-            }
-
-            @Override
-            public boolean vetoJobExecution(Trigger trigger, JobExecutionContext jobExecutionContext) {
-                return false;
-            }
-
-            @Override
-            public void triggerMisfired(Trigger trigger) {
-
-            }
-
-            @Override
-            public void triggerComplete(Trigger trigger, JobExecutionContext jobExecutionContext, Trigger.CompletedExecutionInstruction completedExecutionInstruction) {
-                uiEventPublisher.publishEventForUsers(new QuartzDataChangedEvent(JobModelListView.this), null);
-            }
-        });
     }
 
     protected List<JobModel> loadJobsData() {

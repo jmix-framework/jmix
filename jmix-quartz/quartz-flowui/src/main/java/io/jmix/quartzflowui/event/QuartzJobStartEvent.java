@@ -16,11 +16,11 @@
 
 package io.jmix.quartzflowui.event;
 
-import com.vaadin.flow.component.Component;
+import org.quartz.JobDetail;
 import org.springframework.context.ApplicationEvent;
 
-public class QuartzDataChangedEvent extends ApplicationEvent {
-    public QuartzDataChangedEvent(Component source) {
+public class QuartzJobStartEvent extends ApplicationEvent {
+    public QuartzJobStartEvent(JobDetail source) {
         super(source);
     }
 }

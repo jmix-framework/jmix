@@ -16,22 +16,19 @@
 
 package io.jmix.flowui.kit.meta.component.preview;
 
-import java.util.Arrays;
-
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.html.Div;
 import jakarta.annotation.Nullable;
 import org.dom4j.Element;
 
 public class StandardStudioPreviewComponentLoader implements StudioPreviewComponentLoader {
     @Override
-    public boolean isSuitable(String... componentTags) {
-        return Arrays.asList(componentTags).contains("div");
+    public boolean isSuitable(Element...elements) {
+        return false;
     }
 
     @Nullable
     @Override
     public Component load(Element componentElement, Element viewElement) {
-        return new Div("My div");
+        return null;
     }
 }

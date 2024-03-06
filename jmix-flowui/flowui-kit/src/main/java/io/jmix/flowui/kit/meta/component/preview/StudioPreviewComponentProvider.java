@@ -37,7 +37,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.Namespace;
 import org.dom4j.io.SAXReader;
+import org.dom4j.tree.BaseElement;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -62,12 +64,16 @@ final class StudioPreviewComponentProvider {
     /**
      * Used in Studio.
      */
-    static boolean canCreateComponent(String componentTagName) {
-        return findComponentLoader(componentTagName).isPresent();
+    static boolean canCreateComponent(String tagLocaleName, @Nullable String namespaceUri) {
+        BaseElement element = new BaseElement(tagLocaleName, Namespace.get(namespaceUri));
+        return findComponentLoader(element).isPresent();
     }
 
     /**
      * Used in Studio.
+     * <p>
+     *     Creates a preview component from {@link ComponentCreationContext creationContext}.
+     * </p>
      */
     @Nullable
     @SuppressWarnings("DataFlowIssue")
@@ -75,7 +81,7 @@ final class StudioPreviewComponentProvider {
         Element viewElement = getElement(creationContext.viewXml());
         if (hasQualifiedName(viewElement)) {
             Element componentElement = getComponentElement(viewElement, creationContext.componentPath());
-            Optional<StudioPreviewComponentLoader> loader = findComponentLoader(componentElement.getQualifiedName());
+            Optional<StudioPreviewComponentLoader> loader = findComponentLoader(componentElement);
             if (loader.isPresent()) {
                 return loader.get().load(componentElement, viewElement);
             }
@@ -88,8 +94,8 @@ final class StudioPreviewComponentProvider {
         return (Element) viewElement.selectSingleNode(componentPath);
     }
 
-    private static Optional<StudioPreviewComponentLoader> findComponentLoader(final String componentXmlName) {
-        return getLoaderServices().stream().filter(loader -> loader.isSuitable(componentXmlName)).findFirst();
+    private static Optional<StudioPreviewComponentLoader> findComponentLoader(final Element element) {
+        return getLoaderServices().stream().filter(loader -> loader.isSuitable(element)).findFirst();
     }
 
     private static Collection<StudioPreviewComponentLoader> getLoaderServices() {

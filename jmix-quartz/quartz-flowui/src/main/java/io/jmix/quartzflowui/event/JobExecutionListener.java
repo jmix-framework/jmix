@@ -32,12 +32,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JobExecutionListener extends JobListenerSupport {
+    private static final Logger log = LoggerFactory.getLogger(JobExecutionListener.class);
 
     public static final String QUARTZ_JOB_EXECUTION_LISTENER = "QuartzJobExecutionListener";
-    private static final Logger log = LoggerFactory.getLogger(JobExecutionListener.class);
 
     @Autowired
     private Scheduler scheduler;
+
     @Autowired
     protected UiEventPublisher uiEventPublisher;
 

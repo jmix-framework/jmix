@@ -64,8 +64,8 @@ final class StudioPreviewComponentProvider {
     /**
      * Used in Studio.
      */
-    static boolean canCreateComponent(String tagLocaleName, @Nullable String namespaceUri) {
-        BaseElement element = new BaseElement(tagLocaleName, Namespace.get(namespaceUri));
+    static boolean canCreateComponent(String tagLocaleName, String namespaceUri) {
+        final Element element = new BaseElement(tagLocaleName, Namespace.get(namespaceUri));
         return findComponentLoader(element).isPresent();
     }
 

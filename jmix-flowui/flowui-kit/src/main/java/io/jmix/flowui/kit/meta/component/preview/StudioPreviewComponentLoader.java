@@ -30,9 +30,9 @@ import org.dom4j.Element;
 public interface StudioPreviewComponentLoader {
 
     /**
-     * Define the elements that this loader can load.
+     * Define the element that this loader can load.
      */
-    boolean isSuitable(Element...elements);
+    boolean isSuitable(Element elements);
 
     /**
      * Create vaadin component from component xml element.

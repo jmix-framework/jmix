@@ -22,7 +22,7 @@ import org.dom4j.Element;
 
 public class StandardStudioPreviewComponentLoader implements StudioPreviewComponentLoader {
     @Override
-    public boolean isSuitable(Element...elements) {
+    public boolean isSuitable(Element element) {
         return false;
     }
 

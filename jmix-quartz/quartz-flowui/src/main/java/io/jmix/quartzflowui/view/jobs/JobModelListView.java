@@ -161,18 +161,16 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     protected void onJobStartEvent(QuartzJobStartEvent event) {
-        JobDetail jobDetail = (JobDetail) event.getSource();
         jobModelsDc.getItems().stream().filter(jobModel ->
                 JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
-                .equals(jobDetail.getKey())).findAny()
+                .equals(event.getSource().getKey())).findAny()
             .ifPresent(item -> item.setJobState(JobState.RUNNING));
     }
 
     protected void onJobEndEvent(QuartzJobEndEvent event) {
-        JobDetail jobDetail = (JobDetail) event.getSource();
         jobModelsDc.getItems().stream().filter(jobModel ->
                 JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
-                .equals(jobDetail.getKey())).findAny()
+                .equals(event.getSource().getKey())).findAny()
             .ifPresent(item -> item.setJobState(JobState.NORMAL));
     }
 

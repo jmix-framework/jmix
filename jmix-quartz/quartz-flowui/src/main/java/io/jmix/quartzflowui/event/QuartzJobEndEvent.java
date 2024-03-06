@@ -20,7 +20,16 @@ import org.quartz.JobDetail;
 import org.springframework.context.ApplicationEvent;
 
 public class QuartzJobEndEvent extends ApplicationEvent {
+
+    protected JobDetail source;
+
     public QuartzJobEndEvent(JobDetail source) {
         super(source);
+        this.source = source;
+    }
+
+    @Override
+    public JobDetail getSource() {
+        return source;
     }
 }

@@ -30,7 +30,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 
-@Component
+@Component("quartz_JobExecutionListener")
 public class JobExecutionListener extends JobListenerSupport {
 
     private static final Logger log = LoggerFactory.getLogger(JobExecutionListener.class);
@@ -59,16 +59,14 @@ public class JobExecutionListener extends JobListenerSupport {
 
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
-        log.debug("jobToBeExecuted: name={}, context={}",
-                context.getJobDetail().getKey().getName(), context);
+        log.debug("jobToBeExecuted: {}", context);
         uiEventPublisher.publishEventForUsers(new QuartzJobStartEvent(context.getJobDetail()), null);
     }
 
     @Override
     public void jobWasExecuted(JobExecutionContext context,
-                               JobExecutionException jobException) { 
-        log.debug("jobWasExecuted: name={}, context={}",
-                context.getJobDetail().getKey().getName(), context);
+                               JobExecutionException jobException) {
+        log.debug("jobWasExecuted: {}", context);
         uiEventPublisher.publishEventForUsers(new QuartzJobEndEvent(context.getJobDetail()), null);
     }
 

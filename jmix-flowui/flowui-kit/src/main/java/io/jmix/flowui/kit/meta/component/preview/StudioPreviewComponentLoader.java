@@ -20,10 +20,26 @@ import com.vaadin.flow.component.Component;
 import jakarta.annotation.Nullable;
 import org.dom4j.Element;
 
+/**
+ * Vaadin component loader for Studio view designer preview.
+ * <h4>
+ *     Register new loaders in {@code  META-INF/services/io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader}
+ * </h4>
+ * @see StudioPreviewComponentProvider
+ */
 public interface StudioPreviewComponentLoader {
 
+    /**
+     * Define a components xml tags that this loader can load.
+     */
     boolean isSuitable(String...componentXmlNames);
 
+    /**
+     * Create vaadin component from component xml element.
+     * @param componentElement xml element of component
+     * @param viewElement xml element of view containing {@code componentElement}
+     * @see Element
+     */
     @Nullable
     Component load(Element componentElement, Element viewElement);
 }

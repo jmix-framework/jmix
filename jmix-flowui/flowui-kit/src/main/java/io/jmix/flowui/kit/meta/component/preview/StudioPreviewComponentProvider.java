@@ -33,6 +33,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import com.vaadin.flow.component.Component;
 import jakarta.annotation.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -46,17 +47,28 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 
 /**
  * Used in Studio.
+ * <p>
+ *     Finds a suitable {@link StudioPreviewComponentLoader loader} for component tag
+ *     and invoke {@link StudioPreviewComponentLoader#load(Element, Element) load method}
+ * </p>
  */
+@SuppressWarnings("unused")
 final class StudioPreviewComponentProvider {
 
     private static final Set<StudioPreviewComponentLoader> loaders = new HashSet<>();
     private static final Lock loaderInitializationLock = new ReentrantLock();
     private static final Condition lockCondition = loaderInitializationLock.newCondition();
 
+    /**
+     * Used in Studio.
+     */
     static boolean canCreateComponent(String componentTagName) {
         return findComponentLoader(componentTagName).isPresent();
     }
 
+    /**
+     * Used in Studio.
+     */
     @Nullable
     @SuppressWarnings("DataFlowIssue")
     static Component createComponent(ComponentCreationContext creationContext) {
@@ -124,7 +136,8 @@ final class StudioPreviewComponentProvider {
             if (xml != null && reader != null && isNoneBlank(xml)) {
                 return reader.read(new StringReader(xml));
             }
-        } catch (DocumentException ignored) {
+        } catch (DocumentException e) {
+            console("Can not read document", e);
         }
         return null;
     }
@@ -139,10 +152,16 @@ final class StudioPreviewComponentProvider {
             this.componentPath = componentPath;
         }
 
+        /**
+         * Xml of View descriptor.
+         */
         public String viewXml() {
             return viewXml;
         }
 
+        /**
+         * Component's unique XPath.
+         */
         public String componentPath() {
             return componentPath;
         }
@@ -159,7 +178,8 @@ final class StudioPreviewComponentProvider {
             if (parser != null) {
                 return new SAXReader(parser.getXMLReader());
             }
-        } catch (SAXException ignored) {
+        } catch (SAXException e) {
+            console("Can not create SAXReader", e);
         }
         return null;
     }
@@ -174,6 +194,7 @@ final class StudioPreviewComponentProvider {
             parser = factory.newSAXParser();
             xmlReader = parser.getXMLReader();
         } catch (ParserConfigurationException | SAXException e) {
+            console("Can not create SAXParser", e);
             return null;
         }
 
@@ -198,7 +219,22 @@ final class StudioPreviewComponentProvider {
                                          final boolean value) {
         try {
             reader.setFeature(featureName, value);
-        } catch (SAXNotSupportedException | SAXNotRecognizedException ignored) {
+        } catch (SAXNotSupportedException | SAXNotRecognizedException e) {
+            console("Can not set feature for XMLReader:\n", e);
         }
+    }
+
+    private static void console(String text) {
+        console(text, null);
+    }
+
+    private static void console(String text, @Nullable Throwable throwable) {
+        final String stacktrace;
+        if (throwable != null) {
+            stacktrace = Arrays.toString(throwable.getStackTrace());
+        } else {
+            stacktrace = "";
+        }
+        System.out.print(text + StringUtils.defaultString(stacktrace));
     }
 }

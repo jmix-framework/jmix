@@ -16,7 +16,6 @@
 
 package io.jmix.quartzflowui;
 
-import com.vaadin.flow.component.page.Push;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;

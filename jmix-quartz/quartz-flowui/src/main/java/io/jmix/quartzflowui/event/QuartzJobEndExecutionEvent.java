@@ -16,20 +16,19 @@
 
 package io.jmix.quartzflowui.event;
 
-import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
 import org.springframework.context.ApplicationEvent;
 
-public class QuartzJobEndEvent extends ApplicationEvent {
+public class QuartzJobEndExecutionEvent extends ApplicationEvent {
 
-    protected JobDetail source;
+    protected JobExecutionContext jobExecutionContext;
 
-    public QuartzJobEndEvent(JobDetail source) {
-        super(source);
-        this.source = source;
+    public QuartzJobEndExecutionEvent(JobExecutionContext context) {
+        super(context);
+        this.jobExecutionContext = context;
     }
 
-    @Override
-    public JobDetail getSource() {
-        return source;
+    public JobExecutionContext getJobExecutionContext() {
+        return jobExecutionContext;
     }
 }

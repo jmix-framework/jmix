@@ -36,7 +36,6 @@ import java.util.Collections;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {QuartzConfiguration.class, FlowuiConfiguration.class})
 @PropertySource(name = "io.jmix.quartzflowui", value = "classpath:/io/jmix/quartzflowui/module.properties")
-@Push
 public class QuartzFlowUiConfiguration {
 
     @Bean("flowui_quartz_QuartzViewControllers")

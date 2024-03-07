@@ -441,12 +441,4 @@ public class QuartzService {
             return false;
         }
     }
-
-    public void addTriggerListener(TriggerListener triggerListener) {
-        try {
-            scheduler.getListenerManager().addTriggerListener(triggerListener);
-        } catch (SchedulerException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

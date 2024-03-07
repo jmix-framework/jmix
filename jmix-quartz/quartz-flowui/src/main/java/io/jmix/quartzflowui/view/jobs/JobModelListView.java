@@ -46,10 +46,9 @@ import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
-import io.jmix.quartzflowui.event.QuartzJobEndEvent;
-import io.jmix.quartzflowui.event.QuartzJobStartEvent;
+import io.jmix.quartzflowui.event.QuartzJobEndExecutionEvent;
+import io.jmix.quartzflowui.event.QuartzJobStartExecutionEvent;
 import org.apache.commons.collections4.CollectionUtils;
-import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
@@ -153,24 +152,24 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     protected void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof QuartzJobStartEvent jobStartEvent) {
-            onJobStartEvent(jobStartEvent);
-        } else if (event instanceof QuartzJobEndEvent jobEndEvent) {
-            onJobEndEvent(jobEndEvent);
+        if (event instanceof QuartzJobStartExecutionEvent jobStartEvent) {
+            onJobStartExecutionEvent(jobStartEvent);
+        } else if (event instanceof QuartzJobEndExecutionEvent jobEndEvent) {
+            onJobEndExecutionEvent(jobEndEvent);
         }
     }
 
-    protected void onJobStartEvent(QuartzJobStartEvent event) {
+    protected void onJobStartExecutionEvent(QuartzJobStartExecutionEvent event) {
         jobModelsDc.getItems().stream().filter(jobModel ->
                 JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
-                .equals(event.getSource().getKey())).findAny()
+                .equals(event.getJobExecutionContext().getJobDetail().getKey())).findAny()
             .ifPresent(item -> item.setJobState(JobState.RUNNING));
     }
 
-    protected void onJobEndEvent(QuartzJobEndEvent event) {
+    protected void onJobEndExecutionEvent(QuartzJobEndExecutionEvent event) {
         jobModelsDc.getItems().stream().filter(jobModel ->
                 JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
-                .equals(event.getSource().getKey())).findAny()
+                .equals(event.getJobExecutionContext().getJobDetail().getKey())).findAny()
             .ifPresent(item -> item.setJobState(JobState.NORMAL));
     }
 

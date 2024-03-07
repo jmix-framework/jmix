@@ -60,14 +60,14 @@ public class JobExecutionListener extends JobListenerSupport {
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
         log.debug("jobToBeExecuted: {}", context);
-        uiEventPublisher.publishEventForUsers(new QuartzJobStartEvent(context.getJobDetail()), null);
+        uiEventPublisher.publishEventForUsers(new QuartzJobStartExecutionEvent(context), null);
     }
 
     @Override
     public void jobWasExecuted(JobExecutionContext context,
                                JobExecutionException jobException) {
         log.debug("jobWasExecuted: {}", context);
-        uiEventPublisher.publishEventForUsers(new QuartzJobEndEvent(context.getJobDetail()), null);
+        uiEventPublisher.publishEventForUsers(new QuartzJobEndExecutionEvent(context), null);
     }
 
 

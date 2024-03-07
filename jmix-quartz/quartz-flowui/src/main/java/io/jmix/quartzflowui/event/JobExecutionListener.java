@@ -35,7 +35,7 @@ public class JobExecutionListener extends JobListenerSupport {
 
     private static final Logger log = LoggerFactory.getLogger(JobExecutionListener.class);
 
-    public static final String QUARTZ_JOB_EXECUTION_LISTENER = "QuartzJobExecutionListener";
+    public static final String QUARTZ_JOB_EXECUTION_LISTENER = "quartz_JobExecutionListener";
 
     @Autowired
     private Scheduler scheduler;

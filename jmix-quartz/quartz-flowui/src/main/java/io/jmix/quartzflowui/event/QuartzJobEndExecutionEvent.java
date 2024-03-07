@@ -17,15 +17,19 @@
 package io.jmix.quartzflowui.event;
 
 import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationEvent;
 
 public class QuartzJobEndExecutionEvent extends ApplicationEvent {
 
     protected JobExecutionContext jobExecutionContext;
 
-    public QuartzJobEndExecutionEvent(JobExecutionContext context) {
+    protected JobExecutionException jobException;
+
+    public QuartzJobEndExecutionEvent(JobExecutionContext context, JobExecutionException exception) {
         super(context);
         this.jobExecutionContext = context;
+        this.jobException = exception;
     }
 
     public JobExecutionContext getJobExecutionContext() {

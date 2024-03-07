@@ -67,7 +67,7 @@ public class JobExecutionListener extends JobListenerSupport {
     public void jobWasExecuted(JobExecutionContext context,
                                JobExecutionException jobException) {
         log.debug("jobWasExecuted: {}", context);
-        uiEventPublisher.publishEventForUsers(new QuartzJobEndExecutionEvent(context), null);
+        uiEventPublisher.publishEventForUsers(new QuartzJobEndExecutionEvent(context, jobException), null);
     }
 
 

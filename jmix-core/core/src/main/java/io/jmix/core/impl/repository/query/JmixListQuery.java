@@ -19,7 +19,6 @@ package io.jmix.core.impl.repository.query;
 import io.jmix.core.Sort;
 import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
-import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +34,21 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class JmixListQuery extends JmixStructuredQuery {
-    protected Sort staticSort;
+    protected FetchPlanRepository fetchPlanRepository;
 
-    private static final Logger log = LoggerFactory.getLogger(JmixStructuredQuery.class);
+    protected final Sort staticSort;
 
-    public JmixListQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
+    public JmixListQuery(DataManager dataManager,
+                         Metadata jmixMetadata,
+                         FetchPlanRepository fetchPlanRepository,
+                         Method method,
+                         RepositoryMetadata metadata,
+                         ProjectionFactory factory,
+                         PartTree qryTree) {
         super(dataManager, jmixMetadata, method, metadata, factory, qryTree);
-        staticSort = LoaderHelper.springToJmixSort(qryTree.getSort());
+
+        this.staticSort = LoaderHelper.springToJmixSort(qryTree.getSort());
+        this.fetchPlanRepository = fetchPlanRepository;
     }
 
     @Override
@@ -49,36 +56,26 @@ public class JmixListQuery extends JmixStructuredQuery {
         JmixDataRepositoryContext jmixDataRepositoryContext = jmixContextIndex == -1 ? null :
                 (JmixDataRepositoryContext) parameters[jmixContextIndex];
 
-        if (jmixDataRepositoryContext != null && jmixDataRepositoryContext.condition() != null) {
-            conditions = LogicalCondition.and(conditions, jmixDataRepositoryContext.condition());
-        }
+        LoadContext<?> loadContext = prepareStructuredQueryContext(parameters);
 
-        FluentLoader.ByCondition<?> loader = dataManager.load(metadata.getDomainType())
-                .condition(conditions)
-                .hints(queryHints)
-                .parameters(buildNamedParametersMap(parameters));
-
-        if (fetchPlanIndex != -1) {
-            loader.fetchPlan((FetchPlan) parameters[fetchPlanIndex]);
+        if (fetchPlanIndex != -1 && parameters[fetchPlanIndex] != null) {
+            loadContext.setFetchPlan((FetchPlan) parameters[fetchPlanIndex]);
         } else if (jmixDataRepositoryContext != null && jmixDataRepositoryContext.fetchPlan() != null) {
-            loader.fetchPlan(jmixDataRepositoryContext.fetchPlan());
+            loadContext.setFetchPlan(jmixDataRepositoryContext.fetchPlan());
         } else {
-            loader.fetchPlan(fetchPlan);
-        }
-
-        if (jmixDataRepositoryContext != null) {
-            loader.hints(jmixDataRepositoryContext.hints());
+            loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(metadata.getDomainType(), fetchPlanByAnnotation));
         }
 
         if (maxResults != null) {
-            loader.maxResults(maxResults);
+            //noinspection DataFlowIssue
+            loadContext.getQuery().setMaxResults(maxResults);
         }
 
-        considerSorting(loader, parameters);
-        return processAccordingToReturnType(loader, parameters);
+        considerSorting(loadContext, parameters);
+        return processAccordingToReturnType(loadContext, parameters);
     }
 
-    protected void considerSorting(FluentLoader.ByCondition<?> loader, Object[] parameters) {
+    protected void considerSorting(LoadContext<?> loadContext, Object[] parameters) {
         List<Sort.Order> orders = new LinkedList<>();
 
         if (staticSort != null) {
@@ -91,11 +88,12 @@ public class JmixListQuery extends JmixStructuredQuery {
         if (pageableIndex != -1) {
             orders.addAll(LoaderHelper.springToJmixSort(((Pageable) parameters[pageableIndex]).getSort()).getOrders());
         }
-        loader.sort(Sort.by(orders));
+        //noinspection DataFlowIssue
+        loadContext.getQuery().setSort(Sort.by(orders));
     }
 
     @Nullable
-    protected Object processAccordingToReturnType(FluentLoader.ByCondition<?> loader, Object[] parameters) {
+    protected Object processAccordingToReturnType(LoadContext<?> loadContext, Object[] parameters) {
         Class<?> returnType = method.getReturnType();
         if (Slice.class.isAssignableFrom(returnType)) {
             if (pageableIndex == -1) {
@@ -104,36 +102,24 @@ public class JmixListQuery extends JmixStructuredQuery {
 
             Pageable pageable = (Pageable) parameters[pageableIndex];
 
-            LoaderHelper.applyPageableForConditionLoader(loader, pageable);
+            LoaderHelper.applyPageableForLoadContext(loadContext, pageable);
 
             if (Page.class.isAssignableFrom(returnType)) {
-                String entityName = jmixMetadata.getClass(metadata.getDomainType()).getName();
-
-                String queryString = String.format("select e from %s e", entityName);
-
-                LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
-                        .setQuery(new LoadContext.Query(queryString)
-                                .setCondition(conditions)
-                                .setParameters(buildNamedParametersMap(parameters)))
-                        .setHints(queryHints);
-
-                long count = dataManager.getCount(context);
-
-                return new PageImpl(loader.list(), pageable, count);
+                long count = dataManager.getCount(loadContext);
+                return new PageImpl<>(dataManager.loadList(loadContext), pageable, count);
             } else {
 
                 if (pageable.isPaged())
-                    loader.maxResults(pageable.getPageSize() + 1);
+                    loadContext.getQuery().setMaxResults(pageable.getPageSize() + 1);// have to load additional one to know whether next results present
 
-                List<?> results = loader.list();
+                List<?> results = dataManager.loadList(loadContext);
                 boolean hasNext = pageable.isPaged() && results.size() > pageable.getPageSize();
 
                 return new SliceImpl(hasNext ? results.subList(0, pageable.getPageSize()) : results, pageable, hasNext);
             }
-
         }
 
-        List<?> result = loader.list();
+        List<?> result = dataManager.loadList(loadContext);
 
         if (returnType.isAssignableFrom(metadata.getDomainType())
                 || Optional.class.isAssignableFrom(returnType)) {

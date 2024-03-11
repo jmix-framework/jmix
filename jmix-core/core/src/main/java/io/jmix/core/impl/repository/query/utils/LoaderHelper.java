@@ -17,17 +17,31 @@
 package io.jmix.core.impl.repository.query.utils;
 
 import io.jmix.core.FluentLoader;
+import io.jmix.core.LoadContext;
 import io.jmix.core.Sort;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.lang.Nullable;
+
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
- * Utility class contains common methods to apply Spring Data repositories special query parameters on {@code FluentLoader}.
+ * Utility class contains common methods to apply and process Spring Data repositories special query parameters and annotations.
  */
 public class LoaderHelper {
+
+    @SuppressWarnings("DataFlowIssue")
+    public static void applyPageableForLoadContext(LoadContext<?> loadContext, Pageable pageable) {
+        if (pageable.isPaged()) {
+            loadContext.getQuery().setFirstResult((int) pageable.getOffset());
+            loadContext.getQuery().setMaxResults(pageable.getPageSize());
+        }
+    }
+
     public static <T> FluentLoader.ByCondition<T> applyPageableForConditionLoader(FluentLoader.ByCondition<T> loader, Pageable pageable) {
         if (pageable.isPaged()) {
             loader.firstResult((int) pageable.getOffset())
@@ -58,5 +72,32 @@ public class LoaderHelper {
         return Sort.UNSORTED;
     }
 
+    public static org.springframework.data.domain.Sort jmixToSpringSort(@Nullable Sort sort) {
+        if (sort != null && !sort.getOrders().isEmpty()) {
+            List<org.springframework.data.domain.Sort.Order> orders = new LinkedList<>();
+            for (Sort.Order order : sort.getOrders()) {
+                orders.add(order.getDirection() == Sort.Direction.DESC
+                        ? org.springframework.data.domain.Sort.Order.desc(order.getProperty())
+                        : org.springframework.data.domain.Sort.Order.asc(order.getProperty()));
+            }
+            return org.springframework.data.domain.Sort.by(orders);
+        }
 
+        return org.springframework.data.domain.Sort.unsorted();
+    }
+
+    /**
+     * Parses string value to boolean for known jmix hints.
+     * @return boolean representation or the same value if hint is unknown
+     */
+    public static Serializable parseHint(String name, Serializable value){
+        if (value instanceof String stringValue) {
+            return switch (name) {
+                case "jmix.softDeletion", "jmix.dynattr", "jmix.cacheable" -> Boolean.parseBoolean(stringValue);
+                default -> stringValue;
+            };
+        }
+
+        return value;
+    }
 }

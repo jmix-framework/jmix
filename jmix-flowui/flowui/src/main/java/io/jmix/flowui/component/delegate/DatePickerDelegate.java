@@ -52,7 +52,9 @@ public class DatePickerDelegate<V extends Comparable>
     }
 
     @Override
-    protected void setupProperties(EntityValueSource<?, V> valueSource) {
-        dataAwareComponentsTools.setupRange(component, valueSource);
+    protected void setupProperties(ValueSource<V> valueSource) {
+        if (valueSource instanceof EntityValueSource<?,?> entityValueSource) {
+            dataAwareComponentsTools.setupRange(component, entityValueSource);
+        }
     }
 }

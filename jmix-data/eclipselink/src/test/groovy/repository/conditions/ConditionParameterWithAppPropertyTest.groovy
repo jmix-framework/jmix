@@ -16,29 +16,28 @@
 
 package repository.conditions
 
-import io.jmix.core.CoreConfiguration
 import io.jmix.core.CoreProperties
 import io.jmix.core.DataManager
 import io.jmix.core.querycondition.JpqlCondition
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
-import io.jmix.data.DataConfiguration
-import io.jmix.eclipselink.EclipselinkConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import test_support.DataSpec
-import test_support.DataTestConfiguration
-import test_support.TestContextInititalizer
-import test_support.entity.repository.Address
 import test_support.entity.repository.Customer
 import test_support.repository.CustomerRepository
 
 import static io.jmix.core.querycondition.PropertyCondition.Operation.EQUAL
+import static io.jmix.core.querycondition.PropertyCondition.Operation.EQUAL
+import static io.jmix.core.repository.JmixDataRepositoryContext.of
+import static io.jmix.core.repository.JmixDataRepositoryContext.of
+import static io.jmix.core.repository.JmixDataRepositoryContext.of
 import static io.jmix.core.repository.JmixDataRepositoryContext.of
 
-class ConditionParameterTest extends DataSpec {
+@TestPropertySource(properties = ["jmix.core.skip-null-or-empty-conditions-by-default=true"])
+class ConditionParameterWithAppPropertyTest extends DataSpec {
+
     @Autowired
     protected CustomerRepository customerRepository
     @Autowired
@@ -66,9 +65,10 @@ class ConditionParameterTest extends DataSpec {
         customerRepository.deleteAll()
     }
 
-    void "Conditions skipping in findAll for manual skipNullOrEmpty setting"() {
+    void "Simple conditions always skipping if skip-null-or-empty-conditions-by-default is true"() {
         expect:
         List<Customer> customers = customerRepository.findAll(Sort.by("name")).toList()
+        customers.size() == 3
         customers[0].name == null
         customers[1].name == ""
         customers[2].name == "fullNamedCustomer"
@@ -77,8 +77,7 @@ class ConditionParameterTest extends DataSpec {
         def result1 = customerRepository.findAll(of(PropertyCondition
                 .createWithValue("name", EQUAL, null)))
         then:
-        result1.size() == 1
-        result1[0].name == null
+        result1.size() == 3
 
         when:
         def result2 = customerRepository.findAll(of(PropertyCondition
@@ -91,8 +90,7 @@ class ConditionParameterTest extends DataSpec {
         def result3 = customerRepository.findAll(of(JpqlCondition
                 .createWithParameters('e.name=:name', null, Collections.singletonMap('name', null))))
         then:
-        result3.size() == 1
-        result3[0].name == null
+        result3.size() == 3
 
         when:
         def result4 = customerRepository.findAll(of(JpqlCondition
@@ -102,7 +100,7 @@ class ConditionParameterTest extends DataSpec {
         result4.size() == 3
     }
 
-    void "Conditions skipping in findAll for mixed skipNullOrEmpty setting"() {
+    void "Complex conditions always skipping if skip-null-or-empty-conditions-by-default is true"() {
         when:
         def result1 = customerRepository.findAll(of(
                 LogicalCondition.and(
@@ -111,8 +109,7 @@ class ConditionParameterTest extends DataSpec {
         ))
 
         then:
-        result1.size() == 1
-        result1[0].name == null
+        result1.size() == 2
 
         when:
         def result2 = customerRepository.findAll(of(LogicalCondition.and(
@@ -130,8 +127,7 @@ class ConditionParameterTest extends DataSpec {
                         PropertyCondition.createWithValue("note", EQUAL, "one"))))
 
         then:
-        result3.size() == 1
-        result3[0].name == null
+        result3.size() == 2
 
         when:
         coreProperties.skipNullOrEmptyConditionsByDefault

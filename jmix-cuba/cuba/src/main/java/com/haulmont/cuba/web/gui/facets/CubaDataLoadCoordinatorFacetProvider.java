@@ -18,6 +18,7 @@ package com.haulmont.cuba.web.gui.facets;
 
 import com.haulmont.cuba.gui.xml.layout.CubaLoaderConfig;
 import com.haulmont.cuba.web.gui.components.CubaDataLoadCoordinator;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.DataLoadCoordinator;
 import io.jmix.ui.facet.DataLoadCoordinatorFacetProvider;
@@ -37,6 +38,9 @@ public class CubaDataLoadCoordinatorFacetProvider extends DataLoadCoordinatorFac
     @Autowired
     private UiControllerReflectionInspector reflectionInspector;
 
+    @Autowired
+    private QueryParamValuesManager queryParamValuesManager;
+
     @SuppressWarnings("rawtypes")
     @Override
     public Class getFacetClass() {
@@ -45,7 +49,7 @@ public class CubaDataLoadCoordinatorFacetProvider extends DataLoadCoordinatorFac
 
     @Override
     public DataLoadCoordinator create() {
-        return new CubaDataLoadCoordinator(reflectionInspector);
+        return new CubaDataLoadCoordinator(reflectionInspector, queryParamValuesManager);
     }
 
     @Override

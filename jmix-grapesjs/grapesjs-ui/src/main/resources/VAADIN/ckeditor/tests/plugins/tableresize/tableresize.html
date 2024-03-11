@@ -1,0 +1,99 @@
+<textarea id="classic">
+	&lt;table border="1"&gt;
+		&lt;tbody&gt;
+			&lt;tr&gt;
+				&lt;td&gt;bar&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/tbody&gt;
+	&lt;/table&gt;
+</textarea>
+
+<div id="inline" contenteditable="true">
+	<table border="1" id="inside">
+		<tbody>
+			<tr>
+				<td>foo</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<div id="inline-overflow" contenteditable="true" style="width: 250px;overflow: hidden;">
+	<table border="1" style="width: 500px;">
+		<tr>
+			<td>Cell 1.1</td>
+			<td>Cell 1.2</td>
+		</tr>
+		<tr>
+			<td>Cell 2.1</td>
+			<td>Cell 2.2</td>
+		</tr>
+	</table>
+</div>
+
+<textarea id="classic-overflow">
+	&lt;table border="1" style="width: 500px;"&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Cell 1.1&lt;/td&gt;
+			&lt;td&gt;Cell 1.2&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Cell 2.1&lt;/td&gt;
+			&lt;td&gt;Cell 2.2&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/table&gt;
+</textarea>
+
+<table border="1" id="outside">
+	<tbody>
+		<tr>
+			<td>foo</td>
+		</tr>
+	</tbody>
+</table>
+
+<table>
+	<tbody>
+	<tr>
+		<td>
+			<div id="intable" contenteditable="true">
+				<h1>Foo</h1>
+			</div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<textarea id="undo">
+	&lt;table border="1"&gt;
+		&lt;tbody&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/tbody&gt;
+	&lt;/table&gt;
+</textarea>
+
+<table id="empty" border="1" style="width:500px">
+	<tbody> </tbody>
+</table>
+
+<table id="headeronly">
+	<thead>
+		<tr>
+			<td>1</td>
+			<td>2</td>
+			<td>3</td>
+		</tr>
+	</thead>
+</table>
+
+<table id="footeronly">
+	<tfoot>
+		<tr>
+			<td>1</td>
+			<td>2</td>
+			<td>3</td>
+		</tr>
+	</tfoot>
+</table>

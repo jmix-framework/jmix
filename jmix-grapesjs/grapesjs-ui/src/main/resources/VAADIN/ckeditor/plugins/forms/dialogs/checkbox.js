@@ -1,9 +1,156 @@
-﻿/*
- Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
- For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
-*/
-CKEDITOR.dialog.add("checkbox",function(d){return{title:d.lang.forms.checkboxAndRadio.checkboxTitle,minWidth:350,minHeight:140,getModel:function(a){return(a=a.getSelection().getSelectedElement())&&"checkbox"==a.getAttribute("type")?a:null},onShow:function(){var a=this.getModel(this.getParentEditor());a&&this.setupContent(a)},onOk:function(){var a=this.getParentEditor(),b=this.getModel(a);b||(b=a.document.createElement("input"),b.setAttribute("type","checkbox"),a.insertElement(b));this.commitContent({element:b})},
-contents:[{id:"info",label:d.lang.forms.checkboxAndRadio.checkboxTitle,title:d.lang.forms.checkboxAndRadio.checkboxTitle,startupFocus:"txtName",elements:[{id:"txtName",type:"text",label:d.lang.common.name,"default":"",accessKey:"N",setup:function(a){this.setValue(a.data("cke-saved-name")||a.getAttribute("name")||"")},commit:function(a){a=a.element;this.getValue()?a.data("cke-saved-name",this.getValue()):(a.data("cke-saved-name",!1),a.removeAttribute("name"))}},{id:"txtValue",type:"text",label:d.lang.forms.checkboxAndRadio.value,
-"default":"",accessKey:"V",setup:function(a){a=a.getAttribute("value");this.setValue(CKEDITOR.env.ie&&"on"==a?"":a)},commit:function(a){var b=a.element,c=this.getValue();!c||CKEDITOR.env.ie&&"on"==c?CKEDITOR.env.ie?(c=new CKEDITOR.dom.element("input",b.getDocument()),b.copyAttributes(c,{value:1}),c.replace(b),d.getSelection().selectElement(c),a.element=c):b.removeAttribute("value"):b.setAttribute("value",c)}},{id:"cmbSelected",type:"checkbox",label:d.lang.forms.checkboxAndRadio.selected,"default":"",
-accessKey:"S",value:"checked",setup:function(a){this.setValue(a.getAttribute("checked"))},commit:function(a){var b=a.element;if(CKEDITOR.env.ie){var c=!!b.getAttribute("checked"),e=!!this.getValue();c!=e&&(c=CKEDITOR.dom.element.createFromHtml('\x3cinput type\x3d"checkbox"'+(e?' checked\x3d"checked"':"")+"/\x3e",d.document),b.copyAttributes(c,{type:1,checked:1}),c.replace(b),d.getSelection().selectElement(c),a.element=c)}else a=this.getValue(),CKEDITOR.env.webkit&&(b.$.checked=a),a?b.setAttribute("checked",
-"checked"):b.removeAttribute("checked")}},{id:"required",type:"checkbox",label:d.lang.forms.checkboxAndRadio.required,"default":"",accessKey:"Q",value:"required",setup:CKEDITOR.plugins.forms._setupRequiredAttribute,commit:function(a){a=a.element;this.getValue()?a.setAttribute("required","required"):a.removeAttribute("required")}}]}]}});
+/**
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ */
+
+CKEDITOR.dialog.add( 'checkbox', function( editor ) {
+	return {
+		title: editor.lang.forms.checkboxAndRadio.checkboxTitle,
+		minWidth: 350,
+		minHeight: 140,
+		getModel: function( editor ) {
+			var element = editor.getSelection().getSelectedElement();
+
+			if ( element && element.getAttribute( 'type' ) == 'checkbox' ) {
+				return element;
+			}
+
+			return null;
+		},
+		onShow: function() {
+			var element = this.getModel( this.getParentEditor() );
+
+			if ( element ) {
+				this.setupContent( element );
+			}
+		},
+		onOk: function() {
+			var editor = this.getParentEditor(),
+				element = this.getModel( editor );
+
+			if ( !element ) {
+				element = editor.document.createElement( 'input' );
+				element.setAttribute( 'type', 'checkbox' );
+				editor.insertElement( element );
+			}
+
+			this.commitContent( { element: element } );
+		},
+		contents: [ {
+			id: 'info',
+			label: editor.lang.forms.checkboxAndRadio.checkboxTitle,
+			title: editor.lang.forms.checkboxAndRadio.checkboxTitle,
+			startupFocus: 'txtName',
+			elements: [ {
+				id: 'txtName',
+				type: 'text',
+				label: editor.lang.common.name,
+				'default': '',
+				accessKey: 'N',
+				setup: function( element ) {
+					this.setValue( element.data( 'cke-saved-name' ) || element.getAttribute( 'name' ) || '' );
+				},
+				commit: function( data ) {
+					var element = data.element;
+
+					// IE failed to update 'name' property on input elements, protect it now.
+					if ( this.getValue() )
+						element.data( 'cke-saved-name', this.getValue() );
+					else {
+						element.data( 'cke-saved-name', false );
+						element.removeAttribute( 'name' );
+					}
+				}
+			},
+			{
+				id: 'txtValue',
+				type: 'text',
+				label: editor.lang.forms.checkboxAndRadio.value,
+				'default': '',
+				accessKey: 'V',
+				setup: function( element ) {
+					var value = element.getAttribute( 'value' );
+					// IE Return 'on' as default attr value.
+					this.setValue( CKEDITOR.env.ie && value == 'on' ? '' : value );
+				},
+				commit: function( data ) {
+					var element = data.element,
+						value = this.getValue();
+
+					if ( value && !( CKEDITOR.env.ie && value == 'on' ) )
+						element.setAttribute( 'value', value );
+					else {
+						if ( CKEDITOR.env.ie ) {
+							// Remove attribute 'value' of checkbox (https://dev.ckeditor.com/ticket/4721).
+							var checkbox = new CKEDITOR.dom.element( 'input', element.getDocument() );
+							element.copyAttributes( checkbox, { value: 1 } );
+							checkbox.replace( element );
+							editor.getSelection().selectElement( checkbox );
+							data.element = checkbox;
+						} else {
+							element.removeAttribute( 'value' );
+						}
+					}
+				}
+			},
+			{
+				id: 'cmbSelected',
+				type: 'checkbox',
+				label: editor.lang.forms.checkboxAndRadio.selected,
+				'default': '',
+				accessKey: 'S',
+				value: 'checked',
+				setup: function( element ) {
+					this.setValue( element.getAttribute( 'checked' ) );
+				},
+				commit: function( data ) {
+					var element = data.element;
+
+					if ( CKEDITOR.env.ie ) {
+						var isElementChecked = !!element.getAttribute( 'checked' ),
+							isChecked = !!this.getValue();
+
+						if ( isElementChecked != isChecked ) {
+							var replace = CKEDITOR.dom.element.createFromHtml( '<input type="checkbox"' + ( isChecked ? ' checked="checked"' : '' ) +
+								'/>', editor.document );
+
+							element.copyAttributes( replace, { type: 1, checked: 1 } );
+							replace.replace( element );
+							editor.getSelection().selectElement( replace );
+							data.element = replace;
+						}
+					} else {
+						var value = this.getValue();
+						// Blink/Webkit needs to change checked property, not attribute. (https://dev.ckeditor.com/ticket/12465)
+						if ( CKEDITOR.env.webkit ) {
+							element.$.checked = value;
+						}
+
+						if ( value ) {
+							element.setAttribute( 'checked', 'checked' );
+						}
+						else {
+							element.removeAttribute( 'checked' );
+						}
+					}
+				}
+			},
+			{
+				id: 'required',
+				type: 'checkbox',
+				label: editor.lang.forms.checkboxAndRadio.required,
+				'default': '',
+				accessKey: 'Q',
+				value: 'required',
+				setup: CKEDITOR.plugins.forms._setupRequiredAttribute,
+				commit: function( data ) {
+					var element = data.element;
+					if ( this.getValue() )
+						element.setAttribute( 'required', 'required' );
+					else
+						element.removeAttribute( 'required' );
+				}
+			} ]
+		} ]
+	};
+} );

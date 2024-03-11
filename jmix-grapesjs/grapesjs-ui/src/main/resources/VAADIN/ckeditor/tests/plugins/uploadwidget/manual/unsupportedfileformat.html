@@ -1,0 +1,22 @@
+<div id="editor"></div>
+
+<script>
+	// Older Internet Explorer can't properly recognize MIME types.
+	if ( bender.tools.env.mobile || ( CKEDITOR.env.ie && CKEDITOR.env.version < 11 ) ) {
+		bender.ignore();
+	}
+
+	CKEDITOR.replace( 'editor', {
+		language: 'en',
+		uploadUrl: '%BASE_PATH%',
+		on: {
+			instanceReady: function( evt ) {
+				bender.tools.ignoreUnsupportedEnvironment( 'uploadwidget' );
+
+				CKEDITOR.fileTools.fileLoader.prototype.upload = function( url ) {
+					this.responseData = {};
+				};
+			},
+		}
+	} );
+</script>

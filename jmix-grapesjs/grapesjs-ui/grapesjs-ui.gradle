@@ -23,31 +23,19 @@ archivesBaseName = 'jmix-grapesjs-ui'
 dependencies {
     api project(':ui')
 
-    api ('org.webjars.npm:grapesjs') {
-        exclude group: 'org.webjars.npm', module: 'keymaster'
-        exclude group: 'org.webjars.npm', module: 'cash-dom'
-        exclude group: 'org.webjars.npm', module: 'babel__runtime'
-    }
-    api 'org.webjars.bower:keymaster'
-    api 'org.webjars.npm:babel__runtime'
-    api 'org.webjars.npm:github-com-kenwheeler-cash'
+    api 'org.webjars.npm:grapesjs'
     api 'org.webjars.npm:grapesjs-plugin-ckeditor'
     api 'org.webjars.npm:grapesjs-custom-code'
     api 'org.webjars.npm:grapesjs-tabs'
-    api 'org.webjars.npm:grapesjs-touch'
     api 'org.webjars.npm:grapesjs-parser-postcss'
     api 'org.webjars.npm:grapesjs-preset-webpage'
-    api('org.webjars.npm:github-com-artf-grapesjs-preset-newsletter') {
-        exclude group: 'org.webjars.npm', module: 'slick'
-    }
+    api 'org.webjars.npm:grapesjs-preset-newsletter'
     api 'org.webjars.npm:grapesjs-blocks-basic'
     api 'org.webjars.npm:grapesjs-blocks-flexbox'
     api 'org.webjars.npm:grapesjs-tui-image-editor'
     api 'org.webjars.npm:grapesjs-plugin-forms'
     api 'org.webjars.npm:grapesjs-style-filter'
     api 'org.webjars.npm:grapesjs-tooltip'
-
-    api 'org.webjars.bowergithub.mootools:slick'
 }
 
 jar.manifest {

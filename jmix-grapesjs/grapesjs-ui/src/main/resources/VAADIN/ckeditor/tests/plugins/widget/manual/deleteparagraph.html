@@ -1,0 +1,19 @@
+<div id="editor">
+	<p>&nbsp;</p>
+	<figure class="image">
+		<img alt="alternate" width="100" height="50" src="../_assets/bar.png" />
+		<figcaption>I&#39;m a description</figcaption>
+	</figure>
+    <pre><code class="language-javascript">//Hello another world!</code></pre>
+	<p>&nbsp;</p>
+</div>
+<script>
+	// (#4705).
+	if ( bender.tools.env.mobile ) {
+		bender.ignore();
+	}
+
+	CKEDITOR.replace( 'editor', {
+		height: 300
+	} );
+</script>

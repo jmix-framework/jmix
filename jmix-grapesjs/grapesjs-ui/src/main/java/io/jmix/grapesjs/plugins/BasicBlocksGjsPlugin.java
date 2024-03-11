@@ -24,6 +24,6 @@ public class BasicBlocksGjsPlugin extends GjsPlugin {
     public static final String XSD_CODE = "basicBlocks";
 
     public BasicBlocksGjsPlugin() {
-        super("grapesjs-blocks-basic", null);
+        super("gjs-blocks-basic", null);
     }
 }

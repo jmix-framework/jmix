@@ -23,6 +23,6 @@ public class WebpageGjsPlugin extends GjsPlugin {
     public static final String XSD_CODE = "webpage";
 
     public WebpageGjsPlugin(String options) {
-        super("gjs-preset-webpage", options);
+        super("grapesjs-preset-webpage", options);
     }
 }

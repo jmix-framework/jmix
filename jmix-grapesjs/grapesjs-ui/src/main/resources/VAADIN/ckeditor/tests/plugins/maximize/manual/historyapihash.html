@@ -1,0 +1,24 @@
+<div id="editor">
+	<p>Hi, I am just a test editor!</p>
+</div>
+<button id="history-pusher">Push history</button>
+
+<script>
+	( function() {
+		if ( bender.tools.env.mobile ) {
+			bender.ignore();
+		}
+
+		if ( !( 'onhashchange' in window ) ) {
+			return bender.ignore();
+		}
+
+		CKEDITOR.document.getById( 'history-pusher' ).on( 'click', function() {
+			location.hash = '#/test';
+		} );
+
+		CKEDITOR.replace( 'editor', {
+			maximize_historyIntegration: 2
+		} );
+	} )();
+</script>

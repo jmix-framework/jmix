@@ -450,7 +450,8 @@ public interface StudioElements {
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
+                            componentRefTags = "genericFilter", required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "configurationParam", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "conditionParam", type = StudioPropertyType.STRING)
@@ -562,7 +563,8 @@ public interface StudioElements {
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/pagination.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
+                            componentRefTags = {"simplePagination"}, required = true),
                     @StudioProperty(xmlAttribute = "firstResultParam", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "maxResultsParam", type = StudioPropertyType.STRING)
@@ -577,7 +579,8 @@ public interface StudioElements {
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
+                            componentRefTags = "propertyFilter", required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
             }

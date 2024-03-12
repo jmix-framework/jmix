@@ -82,4 +82,10 @@ public @interface StudioProperty {
      * @return name of the type parameter
      */
     String typeParameter() default "";
+
+    /**
+     * Specifies component tags that will be taken into account
+     * when searching for a reference (if {@code type} equals {@link StudioPropertyType#COMPONENT_REF})
+     */
+    String[] componentRefTags() default {};
 }

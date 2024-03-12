@@ -945,7 +945,8 @@ public interface StudioElements {
             xmlElement = "menuItem",
             target = {"io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility"},
             properties = {
-                    @StudioProperty(xmlAttribute = "refColumn", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "refColumn", type = StudioPropertyType.COMPONENT_REF,
+                            componentRefTags = {"column"}, required = true),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
             }
     )

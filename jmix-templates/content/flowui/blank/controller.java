@@ -1,6 +1,6 @@
 package ${packageName};
 
-<%if (!api.jmixProjectModule.isApplication()) {%>
+<%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%>
 import io.jmix.flowui.view.DefaultMainViewParent;
 <%} else {%>
 import ${routeLayout.getControllerFqn()};
@@ -17,7 +17,7 @@ import io.jmix.flowui.view.ViewDescriptor;
 
 <%if (classComment) {%>
         ${classComment}
-<%}%>@Route(value = "${route}", layout = <%if (!api.jmixProjectModule.isApplication()) {%> DefaultMainViewParent.class <%} else {%>${routeLayout.getControllerClassName()}.class<%}%>)
+<%}%>@Route(value = "${route}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent.class <%} else {%>${routeLayout.getControllerClassName()}.class<%}%>)
 @ViewController("${id}")
 @ViewDescriptor("${descriptorName}.xml")
 public class ${controllerName} extends ${superClass} {

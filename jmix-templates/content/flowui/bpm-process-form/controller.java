@@ -20,10 +20,10 @@ def processHandlers = api.processSnippet('bpm_handlers.xml',
      'api': api])
 %>package ${packageName};
 
-<%if (!api.jmixProjectModule.isApplication()) {%>
+<%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%>
 import io.jmix.flowui.view.DefaultMainViewParent;
 <%} else {%>
-import ${module_basePackage}.view.main.MainView;
+import ${routeLayout.getControllerFqn()};
 <%}%>import com.vaadin.flow.router.Route;
 import io.jmix.bpmflowui.processform.ProcessFormContext;
 import io.jmix.bpmflowui.processform.annotation.ProcessForm;
@@ -38,7 +38,7 @@ import io.jmix.flowui.view.ViewDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 ${processAnnotation}
-@Route(value = "${route}", layout = <%if (!api.jmixProjectModule.isApplication()) {%> DefaultMainViewParent.class <%} else {%>MainView.class<%}%>)
+@Route(value = "${route}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent.class <%} else {%>MainView.class<%}%>)
 @ViewController("${id}")
 @ViewDescriptor("${descriptorName}.xml")
 public class ${controllerName} extends ${superClass} {

@@ -1,6 +1,6 @@
 package ${packageName}
 
-import ${entity.fqn}<%if (!api.jmixProjectModule.isApplication()) {%>
+import ${entity.fqn}<%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%>
 import io.jmix.flowui.view.DefaultMainViewParent<%} else {%>
 import ${routeLayout.getControllerFqn()}
 <%}%>import com.vaadin.flow.router.Route
@@ -11,7 +11,7 @@ import io.jmix.flowui.view.Target
 
 <%if (classComment) {%>
 ${classComment}
-<%}%>@Route(value = "${detailRoute}/:id", layout = <%if (!api.jmixProjectModule.isApplication()) {%> DefaultMainViewParent::class <%} else {%>${routeLayout.getControllerClassName()}::class<%}%>)
+<%}%>@Route(value = "${detailRoute}/:id", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent::class <%} else {%>${routeLayout.getControllerClassName()}::class<%}%>)
 @ViewController("${detailId}")
 @ViewDescriptor("${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")

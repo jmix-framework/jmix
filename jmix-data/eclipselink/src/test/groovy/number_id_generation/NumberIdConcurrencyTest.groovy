@@ -194,10 +194,9 @@ class NumberIdConcurrencyTest extends DataSpec {
     }
 
     private long getCurrentSequenceValue() {
-        def sql = "select NEXT_VALUE from INFORMATION_SCHEMA.SYSTEM_SEQUENCES where SEQUENCE_NAME = '" + getSequenceName('test$NumberIdSingleTableRoot').toUpperCase() + "'"
+        def sql = sequenceSupport.getCurrentValueSql(getSequenceName('test$NumberIdSingleTableRoot'))
         def template = new JdbcTemplate(dataSource)
-        def rows = template.queryForList(sql)
-        return (rows[0]['NEXT_VALUE'] as long) - 1
+        return template.queryForObject(sql, Long.class)
     }
 
     private long countEntities() {

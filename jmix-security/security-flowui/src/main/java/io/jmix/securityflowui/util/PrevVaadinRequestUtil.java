@@ -45,6 +45,7 @@ import java.util.Optional;
  * @see <a href="https://github.com/jmix-framework/jmix/issues/2985">Jmix GitHub issue</a>
  */
 @Component
+@Deprecated(since = "2.2", forRemoval = true)
 public class PrevVaadinRequestUtil {
 
     @Autowired

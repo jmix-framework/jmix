@@ -34,18 +34,28 @@ def isComposition = attribute.hasAnnotation('Composition')
 def oneToOneAnn = attribute.getAnnotation('OneToOne')
 def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim()) || attribute.hasAnnotation('JoinTable')
 %>
-<% if (!isManyToMany || isOwnerAttr) {%>
+<% if (isOwnerAttr) {%>
 <h4 text="msg://${ownerEntity.packageName}/${ownerEntity.className}.${nestedDcProperty}"/>
 <hbox id="buttonsPanel" classNames="buttons-panel">
+    <% if (isManyToMany) {%>
+    <button action="${nestedDcProperty}DataGrid.add"/>
+    <button action="${nestedDcProperty}DataGrid.exclude"/>
+    <%} else {%>
     <button action="${nestedDcProperty}DataGrid.create"/>
     <% if (attribute.hasAnnotation('OneToMany')) {%>
     <button action="${nestedDcProperty}DataGrid.edit"/>
     <%}%>
     <button action="${nestedDcProperty}DataGrid.remove"/>
+    <%}%>
 </hbox>
 <% }%>
 <dataGrid id="${nestedDcProperty}DataGrid" dataContainer="${nestedDcProperty}Dc" width="100%" minHeight="20em">
-    <% if (!isManyToMany || isOwnerAttr) {%>
+<% if (isManyToMany && isOwnerAttr) {%>
+    <actions>
+        <action id="add" type="list_add"/>
+        <action id="exclude" type="list_exclude"/>
+    </actions>
+<%} else if (isOwnerAttr) {%>
     <actions>
         <action id="create" type="list_create">
             <properties>
@@ -61,7 +71,7 @@ def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim(
         <%}%>
         <action id="remove" type="list_remove"/>
     </actions>
-    <% }%>
+<%}%>
     <columns>
         <%columns.each {%>
             <column property="${it}"/>

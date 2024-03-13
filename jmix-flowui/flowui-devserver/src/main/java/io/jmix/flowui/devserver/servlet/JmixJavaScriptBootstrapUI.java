@@ -123,7 +123,8 @@ public class JmixJavaScriptBootstrapUI extends JavaScriptBootstrapUI {
     @Override
     public void connectClient(String clientElementTag,
                               String clientElementId,
-                              String flowRoute,
+                              String flowRoutePath,
+                              String flowRouteQuery,
                               String appShellTitle,
                               JsonValue historyState) {
         // do nothing

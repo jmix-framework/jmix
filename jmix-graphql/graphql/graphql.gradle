@@ -56,7 +56,7 @@ dependencies {
     testImplementation project(':security-data-starter')
     testImplementation project(':security-oauth2-starter')
 
-    testImplementation 'com.google.code.gson:gson:2.8.6'
+    testImplementation 'com.google.code.gson:gson'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.springframework.security:spring-security-test'

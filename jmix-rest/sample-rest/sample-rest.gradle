@@ -56,11 +56,13 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework:spring-webflux'
 
-    testImplementation 'com.squareup.retrofit2:converter-scalars:2.8.1'
+    testImplementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    testImplementation 'com.squareup.okio:okio:3.4.0'
 
     testImplementation 'io.rest-assured:rest-assured'
 
     testImplementation 'com.jayway.jsonpath:json-path'
+    testImplementation 'net.minidev:json-smart'
     testImplementation 'org.mockito:mockito-core:3.6.0'
 
     testImplementation 'org.apache.commons:commons-dbcp2'

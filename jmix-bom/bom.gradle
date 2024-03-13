@@ -268,8 +268,6 @@ dependencies {
         api 'org.apache.commons:commons-collections4:4.4'
         api 'org.apache.commons:commons-text:1.10.0'
         api 'org.apache.commons:commons-compress:1.26.0'
-        api 'org.apache.xmlgraphics:fop:2.9'
-        api 'org.apache.xmlgraphics:xmlgraphics-commons:2.9'
         api 'org.dom4j:dom4j:2.1.4'
         api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
         api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.9-7-jmix'
@@ -348,7 +346,9 @@ dependencies {
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
-        api 'org.apache.tika:tika-parsers:1.27'
+        api 'org.jsoup:jsoup:1.17.2'
+
+        api 'org.apache.tika:tika-parsers:1.28.5'
         api 'org.apache.logging.log4j:log4j-core:2.18.0'
 
         api 'org.webjars.bower:pivottable:2.21.0.jmix.0'
@@ -375,11 +375,11 @@ dependencies {
         api "org.apache.avalon.framework:avalon-framework-api:$avalonVersion"
         api "org.apache.avalon.framework:avalon-framework-impl:$avalonVersion"
 
-        def xmlgraphicsVersion = '2.8'
+        def xmlgraphicsVersion = '2.9'
         api "org.apache.xmlgraphics:fop:$xmlgraphicsVersion"
         api "org.apache.xmlgraphics:xmlgraphics-commons:$xmlgraphicsVersion"
 
-        def batikVersion = '1.16'
+        def batikVersion = '1.17'
         api "org.apache.xmlgraphics:batik-bridge:$batikVersion"
         api "org.apache.xmlgraphics:batik-svggen:$batikVersion"
         api "org.apache.xmlgraphics:batik-awt-util:$batikVersion"
@@ -440,11 +440,8 @@ dependencies {
         api 'xerces:xercesImpl:2.12.2'
         api 'com.hazelcast:hazelcast:5.3.6'
         api 'com.nimbusds:oauth2-oidc-sdk:9.43.4'
-        api 'xalan:xalan:2.7.3'
-        api 'xalan:serializer:2.7.3'
         api 'com.ibm.icu:icu4j:74.2'
         api 'com.fasterxml.jackson.core:jackson-core:2.16.1'
-        api 'com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10'
         api 'com.google.gwt:gwt-dev:2.10.0'
         api 'com.google.protobuf:protobuf-java:3.21.12'
         api 'org.yaml:snakeyaml:2.2'

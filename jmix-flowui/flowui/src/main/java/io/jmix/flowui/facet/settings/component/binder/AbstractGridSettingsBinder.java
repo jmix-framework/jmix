@@ -59,6 +59,9 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
                 Objects.requireNonNull(column);
 
                 if (sColumn.getWidth() != null) {
+                    // Changing the column width manually works only if flexGrow is 0.
+                    // If flexGrow is >=1 then the column width is 100px. So we consider that user didn't resize
+                    //  the column if its width is 100px. And we keep the flexGrow value in this case.
                     column.setFlexGrow(sColumn.getFlexGrow() > 0 && !"100px".equals(sColumn.getWidth())
                             ? 0
                             : sColumn.getFlexGrow());

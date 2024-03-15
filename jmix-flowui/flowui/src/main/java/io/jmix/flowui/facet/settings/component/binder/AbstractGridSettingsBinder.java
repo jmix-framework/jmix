@@ -65,6 +65,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
                     column.setFlexGrow(sColumn.getFlexGrow() > 0 && !"100px".equals(sColumn.getWidth())
                             ? 0
                             : sColumn.getFlexGrow());
+                            
                     column.setWidth(sColumn.getWidth());
                 }
                 if (sColumn.getVisible() != null) {

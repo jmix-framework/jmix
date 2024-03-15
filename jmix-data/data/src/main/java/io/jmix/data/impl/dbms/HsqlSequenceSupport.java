@@ -51,7 +51,7 @@ public class HsqlSequenceSupport implements SequenceSupport {
 
     @Override
     public String getCurrentValueSql(String sequenceName) {
-        return "select START_WITH from INFORMATION_SCHEMA.SYSTEM_SEQUENCES where SEQUENCE_NAME = '"
+        return "select (cast(next_value as bigint) - 1) from INFORMATION_SCHEMA.SYSTEM_SEQUENCES where SEQUENCE_NAME = '"
                 + sequenceName.toUpperCase() + "'";
     }
 }

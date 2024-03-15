@@ -100,11 +100,22 @@ public final class UiComponentUtils {
                 if (innerComponent.isPresent()) {
                     return innerComponent;
                 }
-            } else if (component instanceof HasSubParts hasSubPartsComponent) {
+            }
+
+            if (component instanceof HasSubParts hasSubPartsComponent) {
                 Optional<Component> innerComponent = findSubPart(hasSubPartsComponent, id);
 
                 if (innerComponent.isPresent()) {
                     return innerComponent;
+                }
+
+                String[] elements = ValuePathHelper.parse(id);
+                if (sameId(component, elements[0])) {
+                    innerComponent = findSubPart(hasSubPartsComponent, ValuePathHelper.pathSuffix(elements));
+
+                    if (innerComponent.isPresent()) {
+                        return innerComponent;
+                    }
                 }
             }
 

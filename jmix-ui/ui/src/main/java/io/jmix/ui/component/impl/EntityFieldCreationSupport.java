@@ -138,9 +138,7 @@ public class EntityFieldCreationSupport {
 
         if (options != null || EntityComboBox.NAME.equals(componentName)) {
             EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.class);
-            entityComboBox.setOptions(options != null ?
-                    options :
-                    new ContainerOptions(createCollectionContainer(metaClass)));
+            entityComboBox.setMetaClass(metaClass);
 
             field = entityComboBox;
 

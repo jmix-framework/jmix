@@ -24,6 +24,7 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.DataLoader;
@@ -42,6 +43,7 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
     protected static final String TRUNCATED_CAPTION_STYLENAME = "truncated-caption";
 
     protected UiComponents uiComponents;
+    protected EntityFieldCreationSupport entityFieldCreationSupport;
 
     protected Label<String> captionLabel;
     protected HasValue<V> valueComponent;
@@ -68,6 +70,11 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
     @Autowired
     public void setUiComponents(UiComponents uiComponents) {
         this.uiComponents = uiComponents;
+    }
+
+    @Autowired
+    public void setEntityFieldCreationSupport(EntityFieldCreationSupport entityFieldCreationSupport) {
+        this.entityFieldCreationSupport = entityFieldCreationSupport;
     }
 
     @Autowired
@@ -303,6 +310,10 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
         }
 
         this.valueComponent = valueComponent;
+        if (this.valueComponent instanceof EntityComboBox) {
+            EntityComboBox entityComboBox = (EntityComboBox) (this.valueComponent);
+            entityComboBox.setOptions(new ContainerOptions(entityFieldCreationSupport.createCollectionContainer(entityComboBox.getMetaClass())));
+        }
         root.add(valueComponent);
 
         initValueComponent(valueComponent);

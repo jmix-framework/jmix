@@ -31,6 +31,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
@@ -46,12 +47,14 @@ import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
+import io.jmix.quartzflowui.cache.JobModelCache;
 import io.jmix.quartzflowui.event.QuartzJobEndExecutionEvent;
 import io.jmix.quartzflowui.event.QuartzJobStartExecutionEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.security.core.userdetails.User;
 
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -98,9 +101,16 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected MessageTools messageTools;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private JobModelCache jobsCache;
+    @Autowired
+    private CurrentAuthentication currentAuthentication;
+
+    private String jobsCacheKey;
 
     @Subscribe
     protected void onInit(View.InitEvent event) {
+        jobsCacheKey = ((User) currentAuthentication.getAuthentication().getPrincipal()).getUsername();
         initTable();
         initDataChangedEventListener();
     }
@@ -159,11 +169,24 @@ public class JobModelListView extends StandardListView<JobModel> {
         }
     }
 
+    protected void clearJobsCache() {
+        jobsCache.invalidate(jobsCacheKey);
+    }
+
+    protected void cacheJobs(List<JobModel> jobs) {
+        jobsCache.put(jobsCacheKey, jobs);
+    }
+
+    protected List<JobModel> getCachedJobs() {
+        return jobsCache.get(jobsCacheKey);
+    }
+
     protected void onJobStartExecutionEvent(QuartzJobStartExecutionEvent event) {
         jobModelsDc.getItems().stream().filter(jobModel ->
                 JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
                 .equals(event.getJobExecutionContext().getJobDetail().getKey())).findAny()
             .ifPresent(item -> item.setJobState(JobState.RUNNING));
+        cacheJobs(jobModelsDc.getItems());
     }
 
     protected void onJobEndExecutionEvent(QuartzJobEndExecutionEvent event) {
@@ -171,6 +194,7 @@ public class JobModelListView extends StandardListView<JobModel> {
                 JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
                 .equals(event.getJobExecutionContext().getJobDetail().getKey())).findAny()
             .ifPresent(item -> item.setJobState(JobState.NORMAL));
+        cacheJobs(jobModelsDc.getItems());
     }
 
     @Subscribe
@@ -179,7 +203,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         classFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         groupFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         jobStateFilter.addValueChangeListener(this::onFilterFieldValueChange);
-
+        clearJobsCache();
         loadJobsData();
     }
 
@@ -187,19 +211,21 @@ public class JobModelListView extends StandardListView<JobModel> {
         List<GridSortOrder<JobModel>> sorting = jobModelsTable.getSortOrder();
 
         Comparator<JobModel> jobModelComparator = createJobModelComparator(sorting);
-
-        List<JobModel> jobs = quartzService.getAllJobs().stream()
-                .filter(jobModel -> (Strings.isNullOrEmpty(nameFilter.getTypedValue())
-                        || containsIgnoreCase(jobModel.getJobName(), nameFilter.getTypedValue()))
-                        && (Strings.isNullOrEmpty(classFilter.getTypedValue())
-                        || containsIgnoreCase(jobModel.getJobClass(), classFilter.getTypedValue()))
-                        && (Strings.isNullOrEmpty(groupFilter.getTypedValue())
-                        || containsIgnoreCase(jobModel.getJobGroup(), groupFilter.getTypedValue()))
-                        && (jobStateFilter.getValue() == null
-                        || jobStateFilter.getValue().equals(jobModel.getJobState())))
-                .sorted(jobModelComparator)
-                .collect(Collectors.toList());
-
+        List<JobModel> jobs = getCachedJobs();
+        if (jobs == null) {
+            jobs = quartzService.getAllJobs().stream()
+                    .filter(jobModel -> (Strings.isNullOrEmpty(nameFilter.getTypedValue())
+                            || containsIgnoreCase(jobModel.getJobName(), nameFilter.getTypedValue()))
+                            && (Strings.isNullOrEmpty(classFilter.getTypedValue())
+                            || containsIgnoreCase(jobModel.getJobClass(), classFilter.getTypedValue()))
+                            && (Strings.isNullOrEmpty(groupFilter.getTypedValue())
+                            || containsIgnoreCase(jobModel.getJobGroup(), groupFilter.getTypedValue()))
+                            && (jobStateFilter.getValue() == null
+                            || jobStateFilter.getValue().equals(jobModel.getJobState())))
+                    .sorted(jobModelComparator)
+                    .collect(Collectors.toList());
+            cacheJobs(jobs);
+        }
         jobModelsDc.setItems(jobs);
         return jobs;
     }
@@ -290,6 +316,7 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     protected void updateDataWithSelection(JobModel selectedJobModel) {
+        clearJobsCache();
         List<JobModel> newJobs = loadJobsData();
         jobModelsTable.sort(jobModelsTable.getSortOrder());
         JobKey newJobKey = JobKey.jobKey(selectedJobModel.getJobName(), selectedJobModel.getJobGroup());
@@ -344,6 +371,7 @@ public class JobModelListView extends StandardListView<JobModel> {
                 .withConfirmation(true)
                 .beforeActionPerformed(e -> {
                     if (CollectionUtils.isNotEmpty(e.getItems())) {
+                        clearJobsCache();
                         JobModel jobToDelete = e.getItems().get(0);
                         quartzService.deleteJob(jobToDelete.getJobName(), jobToDelete.getJobGroup());
                         notifications.create(messageBundle.formatMessage("jobDeleted", jobToDelete.getJobName()))
@@ -357,16 +385,19 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @Subscribe("jobModelsTable.refresh")
     protected void onJobModelsTableRefresh(ActionPerformedEvent event) {
+        clearJobsCache();
         loadJobsData();
     }
 
     @Install(to = "jobModelsTable.create", subject = "afterSaveHandler")
     protected void jobModelsTableCreateAfterCommitHandler(JobModel jobModel) {
+        clearJobsCache();
         loadJobsData();
     }
 
     @Install(to = "jobModelsTable.edit", subject = "afterSaveHandler")
     protected void jobModelsTableEditAfterCommitHandler(JobModel jobModel) {
+        clearJobsCache();
         loadJobsData();
     }
 
@@ -379,6 +410,7 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     protected void onFilterFieldValueChange(ComponentEvent<?> event) {
+        clearJobsCache();
         loadJobsData();
     }
 }

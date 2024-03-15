@@ -17,6 +17,7 @@
 package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.FetchPlan;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.repository.query.Parameter;
 
@@ -31,6 +32,8 @@ public class JmixParameter extends Parameter {
 
     @Override
     public boolean isSpecialParameter() {
-        return super.isSpecialParameter() || FetchPlan.class.isAssignableFrom(getType());
+        return super.isSpecialParameter()
+                || FetchPlan.class.isAssignableFrom(getType())
+                || JmixDataRepositoryContext.class.isAssignableFrom(getType());
     }
 }

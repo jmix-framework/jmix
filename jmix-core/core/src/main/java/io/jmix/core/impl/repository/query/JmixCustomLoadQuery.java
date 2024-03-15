@@ -17,11 +17,10 @@
 package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.*;
+import io.jmix.core.Sort;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
-import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.core.repository.Query;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.*;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -29,14 +28,11 @@ import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.RepositoryQuery;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static io.jmix.core.impl.repository.query.utils.LoaderHelper.springToJmixSort;
 
 /**
  * {@link RepositoryQuery} for query methods annotated with {@link Query @Query}.
@@ -48,8 +44,15 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
 
     protected String query;
 
-    public JmixCustomLoadQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, String query) {
-        super(dataManager, jmixMetadata, method, metadata, factory);
+    public JmixCustomLoadQuery(DataManager dataManager,
+                               Metadata jmixMetadata,
+                               FetchPlanRepository fetchPlanRepository,
+                               List<QueryStringProcessor> queryStringProcessors,
+                               Method method,
+                               RepositoryMetadata metadata,
+                               ProjectionFactory factory,
+                               String query) {
+        super(dataManager, jmixMetadata, fetchPlanRepository, queryStringProcessors, method, metadata, factory);
         this.query = query;
         Matcher m = Pattern.compile(PARAMETER_TEMPLATE).matcher(query);
         Set<String> parameterNames = new HashSet<>();
@@ -82,81 +85,41 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
             parameterNames.add(paramName);
         }
 
-        if (parameterNames.size() > 0)
+        if (!parameterNames.isEmpty())
             matchQueryParameters(parameterNames, queryMethod.getParameters().getBindableParameters(), positionParametersFound);
     }
 
+    /**
+     * Builds {@link LoadContext} based on
+     * <ul>
+     *     <li>{@link Query}</li>
+     *     <li>{@link JmixDataRepositoryContext#condition()},</li>
+     *     <li>{@link io.jmix.core.repository.QueryHints},</li>
+     *     <li>{@link JmixDataRepositoryContext#hints()}.</li>
+     * </ul>
+     * <p>
+     * Suitable as is for count query.
+     *
+     * @param parameters query method parameters
+     * @return {@link LoadContext} with {@link LoadContext#getQuery()} not null
+     */
     @Override
-    public Object execute(Object[] parameters) {
-        UnconstrainedDataManager dataManager = getDataManager();
+    protected LoadContext<?> prepareQueryContext(Object[] parameters) {
+        String queryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, this.query, metadata.getDomainType());
+        LoadContext.Query lcQuery = new LoadContext.Query(queryString);
 
-        FluentLoader.ByQuery<?> query = dataManager
-                .load(metadata.getDomainType())
-                .query(this.query)
-                .parameters(buildNamedParametersMap(parameters))
-                .hints(queryHints);
-
-        JmixDataRepositoryContext jmixDataRepositoryContext = jmixContextIndex != -1 ? (JmixDataRepositoryContext) parameters[jmixContextIndex] : null;
-
-        if (fetchPlanIndex != -1) {
-            query.fetchPlan((FetchPlan) parameters[fetchPlanIndex]);
-        } else if (jmixDataRepositoryContext != null && jmixDataRepositoryContext.fetchPlan() != null) {
-            query.fetchPlan(jmixDataRepositoryContext.fetchPlan());
-        } else {
-            query.fetchPlan(fetchPlanByAnnotation);
-        }
-
-        if (sortIndex != -1) {
-            query.sort(LoaderHelper.springToJmixSort((Sort) parameters[sortIndex]));
-        }
-
-        FluentLoader.ByCondition<?> conditionQuery = null;
-
-        if (jmixDataRepositoryContext != null) {
-            query.hints(jmixDataRepositoryContext.hints());
-
+        if (jmixContextIndex != -1 && parameters[jmixContextIndex] != null) {
+            JmixDataRepositoryContext jmixDataRepositoryContext = (JmixDataRepositoryContext) parameters[jmixContextIndex];
             if (jmixDataRepositoryContext.condition() != null) {
-                conditionQuery = query.condition(jmixDataRepositoryContext.condition());
+                lcQuery.setCondition(jmixDataRepositoryContext.condition());
             }
         }
 
-        if (conditionQuery == null) {
-            conditionQuery = query.condition(LogicalCondition.and());
-        }
+        lcQuery.setParameters(buildNamedParametersMap(parameters));
 
-        return considerPagingAndProcess(conditionQuery, parameters);
-    }
-
-    protected Object considerPagingAndProcess(FluentLoader.ByCondition<?> loader, Object[] parameters) {
-        Class<?> returnType = method.getReturnType();
-        if (Slice.class.isAssignableFrom(returnType)) {
-            if (pageableIndex == -1) {
-                throw new DevelopmentException(String.format("Pageable parameter should be provided for method returns instance of Slice: %s", formatMethod(method)));
-            }
-
-            Pageable pageable = (Pageable) parameters[pageableIndex];
-
-            LoaderHelper.applyPageableForConditionLoader(loader, pageable);
-            loader.sort(springToJmixSort(pageable.getSort()));
-
-            if (Page.class.isAssignableFrom(returnType)) {
-                LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
-                        .setQuery(new LoadContext.Query(query)
-                                .setParameters(buildNamedParametersMap(parameters)))
-                        .setHints(queryHints);
-                long count = dataManager.getCount(context);
-                return new PageImpl(loader.list(), pageable, count);
-            } else {
-                if (pageable.isPaged())
-                    loader.maxResults(pageable.getPageSize() + 1);
-
-                List<?> results = loader.list();
-                boolean hasNext = pageable.isPaged() && results.size() > pageable.getPageSize();
-
-                return new SliceImpl(hasNext ? results.subList(0, pageable.getPageSize()) : results, pageable, hasNext);
-            }
-        }
-        return loader.list();
+        return new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
+                .setQuery(lcQuery)
+                .setHints(collectHints(parameters));
     }
 
     protected void matchQueryParameters(Set<String> parameterNames,

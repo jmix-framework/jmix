@@ -16,9 +16,7 @@
 
 package io.jmix.core.impl.repository.query;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.ConditionTransformer;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import io.jmix.core.querycondition.Condition;
@@ -50,8 +48,15 @@ public abstract class JmixStructuredQuery extends JmixAbstractQuery {
      */
     protected final Integer maxResults;
 
-    public JmixStructuredQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
-        super(dataManager, jmixMetadata, method, metadata, factory);
+    public JmixStructuredQuery(DataManager dataManager,
+                               Metadata jmixMetadata,
+                               FetchPlanRepository fetchPlanRepository,
+                               List<QueryStringProcessor> queryStringProcessors,
+                               Method method,
+                               RepositoryMetadata metadata,
+                               ProjectionFactory factory,
+                               PartTree qryTree) {
+        super(dataManager, jmixMetadata, fetchPlanRepository, queryStringProcessors, method, metadata, factory);
         List<String> parameterNames = new ArrayList<>();
         conditions = ConditionTransformer.fromPartTree(qryTree, parameterNames);
         distinct = qryTree.isDistinct();
@@ -83,28 +88,33 @@ public abstract class JmixStructuredQuery extends JmixAbstractQuery {
      * @param parameters query method parameters
      * @return {@link LoadContext} with {@link LoadContext#getQuery()} not null
      */
-    protected LoadContext<?> prepareStructuredQueryContext(Object[] parameters) {
-        Map<String, Serializable> hints = new HashMap<>(queryHints);
-
+    @Override
+    protected LoadContext<?> prepareQueryContext(Object[] parameters) {
         JmixDataRepositoryContext jmixDataRepositoryContext = jmixContextIndex != -1 ? (JmixDataRepositoryContext) parameters[jmixContextIndex] : null;
         Condition currentCallConditions = this.conditions;
         if (jmixDataRepositoryContext != null) {
             if (jmixDataRepositoryContext.condition() != null) {
                 currentCallConditions = LogicalCondition.and(currentCallConditions, jmixDataRepositoryContext.condition());
             }
-
-            jmixDataRepositoryContext.hints().forEach((name, value) ->
-                    hints.put(name, LoaderHelper.parseHint(name, value)));
         }
 
         String entityName = jmixMetadata.getClass(metadata.getDomainType()).getName();
 
         String queryString = String.format("select %s e from %s e", distinct ? "distinct" : "", entityName);
 
-        return new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
+        queryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, queryString, metadata.getDomainType());
+
+        LoadContext<?> loadContext = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
                 .setQuery(new LoadContext.Query(queryString)
                         .setCondition(currentCallConditions)
                         .setParameters(buildNamedParametersMap(parameters)))
-                .setHints(hints);
+                .setHints(collectHints(parameters));
+
+        if (maxResults != null) {
+            //noinspection DataFlowIssue
+            loadContext.getQuery().setMaxResults(maxResults);
+        }
+
+        return loadContext;
     }
 }

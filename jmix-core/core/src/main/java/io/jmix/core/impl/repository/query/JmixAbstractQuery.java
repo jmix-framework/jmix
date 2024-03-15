@@ -16,23 +16,27 @@
 
 package io.jmix.core.impl.repository.query;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.Metadata;
-import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
+import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import io.jmix.core.impl.repository.support.method_metadata.MethodMetadataHelper;
 import io.jmix.core.repository.ApplyConstraints;
 import io.jmix.core.repository.FetchPlan;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.data.domain.*;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.RepositoryQuery;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+
+import static io.jmix.core.Sort.*;
 
 /**
  * Query implementation for Jmix. If you need different types of queries, you can either extend this class or implement parent interface.
@@ -51,6 +55,8 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
      * {@link UnconstrainedDataManager} or {@link DataManager} will be chosen depending on {@link ApplyConstraints} annotation on method/repository or ancestor method/repository
      */
     protected UnconstrainedDataManager dataManager;
+    protected List<QueryStringProcessor> queryStringProcessors;
+    protected FetchPlanRepository fetchPlanRepository;
 
     protected Metadata jmixMetadata;
 
@@ -65,9 +71,15 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     protected final Map<String, Serializable> queryHints;
     protected final String fetchPlanByAnnotation;
 
-    public JmixAbstractQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
+    public JmixAbstractQuery(DataManager dataManager,
+                             Metadata jmixMetadata,
+                             FetchPlanRepository fetchPlanRepository,
+                             List<QueryStringProcessor> queryStringProcessors,
+                             Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
         this.method = method;
         this.metadata = metadata;
+        this.fetchPlanRepository = fetchPlanRepository;
+        this.queryStringProcessors = queryStringProcessors;
         this.factory = factory;
         this.queryMethod = getQueryMethod();
         this.jmixMetadata = jmixMetadata;
@@ -106,6 +118,96 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         sortIndex = parameters.getSortIndex();
         fetchPlanIndex = parameters.getFetchPlanIndex();
         jmixContextIndex = parameters.getJmixContextIndex();
+    }
+
+    protected void setupFetchPlan(LoadContext<?> loadContext, Object[] parameters) {
+        JmixDataRepositoryContext jmixDataRepositoryContext = jmixContextIndex != -1 ? (JmixDataRepositoryContext) parameters[jmixContextIndex] : null;
+        if (fetchPlanIndex != -1 && parameters[fetchPlanIndex] != null) {
+            loadContext.setFetchPlan((io.jmix.core.FetchPlan) parameters[fetchPlanIndex]);
+        } else if (jmixDataRepositoryContext != null && jmixDataRepositoryContext.fetchPlan() != null) {
+            loadContext.setFetchPlan(jmixDataRepositoryContext.fetchPlan());
+        } else {
+            loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(metadata.getDomainType(), fetchPlanByAnnotation));
+        }
+    }
+
+    protected List<Order> getSortFromParams(Object[] parameters) {
+        List<Order> orders = new LinkedList<>();
+
+        if (sortIndex != -1) {
+            orders.addAll(LoaderHelper.springToJmixSort((org.springframework.data.domain.Sort) parameters[sortIndex])
+                    .getOrders());
+        }
+        if (pageableIndex != -1) {
+            orders.addAll(LoaderHelper.springToJmixSort(((Pageable) parameters[pageableIndex]).getSort()).getOrders());
+        }
+        return orders;
+    }
+
+
+    protected Map<String, Serializable> collectHints(Object[] parameters) {
+        Map<String, Serializable> hints = new HashMap<>(queryHints);
+
+        if (jmixContextIndex != -1 && parameters[jmixContextIndex] != null) {
+            ((JmixDataRepositoryContext) parameters[jmixContextIndex]).hints().forEach((name, value) ->
+                    hints.put(name, LoaderHelper.parseHint(name, value)));
+        }
+        return hints;
+    }
+
+    @Override
+    public Object execute(Object[] parameters) {
+        LoadContext<?> loadContext = prepareQueryContext(parameters);
+        setupFetchPlan(loadContext, parameters);
+        loadContext.getQuery().setSort(by(getSortFromParams(parameters)));
+
+        return processAccordingToReturnType(loadContext, parameters);
+    }
+
+    protected abstract LoadContext<?> prepareQueryContext(Object[] parameters);
+
+    @Nullable
+    protected Object processAccordingToReturnType(LoadContext<?> loadContext, Object[] parameters) {
+        Class<?> returnType = method.getReturnType();
+        if (Slice.class.isAssignableFrom(returnType)) {
+            if (pageableIndex == -1) {
+                throw new DevelopmentException(String.format("Pageable parameter should be provided for method returns instance of Slice: %s", formatMethod(method)));
+            }
+
+            Pageable pageable = (Pageable) parameters[pageableIndex];
+
+            LoaderHelper.applyPageableForLoadContext(loadContext, pageable);
+
+            if (Page.class.isAssignableFrom(returnType)) {
+                long count = dataManager.getCount(loadContext.copy());
+                return new PageImpl<>(dataManager.loadList(loadContext), pageable, count);
+            } else {
+
+                if (pageable.isPaged())
+                    loadContext.getQuery().setMaxResults(pageable.getPageSize() + 1);// have to load additional one to know whether next results present
+
+                List<?> results = dataManager.loadList(loadContext);
+                boolean hasNext = pageable.isPaged() && results.size() > pageable.getPageSize();
+
+                return new SliceImpl(hasNext ? results.subList(0, pageable.getPageSize()) : results, pageable, hasNext);
+            }
+        }
+
+        List<?> result = dataManager.loadList(loadContext);
+
+        if (returnType.isAssignableFrom(metadata.getDomainType())
+                || Optional.class.isAssignableFrom(returnType)) {
+            if (result.size() > 1) {
+                throw new IncorrectResultSizeDataAccessException(1, result.size());
+            }
+            return result.size() == 1 ? result.iterator().next() : null;
+        }
+
+        if (Iterator.class.isAssignableFrom(returnType)) {
+            return result.iterator();
+        }
+
+        return result;
     }
 
     protected static String formatMethod(Method method) {

@@ -18,24 +18,34 @@ package io.jmix.core.impl.repository.query;
 
 
 import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
+import io.jmix.core.QueryStringProcessor;
 import jakarta.annotation.Nonnull;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 public class JmixCountQuery extends JmixStructuredQuery {
 
-    public JmixCountQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
-        super(dataManager, jmixMetadata, method, metadata, factory, qryTree);
+    public JmixCountQuery(DataManager dataManager,
+                          Metadata jmixMetadata,
+                          FetchPlanRepository fetchPlanRepository,
+                          List<QueryStringProcessor> queryStringProcessors,
+                          Method method,
+                          RepositoryMetadata metadata,
+                          ProjectionFactory factory,
+                          PartTree qryTree) {
+        super(dataManager, jmixMetadata, fetchPlanRepository, queryStringProcessors, method, metadata, factory, qryTree);
     }
 
     @Override
     @Nonnull
     public Object execute(Object[] parameters) {
-        return dataManager.getCount(prepareStructuredQueryContext(parameters));
+        return dataManager.getCount(prepareQueryContext(parameters));
     }
 
 

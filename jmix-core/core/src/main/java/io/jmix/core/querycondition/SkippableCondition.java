@@ -31,7 +31,7 @@ public abstract class SkippableCondition<T extends SkippableCondition<T>> implem
     /**
      * @param skipNullOrEmpty whether to skip this condition if parameter is absent, null or empty
      */
-    public void setSkipNullOrEmpty(boolean skipNullOrEmpty) {
+    public void setSkipNullOrEmpty(Boolean skipNullOrEmpty) {
         this.skipNullOrEmpty = skipNullOrEmpty;
     }
 

@@ -33,13 +33,24 @@ import java.util.function.Predicate;
  * Class is used by {@link io.jmix.gridexportflowui.action.ExportAction} for exporting all records from the database.
  */
 @Component("grdexp_ExcelAllRecordsExporter")
-public class ExcelAllRecordsExporter extends AbstractAllRecordsExporter {
+public class ExcelAllRecordsExporter {
+
+    public static final String KEYSET_EXPORT_STRATEGY = "keyset";
+    public static final String LIMIT_OFFSET_EXPORT_STRATEGY = "limit-offset";
+
+    protected MetadataTools metadataTools;
+    protected DataManager dataManager;
+    protected PlatformTransactionManager platformTransactionManager;
+    protected GridExportProperties gridExportProperties;
 
     public ExcelAllRecordsExporter(MetadataTools metadataTools,
                                    DataManager dataManager,
                                    PlatformTransactionManager platformTransactionManager,
                                    GridExportProperties gridExportProperties) {
-        super(metadataTools, dataManager, platformTransactionManager, gridExportProperties);
+        this.metadataTools = metadataTools;
+        this.dataManager = dataManager;
+        this.platformTransactionManager = platformTransactionManager;
+        this.gridExportProperties = gridExportProperties;
     }
 
     /**
@@ -66,7 +77,23 @@ public class ExcelAllRecordsExporter extends AbstractAllRecordsExporter {
                 return true;
             }
         };
-        exportAll(dataUnit, entityExporter);
+
+        getExcelRecordsExporter().exportAll(dataUnit, entityExporter);
+    }
+
+    private AbstractAllRecordsExporter getExcelRecordsExporter() {
+        AbstractAllRecordsExporter exporter;
+        String exportStrategy = gridExportProperties.getExcel().getExportStrategy();
+        if (KEYSET_EXPORT_STRATEGY.equals(exportStrategy)) {
+            exporter = new ExcelKeysetExporter(
+                    metadataTools, dataManager, platformTransactionManager, gridExportProperties);
+        } else if (LIMIT_OFFSET_EXPORT_STRATEGY.equals(exportStrategy)){
+            exporter = new ExcelLimitOffsetExporter(
+                    metadataTools, dataManager, platformTransactionManager, gridExportProperties);
+        } else {
+            throw new IllegalStateException(String.format("Unknown excel export strategy: %s", exportStrategy));
+        }
+        return exporter;
     }
 
     public static class RowCreationContext {

@@ -60,8 +60,15 @@ public class GridExportProperties {
          */
         boolean useSxssf;
 
-        public ExcelExporterProperties(@DefaultValue("true") boolean useSxssf) {
+        /**
+         * Choose appropriate strategy to export data to excel
+         */
+        String exportStrategy;
+
+        public ExcelExporterProperties(@DefaultValue("true") boolean useSxssf,
+                                       @DefaultValue("keyset") String exportStrategy) {
             this.useSxssf = useSxssf;
+            this.exportStrategy = exportStrategy;
         }
 
         /**
@@ -69,6 +76,10 @@ public class GridExportProperties {
          */
         public boolean isUseSxssf() {
             return useSxssf;
+        }
+
+        public String getExportStrategy() {
+            return exportStrategy;
         }
     }
 }

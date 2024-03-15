@@ -19,9 +19,9 @@ package test_support.repository;
 import io.jmix.core.repository.*;
 import io.jmix.data.PersistenceHints;
 import jakarta.persistence.QueryHint;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import test_support.entity.repository.SalesOrder;
 
 import java.util.List;
@@ -45,5 +45,24 @@ public interface OrderWithContextRepository extends JmixDataRepository<SalesOrde
     List<SalesOrder> findByQueryAndJDRC(int count, JmixDataRepositoryContext context);
 
 
+    @FetchPlan("SalesOrder.full")
+    @Query("select o from repository$SalesOrder o where o.count >= ?1")
+    List<SalesOrder> loadByCustomQuery(int minCount,
+                                       JmixDataRepositoryContext context,
+                                       io.jmix.core.FetchPlan fetchPlan);
 
+    @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
+    @Query("select o from repository$SalesOrder o where o.number like concat('%',?1)")
+    List<SalesOrder> loadByQueryWithHints(String numberPattern, JmixDataRepositoryContext context);
+
+    @Query("select r from repository$SalesOrder r where upper(r.number) like upper(:number)")
+    Page<SalesOrder> pageByNumberLikeIgnoreCase(JmixDataRepositoryContext context,
+                                                @Param("number") String number,
+                                                Pageable pageable);
+
+    Page<SalesOrder> findByNumberLikeIgnoreCase(String number,
+                                                JmixDataRepositoryContext context,
+                                                Pageable pageable);
+
+    void removeByNumberNotNull(JmixDataRepositoryContext context);
 }

@@ -29,6 +29,8 @@ import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 import org.springframework.lang.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class JmixRepositoryFactory extends RepositoryFactorySupport {
@@ -71,6 +73,7 @@ public class JmixRepositoryFactory extends RepositoryFactorySupport {
         return Optional.of(new JmixQueryLookupStrategy(
                 ctx.getBean(DataManager.class),
                 ctx.getBean(Metadata.class),
-                ctx.getBean(FetchPlanRepository.class)));
+                ctx.getBean(FetchPlanRepository.class),
+                new ArrayList<>(ctx.getBeansOfType(QueryStringProcessor.class).values())));
     }
 }

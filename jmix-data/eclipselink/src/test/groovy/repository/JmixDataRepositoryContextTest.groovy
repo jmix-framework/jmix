@@ -186,6 +186,39 @@ class JmixDataRepositoryContextTest extends DataSpec {
         !entityStates.isLoaded(orders[0], "product")
     }
 
+    void "check fetchPlan special parameter priority for custom query method"() {
+        when: "no fetch plan specified in parameters"
+        List<SalesOrder> orders = orderRepository.loadByCustomQuery(9,
+                JmixDataRepositoryContext.of(PropertyCondition.lessOrEqual("count", 10)),
+                null)
+        then: "default fetch plan used"
+        orders.size() == 1
+        entityStates.isLoaded(orders[0], "customer")
+        !entityStates.isLoaded(orders[0], "product")
+
+        when: "fetch plan specified in JmixDataRepositoryContext"
+        orders = orderRepository.loadByCustomQuery(9,
+                JmixDataRepositoryContext.condition(PropertyCondition.lessOrEqual("count", 10))
+                        .plan(fetchPlans.builder(SalesOrder).add("product").build())
+                        .build(),
+                null)
+        then: "fetch plan from JmixDataRepositoryContext overrides default fetch plan"
+        orders.size() == 1
+        !entityStates.isLoaded(orders[0], "customer")
+        entityStates.isLoaded(orders[0], "product")
+
+        when: "fetch plan specified in FetchPlan parameter"
+        orders = orderRepository.loadByCustomQuery(9,
+                JmixDataRepositoryContext.condition(PropertyCondition.lessOrEqual("count", 10))
+                        .plan(fetchPlans.builder(SalesOrder).add("product").build())
+                        .build(),
+                fetchPlans.builder(SalesOrder).addFetchPlan(FetchPlan.LOCAL).build())
+        then: "fetch plan from FetchPlan parameter overrides all other fetch plans"
+        orders.size() == 1
+        !entityStates.isLoaded(orders[0], "customer")
+        !entityStates.isLoaded(orders[0], "product")
+    }
+
     void "check hints priority"() {
         when:
         def orders = orderRepository.findByNumberLike("14", null)
@@ -196,12 +229,26 @@ class JmixDataRepositoryContextTest extends DataSpec {
         orders = orderRepository.findByNumberLike("14",
                 JmixDataRepositoryContext.of(Map.of(PersistenceHints.SOFT_DELETION, "true")))
         then:
-        orders.size() == 1 //114; 214 is soft deleted
+        orders.size() == 1 //114 only; 214 is soft deleted
         orders[0].number == "114"
 
     }
 
-    void "check top and page works"() {
+    void "check hints priority for custom query"() {
+        when:
+        def orders = orderRepository.loadByQueryWithHints("14", null)
+        then:
+        orders.size() == 2 //114, 214
+
+        when:
+        orders = orderRepository.loadByQueryWithHints("14",
+                JmixDataRepositoryContext.of(Map.of(PersistenceHints.SOFT_DELETION, "true")))
+        then:
+        orders.size() == 1 //114 only; 214 is soft deleted
+        orders[0].number == "114"
+    }
+
+    void "check top works"() {
         when:
         def orders = orderRepository.findTop3ByCountGreaterThanOrderByCount(8)
         then:
@@ -212,23 +259,72 @@ class JmixDataRepositoryContextTest extends DataSpec {
 
     }
 
+    void "check paging works with JDRC"() {
+        when:
+        def customQueryPage = orderRepository.pageByNumberLikeIgnoreCase(
+                JmixDataRepositoryContext
+                        .condition(PropertyCondition.greater("count", 1))
+                        .hints(Map.of(PersistenceHints.SOFT_DELETION, false))
+                        .build(),
+                "%1%",
+                PageRequest.of(1, 2, Sort.by("number")));
+
+        def derivedMethodPage = orderRepository.findByNumberLikeIgnoreCase(
+                "%1%",
+                JmixDataRepositoryContext
+                        .condition(PropertyCondition.greater("count", 1))
+                        .hints(Map.of(PersistenceHints.SOFT_DELETION, false))
+                        .build(),
+
+                PageRequest.of(1, 2, Sort.by("number")));
+        then:
+        customQueryPage.getTotalElements() == 5
+        customQueryPage.getTotalPages() == 3
+        customQueryPage.toList()[0].number == "114"
+        customQueryPage.toList()[1].number == "115"
+
+        derivedMethodPage.getTotalElements() == 5
+        derivedMethodPage.getTotalPages() == 3
+        derivedMethodPage.toList()[0].number == "114"
+        derivedMethodPage.toList()[1].number == "115"
+    }
+
     void "check custom query with JDRC"() {
         when:
         def orders = orderRepository.findByQueryAndJDRC(100,
                 JmixDataRepositoryContext.condition(PropertyCondition.notEqual("number", null))
                         .hints(Map.of(PersistenceHints.SOFT_DELETION, "false",
-                        PersistenceHints.FETCH_PLAN,fetchPlans.builder(SalesOrder).add("customer").build()))
+                                PersistenceHints.FETCH_PLAN, fetchPlans.builder(SalesOrder).add("customer").build()))
                         .build())
         then:
         orders.size() == 4
 
-        orders[0].number=="214"
-        orders[1].number=="115"
-        orders[2].number=="114"
-        orders[3].number=="113"
+        orders[0].number == "214"
+        orders[1].number == "115"
+        orders[2].number == "114"
+        orders[3].number == "113"
 
         entityStates.isLoaded(orders[0], "customer")
         !entityStates.isLoaded(orders[0], "product")
+    }
+
+    void "check remove by JDRC"() {
+        when:
+        orderRepository.removeByNumberNotNull(JmixDataRepositoryContext.of(PropertyCondition.greater("count", 2)))
+        def remaining = orderRepository.findAll()
+        then:
+        remaining.size() == 2
+    }
+
+    void "check hints for remove operation"() {
+        when:
+        JmixDataRepositoryContext hardDeleteContext = JmixDataRepositoryContext.of(Map.of(PersistenceHints.SOFT_DELETION, false))
+        orderRepository.removeByNumberNotNull(hardDeleteContext)
+        def remaining = orderRepository.findAll(hardDeleteContext)
+
+        then:
+        remaining.size() == 1
+        remaining.iterator().next().number == null
     }
 
     void cleanup() {

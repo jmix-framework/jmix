@@ -7,6 +7,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Id;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -17,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -59,7 +59,7 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
     @Nullable
     @Override
     public Object getDefaultPropertyValue(Class<? extends AppSettingsEntity> clazz, String propertyName) {
-        Field field = ReflectionUtils.findField(clazz, propertyName);
+        Field field = ReflectionHelper.findField(clazz, propertyName);
         if (field == null) {
             throw new IllegalArgumentException("Unable to find property " + propertyName + " for class " + clazz);
         }

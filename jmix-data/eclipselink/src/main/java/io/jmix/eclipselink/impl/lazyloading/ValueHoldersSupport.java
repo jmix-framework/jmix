@@ -23,6 +23,7 @@ import org.eclipse.persistence.internal.expressions.ExpressionIterator;
 import org.eclipse.persistence.internal.expressions.ParameterExpression;
 import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
 import org.eclipse.persistence.internal.indirection.UnitOfWorkQueryValueHolder;
+import io.jmix.core.common.util.ReflectionHelper;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -33,7 +34,7 @@ public class ValueHoldersSupport {
     public static Object getSingleValueHolder(Object entity, String propertyName) {
         Object valueHolder;
         try {
-            Field valueHolderField = ReflectionUtils.findField(entity.getClass(), String.format("_persistence_%s_vh", propertyName));
+            Field valueHolderField = ReflectionHelper.findField(entity.getClass(), String.format("_persistence_%s_vh", propertyName));
             if (valueHolderField == null) {
                 throw new RuntimeException(String.format("Unable to access value holder for property: %s on entity %s",
                         propertyName, entity.getClass().getName()));
@@ -51,7 +52,7 @@ public class ValueHoldersSupport {
 
     public static void setSingleValueHolder(Object entity, String propertyName, Object valueHolder) {
         try {
-            Field valueHolderField = ReflectionUtils.findField(entity.getClass(), String.format("_persistence_%s_vh", propertyName));
+            Field valueHolderField = ReflectionHelper.findField(entity.getClass(), String.format("_persistence_%s_vh", propertyName));
             if (valueHolderField == null) {
                 throw new RuntimeException(String.format("Unable to access value holder for property: %s on entity %s",
                         propertyName, entity.getClass().getName()));
@@ -67,7 +68,7 @@ public class ValueHoldersSupport {
     public static Object getCollectionProperty(Object entity, String propertyName) {
         Object value;
         try {
-            Field valueField = ReflectionUtils.findField(entity.getClass(), propertyName);
+            Field valueField = ReflectionHelper.findField(entity.getClass(), propertyName);
             if (valueField == null) {
                 throw new RuntimeException(String.format("Unable to access value for property: %s on entity %s",
                         propertyName, entity.getClass().getName()));
@@ -84,7 +85,7 @@ public class ValueHoldersSupport {
 
     public static void setCollectionProperty(Object entity, String propertyName, Object value) {
         try {
-            Field valueField = ReflectionUtils.findField(entity.getClass(), propertyName);
+            Field valueField = ReflectionHelper.findField(entity.getClass(), propertyName);
             if (valueField == null) {
                 throw new RuntimeException(String.format("Unable to access value for property: %s on entity %s",
                         propertyName, entity.getClass().getName()));

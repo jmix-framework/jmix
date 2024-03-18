@@ -17,11 +17,28 @@
 package io.jmix.quartz.autoconfigure;
 
 import io.jmix.quartz.QuartzConfiguration;
+import io.jmix.quartz.service.RunningJobsCache;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+
+import javax.cache.Cache;
+import javax.cache.configuration.MutableConfiguration;
 
 @AutoConfiguration
 @Import({QuartzConfiguration.class})
 public class QuartzAutoConfiguration {
+    @Bean
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    JCacheManagerCustomizer runningJobsCacheCustomizer() {
+        return cacheManager -> {
+            Cache<Object, Object> cache = cacheManager.getCache(RunningJobsCache.CACHE_NAME);
+            if (cache == null) {
+                MutableConfiguration configuration = new MutableConfiguration();
+                cacheManager.createCache(RunningJobsCache.CACHE_NAME, configuration);
+            }
+        };
+    }
 }
 

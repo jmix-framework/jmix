@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.quartzflowui.cache;
+package io.jmix.quartz.service;
 
-import io.jmix.quartz.model.JobModel;
+import io.jmix.core.CacheOperations;
+import jakarta.annotation.Nullable;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.cache.Cache;
@@ -24,36 +27,40 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+/**
+ * Currently running jobs store
+ */
+@Component("quartz_RunningJobsCache")
+public class RunningJobsCache {
 
-@Component("quartz_JobModelCache")
-public class JobModelCache {
-
-    protected Cache jobModels;
+    protected Cache jobDetails;
 
     @Autowired
     protected CacheManager cacheManager;
 
-    public static final String QUERY_CACHE_NAME = "jmix-quartz-jobmodel-cache";
+    @Autowired
+    protected CacheOperations cacheOperations;
+
+    public static final String CACHE_NAME = "jmix-quartz-running-jobs-cache";
 
     @EventListener(ApplicationStartedEvent.class)
     protected void init() {
-        jobModels = cacheManager.getCache(QUERY_CACHE_NAME);
-        if (jobModels == null) {
-            throw new IllegalStateException(String.format("Unable to find cache: %s", QUERY_CACHE_NAME));
+        jobDetails = cacheManager.getCache(CACHE_NAME);
+        if (jobDetails == null) {
+            throw new IllegalStateException(String.format("Unable to find cache: %s", CACHE_NAME));
         }
     }
 
-    public List<JobModel> get(String key) {
-        //noinspection unchecked
-        return (List<JobModel>) jobModels.get(key, List.class);
+    @Nullable
+    public JobDetail get(JobKey key) {
+        return jobDetails.get(key, JobDetail.class);
     }
 
-    public void put(String key, List<JobModel> jobs) {
-        jobModels.put(key, jobs);
+    public void put(JobKey key, JobDetail job) {
+        jobDetails.put(key, job);
     }
 
-    public void invalidate(String key) {
-        jobModels.evictIfPresent(key);
+    public void invalidate(JobKey key) {
+        jobDetails.evictIfPresent(key);
     }
 }

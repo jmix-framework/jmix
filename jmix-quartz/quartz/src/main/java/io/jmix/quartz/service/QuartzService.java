@@ -43,6 +43,9 @@ public class QuartzService {
     @Autowired
     private Messages messages;
 
+    @Autowired
+    private RunningJobsCache runningJobsCache;
+
     /**
      * Returns information about all configured quartz jobs with related triggers
      */
@@ -50,8 +53,6 @@ public class QuartzService {
         List<JobModel> result = new ArrayList<>();
         try {
             List<JobKey> jobDetailsKeys = jobDetailsFinder.getJobDetailBeanKeys();
-            Map<JobKey, JobExecutionContext> runningJobs = scheduler.getCurrentlyExecutingJobs()
-                    .stream().collect(Collectors.toMap(jctx -> jctx.getJobDetail().getKey(), jctx -> jctx));
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.anyJobGroup())) {
                 JobDetail jobDetail;
                 try {
@@ -121,7 +122,7 @@ public class QuartzService {
                     if (jobDetail instanceof InvalidJobDetail) {
                         jobModel.setJobState(JobState.INVALID);
                     } else {
-                        if (runningJobs.containsKey(jobKey)) {
+                        if (runningJobsCache.get(jobKey) != null) {
                             jobModel.setJobState(JobState.RUNNING);
                         } else {
                             jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);

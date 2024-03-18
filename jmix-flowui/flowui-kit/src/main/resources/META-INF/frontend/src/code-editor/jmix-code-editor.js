@@ -168,11 +168,11 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             this._setFocused(false);
         });
 
-        (function(codeEditor) {
-            codeEditor._editor.textInput.getElement().onfocus = () => {
-                codeEditor._setFocused(true);
-            };
-        })(this);
+        this.addEventListener('focus', (e) => {
+            this._setFocused(true);
+        });
+
+        this._setFocusElement(this._editor.textInput.getElement());
     }
 
     initApplicationThemeObserver() {
@@ -349,10 +349,6 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.setPrintMarginColumn(printMarginColumn);
-    }
-
-    setFocusManually() {
-        this._editor.textInput.getElement().focus();
     }
 
     get clearElement() {

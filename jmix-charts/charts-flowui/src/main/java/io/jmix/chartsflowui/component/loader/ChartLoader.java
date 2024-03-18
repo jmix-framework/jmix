@@ -1987,7 +1987,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
         chartLoaderSupport().loadStringPair(polarElement, "radius", polar::setRadius,
                 String.format("radius of the %s has only inner and outer values", Polar.class.getSimpleName()));
 
-        Element innerTooltipElement = element.element("tooltip");
+        Element innerTooltipElement = polarElement.element("tooltip");
         if (innerTooltipElement != null) {
             InnerTooltip innerTooltip = new InnerTooltip();
 

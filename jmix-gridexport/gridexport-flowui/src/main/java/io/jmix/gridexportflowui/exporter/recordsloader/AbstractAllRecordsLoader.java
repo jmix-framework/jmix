@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportflowui.exporter;
+package io.jmix.gridexportflowui.exporter.recordsloader;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
@@ -24,23 +24,23 @@ import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.model.*;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
+import io.jmix.gridexportflowui.exporter.EntityExporter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
-import java.util.function.Predicate;
 
-public abstract class AbstractAllRecordsExporter {
+public abstract class AbstractAllRecordsLoader {
 
     protected MetadataTools metadataTools;
     protected DataManager dataManager;
     protected PlatformTransactionManager platformTransactionManager;
     protected GridExportProperties gridExportProperties;
 
-    public AbstractAllRecordsExporter(MetadataTools metadataTools,
-                                      DataManager dataManager,
-                                      PlatformTransactionManager platformTransactionManager,
-                                      GridExportProperties gridExportProperties) {
+    public AbstractAllRecordsLoader(MetadataTools metadataTools,
+                                    DataManager dataManager,
+                                    PlatformTransactionManager platformTransactionManager,
+                                    GridExportProperties gridExportProperties) {
         this.metadataTools = metadataTools;
         this.dataManager = dataManager;
         this.platformTransactionManager = platformTransactionManager;
@@ -56,7 +56,7 @@ public abstract class AbstractAllRecordsExporter {
      * @param dataUnit       data unit linked with the data
      * @param entityExporter predicate that is applied to each loaded instance
      */
-    public void exportAll(DataUnit dataUnit, Predicate<EntityExportContext> entityExporter) {
+    public void exportAll(DataUnit dataUnit, EntityExporter entityExporter) {
         Preconditions.checkNotNullArgument(entityExporter,
                 "Cannot export all rows. DataUnit can't be null");
         Preconditions.checkNotNullArgument(entityExporter,
@@ -78,8 +78,9 @@ public abstract class AbstractAllRecordsExporter {
     }
 
     protected abstract LoadContext generateLoadContext(CollectionLoader loader);
+
     protected abstract void exportEntities(CollectionLoader<?> collectionLoader,
-                                            Predicate<EntityExportContext> entityExporter,
+                                            EntityExporter entityExporter,
                                             int loadBatchSize);
 
     protected DataLoader getDataLoader(DataUnit dataUnit) {
@@ -95,7 +96,7 @@ public abstract class AbstractAllRecordsExporter {
 
 
     protected void exportKeyValueEntities(KeyValueCollectionLoader loader,
-                                          Predicate<EntityExportContext> entityExporter,
+                                          EntityExporter entityExporter,
                                           int loadBatchSize) {
         int rowNumber = 0;
         boolean proceedToExport = true;
@@ -111,7 +112,7 @@ public abstract class AbstractAllRecordsExporter {
             List<KeyValueEntity> keyValueEntities = dataManager.loadValues(loadContext);
             for (KeyValueEntity keyValueEntity : keyValueEntities) {
                 EntityExportContext entityExportContext = new EntityExportContext(keyValueEntity, ++rowNumber);
-                proceedToExport = entityExporter.test(entityExportContext);
+                proceedToExport = entityExporter.createRecordFromEntity(entityExportContext);
                 if (!proceedToExport) {
                     break;
                 }

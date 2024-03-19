@@ -16,12 +16,7 @@
 
 package io.jmix.gridexportflowui.exporter;
 
-import io.jmix.flowui.data.DataUnit;
+public interface EntityExporter {
 
-import java.util.function.Predicate;
-
-public interface DataExporter {
-    String getPaginationType();
-
-    void exportAll(DataUnit dataUnit, Predicate<EntityExportContext> entityExporter);
+    boolean createRecordFromEntity(EntityExportContext entityExportContext);
 }

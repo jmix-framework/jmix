@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportflowui.exporter.limitoffset;
+package io.jmix.gridexportflowui.exporter.recordsloader;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
@@ -22,22 +22,28 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.gridexportflowui.GridExportProperties;
-import io.jmix.gridexportflowui.exporter.AbstractAllRecordsExporter;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
+import io.jmix.gridexportflowui.exporter.EntityExporter;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
-public class LimitOffsetAllRecordsExporter extends AbstractAllRecordsExporter {
+@Component
+public class LimitOffsetAllRecordsLoader extends AbstractAllRecordsLoader implements AllRecordsLoader {
 
     public static final String LIMIT_OFFSET_EXPORT_DATA_PROVIDER = "limit-offset";
 
-    public LimitOffsetAllRecordsExporter(MetadataTools metadataTools, DataManager dataManager,
-                                         PlatformTransactionManager platformTransactionManager,
-                                         GridExportProperties gridExportProperties) {
+    public LimitOffsetAllRecordsLoader(MetadataTools metadataTools, DataManager dataManager,
+                                       PlatformTransactionManager platformTransactionManager,
+                                       GridExportProperties gridExportProperties) {
         super(metadataTools, dataManager, platformTransactionManager, gridExportProperties);
+    }
+
+    @Override
+    public String getPaginationType() {
+        return LIMIT_OFFSET_EXPORT_DATA_PROVIDER;
     }
 
     @Override
@@ -58,9 +64,10 @@ public class LimitOffsetAllRecordsExporter extends AbstractAllRecordsExporter {
     }
 
     @Override
-    protected void exportEntities(CollectionLoader<?> collectionLoader, Predicate<EntityExportContext> entityExporter,
+    protected void exportEntities(CollectionLoader<?> collectionLoader, EntityExporter entityExporter,
                                   int loadBatchSize) {
         int rowNumber = 0;
+        int firstResultNumber = 0;
         boolean proceedToExport = true;
         boolean lastBatchLoaded = false;
 
@@ -68,17 +75,19 @@ public class LimitOffsetAllRecordsExporter extends AbstractAllRecordsExporter {
             LoadContext<?> loadContext = generateLoadContext(collectionLoader);
             //query is not null - checked when generated load context
             LoadContext.Query query = Objects.requireNonNull(loadContext.getQuery());
-            query.setFirstResult(rowNumber);
+            query.setFirstResult(firstResultNumber);
             query.setMaxResults(loadBatchSize);
 
             List<?> entities = dataManager.loadList(loadContext);
             for (Object entity : entities) {
                 EntityExportContext entityExportContext = new EntityExportContext(entity, ++rowNumber);
-                proceedToExport = entityExporter.test(entityExportContext);
+                proceedToExport = entityExporter.createRecordFromEntity(entityExportContext);
                 if (!proceedToExport) {
                     break;
                 }
             }
+
+            firstResultNumber += loadBatchSize;
 
             int loadedEntitiesAmount = entities.size();
             lastBatchLoaded = loadedEntitiesAmount == 0 || loadedEntitiesAmount < loadBatchSize;

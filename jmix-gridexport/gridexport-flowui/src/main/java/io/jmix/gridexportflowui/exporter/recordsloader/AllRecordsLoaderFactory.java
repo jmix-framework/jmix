@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportflowui.exporter;
+package io.jmix.gridexportflowui.exporter.recordsloader;
 
 import io.jmix.gridexportflowui.GridExportProperties;
 import org.springframework.stereotype.Component;
@@ -23,20 +23,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class DataExporterFactory {
+public class AllRecordsLoaderFactory {
 
     protected GridExportProperties gridExportProperties;
-    protected List<DataExporter> dataExporters;
+    protected List<AllRecordsLoader> allRecordsLoaders;
 
-    public DataExporterFactory(GridExportProperties gridExportProperties,
-                               List<DataExporter> dataExporters) {
+    public AllRecordsLoaderFactory(GridExportProperties gridExportProperties,
+                                   List<AllRecordsLoader> allRecordsLoaders) {
         this.gridExportProperties = gridExportProperties;
-        this.dataExporters = dataExporters;
+        this.allRecordsLoaders = allRecordsLoaders;
     }
 
-    public DataExporter getDataExporter() {
+    public AllRecordsLoader getRecordsLoader() {
         String paginationType = gridExportProperties.getPaginationType();
-        Optional<? extends DataExporter> dataExporter = dataExporters.stream()
+        Optional<? extends AllRecordsLoader> dataExporter = allRecordsLoaders.stream()
                 .filter(provider -> paginationType.equals(provider.getPaginationType()))
                 .findFirst();
         if (dataExporter.isPresent()) {

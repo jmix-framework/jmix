@@ -30,6 +30,8 @@ import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.gridexportflowui.action.ExportAction;
 import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
+import io.jmix.gridexportflowui.exporter.recordsloader.AllRecordsLoader;
+import io.jmix.gridexportflowui.exporter.recordsloader.AllRecordsLoaderFactory;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -49,14 +51,14 @@ import java.util.stream.Collectors;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
 
+    private final AllRecordsLoaderFactory allRecordsLoaderFactory;
     protected Metadata metadata;
-    protected JsonAllRecordsExporter jsonAllRecordsExporter;
 
     protected Function<GsonBuilder, GsonBuilder> gsonConfigurer;
 
-    public JsonExporter(Metadata metadata, JsonAllRecordsExporter jsonAllRecordsExporter) {
+    public JsonExporter(Metadata metadata, AllRecordsLoaderFactory allRecordsLoaderFactory) {
         this.metadata = metadata;
-        this.jsonAllRecordsExporter = jsonAllRecordsExporter;
+        this.allRecordsLoaderFactory = allRecordsLoaderFactory;
     }
 
     /**
@@ -76,10 +78,12 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
         JsonArray jsonElements = new JsonArray();
 
         if (exportMode == ExportMode.ALL_ROWS) {
-            jsonAllRecordsExporter.exportAll(((ListDataComponent<?>) dataGrid).getItems(),
-                    entity -> {
-                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+            AllRecordsLoader recordsLoader = allRecordsLoaderFactory.getRecordsLoader();
+            recordsLoader.exportAll(((ListDataComponent<?>) dataGrid).getItems(),
+                    context -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, context.getEntity());
                         jsonElements.add(jsonObject);
+                        return true;
                     });
         } else {
             Collection<Object> items = getItems(dataGrid, exportMode);

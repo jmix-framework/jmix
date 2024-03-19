@@ -41,8 +41,9 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.action.ExportAction;
-import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
-import io.jmix.gridexportflowui.exporter.ExportMode;
+import io.jmix.gridexportflowui.exporter.*;
+import io.jmix.gridexportflowui.exporter.recordsloader.AllRecordsLoader;
+import io.jmix.gridexportflowui.exporter.recordsloader.AllRecordsLoaderFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
@@ -56,7 +57,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.Time;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -98,17 +103,15 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
     protected boolean isRowNumberExceeded = false;
 
     protected GridExportProperties gridExportProperties;
-
-    protected ExcelAllRecordsExporter excelAllRecordsExporter;
-
     protected Notifications notifications;
+    protected AllRecordsLoaderFactory allRecordsLoaderFactory;
 
     public ExcelExporter(GridExportProperties gridExportProperties,
-                         ExcelAllRecordsExporter excelAllRecordsExporter,
-                         Notifications notifications) {
+                         Notifications notifications,
+                         AllRecordsLoaderFactory allRecordsLoaderFactory) {
         this.gridExportProperties = gridExportProperties;
-        this.excelAllRecordsExporter = excelAllRecordsExporter;
         this.notifications = notifications;
+        this.allRecordsLoaderFactory = allRecordsLoaderFactory;
     }
 
     protected void createWorkbookWithSheet() {
@@ -227,18 +230,20 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(dataGrid instanceof TreeDataGrid);
 
-                excelAllRecordsExporter.exportAll(
-                        ((ListDataComponent<?>) dataGrid).getItems(),
-                        (context) -> createDataGridRowForEntityInstance(
+                AllRecordsLoader dataExporter = allRecordsLoaderFactory.getRecordsLoader();
+                dataExporter.exportAll(((ListDataComponent<?>) dataGrid).getItems(), context -> {
+                    if (!checkIsRowNumberExceed(context.getEntityNumber())) {
+                        createDataGridRowForEntityInstance(
                                 dataGrid,
                                 columns,
                                 0,
-                                context.getRowNumber(),
+                                context.getEntityNumber(),
                                 context.getEntity(),
-                                addLevelPadding
-                        ),
-                        this::checkIsRowNumberExceed
-                );
+                                addLevelPadding);
+                        return true;
+                    }
+                    return false;
+                });
             }
 
             for (int c = 0; c < columns.size(); c++) {
@@ -449,7 +454,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
             cell.setCellValue(date);
 
-            if (Objects.equals(java.sql.Time.class, javaClass)) {
+            if (Objects.equals(Time.class, javaClass)) {
                 cell.setCellStyle(timeFormatCellStyle);
             } else if (Objects.equals(java.sql.Date.class, javaClass)) {
                 cell.setCellStyle(dateFormatCellStyle);
@@ -460,34 +465,34 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
                 String str = datatypeRegistry.get(Date.class).format(date);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
-        } else if (cellValue instanceof java.time.LocalTime) {
-            java.time.LocalTime time = (java.time.LocalTime) cellValue;
+        } else if (cellValue instanceof LocalTime) {
+            LocalTime time = (LocalTime) cellValue;
 
-            cell.setCellValue(java.sql.Time.valueOf(time));
+            cell.setCellValue(Time.valueOf(time));
             cell.setCellStyle(timeFormatCellStyle);
 
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
-                String str = datatypeRegistry.get(java.time.LocalTime.class).format(time);
+                String str = datatypeRegistry.get(LocalTime.class).format(time);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
-        } else if (cellValue instanceof java.time.LocalDate) {
-            java.time.LocalDate date = (java.time.LocalDate) cellValue;
+        } else if (cellValue instanceof LocalDate) {
+            LocalDate date = (LocalDate) cellValue;
 
             cell.setCellValue(date);
             cell.setCellStyle(dateFormatCellStyle);
 
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
-                String str = datatypeRegistry.get(java.time.LocalDate.class).format(date);
+                String str = datatypeRegistry.get(LocalDate.class).format(date);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
-        } else if (cellValue instanceof java.time.LocalDateTime) {
-            java.time.LocalDateTime dateTime = (java.time.LocalDateTime) cellValue;
+        } else if (cellValue instanceof LocalDateTime) {
+            LocalDateTime dateTime = (LocalDateTime) cellValue;
 
             cell.setCellValue(dateTime);
             cell.setCellStyle(dateTimeFormatCellStyle);
 
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
-                String str = datatypeRegistry.get(java.time.LocalDateTime.class).format(dateTime);
+                String str = datatypeRegistry.get(LocalDateTime.class).format(dateTime);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
         } else if (cellValue instanceof Boolean) {

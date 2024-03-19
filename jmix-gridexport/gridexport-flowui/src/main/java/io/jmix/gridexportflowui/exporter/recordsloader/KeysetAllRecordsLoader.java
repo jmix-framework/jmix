@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportflowui.exporter.keyset;
+package io.jmix.gridexportflowui.exporter.recordsloader;
 
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -23,24 +23,30 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.gridexportflowui.GridExportProperties;
-import io.jmix.gridexportflowui.exporter.AbstractAllRecordsExporter;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
+import io.jmix.gridexportflowui.exporter.EntityExporter;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
-public class KeysetAllRecordsExporter extends AbstractAllRecordsExporter {
+@Component
+public class KeysetAllRecordsLoader extends AbstractAllRecordsLoader implements AllRecordsLoader {
 
     public static final String KEYSET_EXPORT_DATA_PROVIDER = "keyset";
 
     protected static String LAST_LOADED_PK_CONDITION_PARAMETER_NAME = "lastLoadedPkValue";
 
-    public KeysetAllRecordsExporter(MetadataTools metadataTools, DataManager dataManager,
-                                    PlatformTransactionManager platformTransactionManager,
-                                    GridExportProperties gridExportProperties) {
+    public KeysetAllRecordsLoader(MetadataTools metadataTools, DataManager dataManager,
+                                  PlatformTransactionManager platformTransactionManager,
+                                  GridExportProperties gridExportProperties) {
         super(metadataTools, dataManager, platformTransactionManager, gridExportProperties);
+    }
+
+    @Override
+    public String getPaginationType() {
+        return KEYSET_EXPORT_DATA_PROVIDER;
     }
 
     protected LoadContext generateLoadContext(CollectionLoader loader) {
@@ -84,7 +90,7 @@ public class KeysetAllRecordsExporter extends AbstractAllRecordsExporter {
     }
 
     protected void exportEntities(CollectionLoader<?> collectionLoader,
-                                  Predicate<EntityExportContext> entityExporter,
+                                  EntityExporter entityExporter,
                                   int loadBatchSize) {
         int rowNumber = 0;
         boolean initialLoading = true;
@@ -107,7 +113,7 @@ public class KeysetAllRecordsExporter extends AbstractAllRecordsExporter {
             List<?> entities = dataManager.loadList(loadContext);
             for (Object entity : entities) {
                 EntityExportContext entityExportContext = new EntityExportContext(entity, ++rowNumber);
-                proceedToExport = entityExporter.test(entityExportContext);
+                proceedToExport = entityExporter.createRecordFromEntity(entityExportContext);
                 if (!proceedToExport) {
                     break;
                 }

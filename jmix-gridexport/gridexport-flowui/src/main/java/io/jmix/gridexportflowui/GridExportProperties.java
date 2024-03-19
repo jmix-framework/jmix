@@ -31,6 +31,11 @@ public class GridExportProperties {
     int exportAllBatchSize;
 
     /**
+     * Choose appropriate pagination type to export data
+     */
+    String paginationType;
+
+    /**
      * Excel exporting configuration.
      */
     ExcelExporterProperties excel;
@@ -42,10 +47,15 @@ public class GridExportProperties {
         return exportAllBatchSize;
     }
 
+    public String getPaginationType() {
+        return paginationType;
+    }
 
     public GridExportProperties(@DefaultValue("1000") int exportAllBatchSize,
+                                @DefaultValue("keyset") String paginationType,
                                 @DefaultValue ExcelExporterProperties excel) {
         this.exportAllBatchSize = exportAllBatchSize;
+        this.paginationType = paginationType;
         this.excel = excel;
     }
 
@@ -60,15 +70,8 @@ public class GridExportProperties {
          */
         boolean useSxssf;
 
-        /**
-         * Choose appropriate strategy to export data to excel
-         */
-        String exportStrategy;
-
-        public ExcelExporterProperties(@DefaultValue("true") boolean useSxssf,
-                                       @DefaultValue("keyset") String exportStrategy) {
+        public ExcelExporterProperties(@DefaultValue("true") boolean useSxssf) {
             this.useSxssf = useSxssf;
-            this.exportStrategy = exportStrategy;
         }
 
         /**
@@ -76,10 +79,6 @@ public class GridExportProperties {
          */
         public boolean isUseSxssf() {
             return useSxssf;
-        }
-
-        public String getExportStrategy() {
-            return exportStrategy;
         }
     }
 }

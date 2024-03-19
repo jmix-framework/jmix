@@ -16,15 +16,12 @@
 
 package io.jmix.gridexportflowui.exporter.excel;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.gridexportflowui.GridExportProperties;
-import io.jmix.gridexportflowui.exporter.AbstractAllRecordsExporter;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
+import io.jmix.gridexportflowui.exporter.DataExporterFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -35,22 +32,10 @@ import java.util.function.Predicate;
 @Component("grdexp_ExcelAllRecordsExporter")
 public class ExcelAllRecordsExporter {
 
-    public static final String KEYSET_EXPORT_STRATEGY = "keyset";
-    public static final String LIMIT_OFFSET_EXPORT_STRATEGY = "limit-offset";
+    protected DataExporterFactory dataExporterFactory;
 
-    protected MetadataTools metadataTools;
-    protected DataManager dataManager;
-    protected PlatformTransactionManager platformTransactionManager;
-    protected GridExportProperties gridExportProperties;
-
-    public ExcelAllRecordsExporter(MetadataTools metadataTools,
-                                   DataManager dataManager,
-                                   PlatformTransactionManager platformTransactionManager,
-                                   GridExportProperties gridExportProperties) {
-        this.metadataTools = metadataTools;
-        this.dataManager = dataManager;
-        this.platformTransactionManager = platformTransactionManager;
-        this.gridExportProperties = gridExportProperties;
+    public ExcelAllRecordsExporter(DataExporterFactory dataExporterFactory) {
+        this.dataExporterFactory = dataExporterFactory;
     }
 
     /**
@@ -78,22 +63,7 @@ public class ExcelAllRecordsExporter {
             }
         };
 
-        getExcelRecordsExporter().exportAll(dataUnit, entityExporter);
-    }
-
-    private AbstractAllRecordsExporter getExcelRecordsExporter() {
-        AbstractAllRecordsExporter exporter;
-        String exportStrategy = gridExportProperties.getExcel().getExportStrategy();
-        if (KEYSET_EXPORT_STRATEGY.equals(exportStrategy)) {
-            exporter = new ExcelKeysetExporter(
-                    metadataTools, dataManager, platformTransactionManager, gridExportProperties);
-        } else if (LIMIT_OFFSET_EXPORT_STRATEGY.equals(exportStrategy)){
-            exporter = new ExcelLimitOffsetExporter(
-                    metadataTools, dataManager, platformTransactionManager, gridExportProperties);
-        } else {
-            throw new IllegalStateException(String.format("Unknown excel export strategy: %s", exportStrategy));
-        }
-        return exporter;
+        dataExporterFactory.getDataExporter().exportAll(dataUnit, entityExporter);
     }
 
     public static class RowCreationContext {

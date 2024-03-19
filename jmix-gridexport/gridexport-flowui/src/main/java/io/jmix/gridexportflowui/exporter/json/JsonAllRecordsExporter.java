@@ -16,15 +16,12 @@
 
 package io.jmix.gridexportflowui.exporter.json;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.gridexportflowui.GridExportProperties;
-import io.jmix.gridexportflowui.exporter.AbstractAllRecordsExporter;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
+import io.jmix.gridexportflowui.exporter.DataExporterFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -33,13 +30,12 @@ import java.util.function.Predicate;
  * Class is used by {@link io.jmix.gridexportflowui.action.ExportAction} for exporting all records from the database to JSON format.
  */
 @Component("grdexp_JsonAllRecordsExporter")
-public class JsonAllRecordsExporter extends AbstractAllRecordsExporter {
+public class JsonAllRecordsExporter {
 
-    public JsonAllRecordsExporter(MetadataTools metadataTools,
-                                  DataManager dataManager,
-                                  PlatformTransactionManager platformTransactionManager,
-                                  GridExportProperties gridExportProperties) {
-        super(metadataTools, dataManager, platformTransactionManager, gridExportProperties);
+    protected DataExporterFactory dataExporterFactory;
+
+    public JsonAllRecordsExporter(DataExporterFactory dataExporterFactory) {
+        this.dataExporterFactory = dataExporterFactory;
     }
 
     /**
@@ -58,6 +54,7 @@ public class JsonAllRecordsExporter extends AbstractAllRecordsExporter {
             jsonObjectCreator.accept(context.getEntity());
             return true;
         };
-        exportAll(dataUnit, entityExporter);
+
+        dataExporterFactory.getDataExporter().exportAll(dataUnit, entityExporter);
     }
 }

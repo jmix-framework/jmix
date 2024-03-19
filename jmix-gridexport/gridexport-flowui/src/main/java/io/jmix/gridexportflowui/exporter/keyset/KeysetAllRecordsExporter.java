@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportflowui.exporter.excel;
+package io.jmix.gridexportflowui.exporter.keyset;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.AbstractAllRecordsExporter;
@@ -30,14 +31,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public class ExcelLimitOffsetExporter extends AbstractAllRecordsExporter {
-    public ExcelLimitOffsetExporter(MetadataTools metadataTools, DataManager dataManager,
+public class KeysetAllRecordsExporter extends AbstractAllRecordsExporter {
+
+    public static final String KEYSET_EXPORT_DATA_PROVIDER = "keyset";
+
+    protected static String LAST_LOADED_PK_CONDITION_PARAMETER_NAME = "lastLoadedPkValue";
+
+    public KeysetAllRecordsExporter(MetadataTools metadataTools, DataManager dataManager,
                                     PlatformTransactionManager platformTransactionManager,
                                     GridExportProperties gridExportProperties) {
         super(metadataTools, dataManager, platformTransactionManager, gridExportProperties);
     }
 
-    @Override
     protected LoadContext generateLoadContext(CollectionLoader loader) {
         LoadContext loadContext = loader.createLoadContext();
         LoadContext.Query query = loadContext.getQuery();
@@ -51,13 +56,39 @@ public class ExcelLimitOffsetExporter extends AbstractAllRecordsExporter {
                     "Cannot export all rows. Exporting of entities with composite key is not supported.");
         }
 
+        //sort data by primary key. Next batch is loaded using the condition that compares the last primary key value
+        //from the previous batch. In some databases (for example, PostgreSQL) it's faster than paging using firstResult
+        String primaryKeyName = metadataTools.getPrimaryKeyName(entityMetaClass);
+        if (primaryKeyName == null) {
+            throw new IllegalStateException("Cannot find a primary key for a meta class " + entityMetaClass.getName());
+        }
+        query.setSort(Sort.by(primaryKeyName));
+
+        Condition condition = loadContext.getQuery().getCondition();
+
+        LogicalCondition wrappingCondition = new LogicalCondition(LogicalCondition.Type.AND);
+        //noinspection ConstantValue
+        if (condition != null) {
+            //in case there is no filter on the screen a condition in the query may be null
+            wrappingCondition.add(condition);
+        }
+
+        PropertyCondition lastPkCondition = PropertyCondition.createWithParameterName(primaryKeyName,
+                        PropertyCondition.Operation.GREATER, LAST_LOADED_PK_CONDITION_PARAMETER_NAME)
+                .skipNullOrEmpty();
+        wrappingCondition.add(lastPkCondition);
+        query.setCondition(wrappingCondition);
+        query.setFirstResult(0);
+
         return loadContext;
     }
 
-    @Override
-    protected void exportEntities(CollectionLoader<?> collectionLoader, Predicate<EntityExportContext> entityExporter,
+    protected void exportEntities(CollectionLoader<?> collectionLoader,
+                                  Predicate<EntityExportContext> entityExporter,
                                   int loadBatchSize) {
         int rowNumber = 0;
+        boolean initialLoading = true;
+        Object lastLoadedPkValue = null;
         boolean proceedToExport = true;
         boolean lastBatchLoaded = false;
 
@@ -65,7 +96,12 @@ public class ExcelLimitOffsetExporter extends AbstractAllRecordsExporter {
             LoadContext<?> loadContext = generateLoadContext(collectionLoader);
             //query is not null - checked when generated load context
             LoadContext.Query query = Objects.requireNonNull(loadContext.getQuery());
-            query.setFirstResult(rowNumber);
+
+            if (initialLoading) {
+                initialLoading = false;
+            } else {
+                query.setParameter(LAST_LOADED_PK_CONDITION_PARAMETER_NAME, lastLoadedPkValue);
+            }
             query.setMaxResults(loadBatchSize);
 
             List<?> entities = dataManager.loadList(loadContext);
@@ -78,6 +114,10 @@ public class ExcelLimitOffsetExporter extends AbstractAllRecordsExporter {
             }
 
             int loadedEntitiesAmount = entities.size();
+            if (loadedEntitiesAmount > 0) {
+                Object lastEntity = entities.get(loadedEntitiesAmount - 1);
+                lastLoadedPkValue = Id.of(lastEntity).getValue();
+            }
             lastBatchLoaded = loadedEntitiesAmount == 0 || loadedEntitiesAmount < loadBatchSize;
         }
     }

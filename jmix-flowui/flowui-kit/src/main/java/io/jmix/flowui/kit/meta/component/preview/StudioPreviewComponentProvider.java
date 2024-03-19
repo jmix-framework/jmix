@@ -120,7 +120,8 @@ final class StudioPreviewComponentProvider {
         } else {
             try {
                 lockCondition.await(5, TimeUnit.SECONDS);
-            } catch (InterruptedException ignored) {
+            } catch (InterruptedException e) {
+                console("Exception when waiting loaders initialization", e);
             }
         }
     }

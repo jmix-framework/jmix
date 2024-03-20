@@ -23,6 +23,7 @@ import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
@@ -37,6 +38,7 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.JobModel;
@@ -44,9 +46,12 @@ import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
+import io.jmix.quartzflowui.event.QuartzJobEndExecutionEvent;
+import io.jmix.quartzflowui.event.QuartzJobStartExecutionEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -54,6 +59,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.*;
+
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Route(value = "quartz/jobmodels", layout = DefaultMainViewParent.class)
@@ -96,6 +102,7 @@ public class JobModelListView extends StandardListView<JobModel> {
     @Subscribe
     protected void onInit(View.InitEvent event) {
         initTable();
+        initDataChangedEventListener();
     }
 
     protected void initTable() {
@@ -121,34 +128,67 @@ public class JobModelListView extends StandardListView<JobModel> {
         return messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), propertyName);
     }
 
+    protected void initDataChangedEventListener() {
+        VaadinSession session = VaadinSession.getCurrent();
+        if (session == null) {
+            return;
+        }
+
+        UiEventsManager uiEventsManager = session.getAttribute(UiEventsManager.class);
+        if (uiEventsManager != null) {
+            uiEventsManager.addApplicationListener(this, this::onApplicationEvent);
+
+            // Remove on detach event
+            addDetachListener(event -> uiEventsManager.removeApplicationListeners(this));
+        }
+    }
+
+    protected void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof QuartzJobStartExecutionEvent jobStartEvent) {
+            onJobStartExecutionEvent(jobStartEvent);
+        } else if (event instanceof QuartzJobEndExecutionEvent jobEndEvent) {
+            onJobEndExecutionEvent(jobEndEvent);
+        }
+    }
+
+    protected void onJobStartExecutionEvent(QuartzJobStartExecutionEvent event) {
+        jobModelsDc.getItems().stream().filter(jobModel ->
+                JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
+                .equals(event.getJobExecutionContext().getJobDetail().getKey())).findAny()
+            .ifPresent(item -> item.setJobState(JobState.RUNNING));
+    }
+
+    protected void onJobEndExecutionEvent(QuartzJobEndExecutionEvent event) {
+        jobModelsDc.getItems().stream().filter(jobModel ->
+                JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
+                .equals(event.getJobExecutionContext().getJobDetail().getKey())).findAny()
+            .ifPresent(item -> item.setJobState(JobState.NORMAL));
+    }
+
     @Subscribe
     protected void onBeforeShow(View.BeforeShowEvent event) {
         nameFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         classFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         groupFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         jobStateFilter.addValueChangeListener(this::onFilterFieldValueChange);
-
         loadJobsData();
     }
-
 
     protected List<JobModel> loadJobsData() {
         List<GridSortOrder<JobModel>> sorting = jobModelsTable.getSortOrder();
 
         Comparator<JobModel> jobModelComparator = createJobModelComparator(sorting);
-
         List<JobModel> jobs = quartzService.getAllJobs().stream()
-                .filter(jobModel -> (Strings.isNullOrEmpty(nameFilter.getTypedValue())
-                        || containsIgnoreCase(jobModel.getJobName(), nameFilter.getTypedValue()))
-                        && (Strings.isNullOrEmpty(classFilter.getTypedValue())
-                        || containsIgnoreCase(jobModel.getJobClass(), classFilter.getTypedValue()))
-                        && (Strings.isNullOrEmpty(groupFilter.getTypedValue())
-                        || containsIgnoreCase(jobModel.getJobGroup(), groupFilter.getTypedValue()))
-                        && (jobStateFilter.getValue() == null
-                        || jobStateFilter.getValue().equals(jobModel.getJobState())))
-                .sorted(jobModelComparator)
-                .collect(Collectors.toList());
-
+                    .filter(jobModel -> (Strings.isNullOrEmpty(nameFilter.getTypedValue())
+                            || containsIgnoreCase(jobModel.getJobName(), nameFilter.getTypedValue()))
+                            && (Strings.isNullOrEmpty(classFilter.getTypedValue())
+                            || containsIgnoreCase(jobModel.getJobClass(), classFilter.getTypedValue()))
+                            && (Strings.isNullOrEmpty(groupFilter.getTypedValue())
+                            || containsIgnoreCase(jobModel.getJobGroup(), groupFilter.getTypedValue()))
+                            && (jobStateFilter.getValue() == null
+                            || jobStateFilter.getValue().equals(jobModel.getJobState())))
+                    .sorted(jobModelComparator)
+                    .collect(Collectors.toList());
         jobModelsDc.setItems(jobs);
         return jobs;
     }

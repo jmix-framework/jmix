@@ -37,6 +37,9 @@ public class QuartzService {
     @Autowired
     private UnconstrainedDataManager dataManager;
 
+    @Autowired
+    private RunningJobsCache runningJobsCache;
+
     /**
      * Returns information about all configured quartz jobs with related triggers
      */
@@ -99,7 +102,11 @@ public class QuartzService {
                         }
 
                         jobModel.setTriggers(triggerModels);
-                        jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                        if (runningJobsCache.get(jobKey) != null) {
+                            jobModel.setJobState(JobState.RUNNING);
+                        } else {
+                            jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                        }
                     }
 
                     result.add(jobModel);

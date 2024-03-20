@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -42,6 +43,9 @@ public class QuartzService {
     @Autowired
     private Messages messages;
 
+    @Autowired
+    private RunningJobsCache runningJobsCache;
+
     /**
      * Returns information about all configured quartz jobs with related triggers
      */
@@ -49,7 +53,6 @@ public class QuartzService {
         List<JobModel> result = new ArrayList<>();
         try {
             List<JobKey> jobDetailsKeys = jobDetailsFinder.getJobDetailBeanKeys();
-
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.anyJobGroup())) {
                 JobDetail jobDetail;
                 try {
@@ -115,12 +118,15 @@ public class QuartzService {
                             isActive = true;
                         }
                     }
-
                     jobModel.setTriggers(triggerModels);
                     if (jobDetail instanceof InvalidJobDetail) {
                         jobModel.setJobState(JobState.INVALID);
                     } else {
-                        jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                        if (runningJobsCache.get(jobKey) != null) {
+                            jobModel.setJobState(JobState.RUNNING);
+                        } else {
+                            jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
+                        }
                     }
                 }
 

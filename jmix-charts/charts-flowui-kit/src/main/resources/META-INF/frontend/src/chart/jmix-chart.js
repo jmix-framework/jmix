@@ -76,13 +76,7 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
     ready() {
         super.ready();
 
-        const chart = this.shadowRoot.querySelector('[part="root"]');
-
         this.initApplicationThemeObserver();
-
-        this._root = echarts.init(chart, this.theme);
-
-        this._forwardEvents();
     }
 
     _forwardEvents() {
@@ -117,7 +111,7 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
 
         if (currentTheme === "dark") {
             this.theme = "dark";
-        } else if (currentTheme === "") {
+        } else if (currentTheme === "" || currentTheme === null) {
             this.theme = null;
         }
     }
@@ -147,7 +141,30 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
      * @override
      */
     _onResize() {
+        if (this._root == null) {
+            return;
+        }
+
         this._root.resize();
+    }
+
+    /**
+     * @protected
+     * @override
+     */
+    connectedCallback() {
+        super.connectedCallback();
+        // waiting for initialization
+        setTimeout(() => this.$server.ready(), 200);
+    }
+
+    /**
+     * @protected
+     * @override
+     */
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this._destroyChart();
     }
 
     /**
@@ -163,6 +180,12 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
     }
 
     _updateChart(changes) {
+        if (this._root == null) {
+            const chart = this.shadowRoot.querySelector('[part="root"]');
+            this._root = echarts.init(chart, this.theme);
+            this._forwardEvents();
+        }
+
         // merge native json if exist
         if (changes.nativeJson !== undefined) {
 

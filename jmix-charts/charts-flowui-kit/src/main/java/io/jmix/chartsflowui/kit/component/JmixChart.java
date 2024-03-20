@@ -50,10 +50,7 @@ import io.jmix.chartsflowui.kit.data.chart.ChartItems;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
 import jakarta.annotation.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Tag("jmix-chart")
 @NpmPackage(
@@ -70,6 +67,9 @@ public class JmixChart extends Component implements HasSize {
     protected StateTree.ExecutionRegistration synchronizeChartOptionsExecution;
     protected StateTree.ExecutionRegistration synchronizeChartDataExecution;
     protected StateTree.ExecutionRegistration synchronizeChartIncrementalUpdateDataExecution;
+
+    protected volatile boolean clientReady;
+    protected final List<PendingJsFunction> functions = new ArrayList<>();
 
     protected Map<String, Registration> eventRegistrations = new HashMap<>();
 
@@ -859,7 +859,7 @@ public class JmixChart extends Component implements HasSize {
             resultJson.put("nativeJson", nativeJson);
         }
 
-        getElement().callJsFunction("_updateChart", resultJson);
+        callPendingJsFunction("_updateChart", resultJson);
 
         synchronizeChartOptionsExecution = null;
     }
@@ -873,7 +873,7 @@ public class JmixChart extends Component implements HasSize {
         JsonValue dataJson = serializer.serializeDataSet(options.getDataSet());
         resultJson.put("dataset", dataJson);
 
-        getElement().callJsFunction("_updateChartDataset", resultJson);
+        callPendingJsFunction("_updateChartDataset", resultJson);
 
         synchronizeChartDataExecution = null;
         changedItems.clear();
@@ -892,7 +892,7 @@ public class JmixChart extends Component implements HasSize {
             }
         }
 
-        getElement().callJsFunction("_incrementalUpdateChartDataset", resultJson);
+        callPendingJsFunction("_incrementalUpdateChartDataset", resultJson);
 
         synchronizeChartIncrementalUpdateDataExecution = null;
         changedItems.clear();
@@ -906,6 +906,48 @@ public class JmixChart extends Component implements HasSize {
 
         requestUpdateChartOptions();
         requestUpdateChartDataSet();
+    }
+
+    @ClientCallable
+    protected void ready() {
+        synchronized (functions) {
+            while (!functions.isEmpty()) {
+                PendingJsFunction function = functions.remove(0);
+                callJsFunction(function.getFunction(), function.getResultJson());
+            }
+            clientReady = true;
+        }
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        clientReady = false;
+        super.onDetach(detachEvent);
+    }
+
+    /**
+     * Execute JavaScript function with the {@code resultJson} passed. Execution will be delayed till
+     * the client-side is ready.
+     *
+     * @param function JavaScript function to execute
+     * @param resultJson resultJson
+     */
+    protected synchronized void callPendingJsFunction(String function, JsonObject resultJson) {
+        if (clientReady) {
+            callJsFunction(function, resultJson);
+        } else {
+            synchronized (functions) {
+                if (clientReady) {
+                    callJsFunction(function, resultJson);
+                } else {
+                    functions.add(new PendingJsFunction(function, resultJson));
+                }
+            }
+        }
+    }
+
+    protected void callJsFunction(String function, JsonObject resultJson) {
+        getElement().callJsFunction(function, resultJson);
     }
 
     protected <T extends DataItem> void addChangedDataItems(ChartItems.DataChangeOperation operation,
@@ -1073,5 +1115,24 @@ public class JmixChart extends Component implements HasSize {
 
     protected JmixChartSerializer createSerializer() {
         return new JmixChartSerializer();
+    }
+
+    @SuppressWarnings("ClassCanBeRecord")
+    protected static class PendingJsFunction {
+        protected final String function;
+        protected final JsonObject resultJson;
+
+        public PendingJsFunction(String function, JsonObject resultJson) {
+            this.function = function;
+            this.resultJson = resultJson;
+        }
+
+        public String getFunction() {
+            return function;
+        }
+
+        public JsonObject getResultJson() {
+            return resultJson;
+        }
     }
 }

@@ -24,7 +24,6 @@ import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
-import io.jmix.gridexportflowui.exporter.EntityExporter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -32,12 +31,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * This loader implements keyset pagination strategy.
+ * This loader implements the keyset pagination strategy. Entities retrieval is based on sorting
+ * by primary key or unique attribute. The next page starts after the last entity on the previous page.
  */
 @Component
-public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader implements AllEntitiesLoader {
+public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
 
-    public static final String KEYSET_EXPORT_DATA_PROVIDER = "keyset";
+    public static final String PAGINATION_STRATEGY = "keyset";
 
     protected static String LAST_LOADED_PK_CONDITION_PARAMETER_NAME = "lastLoadedPkValue";
 
@@ -48,8 +48,8 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader implement
     }
 
     @Override
-    public String getPaginationType() {
-        return KEYSET_EXPORT_DATA_PROVIDER;
+    public String getPaginationStrategy() {
+        return PAGINATION_STRATEGY;
     }
 
     protected LoadContext generateLoadContext(CollectionLoader loader) {
@@ -93,13 +93,13 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader implement
     }
 
     /**
-     * Sort entities by primary key, load first batch and save last entity primary key value.
-     * Load next batch with primary keys after last entity primary key.
-     * @param entityExporter {@link EntityExporter#exportEntity(EntityExportContext)}
+     * Sort entities by the primary key, load the first batch and save the last entity primary key value.
+     * Load the next batch with primary keys after the last entity primary key.
+     * @param exportedEntityVisitor {@link ExportedEntityVisitor#visitEntity(EntityExportContext)}
      * @param loadBatchSize {@link GridExportProperties#getExportAllBatchSize()} number of entities loaded in one query
      */
     protected void loadEntities(CollectionLoader<?> collectionLoader,
-                                EntityExporter entityExporter,
+                                ExportedEntityVisitor exportedEntityVisitor,
                                 int loadBatchSize) {
         int rowNumber = 0;
         boolean initialLoading = true;
@@ -122,7 +122,7 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader implement
             List<?> entities = dataManager.loadList(loadContext);
             for (Object entity : entities) {
                 EntityExportContext entityExportContext = new EntityExportContext(entity, ++rowNumber);
-                proceedToExport = entityExporter.exportEntity(entityExportContext);
+                proceedToExport = exportedEntityVisitor.visitEntity(entityExportContext);
                 if (!proceedToExport) {
                     break;
                 }

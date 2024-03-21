@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Give access to the entity loader with current pagination strategy
- * set in application.properties {@link GridExportProperties#getPaginationType()}
+ * Gives access to the all entities loader with current pagination strategy
+ * set in application.properties {@link GridExportProperties#getExportAllPaginationStrategy()}
  */
 @Component
 public class AllEntitiesLoaderFactory {
@@ -40,17 +40,17 @@ public class AllEntitiesLoaderFactory {
 
     /**
      * Return appropriate {@link AllEntitiesLoader} component with accordance to
-     * {@link GridExportProperties#getPaginationType()}
+     * {@link GridExportProperties#getExportAllPaginationStrategy()}
      */
     public AllEntitiesLoader getEntitiesLoader() {
-        String paginationType = gridExportProperties.getPaginationType();
+        String paginationStrategy = gridExportProperties.getExportAllPaginationStrategy();
         Optional<? extends AllEntitiesLoader> entityLoader = allEntitiesLoaders.stream()
-                .filter(provider -> paginationType.equals(provider.getPaginationType()))
+                .filter(provider -> paginationStrategy.equals(provider.getPaginationStrategy()))
                 .findFirst();
         if (entityLoader.isPresent()) {
             return entityLoader.get();
         } else {
-            throw new IllegalStateException(String.format("Unknown export pagination with type %s", paginationType));
+            throw new IllegalStateException(String.format("Unknown export pagination strategy %s", paginationStrategy));
         }
     }
 }

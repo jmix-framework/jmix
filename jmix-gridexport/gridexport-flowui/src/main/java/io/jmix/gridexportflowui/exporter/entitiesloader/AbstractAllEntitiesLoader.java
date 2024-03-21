@@ -24,16 +24,15 @@ import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.model.*;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
-import io.jmix.gridexportflowui.exporter.EntityExporter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
 /**
- * Base class for the entity loader which is used to export to other data formats such as excel or json
+ * Base class for the all entities loader which is used to export to other data formats such as excel or json
  */
-public abstract class AbstractAllEntitiesLoader {
+public abstract class AbstractAllEntitiesLoader implements AllEntitiesLoader {
 
     protected MetadataTools metadataTools;
     protected DataManager dataManager;
@@ -57,12 +56,12 @@ public abstract class AbstractAllEntitiesLoader {
      * {@link GridExportProperties#getExportAllBatchSize()}.
      *
      * @param dataUnit       data unit linked with the data
-     * @param entityExporter visitor which exports entity to appropriate format
+     * @param exportedEntityVisitor visitor which exports entity to appropriate format
      */
-    public void loadAll(DataUnit dataUnit, EntityExporter entityExporter) {
-        Preconditions.checkNotNullArgument(entityExporter,
+    public void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor) {
+        Preconditions.checkNotNullArgument(exportedEntityVisitor,
                 "Cannot export all rows. DataUnit can't be null");
-        Preconditions.checkNotNullArgument(entityExporter,
+        Preconditions.checkNotNullArgument(exportedEntityVisitor,
                 "Cannot export all rows. Entity exporter can't be null");
 
         DataLoader dataLoader = getDataLoader(dataUnit);
@@ -71,9 +70,9 @@ public abstract class AbstractAllEntitiesLoader {
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
         transactionTemplate.executeWithoutResult(transactionStatus -> {
             if (dataLoader instanceof CollectionLoader<?> collectionLoader) {
-                loadEntities(collectionLoader, entityExporter, loadBatchSize);
+                loadEntities(collectionLoader, exportedEntityVisitor, loadBatchSize);
             } else if (dataLoader instanceof KeyValueCollectionLoader keyValueCollectionLoader) {
-                loadKeyValueEntities(keyValueCollectionLoader, entityExporter, loadBatchSize);
+                loadKeyValueEntities(keyValueCollectionLoader, exportedEntityVisitor, loadBatchSize);
             } else {
                 throw new IllegalArgumentException("Cannot export all rows. Loader type is not supported.");
             }
@@ -83,7 +82,7 @@ public abstract class AbstractAllEntitiesLoader {
     protected abstract LoadContext generateLoadContext(CollectionLoader loader);
 
     protected abstract void loadEntities(CollectionLoader<?> collectionLoader,
-                                         EntityExporter entityExporter,
+                                         ExportedEntityVisitor exportedEntityVisitor,
                                          int loadBatchSize);
 
     protected DataLoader getDataLoader(DataUnit dataUnit) {
@@ -99,7 +98,7 @@ public abstract class AbstractAllEntitiesLoader {
 
 
     protected void loadKeyValueEntities(KeyValueCollectionLoader loader,
-                                        EntityExporter entityExporter,
+                                        ExportedEntityVisitor exportedEntityVisitor,
                                         int loadBatchSize) {
         int rowNumber = 0;
         boolean proceedToExport = true;
@@ -115,7 +114,7 @@ public abstract class AbstractAllEntitiesLoader {
             List<KeyValueEntity> keyValueEntities = dataManager.loadValues(loadContext);
             for (KeyValueEntity keyValueEntity : keyValueEntities) {
                 EntityExportContext entityExportContext = new EntityExportContext(keyValueEntity, ++rowNumber);
-                proceedToExport = entityExporter.exportEntity(entityExportContext);
+                proceedToExport = exportedEntityVisitor.visitEntity(entityExportContext);
                 if (!proceedToExport) {
                     break;
                 }

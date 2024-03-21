@@ -23,7 +23,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
-import io.jmix.gridexportflowui.exporter.EntityExporter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -31,12 +30,14 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * This loader implements limit-offset pagination strategy.
+ * This loader implements limit-offset pagination strategy. Entities are fetched in the same order as in the data store.
+ * The strategy uses two parameters. The first, offset, sets a number of the starting record of the page.
+ * The second, limit, defines the number of records in the page.
  */
 @Component
-public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader implements AllEntitiesLoader {
+public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader {
 
-    public static final String LIMIT_OFFSET_EXPORT_DATA_PROVIDER = "limit-offset";
+    public static final String PAGINATION_STRATEGY = "limit-offset";
 
     public LimitOffsetAllEntitiesLoader(MetadataTools metadataTools, DataManager dataManager,
                                         PlatformTransactionManager platformTransactionManager,
@@ -45,8 +46,8 @@ public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader impl
     }
 
     @Override
-    public String getPaginationType() {
-        return LIMIT_OFFSET_EXPORT_DATA_PROVIDER;
+    public String getPaginationStrategy() {
+        return PAGINATION_STRATEGY;
     }
 
     @Override
@@ -68,11 +69,11 @@ public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader impl
 
     /**
      * Sequential data loading
-     * @param entityExporter {@link EntityExporter#exportEntity(EntityExportContext)}
+     * @param exportedEntityVisitor {@link ExportedEntityVisitor#visitEntity(EntityExportContext)}
      * @param loadBatchSize {@link GridExportProperties#getExportAllBatchSize()} number of entities loaded in one query
      */
     @Override
-    protected void loadEntities(CollectionLoader<?> collectionLoader, EntityExporter entityExporter,
+    protected void loadEntities(CollectionLoader<?> collectionLoader, ExportedEntityVisitor exportedEntityVisitor,
                                 int loadBatchSize) {
         int rowNumber = 0;
         int firstResultNumber = 0;
@@ -89,7 +90,7 @@ public class LimitOffsetAllEntitiesLoader extends AbstractAllEntitiesLoader impl
             List<?> entities = dataManager.loadList(loadContext);
             for (Object entity : entities) {
                 EntityExportContext entityExportContext = new EntityExportContext(entity, ++rowNumber);
-                proceedToExport = entityExporter.exportEntity(entityExportContext);
+                proceedToExport = exportedEntityVisitor.visitEntity(entityExportContext);
                 if (!proceedToExport) {
                     break;
                 }

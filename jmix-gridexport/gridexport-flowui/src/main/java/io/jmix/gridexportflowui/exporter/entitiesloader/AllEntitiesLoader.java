@@ -18,21 +18,35 @@ package io.jmix.gridexportflowui.exporter.entitiesloader;
 
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.gridexportflowui.GridExportProperties;
-import io.jmix.gridexportflowui.exporter.EntityExporter;
+import io.jmix.gridexportflowui.exporter.EntityExportContext;
 
 /**
- * This interface should be implemented by any bean which loads data for json or excel export.
+ * This interface should be implemented by any bean which loads entities for json or excel export.
  */
 public interface AllEntitiesLoader {
-    /**
-     * Type of data loading strategy defined as string constant.
-     * {@link AllEntitiesLoaderFactory#getEntitiesLoader()} returns loader which getPaginationType() equals to
-     * {@link GridExportProperties#getPaginationType()}
-     */
-    String getPaginationType();
 
     /**
-     * Load entities and export each entity using the {@link EntityExporter} visitor
+     * Visitor is passed to {@link AllEntitiesLoader} to export loaded entity
      */
-    void loadAll(DataUnit dataUnit, EntityExporter entityExporter);
+    interface ExportedEntityVisitor {
+
+        /**
+         * Export entity to an appropriate format (json, excel)
+         * @param entityExportContext loaded entity
+         * @return false if entity cannot be exported
+         */
+        boolean visitEntity(EntityExportContext entityExportContext);
+    }
+
+    /**
+     * Type of data loading strategy defined as string constant.
+     * {@link AllEntitiesLoaderFactory#getEntitiesLoader()} returns loader which pagination strategy equals to
+     * {@link GridExportProperties#getExportAllPaginationStrategy()}
+     */
+    String getPaginationStrategy();
+
+    /**
+     * Load entities and export each entity using the {@link ExportedEntityVisitor}
+     */
+    void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor);
 }

@@ -31,9 +31,9 @@ public class GridExportProperties {
     int exportAllBatchSize;
 
     /**
-     * Choose appropriate pagination type to export data
+     * Pagination strategy for all entities export
      */
-    String paginationType;
+    String exportAllPaginationStrategy;
 
     /**
      * Excel exporting configuration.
@@ -47,15 +47,18 @@ public class GridExportProperties {
         return exportAllBatchSize;
     }
 
-    public String getPaginationType() {
-        return paginationType;
+    /**
+     * @see #exportAllPaginationStrategy
+     */
+    public String getExportAllPaginationStrategy() {
+        return exportAllPaginationStrategy;
     }
 
     public GridExportProperties(@DefaultValue("1000") int exportAllBatchSize,
-                                @DefaultValue("keyset") String paginationType,
+                                @DefaultValue("keyset") String exportAllPaginationStrategy,
                                 @DefaultValue ExcelExporterProperties excel) {
         this.exportAllBatchSize = exportAllBatchSize;
-        this.paginationType = paginationType;
+        this.exportAllPaginationStrategy = exportAllPaginationStrategy;
         this.excel = excel;
     }
 

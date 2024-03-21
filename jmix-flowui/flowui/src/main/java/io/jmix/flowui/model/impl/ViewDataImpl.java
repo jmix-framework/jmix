@@ -20,10 +20,8 @@ import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
-import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
@@ -34,24 +32,11 @@ import java.util.Set;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ViewDataImpl implements ViewData {
 
-    protected String viewId;
-
     protected DataContext dataContext;
 
     protected Map<String, InstanceContainer<?>> containers = new LinkedHashMap<>();
 
     protected Map<String, DataLoader> loaders = new LinkedHashMap<>();
-
-    @Override
-    @Nullable
-    public String getViewId() {
-        return viewId;
-    }
-
-    @Override
-    public void setViewId(@Nullable String viewId) {
-        this.viewId = viewId;
-    }
 
     @Override
     public DataContext getDataContext() {
@@ -116,8 +101,5 @@ public class ViewDataImpl implements ViewData {
     @Override
     public void registerLoader(String id, DataLoader loader) {
         loaders.put(id, loader);
-
-        DataLoaderMonitoringInfo monitoringInfo = new DataLoaderMonitoringInfo(getViewId(), id);
-        loader.setMonitoringInfoProvider(dl -> monitoringInfo);
     }
 }

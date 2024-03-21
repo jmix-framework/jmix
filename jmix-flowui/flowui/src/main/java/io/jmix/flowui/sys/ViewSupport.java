@@ -26,7 +26,6 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.action.binder.ActionBinders;
 import io.jmix.flowui.model.ViewData;
-import io.jmix.flowui.monitoring.ViewLifeCycle;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.View.InitEvent;
 import io.jmix.flowui.view.navigation.RouteSupport;
@@ -34,8 +33,6 @@ import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.ComponentLoaderContext;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +45,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import static io.jmix.flowui.monitoring.UiMonitoring.*;
 import static io.jmix.flowui.view.ViewControllerUtils.getPackage;
 
 
@@ -64,7 +60,6 @@ public class ViewSupport {
     protected CurrentAuthentication currentAuthentication;
     protected ViewControllerDependencyManager dependencyManager;
     protected RouteSupport routeSupport;
-    protected MeterRegistry meterRegistry;
 
     protected Map<String, String> titleCache = new ConcurrentHashMap<>();
 
@@ -74,8 +69,7 @@ public class ViewSupport {
                        ViewNavigationSupport navigationSupport,
                        CurrentAuthentication currentAuthentication,
                        ViewControllerDependencyManager dependencyManager,
-                       RouteSupport routeSupport,
-                       MeterRegistry meterRegistry) {
+                       RouteSupport routeSupport) {
         this.applicationContext = applicationContext;
         this.viewXmlLoader = viewXmlLoader;
         this.viewRegistry = viewRegistry;
@@ -83,16 +77,10 @@ public class ViewSupport {
         this.currentAuthentication = currentAuthentication;
         this.dependencyManager = dependencyManager;
         this.routeSupport = routeSupport;
-        this.meterRegistry = meterRegistry;
     }
 
     public void initView(View<?> view) {
         log.debug("Init view: " + view);
-
-        Timer.Sample createSample = startTimerSample(meterRegistry);
-
-        String viewId = getInferredViewId(view);
-        view.setId(viewId);
 
         ViewControllerUtils.setViewData(view, applicationContext.getBean(ViewData.class));
 
@@ -102,11 +90,10 @@ public class ViewSupport {
 
         ViewControllerUtils.setViewFacets(view, applicationContext.getBean(ViewFacets.class, view));
 
-        stopViewTimerSample(createSample, meterRegistry, ViewLifeCycle.CREATE, viewId);
+        String viewId = getInferredViewId(view);
+        view.setId(viewId);
 
         ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
-
-        Timer.Sample loadSample = startTimerSample(meterRegistry);
 
         ComponentLoaderContext componentLoaderContext = createComponentLoaderContext();
 
@@ -123,25 +110,15 @@ public class ViewSupport {
             loadWindowFromXml(element, view, componentLoaderContext);
         }
 
-        stopViewTimerSample(loadSample, meterRegistry, ViewLifeCycle.LOAD, viewId);
-
         // Pre InitTasks must be executed before DependencyManager
         // invocation to have precedence over @Subscribe methods
         componentLoaderContext.executePreInitTasks();
-
-        Timer.Sample injectSample = startTimerSample(meterRegistry);
 
         ViewControllerDependencyManager dependencyManager =
                 applicationContext.getBean(ViewControllerDependencyManager.class);
         dependencyManager.inject(view);
 
-        stopViewTimerSample(injectSample, meterRegistry, ViewLifeCycle.INJECT, viewId);
-
-        Timer.Sample initSample = startTimerSample(meterRegistry);
-
         fireViewInitEvent(view);
-
-        stopViewTimerSample(initSample, meterRegistry, ViewLifeCycle.INIT, viewId);
 
         // InitTasks must be executed after View.InitEvent
         // in case something was replaced, e.g. actions

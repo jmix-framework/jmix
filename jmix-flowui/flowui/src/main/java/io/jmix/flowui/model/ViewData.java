@@ -24,11 +24,6 @@ import java.util.Set;
  */
 public interface ViewData {
 
-    @Nullable
-    String getViewId();
-
-    void setViewId(@Nullable String viewId);
-
     /**
      * Returns view's {@code DataContext}.
      *

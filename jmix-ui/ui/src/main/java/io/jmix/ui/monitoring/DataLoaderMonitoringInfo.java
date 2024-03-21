@@ -48,10 +48,12 @@ public class DataLoaderMonitoringInfo {
         return EMPTY;
     }
 
+    @Nullable
     public String screenId() {
         return screenId;
     }
 
+    @Nullable
     public String loaderId() {
         return loaderId;
     }

@@ -18,11 +18,19 @@ package io.jmix.ui.monitoring;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.Nullable;
 
 /**
  * Logger class for UI performance monitoring.
  */
 public final class UiMonitoring {
+    private static final String NOT_AVAILABLE_TAG_VALUE = "N/A";
+    private static final String VIEWS_BASE_NAME = "jmix.ui.views";
+    private static final String DATA_BASE_NAME = "jmix.ui.data";
+    private static final String VIEW_TAG = "view";
+    private static final String DATA_LOADER_TAG = "dataLoader";
+    private static final String LIFE_CYCLE_TAG = "lifeCycle";
 
     private UiMonitoring() {
     }
@@ -33,5 +41,48 @@ public final class UiMonitoring {
 
     public static Timer createMenuTimer(MeterRegistry meterRegistry, String menuItemId) {
         return meterRegistry.timer("jmix.ui.menu", "menuItem", menuItemId);
+    }
+
+    public static Timer.Sample startTimerSample(MeterRegistry meterRegistry) {
+        return Timer.start(meterRegistry);
+    }
+
+    public static void stopDataLoaderTimerSample(Timer.Sample sample,
+                                                 MeterRegistry meterRegistry,
+                                                 DataLoaderLifeCycle lifeCycle,
+                                                 DataLoaderMonitoringInfo info) {
+        if (!canDataLoaderBeMonitored(lifeCycle, info)) {
+            return;
+        }
+        sample.stop(createDataLoaderTimer(
+                        meterRegistry, lifeCycle, handleNullTag(info.viewId()), handleNullTag(info.loaderId())
+                )
+        );
+    }
+
+
+    protected static Timer createDataLoaderTimer(MeterRegistry meterRegistry,
+                                                 DataLoaderLifeCycle lifeCycle,
+                                                 String viewId, String loaderId) {
+        return meterRegistry.timer(
+                DATA_BASE_NAME, DATA_LOADER_TAG, loaderId, VIEW_TAG, viewId, LIFE_CYCLE_TAG, lifeCycle.getName()
+        );
+    }
+
+    protected static boolean canDataLoaderBeMonitored(@Nullable DataLoaderLifeCycle lifeCycle,
+                                                      @Nullable DataLoaderMonitoringInfo monitoringInfo) {
+        if (monitoringInfo == null || lifeCycle == null) {
+            return false;
+        }
+        String loaderId = monitoringInfo.loaderId();
+        return !StringUtils.isBlank(loaderId);
+    }
+
+    /**
+     * Prevents null from being tag value.
+     * Actual sanity check should be performed before and prevent monitoring at all.
+     */
+    protected static String handleNullTag(@Nullable String tag) {
+        return tag == null ? NOT_AVAILABLE_TAG_VALUE : tag;
     }
 }

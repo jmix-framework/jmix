@@ -19,17 +19,17 @@ package io.jmix.gridexportflowui.exporter;
 public enum ExportMode {
 
     /**
-     * Export all records in the database
+     * Export all entities in the database
      */
     ALL_ROWS,
 
     /**
-     * Export only records loaded to the current page of a table or a data grid
+     * Export only entities loaded to the current page of a table or a data grid
      */
     CURRENT_PAGE,
 
     /**
-     * Export only records selected in a table or a data grid
+     * Export only entities selected in a table or a data grid
      */
     SELECTED_ROWS
 }

@@ -16,6 +16,7 @@
 
 package io.jmix.ui.monitoring;
 
+import io.jmix.ui.model.impl.ScreenDataXmlLoader;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
@@ -26,9 +27,11 @@ import org.springframework.lang.Nullable;
  */
 public final class UiMonitoring {
     private static final String NOT_AVAILABLE_TAG_VALUE = "N/A";
-    private static final String VIEWS_BASE_NAME = "jmix.ui.views";
+    private static final String SCREENS_BASE_NAME = "jmix.ui.screens";
     private static final String DATA_BASE_NAME = "jmix.ui.data";
-    private static final String VIEW_TAG = "view";
+    private static final String MENU_BASE_NAME = "jmix.ui.menu";
+    private static final String SCREEN_TAG = "screen";
+    private static final String MENU_TAG = "menu";
     private static final String DATA_LOADER_TAG = "dataLoader";
     private static final String LIFE_CYCLE_TAG = "lifeCycle";
 
@@ -36,11 +39,11 @@ public final class UiMonitoring {
     }
 
     public static Timer createScreenTimer(MeterRegistry meterRegistry, ScreenLifeCycle lifeCycle, String screen) {
-        return meterRegistry.timer("jmix.ui.screens", "screen", screen, "lifeCycle", lifeCycle.getName());
+        return meterRegistry.timer(SCREENS_BASE_NAME, SCREEN_TAG, screen, LIFE_CYCLE_TAG, lifeCycle.getName());
     }
 
     public static Timer createMenuTimer(MeterRegistry meterRegistry, String menuItemId) {
-        return meterRegistry.timer("jmix.ui.menu", "menuItem", menuItemId);
+        return meterRegistry.timer(MENU_BASE_NAME, MENU_TAG, menuItemId);
     }
 
     public static Timer.Sample startTimerSample(MeterRegistry meterRegistry) {
@@ -55,7 +58,7 @@ public final class UiMonitoring {
             return;
         }
         sample.stop(createDataLoaderTimer(
-                        meterRegistry, lifeCycle, handleNullTag(info.viewId()), handleNullTag(info.loaderId())
+                        meterRegistry, lifeCycle, handleNullTag(info.screenId()), handleNullTag(info.loaderId())
                 )
         );
     }
@@ -63,9 +66,9 @@ public final class UiMonitoring {
 
     protected static Timer createDataLoaderTimer(MeterRegistry meterRegistry,
                                                  DataLoaderLifeCycle lifeCycle,
-                                                 String viewId, String loaderId) {
+                                                 String screenId, String loaderId) {
         return meterRegistry.timer(
-                DATA_BASE_NAME, DATA_LOADER_TAG, loaderId, VIEW_TAG, viewId, LIFE_CYCLE_TAG, lifeCycle.getName()
+                DATA_BASE_NAME, DATA_LOADER_TAG, loaderId, SCREEN_TAG, screenId, LIFE_CYCLE_TAG, lifeCycle.getName()
         );
     }
 
@@ -75,7 +78,8 @@ public final class UiMonitoring {
             return false;
         }
         String loaderId = monitoringInfo.loaderId();
-        return !StringUtils.isBlank(loaderId);
+        return !StringUtils.isBlank(loaderId)
+                && !loaderId.startsWith(ScreenDataXmlLoader.GENERATED_PREFIX);
     }
 
     /**

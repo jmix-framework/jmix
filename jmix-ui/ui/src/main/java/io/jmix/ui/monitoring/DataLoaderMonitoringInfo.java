@@ -24,18 +24,18 @@ import org.springframework.lang.Nullable;
  */
 public class DataLoaderMonitoringInfo {
 
-    protected String viewId;
+    protected String screenId;
     protected String loaderId;
 
     private static final DataLoaderMonitoringInfo EMPTY = new DataLoaderMonitoringInfo(null, null);
 
     /**
      *
-     * @param viewId   id of the view containing target data loader
+     * @param screenId   id of the view containing target data loader
      * @param loaderId id of the target data loader
      */
-    public DataLoaderMonitoringInfo(@Nullable String viewId, @Nullable String loaderId) {
-        viewId = viewId;
+    public DataLoaderMonitoringInfo(@Nullable String screenId, @Nullable String loaderId) {
+        screenId = screenId;
         loaderId = loaderId;
     }
 
@@ -46,12 +46,12 @@ public class DataLoaderMonitoringInfo {
         return EMPTY;
     }
 
-    public String viewId() {
-        return viewId;
+    public String screenId() {
+        return screenId;
     }
 
-    public DataLoaderMonitoringInfo setViewId(String viewId) {
-        this.viewId = viewId;
+    public DataLoaderMonitoringInfo setScreenId(String screenId) {
+        this.screenId = screenId;
         return this;
     }
 

@@ -26,9 +26,15 @@ import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
+import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
+import static io.jmix.flowui.monitoring.ViewLifeCycle.*;
+import static io.micrometer.core.instrument.Timer.Sample;
+import static io.micrometer.core.instrument.Timer.start;
 
 /**
  * Base class for UI views.
@@ -50,6 +56,7 @@ public class View<T extends Component> extends Composite<T>
         implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver, HasDynamicTitle {
 
     private ApplicationContext applicationContext;
+    private MeterRegistry meterRegistry;
 
     private ViewData viewData;
     private ViewActions viewActions;
@@ -80,6 +87,11 @@ public class View<T extends Component> extends Composite<T>
         this.applicationContext = applicationContext;
     }
 
+    @Autowired
+    protected void setMeterRegistry(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+    }
+
     @Override
     public void setId(String id) {
         super.setId(id);
@@ -92,13 +104,18 @@ public class View<T extends Component> extends Composite<T>
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
+        Sample sample = start(meterRegistry);
         fireEvent(new ReadyEvent(this));
+        stopViewTimerSample(sample, meterRegistry, READY, getId().orElse(null));
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         fireEvent(new QueryParametersChangeEvent(this, event.getLocation().getQueryParameters()));
+
+        Sample sample = startTimerSample(meterRegistry);
         fireEvent(new BeforeShowEvent(this));
+        stopViewTimerSample(sample, meterRegistry, BEFORE_SHOW, getId().orElse(null));
     }
 
     @Override
@@ -107,7 +124,10 @@ public class View<T extends Component> extends Composite<T>
             if (!closeActionPerformed) {
                 CloseAction closeAction = new NavigateCloseAction(event);
                 BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
+
+                Sample beforeCloseSample = startTimerSample(meterRegistry);
                 fireEvent(beforeCloseEvent);
+                stopViewTimerSample(beforeCloseSample, meterRegistry, BEFORE_CLOSE, getId().orElse(null));
 
                 if (beforeCloseEvent.isClosePrevented()) {
                     closeActionPerformed = false;
@@ -115,7 +135,9 @@ public class View<T extends Component> extends Composite<T>
                 }
 
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
+                Sample afterCloseSample = startTimerSample(meterRegistry);
                 fireEvent(afterCloseEvent);
+                stopViewTimerSample(afterCloseSample, meterRegistry, AFTER_CLOSE, getId().orElse(null));
             }
         }
 

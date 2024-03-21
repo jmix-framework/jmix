@@ -87,6 +87,7 @@ public final class ViewControllerUtils {
 
     public static void setViewData(View<?> view, ViewData viewData) {
         view.setViewData(viewData);
+        viewData.setViewId(view.getId().orElse(null));
     }
 
     public static ViewActions getViewActions(View<?> view) {

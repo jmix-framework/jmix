@@ -31,7 +31,7 @@ public class GridExportProperties {
     int exportAllBatchSize;
 
     /**
-     * Pagination strategy for all entities export
+     * Pagination strategy for all entities export.
      */
     String exportAllPaginationStrategy;
 

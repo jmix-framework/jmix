@@ -32,7 +32,7 @@ import java.util.Objects;
 
 /**
  * This loader implements the keyset pagination strategy. Entities retrieval is based on sorting
- * by primary key or unique attribute. The next page starts after the last entity on the previous page.
+ * by primary key. The next page starts after the last entity on the previous page.
  */
 @Component
 public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {

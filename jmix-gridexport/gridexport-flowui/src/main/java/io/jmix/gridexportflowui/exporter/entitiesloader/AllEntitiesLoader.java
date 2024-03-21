@@ -21,7 +21,7 @@ import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
 
 /**
- * This interface should be implemented by any bean which loads entities for json or excel export.
+ * This interface should be implemented by any bean which loads all entities for json or excel export.
  */
 public interface AllEntitiesLoader {
 

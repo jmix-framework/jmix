@@ -31,7 +31,7 @@ public final class UiMonitoring {
     private static final String DATA_BASE_NAME = "jmix.ui.data";
     private static final String MENU_BASE_NAME = "jmix.ui.menu";
     private static final String SCREEN_TAG = "screen";
-    private static final String MENU_TAG = "menu";
+    private static final String MENU_TAG = "menuItem";
     private static final String DATA_LOADER_TAG = "dataLoader";
     private static final String LIFE_CYCLE_TAG = "lifeCycle";
 

@@ -25,9 +25,9 @@ import javax.annotation.Nullable;
  */
 public class DataLoaderMonitoringInfo {
 
-    protected String screenId;
+    protected final String screenId;
 
-    protected String loaderId;
+    protected final String loaderId;
 
     private static final DataLoaderMonitoringInfo EMPTY = new DataLoaderMonitoringInfo(null, null);
 
@@ -37,8 +37,8 @@ public class DataLoaderMonitoringInfo {
      * @param loaderId id of the target data loader
      */
     public DataLoaderMonitoringInfo(@Nullable String screenId, @Nullable String loaderId) {
-        screenId = screenId;
-        loaderId = loaderId;
+        this.screenId = screenId;
+        this.loaderId = loaderId;
     }
 
     /**
@@ -52,17 +52,7 @@ public class DataLoaderMonitoringInfo {
         return screenId;
     }
 
-    public DataLoaderMonitoringInfo setScreenId(@Nullable  String screenId) {
-        this.screenId = screenId;
-        return this;
-    }
-
     public String loaderId() {
         return loaderId;
-    }
-
-    public DataLoaderMonitoringInfo setLoaderId(@Nullable  String loaderId) {
-        this.loaderId = loaderId;
-        return this;
     }
 }

@@ -120,7 +120,6 @@ public abstract class Screen implements FrameOwner {
 
     protected void setScreenData(ScreenData data) {
         this.screenData = data;
-        this.screenData.setScreenId(getId());
     }
 
     protected <E> void fireEvent(Class<E> eventType, E event) {

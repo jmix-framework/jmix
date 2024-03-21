@@ -17,7 +17,8 @@
 package io.jmix.ui.monitoring;
 
 import io.jmix.ui.model.DataLoader;
-import org.springframework.lang.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * Static info about {@link DataLoader} that will be used as monitoring tags.
@@ -25,6 +26,7 @@ import org.springframework.lang.Nullable;
 public class DataLoaderMonitoringInfo {
 
     protected String screenId;
+
     protected String loaderId;
 
     private static final DataLoaderMonitoringInfo EMPTY = new DataLoaderMonitoringInfo(null, null);
@@ -50,7 +52,7 @@ public class DataLoaderMonitoringInfo {
         return screenId;
     }
 
-    public DataLoaderMonitoringInfo setScreenId(String screenId) {
+    public DataLoaderMonitoringInfo setScreenId(@Nullable  String screenId) {
         this.screenId = screenId;
         return this;
     }
@@ -59,7 +61,7 @@ public class DataLoaderMonitoringInfo {
         return loaderId;
     }
 
-    public DataLoaderMonitoringInfo setLoaderId(String loaderId) {
+    public DataLoaderMonitoringInfo setLoaderId(@Nullable  String loaderId) {
         this.loaderId = loaderId;
         return this;
     }

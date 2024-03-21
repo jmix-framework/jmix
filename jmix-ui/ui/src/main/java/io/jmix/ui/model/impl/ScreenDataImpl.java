@@ -114,7 +114,9 @@ public class ScreenDataImpl implements ScreenData {
     public void registerLoader(String id, DataLoader loader) {
         loaders.put(id, loader);
 
-        DataLoaderMonitoringInfo monitoringInfo = new DataLoaderMonitoringInfo(getScreenId(), id);
+        DataLoaderMonitoringInfo monitoringInfo = DataLoaderMonitoringInfo.empty();
+        monitoringInfo.setScreenId(getScreenId());
+        monitoringInfo.setLoaderId(id);
         loader.setMonitoringInfoProvider(dl -> monitoringInfo);
     }
 }

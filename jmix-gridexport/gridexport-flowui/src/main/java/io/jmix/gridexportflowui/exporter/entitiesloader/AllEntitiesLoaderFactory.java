@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportflowui.exporter.recordsloader;
+package io.jmix.gridexportflowui.exporter.entitiesloader;
 
 import io.jmix.gridexportflowui.GridExportProperties;
 import org.springframework.stereotype.Component;
@@ -22,25 +22,33 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Give access to the entity loader with current pagination strategy
+ * set in application.properties {@link GridExportProperties#getPaginationType()}
+ */
 @Component
-public class AllRecordsLoaderFactory {
+public class AllEntitiesLoaderFactory {
 
     protected GridExportProperties gridExportProperties;
-    protected List<AllRecordsLoader> allRecordsLoaders;
+    protected List<AllEntitiesLoader> allEntitiesLoaders;
 
-    public AllRecordsLoaderFactory(GridExportProperties gridExportProperties,
-                                   List<AllRecordsLoader> allRecordsLoaders) {
+    public AllEntitiesLoaderFactory(GridExportProperties gridExportProperties,
+                                    List<AllEntitiesLoader> allEntitiesLoaders) {
         this.gridExportProperties = gridExportProperties;
-        this.allRecordsLoaders = allRecordsLoaders;
+        this.allEntitiesLoaders = allEntitiesLoaders;
     }
 
-    public AllRecordsLoader getRecordsLoader() {
+    /**
+     * Return appropriate {@link AllEntitiesLoader} component with accordance to
+     * {@link GridExportProperties#getPaginationType()}
+     */
+    public AllEntitiesLoader getEntitiesLoader() {
         String paginationType = gridExportProperties.getPaginationType();
-        Optional<? extends AllRecordsLoader> dataExporter = allRecordsLoaders.stream()
+        Optional<? extends AllEntitiesLoader> entityLoader = allEntitiesLoaders.stream()
                 .filter(provider -> paginationType.equals(provider.getPaginationType()))
                 .findFirst();
-        if (dataExporter.isPresent()) {
-            return dataExporter.get();
+        if (entityLoader.isPresent()) {
+            return entityLoader.get();
         } else {
             throw new IllegalStateException(String.format("Unknown export pagination with type %s", paginationType));
         }

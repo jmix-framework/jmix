@@ -16,7 +16,17 @@
 
 package io.jmix.gridexportflowui.exporter;
 
+import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoader;
+
+/**
+ * Visitor is passed to {@link AllEntitiesLoader} to export loaded entity
+ */
 public interface EntityExporter {
 
-    boolean createRecordFromEntity(EntityExportContext entityExportContext);
+    /**
+     * Export entity to an appropriate format (json, excel)
+     * @param entityExportContext loaded entity
+     * @return false if entity cannot be exported
+     */
+    boolean exportEntity(EntityExportContext entityExportContext);
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportflowui.exporter.recordsloader;
+package io.jmix.gridexportflowui.exporter.entitiesloader;
 
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -31,16 +31,19 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This loader implements keyset pagination strategy.
+ */
 @Component
-public class KeysetAllRecordsLoader extends AbstractAllRecordsLoader implements AllRecordsLoader {
+public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader implements AllEntitiesLoader {
 
     public static final String KEYSET_EXPORT_DATA_PROVIDER = "keyset";
 
     protected static String LAST_LOADED_PK_CONDITION_PARAMETER_NAME = "lastLoadedPkValue";
 
-    public KeysetAllRecordsLoader(MetadataTools metadataTools, DataManager dataManager,
-                                  PlatformTransactionManager platformTransactionManager,
-                                  GridExportProperties gridExportProperties) {
+    public KeysetAllEntitiesLoader(MetadataTools metadataTools, DataManager dataManager,
+                                   PlatformTransactionManager platformTransactionManager,
+                                   GridExportProperties gridExportProperties) {
         super(metadataTools, dataManager, platformTransactionManager, gridExportProperties);
     }
 
@@ -89,9 +92,15 @@ public class KeysetAllRecordsLoader extends AbstractAllRecordsLoader implements 
         return loadContext;
     }
 
-    protected void exportEntities(CollectionLoader<?> collectionLoader,
-                                  EntityExporter entityExporter,
-                                  int loadBatchSize) {
+    /**
+     * Sort entities by primary key, load first batch and save last entity primary key value.
+     * Load next batch with primary keys after last entity primary key.
+     * @param entityExporter {@link EntityExporter#exportEntity(EntityExportContext)}
+     * @param loadBatchSize {@link GridExportProperties#getExportAllBatchSize()} number of entities loaded in one query
+     */
+    protected void loadEntities(CollectionLoader<?> collectionLoader,
+                                EntityExporter entityExporter,
+                                int loadBatchSize) {
         int rowNumber = 0;
         boolean initialLoading = true;
         Object lastLoadedPkValue = null;
@@ -113,7 +122,7 @@ public class KeysetAllRecordsLoader extends AbstractAllRecordsLoader implements 
             List<?> entities = dataManager.loadList(loadContext);
             for (Object entity : entities) {
                 EntityExportContext entityExportContext = new EntityExportContext(entity, ++rowNumber);
-                proceedToExport = entityExporter.createRecordFromEntity(entityExportContext);
+                proceedToExport = entityExporter.exportEntity(entityExportContext);
                 if (!proceedToExport) {
                     break;
                 }

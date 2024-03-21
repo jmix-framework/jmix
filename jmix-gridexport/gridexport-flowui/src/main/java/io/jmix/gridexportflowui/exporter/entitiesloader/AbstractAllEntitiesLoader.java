@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportflowui.exporter.recordsloader;
+package io.jmix.gridexportflowui.exporter.entitiesloader;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
@@ -30,17 +30,20 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
-public abstract class AbstractAllRecordsLoader {
+/**
+ * Base class for the entity loader which is used to export to other data formats such as excel or json
+ */
+public abstract class AbstractAllEntitiesLoader {
 
     protected MetadataTools metadataTools;
     protected DataManager dataManager;
     protected PlatformTransactionManager platformTransactionManager;
     protected GridExportProperties gridExportProperties;
 
-    public AbstractAllRecordsLoader(MetadataTools metadataTools,
-                                    DataManager dataManager,
-                                    PlatformTransactionManager platformTransactionManager,
-                                    GridExportProperties gridExportProperties) {
+    public AbstractAllEntitiesLoader(MetadataTools metadataTools,
+                                     DataManager dataManager,
+                                     PlatformTransactionManager platformTransactionManager,
+                                     GridExportProperties gridExportProperties) {
         this.metadataTools = metadataTools;
         this.dataManager = dataManager;
         this.platformTransactionManager = platformTransactionManager;
@@ -54,9 +57,9 @@ public abstract class AbstractAllRecordsLoader {
      * {@link GridExportProperties#getExportAllBatchSize()}.
      *
      * @param dataUnit       data unit linked with the data
-     * @param entityExporter predicate that is applied to each loaded instance
+     * @param entityExporter visitor which exports entity to appropriate format
      */
-    public void exportAll(DataUnit dataUnit, EntityExporter entityExporter) {
+    public void loadAll(DataUnit dataUnit, EntityExporter entityExporter) {
         Preconditions.checkNotNullArgument(entityExporter,
                 "Cannot export all rows. DataUnit can't be null");
         Preconditions.checkNotNullArgument(entityExporter,
@@ -68,9 +71,9 @@ public abstract class AbstractAllRecordsLoader {
         TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
         transactionTemplate.executeWithoutResult(transactionStatus -> {
             if (dataLoader instanceof CollectionLoader<?> collectionLoader) {
-                exportEntities(collectionLoader, entityExporter, loadBatchSize);
+                loadEntities(collectionLoader, entityExporter, loadBatchSize);
             } else if (dataLoader instanceof KeyValueCollectionLoader keyValueCollectionLoader) {
-                exportKeyValueEntities(keyValueCollectionLoader, entityExporter, loadBatchSize);
+                loadKeyValueEntities(keyValueCollectionLoader, entityExporter, loadBatchSize);
             } else {
                 throw new IllegalArgumentException("Cannot export all rows. Loader type is not supported.");
             }
@@ -79,9 +82,9 @@ public abstract class AbstractAllRecordsLoader {
 
     protected abstract LoadContext generateLoadContext(CollectionLoader loader);
 
-    protected abstract void exportEntities(CollectionLoader<?> collectionLoader,
-                                            EntityExporter entityExporter,
-                                            int loadBatchSize);
+    protected abstract void loadEntities(CollectionLoader<?> collectionLoader,
+                                         EntityExporter entityExporter,
+                                         int loadBatchSize);
 
     protected DataLoader getDataLoader(DataUnit dataUnit) {
         if (!(dataUnit instanceof ContainerDataUnit<?> containerDataUnit)) {
@@ -95,9 +98,9 @@ public abstract class AbstractAllRecordsLoader {
     }
 
 
-    protected void exportKeyValueEntities(KeyValueCollectionLoader loader,
-                                          EntityExporter entityExporter,
-                                          int loadBatchSize) {
+    protected void loadKeyValueEntities(KeyValueCollectionLoader loader,
+                                        EntityExporter entityExporter,
+                                        int loadBatchSize) {
         int rowNumber = 0;
         boolean proceedToExport = true;
         boolean lastBatchLoaded = false;
@@ -112,7 +115,7 @@ public abstract class AbstractAllRecordsLoader {
             List<KeyValueEntity> keyValueEntities = dataManager.loadValues(loadContext);
             for (KeyValueEntity keyValueEntity : keyValueEntities) {
                 EntityExportContext entityExportContext = new EntityExportContext(keyValueEntity, ++rowNumber);
-                proceedToExport = entityExporter.createRecordFromEntity(entityExportContext);
+                proceedToExport = entityExporter.exportEntity(entityExportContext);
                 if (!proceedToExport) {
                     break;
                 }

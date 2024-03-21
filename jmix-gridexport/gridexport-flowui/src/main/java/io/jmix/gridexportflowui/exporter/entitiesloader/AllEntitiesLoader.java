@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportflowui.exporter.recordsloader;
+package io.jmix.gridexportflowui.exporter.entitiesloader;
 
 import io.jmix.flowui.data.DataUnit;
+import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.EntityExporter;
 
-public interface AllRecordsLoader {
+/**
+ * This interface should be implemented by any bean which loads data for json or excel export.
+ */
+public interface AllEntitiesLoader {
+    /**
+     * Type of data loading strategy defined as string constant.
+     * {@link AllEntitiesLoaderFactory#getEntitiesLoader()} returns loader which getPaginationType() equals to
+     * {@link GridExportProperties#getPaginationType()}
+     */
     String getPaginationType();
 
-    void exportAll(DataUnit dataUnit, EntityExporter entityExporter);
+    /**
+     * Load entities and export each entity using the {@link EntityExporter} visitor
+     */
+    void loadAll(DataUnit dataUnit, EntityExporter entityExporter);
 }

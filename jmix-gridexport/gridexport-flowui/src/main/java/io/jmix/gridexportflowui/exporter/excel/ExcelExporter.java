@@ -42,8 +42,8 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.action.ExportAction;
 import io.jmix.gridexportflowui.exporter.*;
-import io.jmix.gridexportflowui.exporter.recordsloader.AllRecordsLoader;
-import io.jmix.gridexportflowui.exporter.recordsloader.AllRecordsLoaderFactory;
+import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoader;
+import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoaderFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
@@ -104,14 +104,14 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     protected GridExportProperties gridExportProperties;
     protected Notifications notifications;
-    protected AllRecordsLoaderFactory allRecordsLoaderFactory;
+    protected AllEntitiesLoaderFactory allEntitiesLoaderFactory;
 
     public ExcelExporter(GridExportProperties gridExportProperties,
                          Notifications notifications,
-                         AllRecordsLoaderFactory allRecordsLoaderFactory) {
+                         AllEntitiesLoaderFactory allEntitiesLoaderFactory) {
         this.gridExportProperties = gridExportProperties;
         this.notifications = notifications;
-        this.allRecordsLoaderFactory = allRecordsLoaderFactory;
+        this.allEntitiesLoaderFactory = allEntitiesLoaderFactory;
     }
 
     protected void createWorkbookWithSheet() {
@@ -230,20 +230,22 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(dataGrid instanceof TreeDataGrid);
 
-                AllRecordsLoader dataExporter = allRecordsLoaderFactory.getRecordsLoader();
-                dataExporter.exportAll(((ListDataComponent<?>) dataGrid).getItems(), context -> {
-                    if (!checkIsRowNumberExceed(context.getEntityNumber())) {
-                        createDataGridRowForEntityInstance(
-                                dataGrid,
-                                columns,
-                                0,
-                                context.getEntityNumber(),
-                                context.getEntity(),
-                                addLevelPadding);
-                        return true;
-                    }
-                    return false;
-                });
+                AllEntitiesLoader entitiesLoader = allEntitiesLoaderFactory.getEntitiesLoader();
+                entitiesLoader.loadAll(
+                    ((ListDataComponent<?>) dataGrid).getItems(),
+                    context -> {
+                        if (!checkIsRowNumberExceed(context.getEntityNumber())) {
+                            createDataGridRowForEntityInstance(
+                                    dataGrid,
+                                    columns,
+                                    0,
+                                    context.getEntityNumber(),
+                                    context.getEntity(),
+                                    addLevelPadding);
+                            return true;
+                        }
+                        return false;
+                    });
             }
 
             for (int c = 0; c < columns.size(); c++) {

@@ -285,7 +285,7 @@ dependencies {
         api "io.jmix.webdav:jmix-webdav-ui-starter:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest-starter:$premiumVersion"
 
-        api 'com.google.guava:guava:33.0.0-jre' //todo 32.1.3-jre?
+        api 'com.google.guava:guava:33.0.0-jre'
         api 'commons-io:commons-io:2.15.1'
         api 'javax.annotation:javax.annotation-api:1.3.2'
         api 'javax.inject:javax.inject:1'
@@ -381,7 +381,7 @@ dependencies {
         api "com.haulmont.yarg:yarg-api:$yargVersion"
         api "com.haulmont.yarg:yarg:$yargVersion"
 
-        api 'org.jsoup:jsoup:1.15.3'
+        api 'org.jsoup:jsoup:1.17.2'
 
         api 'org.apache.poi:poi:5.2.5'
         api 'org.apache.poi:poi-ooxml:5.2.5'
@@ -436,8 +436,8 @@ dependencies {
         api 'com.jayway.jsonpath:json-path:2.9.0'
         api 'org.apache.james:apache-mime4j-core:0.8.10'
 
-        runtime 'org.postgresql:postgresql:42.3.9' //todo 42.7.2?
-        runtime 'org.hsqldb:hsqldb:2.7.1'
+        runtime 'org.postgresql:postgresql:42.7.3'
+        runtime 'org.hsqldb:hsqldb:2.7.2'
     }
 }
 

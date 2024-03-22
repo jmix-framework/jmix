@@ -37,6 +37,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
+import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
@@ -200,6 +201,11 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
             Component headerComponent = column.getHeaderComponent();
             if (headerComponent instanceof HasText hasText) {
                 headerText = hasText.getText();
+            }
+            if (Strings.isNullOrEmpty(headerText)
+                    && headerComponent instanceof DataGridHeaderFilter headerFilter
+                    && headerFilter.getHeader() instanceof HasText headerFilterWithText) {
+                headerText = headerFilterWithText.getText();
             }
             return Strings.nullToEmpty(headerText);
         }

@@ -20,7 +20,9 @@ import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.icon.VaadinIcon
 import component_xml_load.screen.GridColumnVisibilityView
 import io.jmix.core.DataManager
+import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Order
@@ -39,7 +41,7 @@ class GridColumnVisibilityXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerViewBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen", "io.jmix.flowui.app")
 
         def order = dataManager.create(Order)
         order.number = "number"
@@ -107,5 +109,14 @@ class GridColumnVisibilityXmlLoadTest extends FlowuiTestSpecification {
             getMenuItem("number") != null
             getMenuItem("total") != null
         }
+    }
+
+    def "Load DataGrid with filterable column"() {
+        when: "Open View with DatGrid with GridColumnVisibility"
+        def screen = navigateToView(GridColumnVisibilityView)
+
+        then: "DataGrid filterable column header text should not be empty"
+
+        screen.columnVisibility.getMenuItem("dateTime").getText() == "DateTime"
     }
 }

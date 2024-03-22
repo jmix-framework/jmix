@@ -95,15 +95,14 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     protected E loadWithTimer(Callable<E> loader) {
         E entity;
 
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
         try {
-            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
             entity = loader.call();
-
-            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
         }
 
         return entity;
@@ -143,7 +142,6 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         if (dataContext != null) {
             entity = dataContext.merge(entity, new MergeOptions().setFresh(true));
         }
-
 
         container.setItem(entity);
 

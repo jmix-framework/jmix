@@ -378,4 +378,11 @@ public class TypedTextField<V> extends TextField
     protected boolean fieldValueEquals(@Nullable V value, @Nullable V oldValue) {
         return EntityValues.propertyValueEquals(value, oldValue);
     }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        setInvalid(false);
+    }
 }

@@ -149,4 +149,11 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
     public void setValue(String value) {
         super.setValue(Strings.nullToEmpty(value));
     }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        setInvalid(false);
+    }
 }

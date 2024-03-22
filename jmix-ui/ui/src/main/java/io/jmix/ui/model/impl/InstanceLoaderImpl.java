@@ -100,8 +100,6 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
 
         LoadContext<E> loadContext = createLoadContext();
 
-        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
         if (delegate == null) {
             if (!needLoad())
                 return;
@@ -110,7 +108,12 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
                 return;
             }
 
+            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
             entity = dataManager.load(loadContext);
+
+            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
 
             if (entity == null) {
                 throw new EntityAccessException(container.getEntityMetaClass(), entityId);
@@ -119,15 +122,20 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
             if (!sendPreLoadEvent(loadContext)) {
                 return;
             }
-            entity = delegate.apply(createLoadContext());
-        }
 
-        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
+            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
+            entity = delegate.apply(createLoadContext());
+
+            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
+        }
 
         if (dataContext != null) {
             entity = dataContext.merge(entity, new MergeOptions().setFresh(true));
         }
+
+
         container.setItem(entity);
 
         sendPostLoadEvent(entity);

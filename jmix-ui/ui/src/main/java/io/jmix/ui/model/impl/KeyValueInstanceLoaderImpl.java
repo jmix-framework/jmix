@@ -141,13 +141,26 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
 
     protected boolean sendPreLoadEvent(ValueLoadContext loadContext) {
         PreLoadEvent preLoadEvent = new PreLoadEvent(this, loadContext);
+
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
         events.publish(PreLoadEvent.class, preLoadEvent);
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.PRE_LOAD, info);
+
         return !preLoadEvent.isLoadPrevented();
     }
 
     protected void sendPostLoadEvent(@Nullable KeyValueEntity entity) {
         PostLoadEvent postLoadEvent = new PostLoadEvent(this, entity);
+
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
         events.publish(PostLoadEvent.class, postLoadEvent);
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.POST_LOAD, info);
     }
 
     @Override

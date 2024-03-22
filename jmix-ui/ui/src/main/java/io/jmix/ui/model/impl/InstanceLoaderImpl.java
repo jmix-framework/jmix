@@ -92,13 +92,13 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         return monitoringInfoProvider;
     }
 
-    protected E loadEntity(Callable<E> c) {
+    protected E loadWithTimer(Callable<E> loader) {
         E entity;
 
         try {
             Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
 
-            entity = c.call();
+            entity = loader.call();
 
             DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
             UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
@@ -127,7 +127,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
                 return;
             }
 
-            entity = loadEntity(() -> dataManager.load(loadContext));
+            entity = loadWithTimer(() -> dataManager.load(loadContext));
 
             if (entity == null) {
                 throw new EntityAccessException(container.getEntityMetaClass(), entityId);
@@ -137,7 +137,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
                 return;
             }
 
-            entity = loadEntity(() -> delegate.apply(createLoadContext()));
+            entity = loadWithTimer(() -> delegate.apply(createLoadContext()));
         }
 
         if (dataContext != null) {

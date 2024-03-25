@@ -92,8 +92,10 @@ public final class UiControllerUtils {
 
     public static void setScreenData(FrameOwner screen, ScreenData screenData) {
         if (screen instanceof Screen) {
+            screenData.setScreenId(((Screen) screen).getId());
             ((Screen) screen).setScreenData(screenData);
         } else if (screen instanceof ScreenFragment) {
+            screenData.setScreenId(((ScreenFragment) screen).getId());
             ((ScreenFragment) screen).setScreenData(screenData);
         }
     }

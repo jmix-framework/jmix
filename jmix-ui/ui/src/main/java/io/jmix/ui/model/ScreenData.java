@@ -24,6 +24,11 @@ import java.util.Set;
  */
 public interface ScreenData {
 
+    @Nullable
+    String getScreenId();
+
+    void setScreenId(@Nullable String viewId);
+
     /**
      * Returns screen's {@code DataContext}.
      * @throws IllegalStateException if the DataContext is not defined

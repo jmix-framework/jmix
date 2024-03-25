@@ -20,8 +20,14 @@ import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.ui.model.*;
+import io.jmix.ui.monitoring.DataLoaderLifeCycle;
+import io.jmix.ui.monitoring.DataLoaderMonitoringInfo;
+import io.jmix.ui.monitoring.UiMonitoring;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -47,6 +53,8 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     protected List<QueryStringProcessor> queryStringProcessors;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected MeterRegistry meterRegistry;
 
     protected DataContext dataContext;
     protected InstanceContainer<E> container;
@@ -59,6 +67,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     protected Map<String, Serializable> hints = new HashMap<>();
     protected Function<LoadContext<E>, E> delegate;
     protected EventHub events = new EventHub();
+    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
 
     @Nullable
     @Override
@@ -69,6 +78,17 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     @Override
     public void setDataContext(@Nullable DataContext dataContext) {
         this.dataContext = dataContext;
+    }
+
+    @Override
+    public void setMonitoringInfoProvider(Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider) {
+        Preconditions.checkNotNullArgument(monitoringInfoProvider);
+        this.monitoringInfoProvider = monitoringInfoProvider;
+    }
+
+    @Override
+    public Function<DataLoader, DataLoaderMonitoringInfo> getMonitoringInfoProvider() {
+        return monitoringInfoProvider;
     }
 
     @Override
@@ -88,7 +108,12 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
                 return;
             }
 
+            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
             entity = dataManager.load(loadContext);
+
+            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
 
             if (entity == null) {
                 throw new EntityAccessException(container.getEntityMetaClass(), entityId);
@@ -97,12 +122,20 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
             if (!sendPreLoadEvent(loadContext)) {
                 return;
             }
+
+            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
             entity = delegate.apply(createLoadContext());
+
+            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
         }
 
         if (dataContext != null) {
             entity = dataContext.merge(entity, new MergeOptions().setFresh(true));
         }
+
+
         container.setItem(entity);
 
         sendPostLoadEvent(entity);
@@ -145,13 +178,26 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
 
     protected boolean sendPreLoadEvent(LoadContext<E> loadContext) {
         PreLoadEvent<E> preLoadEvent = new PreLoadEvent<>(this, loadContext);
+
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
         events.publish(PreLoadEvent.class, preLoadEvent);
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.PRE_LOAD, info);
+
         return !preLoadEvent.isLoadPrevented();
     }
 
     protected void sendPostLoadEvent(E entity) {
         PostLoadEvent<E> postLoadEvent = new PostLoadEvent<>(this, entity);
+
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
         events.publish(PostLoadEvent.class, postLoadEvent);
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.POST_LOAD, info);
     }
 
     @Override

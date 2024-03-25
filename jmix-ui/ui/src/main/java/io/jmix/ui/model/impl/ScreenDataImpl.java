@@ -17,12 +17,12 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.ui.model.*;
+import io.jmix.ui.monitoring.DataLoaderMonitoringInfo;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -31,11 +31,24 @@ import java.util.Set;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ScreenDataImpl implements ScreenData {
 
+    protected String screenId;
+
     protected DataContext dataContext;
 
     protected Map<String, InstanceContainer> containers = new LinkedHashMap<>();
 
     protected Map<String, DataLoader> loaders = new LinkedHashMap<>();
+
+    @Override
+    @Nullable
+    public String getScreenId() {
+        return screenId;
+    }
+
+    @Override
+    public void setScreenId(@Nullable String screenId) {
+        this.screenId = screenId;
+    }
 
     @Override
     public DataContext getDataContext() {
@@ -100,5 +113,8 @@ public class ScreenDataImpl implements ScreenData {
     @Override
     public void registerLoader(String id, DataLoader loader) {
         loaders.put(id, loader);
+
+        DataLoaderMonitoringInfo monitoringInfo = new DataLoaderMonitoringInfo(getScreenId(), id);
+        loader.setMonitoringInfoProvider(dl -> monitoringInfo);
     }
 }

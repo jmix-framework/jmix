@@ -17,10 +17,12 @@
 package io.jmix.ui.model;
 
 import io.jmix.core.querycondition.Condition;
+import io.jmix.ui.monitoring.DataLoaderMonitoringInfo;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * The root interface in the <i>data loaders</i> hierarchy. Data loaders are designed to load entity instances and
@@ -107,4 +109,17 @@ public interface DataLoader {
      * @return custom hints which are used by the query for loading data.
      */
     Map<String, Serializable> getHints();
+
+    /**
+     * Sets function that provides monitoring info about this data loader.
+     */
+    default void setMonitoringInfoProvider(Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider) {
+    }
+
+    /**
+     * Returns function that provides monitoring info about this data loader.
+     */
+    default Function<DataLoader, DataLoaderMonitoringInfo> getMonitoringInfoProvider() {
+        return __ -> DataLoaderMonitoringInfo.empty();
+    }
 }

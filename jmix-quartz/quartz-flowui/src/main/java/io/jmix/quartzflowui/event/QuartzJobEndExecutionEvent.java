@@ -35,4 +35,8 @@ public class QuartzJobEndExecutionEvent extends ApplicationEvent {
     public JobExecutionContext getJobExecutionContext() {
         return jobExecutionContext;
     }
+
+    public JobExecutionException jobException() {
+        return jobException;
+    }
 }

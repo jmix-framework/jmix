@@ -36,7 +36,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -92,24 +91,6 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         return monitoringInfoProvider;
     }
 
-    protected E loadEntity(Callable<E> c) {
-        E entity;
-
-        try {
-            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
-            entity = c.call();
-
-            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return entity;
-    }
-
-
     @Override
     public void load() {
         if (container == null)
@@ -127,7 +108,12 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
                 return;
             }
 
-            entity = loadEntity(() -> dataManager.load(loadContext));
+            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
+            entity = dataManager.load(loadContext);
+
+            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
 
             if (entity == null) {
                 throw new EntityAccessException(container.getEntityMetaClass(), entityId);
@@ -137,7 +123,12 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
                 return;
             }
 
-            entity = loadEntity(() -> delegate.apply(createLoadContext()));
+            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+
+            entity = delegate.apply(createLoadContext());
+
+            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
         }
 
         if (dataContext != null) {

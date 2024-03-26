@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
 public class JmixFormLayout extends FormLayout implements ComponentContainer, HasValueSourceProvider {
-    public static final String QUALIFIED_XML_NAME = "formLayout";
     protected ValueSourceProvider valueSourceProvider;
 
     @Override

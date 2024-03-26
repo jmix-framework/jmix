@@ -157,9 +157,4 @@ public abstract class AbstractTextInputFieldDelegate<C extends AbstractField<?, 
     protected RegexpValidator createRegexpValidator(String pattern) {
         return applicationContext.getBean(RegexpValidator.class, pattern);
     }
-
-    @Override
-    protected void setInvalidInternal(boolean invalid) {
-        super.setInvalidInternal(!component.isReadOnly() && invalid);
-    }
 }

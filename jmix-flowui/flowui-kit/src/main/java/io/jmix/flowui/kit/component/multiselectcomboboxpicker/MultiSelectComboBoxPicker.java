@@ -63,6 +63,13 @@ public class MultiSelectComboBoxPicker<V> extends MultiSelectComboBox<V>
                 .orElse(null);
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
     protected ValuePickerActionSupport getActionsSupport() {
         if (actionsSupport == null) {
             actionsSupport = createActionsSupport();

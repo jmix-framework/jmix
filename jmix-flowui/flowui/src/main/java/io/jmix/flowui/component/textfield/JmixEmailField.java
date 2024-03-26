@@ -113,6 +113,13 @@ public class JmixEmailField extends EmailField implements SupportsValueSource<St
     }
 
     @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
+    @Override
     protected void validate() {
         fieldDelegate.updateInvalidState();
     }

@@ -60,9 +60,4 @@ public class TextAreaFieldDelegate<C extends AbstractField<?, String>, V> extend
             dataAwareComponentsTools.setupLength(hasLengthLimitedComponent, entityValueSource);
         }
     }
-
-    @Override
-    protected void setInvalidInternal(boolean invalid) {
-        super.setInvalidInternal(!component.isReadOnly() && invalid);
-    }
 }

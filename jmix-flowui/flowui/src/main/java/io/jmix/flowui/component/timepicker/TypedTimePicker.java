@@ -261,6 +261,13 @@ public class TypedTimePicker<V extends Comparable> extends TimePicker implements
         }
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
     protected void fireAllValueChangeEvents(@Nullable V value, @Nullable V oldValue, boolean isFromClient) {
         fireTimePickerValueChangeEvent(oldValue, isFromClient);
         fireTypedValueChangeEvent(value, oldValue, isFromClient);

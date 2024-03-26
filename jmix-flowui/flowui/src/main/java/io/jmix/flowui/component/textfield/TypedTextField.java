@@ -255,6 +255,13 @@ public class TypedTextField<V> extends TextField
         fieldDelegate.updateInvalidState();
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
     protected void fireAllValueChangeEvents(@Nullable V value, @Nullable V oldValue, boolean isFromClient) {
         fireTextFieldValueChangeEvent(oldValue, isFromClient);
         fireTypedValueChangeEvent(value, oldValue, isFromClient);
@@ -377,12 +384,5 @@ public class TypedTextField<V> extends TextField
 
     protected boolean fieldValueEquals(@Nullable V value, @Nullable V oldValue) {
         return EntityValues.propertyValueEquals(value, oldValue);
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        setInvalid(false);
     }
 }

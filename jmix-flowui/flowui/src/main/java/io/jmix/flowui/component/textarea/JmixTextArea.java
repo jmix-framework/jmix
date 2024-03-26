@@ -19,10 +19,7 @@ package io.jmix.flowui.component.textarea;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.HasLengthLimited;
-import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsStatusChangeHandler;
-import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.delegate.TextAreaFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
@@ -154,6 +151,6 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
 
-        setInvalid(false);
+        validate();
     }
 }

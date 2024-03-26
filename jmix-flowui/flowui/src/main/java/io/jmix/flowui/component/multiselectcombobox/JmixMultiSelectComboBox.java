@@ -128,6 +128,13 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
     }
 
     @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
+    @Override
     protected void validate() {
         fieldDelegate.updateInvalidState();
     }

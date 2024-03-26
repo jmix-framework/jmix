@@ -524,6 +524,7 @@
                 required="true"
                 requiredMessage="requiredMessageString"
                 tabIndex="3"
+                themeNames="helper-above-field align-center"
                 emptySelectionCaption="emptySelectionString"
                 emptySelectionAllowed="true"
                 dataContainer="orderDc"

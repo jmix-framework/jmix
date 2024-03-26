@@ -59,7 +59,6 @@ import java.util.function.Consumer;
 
 public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
         EnhancedDataGrid<E>, SupportsEnterPress<DataGrid<E>>, ApplicationContextAware, InitializingBean {
-    public static final String QUALIFIED_XML_NAME = "dataGrid";
 
     protected ApplicationContext applicationContext;
 

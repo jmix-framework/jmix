@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 @Component("dynattr_DynAttrFacetInfo")
 public class DynAttrFacetInfo {
-
+    public static final String DATAGRID_QUALIFIED_XML_NAME = "dataGrid";
     private static final Logger log = LoggerFactory.getLogger(DynAttrFacetInfo.class);
 
     protected final ViewRegistry viewRegistry;
@@ -224,7 +224,7 @@ public class DynAttrFacetInfo {
     private void findTargetElementNames(List<String> targetElementList, Element searchElement) {
         for (var child : searchElement.elements()) {
             if (child.getQName().getName().equals(JmixFormLayout.QUALIFIED_XML_NAME) ||
-                    child.getQName().getName().equals(DataGrid.QUALIFIED_XML_NAME)) {
+                    child.getQName().getName().equals(DATAGRID_QUALIFIED_XML_NAME)) {
                 String idAttribute = child.attributeValue("id");
                 if(StringUtils.isNotBlank(idAttribute)) {
                     targetElementList.add(idAttribute);

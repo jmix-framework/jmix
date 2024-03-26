@@ -25,7 +25,6 @@ import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrflowui.facet.DynAttrFacet;
 import io.jmix.flowui.component.formlayout.JmixFormLayout;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
 import org.apache.commons.lang3.StringUtils;
@@ -226,7 +225,7 @@ public class DynAttrFacetInfo {
             if (child.getQName().getName().equals(JmixFormLayout.QUALIFIED_XML_NAME) ||
                     child.getQName().getName().equals(DATAGRID_QUALIFIED_XML_NAME)) {
                 String idAttribute = child.attributeValue("id");
-                if(StringUtils.isNotBlank(idAttribute)) {
+                if (StringUtils.isNotBlank(idAttribute)) {
                     targetElementList.add(idAttribute);
                 }
             }

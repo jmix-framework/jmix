@@ -1930,6 +1930,23 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="selectThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="helper-above-field"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="gridThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -3685,6 +3702,7 @@
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
+                <xs:attribute name="themeNames" type="selectThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>

@@ -1727,6 +1727,8 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"small", "align-left", "align-center", "align-right", "helper-above-field"}),
                     @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
                             options = {"small", "align-center", "align-right", "helper-above-field",

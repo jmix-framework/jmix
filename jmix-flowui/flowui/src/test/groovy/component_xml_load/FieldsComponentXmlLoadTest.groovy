@@ -378,6 +378,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             tabIndex == 3
+            themeNames.containsAll(["helper-above-field", "align-center"])
             value == order.number
             visible
             width == "100px"

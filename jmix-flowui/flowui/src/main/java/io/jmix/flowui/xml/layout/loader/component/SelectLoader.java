@@ -56,6 +56,7 @@ public class SelectLoader extends AbstractComponentLoader<JmixSelect<?>> {
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadOverlayClass(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);

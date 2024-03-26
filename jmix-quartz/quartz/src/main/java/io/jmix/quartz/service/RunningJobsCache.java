@@ -18,13 +18,12 @@ package io.jmix.quartz.service;
 
 import io.jmix.core.CacheOperations;
 import jakarta.annotation.Nullable;
+import jakarta.annotation.PostConstruct;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -43,7 +42,7 @@ public class RunningJobsCache {
 
     public static final String CACHE_NAME = "jmix-quartz-running-jobs-cache";
 
-    @EventListener(ApplicationStartedEvent.class)
+    @PostConstruct
     protected void init() {
         jobDetails = cacheManager.getCache(CACHE_NAME);
         if (jobDetails == null) {

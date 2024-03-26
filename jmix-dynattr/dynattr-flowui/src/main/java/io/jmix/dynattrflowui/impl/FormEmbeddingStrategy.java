@@ -60,7 +60,8 @@ public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
 
     @Override
     public boolean supportComponent(Component component) {
-        return component instanceof JmixFormLayout && ((JmixFormLayout) component).getValueSourceProvider() instanceof ContainerValueSourceProvider;
+        return component instanceof JmixFormLayout jmixFormLayout &&
+                jmixFormLayout.getValueSourceProvider() instanceof ContainerValueSourceProvider;
     }
 
     @Override

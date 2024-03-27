@@ -17,27 +17,19 @@
 package io.jmix.ui.component.factory;
 
 import com.google.common.collect.ImmutableMap;
-import io.jmix.core.Entity;
-import io.jmix.core.FileRef;
-import io.jmix.core.JmixOrder;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
 import io.jmix.ui.action.valuespicker.ValuesSelectAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.screen.OpenMode;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +37,7 @@ import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
 import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
+import java.time.*;
 import java.util.Date;
 import java.util.UUID;
 
@@ -145,18 +133,9 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
     }
 
     protected Component createEntityField(ComponentGenerationContext context) {
-        EntityPicker<?> field = uiComponents.create(EntityPicker.class);
-
         JpqlFilterComponentGenerationContext cfContext = (JpqlFilterComponentGenerationContext) context;
         MetaClass metaClass = metadata.getClass(cfContext.getParameterClass());
-        field.setMetaClass(metaClass);
-
-        EntityLookupAction<?> lookupAction = actions.create(EntityLookupAction.ID);
-        lookupAction.setOpenMode(OpenMode.DIALOG);
-        field.addAction(lookupAction);
-        field.addAction(actions.create(EntityClearAction.ID));
-
-        return field;
+        return (EntityPicker<?>) entityFieldCreationSupport.createEntityField(metaClass, context.getOptions());
     }
 
     @Override

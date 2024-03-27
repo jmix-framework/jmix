@@ -201,6 +201,13 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
         fieldDelegate.executeValidators();
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
     @SuppressWarnings("unchecked")
     protected FieldDelegate<JmixSelect<V>, V, V> createFieldDelegate() {
         return applicationContext.getBean(FieldDelegate.class, this);

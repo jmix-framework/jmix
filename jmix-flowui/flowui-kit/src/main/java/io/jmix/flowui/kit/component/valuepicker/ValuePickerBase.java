@@ -102,13 +102,20 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
         setPresentationValue(value);
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
     protected void validate() {
         boolean isRequired = this.isRequiredIndicatorVisible();
         boolean isInvalid = ValidationUtil
                 .checkRequired(isRequired, getValue(), getEmptyValue())
                 .isError();
 
-        setInvalid(isInvalid);
+        setInvalid(!isReadOnly() && isInvalid);
     }
 
     @Override

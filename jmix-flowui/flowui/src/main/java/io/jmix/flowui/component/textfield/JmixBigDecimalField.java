@@ -99,6 +99,13 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
     }
 
     @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
+    @Override
     protected void validate() {
         fieldDelegate.updateInvalidState();
     }

@@ -158,4 +158,11 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
         super.setMin(min);
         fieldDelegate.setMin(min);
     }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
 }

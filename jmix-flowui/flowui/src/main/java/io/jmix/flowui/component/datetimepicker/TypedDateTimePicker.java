@@ -262,6 +262,13 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
         setValueInternal(value);
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
     protected void setValueInternal(@Nullable LocalDateTime value) {
         V modelValue = convertToModel(value);
 

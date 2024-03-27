@@ -260,6 +260,13 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
         fieldDelegate.setMax(max);
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
     protected void fireAllValueChangeEvents(@Nullable V value, @Nullable V oldValue, boolean isFromClient) {
         fireDatePickerValueChangeEvent(oldValue, isFromClient);
         fireTypedValueChangeEvent(value, oldValue, isFromClient);

@@ -3,8 +3,15 @@
       title="msg://jobModelListView.title"
       focusComponent="jobModelsTable">
     <data readOnly="true">
-        <collection id="jobModelsDc" class="io.jmix.quartz.model.JobModel"/>
+        <collection id="jobModelsDc" class="io.jmix.quartz.model.JobModel">
+            <loader id="jobModelsDl"/>
+        </collection>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <settings id="settings"/>
+        <urlQueryParameters id="urlQueryParameters"/>
+    </facets>
     <actions>
         <action id="lookupSelectAction"
                 type="lookup_select"/>

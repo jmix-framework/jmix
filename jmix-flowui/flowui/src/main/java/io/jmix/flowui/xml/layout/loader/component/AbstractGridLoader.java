@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnRendering;
@@ -91,6 +92,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     public static final String COLUMN_ELEMENT_NAME = "column";
     public static final String EDITOR_ACTIONS_COLUMN_ELEMENT_NAME = "editorActionsColumn";
+    public static final String EDITOR_ACTIONS_COLUMN_KEY_DEFAULT_PREFIX = "editorActionsColumnKey";
 
     protected ActionLoaderSupport actionLoaderSupport;
     protected MetadataTools metaDataTools;
@@ -256,6 +258,11 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         editColumn.setEditorComponent(actions);
 
         loadString(columnElement, "key", editColumn::setKey);
+        if (Strings.isNullOrEmpty(editColumn.getKey())) {
+            //If the key is null then NPE will rise when the settings are applied
+            editColumn.setKey(EDITOR_ACTIONS_COLUMN_KEY_DEFAULT_PREFIX +
+                    (resultComponent.getColumns().size() - 1));
+        }
         loadString(columnElement, "width", editColumn::setWidth);
         loadBoolean(columnElement, "autoWidth", editColumn::setAutoWidth);
         loadBoolean(columnElement, "resizable", editColumn::setResizable);

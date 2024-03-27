@@ -23,6 +23,7 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
 import io.jmix.core.cluster.ClusterApplicationEvent;
 import io.jmix.core.cluster.ClusterApplicationEventPublisher;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.flowui.sys.SessionHolder;
 import io.jmix.flowui.sys.event.UiEventsManager;
@@ -63,16 +64,18 @@ public class UiEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(UiEventPublisher.class);
 
+    protected CurrentAuthentication currentAuthentication;
     protected SystemAuthenticator systemAuthenticator;
     protected ClusterApplicationEventPublisher clusterApplicationEventPublisher;
     protected SessionHolder sessionHolder;
 
     public UiEventPublisher(SystemAuthenticator systemAuthenticator,
                             ClusterApplicationEventPublisher clusterApplicationEventPublisher,
-                            SessionHolder sessionHolder) {
+                            SessionHolder sessionHolder, CurrentAuthentication currentAuthentication) {
         this.systemAuthenticator = systemAuthenticator;
         this.clusterApplicationEventPublisher = clusterApplicationEventPublisher;
         this.sessionHolder = sessionHolder;
+        this.currentAuthentication = currentAuthentication;
     }
 
     @EventListener
@@ -131,12 +134,12 @@ public class UiEventPublisher {
     }
 
     /**
-     * Publishes event for all UIs in the current session.
+     * Publishes event for all UIs (tabs and browsers) in the current user session.
      *
      * @param event application event
      */
     public void publishEvent(ApplicationEvent event) {
-        publish(Collections.emptyList(), event);
+        publishEventForUsersInternal(event, List.of(currentAuthentication.getUser().getUsername()));
     }
 
     protected void publish(Collection<UI> uis, ApplicationEvent event) {

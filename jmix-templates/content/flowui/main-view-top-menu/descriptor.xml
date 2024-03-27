@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <mainView xmlns="http://jmix.io/schema/flowui/main-view"
-          title="msg://viewTitle">
+          title="msg://${id}.title">
     <actions>
         <action id="logout"
                 type="logout"/>
@@ -26,7 +26,6 @@
                           classNames="jmix-main-view-top-menu-user-box">
                         <userIndicator id="userIndicator"/>
                         <button id="logoutButton"
-                                text="msg://logoutBtnDescription"
                                 action="logout"
                                 classNames="jmix-logout-button"/>
                     </hbox>

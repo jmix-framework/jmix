@@ -436,7 +436,6 @@ dependencies {
         api 'com.jayway.jsonpath:json-path:2.9.0'
         api 'org.apache.james:apache-mime4j-core:0.8.10'
 
-        runtime 'org.postgresql:postgresql:42.7.3'
         runtime 'org.hsqldb:hsqldb:2.7.2'
     }
 }

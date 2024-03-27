@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,33 @@
 
 package io.jmix.gridexportui.exporter;
 
-public enum ExportMode {
+/**
+ * Contains information about single entity used when exporting entity collections
+ */
+public class EntityExportContext {
+
+    protected Object entity;
+    protected int entityNumber;
+
+    public EntityExportContext(Object entity, int entityNumber) {
+        this.entity = entity;
+        this.entityNumber = entityNumber;
+    }
 
     /**
-     * Export all entities in the database
+     *
+     * @return entity to export
      */
-    ALL_ROWS,
+    public Object getEntity() {
+        return entity;
+    }
 
     /**
-     * Export only entities loaded to the current page of a table or a data grid
+     *
+     * @return sequential number of entity to export
      */
-    CURRENT_PAGE,
-
-    /**
-     * Export only entities selected in a table or a data grid
-     */
-    SELECTED_ROWS
-
+    public int getEntityNumber() {
+        return entityNumber;
+    }
 }
+

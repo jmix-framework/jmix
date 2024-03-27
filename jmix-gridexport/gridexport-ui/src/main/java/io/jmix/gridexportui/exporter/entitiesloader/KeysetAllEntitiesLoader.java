@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,54 @@
  * limitations under the License.
  */
 
-package io.jmix.gridexportui.exporter;
+package io.jmix.gridexportui.exporter.entitiesloader;
 
+import io.jmix.core.DataManager;
+import io.jmix.core.Id;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Sort;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.gridexportui.GridExportProperties;
+import io.jmix.gridexportui.exporter.EntityExportContext;
 import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.HasLoader;
-import javax.annotation.Nullable;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
-public abstract class AbstractAllRecordsExporter {
+import javax.annotation.Nullable;
+import java.util.List;
+
+/**
+ * This loader implements the keyset pagination strategy. Entities retrieval is based on sorting
+ * by primary key. The next page starts after the last entity on the previous page.
+ */
+@Component
+public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
+
+    public static final String PAGINATION_STRATEGY = "keyset";
 
     protected static String LAST_LOADED_PK_CONDITION_PARAMETER_NAME = "lastLoadedPkValue";
 
-    protected MetadataTools metadataTools;
+    public KeysetAllEntitiesLoader(MetadataTools metadataTools,
+                                   DataManager dataManager,
+                                   PlatformTransactionManager platformTransactionManager,
+                                   GridExportProperties gridExportProperties) {
+        super(metadataTools, dataManager, platformTransactionManager, gridExportProperties);
+    }
 
-    public AbstractAllRecordsExporter(MetadataTools metadataTools) {
-        this.metadataTools = metadataTools;
+    @Override
+    public String getPaginationStrategy() {
+        return PAGINATION_STRATEGY;
     }
 
     /**
@@ -49,7 +72,7 @@ public abstract class AbstractAllRecordsExporter {
      *             If {@code null} sorting will be applied by the primary key.
      */
     @SuppressWarnings("rawtypes")
-    public LoadContext generateLoadContext(DataUnit dataUnit, @Nullable Sort sort) {
+    protected LoadContext generateLoadContext(DataUnit dataUnit, @Nullable Sort sort) {
         if (!(dataUnit instanceof ContainerDataUnit)) {
             throw new RuntimeException("Cannot export all rows. DataUnit must be an instance of ContainerDataUnit.");
         }
@@ -98,5 +121,58 @@ public abstract class AbstractAllRecordsExporter {
         loadContext.getQuery().setCondition(wrappingCondition);
 
         return loadContext;
+    }
+
+    /**
+     * Method loads all entity instances associated with the given {@code dataUnit} and pass
+     * each loaded entity instance to the {@code exportedEntityVisitor}. Creation of the output file row is the
+     * responsibility of that visitor. Data is loaded in batches, the batch size is configured by the
+     * {@link GridExportProperties#getExportAllBatchSize()}.
+     *
+     * @param dataUnit        data unit linked with the data
+     * @param exportedEntityVisitor function that is responsible for export
+     * @param sort An optional sorting specification for the data.
+     *             If {@code null} sorting will be applied by the primary key.
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void loadAll(DataUnit dataUnit, ExportedEntityVisitor exportedEntityVisitor, @Nullable Sort sort) {
+        Preconditions.checkNotNullArgument(exportedEntityVisitor,
+                "Cannot export all rows. ExportedEntityVisitor can't be null");
+
+        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+        transactionTemplate.executeWithoutResult(transactionStatus -> {
+            long count = dataManager.getCount(generateLoadContext(dataUnit, sort));
+            int loadBatchSize = gridExportProperties.getExportAllBatchSize();
+
+            int rowNumber = 0;
+            boolean initialLoading = true;
+            boolean proceedToExport = true;
+            Object lastLoadedPkValue = null;
+
+            for (int firstResult = 0; firstResult < count && proceedToExport; firstResult += loadBatchSize) {
+                LoadContext loadContext = generateLoadContext(dataUnit, sort);
+                LoadContext.Query query = loadContext.getQuery();
+
+                if (initialLoading) {
+                    initialLoading = false;
+                } else {
+                    query.setParameter(LAST_LOADED_PK_CONDITION_PARAMETER_NAME, lastLoadedPkValue);
+                }
+                query.setMaxResults(loadBatchSize);
+
+                List entities = dataManager.loadList(loadContext);
+                for (Object entity : entities) {
+                    EntityExportContext entityExportContext = new EntityExportContext(entity, ++rowNumber);
+                    proceedToExport = exportedEntityVisitor.visitEntity(entityExportContext);
+                    if (!proceedToExport) {
+                        break;
+                    }
+                }
+
+                Object lastEntity = entities.get(entities.size() - 1);
+                lastLoadedPkValue = Id.of(lastEntity).getValue();
+            }
+        });
     }
 }

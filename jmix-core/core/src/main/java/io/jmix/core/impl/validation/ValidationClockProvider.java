@@ -18,12 +18,11 @@ package io.jmix.core.impl.validation;
 
 
 import io.jmix.core.TimeSource;
+import jakarta.validation.ClockProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.validation.ClockProvider;
 import java.time.Clock;
-import java.time.ZonedDateTime;
 
 @Component("core_JmixValidationClockProvider")
 public class ValidationClockProvider implements ClockProvider {
@@ -33,7 +32,6 @@ public class ValidationClockProvider implements ClockProvider {
 
     @Override
     public Clock getClock() {
-        ZonedDateTime now = timeSource.now();
-        return Clock.fixed(now.toInstant(), now.getZone());
+        return Clock.systemDefaultZone();
     }
 }

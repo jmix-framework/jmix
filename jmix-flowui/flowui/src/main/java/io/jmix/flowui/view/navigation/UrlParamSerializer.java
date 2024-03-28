@@ -23,6 +23,8 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.UiNavigationProperties;
+import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalSupport;
+import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -63,13 +65,16 @@ public class UrlParamSerializer {
     protected UiNavigationProperties navigationProperties;
     protected MetadataTools metadataTools;
     protected Metadata metadata;
+    protected DateIntervalSupport dateIntervalSupport;
 
     public UrlParamSerializer(UiNavigationProperties navigationProperties,
                               MetadataTools metadataTools,
-                              Metadata metadata) {
+                              Metadata metadata,
+                              DateIntervalSupport dateIntervalSupport) {
         this.navigationProperties = navigationProperties;
         this.metadataTools = metadataTools;
         this.metadata = metadata;
+        this.dateIntervalSupport = dateIntervalSupport;
     }
 
     /**
@@ -140,7 +145,7 @@ public class UrlParamSerializer {
         } else if (Time.class == type) {
             return serializeTime(((Time) value));
 
-        } if (UUID.class.equals(type)) {
+        } else if (UUID.class.equals(type)) {
             return serializeUuid((UUID) value);
 
         } else if (Enum.class.isAssignableFrom(type)) {
@@ -149,6 +154,12 @@ public class UrlParamSerializer {
         } else if (EntityValues.isEntity(value)
                 && metadataTools.isJpaEmbeddable(type)) {
             return serializeComposite(value);
+
+        } else if (Collection.class.isAssignableFrom(type)) {
+            return serializeCollection((Collection<?>) value);
+
+        } else if (BaseDateInterval.class.isAssignableFrom(type)) {
+            return serializeDateInterval((BaseDateInterval) value);
 
         }
 
@@ -220,6 +231,16 @@ public class UrlParamSerializer {
         }
 
         return String.join("&", params);
+    }
+
+    protected String serializeCollection(Collection<?> value) {
+        return value.stream()
+                .map(this::serialize)
+                .collect(Collectors.joining(","));
+    }
+
+    protected String serializeDateInterval(BaseDateInterval value) {
+        return dateIntervalSupport.formatDateInterval(value);
     }
 
     /**
@@ -301,6 +322,10 @@ public class UrlParamSerializer {
             } else if (Entity.class.isAssignableFrom(type)
                     && metadataTools.isJpaEmbeddable(type)) {
                 return parseComposite(type, serializedValue);
+
+            } else if (BaseDateInterval.class == type) {
+                return (T) parseDateInterval(serializedValue);
+
             } else {
                 throw new IllegalArgumentException(
                         String.format("Unable to deserialize id '%s' of type '%s'", serializedValue, type));
@@ -426,6 +451,10 @@ public class UrlParamSerializer {
         }
 
         return composite;
+    }
+
+    protected Object parseDateInterval(String stringValue) {
+        return Objects.requireNonNull(dateIntervalSupport.parseDateInterval(stringValue));
     }
 
     protected String propertyNameMapper(String property) {

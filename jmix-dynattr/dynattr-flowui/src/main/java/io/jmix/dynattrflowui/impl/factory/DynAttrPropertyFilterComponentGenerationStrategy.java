@@ -17,7 +17,6 @@
 package io.jmix.dynattrflowui.impl.factory;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -38,19 +37,17 @@ import io.jmix.dynattrflowui.impl.AttributeValidators;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
+import io.jmix.flowui.action.valuepicker.DateIntervalAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
-import io.jmix.flowui.component.*;
-import io.jmix.flowui.component.combobox.EntityComboBox;
+import io.jmix.flowui.component.ComponentGenerationContext;
+import io.jmix.flowui.component.EntityPickerComponent;
+import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.factory.PropertyFilterComponentGenerationContext;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
-import io.jmix.flowui.component.valuepicker.EntityPicker;
-import io.jmix.flowui.data.HasType;
+import io.jmix.flowui.component.valuepicker.JmixValuePicker;
 import io.jmix.flowui.kit.component.ComponentUtils;
-import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
-import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.ViewRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,8 +176,8 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
     }
 
     protected AbstractField<?, ?> createIntervalField(@SuppressWarnings("unused") ComponentGenerationContext context) {
-        ValuePicker<?> valuePicker = uiComponents.create(ValuePicker.class);
-//        valuePicker.addAction(applicationContext.getBean(DateIntervalAction.class));
+        JmixValuePicker<?> valuePicker = uiComponents.create(JmixValuePicker.class);
+        valuePicker.addAction(actions.create(DateIntervalAction.ID));
         valuePicker.addAction(actions.create(ValueClearAction.ID));
         return valuePicker;
     }

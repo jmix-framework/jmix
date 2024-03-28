@@ -16,13 +16,14 @@
 
 package component_xml_load
 
+
 import com.vaadin.flow.component.HasText
+import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.icon.VaadinIcon
 import component_xml_load.screen.GridColumnVisibilityView
 import io.jmix.core.DataManager
-import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter
+import io.jmix.flowui.UiComponents
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.sales.Order
@@ -38,6 +39,9 @@ class GridColumnVisibilityXmlLoadTest extends FlowuiTestSpecification {
 
     @Autowired
     JdbcTemplate jdbcTemplate
+
+    @Autowired
+    UiComponents uiComponents
 
     @Override
     void setup() {
@@ -118,5 +122,12 @@ class GridColumnVisibilityXmlLoadTest extends FlowuiTestSpecification {
         then: "DataGrid filterable column header text should not be empty"
 
         screen.columnVisibility.getMenuItem("dateTime").getText() == "DateTime"
+
+        screen.columnVisibility.removeMenuItem("dateTime")
+        def column = screen.dataGrid.getColumnByKey("dateTime")
+        //set component that is not instance of HasText
+        column.setHeader(uiComponents.create(ComboBox<String>.class))
+        screen.columnVisibility.addMenuItem(column)
+        screen.columnVisibility.getMenuItem("dateTime").getText() == "DATETIME"
     }
 }

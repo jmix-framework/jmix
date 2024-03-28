@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 public class NextLastIntervalConverter implements DateIntervalConverter {
 
     public static final Pattern NEXT_LAST_PATTERN =
-            Pattern.compile("(NEXT|LAST)\\s+\\d+\\s+(DAY|MONTH|MINUTE|HOUR)(\\s+including_current)?");
+            Pattern.compile("(NEXT|LAST)\\s+\\d+\\s+(DAY|MONTH|MINUTE|HOUR|YEAR)(\\s+including_current)?");
 
     protected Messages messages;
 

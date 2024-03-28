@@ -64,7 +64,7 @@
                         header="Number"/>
                 <column property="date"/>
                 <column property="time"/>
-                <column property="dateTime"/>
+                <column property="dateTime" filterable="true" header="DateTime"/>
                 <column property="total"
                         visible="false"/>
                 <column key="amountColumn"

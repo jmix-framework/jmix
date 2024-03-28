@@ -33,10 +33,16 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
+import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
@@ -65,6 +71,8 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
 
     protected ApplicationContext applicationContext;
     protected Messages messages;
+    protected MessageTools messageTools;
+    protected MetadataTools metadataTools;
 
     protected JmixMenuItem dropdownItem;
     protected Icon icon;
@@ -91,6 +99,8 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
 
     protected void autowireDependencies() {
         messages = applicationContext.getBean(Messages.class);
+        messageTools = applicationContext.getBean(MessageTools.class);
+        metadataTools = applicationContext.getBean(MetadataTools.class);
     }
 
     protected void initHeader() {
@@ -192,6 +202,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected String getColumnHeaderText(DataGridColumn<?> column) {
         String headerText = column.getHeaderText();
         if (!Strings.isNullOrEmpty(headerText)) {
@@ -200,6 +211,19 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
             Component headerComponent = column.getHeaderComponent();
             if (headerComponent instanceof HasText hasText) {
                 headerText = hasText.getText();
+            }
+            if (Strings.isNullOrEmpty(headerText)
+                    && headerComponent instanceof DataGridHeaderFilter headerFilter
+                    && headerFilter.getHeader() instanceof HasText headerFilterWithText) {
+                headerText = headerFilterWithText.getText();
+            }
+            if (Strings.isNullOrEmpty(headerText) && grid instanceof DataGrid dataGrid) {
+                MetaPropertyPath metaPropertyPath = dataGrid.getColumnMetaPropertyPath(column);
+                if (metaPropertyPath != null) {
+                    MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);
+                    headerText = messageTools.getPropertyCaption(propertyMetaClass,
+                            metaPropertyPath.getMetaProperty().getName());
+                }
             }
             return Strings.nullToEmpty(headerText);
         }

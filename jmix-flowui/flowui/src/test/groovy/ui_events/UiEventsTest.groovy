@@ -16,7 +16,10 @@
 
 package ui_events
 
+import com.vaadin.flow.component.UI
+import com.vaadin.flow.server.ServiceInitEvent
 import io.jmix.flowui.UiEventPublisher
+import io.jmix.flowui.sys.SessionHolder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
@@ -28,6 +31,9 @@ class UiEventsTest extends FlowuiTestSpecification {
     @Autowired
     UiEventPublisher uiEventPublisher
 
+    @Autowired
+    SessionHolder sessionHolder
+
     void setup() {
         registerViewBasePackages("ui_events.screen")
     }
@@ -37,7 +43,7 @@ class UiEventsTest extends FlowuiTestSpecification {
 
         when: "Fire application event"
         def event = new TestUiEvent(this, "eventMessage")
-        uiEventPublisher.publishEvent(event)
+        uiEventPublisher.publishEventForCurrentUI(event)
 
         then: "Screen's application listener receives the event"
 

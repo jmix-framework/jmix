@@ -36,7 +36,6 @@
                      classNames="jmix-main-view-navigation">
                 </nav>
                 <footer id="footer" classNames="jmix-main-view-footer">
-                    <userIndicator id="userIndicator"/>
                     <button id="logoutButton"
                             action="logout"
                             classNames="jmix-logout-button"/>

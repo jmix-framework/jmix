@@ -243,7 +243,8 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     }
 
     public void updateInvalidState() {
-        boolean invalid = !component.isReadOnly() && (explicitlyInvalid || conversionInvalid || !validatorsPassed());
+//        boolean invalid = !component.isReadOnly() && (explicitlyInvalid || conversionInvalid || !validatorsPassed());
+        boolean invalid = explicitlyInvalid || conversionInvalid || !validatorsPassed();
 
         setInvalidInternal(invalid);
     }

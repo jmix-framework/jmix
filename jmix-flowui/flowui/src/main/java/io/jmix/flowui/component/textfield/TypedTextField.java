@@ -82,8 +82,12 @@ public class TypedTextField<V> extends TextField
         fieldDelegate = createFieldDelegate();
         fieldDelegate.setToModelConverter(this::convertToModel);
 
+        addClassNames("jmix-text-field");
+
         attachValueChangeListener();
     }
+
+
 
     @SuppressWarnings("unchecked")
     protected TextInputFieldDelegate<TypedTextField<V>, V> createFieldDelegate() {
@@ -255,12 +259,12 @@ public class TypedTextField<V> extends TextField
         fieldDelegate.updateInvalidState();
     }
 
-    @Override
+    /*@Override
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
 
         validate();
-    }
+    }*/
 
     protected void fireAllValueChangeEvents(@Nullable V value, @Nullable V oldValue, boolean isFromClient) {
         fireTextFieldValueChangeEvent(oldValue, isFromClient);

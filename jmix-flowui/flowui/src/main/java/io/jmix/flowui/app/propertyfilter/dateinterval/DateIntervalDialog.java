@@ -24,9 +24,9 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowui.app.propertyfilter.dateinterval.component.LastIntervalField;
 import io.jmix.flowui.app.propertyfilter.dateinterval.component.NextIntervalField;
+import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval.Type;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.DateInterval;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.DateInterval.TimeUnit;
@@ -49,7 +49,7 @@ import java.util.*;
 
 @ViewController("flowui_DateIntervalDialog")
 @ViewDescriptor("date-interval-dialog.xml")
-@DialogMode(height = "AUTO", width = "50em", resizable = true)
+@DialogMode(width = "50em")
 public class DateIntervalDialog extends StandardView {
 
     @Autowired

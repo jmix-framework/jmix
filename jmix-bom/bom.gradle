@@ -366,7 +366,7 @@ dependencies {
 
         api 'org.apache.tika:tika-parsers:1.27'
 
-        def flowableVersion = '7.0.0'
+        def flowableVersion = '7.0.1'
         api "org.flowable:flowable-spring-configurator:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-process:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn:$flowableVersion"

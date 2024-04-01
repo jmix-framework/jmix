@@ -40,11 +40,11 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.urlqueryparameters.AbstractUrlQueryParametersBinder;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
@@ -95,7 +95,8 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @ViewComponent
     protected CollectionContainer<JobModel> jobModelsDc;
-
+    @ViewComponent
+    private CollectionLoader<JobModel> jobModelsDl;
     @Autowired
     protected RemoveOperation removeOperation;
     @Autowired
@@ -110,8 +111,6 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected MessageTools messageTools;
     @Autowired
     private Metadata metadata;
-    @ViewComponent
-    protected SettingsFacet settings;
     @ViewComponent
     private UrlQueryParametersFacet urlQueryParameters;
 
@@ -170,9 +169,9 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     @Subscribe
-    protected void onInit(View.InitEvent event) {
+    protected void onInit(InitEvent event) {
         initTable();
-        initSettings();
+        initUrlParameters();
         initDataChangedEventListener();
     }
 
@@ -216,7 +215,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         return messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), propertyName);
     }
 
-    protected void initSettings() {
+    protected void initUrlParameters() {
         urlQueryParameters.registerBinder(new JobUrlQueryParametersBinder());
     }
 
@@ -258,7 +257,7 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     @Subscribe
-    protected void onBeforeShow(View.BeforeShowEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
         nameFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         classFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         groupFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
@@ -429,7 +428,7 @@ public class JobModelListView extends StandardListView<JobModel> {
                         notifications.create(messageBundle.formatMessage("jobDeleted", jobToDelete.getJobName()))
                                 .withType(Notifications.Type.DEFAULT)
                                 .show();
-                        loadJobsData();
+                        jobModelsDl.load();
                     }
                 })
                 .remove();
@@ -437,17 +436,17 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @Subscribe("jobModelsTable.refresh")
     protected void onJobModelsTableRefresh(ActionPerformedEvent event) {
-        loadJobsData();
+        jobModelsDl.load();
     }
 
     @Install(to = "jobModelsTable.create", subject = "afterSaveHandler")
     protected void jobModelsTableCreateAfterCommitHandler(JobModel jobModel) {
-        loadJobsData();
+        jobModelsDl.load();
     }
 
     @Install(to = "jobModelsTable.edit", subject = "afterSaveHandler")
     protected void jobModelsTableEditAfterCommitHandler(JobModel jobModel) {
-        loadJobsData();
+        jobModelsDl.load();
     }
 
     protected boolean isJobActive(JobModel jobModel) {
@@ -459,6 +458,6 @@ public class JobModelListView extends StandardListView<JobModel> {
     }
 
     protected void onFilterFieldValueChange(ComponentEvent<?> event) {
-        loadJobsData();
+        jobModelsDl.load();
     }
 }

@@ -9,7 +9,7 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <settings id="settings"/>
+        <settings id="settings" auto="true"/>
         <urlQueryParameters id="urlQueryParameters"/>
     </facets>
     <actions>

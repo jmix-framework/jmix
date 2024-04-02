@@ -56,6 +56,8 @@ public class JmixPasswordField extends PasswordField implements SupportsValueSou
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
+
+        addClassNames("jmix-inactive-states-error-handling");
     }
 
     @SuppressWarnings("unchecked")
@@ -148,12 +150,5 @@ public class JmixPasswordField extends PasswordField implements SupportsValueSou
     @Override
     public void setValue(String value) {
         super.setValue(Strings.nullToEmpty(value));
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
     }
 }

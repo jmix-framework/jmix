@@ -98,6 +98,8 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
                 .setMonthNames(getMonthNames(locale))
                 .setFirstDayOfWeek(getFirstDayOfWeek(locale)));
 
+        addClassNames("jmix-inactive-states-error-handling");
+
         attachValueChangeListener();
     }
 
@@ -258,13 +260,6 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
         super.setMax(max);
 
         fieldDelegate.setMax(max);
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
     }
 
     protected void fireAllValueChangeEvents(@Nullable V value, @Nullable V oldValue, boolean isFromClient) {

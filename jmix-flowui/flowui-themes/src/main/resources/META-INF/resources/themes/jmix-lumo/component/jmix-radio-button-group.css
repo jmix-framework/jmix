@@ -1,0 +1,7 @@
+.jmix-radio-button-group[readonly]::part(error-message) {
+    display: none;
+}
+
+.jmix-radio-button-group[disabled]::part(error-message) {
+    display: none;
+}

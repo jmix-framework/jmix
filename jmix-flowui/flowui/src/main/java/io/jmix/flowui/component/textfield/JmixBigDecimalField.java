@@ -55,6 +55,8 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
+
+        addClassNames("jmix-inactive-states-error-handling");
     }
 
     @SuppressWarnings("unchecked")
@@ -96,13 +98,6 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
     @Override
     public void setRequiredMessage(@Nullable String requiredMessage) {
         fieldDelegate.setRequiredMessage(requiredMessage);
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
     }
 
     @Override

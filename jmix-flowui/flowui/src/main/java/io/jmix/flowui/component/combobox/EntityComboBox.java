@@ -78,6 +78,8 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
         fieldDelegate = createFieldDelegate();
         dataViewDelegate = createDataViewDelegate();
 
+        addClassNames("jmix-inactive-states-error-handling");
+
         fieldDelegate.addValueBindingChangeListener(event ->
                 dataViewDelegate.valueBindingChanged(event));
 

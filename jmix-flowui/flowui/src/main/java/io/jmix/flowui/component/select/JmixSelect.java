@@ -69,6 +69,8 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
         fieldDelegate.addValueBindingChangeListener(event ->
                 dataViewDelegate.valueBindingChanged(event));
 
+        addClassNames("jmix-inactive-states-error-handling");
+
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
     }
 
@@ -199,13 +201,6 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
     @Override
     public void executeValidators() throws ValidationException {
         fieldDelegate.executeValidators();
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
     }
 
     @SuppressWarnings("unchecked")

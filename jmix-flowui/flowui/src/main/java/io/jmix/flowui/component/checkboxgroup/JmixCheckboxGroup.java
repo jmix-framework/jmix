@@ -87,6 +87,8 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
 
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
 
+        addClassNames("jmix-checkbox-group");
+
         attachValueChangeListener();
     }
 

@@ -54,6 +54,8 @@ public class JmixNumberField extends NumberField implements SupportsValueSource<
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
+
+        addClassNames("jmix-inactive-states-error-handling");
     }
 
     protected NumberFieldDelegate createFieldDelegate() {
@@ -157,12 +159,5 @@ public class JmixNumberField extends NumberField implements SupportsValueSource<
     public void setMin(double min) {
         super.setMin(min);
         fieldDelegate.setMin(min);
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
     }
 }

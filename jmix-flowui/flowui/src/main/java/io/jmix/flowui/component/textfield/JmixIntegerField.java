@@ -54,6 +54,8 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
+
+        addClassNames("jmix-inactive-states-error-handling");
     }
 
     protected IntegerFieldDelegate createFieldDelegate() {
@@ -157,12 +159,5 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
     public void setMin(int min) {
         super.setMin(min);
         fieldDelegate.setMin(min);
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
     }
 }

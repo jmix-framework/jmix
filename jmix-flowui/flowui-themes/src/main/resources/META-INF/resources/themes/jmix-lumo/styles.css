@@ -37,7 +37,12 @@
 @import url('component/jmix-grid-context-menu.css');
 @import url('component/jmix-rich-text-editor.css');
 
-@import url('component/jmix-text-field.css');
+@import url('component/jmix-inactive-states-error-handling.css');
+@import url('component/jmix-date-time-picker.css');
+@import url('component/jmix-code-editor.css');
+@import url('component/jmix-radio-button-group.css');
+@import url('component/jmix-checkbox-group.css');
+@import url('component/jmix-file-upload-field.css');
 
 @import url('component/vaadin-form-layout.css');
 @import url('component/vaadin-grid.css');

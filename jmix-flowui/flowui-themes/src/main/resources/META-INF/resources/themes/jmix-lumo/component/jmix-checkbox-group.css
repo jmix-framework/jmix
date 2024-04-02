@@ -1,0 +1,7 @@
+.jmix-checkbox-group[readonly]::part(error-message) {
+    display: none;
+}
+
+.jmix-checkbox-group[disabled]::part(error-message) {
+    display: none;
+}

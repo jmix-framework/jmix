@@ -89,6 +89,8 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
 
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
 
+        addClassNames("jmix-inactive-states-error-handling");
+
         attachValueChangeListener();
     }
 
@@ -125,13 +127,6 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
     @Override
     public void executeValidators() throws ValidationException {
         fieldDelegate.executeValidators();
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
     }
 
     @Override

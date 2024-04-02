@@ -59,6 +59,8 @@ public class JmixEmailField extends EmailField implements SupportsValueSource<St
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
         setPattern(EmailValidator.PATTERN);
+
+        addClassNames("jmix-inactive-states-error-handling");
     }
 
     @SuppressWarnings("unchecked")
@@ -110,13 +112,6 @@ public class JmixEmailField extends EmailField implements SupportsValueSource<St
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
         fieldDelegate.updateInvalidState();
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
     }
 
     @Override

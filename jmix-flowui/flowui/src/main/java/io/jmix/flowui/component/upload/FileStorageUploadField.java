@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.upload;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.upload.*;
@@ -50,8 +49,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -106,6 +105,8 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
                 setMaxFileSize((int) properties.getMaxFileSize().toBytes()));
 
         applyI18nDefaults();
+
+        addClassNames("jmix-file-upload-field");
 
         attachValueChangeListener(this::onValueChange);
 

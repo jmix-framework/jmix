@@ -53,6 +53,8 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
+
+        addClassNames("jmix-inactive-states-error-handling");
     }
 
     @SuppressWarnings("unchecked")
@@ -145,12 +147,5 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
     @Override
     public void setValue(String value) {
         super.setValue(Strings.nullToEmpty(value));
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
     }
 }

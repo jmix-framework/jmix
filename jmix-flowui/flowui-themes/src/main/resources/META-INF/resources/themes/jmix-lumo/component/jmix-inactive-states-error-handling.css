@@ -1,0 +1,19 @@
+.jmix-inactive-states-error-handling[readonly]::part(error-message) {
+    display: none;
+}
+
+.jmix-inactive-states-error-handling[readonly]::part(input-field) {
+    background-color: transparent;
+}
+
+.jmix-inactive-states-error-handling[readonly]::part(input-field)::after {
+    background: transparent;
+}
+
+.jmix-inactive-states-error-handling[disabled]::part(error-message) {
+    display: none;
+}
+
+.jmix-inactive-states-error-handling[disabled]::part(input-field) {
+    background-color: var(--lumo-contrast-5pct);
+}

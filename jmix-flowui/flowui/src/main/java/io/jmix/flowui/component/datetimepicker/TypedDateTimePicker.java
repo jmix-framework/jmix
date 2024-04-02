@@ -110,6 +110,8 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
                 .setMonthNames(getMonthNames(locale))
                 .setFirstDayOfWeek(getFirstDayOfWeek(locale)));
 
+        addClassNames("jmix-date-time-picker");
+
         attachValueChangeListener();
     }
 
@@ -260,13 +262,6 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
     @Override
     public void setValue(LocalDateTime value) {
         setValueInternal(value);
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
     }
 
     protected void setValueInternal(@Nullable LocalDateTime value) {

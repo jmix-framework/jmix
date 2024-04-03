@@ -128,20 +128,7 @@ public class JmixTabSheet extends Component
             tabs.addTabAtIndex(position, tab);
         }
 
-        // Make sure possible old content related to the same tab gets removed
-        if (tabToContent.containsKey(tab)) {
-            tabToContent.get(tab).getElement().removeFromParent();
-        }
-
-        // On the client, content is associated with a tab by id
-        String id = tab.getId()
-                .orElse(generateTabId());
-        tab.setId(id);
-        content.getElement().setAttribute("tab", id);
-
-        tabToContent.put(tab, content);
-
-        updateContent();
+        updateTabContent(tab, content);
 
         return tab;
     }
@@ -368,6 +355,23 @@ public class JmixTabSheet extends Component
         }
     }
 
+    protected void updateTabContent(Tab tab, Component content) {
+        // Make sure possible old content related to the same tab gets removed
+        if (tabToContent.containsKey(tab)) {
+            tabToContent.get(tab).getElement().removeFromParent();
+        }
+
+        // On the client, content is associated with a tab by id
+        String id = tab.getId()
+                .orElse(generateTabId());
+        tab.setId(id);
+        content.getElement().setAttribute("tab", id);
+
+        tabToContent.put(tab, content);
+
+        updateContent();
+    }
+
     protected String generateTabId() {
         return GENERATED_TAB_ID_PREFIX + RandomStringUtils.randomAlphanumeric(8);
     }
@@ -466,8 +470,9 @@ public class JmixTabSheet extends Component
                     componentLoader instanceof TabSheetLoader.LazyTabLoader lazyTabLoader) {
                 lazyTabLoader.forceCreateSubComponents();
                 lazyTabLoader.forceLoadSubComponents();
+
                 Component content = lazyTabLoader.getContent();
-                tabToContent.put(selectedTab, content);
+                updateTabContent(tab, content);
 
                 event.unregisterListener();
             }

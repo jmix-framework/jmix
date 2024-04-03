@@ -30,19 +30,22 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
+import io.jmix.dynattr.model.CategoryAttributeValue;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -67,6 +70,7 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
     protected SearchProperties searchProperties;
     @Autowired
     protected MetadataTools metadataTools;
+
 
     protected Cache<Id<?>, Set<Id<?>>> removalDependencies = CacheBuilder.newBuilder()
             .expireAfterWrite(1, TimeUnit.MINUTES)
@@ -117,6 +121,13 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
 
     @EventListener
     public void onEntityChangedBeforeCommit(EntityChangedEvent<?> event) {
+        Optional<?> obj = dataManager.load(event.getEntityId()).optional();
+        if(obj.isPresent() && obj.get() instanceof CategoryAttributeValue categoryAttributeValue) {
+            Class<Object> javaClass = metadata.getClass(categoryAttributeValue.getCategoryAttribute().getCategoryEntityType()).getJavaClass();
+            indexingQueueManager.enqueueIndexByEntityId(Id.of(categoryAttributeValue.getObjectEntityId(), javaClass));
+            return;
+        }
+
         if (isEntityChangedEventProcessingRequired(event)) {
             try {
                 log.trace("Process event: {}", event);
@@ -180,7 +191,7 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
 
     protected boolean isUpdateRequired(Class<?> entityClass, AttributeChanges changes) {
         Set<String> affectedLocalPropertyNames = new HashSet<>(indexConfigurationManager.getLocalPropertyNamesAffectedByUpdate(entityClass));
-        if(metadataTools.isSoftDeletable(entityClass)) {
+        if (metadataTools.isSoftDeletable(entityClass)) {
             affectedLocalPropertyNames.add(metadataTools.findDeletedDateProperty(entityClass));
         }
         return changes.getAttributes()

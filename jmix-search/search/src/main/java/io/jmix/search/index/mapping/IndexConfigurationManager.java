@@ -44,7 +44,6 @@ public class IndexConfigurationManager {
 
     protected final Registry registry;
 
-    @Autowired
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
                                      AnnotatedIndexDefinitionProcessor indexDefinitionProcessor,
                                      InstanceNameProvider instanceNameProvider,

@@ -200,6 +200,7 @@ public class EntityIndexerImpl implements EntityIndexer {
                                     .load(metaClass.getJavaClass())
                                     .id(id)
                                     .fetchPlan(fetchPlan)
+                                    .hint("jmix.dynattr", true)
                                     .optional())
                             .filter(Optional::isPresent)
                             .map(Optional::get)
@@ -211,6 +212,7 @@ public class EntityIndexerImpl implements EntityIndexer {
                     loaded = dataManager
                             .load(metaClass.getJavaClass())
                             .query(queryString)
+                            .hint("jmix.dynattr", true)
                             .parameter("ids", entityIds)
                             .fetchPlan(fetchPlan)
                             .list();
@@ -224,6 +226,9 @@ public class EntityIndexerImpl implements EntityIndexer {
     protected FetchPlan createFetchPlan(IndexConfiguration indexConfiguration) {
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexConfiguration.getEntityClass());
         indexConfiguration.getMapping().getFields().values().forEach(field -> {
+            if (field.getEntityPropertyFullName().startsWith("+")) {
+                return;
+            }
             log.trace("Add property to fetch plan: {}", field.getEntityPropertyFullName());
             fetchPlanBuilder.add(field.getEntityPropertyFullName());
             field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {

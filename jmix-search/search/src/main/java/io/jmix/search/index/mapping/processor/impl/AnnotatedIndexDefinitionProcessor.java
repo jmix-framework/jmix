@@ -21,12 +21,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.Stores;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.method.ContextArgumentResolverComposite;
 import io.jmix.core.impl.method.MethodArgumentsProvider;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.datatype.impl.StringDatatype;
+import io.jmix.core.metamodel.model.*;
+import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexSettingsConfigurationContext;
@@ -55,9 +56,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import io.jmix.core.metamodel.model.impl.DatatypeRange;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -80,6 +82,7 @@ public class AnnotatedIndexDefinitionProcessor {
     private static final Logger log = LoggerFactory.getLogger(AnnotatedIndexDefinitionProcessor.class);
 
     protected final Metadata metadata;
+    protected final Stores stores;
     protected final MetadataTools metadataTools;
     protected final MappingFieldAnnotationProcessorsRegistry mappingFieldAnnotationProcessorsRegistry;
     protected final PropertyTools propertyTools;
@@ -92,7 +95,7 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final IndexAnalysisElementsRegistry indexAnalysisElementsRegistry;
 
     @Autowired
-    public AnnotatedIndexDefinitionProcessor(Metadata metadata,
+    public AnnotatedIndexDefinitionProcessor(Metadata metadata, Stores stores,
                                              MetadataTools metadataTools,
                                              MappingFieldAnnotationProcessorsRegistry mappingFieldAnnotationProcessorsRegistry,
                                              PropertyTools propertyTools,
@@ -104,6 +107,7 @@ public class AnnotatedIndexDefinitionProcessor {
                                              ContextArgumentResolverComposite resolvers,
                                              IndexAnalysisElementsRegistry indexAnalysisElementsRegistry) {
         this.metadata = metadata;
+        this.stores = stores;
         this.metadataTools = metadataTools;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
         this.propertyTools = propertyTools;
@@ -341,7 +345,7 @@ public class AnnotatedIndexDefinitionProcessor {
     protected Set<Class<?>> getAffectedEntityClasses(IndexMappingConfiguration indexMappingConfiguration) {
         Set<Class<?>> affectedClasses = indexMappingConfiguration.getFields().values().stream()
                 .flatMap(d -> Arrays.stream(d.getMetaPropertyPath().getMetaProperties()))
-                .filter(p -> p.getRange().isClass())
+                .filter(p -> p.getRange() != null && p.getRange().isClass())
                 .map(p -> p.getRange().asClass().getJavaClass())
                 .collect(Collectors.toSet());
 
@@ -423,6 +427,17 @@ public class AnnotatedIndexDefinitionProcessor {
         Arrays.stream(includes)
                 .filter(StringUtils::isNotBlank)
                 .forEach(included -> {
+                    if (included.startsWith("+")) {
+                        var prop = new MetaPropertyImpl(rootEntityMetaClass, included);
+                        prop.setRange(new DatatypeRange(new StringDatatype()));
+                        prop.setJavaType(String.class);
+                        prop.setStore(stores.get(Stores.NOOP));
+                        prop.setType(MetaProperty.Type.DATATYPE);
+                        MetaPropertyPath metaPropertyPath = new MetaPropertyPath(rootEntityMetaClass, prop);
+
+                        effectiveProperties.put(included, metaPropertyPath);
+                        return;
+                    }
                     Map<String, MetaPropertyPath> propertyPaths = propertyTools.findPropertiesByPath(rootEntityMetaClass, included);
                     Map<String, MetaPropertyPath> expandedPropertyPaths = expandEmbeddedProperties(rootEntityMetaClass, propertyPaths);
                     effectiveProperties.putAll(expandedPropertyPaths);
@@ -558,7 +573,7 @@ public class AnnotatedIndexDefinitionProcessor {
 
     protected List<MetaPropertyPath> resolveInstanceNameRelatedProperties(MetaPropertyPath propertyPath) {
         List<MetaPropertyPath> instanceNameRelatedProperties;
-        if (propertyPath.getRange().isClass()) {
+        if (Objects.nonNull(propertyPath.getRange()) && propertyPath.getRange().isClass()) {
             instanceNameRelatedProperties = resolveInstanceNameRelatedProperties(propertyPath.getRange().asClass(), propertyPath);
             log.debug("Properties related to Instance Name ({}): {}", propertyPath, instanceNameRelatedProperties);
         } else {

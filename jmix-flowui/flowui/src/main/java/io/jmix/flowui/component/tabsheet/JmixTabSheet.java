@@ -28,16 +28,16 @@ import com.vaadin.flow.component.tabs.TabSheetVariant;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.kit.component.HasSubParts;
+import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.loader.container.TabSheetLoader;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.lang.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,6 +54,7 @@ public class JmixTabSheet extends Component
 
     protected Tabs tabs = new Tabs();
     protected Map<Tab, Component> tabToContent = new HashMap<>();
+    protected Set<Tab> lazyTabs;
 
     public JmixTabSheet() {
         super();
@@ -335,6 +336,13 @@ public class JmixTabSheet extends Component
 
     }
 
+    protected Set<Tab> getLazyTabs() {
+        if (lazyTabs == null) {
+            lazyTabs = new LinkedHashSet<>();
+        }
+        return lazyTabs;
+    }
+
     /**
      * Marks the content related to the selected tab as enabled and adds it to
      * the component if it is not already added. All the other content panels
@@ -371,6 +379,19 @@ public class JmixTabSheet extends Component
                 .filter(tab -> sameId(tab, name))
                 .findAny()
                 .orElse(null);
+    }
+
+    /**
+     * Add a new lazy tab to the component.
+     *
+     * @param lazyTab tab which components should be loaded after opening
+     * @param componentLoader tab loader
+     */
+    @Internal
+    public void addLazyTab(Tab lazyTab, ComponentLoader<?> componentLoader) {
+        getLazyTabs().add(lazyTab);
+
+        addSelectedChangeListener(new LazyTabChangeListener(componentLoader, lazyTab));
     }
 
     /**
@@ -425,6 +446,31 @@ public class JmixTabSheet extends Component
          */
         public boolean isInitialSelection() {
             return this.initialSelection;
+        }
+    }
+
+    class LazyTabChangeListener implements ComponentEventListener<SelectedChangeEvent> {
+
+        private final ComponentLoader<?> componentLoader;
+        private final Tab tab;
+
+        public LazyTabChangeListener(ComponentLoader<?> componentLoader, Tab tab) {
+            this.componentLoader = componentLoader;
+            this.tab = tab;
+        }
+
+        @Override
+        public void onComponentEvent(SelectedChangeEvent event) {
+            Tab selectedTab = JmixTabSheet.this.getSelectedTab();
+            if (tab == selectedTab && getLazyTabs().remove(selectedTab) &&
+                    componentLoader instanceof TabSheetLoader.LazyTabLoader lazyTabLoader) {
+                lazyTabLoader.forceCreateSubComponents();
+                lazyTabLoader.forceLoadSubComponents();
+                Component content = lazyTabLoader.getContent();
+                tabToContent.put(selectedTab, content);
+
+                event.unregisterListener();
+            }
         }
     }
 }

@@ -18,6 +18,8 @@ package io.jmix.flowui.xml.layout.loader.container;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.exception.GuiDevelopmentException;
@@ -25,6 +27,8 @@ import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import org.dom4j.Element;
+
+import java.util.Optional;
 
 public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
 
@@ -54,9 +58,15 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
         LayoutLoader loader = getLayoutLoader();
 
         for (Element subElement : element.elements("tab")) {
-            ComponentLoader<?> componentLoader = loader.getLoader(subElement, TabLoader.class);
-            componentLoader.initComponent();
+            Optional<Boolean> lazyOptional = loadBoolean(subElement, "lazy");
+            boolean lazy = lazyOptional.isPresent() && lazyOptional.get();
+            ComponentLoader<?> componentLoader = loader.getLoader(subElement,
+                    lazy ? LazyTabLoader.class : TabLoader.class);
 
+            componentLoader.initComponent();
+            if (lazy) {
+                resultComponent.addLazyTab((Tab) componentLoader.getResultComponent(), componentLoader);
+            }
             pendingLoadComponents.add(componentLoader);
         }
     }
@@ -121,6 +131,26 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
 
         public Component getContent() {
             return content;
+        }
+    }
+
+    public static class LazyTabLoader extends TabLoader {
+
+        @Override
+        public Component getContent() {
+            return content != null ? content : factory.create(Div.class);
+        }
+
+        public void forceCreateSubComponents() {
+            super.createSubComponents(resultComponent, element);
+        }
+
+        public void forceLoadSubComponents() {
+            loadSubComponents();
+        }
+
+        @Override
+        protected void createSubComponents(HasComponents container, Element containerElement) {
         }
     }
 

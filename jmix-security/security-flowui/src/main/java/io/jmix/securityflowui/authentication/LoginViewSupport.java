@@ -26,7 +26,7 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
-import com.vaadin.flow.server.auth.ViewAccessChecker;
+import com.vaadin.flow.server.auth.NavigationAccessControl;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import io.jmix.core.AccessManager;
@@ -274,7 +274,7 @@ public class LoginViewSupport {
             return null;
         }
 
-        String redirectTarget = (String) session.getAttribute(ViewAccessChecker.SESSION_STORED_REDIRECT);
+        String redirectTarget = (String) session.getAttribute(NavigationAccessControl.SESSION_STORED_REDIRECT);
         if (redirectTarget != null) {
             return new Location(redirectTarget);
         }

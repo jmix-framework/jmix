@@ -21,7 +21,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterListener;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.server.VaadinServletRequest;
-import com.vaadin.flow.server.auth.ViewAccessChecker;
+import com.vaadin.flow.server.auth.NavigationAccessControl;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.sys.UiAccessChecker;
 import org.slf4j.Logger;
@@ -106,7 +106,7 @@ public class UiViewAccessChecker implements BeforeEnterListener {
             httpServletRequest.getSession()
                     // Use constant from Vaadin class to avoid
                     // VaadinSavedRequestAwareAuthenticationSuccessHandler extension
-                    .setAttribute(ViewAccessChecker.SESSION_STORED_REDIRECT, beforeEnterEvent
+                    .setAttribute(NavigationAccessControl.SESSION_STORED_REDIRECT, beforeEnterEvent
                             .getLocation().getPathWithQueryParameters());
             if (loginView != null) {
                 beforeEnterEvent.forwardTo(loginView);

@@ -109,6 +109,8 @@ public class QueryCacheManager {
                             "Loading entities by ids.", queryKey.getId());
                     resultList = loadAllByIds(queryCacheResult, metaClass, fetchPlans, (JmixEntityManager) em);
                 }
+            } else {
+                return Collections.emptyList();
             }
         } else {
             log.debug("Query results are not found in cache: {}", queryKey.printDescription());

@@ -37,6 +37,7 @@ class TabSheetTest extends FlowuiTestSpecification {
 
         screen.tab1Span != null
         screen.tab2Button == null
+        screen.tab3Checkbox != null
 
         screen.tabSheet.findComponent("tab2Button").isEmpty()
         screen.tabSheet.setSelectedTab(screen.tab2)

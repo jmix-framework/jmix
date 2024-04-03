@@ -35,7 +35,7 @@
             </tab>
             <tab id="tab3" label="tab3">
                 <hbox>
-                    <checkbox id="checkbox"/>
+                    <checkbox id="tab3Checkbox"/>
                 </hbox>
             </tab>
             <tab id="tab4" label="tab4" lazy="true">

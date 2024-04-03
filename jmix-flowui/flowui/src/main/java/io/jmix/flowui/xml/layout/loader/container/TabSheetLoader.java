@@ -56,17 +56,20 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
     protected void createTabs(Element element) {
         LayoutLoader loader = getLayoutLoader();
 
+        int tabCount = 0;
         for (Element subElement : element.elements("tab")) {
             Optional<Boolean> lazyOptional = loadBoolean(subElement, "lazy");
-            boolean lazy = lazyOptional.isPresent() && lazyOptional.get();
+            boolean shouldBeLazy = lazyOptional.isPresent() && lazyOptional.get() && tabCount > 0;
             ComponentLoader<?> componentLoader = loader.getLoader(subElement,
-                    lazy ? LazyTabLoader.class : TabLoader.class);
+                    shouldBeLazy ? LazyTabLoader.class : TabLoader.class);
 
             componentLoader.initComponent();
-            if (lazy) {
+            if (shouldBeLazy) {
                 resultComponent.addLazyTab((Tab) componentLoader.getResultComponent(), componentLoader);
             }
             pendingLoadComponents.add(componentLoader);
+
+            tabCount++;
         }
     }
 

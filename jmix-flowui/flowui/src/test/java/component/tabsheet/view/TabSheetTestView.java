@@ -16,10 +16,10 @@
 
 package component.tabsheet.view;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.StandardView;
@@ -47,6 +47,9 @@ public class TabSheetTestView extends StandardView {
     @ViewComponent
     private JmixButton tab2Button;
 
+    @ViewComponent
+    private JmixCheckbox tab3Checkbox;
+
     public JmixTabSheet getTabSheet() {
         return tabSheet;
     }
@@ -65,5 +68,9 @@ public class TabSheetTestView extends StandardView {
 
     public JmixButton getTab2Button() {
         return tab2Button;
+    }
+
+    public JmixCheckbox getTab3Checkbox() {
+        return tab3Checkbox;
     }
 }

@@ -834,7 +834,7 @@ public interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
             unlimitedCount = false,
             target = {"io.jmix.flowui.component.combobox.JmixComboBox"},
-            documentationLink = "whats-new/index.html#fetching-items-in-dropdowns",
+            documentationLink = "2.1/whats-new/index.html#fetching-items-in-dropdowns",
             unsupportedTarget = {
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
@@ -855,7 +855,7 @@ public interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
             unlimitedCount = false,
             target = {"io.jmix.flowui.component.combobox.EntityComboBox"},
-            documentationLink = "whats-new/index.html#fetching-items-in-dropdowns",
+            documentationLink = "2.1/whats-new/index.html#fetching-items-in-dropdowns",
             unsupportedTarget = {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
@@ -876,7 +876,7 @@ public interface StudioElements {
             name = "ItemsQuery",
             xmlElement = "itemsQuery",
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
-            documentationLink = "whats-new/index.html#fetching-items-in-dropdowns",
+            documentationLink = "2.1/whats-new/index.html#fetching-items-in-dropdowns",
             unlimitedCount = false,
             target = {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
@@ -902,7 +902,7 @@ public interface StudioElements {
             xmlElement = "prefix",
             target = {"com.vaadin.flow.component.shared.HasPrefix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
-            documentationLink = "whats-new/index.html#prefix-and-suffix-components",
+            documentationLink = "2.1/whats-new/index.html#prefix-and-suffix-components",
             unlimitedCount = false,
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
@@ -918,7 +918,7 @@ public interface StudioElements {
             xmlElement = "suffix",
             target = {"com.vaadin.flow.component.shared.HasSuffix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
-            documentationLink = "whats-new/index.html#prefix-and-suffix-components",
+            documentationLink = "2.1/whats-new/index.html#prefix-and-suffix-components",
             unlimitedCount = false,
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(

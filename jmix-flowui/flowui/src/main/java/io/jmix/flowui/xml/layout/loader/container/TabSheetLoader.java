@@ -19,7 +19,6 @@ package io.jmix.flowui.xml.layout.loader.container;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.exception.GuiDevelopmentException;

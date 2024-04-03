@@ -19,7 +19,7 @@ package io.jmix.securityflowui.access;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterListener;
-import com.vaadin.flow.router.NotFoundException;
+import com.vaadin.flow.router.AccessDeniedException;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.auth.ViewAccessChecker;
 import io.jmix.core.security.SecurityContextHelper;
@@ -85,7 +85,7 @@ public class UiViewAccessChecker implements BeforeEnterListener {
             // to check access
             log.warn("Preventing navigation to " + targetView.getName()
                     + " because no HTTP request is available for checking access.");
-            beforeEnterEvent.rerouteToError(NotFoundException.class);
+            beforeEnterEvent.rerouteToError(AccessDeniedException.class);
             return;
         }
 
@@ -113,15 +113,15 @@ public class UiViewAccessChecker implements BeforeEnterListener {
             } else {
                 // Prevent the view from being created
                 // TODO: gg, throw an exception?
-                beforeEnterEvent.rerouteToError(NotFoundException.class);
+                beforeEnterEvent.rerouteToError(AccessDeniedException.class);
             }
         } else if (isProductionMode(beforeEnterEvent)) {
             // Intentionally does not reveal if the route exists
             // TODO: gg, throw an exception?
-            beforeEnterEvent.rerouteToError(NotFoundException.class);
+            beforeEnterEvent.rerouteToError(AccessDeniedException.class);
         } else {
             // TODO: gg, throw an exception?
-            beforeEnterEvent.rerouteToError(NotFoundException.class, "Access denied");
+            beforeEnterEvent.rerouteToError(AccessDeniedException.class, "Access denied");
         }
     }
 

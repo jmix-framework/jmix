@@ -22,7 +22,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
@@ -33,7 +35,6 @@ import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
-import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.jpqlfilter.JpqlFilter;
 import io.jmix.flowui.component.logicalfilter.GroupFilter;
@@ -52,6 +53,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 import static java.util.Objects.requireNonNull;
@@ -222,7 +224,21 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected List<FilterComponent> deserializeConditions(List<String> conditionParams, DataLoader dataLoader) {
         List<FilterComponent> conditions = new ArrayList<>(conditionParams.size());
         for (String conditionString : conditionParams) {
-            conditions.add(parseCondition(conditionString, dataLoader));
+            FilterComponent filterComponent = parseCondition(conditionString, dataLoader);
+            if (filterComponent instanceof PropertyFilter<?> propertyFilter && propertyFilter.getProperty() != null) {
+                MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
+                MetaPropertyPath propertyPath = entityMetaClass.getPropertyPath(propertyFilter.getProperty());
+
+                Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
+                if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {
+                    continue;
+                }
+                if (propertyPath != null &&
+                        propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class)) {
+                    continue;
+                }
+            }
+            conditions.add(filterComponent);
         }
 
         return conditions;

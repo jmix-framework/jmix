@@ -27,7 +27,7 @@ import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import org.dom4j.Element;
 
-import java.util.Optional;
+import static io.jmix.flowui.component.tabsheet.JmixTabSheetUtils.updateTabContent;
 
 public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
 
@@ -56,20 +56,19 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
     protected void createTabs(Element element) {
         LayoutLoader loader = getLayoutLoader();
 
-        int tabCount = 0;
+        boolean firstTab = true;
         for (Element subElement : element.elements("tab")) {
-            Optional<Boolean> lazyOptional = loadBoolean(subElement, "lazy");
-            boolean shouldBeLazy = lazyOptional.isPresent() && lazyOptional.get() && tabCount > 0;
+            boolean shouldBeLazy = loadBoolean(subElement, "lazy").orElse(false) && !firstTab;
             ComponentLoader<?> componentLoader = loader.getLoader(subElement,
                     shouldBeLazy ? LazyTabLoader.class : TabLoader.class);
 
             componentLoader.initComponent();
             if (shouldBeLazy) {
-                resultComponent.addLazyTab((Tab) componentLoader.getResultComponent(), componentLoader);
+                resultComponent.addSelectedChangeListener(((LazyTabLoader) componentLoader)::selectedChangeHandler);
             }
             pendingLoadComponents.add(componentLoader);
 
-            tabCount++;
+            firstTab = false;
         }
     }
 
@@ -143,16 +142,19 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
             return content != null ? content : factory.create(Div.class);
         }
 
-        public void forceCreateSubComponents() {
-            super.createSubComponents(resultComponent, element);
-        }
-
-        public void forceLoadSubComponents() {
-            loadSubComponents();
-        }
-
         @Override
         protected void createSubComponents(HasComponents container, Element containerElement) {
+        }
+
+        protected void selectedChangeHandler(JmixTabSheet.SelectedChangeEvent selectedChangeEvent) {
+            if (resultComponent == selectedChangeEvent.getSelectedTab()) {
+                super.createSubComponents(resultComponent, element);
+                loadSubComponents();
+
+                updateTabContent(selectedChangeEvent.getSource(), resultComponent, content);
+
+                selectedChangeEvent.unregisterListener();
+            }
         }
     }
 

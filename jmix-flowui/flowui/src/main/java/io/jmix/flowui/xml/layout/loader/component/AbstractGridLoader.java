@@ -74,7 +74,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     public static final String COLUMN_ELEMENT_NAME = "column";
     public static final String EDITOR_ACTIONS_COLUMN_ELEMENT_NAME = "editorActionsColumn";
-    public static final String EDITOR_ACTIONS_COLUMN_KEY_DEFAULT_PREFIX = "eDACcOPr";
+    public static final String EDITOR_ACTION_COLUMN_DEFAULT_KEY = "editorActionColumn";
 
     protected ActionLoaderSupport actionLoaderSupport;
     protected MetadataTools metaDataTools;
@@ -169,6 +169,11 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         boolean resizable = loadBoolean(columnsElement, "resizable")
                 .orElse(false);
 
+        if (columnsElement.elements(EDITOR_ACTIONS_COLUMN_ELEMENT_NAME).size() > 1) {
+            throw new GuiDevelopmentException("DataGrid can contain only one editorActionColumn",
+                    context, "Component ID", resultComponent.getId());
+        }
+
         if (includeAll) {
             loadColumnsByInclude(resultComponent, columnsElement, metaClass, fetchPlan, sortable, resizable);
             // In case of includeAll, EditorActionsColumn will be place at the end
@@ -242,7 +247,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         //If the key is null then NPE will rise when the settings are applied
         loadString(columnElement, "key").ifPresentOrElse(
                 editColumn::setKey,
-                () -> editColumn.setKey(EDITOR_ACTIONS_COLUMN_KEY_DEFAULT_PREFIX + resultComponent.getColumns().size()));
+                () -> editColumn.setKey(EDITOR_ACTION_COLUMN_DEFAULT_KEY));
         loadString(columnElement, "width", editColumn::setWidth);
         loadBoolean(columnElement, "autoWidth", editColumn::setAutoWidth);
         loadBoolean(columnElement, "resizable", editColumn::setResizable);

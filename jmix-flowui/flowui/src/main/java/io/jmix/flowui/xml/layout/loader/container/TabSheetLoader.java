@@ -144,6 +144,7 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
 
         @Override
         protected void createSubComponents(HasComponents container, Element containerElement) {
+            //Skip subcomponents creating while tab isn't active
         }
 
         protected void selectedChangeHandler(JmixTabSheet.SelectedChangeEvent selectedChangeEvent) {

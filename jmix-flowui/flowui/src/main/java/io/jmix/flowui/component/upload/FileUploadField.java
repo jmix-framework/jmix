@@ -91,8 +91,6 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
 
         applyI18nDefaults();
 
-        addClassNames("jmix-file-upload-field");
-
         attachValueChangeListener(this::onValueChange);
 
         attachUploadEvents(uploadButton);

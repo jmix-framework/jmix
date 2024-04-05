@@ -106,8 +106,6 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
         applyI18nDefaults();
 
-        addClassNames("jmix-file-upload-field");
-
         attachValueChangeListener(this::onValueChange);
 
         attachUploadEvents(uploadButton);

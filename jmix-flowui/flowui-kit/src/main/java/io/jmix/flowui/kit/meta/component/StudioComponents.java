@@ -1154,7 +1154,13 @@ public interface StudioComponents {
             documentationLink = "%VERSION%/flow-ui/vc/components/entityPicker.html",
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "comboBox"),
-                    @StudioConvertStrategy.TagInfo(qualifiedName = "entityComboBox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "entityComboBox", attributeConvertStrategy = {
+                            @StudioConvertStrategy.AttributeConvertStrategy(
+                                    type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF,
+                                    qualifiedName = "itemsContainer",
+                                    value = ""
+                            )
+                    }),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "multiSelectComboBoxPicker")
             }),
             properties = {

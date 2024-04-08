@@ -770,6 +770,8 @@ public class DialogsImpl implements Dialogs {
 
         protected Dialog dialog;
 
+        protected Component content;
+
         protected Span messageSpan;
         protected Span progressTextSpan;
         protected ProgressBar progressBar;
@@ -804,18 +806,20 @@ public class DialogsImpl implements Dialogs {
         }
 
         protected void initDialogContent(Dialog dialog) {
-            VerticalLayout content = new VerticalLayout();
-            content.setPadding(false);
+            VerticalLayout layout = new VerticalLayout();
+            layout.setPadding(false);
 
             messageSpan = uiComponents.create(Span.class);
             messageSpan.setText(messages.getMessage("backgroundWorkProgressDialog.messageSpan.text"));
-            content.add(messageSpan);
+            layout.add(messageSpan);
 
             progressTextSpan = uiComponents.create(Span.class);
-            content.add(progressTextSpan);
+            layout.add(progressTextSpan);
 
             progressBar = uiComponents.create(ProgressBar.class);
-            content.add(progressBar);
+            layout.add(progressBar);
+
+            content = layout;
 
             dialog.add(content);
 
@@ -922,6 +926,21 @@ public class DialogsImpl implements Dialogs {
         @Override
         public boolean isDraggable() {
             return dialog.isDraggable();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withContent(Component content) {
+            if (this.content != null) {
+                dialog.remove(this.content);
+            }
+
+            dialog.add(content);
+            return this;
+        }
+
+        @Override
+        public Component getContent() {
+            return content;
         }
 
         @Override

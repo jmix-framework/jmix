@@ -372,6 +372,7 @@ public interface Dialogs {
             HasText<BackgroundTaskDialogBuilder<T, V>>,
             HasTheme<BackgroundTaskDialogBuilder<T, V>>,
             HasStyle<BackgroundTaskDialogBuilder<T, V>>,
+            HasContent<BackgroundTaskDialogBuilder<T, V>>,
             Draggable<BackgroundTaskDialogBuilder<T, V>>,
             Resizable<BackgroundTaskDialogBuilder<T, V>> {
 

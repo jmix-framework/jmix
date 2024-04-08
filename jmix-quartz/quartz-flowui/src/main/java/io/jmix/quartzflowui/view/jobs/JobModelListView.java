@@ -114,60 +114,6 @@ public class JobModelListView extends StandardListView<JobModel> {
     @ViewComponent
     private UrlQueryParametersFacet urlQueryParameters;
 
-    private class JobUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
-        public JobUrlQueryParametersBinder() {
-            nameFilter.addValueChangeListener(event -> {
-                String text = event.getValue();
-                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_NAME_URL_PARAM,
-                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
-                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
-            });
-            groupFilter.addValueChangeListener(event -> {
-                String text = event.getValue();
-                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_GROUP_URL_PARAM,
-                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
-                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
-            });
-            classFilter.addValueChangeListener(event -> {
-                String text = event.getValue();
-                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_CLASS_URL_PARAM,
-                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
-                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
-            });
-            jobStateFilter.addValueChangeListener(event -> {
-                JobState jobState = event.getValue();
-                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_STATE_URL_PARAM,
-                        jobState != null ? Collections.singletonList(jobState.getId()) : Collections.emptyList()));
-                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
-            });
-        }
-
-        @Override
-        public void updateState(QueryParameters queryParameters) {
-            List<String> jobNameStrings = queryParameters.getParameters().get(JOB_NAME_URL_PARAM);
-            if (jobNameStrings != null && !jobNameStrings.isEmpty()) {
-                nameFilter.setValue(jobNameStrings.get(0));
-            }
-            List<String> jobGroupStrings = queryParameters.getParameters().get(JOB_GROUP_URL_PARAM);
-            if (jobGroupStrings != null && !jobGroupStrings.isEmpty()) {
-                groupFilter.setValue(jobGroupStrings.get(0));
-            }
-            List<String> jobClassStrings = queryParameters.getParameters().get(JOB_CLASS_URL_PARAM);
-            if (jobClassStrings != null && !jobClassStrings.isEmpty()) {
-                classFilter.setValue(jobClassStrings.get(0));
-            }
-            List<String> jobStateStrings = queryParameters.getParameters().get(JOB_STATE_URL_PARAM);
-            if (jobStateStrings != null && !jobStateStrings.isEmpty()) {
-                jobStateFilter.setValue(JobState.fromId(jobStateStrings.get(0)));
-            }
-        }
-
-        @Override
-        public Component getComponent() {
-            return null;
-        }
-    }
-
     @Subscribe
     protected void onInit(InitEvent event) {
         initTable();
@@ -459,5 +405,59 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     protected void onFilterFieldValueChange(ComponentEvent<?> event) {
         jobModelsDl.load();
+    }
+
+    private class JobUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+        public JobUrlQueryParametersBinder() {
+            nameFilter.addValueChangeListener(event -> {
+                String text = event.getValue();
+                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_NAME_URL_PARAM,
+                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
+                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
+            });
+            groupFilter.addValueChangeListener(event -> {
+                String text = event.getValue();
+                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_GROUP_URL_PARAM,
+                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
+                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
+            });
+            classFilter.addValueChangeListener(event -> {
+                String text = event.getValue();
+                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_CLASS_URL_PARAM,
+                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
+                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
+            });
+            jobStateFilter.addValueChangeListener(event -> {
+                JobState jobState = event.getValue();
+                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_STATE_URL_PARAM,
+                        jobState != null ? Collections.singletonList(jobState.getId()) : Collections.emptyList()));
+                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
+            });
+        }
+
+        @Override
+        public void updateState(QueryParameters queryParameters) {
+            List<String> jobNameStrings = queryParameters.getParameters().get(JOB_NAME_URL_PARAM);
+            if (jobNameStrings != null && !jobNameStrings.isEmpty()) {
+                nameFilter.setValue(jobNameStrings.get(0));
+            }
+            List<String> jobGroupStrings = queryParameters.getParameters().get(JOB_GROUP_URL_PARAM);
+            if (jobGroupStrings != null && !jobGroupStrings.isEmpty()) {
+                groupFilter.setValue(jobGroupStrings.get(0));
+            }
+            List<String> jobClassStrings = queryParameters.getParameters().get(JOB_CLASS_URL_PARAM);
+            if (jobClassStrings != null && !jobClassStrings.isEmpty()) {
+                classFilter.setValue(jobClassStrings.get(0));
+            }
+            List<String> jobStateStrings = queryParameters.getParameters().get(JOB_STATE_URL_PARAM);
+            if (jobStateStrings != null && !jobStateStrings.isEmpty()) {
+                jobStateFilter.setValue(JobState.fromId(jobStateStrings.get(0)));
+            }
+        }
+
+        @Override
+        public Component getComponent() {
+            return null;
+        }
     }
 }

@@ -22,6 +22,7 @@ archivesBaseName = 'jmix-search'
 
 dependencies {
     api project(':data')
+    api project(':dynattr')
     implementation project(':security')
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'

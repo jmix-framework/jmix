@@ -51,6 +51,7 @@ public class AutoMappingStrategy implements FieldMappingStrategy {
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final FieldMapperProvider fieldMapperProvider;
     protected final DataManager dataManager;
+
     @Autowired
     public AutoMappingStrategy(PropertyValueExtractorProvider propertyValueExtractorProvider,
                                FieldMapperProvider fieldMapperProvider,
@@ -140,7 +141,13 @@ public class AutoMappingStrategy implements FieldMappingStrategy {
     protected Optional<PropertyValueExtractor> resolvePropertyValueExtractor(MetaPropertyPath propertyPath) {
         PropertyValueExtractor valueExtractor = null;
         if (propertyPath.getFirstPropertyName().startsWith("+")) {
-            valueExtractor = propertyValueExtractorProvider.getPropertyValueExtractor(DynAttrPropertyValueExtractor.class);
+            MetaClass domain = propertyPath.getMetaClass();
+            Optional<CategoryAttribute> categoryAttribute = dataManager.load(CategoryAttribute.class)
+                    .query("select e from dynat_CategoryAttribute e where e.category.entityType = :entityType and e.name = :name")
+                    .parameter("entityType", domain.getName())
+                    .parameter("name", propertyPath.getFirstPropertyName().substring(1))
+                    .optional();
+            return categoryAttribute.map(this::resolveDynAttrPropertyValueExtractor);
         } else if (propertyPath.getRange().isDatatype()) {
             Datatype<?> datatype = propertyPath.getRange().asDatatype();
             if (datatype instanceof FileRefDatatype) {
@@ -154,6 +161,21 @@ public class AutoMappingStrategy implements FieldMappingStrategy {
             valueExtractor = propertyValueExtractorProvider.getPropertyValueExtractor(EnumPropertyValueExtractor.class);
         }
         return Optional.ofNullable(valueExtractor);
+    }
+
+    private PropertyValueExtractor resolveDynAttrPropertyValueExtractor(CategoryAttribute categoryAttribute) {
+        return switch (categoryAttribute.getDataType()) {
+            case STRING, INTEGER, DOUBLE, DECIMAL, BOOLEAN ->
+                    propertyValueExtractorProvider.getPropertyValueExtractor(BaseDynAttrPropertyValueExtractor.class);
+            case DATE -> {
+                yield propertyValueExtractorProvider.getPropertyValueExtractor(BaseDynAttrPropertyValueExtractor.class);
+            }
+            case DATE_WITHOUT_TIME -> {
+                yield  propertyValueExtractorProvider.getPropertyValueExtractor(BaseDynAttrPropertyValueExtractor.class);
+            }
+            case ENTITY -> propertyValueExtractorProvider.getPropertyValueExtractor(EntityDynAttrValueExtractor.class);
+            case ENUMERATION -> propertyValueExtractorProvider.getPropertyValueExtractor(EnumDynAttrValueExtractor.class);
+        };
     }
 
 

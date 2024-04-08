@@ -41,8 +41,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -122,7 +120,7 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
     @EventListener
     public void onEntityChangedBeforeCommit(EntityChangedEvent<?> event) {
         Optional<?> obj = dataManager.load(event.getEntityId()).optional();
-        if(obj.isPresent() && obj.get() instanceof CategoryAttributeValue categoryAttributeValue) {
+        if (obj.isPresent() && obj.get() instanceof CategoryAttributeValue categoryAttributeValue) {
             Class<Object> javaClass = metadata.getClass(categoryAttributeValue.getCategoryAttribute().getCategoryEntityType()).getJavaClass();
             indexingQueueManager.enqueueIndexByEntityId(Id.of(categoryAttributeValue.getObjectEntityId(), javaClass));
             return;

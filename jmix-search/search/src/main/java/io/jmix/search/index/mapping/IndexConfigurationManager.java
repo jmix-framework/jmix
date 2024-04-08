@@ -29,7 +29,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -48,6 +48,7 @@ public class IndexConfigurationManager {
                                      AnnotatedIndexDefinitionProcessor indexDefinitionProcessor,
                                      InstanceNameProvider instanceNameProvider,
                                      IndexDefinitionDetector indexDefinitionDetector,
+                                     // IDK but IndexDefinitionDetector causes a circular dependence with IndexListener(that does not inject anywhere and anyhow)
                                      MetadataTools metadataTools) {
         Class<? extends IndexDefinitionDetector> detectorClass = indexDefinitionDetector.getClass();
         Set<String> classNames = classpathScanner.getClassNames(detectorClass);

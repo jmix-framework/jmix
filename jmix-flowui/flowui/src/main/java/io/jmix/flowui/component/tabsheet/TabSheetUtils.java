@@ -22,21 +22,32 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.facet.SettingsFacet;
+import io.jmix.flowui.facet.impl.SettingsFacetHelper;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Internal
 public final class TabSheetUtils {
+
     public static void updateTabContent(JmixTabSheet tabSheet, Tab tab, Component content) {
         tabSheet.updateTabContent(tab, content);
     }
 
-    public static void applySettingsToTabContent(Tab tab) {
-        View<?> view = UiComponentUtils.getView(tab);
+    public static void applySettingsToTabContent(JmixTabSheet tabSheet, Tab tab) {
+        View<?> view = UiComponentUtils.getView(tabSheet);
+        Component tabContent = tabSheet.getContentByTab(tab);
+        List<Component> tabComponents = new ArrayList<>();
+        if (UiComponentUtils.isContainer(tabContent)) {
+            tabComponents.addAll(UiComponentUtils.getComponents(tabContent));
+        } else {
+            tabComponents.add(tabContent);
+        }
 
         ViewControllerUtils.getViewFacets(view).getFacets().forEach(facet -> {
             if (facet instanceof SettingsFacet settingsFacet) {
@@ -51,11 +62,10 @@ public final class TabSheetUtils {
                 if (applySettingsDelegate != null) {
                     applySettingsDelegate.accept(new SettingsFacet.SettingsContext(
                             view,
-                            tab.getChildren().collect(Collectors.toList()),
+                            new ArrayList<>(tabComponents),
                             settingsFacet.getSettings()));
                 } else {
-                    settingsFacet.saveSettings();
-                    settingsFacet.applySettings();
+                    SettingsFacetHelper.applySettings(settingsFacet, tabComponents);
                 }
             }
         });

@@ -22,17 +22,13 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.facet.SettingsFacet;
-import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.jmix.flowui.component.tabsheet.TabSheetUtils.applySettingsToTabContent;
 import static io.jmix.flowui.component.tabsheet.TabSheetUtils.updateTabContent;
@@ -96,7 +92,9 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
                     selectedChangeEvent.getSelectedTab(),
                     loader.getContent());
 
-            applySettingsToTabContent(selectedChangeEvent.getSelectedTab());
+            applySettingsToTabContent(
+                    getResultComponent(),
+                    selectedChangeEvent.getSelectedTab());
         }
         if (lazyTabToLoader.isEmpty()) {
             selectedChangeEvent.unregisterListener();

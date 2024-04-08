@@ -170,6 +170,10 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
                     }
                 }
 
+                if (entities.isEmpty()) {
+                    break;
+                }
+
                 Object lastEntity = entities.get(entities.size() - 1);
                 lastLoadedPkValue = Id.of(lastEntity).getValue();
             }

@@ -246,6 +246,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     protected boolean isPermitted() {
         if (target == null
                 || target.getSingleSelectedItem() == null
+                || target.getSelectedItems().size() != 1
                 || !(target.getItems() instanceof EntityDataUnit)) {
             return false;
         }
@@ -317,6 +318,11 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         }
 
         return true;
+    }
+
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && target.getSelectedItems().size() == 1;
     }
 
     /**

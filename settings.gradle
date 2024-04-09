@@ -127,6 +127,8 @@ includeProject('jmxconsole-starter', 'jmix-jmxconsole/jmxconsole-starter')
 
 includeProject('search', 'jmix-search/search')
 includeProject('search-starter', 'jmix-search/search-starter')
+includeProject('search-dynattr-support', 'jmix-search/search-dynattr-support')
+includeProject('search-dynattr-support-starter', 'jmix-search/search-dynattr-support-starter')
 includeProject('search-aws-starter', 'jmix-search/search-aws-starter')
 includeProject('search-flowui', 'jmix-search/search-flowui')
 includeProject('search-flowui-kit', 'jmix-search/search-flowui-kit')

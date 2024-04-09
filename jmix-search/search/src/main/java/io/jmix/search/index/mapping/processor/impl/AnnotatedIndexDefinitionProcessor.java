@@ -94,8 +94,8 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final MethodArgumentsProvider methodArgumentsProvider;
     protected final IndexAnalysisElementsRegistry indexAnalysisElementsRegistry;
 
-    @Autowired
-    public AnnotatedIndexDefinitionProcessor(Metadata metadata, Stores stores,
+    public AnnotatedIndexDefinitionProcessor(Metadata metadata,
+                                             Stores stores,
                                              MetadataTools metadataTools,
                                              MappingFieldAnnotationProcessorsRegistry mappingFieldAnnotationProcessorsRegistry,
                                              PropertyTools propertyTools,
@@ -345,7 +345,7 @@ public class AnnotatedIndexDefinitionProcessor {
     protected Set<Class<?>> getAffectedEntityClasses(IndexMappingConfiguration indexMappingConfiguration) {
         Set<Class<?>> affectedClasses = indexMappingConfiguration.getFields().values().stream()
                 .flatMap(d -> Arrays.stream(d.getMetaPropertyPath().getMetaProperties()))
-                .filter(p -> p.getRange() != null && p.getRange().isClass())
+                .filter(p -> p.getRange().isClass())
                 .map(p -> p.getRange().asClass().getJavaClass())
                 .collect(Collectors.toSet());
 
@@ -427,17 +427,6 @@ public class AnnotatedIndexDefinitionProcessor {
         Arrays.stream(includes)
                 .filter(StringUtils::isNotBlank)
                 .forEach(included -> {
-                    if (included.startsWith("+")) {
-                        var prop = new MetaPropertyImpl(rootEntityMetaClass, included);
-                        prop.setRange(new DatatypeRange(new StringDatatype()));
-                        prop.setJavaType(String.class);
-                        prop.setStore(stores.get(Stores.NOOP));
-                        prop.setType(MetaProperty.Type.DATATYPE);
-                        MetaPropertyPath metaPropertyPath = new MetaPropertyPath(rootEntityMetaClass, prop);
-
-                        effectiveProperties.put(included, metaPropertyPath);
-                        return;
-                    }
                     Map<String, MetaPropertyPath> propertyPaths = propertyTools.findPropertiesByPath(rootEntityMetaClass, included);
                     Map<String, MetaPropertyPath> expandedPropertyPaths = expandEmbeddedProperties(rootEntityMetaClass, propertyPaths);
                     effectiveProperties.putAll(expandedPropertyPaths);
@@ -573,7 +562,7 @@ public class AnnotatedIndexDefinitionProcessor {
 
     protected List<MetaPropertyPath> resolveInstanceNameRelatedProperties(MetaPropertyPath propertyPath) {
         List<MetaPropertyPath> instanceNameRelatedProperties;
-        if (Objects.nonNull(propertyPath.getRange()) && propertyPath.getRange().isClass()) {
+        if (propertyPath.getRange().isClass()) {
             instanceNameRelatedProperties = resolveInstanceNameRelatedProperties(propertyPath.getRange().asClass(), propertyPath);
             log.debug("Properties related to Instance Name ({}): {}", propertyPath, instanceNameRelatedProperties);
         } else {

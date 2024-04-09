@@ -195,27 +195,9 @@ public class EntityIndexerImpl implements EntityIndexer {
                 FetchPlan fetchPlan = fetchPlanLocalCache.computeIfAbsent(indexConfiguration, this::createFetchPlan);
                 List<Object> loaded;
                 if (metadataTools.hasCompositePrimaryKey(metaClass)) {
-                    loaded = entityIds.stream()
-                            .map(id -> dataManager
-                                    .load(metaClass.getJavaClass())
-                                    .id(id)
-                                    .fetchPlan(fetchPlan)
-                                    .hint("jmix.dynattr", true)
-                                    .optional())
-                            .filter(Optional::isPresent)
-                            .map(Optional::get)
-                            .collect(Collectors.toList());
+                    loaded = reloadEntityListWithPrimaryKeyByIds(entityIds, metaClass, fetchPlan);
                 } else {
-                    String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
-                    String discriminatorCondition = metaClass.getDescendants().isEmpty() ? "" : " and TYPE(e) = " + metaClass.getName();
-                    String queryString = "select e from " + metaClass.getName() + " e where e." + primaryKeyName + " in :ids" + discriminatorCondition;
-                    loaded = dataManager
-                            .load(metaClass.getJavaClass())
-                            .query(queryString)
-                            .hint("jmix.dynattr", true)
-                            .parameter("ids", entityIds)
-                            .fetchPlan(fetchPlan)
-                            .list();
+                    loaded = reloadEntityListByIds(entityIds, metaClass, fetchPlan);
                 }
                 result.put(indexConfiguration, loaded);
             }
@@ -223,12 +205,33 @@ public class EntityIndexerImpl implements EntityIndexer {
         return result;
     }
 
+    protected List<Object> reloadEntityListWithPrimaryKeyByIds(List<Object> entityIds, MetaClass metaClass, FetchPlan fetchPlan) {
+        return entityIds.stream()
+                .map(id -> dataManager
+                        .load(metaClass.getJavaClass())
+                        .id(id)
+                        .fetchPlan(fetchPlan)
+                        .optional())
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    protected List<Object> reloadEntityListByIds(List<Object> entityIds, MetaClass metaClass, FetchPlan fetchPlan) {
+        String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+        String discriminatorCondition = metaClass.getDescendants().isEmpty() ? "" : " and TYPE(e) = " + metaClass.getName();
+        String queryString = "select e from " + metaClass.getName() + " e where e." + primaryKeyName + " in :ids" + discriminatorCondition;
+        return dataManager
+                .load(metaClass.getJavaClass())
+                .query(queryString)
+                .parameter("ids", entityIds)
+                .fetchPlan(fetchPlan)
+                .list();
+    }
+
     protected FetchPlan createFetchPlan(IndexConfiguration indexConfiguration) {
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexConfiguration.getEntityClass());
         indexConfiguration.getMapping().getFields().values().forEach(field -> {
-            if (field.getEntityPropertyFullName().startsWith("+")) {
-                return;
-            }
             log.trace("Add property to fetch plan: {}", field.getEntityPropertyFullName());
             fetchPlanBuilder.add(field.getEntityPropertyFullName());
             field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {

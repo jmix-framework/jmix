@@ -1,0 +1,10 @@
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
+
+group = 'io.jmix.search'
+archivesBaseName = 'jmix-search-dynattr-support-starter'
+
+dependencies {
+    api project(':search-dynattr-support')
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+}

@@ -1,0 +1,17 @@
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
+
+group = 'io.jmix.search'
+archivesBaseName = 'jmix-search-dynattr-support'
+
+dependencies {
+    implementation project(':dynattr')
+    implementation project(':search')
+    implementation project(':data')
+    implementation project(':security')
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.propertyvalue.impl;
+package io.jmix.searchdynattr.index.mapping.propertyvalue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -28,6 +28,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattr.model.CategoryAttribute;
+import io.jmix.search.index.mapping.propertyvalue.impl.AbstractPropertyValueExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Component
+@Component("search_dynattr_support_EnumDynAttrValueExtractor")
 public class EnumDynAttrValueExtractor extends AbstractPropertyValueExtractor {
 
     @Autowired

@@ -119,13 +119,6 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
 
     @EventListener
     public void onEntityChangedBeforeCommit(EntityChangedEvent<?> event) {
-        Optional<?> obj = dataManager.load(event.getEntityId()).optional();
-        if (obj.isPresent() && obj.get() instanceof CategoryAttributeValue categoryAttributeValue) {
-            Class<Object> javaClass = metadata.getClass(categoryAttributeValue.getCategoryAttribute().getCategoryEntityType()).getJavaClass();
-            indexingQueueManager.enqueueIndexByEntityId(Id.of(categoryAttributeValue.getObjectEntityId(), javaClass));
-            return;
-        }
-
         if (isEntityChangedEventProcessingRequired(event)) {
             try {
                 log.trace("Process event: {}", event);

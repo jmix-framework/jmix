@@ -769,7 +769,7 @@ public class DialogsImpl implements Dialogs {
     public class BackgroundTaskDialogBuilderImpl<T extends Number, V> implements BackgroundTaskDialogBuilder<T, V> {
 
         protected Dialog dialog;
-
+        protected VerticalLayout layout;
         protected Component content;
 
         protected Span messageSpan;
@@ -806,7 +806,7 @@ public class DialogsImpl implements Dialogs {
         }
 
         protected void initDialogContent(Dialog dialog) {
-            VerticalLayout layout = new VerticalLayout();
+            layout = new VerticalLayout();
             layout.setPadding(false);
 
             messageSpan = uiComponents.create(Span.class);
@@ -819,9 +819,7 @@ public class DialogsImpl implements Dialogs {
             progressBar = uiComponents.create(ProgressBar.class);
             layout.add(progressBar);
 
-            content = layout;
-
-            dialog.add(content);
+            dialog.add(layout);
 
             cancelButton = uiComponents.create(Button.class);
             cancelButton.setText(messages.getMessage("actions.Cancel"));
@@ -884,6 +882,14 @@ public class DialogsImpl implements Dialogs {
         @Override
         public BackgroundTaskDialogBuilder<T, V> withText(String text) {
             this.messageText = text;
+
+            if (layout.getComponentAt(0) != messageSpan) {
+                if (content != null) {
+                    layout.remove(content);
+                }
+                layout.addComponentAtIndex(0, messageSpan);
+            }
+
             return this;
         }
 
@@ -930,11 +936,16 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public BackgroundTaskDialogBuilder<T, V> withContent(Component content) {
-            if (this.content != null) {
-                dialog.remove(this.content);
+            if (this.messageSpan != null) {
+                layout.remove(this.messageSpan);
             }
+            if (this.content != null) {
+                layout.remove(this.content);
+            }
+            layout.addComponentAtIndex(0, content);
 
-            dialog.add(content);
+            this.content = content;
+
             return this;
         }
 

@@ -225,23 +225,28 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         List<FilterComponent> conditions = new ArrayList<>(conditionParams.size());
         for (String conditionString : conditionParams) {
             FilterComponent filterComponent = parseCondition(conditionString, dataLoader);
-            if (filterComponent instanceof PropertyFilter<?> propertyFilter && propertyFilter.getProperty() != null) {
-                MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
-                MetaPropertyPath propertyPath = entityMetaClass.getPropertyPath(propertyFilter.getProperty());
-
-                Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
-                if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {
-                    continue;
-                }
-                if (propertyPath != null &&
-                        propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class)) {
-                    continue;
-                }
+            if (isNotEligible(dataLoader, filterComponent)) {
+                continue;
             }
             conditions.add(filterComponent);
         }
 
         return conditions;
+    }
+
+    protected boolean isNotEligible(DataLoader dataLoader, FilterComponent filterComponent) {
+        if (filterComponent instanceof PropertyFilter<?> propertyFilter && propertyFilter.getProperty() != null) {
+            MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
+            MetaPropertyPath propertyPath = entityMetaClass.getPropertyPath(propertyFilter.getProperty());
+
+            Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
+            if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {
+                return true;
+            }
+            return propertyPath != null &&
+                    propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class);
+        }
+        return false;
     }
 
     protected void updateConfigurationConditions(Configuration currentConfiguration, List<String> conditionParams) {

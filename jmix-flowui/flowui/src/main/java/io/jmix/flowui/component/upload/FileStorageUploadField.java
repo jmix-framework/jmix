@@ -26,7 +26,7 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.delegate.FieldDelegate;
+import io.jmix.flowui.component.delegate.FileFieldDelegate;
 import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer;
 import io.jmix.flowui.component.upload.receiver.TemporaryStorageFileData;
 import io.jmix.flowui.component.validation.Validator;
@@ -68,7 +68,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     protected Messages messages;
     protected ObjectProvider<MultipartProperties> multipartPropertiesProvider;
 
-    protected FieldDelegate<FileStorageUploadField, FileRef, FileRef> fieldDelegate;
+    protected FileFieldDelegate<FileStorageUploadField, FileRef, FileRef> fieldDelegate;
 
     protected FileStorage fileStorage;
 
@@ -111,8 +111,8 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
         attachUploadEvents(uploadButton);
     }
 
-    protected FieldDelegate<FileStorageUploadField, FileRef, FileRef> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
+    protected FileFieldDelegate<FileStorageUploadField, FileRef, FileRef> createFieldDelegate() {
+        return applicationContext.getBean(FileFieldDelegate.class, this);
     }
 
     @Override
@@ -162,6 +162,20 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
     protected void validate() {
         fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        validate();
     }
 
     @Nullable

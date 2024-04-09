@@ -38,6 +38,9 @@ public abstract class AbstractMultiSelectComboBoxLoader<C extends MultiSelectCom
         loadInteger(element, "pageSize", resultComponent::setPageSize);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
+        loadBoolean(element, "selectedItemsOnTop", resultComponent::setSelectedItemsOnTop);
+        loadEnum(element, MultiSelectComboBox.AutoExpandMode.class,"autoExpand",
+                resultComponent::setAutoExpand);
 
         componentLoader().loadPlaceholder(resultComponent, element);
         componentLoader().loadLabel(resultComponent, element);

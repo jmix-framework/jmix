@@ -68,17 +68,13 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Subscribe("saveBtn")
     public void onSaveButtonClick(final ClickEvent<JmixButton> event) {
         ${entity.className} item = ${detailDc}.getItem();
-
         ValidationErrors validationErrors = validateView(item);
         if (!validationErrors.isEmpty()) {
             ViewValidation viewValidation = getViewValidation();
-
             viewValidation.showValidationErrors(validationErrors);
             viewValidation.focusProblemComponent(validationErrors);
-
             return;
         }
-
         dataContext.save();
         ${tableDc}.replaceItem(item);
         updateControls(false);
@@ -104,17 +100,13 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         }
     }
 
-    protected ValidationErrors validateView(Object entity) {
+    protected ValidationErrors validateView(${entity.className} entity) {
         ViewValidation viewValidation = getViewValidation();
-
         ValidationErrors validationErrors = viewValidation.validateUiComponents(form);
-
         if (!validationErrors.isEmpty()) {
             return validationErrors;
         }
-
         validationErrors.addAll(viewValidation.validateBeanGroup(UiCrossFieldChecks.class, entity));
-
         return validationErrors;
     }
 

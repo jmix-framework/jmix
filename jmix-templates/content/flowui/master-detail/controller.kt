@@ -10,6 +10,8 @@ import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.Route
+import io.jmix.flowui.component.validation.ValidationErrors
+import io.jmix.flowui.component.validation.group.UiCrossFieldChecks
 import io.jmix.flowui.kit.action.ActionPerformedEvent
 import io.jmix.flowui.kit.component.button.JmixButton
 import io.jmix.flowui.model.*
@@ -66,8 +68,16 @@ class ${viewControllerName} : StandardListView<${entity.className}>() {
 
     @Subscribe("saveBtn")
     fun onSaveButtonClick(event: ClickEvent<JmixButton>) {
+        val item = ${detailDc}.item
+        val validationErrors = validateView(item)
+        if (!validationErrors.isEmpty) {
+            val viewValidation = getViewValidation()
+            viewValidation.showValidationErrors(validationErrors)
+            viewValidation.focusProblemComponent(validationErrors)
+            return
+        }
         dataContext.save()
-        ${tableDc}.replaceItem(${detailDc}.item)
+        ${tableDc}.replaceItem(item)
         updateControls(false)
     }
 
@@ -91,6 +101,16 @@ class ${viewControllerName} : StandardListView<${entity.className}>() {
         }
     }
 
+    private fun validateView(entity: ${entity.className}): ValidationErrors {
+        val viewValidation = getViewValidation()
+        val validationErrors = viewValidation.validateUiComponents(form)
+        if (!validationErrors.isEmpty) {
+            return validationErrors
+        }
+        validationErrors.addAll(viewValidation.validateBeanGroup(UiCrossFieldChecks::class.java, entity))
+        return validationErrors
+    }
+
     private fun updateControls(editing: Boolean) {
         form.children.forEach { component ->
             if (component is HasValueAndElement<*, *>) {
@@ -99,5 +119,9 @@ class ${viewControllerName} : StandardListView<${entity.className}>() {
         }
         detailActions.isVisible = editing
         listLayout.isEnabled = !editing
+    }
+
+    private fun getViewValidation(): ViewValidation {
+        return applicationContext.getBean(ViewValidation::class.java)
     }
 }

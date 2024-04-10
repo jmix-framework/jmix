@@ -811,6 +811,15 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="multiSelectComboBoxAutoExpandModeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VERTICAL"/>
+            <xs:enumeration value="HORIZONTAL"/>
+            <xs:enumeration value="BOTH"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="codeEditorTheme">
         <xs:restriction base="xs:string">
             <xs:enumeration value="AMBIANCE"/>
@@ -3203,12 +3212,14 @@
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="selectedItemsOnTop" type="xs:boolean"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="metaClass" type="xs:string"/>
+                <xs:attribute name="autoExpand" type="multiSelectComboBoxAutoExpandModeEnum"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasRequired"/>

@@ -78,6 +78,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "${multiSelectComboBoxComponent}Id"
             allowCustomValue
             allowedCharPattern == "testPattern"
+            autoExpand == MultiSelectComboBox.AutoExpandMode.BOTH
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
@@ -97,6 +98,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
+            selectedItemsOnTop
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             (it as HasTitle).getTitle() == "titleString"

@@ -42,12 +42,15 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.main.UserIndicator;
 import io.jmix.flowui.sys.event.UiEventsManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -55,6 +58,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class JmixUserIndicator extends UserIndicator<UserDetails> implements ApplicationContextAware, InitializingBean {
+
+    private static final Logger log = LoggerFactory.getLogger(JmixUserIndicator.class);
 
     protected ApplicationContext applicationContext;
 
@@ -113,10 +118,14 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         getContent().removeAll();
 
         UserDetails user = currentUserSubstitution.getAuthenticatedUser();
-        UserDetails updatedUser = userRepository.loadUserByUsername(user.getUsername());
+        try {
+            user = userRepository.loadUserByUsername(user.getUsername());
+        } catch (UsernameNotFoundException e) {
+            log.error("User repository doesn't contain user with username {}", user.getUsername());
+        }
 
         List<UserDetails> currentAndSubstitutedUsers = new LinkedList<>();
-        currentAndSubstitutedUsers.add(updatedUser);
+        currentAndSubstitutedUsers.add(user);
 
         List<UserDetails> additionalUsers = substitutionManager != null
                 ? substitutionManager.getCurrentSubstitutedUsers()
@@ -130,7 +139,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         updateUserIndicatorLabel(currentUserSubstitution.getEffectiveUser());
 
         getContent().add(userComponent);
-        getContent().setTitle(generateUserTitle(updatedUser));
+        getContent().setTitle(generateUserTitle(user));
     }
 
     protected Component createUserSelectionField(List<UserDetails> currentAndSubstitutedUsers) {

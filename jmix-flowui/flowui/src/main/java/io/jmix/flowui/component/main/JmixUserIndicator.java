@@ -46,7 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
@@ -72,9 +71,6 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
     protected Dialogs dialogs;
     protected Messages messages;
     protected Actions actions;
-    protected UserRepository userRepository;
-
-    @Autowired
     protected UserRepository userRepository;
 
     @Override
@@ -129,7 +125,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         }
 
         List<UserDetails> currentAndSubstitutedUsers = new LinkedList<>();
-        currentAndSubstitutedUsers.add(updatedUser);
+        currentAndSubstitutedUsers.add(user);
 
         List<UserDetails> additionalUsers = substitutionManager != null
                 ? substitutionManager.getCurrentSubstitutedUsers()
@@ -143,7 +139,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         updateUserIndicatorLabel(currentUserSubstitution.getEffectiveUser());
 
         getContent().add(userComponent);
-        getContent().setTitle(generateUserTitle(updatedUser));
+        getContent().setTitle(generateUserTitle(user));
     }
 
     protected Component createUserSelectionField(List<UserDetails> currentAndSubstitutedUsers) {

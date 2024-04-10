@@ -57,7 +57,7 @@ class ListMenuTest extends FlowuiTestSpecification {
                       description="Description">
                     <item view="ListMenuTestView"
                           title="List menu test view"
-                          icon="ABACUS"
+                          icon="vaadin:academy-cap"
                           description="Description"
                           shortcutCombination="O"/>
                     <item bean="TestMenuItemBean" 
@@ -91,9 +91,9 @@ class ListMenuTest extends FlowuiTestSpecification {
         def menuItem = listMenu.getMenuItem("ListMenuTestView")
         menuItem != null
         menuItem.title == "List menu test view"
-        menuItem.icon == VaadinIcon.ABACUS
+        menuItem.icon == VaadinIcon.ACADEMY_CAP
         (menuItem.prefixComponent as Icon).element.getAttribute("icon") ==
-                VaadinIcon.ABACUS.create().element.getAttribute("icon")
+                VaadinIcon.ACADEMY_CAP.create().element.getAttribute("icon")
         menuItem.description == "Description"
         menuItem.shortcutCombination.key.keys.get(0) == "KeyO"
 

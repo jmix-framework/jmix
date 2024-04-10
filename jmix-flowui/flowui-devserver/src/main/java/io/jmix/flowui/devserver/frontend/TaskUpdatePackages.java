@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -382,12 +383,11 @@ public class TaskUpdatePackages extends NodeUpdater {
     }
 
     static Optional<String> getVaadinVersion(ClassFinder finder) {
-//        URL coreVersionsResource = finder
-//                .getResource(Constants.VAADIN_CORE_VERSIONS_JSON);
-//
-//        if (coreVersionsResource == null) {
-//            return Optional.empty();
-//        }
+        URL coreVersionsResource = FrontendUtils.getResource(Constants.VAADIN_CORE_VERSIONS_JSON);
+
+        if (coreVersionsResource == null) {
+            return Optional.empty();
+        }
         try (InputStream vaadinVersionsStream = getResourceAsStream(Constants.VAADIN_CORE_VERSIONS_JSON)) {
             final JsonObject versionsJson = Json.parse(IOUtils
                     .toString(vaadinVersionsStream, StandardCharsets.UTF_8));

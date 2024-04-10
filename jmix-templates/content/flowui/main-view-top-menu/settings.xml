@@ -24,11 +24,8 @@
         <![CDATA[<html>Main view with top menu.</html>]]>
     </description>
 
-    <locMessages key="viewTitle">
+    <locMessages key="${id}.title">
         <message lang="default"><![CDATA[${project.getName()} application]]></message>
-    </locMessages>
-    <locMessages key="logoutBtnDescription">
-        <message lang="default">Logout</message>
     </locMessages>
 
     <property caption="Descriptor name"

@@ -16,13 +16,22 @@
 
 package repository.conditions
 
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.CoreProperties
 import io.jmix.core.DataManager
 import io.jmix.core.querycondition.JpqlCondition
+import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
+import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import test_support.DataSpec
+import test_support.DataTestConfiguration
+import test_support.TestContextInititalizer
+import test_support.entity.repository.Address
 import test_support.entity.repository.Customer
 import test_support.repository.CustomerRepository
 
@@ -31,78 +40,33 @@ import static io.jmix.core.repository.JmixDataRepositoryContext.of
 
 class ConditionParameterTest extends DataSpec {
     @Autowired
-    private CustomerRepository customerRepository
+    protected CustomerRepository customerRepository
     @Autowired
-    private CoreProperties coreProperties;
+    protected CoreProperties coreProperties;
     @Autowired
-    private DataManager dataManager;
+    protected DataManager dataManager;
 
-    void "Conditions skipping in findAll for manual skipNullOrEmpty setting"() {
-        setup:
+    void setup() {
         Customer fullNamedCustomer = customerRepository.create();
         fullNamedCustomer.name = "fullNamedCustomer"
+        fullNamedCustomer.note = "one"
         customerRepository.save(fullNamedCustomer)
 
         Customer emptyNamedCustomer = customerRepository.create();
         emptyNamedCustomer.name = ""
+        emptyNamedCustomer.note = "two"
         customerRepository.save(emptyNamedCustomer)
 
         Customer nullNamedCustomer = customerRepository.create();
+        nullNamedCustomer.note = "one"
         customerRepository.save(nullNamedCustomer)
+    }
 
-        expect:
-        List<Customer> customers = customerRepository.findAll(Sort.by("name")).toList()
-        customers[0].name == null
-        customers[1].name == ""
-        customers[2].name == "fullNamedCustomer"
-
-        when:
-        def result1 = customerRepository.findAll(of(PropertyCondition
-                .createWithValue("name", EQUAL, null)))
-        then:
-        result1.size() == 1
-        result1[0].name == null
-
-        when:
-        def result2 = customerRepository.findAll(of(PropertyCondition
-                .createWithValue("name", EQUAL, null)
-                .skipNullOrEmpty()))
-        then:
-        result2.size() == 3
-
-        when:
-        coreProperties.skipNullOrEmptyConditionsByDefault
-        def result3 = customerRepository.findAll(of(JpqlCondition
-                .createWithParameters('e.name=:name', null, Collections.singletonMap('name', null))))
-        then:
-        result3.size() == 1
-        result3[0].name == null
-
-        when:
-        coreProperties.skipNullOrEmptyConditionsByDefault
-        def result4 = customerRepository.findAll(of(JpqlCondition
-                .createWithParameters('e.name=:name', null, Collections.singletonMap('name', null))
-                .skipNullOrEmpty()))
-        then:
-        result4.size() == 3
-
-        cleanup:
+    void cleanup() {
         customerRepository.deleteAll()
     }
 
-    void "Conditions skipping in findAll for mixed skipNullOrEmpty setting"() {
-        setup:
-        Customer fullNamedCustomer = customerRepository.create();
-        fullNamedCustomer.name = "fullNamedCustomer"
-        customerRepository.save(fullNamedCustomer)
-
-        Customer emptyNamedCustomer = customerRepository.create();
-        emptyNamedCustomer.name = ""
-        customerRepository.save(emptyNamedCustomer)
-
-        Customer nullNamedCustomer = customerRepository.create();
-        customerRepository.save(nullNamedCustomer)
-
+    void "Conditions skipping in findAll for manual skipNullOrEmpty setting"() {
         expect:
         List<Customer> customers = customerRepository.findAll(Sort.by("name")).toList()
         customers[0].name == null
@@ -124,7 +88,6 @@ class ConditionParameterTest extends DataSpec {
         result2.size() == 3
 
         when:
-        coreProperties.skipNullOrEmptyConditionsByDefault
         def result3 = customerRepository.findAll(of(JpqlCondition
                 .createWithParameters('e.name=:name', null, Collections.singletonMap('name', null))))
         then:
@@ -132,14 +95,51 @@ class ConditionParameterTest extends DataSpec {
         result3[0].name == null
 
         when:
-        coreProperties.skipNullOrEmptyConditionsByDefault
         def result4 = customerRepository.findAll(of(JpqlCondition
                 .createWithParameters('e.name=:name', null, Collections.singletonMap('name', null))
                 .skipNullOrEmpty()))
         then:
         result4.size() == 3
+    }
 
-        cleanup:
-        customerRepository.deleteAll()
+    void "Conditions skipping in findAll for mixed skipNullOrEmpty setting"() {
+        when:
+        def result1 = customerRepository.findAll(of(
+                LogicalCondition.and(
+                        PropertyCondition.createWithValue("name", EQUAL, null),
+                        PropertyCondition.createWithValue("note", EQUAL, "one"))
+        ))
+
+        then:
+        result1.size() == 1
+        result1[0].name == null
+
+        when:
+        def result2 = customerRepository.findAll(of(LogicalCondition.and(
+                PropertyCondition.createWithValue("name", EQUAL, null).skipNullOrEmpty(),
+                PropertyCondition.createWithValue("note", EQUAL, "one"))
+        ))
+        then:
+        result2.size() == 2
+
+        when:
+        coreProperties.skipNullOrEmptyConditionsByDefault
+        def result3 = customerRepository.findAll(of(
+                LogicalCondition.and(
+                        JpqlCondition.createWithParameters('e.name=:name', null, Collections.singletonMap('name', null)),
+                        PropertyCondition.createWithValue("note", EQUAL, "one"))))
+
+        then:
+        result3.size() == 1
+        result3[0].name == null
+
+        when:
+        coreProperties.skipNullOrEmptyConditionsByDefault
+        def result4 = customerRepository.findAll(of(LogicalCondition.and(
+                JpqlCondition.createWithParameters('e.name=:name', null, Collections.singletonMap('name', null))
+                        .skipNullOrEmpty(),
+                PropertyCondition.createWithValue("note", EQUAL, "one"))))
+        then:
+        result4.size() == 2
     }
 }

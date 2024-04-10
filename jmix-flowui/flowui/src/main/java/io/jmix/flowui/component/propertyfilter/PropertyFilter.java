@@ -382,10 +382,9 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         STARTS_WITH(Type.VALUE),
         ENDS_WITH(Type.VALUE),
         IS_SET(Type.UNARY),
-        /*IS_NOT_SET(Type.UNARY),
         IN_LIST(Type.LIST),
         NOT_IN_LIST(Type.LIST),
-        DATE_INTERVAL(Type.INTERVAL)*/
+        IN_INTERVAL(Type.INTERVAL),
         IS_COLLECTION_EMPTY(Type.UNARY),
         MEMBER_OF_COLLECTION(Type.VALUE),
         NOT_MEMBER_OF_COLLECTION(Type.VALUE);

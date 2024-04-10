@@ -68,6 +68,8 @@ public @interface StudioComponent {
 
     StudioAvailableChildrenInfo availableChildren() default @StudioAvailableChildrenInfo();
 
+    StudioConvertStrategy convertStrategy() default @StudioConvertStrategy();
+
     /**
      * Link to the component documentation.
      * <p>It can be of the following types:</p>

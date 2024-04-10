@@ -450,7 +450,8 @@ public interface StudioElements {
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
+                            componentRefTags = "genericFilter", required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "configurationParam", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "conditionParam", type = StudioPropertyType.STRING)
@@ -562,7 +563,8 @@ public interface StudioElements {
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/pagination.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
+                            componentRefTags = {"simplePagination"}, required = true),
                     @StudioProperty(xmlAttribute = "firstResultParam", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "maxResultsParam", type = StudioPropertyType.STRING)
@@ -577,7 +579,8 @@ public interface StudioElements {
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
+                            componentRefTags = "propertyFilter", required = true),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
             }
@@ -678,7 +681,8 @@ public interface StudioElements {
                             classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter$Operation",
                             options = {"EQUAL", "NOT_EQUAL", "GREATER",
                                     "GREATER_OR_EQUAL", "LESS", "LESS_OR_EQUAL", "CONTAINS", "NOT_CONTAINS",
-                                    "STARTS_WITH", "ENDS_WITH", "IS_SET", "IS_COLLECTION_EMPTY", "MEMBER_OF_COLLECTION",
+                                    "STARTS_WITH", "ENDS_WITH", "IS_SET", "IN_LIST", "NOT_IN_LIST", "IN_INTERVAL",
+                                    "IS_COLLECTION_EMPTY", "MEMBER_OF_COLLECTION",
                                     "NOT_MEMBER_OF_COLLECTION"}, required = true),
                     @StudioProperty(xmlAttribute = "operationEditable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -831,7 +835,7 @@ public interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
             unlimitedCount = false,
             target = {"io.jmix.flowui.component.combobox.JmixComboBox"},
-            documentationLink = "whats-new/index.html#fetching-items-in-dropdowns",
+            documentationLink = "2.1/whats-new/index.html#fetching-items-in-dropdowns",
             unsupportedTarget = {
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
@@ -852,7 +856,7 @@ public interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
             unlimitedCount = false,
             target = {"io.jmix.flowui.component.combobox.EntityComboBox"},
-            documentationLink = "whats-new/index.html#fetching-items-in-dropdowns",
+            documentationLink = "2.1/whats-new/index.html#fetching-items-in-dropdowns",
             unsupportedTarget = {
                     "io.jmix.flowui.component.combobox.JmixComboBox",
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
@@ -873,7 +877,7 @@ public interface StudioElements {
             name = "ItemsQuery",
             xmlElement = "itemsQuery",
             icon = "io/jmix/flowui/kit/meta/icon/element/itemsQuery.svg",
-            documentationLink = "whats-new/index.html#fetching-items-in-dropdowns",
+            documentationLink = "2.1/whats-new/index.html#fetching-items-in-dropdowns",
             unlimitedCount = false,
             target = {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
@@ -899,7 +903,7 @@ public interface StudioElements {
             xmlElement = "prefix",
             target = {"com.vaadin.flow.component.shared.HasPrefix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
-            documentationLink = "whats-new/index.html#prefix-and-suffix-components",
+            documentationLink = "2.1/whats-new/index.html#prefix-and-suffix-components",
             unlimitedCount = false,
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
@@ -915,7 +919,7 @@ public interface StudioElements {
             xmlElement = "suffix",
             target = {"com.vaadin.flow.component.shared.HasSuffix"},
             unsupportedTarget = {"com.vaadin.flow.component.applayout.DrawerToggle"},
-            documentationLink = "whats-new/index.html#prefix-and-suffix-components",
+            documentationLink = "2.1/whats-new/index.html#prefix-and-suffix-components",
             unlimitedCount = false,
             availableChildren = @StudioAvailableChildrenInfo(
                     availableClasses = @StudioAvailableChildrenInfo.ClassInfo(
@@ -942,7 +946,8 @@ public interface StudioElements {
             xmlElement = "menuItem",
             target = {"io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility"},
             properties = {
-                    @StudioProperty(xmlAttribute = "refColumn", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "refColumn", type = StudioPropertyType.COMPONENT_REF,
+                            componentRefTags = {"column"}, required = true),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
             }
     )

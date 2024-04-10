@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.2.2")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.2.4")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -270,7 +270,7 @@ dependencies {
 //        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
 
         def eclipselinkOriginalVersion = '4.0.2'
-        def eclipselinkVersion = '4.0.2-2-jmix'
+        def eclipselinkVersion = '4.0.2-3-jmix'
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"
@@ -365,7 +365,7 @@ dependencies {
 
         api 'org.apache.tika:tika-parsers:1.27'
 
-        def flowableVersion = '7.0.0'
+        def flowableVersion = '7.0.1'
         api "org.flowable:flowable-spring-configurator:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-process:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn:$flowableVersion"

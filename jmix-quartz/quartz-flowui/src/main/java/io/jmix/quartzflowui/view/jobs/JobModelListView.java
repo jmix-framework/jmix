@@ -17,12 +17,17 @@
 package io.jmix.quartzflowui.view.jobs;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.TextRenderer;
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
+import io.jmix.core.LoadContext;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
@@ -35,8 +40,12 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.facet.UrlQueryParametersFacet;
+import io.jmix.flowui.facet.urlqueryparameters.AbstractUrlQueryParametersBinder;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.JobModel;
@@ -44,16 +53,21 @@ import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import io.jmix.quartz.service.QuartzService;
+import io.jmix.quartzflowui.event.QuartzJobEndExecutionEvent;
+import io.jmix.quartzflowui.event.QuartzJobStartExecutionEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.*;
+
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Route(value = "quartz/jobmodels", layout = DefaultMainViewParent.class)
@@ -62,6 +76,11 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 @LookupComponent("jobModelsTable")
 @DialogMode(width = "60em")
 public class JobModelListView extends StandardListView<JobModel> {
+
+    public static final String JOB_NAME_URL_PARAM = "jobName";
+    public static final String JOB_GROUP_URL_PARAM = "jobGroup";
+    public static final String JOB_CLASS_URL_PARAM = "jobClass";
+    public static final String JOB_STATE_URL_PARAM = "jobState";
 
     @ViewComponent
     protected DataGrid<JobModel> jobModelsTable;
@@ -76,12 +95,12 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @ViewComponent
     protected CollectionContainer<JobModel> jobModelsDc;
-
+    @ViewComponent
+    private CollectionLoader<JobModel> jobModelsDl;
     @Autowired
     protected RemoveOperation removeOperation;
     @Autowired
     protected QuartzService quartzService;
-
     @Autowired
     protected ScheduleDescriptionProvider scheduleDescriptionProvider;
     @Autowired
@@ -92,63 +111,120 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected MessageTools messageTools;
     @Autowired
     private Metadata metadata;
+    @ViewComponent
+    private UrlQueryParametersFacet urlQueryParameters;
 
     @Subscribe
-    protected void onInit(View.InitEvent event) {
+    protected void onInit(InitEvent event) {
         initTable();
+        initUrlParameters();
+        initDataChangedEventListener();
+    }
+
+    @Install(to = "jobModelsDl", target = Target.DATA_LOADER)
+    private List<JobModel> jobModelsDlLoadDelegate(final LoadContext<JobModel> loadContext) {
+        return loadJobsData();
     }
 
     protected void initTable() {
         DataGridColumn<JobModel> triggerDescriptionColumn = jobModelsTable.addColumn(new TextRenderer<>(job -> scheduleDescriptionProvider.getScheduleDescription(job)));
-        triggerDescriptionColumn.setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"));
+        triggerDescriptionColumn
+                .setKey("jobScheduleDescription")
+                .setHeader(messageBundle.getMessage("column.jobScheduleDescription.header"));
         jobModelsTable.setColumnPosition(triggerDescriptionColumn, 5);
         triggerDescriptionColumn.setResizable(true).setWidth("20%");
 
         jobModelsTable.addColumn(entity -> entity.getLastFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
                                 .format(entity.getLastFireDate()) : "").setResizable(false)
+                .setKey("lastFireDate")
                 .setHeader(getHeaderForPropertyColumn("lastFireDate"))
                 .setAutoWidth(true);
 
         jobModelsTable.addColumn(entity -> entity.getNextFireDate() != null ?
                         new SimpleDateFormat(messageBundle.getMessage("dateTimeWithSeconds"))
                                 .format(entity.getNextFireDate()) : "").setResizable(false)
+                .setKey("nextFireDate")
                 .setHeader(getHeaderForPropertyColumn("nextFireDate"))
                 .setAutoWidth(true);
+    }
+
+    @Install(to = "jobModelsTable.jobState", subject = "partNameGenerator")
+    protected String jobStatePartNameGenerator(final JobModel entity) {
+        return switch (entity.getJobState()) {
+            case INVALID -> "quartz-job-invalid";
+            default -> null;
+        };
     }
 
     private String getHeaderForPropertyColumn(String propertyName) {
         return messageTools.getPropertyCaption(jobModelsDc.getEntityMetaClass(), propertyName);
     }
 
+    protected void initUrlParameters() {
+        urlQueryParameters.registerBinder(new JobUrlQueryParametersBinder());
+    }
+
+    protected void initDataChangedEventListener() {
+        VaadinSession session = VaadinSession.getCurrent();
+        if (session == null) {
+            return;
+        }
+
+        UiEventsManager uiEventsManager = session.getAttribute(UiEventsManager.class);
+        if (uiEventsManager != null) {
+            uiEventsManager.addApplicationListener(this, this::onApplicationEvent);
+
+            // Remove on detach event
+            addDetachListener(event -> uiEventsManager.removeApplicationListeners(this));
+        }
+    }
+
+    protected void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof QuartzJobStartExecutionEvent jobStartEvent) {
+            onJobStartExecutionEvent(jobStartEvent);
+        } else if (event instanceof QuartzJobEndExecutionEvent jobEndEvent) {
+            onJobEndExecutionEvent(jobEndEvent);
+        }
+    }
+
+    protected void onJobStartExecutionEvent(QuartzJobStartExecutionEvent event) {
+        jobModelsDc.getItems().stream().filter(jobModel ->
+                JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
+                .equals(event.getJobExecutionContext().getJobDetail().getKey())).findAny()
+            .ifPresent(item -> item.setJobState(JobState.RUNNING));
+    }
+
+    protected void onJobEndExecutionEvent(QuartzJobEndExecutionEvent event) {
+        jobModelsDc.getItems().stream().filter(jobModel ->
+                JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup())
+                .equals(event.getJobExecutionContext().getJobDetail().getKey())).findAny()
+            .ifPresent(item -> item.setJobState(JobState.NORMAL));
+    }
+
     @Subscribe
-    protected void onBeforeShow(View.BeforeShowEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
         nameFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         classFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         groupFilter.addTypedValueChangeListener(this::onFilterFieldValueChange);
         jobStateFilter.addValueChangeListener(this::onFilterFieldValueChange);
-
-        loadJobsData();
     }
-
 
     protected List<JobModel> loadJobsData() {
         List<GridSortOrder<JobModel>> sorting = jobModelsTable.getSortOrder();
 
         Comparator<JobModel> jobModelComparator = createJobModelComparator(sorting);
-
         List<JobModel> jobs = quartzService.getAllJobs().stream()
-                .filter(jobModel -> (Strings.isNullOrEmpty(nameFilter.getTypedValue())
-                        || containsIgnoreCase(jobModel.getJobName(), nameFilter.getTypedValue()))
-                        && (Strings.isNullOrEmpty(classFilter.getTypedValue())
-                        || containsIgnoreCase(jobModel.getJobClass(), classFilter.getTypedValue()))
-                        && (Strings.isNullOrEmpty(groupFilter.getTypedValue())
-                        || containsIgnoreCase(jobModel.getJobGroup(), groupFilter.getTypedValue()))
-                        && (jobStateFilter.getValue() == null
-                        || jobStateFilter.getValue().equals(jobModel.getJobState())))
-                .sorted(jobModelComparator)
-                .collect(Collectors.toList());
-
+                    .filter(jobModel -> (Strings.isNullOrEmpty(nameFilter.getTypedValue())
+                            || containsIgnoreCase(jobModel.getJobName(), nameFilter.getTypedValue()))
+                            && (Strings.isNullOrEmpty(classFilter.getTypedValue())
+                            || containsIgnoreCase(jobModel.getJobClass(), classFilter.getTypedValue()))
+                            && (Strings.isNullOrEmpty(groupFilter.getTypedValue())
+                            || containsIgnoreCase(jobModel.getJobGroup(), groupFilter.getTypedValue()))
+                            && (jobStateFilter.getValue() == null
+                            || jobStateFilter.getValue().equals(jobModel.getJobState())))
+                    .sorted(jobModelComparator)
+                    .collect(Collectors.toList());
         jobModelsDc.setItems(jobs);
         return jobs;
     }
@@ -204,22 +280,30 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @Install(to = "jobModelsTable.executeNow", subject = "enabledRule")
     protected boolean jobModelsTableExecuteNowEnabledRule() {
+        JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
         return !CollectionUtils.isEmpty(jobModelsTable.getSelectedItems())
-                && !isJobActive(jobModelsTable.getSingleSelectedItem());
+            && !isJobActive(selectedJobModel)
+            && !isJobInvalid(selectedJobModel)
+        ;
     }
 
     @Install(to = "jobModelsTable.activate", subject = "enabledRule")
     protected boolean jobModelsTableActivateEnabledRule() {
         JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
         return selectedJobModel != null
-                && !isJobActive(selectedJobModel)
-                && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers());
+            && !isJobActive(selectedJobModel)
+            && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers())
+            && !isJobInvalid(selectedJobModel)
+        ;
     }
 
     @Install(to = "jobModelsTable.deactivate", subject = "enabledRule")
     protected boolean jobModelsTableDeactivateEnabledRule() {
-        return (jobModelsTable.getSingleSelectedItem() != null)
-                && isJobActive(jobModelsTable.getSingleSelectedItem());
+        JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
+        return selectedJobModel != null
+            && isJobActive(selectedJobModel)
+            && !isJobInvalid(selectedJobModel)
+        ;
     }
 
     @Install(to = "jobModelsTable.remove", subject = "enabledRule")
@@ -290,7 +374,7 @@ public class JobModelListView extends StandardListView<JobModel> {
                         notifications.create(messageBundle.formatMessage("jobDeleted", jobToDelete.getJobName()))
                                 .withType(Notifications.Type.DEFAULT)
                                 .show();
-                        loadJobsData();
+                        jobModelsDl.load();
                     }
                 })
                 .remove();
@@ -298,24 +382,82 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     @Subscribe("jobModelsTable.refresh")
     protected void onJobModelsTableRefresh(ActionPerformedEvent event) {
-        loadJobsData();
+        jobModelsDl.load();
     }
 
     @Install(to = "jobModelsTable.create", subject = "afterSaveHandler")
     protected void jobModelsTableCreateAfterCommitHandler(JobModel jobModel) {
-        loadJobsData();
+        jobModelsDl.load();
     }
 
     @Install(to = "jobModelsTable.edit", subject = "afterSaveHandler")
     protected void jobModelsTableEditAfterCommitHandler(JobModel jobModel) {
-        loadJobsData();
+        jobModelsDl.load();
     }
 
     protected boolean isJobActive(JobModel jobModel) {
         return jobModel != null && jobModel.getJobState() == JobState.NORMAL;
     }
 
+    protected boolean isJobInvalid(JobModel jobModel) {
+        return jobModel != null && jobModel.getJobState() == JobState.INVALID;
+    }
+
     protected void onFilterFieldValueChange(ComponentEvent<?> event) {
-        loadJobsData();
+        jobModelsDl.load();
+    }
+
+    private class JobUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+        public JobUrlQueryParametersBinder() {
+            nameFilter.addValueChangeListener(event -> {
+                String text = event.getValue();
+                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_NAME_URL_PARAM,
+                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
+                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
+            });
+            groupFilter.addValueChangeListener(event -> {
+                String text = event.getValue();
+                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_GROUP_URL_PARAM,
+                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
+                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
+            });
+            classFilter.addValueChangeListener(event -> {
+                String text = event.getValue();
+                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_CLASS_URL_PARAM,
+                        text != null ? Collections.singletonList(text) : Collections.emptyList()));
+                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
+            });
+            jobStateFilter.addValueChangeListener(event -> {
+                JobState jobState = event.getValue();
+                QueryParameters qp = new QueryParameters(ImmutableMap.of(JOB_STATE_URL_PARAM,
+                        jobState != null ? Collections.singletonList(jobState.getId()) : Collections.emptyList()));
+                fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, qp));
+            });
+        }
+
+        @Override
+        public void updateState(QueryParameters queryParameters) {
+            List<String> jobNameStrings = queryParameters.getParameters().get(JOB_NAME_URL_PARAM);
+            if (jobNameStrings != null && !jobNameStrings.isEmpty()) {
+                nameFilter.setValue(jobNameStrings.get(0));
+            }
+            List<String> jobGroupStrings = queryParameters.getParameters().get(JOB_GROUP_URL_PARAM);
+            if (jobGroupStrings != null && !jobGroupStrings.isEmpty()) {
+                groupFilter.setValue(jobGroupStrings.get(0));
+            }
+            List<String> jobClassStrings = queryParameters.getParameters().get(JOB_CLASS_URL_PARAM);
+            if (jobClassStrings != null && !jobClassStrings.isEmpty()) {
+                classFilter.setValue(jobClassStrings.get(0));
+            }
+            List<String> jobStateStrings = queryParameters.getParameters().get(JOB_STATE_URL_PARAM);
+            if (jobStateStrings != null && !jobStateStrings.isEmpty()) {
+                jobStateFilter.setValue(JobState.fromId(jobStateStrings.get(0)));
+            }
+        }
+
+        @Override
+        public Component getComponent() {
+            return null;
+        }
     }
 }

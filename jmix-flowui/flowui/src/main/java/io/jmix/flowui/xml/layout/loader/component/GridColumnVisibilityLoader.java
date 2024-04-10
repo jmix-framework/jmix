@@ -80,7 +80,8 @@ public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGrid
                         .orElseThrow(() ->
                                 new GuiDevelopmentException("Failed to find refColumn attribute for columnItem", context));
                 MenuItem menuItem = new MenuItem(refColumn);
-                getLoaderSupport().loadString(element, "text", menuItem::setText);
+                getLoaderSupport().loadResourceString(element, "text", context.getMessageGroup(),
+                        menuItem::setText);
                 menuItems.put(refColumn, menuItem);
             } else {
                 throw new GuiDevelopmentException("Found invalid child element '%s' in gridColumnVisibility element"

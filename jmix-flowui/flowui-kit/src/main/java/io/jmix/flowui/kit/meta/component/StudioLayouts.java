@@ -26,6 +26,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import io.jmix.flowui.kit.meta.StudioComponent;
+import io.jmix.flowui.kit.meta.StudioConvertStrategy;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
@@ -40,6 +41,13 @@ public interface StudioLayouts {
             xmlElement = "details",
             icon = "io/jmix/flowui/kit/meta/icon/layout/details.svg",
             documentationLink = "%VERSION%/flow-ui/vc/layouts/details.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "div"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "hbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "vbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "flexLayout"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -75,6 +83,13 @@ public interface StudioLayouts {
             xmlElement = "hbox",
             icon = "io/jmix/flowui/kit/meta/icon/layout/hbox.svg",
             documentationLink = "%VERSION%/flow-ui/vc/layouts/hbox.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "div"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "vbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "details"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "flexLayout"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -130,6 +145,13 @@ public interface StudioLayouts {
             xmlElement = "vbox",
             icon = "io/jmix/flowui/kit/meta/icon/layout/vbox.svg",
             documentationLink = "%VERSION%/flow-ui/vc/layouts/vbox.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "div"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "hbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "details"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "flexLayout"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -184,6 +206,13 @@ public interface StudioLayouts {
             category = "Layouts",
             xmlElement = "flexLayout",
             icon = "io/jmix/flowui/kit/meta/icon/layout/hbox.svg",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "div"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "hbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "vbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "details"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -240,6 +269,14 @@ public interface StudioLayouts {
             xmlElement = "scroller",
             icon = "io/jmix/flowui/kit/meta/icon/layout/scroller.svg",
             documentationLink = "%VERSION%/flow-ui/vc/layouts/scroller.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "div"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "hbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "vbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "details"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "flexLayout"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -272,6 +309,14 @@ public interface StudioLayouts {
             xmlElement = "split",
             icon = "io/jmix/flowui/kit/meta/icon/layout/split.svg",
             documentationLink = "%VERSION%/flow-ui/vc/layouts/split.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "div"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "hbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "vbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "details"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "flexLayout"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

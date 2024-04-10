@@ -20,6 +20,7 @@ import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.RememberMeConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.securityflowui.access.UiViewAccessChecker;
+import io.jmix.securityflowui.util.PrevVaadinRequestUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -84,6 +85,13 @@ public class FlowuiSecurityConfiguration {
     protected UiProperties uiProperties;
     protected ViewRegistry viewRegistry;
     protected ServerProperties serverProperties;
+
+    protected PrevVaadinRequestUtil prevVaadinRequestUtil;
+
+    @Autowired
+    public void setPrevVaadinRequestUtil(PrevVaadinRequestUtil prevVaadinRequestUtil) {
+        this.prevVaadinRequestUtil = prevVaadinRequestUtil;
+    }
 
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -187,7 +195,9 @@ public class FlowuiSecurityConfiguration {
         // Public endpoints are OK to access
         urlRegistry.requestMatchers(requestUtil::isAnonymousEndpoint).permitAll();
         // Public routes are OK to access
-        urlRegistry.requestMatchers(requestUtil::isAnonymousRoute).permitAll();
+        //use RequestUtil::isAnonymousRoute from Vaadin 24.1. See https://github.com/jmix-framework/jmix/issues/2985
+        urlRegistry.requestMatchers(prevVaadinRequestUtil::isAnonymousRoute).permitAll();
+//        urlRegistry.requestMatchers(requestUtil::isAnonymousRoute).permitAll();
         urlRegistry.requestMatchers(
                 getDefaultHttpSecurityPermitMatcher(getUrlMapping())).permitAll();
 

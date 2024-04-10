@@ -222,6 +222,13 @@ public interface StudioHTMLComponents {
             xmlElement = "div",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/div.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "hbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "vbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "flexLayout"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "details"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -339,6 +346,15 @@ public interface StudioHTMLComponents {
             xmlElement = "h1",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h6"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -367,7 +383,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H1 h1();
 
@@ -378,6 +400,15 @@ public interface StudioHTMLComponents {
             xmlElement = "h2",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h6"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -406,7 +437,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H2 h2();
 
@@ -417,6 +454,15 @@ public interface StudioHTMLComponents {
             xmlElement = "h3",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h6"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -445,7 +491,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H3 h3();
 
@@ -456,6 +508,15 @@ public interface StudioHTMLComponents {
             xmlElement = "h4",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h6"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -484,7 +545,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H4 h4();
 
@@ -495,6 +562,15 @@ public interface StudioHTMLComponents {
             xmlElement = "h5",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h6"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -523,7 +599,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H5 h5();
 
@@ -534,6 +616,15 @@ public interface StudioHTMLComponents {
             xmlElement = "h6",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -562,7 +653,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H6 h6();
 
@@ -1182,6 +1279,14 @@ public interface StudioHTMLComponents {
             xmlElement = "span",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/span.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1210,7 +1315,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     Span span();
 
@@ -1260,6 +1371,14 @@ public interface StudioHTMLComponents {
             xmlElement = "nativeLabel",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/nativeLabel.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1288,7 +1407,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     NativeLabel nativeLabel();
 

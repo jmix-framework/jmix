@@ -158,7 +158,12 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         setupDataProvider(holder);
 
         // filters must be initialized after the data provider
-        pendingToFilterableColumns.forEach(column -> column.setFilterable(true));
+        // check for parent was implemented for the case
+        // when a column was deleted due to security constraints
+        pendingToFilterableColumns.forEach(column ->
+                column.getParent()
+                        .ifPresent(__ -> column.setFilterable(true))
+        );
         pendingToFilterableColumns.clear();
     }
 

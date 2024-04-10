@@ -370,7 +370,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
                 Preconditions.checkNotNullArgument(propertyPath);
 
                 metaClass = propertyPath.getMetaClass();
-                property = propertyPath.getFirstPropertyName();
+                property = propertyPath.toPathString();
             }
 
             if (column.getHeaderText() != null) {

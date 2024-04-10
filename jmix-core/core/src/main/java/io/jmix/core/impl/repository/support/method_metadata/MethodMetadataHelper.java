@@ -16,6 +16,7 @@
 
 package io.jmix.core.impl.repository.support.method_metadata;
 
+import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import io.jmix.core.repository.ApplyConstraints;
 import io.jmix.core.repository.JmixDataRepository;
 import io.jmix.core.repository.QueryHints;
@@ -24,6 +25,7 @@ import org.springframework.core.type.MethodMetadata;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.QueryHint;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -76,17 +78,7 @@ public class MethodMetadataHelper {
         if (hints != null) {
             Map<String, Serializable> result = new HashMap<>();
             for (QueryHint hint : hints.value()) {
-                Serializable value;
-                switch (hint.name()) {
-                    case "jmix.softDeletion":
-                    case "jmix.dynattr":
-                    case "jmix.cacheable":
-                        value = Boolean.parseBoolean(hint.value());
-                        break;
-                    default:
-                        value = hint.value();
-                }
-                result.put(hint.name(), value);
+                result.put(hint.name(), LoaderHelper.parseHint(hint.name(), hint.value()));
             }
             return result;
         } else {

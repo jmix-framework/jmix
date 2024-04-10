@@ -18,50 +18,34 @@ package io.jmix.core.impl.repository.query;
 
 
 import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
-import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.core.repository.JmixDataRepositoryContext;
+import io.jmix.core.QueryStringProcessor;
 import jakarta.annotation.Nonnull;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class JmixCountQuery extends JmixStructuredQuery {
 
-    public JmixCountQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
-        super(dataManager, jmixMetadata, method, metadata, factory, qryTree);
+    public JmixCountQuery(DataManager dataManager,
+                          Metadata jmixMetadata,
+                          FetchPlanRepository fetchPlanRepository,
+                          List<QueryStringProcessor> queryStringProcessors,
+                          Method method,
+                          RepositoryMetadata metadata,
+                          ProjectionFactory factory,
+                          PartTree qryTree) {
+        super(dataManager, jmixMetadata, fetchPlanRepository, queryStringProcessors, method, metadata, factory, qryTree);
     }
 
     @Override
     @Nonnull
     public Object execute(Object[] parameters) {
-        Map<String, Serializable> hints = new HashMap<>(queryHints);
-
-        JmixDataRepositoryContext jmixDataRepositoryContext = jmixContextIndex != -1 ? (JmixDataRepositoryContext) parameters[jmixContextIndex] : null;
-        if (jmixDataRepositoryContext != null) {
-            if (jmixDataRepositoryContext.condition() != null) {
-                conditions = LogicalCondition.and(conditions, jmixDataRepositoryContext.condition());
-            }
-            hints.putAll(jmixDataRepositoryContext.hints());
-        }
-
-        String entityName = jmixMetadata.getClass(metadata.getDomainType()).getName();
-
-        String queryString = String.format("select %s e from %s e", distinct ? "distinct" : "", entityName);
-
-        LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
-                .setQuery(new LoadContext.Query(queryString)
-                        .setCondition(conditions)
-                        .setParameters(buildNamedParametersMap(parameters)))
-                .setHints(hints);
-
-        return dataManager.getCount(context);
+        return dataManager.getCount(prepareQueryContext(parameters));
     }
 
 

@@ -72,6 +72,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
     protected Dialogs dialogs;
     protected Messages messages;
     protected Actions actions;
+    protected UserRepository userRepository;
 
     @Autowired
     protected UserRepository userRepository;
@@ -97,6 +98,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         dialogs = applicationContext.getBean(Dialogs.class);
         messages = applicationContext.getBean(Messages.class);
         actions = applicationContext.getBean(Actions.class);
+        userRepository = applicationContext.getBean(UserRepository.class);
     }
 
     protected void initUiUserSubstitutionChangeListener() {
@@ -127,7 +129,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         }
 
         List<UserDetails> currentAndSubstitutedUsers = new LinkedList<>();
-        currentAndSubstitutedUsers.add(user);
+        currentAndSubstitutedUsers.add(updatedUser);
 
         List<UserDetails> additionalUsers = substitutionManager != null
                 ? substitutionManager.getCurrentSubstitutedUsers()
@@ -141,7 +143,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         updateUserIndicatorLabel(currentUserSubstitution.getEffectiveUser());
 
         getContent().add(userComponent);
-        getContent().setTitle(generateUserTitle(user));
+        getContent().setTitle(generateUserTitle(updatedUser));
     }
 
     protected Component createUserSelectionField(List<UserDetails> currentAndSubstitutedUsers) {

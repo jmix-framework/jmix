@@ -150,7 +150,7 @@ public class ListMenuBuilder {
             if (!parts[0].equals("vaadin")) {
                 return null;
             }
-            return VaadinIcon.valueOf(parts[1].toUpperCase());
+            return VaadinIcon.valueOf(parts[1].toUpperCase().replace('-', '_'));
         } else {
             return VaadinIcon.valueOf(iconString);
         }

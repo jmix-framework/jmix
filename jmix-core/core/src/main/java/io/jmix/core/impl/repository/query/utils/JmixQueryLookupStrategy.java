@@ -17,7 +17,9 @@
 package io.jmix.core.impl.repository.query.utils;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
+import io.jmix.core.QueryStringProcessor;
 import io.jmix.core.impl.repository.query.*;
 import io.jmix.core.repository.Query;
 import org.slf4j.Logger;
@@ -30,6 +32,7 @@ import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.repository.query.parser.PartTree;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Determines query type and creates {@link RepositoryQuery RepositoryQueries} for Jmix data repositories
@@ -40,10 +43,17 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
 
     private DataManager dataManager;
     private Metadata jmixMetadata;
+    private FetchPlanRepository fetchPlanRepository;
+    private List<QueryStringProcessor> processors;
 
-    public JmixQueryLookupStrategy(DataManager dataManager, Metadata jmixMetadata) {
+    public JmixQueryLookupStrategy(DataManager dataManager,
+                                   Metadata jmixMetadata,
+                                   FetchPlanRepository fetchPlanRepository,
+                                   List<QueryStringProcessor> processors) {
         this.dataManager = dataManager;
         this.jmixMetadata = jmixMetadata;
+        this.fetchPlanRepository = fetchPlanRepository;
+        this.processors = processors;
     }
 
     @Override
@@ -52,17 +62,17 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
         JmixAbstractQuery resolvedQuery;
         if (query != null) {
             String qryString = query.value();
-            resolvedQuery = new JmixCustomLoadQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryString);
+            resolvedQuery = new JmixCustomLoadQuery(dataManager, jmixMetadata, fetchPlanRepository, processors, method, repositoryMetadata, factory, qryString);
         } else {
             PartTree qryTree = new PartTree(method.getName(), repositoryMetadata.getDomainType());
             if (qryTree.isDelete()) {
-                resolvedQuery = new JmixDeleteQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
+                resolvedQuery = new JmixDeleteQuery(dataManager, jmixMetadata, fetchPlanRepository, processors, method, repositoryMetadata, factory, qryTree);
             } else if (qryTree.isCountProjection()) {
-                resolvedQuery = new JmixCountQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
+                resolvedQuery = new JmixCountQuery(dataManager, jmixMetadata, fetchPlanRepository, processors, method, repositoryMetadata, factory, qryTree);
             } else if (qryTree.isExistsProjection()) {
-                resolvedQuery = new JmixExistsQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
+                resolvedQuery = new JmixExistsQuery(dataManager, jmixMetadata, fetchPlanRepository, processors, method, repositoryMetadata, factory, qryTree);
             } else {
-                resolvedQuery = new JmixListQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
+                resolvedQuery = new JmixListQuery(dataManager, jmixMetadata, fetchPlanRepository, processors, method, repositoryMetadata, factory, qryTree);
             }
         }
 

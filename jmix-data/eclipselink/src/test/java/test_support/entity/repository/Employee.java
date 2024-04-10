@@ -45,6 +45,18 @@ public class Employee {
     @Column(name = "NAME")
     private String name;
 
+    public Integer getAge() {
+        return age;
+    }
+
+    public Employee setAge(Integer age) {
+        this.age = age;
+        return this;
+    }
+
+    @Column(name = "AGE")
+    private Integer age;
+
     @Column(name = "SECOND_NAME")
     private String secondName;
 

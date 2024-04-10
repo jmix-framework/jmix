@@ -118,10 +118,10 @@ public class MBeanOperationResultView extends StandardView {
                     new ByteArrayDownloadDataProvider(bytes, uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                             coreProperties.getTempDir());
             downloader.download(dataProvider,
-                    String.format("jmx.%s-%s-%s.log",
+                    String.format("jmx.%s_%s_%s.log",
                             operation.getMbean().getClassName(),
                             operation.getName(),
-                            new SimpleDateFormat("HH:mm:ss").format(
+                            new SimpleDateFormat("HH-mm-ss").format(
                                     timeSource.currentTimestamp())));
         } else {
             notifications.create(messageBundle.getMessage("operationResult.resultIsEmpty"))

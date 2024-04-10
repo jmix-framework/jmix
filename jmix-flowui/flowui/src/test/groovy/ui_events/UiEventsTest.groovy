@@ -37,7 +37,7 @@ class UiEventsTest extends FlowuiTestSpecification {
 
         when: "Fire application event"
         def event = new TestUiEvent(this, "eventMessage")
-        uiEventPublisher.publishEvent(event)
+        uiEventPublisher.publishEventForCurrentUI(event)
 
         then: "Screen's application listener receives the event"
 

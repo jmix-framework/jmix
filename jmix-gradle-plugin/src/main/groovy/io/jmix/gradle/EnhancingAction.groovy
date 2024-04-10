@@ -55,14 +55,14 @@ class EnhancingAction implements Action<Task> {
 
         ClassesInfo classesInfo = collectClasses(project, sourceSet)
 
+        constructDescriptors(project, sourceSet, classesInfo)
+
         boolean entitiesEnhancingRequired = !project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing ||
                 entityClassesChangedSinceLastBuild(project, sourceSet, classesInfo)
 
         if (entitiesEnhancingRequired) {
-            constructDescriptors(project, sourceSet, classesInfo)
             persistenceProviderEnhancing().run(project, sourceSet, classesInfo.allStores())
             runJmixEnhancing(project, sourceSet, classesInfo)
-
             if (project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing) {
                 saveEntityClassesChecksumForNextBuild(project, sourceSet, classesInfo)
             }
@@ -262,7 +262,7 @@ class EnhancingAction implements Action<Task> {
      * checksum saved to the file to find out if entities have been changed since the last compilation.
      */
     protected void saveEntityClassesChecksumForNextBuild(Project project, sourceSet, ClassesInfo classesInfo) {
-        def allEntityClassesChecksum = evaluateEntityClassesChecksum(sourceSet, classesInfo)
+        def allEntityClassesChecksum = evaluateEntityClassesChecksum(project, sourceSet, classesInfo)
         Path checksumFilePath = getEntitiesChecksumFilePath(project)
         if (!Files.exists(checksumFilePath.getParent())) {
             Files.createDirectories(checksumFilePath.getParent())
@@ -273,7 +273,7 @@ class EnhancingAction implements Action<Task> {
     /**
      * Evaluates a single checksum for all entity classes (of the current project) extracted from the ClassesInfo.
      */
-    protected String evaluateEntityClassesChecksum(sourceSet, ClassesInfo classesInfo) {
+    protected String evaluateEntityClassesChecksum(Project project, sourceSet, ClassesInfo classesInfo) {
         StringBuilder sb = new StringBuilder()
         String javaOutputDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
         Collection<String> allEntities = classesInfo.getAllEntities()
@@ -284,7 +284,9 @@ class EnhancingAction implements Action<Task> {
 
             // skip files from dependencies, copy only classes from `javaOutputDir`
             if (classFile.exists()) {
-                sb.append(checkSum(classFile))
+                def fileChecksum = checkSum(classFile)
+                sb.append(fileChecksum)
+                project.logger.debug("Entity file: {}, checksum: {}", classFileName, fileChecksum)
             }
         }
         return checkSum(sb.toString().getBytes(StandardCharsets.UTF_8))
@@ -302,7 +304,8 @@ class EnhancingAction implements Action<Task> {
             return true
         }
         def prevChecksum = Files.readString(entitiesChecksumFilePath)
-        def currentChecksum = evaluateEntityClassesChecksum(sourceSet, classesInfo)
+        def currentChecksum = evaluateEntityClassesChecksum(project, sourceSet, classesInfo)
+        project.logger.debug("Previous entities checksum: {}, current entities checksum: {}", prevChecksum, currentChecksum)
         return prevChecksum != currentChecksum
     }
 

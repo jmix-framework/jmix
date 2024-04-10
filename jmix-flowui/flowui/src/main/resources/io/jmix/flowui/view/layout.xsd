@@ -811,6 +811,15 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="multiSelectComboBoxAutoExpandModeEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VERTICAL"/>
+            <xs:enumeration value="HORIZONTAL"/>
+            <xs:enumeration value="BOTH"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="codeEditorTheme">
         <xs:restriction base="xs:string">
             <xs:enumeration value="AMBIANCE"/>
@@ -1686,6 +1695,9 @@
             <xs:enumeration value="STARTS_WITH"/>
             <xs:enumeration value="ENDS_WITH"/>
             <xs:enumeration value="IS_SET"/>
+            <xs:enumeration value="IN_LIST"/>
+            <xs:enumeration value="NOT_IN_LIST"/>
+            <xs:enumeration value="IN_INTERVAL"/>
             <xs:enumeration value="IS_COLLECTION_EMPTY"/>
             <xs:enumeration value="MEMBER_OF_COLLECTION"/>
             <xs:enumeration value="NOT_MEMBER_OF_COLLECTION"/>
@@ -1925,6 +1937,23 @@
                     <xs:enumeration value="align-right"/>
                     <xs:enumeration value="helper-above-field"/>
                     <xs:enumeration value="always-float-label"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="selectThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="helper-above-field"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -3183,12 +3212,14 @@
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="selectedItemsOnTop" type="xs:boolean"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="metaClass" type="xs:string"/>
+                <xs:attribute name="autoExpand" type="multiSelectComboBoxAutoExpandModeEnum"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasRequired"/>
@@ -3685,6 +3716,7 @@
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
+                <xs:attribute name="themeNames" type="selectThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
@@ -4033,7 +4065,7 @@
 
     <xs:complexType name="gridColumnVisibilityMenuItemType">
         <xs:attribute name="refColumn" type="xs:string" use="required"/>
-        <xs:attribute name="text" type="xs:string"/>
+        <xs:attribute name="text" type="resourceString"/>
     </xs:complexType>
 
     <!--    MenuFilterField-->

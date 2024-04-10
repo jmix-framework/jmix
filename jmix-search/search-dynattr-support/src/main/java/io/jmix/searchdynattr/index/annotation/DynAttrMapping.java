@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,21 @@
  * limitations under the License.
  */
 
-@Internal
-package io.jmix.autoconfigure.searchdynattr;
+package io.jmix.searchdynattr.index.annotation;
 
-import io.jmix.core.annotation.Internal;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DynAttrMapping {
+    DynAttrCategoryFetchStrategy strategy() default DynAttrCategoryFetchStrategy.FETCH_ONE_DEFAULT;
+
+
+    enum DynAttrCategoryFetchStrategy {
+        FETCH_ALL,
+        FETCH_ONE_DEFAULT,
+    }
+}

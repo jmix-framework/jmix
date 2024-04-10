@@ -19,24 +19,25 @@ package io.jmix.searchdynattr.listener;
 import io.jmix.core.Id;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.dynattr.model.CategoryAttributeValue;
-import io.jmix.search.listener.EntityTrackingListener;
+import io.jmix.search.listener.EntityTrackingListenerDelegate;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Primary
-@Component("search_dynattr_support_DynAttrAnnotatedIndexDefinitionProcessor")
-public class DynAttrEntityTrackingListener extends EntityTrackingListener {
+@Component("search_dynattr_support_DynAttrEntityTrackingListener")
+public class DynAttrEntityTrackingListener extends EntityTrackingListenerDelegate {
+
+
     @Override
-    public void onEntityChangedBeforeCommit(EntityChangedEvent<?> event) {
+    public void doOnEntityChangedBeforeCommit(EntityChangedEvent<?> event) {
         Optional<?> obj = dataManager.load(event.getEntityId()).optional();
         if (obj.isPresent() && obj.get() instanceof CategoryAttributeValue categoryAttributeValue) {
             Class<Object> javaClass = metadata.getClass(categoryAttributeValue.getCategoryAttribute().getCategoryEntityType()).getJavaClass();
             indexingQueueManager.enqueueIndexByEntityId(Id.of(categoryAttributeValue.getObjectEntityId(), javaClass));
             return;
         }
-
-        super.onEntityChangedBeforeCommit(event);
+        super.doOnEntityChangedBeforeCommit(event);
     }
 }

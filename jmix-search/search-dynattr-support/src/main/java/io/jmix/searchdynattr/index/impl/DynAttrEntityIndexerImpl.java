@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 import static io.jmix.searchdynattr.SearchDynAttrSupportConstants.DYN_ATTR_PREFIX;
 
 @Primary
-@Component("search_dynattr_support_EntityIndexer")
+@Component("search_dynattr_support_DynAttrEntityIndexerImpl")
 public class DynAttrEntityIndexerImpl extends EntityIndexerImpl {
     private static final Logger log = LoggerFactory.getLogger(DynAttrEntityIndexerImpl.class);
     @Override

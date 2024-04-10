@@ -220,6 +220,8 @@ dependencies {
         api "io.jmix.search:jmix-search:$freeVersion"
         api "io.jmix.search:jmix-search-starter:$freeVersion"
         api "io.jmix.search:jmix-search-aws-starter:$freeVersion"
+        api "io.jmix.search:jmix-search-dynattr-support:$freeVersion"
+        api "io.jmix.search:jmix-search-dynattr-support-starter:$freeVersion"
         api "io.jmix.search:jmix-search-flowui:$freeVersion"
         api "io.jmix.search:jmix-search-flowui-kit:$freeVersion"
         api "io.jmix.search:jmix-search-flowui-starter:$freeVersion"

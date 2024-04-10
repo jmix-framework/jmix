@@ -47,17 +47,18 @@ import java.util.Optional;
 
 @Primary
 @Component("search_dynattr_support_DynAttrAutoMappingStrategy")
-public class DynAttrAutoMappingStrategy extends AutoMappingStrategy {
+public class DynAttrExtendedAutoMappingStrategy extends AutoMappingStrategy {
     protected final DataManager dataManager;
 
-    public DynAttrAutoMappingStrategy(PropertyValueExtractorProvider propertyValueExtractorProvider,
-                                      FieldMapperProvider fieldMapperProvider,
-                                      DataManager dataManager) {
-        super(propertyValueExtractorProvider, fieldMapperProvider);
+    public DynAttrExtendedAutoMappingStrategy(PropertyValueExtractorProvider propertyValueExtractorProvider,
+                                              FieldMapperProvider fieldMapperProvider,
+                                              DataManager dataManager) {
+        super(propertyValueExtractorProvider, fieldMapperProvider, dataManager);
         this.dataManager = dataManager;
     }
 
     @SuppressWarnings("DuplicatedCode")
+    @Override
     protected Optional<FieldMapper> resolveFieldMapper(MetaPropertyPath propertyPath) {
         FieldMapper fieldMapper = null;
         if (propertyPath.getFirstPropertyName().startsWith("+")) {
@@ -103,6 +104,7 @@ public class DynAttrAutoMappingStrategy extends AutoMappingStrategy {
         }
     }
 
+    @Override
     @SuppressWarnings("DuplicatedCode")
     protected Optional<PropertyValueExtractor> resolvePropertyValueExtractor(MetaPropertyPath propertyPath) {
         PropertyValueExtractor valueExtractor = null;

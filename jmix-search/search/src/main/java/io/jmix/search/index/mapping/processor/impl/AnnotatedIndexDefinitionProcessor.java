@@ -47,6 +47,7 @@ import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractorProvider
 import io.jmix.search.index.mapping.propertyvalue.impl.DisplayedNameValueExtractor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategyProvider;
+import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -54,6 +55,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.lang.Nullable;

@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.search.index.mapping.FieldConfiguration;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
 import io.jmix.search.index.mapping.fieldmapper.FieldMapperProvider;
 import io.jmix.search.index.mapping.fieldmapper.impl.EnumFieldMapper;
@@ -37,6 +38,7 @@ import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractorProvider
 import io.jmix.search.index.mapping.propertyvalue.impl.*;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -50,12 +52,14 @@ public class AutoMappingStrategy implements FieldMappingStrategy {
 
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final FieldMapperProvider fieldMapperProvider;
+    protected final DataManager dataManager;
 
     @Autowired
     public AutoMappingStrategy(PropertyValueExtractorProvider propertyValueExtractorProvider,
-                               FieldMapperProvider fieldMapperProvider) {
+                               FieldMapperProvider fieldMapperProvider, DataManager dataManager) {
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
         this.fieldMapperProvider = fieldMapperProvider;
+        this.dataManager = dataManager;
     }
 
     @Override
@@ -92,6 +96,11 @@ public class AutoMappingStrategy implements FieldMappingStrategy {
 
     @SuppressWarnings("DuplicatedCode")
     protected Optional<FieldMapper> resolveFieldMapper(MetaPropertyPath propertyPath) {
+        Optional<CategoryAttribute> categoryAttribute = dataManager.load(CategoryAttribute.class)
+                .query("select e from dynat_CategoryAttribute e where e.category.entityType = :entityType and e.name = :name")
+                .parameter("entityType", "User")
+                .parameter("name", propertyPath.getFirstPropertyName().substring(1))
+                .optional();
         FieldMapper fieldMapper = null;
         if (propertyPath.getRange().isDatatype()) {
             Datatype<?> datatype = propertyPath.getRange().asDatatype();

@@ -30,6 +30,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
     api 'org.elasticsearch.client:elasticsearch-rest-high-level-client'
+    api 'org.springframework.boot:spring-boot-autoconfigure'
 
     implementation 'org.apache.poi:poi'
     implementation ('org.apache.tika:tika-parsers') {

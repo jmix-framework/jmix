@@ -6,5 +6,7 @@ archivesBaseName = 'jmix-search-dynattr-support-starter'
 
 dependencies {
     api project(':search-dynattr-support')
+    implementation project(':core')
     api 'org.springframework.boot:spring-boot-autoconfigure'
+
 }

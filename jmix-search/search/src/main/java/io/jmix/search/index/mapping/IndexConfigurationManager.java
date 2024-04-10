@@ -29,11 +29,22 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,8 +52,12 @@ import java.util.stream.Stream;
 public class IndexConfigurationManager {
 
     private static final Logger log = LoggerFactory.getLogger(IndexConfigurationManager.class);
-
-    protected final Registry registry;
+    private Registry registry;
+    protected final JmixModulesClasspathScanner classpathScanner;
+    protected final AnnotatedIndexDefinitionProcessor indexDefinitionProcessor;
+    protected final InstanceNameProvider instanceNameProvider;
+    protected final IndexDefinitionDetector indexDefinitionDetector;
+    protected final MetadataTools metadataTools;
 
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
                                      AnnotatedIndexDefinitionProcessor indexDefinitionProcessor,
@@ -50,7 +65,14 @@ public class IndexConfigurationManager {
                                      IndexDefinitionDetector indexDefinitionDetector,
                                      // IDK but IndexDefinitionDetector causes a circular dependence with IndexListener(that does not inject anywhere and anyhow)
                                      MetadataTools metadataTools) {
+        this.classpathScanner = classpathScanner;
+        this.indexDefinitionProcessor = indexDefinitionProcessor;
+        this.instanceNameProvider = instanceNameProvider;
+        this.indexDefinitionDetector = indexDefinitionDetector;
+        this.metadataTools = metadataTools;
+
         Class<? extends IndexDefinitionDetector> detectorClass = indexDefinitionDetector.getClass();
+
         Set<String> classNames = classpathScanner.getClassNames(detectorClass);
         log.debug("Create Index Configurations");
 

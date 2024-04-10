@@ -246,7 +246,6 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     protected boolean isPermitted() {
         if (target == null
                 || target.getSingleSelectedItem() == null
-                || target.getSelectedItems().size() != 1
                 || !(target.getItems() instanceof EntityDataUnit)) {
             return false;
         }

@@ -124,6 +124,11 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         openDialog();
     }
 
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && target.getSelectedItems().size() == 1;
+    }
+
     protected void openDialog() {
         Class<?> userClass = userRepository.getSystemUser().getClass();
 

@@ -83,6 +83,11 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
         navigate(selectedItem);
     }
 
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && target.getSelectedItems().size() == 1;
+    }
+
     protected void navigate(E selectedItem) {
         viewNavigators.view(RoleAssignmentView.class)
                 .withRouteParameters(routeSupport.createRouteParameters("username", selectedItem.getUsername()))

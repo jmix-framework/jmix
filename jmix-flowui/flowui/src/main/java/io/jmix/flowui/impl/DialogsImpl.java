@@ -166,13 +166,7 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public OptionDialogBuilder withText(String text) {
-            if (this.content != null) {
-                dialog.remove(this.content);
-            }
-
-            this.content = new Paragraph(text);
-            dialog.add(this.content);
-            return this;
+            return withContent(new Paragraph(text));
         }
 
         @Nullable
@@ -188,6 +182,7 @@ public class DialogsImpl implements Dialogs {
             }
 
             dialog.add(content);
+            this.content = content;
             return this;
         }
 
@@ -464,13 +459,7 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public MessageDialogBuilder withText(String text) {
-            if (this.content != null) {
-                dialog.remove(this.content);
-            }
-
-            this.content = new Paragraph(text);
-            dialog.add(this.content);
-            return this;
+            return withContent(new Paragraph(text));
         }
 
         @Nullable
@@ -486,6 +475,7 @@ public class DialogsImpl implements Dialogs {
             }
 
             dialog.add(content);
+            this.content = content;
             return this;
         }
 
@@ -769,14 +759,14 @@ public class DialogsImpl implements Dialogs {
     public class BackgroundTaskDialogBuilderImpl<T extends Number, V> implements BackgroundTaskDialogBuilder<T, V> {
 
         protected Dialog dialog;
+        protected VerticalLayout layout;
+        protected Component content;
 
-        protected Span messageSpan;
         protected Span progressTextSpan;
         protected ProgressBar progressBar;
         protected Button cancelButton;
 
         protected BackgroundTask<T, V> backgroundTask;
-        protected String messageText;
         protected Number total;
         protected boolean showProgressInPercentage;
         protected boolean cancelAllowed = false;
@@ -804,20 +794,20 @@ public class DialogsImpl implements Dialogs {
         }
 
         protected void initDialogContent(Dialog dialog) {
-            VerticalLayout content = new VerticalLayout();
-            content.setPadding(false);
+            layout = new VerticalLayout();
+            layout.setPadding(false);
 
-            messageSpan = uiComponents.create(Span.class);
-            messageSpan.setText(messages.getMessage("backgroundWorkProgressDialog.messageSpan.text"));
-            content.add(messageSpan);
+            content = uiComponents.create(Span.class);
+            ((Span) content).setText(messages.getMessage("backgroundWorkProgressDialog.messageSpan.text"));
+            layout.add(content);
 
             progressTextSpan = uiComponents.create(Span.class);
-            content.add(progressTextSpan);
+            layout.add(progressTextSpan);
 
             progressBar = uiComponents.create(ProgressBar.class);
-            content.add(progressBar);
+            layout.add(progressBar);
 
-            dialog.add(content);
+            dialog.add(layout);
 
             cancelButton = uiComponents.create(Button.class);
             cancelButton.setText(messages.getMessage("actions.Cancel"));
@@ -879,14 +869,15 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public BackgroundTaskDialogBuilder<T, V> withText(String text) {
-            this.messageText = text;
-            return this;
+            Span span = uiComponents.create(Span.class);
+            span.setText(text);
+            return withContent(span);
         }
 
         @Nullable
         @Override
         public String getText() {
-            return messageText;
+            return (content instanceof Span) ? ((Span) content).getText() : null;
         }
 
         @Override
@@ -922,6 +913,21 @@ public class DialogsImpl implements Dialogs {
         @Override
         public boolean isDraggable() {
             return dialog.isDraggable();
+        }
+
+        @Override
+        public BackgroundTaskDialogBuilder<T, V> withContent(Component content) {
+            if (this.content != null) {
+                layout.remove(this.content);
+            }
+            layout.addComponentAtIndex(0, content);
+            this.content = content;
+            return this;
+        }
+
+        @Override
+        public Component getContent() {
+            return content;
         }
 
         @Override
@@ -981,9 +987,6 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public void open() {
-            if (messageText != null) {
-                messageSpan.setText(messageText);
-            }
             if (isIndeterminateMode()) {
                 progressTextSpan.setVisible(false);
                 progressBar.setIndeterminate(true);

@@ -90,7 +90,7 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout padding="false">
-        <formLayout classNames="master-detail-layout" height="100%">
+        <formLayout id="layoutWrapper" classNames="master-detail-layout" height="100%">
             <vbox id="listLayout" height="100%"><%if (createGenericFilter) {%>
                 <genericFilter id="genericFilter"
                                dataLoader="${tableDl}">

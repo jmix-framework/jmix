@@ -21,7 +21,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.SettingsFacet;
-import io.jmix.flowui.facet.impl.SettingsFacetUtil;
+import io.jmix.flowui.facet.impl.SettingsFacetUtils;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 
@@ -62,7 +62,7 @@ public final class TabSheetUtils {
                             new ArrayList<>(tabComponents),
                             settingsFacet.getSettings()));
                 } else {
-                    SettingsFacetUtil.applySettings(settingsFacet, tabComponents);
+                    SettingsFacetUtils.applySettings(settingsFacet, tabComponents);
                 }
             }
         });

@@ -23,7 +23,7 @@ import io.jmix.flowui.facet.SettingsFacet;
 import java.util.Collection;
 
 @Internal
-public final class SettingsFacetUtil {
+public final class SettingsFacetUtils {
 
     public static void applySettings(SettingsFacet settingsFacet, Collection<Component> components) {
         if (settingsFacet instanceof SettingsFacetImpl settingsFacetImpl) {

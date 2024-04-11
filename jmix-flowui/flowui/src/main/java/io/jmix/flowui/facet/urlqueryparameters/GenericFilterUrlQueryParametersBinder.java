@@ -22,6 +22,8 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.AccessManager;
+import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -78,6 +80,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected UiComponents uiComponents;
     protected SingleFilterSupport singleFilterSupport;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
+    protected AccessManager accessManager;
 
     protected Registration filterComponentsChangeRegistration;
 
@@ -95,6 +98,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected void autowireDependencies() {
         uiComponents = applicationContext.getBean(UiComponents.class);
         filterUrlQueryParametersSupport = applicationContext.getBean(FilterUrlQueryParametersSupport.class);
+        accessManager = applicationContext.getBean(AccessManager.class);
     }
 
     protected void initComponent(GenericFilter filter) {
@@ -243,6 +247,13 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
             if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {
                 return true;
             }
+
+            EntityAttributeContext context = new EntityAttributeContext(propertyPath);
+            accessManager.applyRegisteredConstraints(context);
+            if (!context.canView()) {
+                return true;
+            }
+
             return propertyPath != null &&
                     propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class);
         }

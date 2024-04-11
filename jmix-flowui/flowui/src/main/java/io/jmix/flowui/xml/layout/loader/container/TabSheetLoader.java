@@ -64,6 +64,8 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
         boolean firstTab = true;
         for (Element subElement : element.elements("tab")) {
             boolean shouldBeLazy = loadBoolean(subElement, "lazy").orElse(false) && !firstTab;
+
+            //LazyTabLoader skips loading subcomponents and initialises them after lazy tab activation
             ComponentLoader<?> componentLoader = loader.getLoader(subElement,
                     shouldBeLazy ? LazyTabLoader.class : TabLoader.class);
 

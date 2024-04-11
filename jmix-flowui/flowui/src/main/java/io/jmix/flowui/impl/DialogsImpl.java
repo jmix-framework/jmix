@@ -881,16 +881,9 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public BackgroundTaskDialogBuilder<T, V> withText(String text) {
-            if (!(content instanceof Span)) {
-                if (content != null) {
-                    layout.remove(content);
-                }
-                content = uiComponents.create(Span.class);
-                layout.addComponentAtIndex(0, content);
-            }
-            ((Span) content).setText(text);
-
-            return this;
+            Span span = uiComponents.create(Span.class);
+            span.setText(text);
+            return withContent(span);
         }
 
         @Nullable

@@ -74,7 +74,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     public static final String COLUMN_ELEMENT_NAME = "column";
     public static final String EDITOR_ACTIONS_COLUMN_ELEMENT_NAME = "editorActionsColumn";
-    public static final String EDITOR_ACTION_COLUMN_DEFAULT_KEY = "editorActionColumn";
 
     protected ActionLoaderSupport actionLoaderSupport;
     protected MetadataTools metaDataTools;
@@ -247,7 +246,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         //If the key is null then NPE will rise when the settings are applied
         loadString(columnElement, "key").ifPresentOrElse(
                 editColumn::setKey,
-                () -> editColumn.setKey(EDITOR_ACTION_COLUMN_DEFAULT_KEY));
+                () -> editColumn.setKey(EDITOR_ACTIONS_COLUMN_ELEMENT_NAME));
         loadString(columnElement, "width", editColumn::setWidth);
         loadBoolean(columnElement, "autoWidth", editColumn::setAutoWidth);
         loadBoolean(columnElement, "resizable", editColumn::setResizable);

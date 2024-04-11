@@ -20,17 +20,14 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.facet.SettingsFacet;
-import io.jmix.flowui.facet.impl.SettingsFacetHelper;
+import io.jmix.flowui.facet.impl.SettingsFacetUtil;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @Internal
 public final class TabSheetUtils {
@@ -65,7 +62,7 @@ public final class TabSheetUtils {
                             new ArrayList<>(tabComponents),
                             settingsFacet.getSettings()));
                 } else {
-                    SettingsFacetHelper.applySettings(settingsFacet, tabComponents);
+                    SettingsFacetUtil.applySettings(settingsFacet, tabComponents);
                 }
             }
         });

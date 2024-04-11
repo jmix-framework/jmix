@@ -36,7 +36,7 @@ import static io.jmix.flowui.component.tabsheet.TabSheetUtils.updateTabContent;
 public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
 
     protected PrefixSuffixLoaderSupport prefixSuffixLoaderSupport;
-    protected Map<Tab, LazyTabLoader> lazyTabToLoader = new HashMap<>();
+    protected Map<Tab, LazyTabLoader> lazyTabs = new HashMap<>();
 
     @Override
     protected JmixTabSheet createComponent() {
@@ -69,20 +69,20 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
 
             componentLoader.initComponent();
             if (shouldBeLazy) {
-                lazyTabToLoader.put((Tab) componentLoader.getResultComponent(), (LazyTabLoader) componentLoader);
+                lazyTabs.put((Tab) componentLoader.getResultComponent(), (LazyTabLoader) componentLoader);
             }
             pendingLoadComponents.add(componentLoader);
 
             firstTab = false;
         }
 
-        if (!lazyTabToLoader.isEmpty()) {
+        if (!lazyTabs.isEmpty()) {
             resultComponent.addSelectedChangeListener(this::selectedTabChangeHandler);
         }
     }
 
     protected void selectedTabChangeHandler(JmixTabSheet.SelectedChangeEvent selectedChangeEvent) {
-        LazyTabLoader loader = lazyTabToLoader.remove(selectedChangeEvent.getSelectedTab());
+        LazyTabLoader loader = lazyTabs.remove(selectedChangeEvent.getSelectedTab());
         if (loader != null) {
             loader.forceCreateSubComponents();
             loader.loadSubComponents();
@@ -96,7 +96,7 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
                     getResultComponent(),
                     selectedChangeEvent.getSelectedTab());
         }
-        if (lazyTabToLoader.isEmpty()) {
+        if (lazyTabs.isEmpty()) {
             selectedChangeEvent.unregisterListener();
         }
     }

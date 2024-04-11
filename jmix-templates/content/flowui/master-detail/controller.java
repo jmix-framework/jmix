@@ -10,6 +10,8 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.*;
@@ -65,8 +67,16 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     @Subscribe("saveBtn")
     public void onSaveButtonClick(final ClickEvent<JmixButton> event) {
+        ${entity.className} item = ${detailDc}.getItem();
+        ValidationErrors validationErrors = validateView(item);
+        if (!validationErrors.isEmpty()) {
+            ViewValidation viewValidation = getViewValidation();
+            viewValidation.showValidationErrors(validationErrors);
+            viewValidation.focusProblemComponent(validationErrors);
+            return;
+        }
         dataContext.save();
-        ${tableDc}.replaceItem(${detailDc}.getItem());
+        ${tableDc}.replaceItem(item);
         updateControls(false);
     }
 
@@ -90,6 +100,16 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         }
     }
 
+    protected ValidationErrors validateView(${entity.className} entity) {
+        ViewValidation viewValidation = getViewValidation();
+        ValidationErrors validationErrors = viewValidation.validateUiComponents(form);
+        if (!validationErrors.isEmpty()) {
+            return validationErrors;
+        }
+        validationErrors.addAll(viewValidation.validateBeanGroup(UiCrossFieldChecks.class, entity));
+        return validationErrors;
+    }
+
     private void updateControls(boolean editing) {
         form.getChildren().forEach(component -> {
             if (component instanceof HasValueAndElement<?, ?> field) {
@@ -99,5 +119,9 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
         detailActions.setVisible(editing);
         listLayout.setEnabled(!editing);
+    }
+
+    private ViewValidation getViewValidation() {
+        return getApplicationContext().getBean(ViewValidation.class);
     }
 }

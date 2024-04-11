@@ -188,6 +188,7 @@ public class DialogsImpl implements Dialogs {
             }
 
             dialog.add(content);
+            this.content = content;
             return this;
         }
 
@@ -486,6 +487,7 @@ public class DialogsImpl implements Dialogs {
             }
 
             dialog.add(content);
+            this.content = content;
             return this;
         }
 
@@ -772,13 +774,11 @@ public class DialogsImpl implements Dialogs {
         protected VerticalLayout layout;
         protected Component content;
 
-        protected Span messageSpan;
         protected Span progressTextSpan;
         protected ProgressBar progressBar;
         protected Button cancelButton;
 
         protected BackgroundTask<T, V> backgroundTask;
-        protected String messageText;
         protected Number total;
         protected boolean showProgressInPercentage;
         protected boolean cancelAllowed = false;
@@ -809,9 +809,9 @@ public class DialogsImpl implements Dialogs {
             layout = new VerticalLayout();
             layout.setPadding(false);
 
-            messageSpan = uiComponents.create(Span.class);
-            messageSpan.setText(messages.getMessage("backgroundWorkProgressDialog.messageSpan.text"));
-            layout.add(messageSpan);
+            content = uiComponents.create(Span.class);
+            ((Span) content).setText(messages.getMessage("backgroundWorkProgressDialog.messageSpan.text"));
+            layout.add(content);
 
             progressTextSpan = uiComponents.create(Span.class);
             layout.add(progressTextSpan);
@@ -881,14 +881,14 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public BackgroundTaskDialogBuilder<T, V> withText(String text) {
-            this.messageText = text;
-
-            if (layout.getComponentAt(0) != messageSpan) {
+            if (!(content instanceof Span)) {
                 if (content != null) {
                     layout.remove(content);
                 }
-                layout.addComponentAtIndex(0, messageSpan);
+                content = uiComponents.create(Span.class);
+                layout.addComponentAtIndex(0, content);
             }
+            ((Span) content).setText(text);
 
             return this;
         }
@@ -896,7 +896,7 @@ public class DialogsImpl implements Dialogs {
         @Nullable
         @Override
         public String getText() {
-            return messageText;
+            return (content instanceof Span) ? ((Span) content).getText() : null;
         }
 
         @Override
@@ -936,16 +936,11 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public BackgroundTaskDialogBuilder<T, V> withContent(Component content) {
-            if (this.messageSpan != null) {
-                layout.remove(this.messageSpan);
-            }
             if (this.content != null) {
                 layout.remove(this.content);
             }
             layout.addComponentAtIndex(0, content);
-
             this.content = content;
-
             return this;
         }
 
@@ -1011,9 +1006,6 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public void open() {
-            if (messageText != null) {
-                messageSpan.setText(messageText);
-            }
             if (isIndeterminateMode()) {
                 progressTextSpan.setVisible(false);
                 progressBar.setIndeterminate(true);

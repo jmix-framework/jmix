@@ -166,13 +166,7 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public OptionDialogBuilder withText(String text) {
-            if (this.content != null) {
-                dialog.remove(this.content);
-            }
-
-            this.content = new Paragraph(text);
-            dialog.add(this.content);
-            return this;
+            return withContent(new Paragraph(text));
         }
 
         @Nullable
@@ -465,13 +459,7 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public MessageDialogBuilder withText(String text) {
-            if (this.content != null) {
-                dialog.remove(this.content);
-            }
-
-            this.content = new Paragraph(text);
-            dialog.add(this.content);
-            return this;
+            return withContent(new Paragraph(text));
         }
 
         @Nullable

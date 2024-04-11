@@ -15,7 +15,7 @@
  */
 package io.jmix.reportsui.screen.parameter.edit;
 
-import com.haulmont.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.ParameterClassResolver;

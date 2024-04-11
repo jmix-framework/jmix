@@ -21,7 +21,8 @@ import java.util.Collection;
 /**
  * Repository of {@link RoleAssignment}
  */
-public interface RoleAssignmentRepository {
+public interface
+RoleAssignmentRepository {
 
     Collection<RoleAssignment> getAllAssignments();
 

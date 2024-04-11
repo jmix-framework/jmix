@@ -16,7 +16,7 @@
 
 package io.jmix.reports.entity;
 
-import com.haulmont.yarg.formatters.CustomReport;
+import io.jmix.reports.yarg.formatters.CustomReport;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -49,7 +49,7 @@ import java.util.UUID;
 @SystemLevel
 @JmixEntity
 @SuppressWarnings("unused")
-public class ReportTemplate implements com.haulmont.yarg.structure.ReportTemplate {
+public class ReportTemplate implements io.jmix.reports.yarg.structure.ReportTemplate {
     private static final long serialVersionUID = 3692751073234357754L;
 
     public static final String DEFAULT_TEMPLATE_CODE = "DEFAULT";
@@ -295,7 +295,7 @@ public class ReportTemplate implements com.haulmont.yarg.structure.ReportTemplat
     }
 
     @Override
-    public com.haulmont.yarg.structure.ReportOutputType getOutputType() {
+    public io.jmix.reports.yarg.structure.ReportOutputType getOutputType() {
         return getReportOutputType() != null ? getReportOutputType().getOutputType() : null;
     }
 

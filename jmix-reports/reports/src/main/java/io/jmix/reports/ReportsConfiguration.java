@@ -16,17 +16,17 @@
 
 package io.jmix.reports;
 
-import com.haulmont.yarg.loaders.QueryLoaderPreprocessor;
-import com.haulmont.yarg.loaders.ReportDataLoader;
-import com.haulmont.yarg.loaders.factory.DefaultLoaderFactory;
-import com.haulmont.yarg.loaders.factory.ReportLoaderFactory;
-import com.haulmont.yarg.reporting.extraction.DefaultExtractionControllerFactory;
-import com.haulmont.yarg.reporting.extraction.DefaultPreprocessorFactory;
-import com.haulmont.yarg.reporting.extraction.ExtractionController;
-import com.haulmont.yarg.reporting.extraction.controller.CrossTabExtractionController;
-import com.haulmont.yarg.reporting.extraction.preprocessor.SqlCrosstabPreprocessor;
-import com.haulmont.yarg.structure.BandOrientation;
-import com.haulmont.yarg.util.groovy.Scripting;
+import io.jmix.reports.yarg.loaders.QueryLoaderPreprocessor;
+import io.jmix.reports.yarg.loaders.ReportDataLoader;
+import io.jmix.reports.yarg.loaders.factory.DefaultLoaderFactory;
+import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
+import io.jmix.reports.yarg.reporting.extraction.DefaultExtractionControllerFactory;
+import io.jmix.reports.yarg.reporting.extraction.DefaultPreprocessorFactory;
+import io.jmix.reports.yarg.reporting.extraction.ExtractionController;
+import io.jmix.reports.yarg.reporting.extraction.controller.CrossTabExtractionController;
+import io.jmix.reports.yarg.reporting.extraction.preprocessor.SqlCrosstabPreprocessor;
+import io.jmix.reports.yarg.structure.BandOrientation;
+import io.jmix.reports.yarg.util.groovy.Scripting;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;

@@ -16,12 +16,12 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.exception.ReportFormattingException;
-import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
-import com.haulmont.yarg.formatters.impl.HtmlFormatter;
-import com.haulmont.yarg.formatters.impl.pdf.HtmlToPdfConverter;
-import com.haulmont.yarg.formatters.impl.pdf.ITextPdfConverter;
-import com.haulmont.yarg.structure.BandData;
+import io.jmix.reports.yarg.exception.ReportFormattingException;
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
+import io.jmix.reports.yarg.formatters.impl.HtmlFormatter;
+import io.jmix.reports.yarg.formatters.impl.pdf.HtmlToPdfConverter;
+import io.jmix.reports.yarg.formatters.impl.pdf.ITextPdfConverter;
+import io.jmix.reports.yarg.structure.BandData;
 import com.lowagie.text.Image;
 import freemarker.ext.util.WrapperTemplateModel;
 import freemarker.template.TemplateMethodModelEx;
@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.pdf.ITextFSImage;
 import org.xhtmlrenderer.pdf.ITextOutputDevice;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -99,8 +100,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
             loadFonts(converter);
 
             ResourcesITextUserAgentCallback userAgentCallback =
-                    new ResourcesITextUserAgentCallback(renderer.getOutputDevice());
-            userAgentCallback.setSharedContext(renderer.getSharedContext());
+                    new ResourcesITextUserAgentCallback(renderer.getOutputDevice(), renderer.getSharedContext());
 
             renderer.getSharedContext().setUserAgentCallback(userAgentCallback);
 
@@ -129,8 +129,11 @@ public class JmixHtmlFormatter extends HtmlFormatter {
 
     protected class ResourcesITextUserAgentCallback extends ITextUserAgent {
 
-        public ResourcesITextUserAgentCallback(ITextOutputDevice outputDevice) {
-            super(outputDevice);
+        private SharedContext sharedContext;
+
+        public ResourcesITextUserAgentCallback(ITextOutputDevice outputDevice, SharedContext sharedContext) {
+            super(outputDevice, sharedContext.getDotsPerPixel());
+            this.sharedContext = sharedContext;
         }
 
         @Override
@@ -199,7 +202,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
         }
 
         protected void scaleToOutputResolution(Image image) {
-            float factor = getSharedContext().getDotsPerPixel();
+            float factor = sharedContext.getDotsPerPixel();
             image.scaleAbsolute(image.getPlainWidth() * factor, image.getPlainHeight() * factor);
         }
 

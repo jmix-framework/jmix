@@ -16,7 +16,7 @@
 
 package io.jmix.reportsui.screen.report.wizard.step;
 
-import com.haulmont.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.QueryParser;

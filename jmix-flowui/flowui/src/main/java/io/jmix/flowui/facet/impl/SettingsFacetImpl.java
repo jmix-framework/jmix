@@ -154,24 +154,10 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     public Collection<Component> getManagedComponents() {
         checkAttachedToView();
 
-        Collection<Component> components = Collections.emptyList();
+        Collection<Component> viewComponents = UiComponentUtils.getComponents(
+                Objects.requireNonNull(getView()).getContent());
 
-        if (auto) {
-            components = UiComponentUtils.getComponents(Objects.requireNonNull(getView()).getContent());
-        } else if (CollectionUtils.isNotEmpty(componentIds)) {
-            components = UiComponentUtils.getComponents(Objects.requireNonNull(getView()).getContent())
-                    .stream()
-                    .filter(c -> componentIds.contains(c.getId().orElse(null)))
-                    .collect(Collectors.toList());
-        }
-
-        if (CollectionUtils.isNotEmpty(excludedComponentIds)) {
-            components = components.stream()
-                    .filter(component -> !excludedComponentIds.contains(component.getId().orElse(null)))
-                    .collect(Collectors.toList());
-        }
-
-        return components;
+        return getManagedComponentsFromCollection(viewComponents);
     }
 
     @Nullable
@@ -224,6 +210,25 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
                         + "that provides the ability to work with settings is not added", owner.getId().orElse(null));
             }
         }
+    }
+
+    protected Collection<Component> getManagedComponentsFromCollection(Collection<Component> viewComponents) {
+        Collection<Component> components = Collections.emptyList();
+        if (auto) {
+            components = viewComponents;
+        } else if (CollectionUtils.isNotEmpty(componentIds)) {
+            components = viewComponents
+                    .stream()
+                    .filter(c -> componentIds.contains(c.getId().orElse(null)))
+                    .collect(Collectors.toList());
+        }
+
+        if (CollectionUtils.isNotEmpty(excludedComponentIds)) {
+            components = components.stream()
+                    .filter(component -> !excludedComponentIds.contains(component.getId().orElse(null)))
+                    .collect(Collectors.toList());
+        }
+        return components;
     }
 
     protected ViewSettings createViewSettings(View<?> view) {

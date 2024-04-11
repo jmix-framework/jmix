@@ -127,20 +127,7 @@ public class JmixTabSheet extends Component
             tabs.addTabAtIndex(position, tab);
         }
 
-        // Make sure possible old content related to the same tab gets removed
-        if (tabToContent.containsKey(tab)) {
-            tabToContent.get(tab).getElement().removeFromParent();
-        }
-
-        // On the client, content is associated with a tab by id
-        String id = tab.getId()
-                .orElse(generateTabId());
-        tab.setId(id);
-        content.getElement().setAttribute("tab", id);
-
-        tabToContent.put(tab, content);
-
-        updateContent();
+        updateTabContent(tab, content);
 
         return tab;
     }
@@ -358,6 +345,28 @@ public class JmixTabSheet extends Component
                 content.getNode().setEnabled(false);
             }
         }
+    }
+
+    /**
+     * Remove old tab content if exists and set new one
+     * @param tab updated tab
+     * @param content new content
+     */
+    protected void updateTabContent(Tab tab, Component content) {
+        // Make sure possible old content related to the same tab gets removed
+        if (tabToContent.containsKey(tab)) {
+            tabToContent.get(tab).getElement().removeFromParent();
+        }
+
+        // On the client, content is associated with a tab by id
+        String id = tab.getId()
+                .orElse(generateTabId());
+        tab.setId(id);
+        content.getElement().setAttribute("tab", id);
+
+        tabToContent.put(tab, content);
+
+        updateContent();
     }
 
     protected String generateTabId() {

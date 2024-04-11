@@ -32,11 +32,7 @@ import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
-import io.jmix.core.ClassManager;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanProperty;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -53,13 +49,7 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionLoader;
-import io.jmix.flowui.model.CollectionPropertyContainer;
-import io.jmix.flowui.model.DataLoader;
-import io.jmix.flowui.model.HasLoader;
-import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.InstanceLoader;
+import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
 import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -73,14 +63,7 @@ import org.dom4j.datatype.DatatypeElementFactory;
 import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -185,6 +168,11 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         boolean resizable = loadBoolean(columnsElement, "resizable")
                 .orElse(false);
 
+        if (columnsElement.elements(EDITOR_ACTIONS_COLUMN_ELEMENT_NAME).size() > 1) {
+            throw new GuiDevelopmentException("DataGrid can contain only one editorActionsColumn",
+                    context, "Component ID", resultComponent.getId());
+        }
+
         if (includeAll) {
             loadColumnsByInclude(resultComponent, columnsElement, metaClass, fetchPlan, sortable, resizable);
             // In case of includeAll, EditorActionsColumn will be place at the end
@@ -255,7 +243,10 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         editColumn.setEditorComponent(actions);
 
-        loadString(columnElement, "key", editColumn::setKey);
+        //If the key is null then NPE will rise when the settings are applied
+        loadString(columnElement, "key").ifPresentOrElse(
+                editColumn::setKey,
+                () -> editColumn.setKey(EDITOR_ACTIONS_COLUMN_ELEMENT_NAME));
         loadString(columnElement, "width", editColumn::setWidth);
         loadBoolean(columnElement, "autoWidth", editColumn::setAutoWidth);
         loadBoolean(columnElement, "resizable", editColumn::setResizable);

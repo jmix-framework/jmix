@@ -91,8 +91,6 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
 
-        addClassNames("jmix-inactive-states-error-handling");
-
         attachValueChangeListener();
     }
 

@@ -56,8 +56,6 @@ public class JmixPasswordField extends PasswordField implements SupportsValueSou
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
-
-        addClassNames("jmix-inactive-states-error-handling");
     }
 
     @SuppressWarnings("unchecked")

@@ -36,13 +36,26 @@
 @import url('component/jmix-horizontal-menu.css');
 @import url('component/jmix-grid-context-menu.css');
 @import url('component/jmix-rich-text-editor.css');
-
-@import url('component/jmix-inactive-states-error-handling.css');
-@import url('component/jmix-date-time-picker.css');
+@import url('component/jmix-combo-box-picker.css');
 @import url('component/jmix-code-editor.css');
-@import url('component/jmix-radio-button-group.css');
-@import url('component/jmix-checkbox-group.css');
+@import url('component/jmix-value-picker.css');
+@import url('component/jmix-multi-select-combo-box-picker.css');
 
+@import url('component/vaadin-text-field.css');
+@import url('component/vaadin-text-area.css');
+@import url('component/vaadin-number-field.css');
+@import url('component/vaadin-big-decimal-field.css');
+@import url('component/vaadin-integer-field.css');
+@import url('component/vaadin-password-field.css');
+@import url('component/vaadin-email-field.css');
+@import url('component/vaadin-select.css');
+@import url('component/vaadin-checkbox-group.css');
+@import url('component/vaadin-radio-group.css');
+@import url('component/vaadin-date-picker.css');
+@import url('component/vaadin-time-picker.css');
+@import url('component/vaadin-date-time-picker.css');
+@import url('component/vaadin-combo-box.css');
+@import url('component/vaadin-multi-select-combo-box.css');
 @import url('component/vaadin-form-layout.css');
 @import url('component/vaadin-grid.css');
 @import url('component/vaadin-notification-card.css');

@@ -98,8 +98,6 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
                 .setMonthNames(getMonthNames(locale))
                 .setFirstDayOfWeek(getFirstDayOfWeek(locale)));
 
-        addClassNames("jmix-inactive-states-error-handling");
-
         attachValueChangeListener();
     }
 

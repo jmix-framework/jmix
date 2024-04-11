@@ -91,8 +91,6 @@ public class TypedTimePicker<V extends Comparable> extends TimePicker implements
         fieldDelegate = createFieldDelegate();
         fieldDelegate.setToModelConverter(this::convertToModel);
 
-        addClassNames("jmix-inactive-states-error-handling");
-
         attachValueChangeListener();
 
         // todo rp bad API for time format

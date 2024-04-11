@@ -54,8 +54,6 @@ public class JmixNumberField extends NumberField implements SupportsValueSource<
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
-
-        addClassNames("jmix-inactive-states-error-handling");
     }
 
     protected NumberFieldDelegate createFieldDelegate() {

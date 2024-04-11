@@ -69,8 +69,6 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
         fieldDelegate.addValueBindingChangeListener(event ->
                 dataViewDelegate.valueBindingChanged(event));
 
-        addClassNames("jmix-inactive-states-error-handling");
-
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
     }
 

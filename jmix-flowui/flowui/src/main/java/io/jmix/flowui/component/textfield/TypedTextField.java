@@ -82,8 +82,6 @@ public class TypedTextField<V> extends TextField
         fieldDelegate = createFieldDelegate();
         fieldDelegate.setToModelConverter(this::convertToModel);
 
-        addClassNames("jmix-inactive-states-error-handling");
-
         attachValueChangeListener();
     }
 

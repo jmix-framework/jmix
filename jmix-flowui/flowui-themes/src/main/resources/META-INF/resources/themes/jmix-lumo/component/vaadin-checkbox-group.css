@@ -1,0 +1,4 @@
+vaadin-checkbox-group[readonly][has-error-message]::part(error-message),
+vaadin-checkbox-group[disabled][has-error-message]::part(error-message) {
+    display: none;
+}

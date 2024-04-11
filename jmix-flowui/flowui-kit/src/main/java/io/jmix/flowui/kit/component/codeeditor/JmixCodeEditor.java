@@ -73,8 +73,6 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         setPrintMarginColumn(PRINT_MARGIN_COLUMN_DEFAULT_VALUE);
         setFontSize(FONT_SIZE_DEFAULT_VALUE);
 
-        addClassNames("jmix-code-editor");
-
         addValueChangeListener(e -> validate());
         addClientValidatedEventListener(e -> validate());
     }

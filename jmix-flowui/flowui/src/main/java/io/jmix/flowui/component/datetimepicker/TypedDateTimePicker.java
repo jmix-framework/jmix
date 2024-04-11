@@ -110,8 +110,6 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
                 .setMonthNames(getMonthNames(locale))
                 .setFirstDayOfWeek(getFirstDayOfWeek(locale)));
 
-        addClassNames("jmix-date-time-picker");
-
         attachValueChangeListener();
     }
 

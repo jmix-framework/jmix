@@ -74,8 +74,6 @@ public class JmixComboBox<V> extends ComboBox<V>
         fieldDelegate.addValueBindingChangeListener(event ->
                 dataViewDelegate.valueBindingChanged(event));
 
-        addClassNames("jmix-inactive-states-error-handling");
-
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
     }
 

@@ -55,8 +55,6 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
-
-        addClassNames("jmix-inactive-states-error-handling");
     }
 
     @SuppressWarnings("unchecked")

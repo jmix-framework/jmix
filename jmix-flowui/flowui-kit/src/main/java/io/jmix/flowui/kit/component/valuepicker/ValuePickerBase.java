@@ -62,8 +62,6 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
     }
 
     protected void initComponent() {
-        addClassNames("jmix-inactive-states-error-handling");
-
         setAllowCustomValue(false);
         initFieldValuePropertyChangeListener();
     }

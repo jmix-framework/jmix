@@ -54,8 +54,6 @@ public class JmixIntegerField extends IntegerField implements SupportsValueSourc
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
-
-        addClassNames("jmix-inactive-states-error-handling");
     }
 
     protected IntegerFieldDelegate createFieldDelegate() {

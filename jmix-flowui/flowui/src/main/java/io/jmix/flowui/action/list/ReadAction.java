@@ -268,6 +268,11 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
         return super.isPermitted();
     }
 
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && target.getSelectedItems().size() == 1;
+    }
+
     /**
      * Executes the action.
      */

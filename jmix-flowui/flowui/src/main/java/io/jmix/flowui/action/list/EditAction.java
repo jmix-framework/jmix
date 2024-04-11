@@ -319,6 +319,11 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         return true;
     }
 
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && target.getSelectedItems().size() == 1;
+    }
+
     /**
      * Executes the action.
      */

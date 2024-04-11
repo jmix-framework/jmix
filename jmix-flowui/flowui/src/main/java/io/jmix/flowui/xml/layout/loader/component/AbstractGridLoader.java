@@ -169,7 +169,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 .orElse(false);
 
         if (columnsElement.elements(EDITOR_ACTIONS_COLUMN_ELEMENT_NAME).size() > 1) {
-            throw new GuiDevelopmentException("DataGrid can contain only one editorActionColumn",
+            throw new GuiDevelopmentException("DataGrid can contain only one editorActionsColumn",
                     context, "Component ID", resultComponent.getId());
         }
 

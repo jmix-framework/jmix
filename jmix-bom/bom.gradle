@@ -343,12 +343,6 @@ dependencies {
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
-        def yargVersion = '2.2.21'
-        api "com.haulmont.yarg:yarg-api:$yargVersion"
-        api "com.haulmont.yarg:yarg:$yargVersion"
-
-        api 'org.jsoup:jsoup:1.14.3'
-
         api 'org.apache.poi:poi:5.2.3'
         api 'org.apache.poi:poi-ooxml:5.2.3'
         api 'org.apache.tika:tika-parsers:1.27'
@@ -418,6 +412,7 @@ dependencies {
         api 'org.docx4j:docx4j-ImportXHTML:11.4.8'
         api 'org.docx4j:docx4j-export-fo:11.4.9'
 
+        api 'org.jsoup:jsoup:1.16.1'
         api 'org.olap4j:olap4j:1.2.0'
 
         def jasperVersion = '6.20.5'

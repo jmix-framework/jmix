@@ -19,6 +19,8 @@ package io.jmix.reportsui.screen.report.wizard.template.generators;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import org.apache.poi.ss.util.CellReference;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.OpcPackage;
@@ -32,8 +34,6 @@ import org.springframework.stereotype.Component;
 import org.xlsx4j.sml.*;
 
 import javax.annotation.Nullable;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import java.util.List;
 
 @Component("report_XlsxGenerator")

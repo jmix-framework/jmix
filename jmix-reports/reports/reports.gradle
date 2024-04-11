@@ -46,7 +46,6 @@ dependencies {
         exclude group: 'pull-parser', module: 'pull-parser'
     }
     api 'com.google.guava:guava'
-    api 'org.slf4j:slf4j-api'
     api 'org.freemarker:freemarker'
     api 'org.openoffice:juh'
     api 'org.openoffice:ridl'
@@ -63,8 +62,12 @@ dependencies {
     api 'org.apache.xmlgraphics:batik-awt-util'
     api 'org.apache.xmlgraphics:batik-css'
 
-    api 'org.plutext:jaxb-svg11'
-    api 'org.plutext:jaxb-xslfo'
+    api('org.plutext:jaxb-svg11') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+    api ('org.plutext:jaxb-xslfo') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
     api 'org.plutext:jaxb-xmldsig-core'
 
     api 'xalan:xalan'
@@ -86,6 +89,7 @@ dependencies {
         exclude group: 'bouncycastle', module: 'bcmail-jdk14'
         exclude group: 'bouncycastle', module: 'bcprov-jdk14'
         exclude group: 'bouncycastle', module: 'bctsp-jdk14'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
     api('com.openhtmltopdf:openhtmltopdf-core') {
@@ -95,27 +99,35 @@ dependencies {
     api('com.openhtmltopdf:openhtmltopdf-pdfbox') {
         exclude group: 'junit', module: 'junit'
     }
+
     api('org.docx4j:docx4j-JAXB-ReferenceImpl') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'log4j', module: 'log4j'
-        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'ch.qos.logback'
         exclude group: 'com.fasterxml.jackson.core'
     }
     api('org.docx4j:docx4j-ImportXHTML') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.apache.poi', module: 'poi'
         exclude group: 'log4j', module: 'log4j'
-        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'ch.qos.logback'
         exclude group: 'com.fasterxml.jackson.core'
     }
     api('org.docx4j:docx4j-export-fo') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'log4j', module: 'log4j'
-        exclude group: 'org.slf4j', module: 'slf4j -log4j12'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'ch.qos.logback'
         exclude group: 'com.fasterxml.jackson.core'
     }
+
     api 'org.jsoup:jsoup'
-    api 'com.jayway.jsonpath:json-path'
+    api ('com.jayway.jsonpath:json-path') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+
     api 'com.opencsv:opencsv'
     api 'org.olap4j:olap4j'
 
@@ -130,6 +142,7 @@ dependencies {
         exclude group: 'com.lowagie', module: 'itext'
         exclude group: 'org.codehaus.castor', module: 'castor-xml'
     }
+
     api 'net.sf.jasperreports:jasperreports-fonts'
 
     api 'jakarta.xml.bind:jakarta.xml.bind-api'

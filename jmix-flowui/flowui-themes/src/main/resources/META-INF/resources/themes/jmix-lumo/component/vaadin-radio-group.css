@@ -1,0 +1,9 @@
+vaadin-radio-group[readonly][has-error-message]::part(error-message),
+vaadin-radio-group[disabled][has-error-message]::part(error-message) {
+    display: none;
+}
+
+vaadin-radio-group[readonly][invalid],
+vaadin-radio-group[disabled][invalid] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+}

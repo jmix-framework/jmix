@@ -35,18 +35,18 @@ public enum ReportOutputType implements EnumClass<Integer> {
 
     private Integer id;
 
-    private com.haulmont.yarg.structure.ReportOutputType outputType;
+    private io.jmix.reports.yarg.structure.ReportOutputType outputType;
 
     @Override
     public Integer getId() {
         return id;
     }
 
-    public com.haulmont.yarg.structure.ReportOutputType getOutputType() {
+    public io.jmix.reports.yarg.structure.ReportOutputType getOutputType() {
         return outputType;
     }
 
-    ReportOutputType(Integer id, com.haulmont.yarg.structure.ReportOutputType outputType) {
+    ReportOutputType(Integer id, io.jmix.reports.yarg.structure.ReportOutputType outputType) {
         this.id = id;
         this.outputType = outputType;
     }

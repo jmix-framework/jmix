@@ -348,15 +348,7 @@ dependencies {
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
-        def yargVersion = '2.2.21'
-        api "com.haulmont.yarg:yarg-api:$yargVersion"
-        api "com.haulmont.yarg:yarg:$yargVersion"
-
-        api 'org.jsoup:jsoup:1.17.2'
-
-        api 'org.apache.poi:poi:5.2.5'
-        api 'org.apache.poi:poi-ooxml:5.2.5'
-        api 'org.apache.tika:tika-parsers:1.28.5'
+        api 'org.apache.tika:tika-parsers:1.27'
         api 'org.apache.logging.log4j:log4j-core:2.18.0'
 
         api 'org.webjars.bower:pivottable:2.21.0.jmix.0'
@@ -373,6 +365,62 @@ dependencies {
 
         api 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
         api 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
+
+        def openOfficeVersion = '4.1.2'
+        api "org.openoffice:juh:$openOfficeVersion"
+        api "org.openoffice:ridl:$openOfficeVersion"
+        api "org.openoffice:unoil:$openOfficeVersion"
+
+        def avalonVersion = '4.3.1'
+        api "org.apache.avalon.framework:avalon-framework-api:$avalonVersion"
+        api "org.apache.avalon.framework:avalon-framework-impl:$avalonVersion"
+
+        def xmlgraphicsVersion = '2.8'
+        api "org.apache.xmlgraphics:fop:$xmlgraphicsVersion"
+        api "org.apache.xmlgraphics:xmlgraphics-commons:$xmlgraphicsVersion"
+
+        def batikVersion = '1.16'
+        api "org.apache.xmlgraphics:batik-bridge:$batikVersion"
+        api "org.apache.xmlgraphics:batik-svggen:$batikVersion"
+        api "org.apache.xmlgraphics:batik-awt-util:$batikVersion"
+        api "org.apache.xmlgraphics:batik-css:$batikVersion"
+
+        def plutextVersion = '11.4.0'
+        api "org.plutext:jaxb-svg11:$plutextVersion"
+        api "org.plutext:jaxb-xslfo:$plutextVersion"
+
+        api 'org.plutext:jaxb-xmldsig-core:1.0.0'
+
+        def xalanVersion = '2.7.3'
+        api "xalan:xalan:$xalanVersion"
+        api "xalan:serializer:$xalanVersion"
+
+        api 'com.github.librepdf:openpdf:1.3.39'
+
+        def poiVersion = '5.2.3'
+        api "org.apache.poi:poi:$poiVersion"
+        api "org.apache.poi:poi-ooxml:$poiVersion"
+        api "org.apache.poi:poi-scratchpad:$poiVersion"
+
+        def xhtmlrendererVersion = '9.4.0'
+        api "org.xhtmlrenderer:flying-saucer-core:$xhtmlrendererVersion"
+        api "org.xhtmlrenderer:flying-saucer-pdf-openpdf:$xhtmlrendererVersion"
+
+        def openhtmltopdfVersion = '1.0.10'
+        api "com.openhtmltopdf:openhtmltopdf-core:$openhtmltopdfVersion"
+        api "com.openhtmltopdf:openhtmltopdf-rtl-support:$openhtmltopdfVersion"
+        api "com.openhtmltopdf:openhtmltopdf-pdfbox:$openhtmltopdfVersion"
+
+        api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.4.9'
+        api 'org.docx4j:docx4j-ImportXHTML:11.4.8'
+        api 'org.docx4j:docx4j-export-fo:11.4.9'
+
+        api 'org.jsoup:jsoup:1.16.1'
+        api 'org.olap4j:olap4j:1.2.0'
+
+        def jasperVersion = '6.20.5'
+        api "net.sf.jasperreports:jasperreports:$jasperVersion"
+        api "net.sf.jasperreports:jasperreports-fonts:$jasperVersion"
 
         //todo remove strict version after jmix-graphql is reworked
         api ('com.graphql-java:graphql-java') {

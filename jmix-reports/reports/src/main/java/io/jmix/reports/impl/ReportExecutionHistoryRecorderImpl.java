@@ -17,8 +17,8 @@
 package io.jmix.reports.impl;
 
 import com.google.common.collect.Sets;
-import com.haulmont.yarg.reporting.ReportOutputDocument;
-import com.haulmont.yarg.structure.ReportOutputType;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.structure.ReportOutputType;
 import io.jmix.core.*;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SystemAuthenticator;

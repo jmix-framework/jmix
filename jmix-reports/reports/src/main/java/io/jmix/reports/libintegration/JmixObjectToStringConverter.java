@@ -16,8 +16,8 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.exception.ReportingException;
-import com.haulmont.yarg.util.converter.AbstractObjectToStringConverter;
+import io.jmix.reports.yarg.exception.ReportingException;
+import io.jmix.reports.yarg.util.converter.AbstractObjectToStringConverter;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;

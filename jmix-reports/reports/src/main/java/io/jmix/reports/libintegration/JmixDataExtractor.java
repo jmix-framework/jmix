@@ -16,8 +16,8 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.loaders.factory.ReportLoaderFactory;
-import com.haulmont.yarg.reporting.DataExtractorImpl;
+import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
+import io.jmix.reports.yarg.reporting.DataExtractorImpl;
 import io.jmix.reports.ReportsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 

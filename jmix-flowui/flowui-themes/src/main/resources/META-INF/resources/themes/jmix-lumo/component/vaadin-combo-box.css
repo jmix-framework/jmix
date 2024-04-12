@@ -1,0 +1,15 @@
+vaadin-combo-box[readonly][invalid] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+    --vaadin-input-field-invalid-background: transparent;
+    --vaadin-input-field-invalid-hover-highlight: transparent;
+}
+
+vaadin-combo-box[disabled][invalid] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+    --vaadin-input-field-invalid-background: var(--lumo-contrast-5pct);
+}
+
+vaadin-combo-box[disabled][has-error-message]::part(error-message),
+vaadin-combo-box[readonly][has-error-message]::part(error-message) {
+    display: none;
+}

@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.upload;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.upload.*;
@@ -27,7 +26,7 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.delegate.FieldDelegate;
+import io.jmix.flowui.component.delegate.FileFieldDelegate;
 import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer;
 import io.jmix.flowui.component.upload.receiver.TemporaryStorageFileData;
 import io.jmix.flowui.component.validation.Validator;
@@ -50,8 +49,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -69,7 +68,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     protected Messages messages;
     protected ObjectProvider<MultipartProperties> multipartPropertiesProvider;
 
-    protected FieldDelegate<FileStorageUploadField, FileRef, FileRef> fieldDelegate;
+    protected FileFieldDelegate<FileStorageUploadField, FileRef, FileRef> fieldDelegate;
 
     protected FileStorage fileStorage;
 
@@ -112,8 +111,8 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
         attachUploadEvents(uploadButton);
     }
 
-    protected FieldDelegate<FileStorageUploadField, FileRef, FileRef> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
+    protected FileFieldDelegate<FileStorageUploadField, FileRef, FileRef> createFieldDelegate() {
+        return applicationContext.getBean(FileFieldDelegate.class, this);
     }
 
     @Override
@@ -163,6 +162,20 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
     protected void validate() {
         fieldDelegate.updateInvalidState();
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        validate();
     }
 
     @Nullable

@@ -1,0 +1,15 @@
+vaadin-text-area[readonly][invalid] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+    --vaadin-input-field-invalid-background: transparent;
+    --vaadin-input-field-invalid-hover-highlight: transparent;
+}
+
+vaadin-text-area[disabled][invalid] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+    --vaadin-input-field-invalid-background: var(--lumo-contrast-5pct);
+}
+
+vaadin-text-area[disabled][has-error-message]::part(error-message),
+vaadin-text-area[readonly][has-error-message]::part(error-message) {
+    display: none;
+}

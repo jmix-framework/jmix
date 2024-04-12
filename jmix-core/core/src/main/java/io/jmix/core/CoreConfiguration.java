@@ -53,8 +53,8 @@ public class CoreConfiguration {
     }
 
     @Bean("core_BeanExclusionProcessor")
-    public static BeanExclusionProcessor beanExclusionProcessor() {
-        return new BeanExclusionProcessor();
+    public static BeanExclusionProcessor beanExclusionProcessor(JmixModules modules) {
+        return new BeanExclusionProcessor(modules);
     }
 
     @Bean("core_Modules")

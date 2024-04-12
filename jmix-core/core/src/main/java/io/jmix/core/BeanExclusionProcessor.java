@@ -36,6 +36,7 @@ public class BeanExclusionProcessor implements BeanDefinitionRegistryPostProcess
     private static final Logger log = LoggerFactory.getLogger(BeanExclusionProcessor.class);
 
     private final JmixModules modules;
+
     private List<String> beansToExclude = new ArrayList<>();
 
     public BeanExclusionProcessor(JmixModules modules) {

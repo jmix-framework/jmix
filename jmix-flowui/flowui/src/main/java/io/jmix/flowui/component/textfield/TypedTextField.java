@@ -85,8 +85,6 @@ public class TypedTextField<V> extends TextField
         attachValueChangeListener();
     }
 
-
-
     @SuppressWarnings("unchecked")
     protected TextInputFieldDelegate<TypedTextField<V>, V> createFieldDelegate() {
         return applicationContext.getBean(TextInputFieldDelegate.class, this);
@@ -256,13 +254,6 @@ public class TypedTextField<V> extends TextField
 
         fieldDelegate.updateInvalidState();
     }
-
-    /*@Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-
-        validate();
-    }*/
 
     protected void fireAllValueChangeEvents(@Nullable V value, @Nullable V oldValue, boolean isFromClient) {
         fireTextFieldValueChangeEvent(oldValue, isFromClient);

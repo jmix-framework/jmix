@@ -382,10 +382,9 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
             applyVisibilityRules(event.getItem());
 
             if (dataSet.getType() == DataSetType.SINGLE) {
-                refreshFetchPlanNames(findParameterByAlias(dataSet.getEntityParamName()));
+                refreshFetchPlanNames(dataSet.getFetchPlanName(), dataSet.getEntityParamName());
             } else if (dataSet.getType() == DataSetType.MULTI) {
-                String alias = StringUtils.substringBefore(dataSet.getListEntitiesParamName(), "#");
-                refreshFetchPlanNames(findParameterByAlias(alias));
+                refreshFetchPlanNames(dataSet.getFetchPlanName(), dataSet.getListEntitiesParamName());
             }
 
             dataSetScriptField.resetEditHistory();
@@ -398,8 +397,8 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     protected void onDataSetsDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<DataSet> event) {
         applyVisibilityRules(event.getItem());
         if (ENTITY_PARAM_NAME.equals(event.getProperty()) || LIST_ENTITIES_PARAM_NAME.equals(event.getProperty())) {
-            ReportInputParameter linkedParameter = findParameterByAlias(String.valueOf(event.getValue()));
-            refreshFetchPlanNames(linkedParameter);
+            DataSet dataSet = event.getItem();
+            refreshFetchPlanNames(dataSet.getFetchPlanName(), String.valueOf(event.getValue()));
         }
 
         if (PROCESS_TEMPLATE.equals(event.getProperty())) {
@@ -435,7 +434,9 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         return null;
     }
 
-    protected void refreshFetchPlanNames(@Nullable ReportInputParameter reportInputParameter) {
+    protected void refreshFetchPlanNames(@Nullable String currentFetchPlanName, String paramName) {
+        ReportInputParameter reportInputParameter = findParameterByAlias(paramName);
+
         if (reportInputParameter != null) {
             if (StringUtils.isNotBlank(reportInputParameter.getEntityMetaClass())) {
                 MetaClass parameterMetaClass = metadata.getClass(reportInputParameter.getEntityMetaClass());
@@ -447,12 +448,15 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
                 fetchPlans.put(FetchPlan.LOCAL, FetchPlan.LOCAL);
                 fetchPlans.put(FetchPlan.INSTANCE_NAME, FetchPlan.INSTANCE_NAME);
                 fetchPlans.put(FetchPlan.BASE, FetchPlan.BASE);
+
                 fetchPlanNameField.setOptionsMap(fetchPlans);
-                fetchPlanNameField.setValue(FetchPlan.BASE);
+
+                if (currentFetchPlanName == null) {
+                    fetchPlanNameField.setValue(FetchPlan.BASE);
+                }
                 return;
             }
         }
-
         fetchPlanNameField.setOptionsMap(new HashMap<>());
     }
 

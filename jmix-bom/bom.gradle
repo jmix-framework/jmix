@@ -410,7 +410,7 @@ dependencies {
             }
         }
 
-        api 'com.opencsv:opencsv:5.5.2'
+        api 'com.opencsv:opencsv:5.9'
 
         api 'io.vavr:vavr:0.9.3'
         api 'org.jetbrains:annotations:22.0.0'

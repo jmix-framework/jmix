@@ -44,7 +44,7 @@ public class QuartzJobClassFinder {
                         && !metadataReader.getClassMetadata().isAbstract()
                         && Job.class.isAssignableFrom(Class.forName(metadataReader.getClassMetadata().getClassName()));
             } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                log.info("Class not found: {}", e.getMessage());
+                log.trace("Class not found", e);
                 return false;
             }
         }

@@ -343,8 +343,6 @@ dependencies {
 
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
-        api 'org.apache.poi:poi:5.2.3'
-        api 'org.apache.poi:poi-ooxml:5.2.3'
         api 'org.apache.tika:tika-parsers:1.27'
         api 'org.apache.logging.log4j:log4j-core:2.18.0'
 

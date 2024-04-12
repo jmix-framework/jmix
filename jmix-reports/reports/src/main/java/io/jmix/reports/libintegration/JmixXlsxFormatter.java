@@ -16,8 +16,8 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
-import com.haulmont.yarg.formatters.impl.XlsxFormatter;
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
+import io.jmix.reports.yarg.formatters.impl.XlsxFormatter;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

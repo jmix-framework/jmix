@@ -16,7 +16,7 @@
 
 package io.jmix.reportsui.screen.report.run;
 
-import com.haulmont.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.DataManager;
 import io.jmix.core.Id;
 import io.jmix.reports.ParameterClassResolver;

@@ -16,8 +16,8 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.formatters.factory.inline.DefaultInlinersProvider;
-import com.haulmont.yarg.formatters.impl.inline.ContentInliner;
+import io.jmix.reports.yarg.formatters.factory.inline.DefaultInlinersProvider;
+import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
 
 public class JmixInlinersProvider extends DefaultInlinersProvider {
 

@@ -15,8 +15,8 @@
  */
 package io.jmix.reports.entity;
 
-import com.haulmont.yarg.structure.ReportBand;
-import com.haulmont.yarg.structure.ReportFieldFormat;
+import io.jmix.reports.yarg.structure.ReportBand;
+import io.jmix.reports.yarg.structure.ReportFieldFormat;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.TenantId;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @Listeners("report_ReportDetachListener")
 @JmixEntity
 @SuppressWarnings("unused")
-public class Report implements com.haulmont.yarg.structure.Report {
+public class Report implements io.jmix.reports.yarg.structure.Report {
     private static final long serialVersionUID = -2817764915661205093L;
     protected static final String IDX_SEPARATOR = ",";
 
@@ -436,8 +436,8 @@ public class Report implements com.haulmont.yarg.structure.Report {
     }
 
     @Override
-    public Map<String, com.haulmont.yarg.structure.ReportTemplate> getReportTemplates() {
-        Map<String, com.haulmont.yarg.structure.ReportTemplate> templateMap = new HashMap<>();
+    public Map<String, io.jmix.reports.yarg.structure.ReportTemplate> getReportTemplates() {
+        Map<String, io.jmix.reports.yarg.structure.ReportTemplate> templateMap = new HashMap<>();
         for (ReportTemplate template : templates) {
             templateMap.put(template.getCode(), template);
         }
@@ -446,7 +446,7 @@ public class Report implements com.haulmont.yarg.structure.Report {
     }
 
     @Override
-    public List<com.haulmont.yarg.structure.ReportParameter> getReportParameters() {
+    public List<io.jmix.reports.yarg.structure.ReportParameter> getReportParameters() {
         return (List) inputParameters;
     }
 

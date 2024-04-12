@@ -15,9 +15,9 @@
  */
 package io.jmix.reports.entity;
 
-import com.haulmont.yarg.structure.BandOrientation;
-import com.haulmont.yarg.structure.ReportBand;
-import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.structure.BandOrientation;
+import io.jmix.reports.yarg.structure.ReportBand;
+import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;

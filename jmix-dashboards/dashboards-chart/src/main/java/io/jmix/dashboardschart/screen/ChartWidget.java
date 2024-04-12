@@ -16,7 +16,7 @@
 
 package io.jmix.dashboardschart.screen;
 
-import com.haulmont.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.charts.component.CustomChart;
 import io.jmix.charts.model.chart.impl.AbstractChart;
 import io.jmix.core.DataManager;

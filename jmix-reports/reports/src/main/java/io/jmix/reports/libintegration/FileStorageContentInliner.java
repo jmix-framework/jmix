@@ -16,8 +16,8 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.exception.ReportFormattingException;
-import com.haulmont.yarg.formatters.impl.inline.AbstractInliner;
+import io.jmix.reports.yarg.exception.ReportFormattingException;
+import io.jmix.reports.yarg.formatters.impl.inline.AbstractInliner;
 import io.jmix.core.DataManager;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorageLocator;

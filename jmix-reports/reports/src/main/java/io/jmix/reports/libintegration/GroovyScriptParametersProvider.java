@@ -16,8 +16,8 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.structure.BandData;
-import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.ReportQuery;
 
 import java.util.Map;
 

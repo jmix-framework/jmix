@@ -15,7 +15,7 @@
  */
 package io.jmix.reports.entity;
 
-import com.haulmont.yarg.structure.ReportParameterWithDefaultValue;
+import io.jmix.reports.yarg.structure.ReportParameterWithDefaultValue;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;

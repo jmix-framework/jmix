@@ -16,7 +16,7 @@
 
 package io.jmix.reportsui.runner.impl;
 
-import com.haulmont.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
@@ -293,7 +293,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
             reportTable.show();
         } else {
             byte[] byteArr = document.getContent();
-            com.haulmont.yarg.structure.ReportOutputType finalOutputType =
+            io.jmix.reports.yarg.structure.ReportOutputType finalOutputType =
                     (outputType != null) ? outputType.getOutputType() : document.getReportOutputType();
 
             DownloadFormat exportFormat = DownloadFormat.getByExtension(finalOutputType.getId());

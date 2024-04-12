@@ -43,9 +43,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
-
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class JmixCheckboxGroup<V> extends CheckboxGroup<V>

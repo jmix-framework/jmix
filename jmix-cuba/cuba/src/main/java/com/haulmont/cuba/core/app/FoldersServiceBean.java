@@ -34,7 +34,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -240,7 +239,7 @@ public class FoldersServiceBean implements FoldersService {
         zipOutputStream.setEncoding(StandardCharsets.UTF_8.name());
         String xml = createXStream().toXML(folder);
         byte[] xmlBytes = xml.getBytes(StandardCharsets.UTF_8);
-        ArchiveEntry zipEntryDesign = newStoredEntry("folder.xml", xmlBytes);
+        ZipArchiveEntry zipEntryDesign = newStoredEntry("folder.xml", xmlBytes);
         zipOutputStream.putArchiveEntry(zipEntryDesign);
         zipOutputStream.write(xmlBytes);
         try {
@@ -357,7 +356,7 @@ public class FoldersServiceBean implements FoldersService {
         return xStream;
     }
 
-    protected ArchiveEntry newStoredEntry(String name, byte[] data) {
+    protected ZipArchiveEntry newStoredEntry(String name, byte[] data) {
         ZipArchiveEntry zipEntry = new ZipArchiveEntry(name);
         zipEntry.setSize(data.length);
         zipEntry.setCompressedSize(zipEntry.getSize());

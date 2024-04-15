@@ -115,6 +115,7 @@ public class ReportActionSupport {
                     .build();
 
             ReportRunView reportRunView = reportRunScreenDialogWindow.getView();
+            reportRunView.setMetaClass(inputValueMetaClass);
             reportRunView.setReports(reports);
 
             reportRunScreenDialogWindow.open();

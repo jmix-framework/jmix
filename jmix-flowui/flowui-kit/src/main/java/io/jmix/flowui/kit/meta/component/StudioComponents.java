@@ -2725,7 +2725,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "alignItems", type = StudioPropertyType.ENUMERATION,
                             setParameterFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "STRETCH",
+                            defaultValue = "START",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "boxSizing", type = StudioPropertyType.ENUMERATION,
                             setParameterFqn = "com.vaadin.flow.component.orderedlayout.BoxSizing",

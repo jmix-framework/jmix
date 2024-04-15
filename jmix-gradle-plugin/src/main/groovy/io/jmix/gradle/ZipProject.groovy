@@ -59,6 +59,7 @@ class ZipProject extends DefaultTask {
                 'bower_components',
                 'node_modules',
                 'dev-bundle',
+                'bundles',
                 'vite.generated.ts',
                 '.iml'
         ]

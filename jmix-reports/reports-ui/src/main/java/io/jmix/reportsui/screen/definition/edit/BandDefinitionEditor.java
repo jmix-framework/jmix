@@ -384,7 +384,8 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
             if (dataSet.getType() == DataSetType.SINGLE) {
                 refreshFetchPlanNames(dataSet.getFetchPlanName(), dataSet.getEntityParamName());
             } else if (dataSet.getType() == DataSetType.MULTI) {
-                refreshFetchPlanNames(dataSet.getFetchPlanName(), dataSet.getListEntitiesParamName());
+                String alias = StringUtils.substringBefore(dataSet.getListEntitiesParamName(), "#");
+                refreshFetchPlanNames(dataSet.getFetchPlanName(), alias);
             }
 
             dataSetScriptField.resetEditHistory();

@@ -23,12 +23,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DynAttrMapping {
-    DynAttrCategoryFetchStrategy strategy() default DynAttrCategoryFetchStrategy.FETCH_ONE_DEFAULT;
+public @interface DynamicAttributesMapping {
 
-
-    enum DynAttrCategoryFetchStrategy {
-        FETCH_ALL,
-        FETCH_ONE_DEFAULT,
-    }
 }

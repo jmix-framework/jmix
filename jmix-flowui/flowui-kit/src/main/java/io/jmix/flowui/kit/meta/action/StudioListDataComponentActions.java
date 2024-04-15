@@ -263,6 +263,7 @@ public interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.RefreshAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_refresh",
+            availableInViewWizard = true,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

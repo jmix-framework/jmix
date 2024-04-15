@@ -110,7 +110,6 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         return resultComponent;
     }
 
-    @Nullable
     protected Component createDatatypeField(ComponentGenerationContext context, MetaPropertyPath mpp) {
         Range mppRange = mpp.getRange();
 
@@ -139,7 +138,8 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         } else if (type.equals(byte[].class)) {
             return createFileUploadField(context);
         }
-        return null;
+
+        return createStringField(context, mpp);
     }
 
     protected Component createEnumField(ComponentGenerationContext context) {

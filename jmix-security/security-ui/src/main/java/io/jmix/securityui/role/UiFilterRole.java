@@ -37,7 +37,8 @@ public interface UiFilterRole {
     @ScreenPolicy(screenIds = {
             "ui_FilterConfigurationModel.fragment",
             "ui_UiDataFilterConfigurationModel.fragment",
-            "ui_AddConditionScreen"
+            "ui_AddConditionScreen",
+            "ui_DateIntervalDialog"
     })
     @EntityPolicy(entityName = "ui_FilterConfiguration", actions = EntityPolicyAction.ALL)
     @EntityAttributePolicy(entityName = "ui_FilterConfiguration", attributes = "*", action = EntityAttributePolicyAction.MODIFY)

@@ -18,10 +18,9 @@ package io.jmix.flowui.devserver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.internal.BrowserLiveReload;
+import com.vaadin.flow.server.DevToolsToken;
 import com.vaadin.flow.server.VaadinContext;
-import com.vaadin.flow.server.communication.AtmospherePushConnection;
 import com.vaadin.flow.server.communication.AtmospherePushConnection.FragmentedMessage;
-import com.vaadin.flow.server.communication.IndexHtmlRequestHandler;
 import elemental.json.Json;
 import elemental.json.JsonObject;
 import org.atmosphere.cpr.AtmosphereResource;
@@ -30,16 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 /**
@@ -135,7 +126,9 @@ public class DebugWindowConnection implements BrowserLiveReload {
         this.backend = backend;
     }
 
-    /** Implementation of the development tools interface. */
+    /**
+     * Implementation of the development tools interface.
+     */
     public static class DevToolsInterfaceImpl implements DevToolsInterface {
         private DebugWindowConnection debugWindowConnection;
         private AtmosphereResource resource;
@@ -185,7 +178,7 @@ public class DebugWindowConnection implements BrowserLiveReload {
 
     @Override
     public void onConnect(AtmosphereResource resource) {
-        if (IndexHtmlRequestHandler.RANDOM_DEV_TOOLS_TOKEN
+        if (DevToolsToken.getToken()
                 .equals(resource.getRequest().getParameter("token"))) {
             handleConnect(resource);
         } else {
@@ -362,6 +355,7 @@ public class DebugWindowConnection implements BrowserLiveReload {
     private static Logger getLogger() {
         return LoggerFactory.getLogger(DebugWindowConnection.class.getName());
     }
+
     @Override
     public FragmentedMessage getOrCreateFragmentedMessage(
             AtmosphereResource resource) {

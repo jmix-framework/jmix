@@ -34,7 +34,7 @@ public interface UiFilterRole {
 
     String CODE = "flowui-filter";
 
-    @ViewPolicy(viewIds = "flowui_AddConditionView")
+    @ViewPolicy(viewIds = {"flowui_AddConditionView", "flowui_DateIntervalDialog"})
     @SpecificPolicy(resources = "ui.genericfilter.modifyConfiguration")
     void configuration();
 

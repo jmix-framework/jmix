@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+vaadin-form-item[theme~='jmix-group-filter-form-item']:not([label-position='top']) {
+  align-items: center;
+}
+
 vaadin-form-item[theme~='jmix-group-filter-form-item']:not([label-position='top'])::part(label) {
   margin: 0;
 }

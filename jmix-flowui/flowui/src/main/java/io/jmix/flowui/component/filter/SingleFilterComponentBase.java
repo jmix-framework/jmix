@@ -236,6 +236,7 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
             super.setLabel(labelVisible ? labelText : null);
         } else {
             this.label.setText(labelVisible ? labelText : null);
+            this.label.setTitle(labelVisible && labelText != null ? labelText : "");
             this.label.setVisible(labelVisible);
         }
     }

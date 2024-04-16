@@ -158,7 +158,10 @@ public class GroupFilter extends Composite<VerticalLayout>
 
             registerFilterComponentFormItem(filterComponent, formItem);
 
-            singleFilterComponent.setLabelDelegate(label::setText);
+            singleFilterComponent.setLabelDelegate(labelText -> {
+                label.setText(labelText);
+                label.setTitle(labelText != null ? labelText : "");
+            });
         } else if (filterComponent instanceof GroupFilter) {
             GroupFilter groupFilter = (GroupFilter) filterComponent;
             conditionsLayout.add(groupFilter, 3);

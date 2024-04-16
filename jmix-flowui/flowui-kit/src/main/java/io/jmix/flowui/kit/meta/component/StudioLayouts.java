@@ -267,7 +267,7 @@ public interface StudioLayouts {
 
     @StudioComponent(
             name = "Split",
-            classFqn = "io.jmix.flowui.splitlayout.JmixSplitLayout",
+            classFqn = "io.jmix.flowui.component.splitlayout.JmixSplitLayout",
             category = "Layouts",
             xmlElement = "split",
             icon = "io/jmix/flowui/kit/meta/icon/layout/split.svg",

@@ -16,6 +16,11 @@
 
 package io.jmix.flowui.kit.meta.component.preview;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
@@ -24,16 +29,13 @@ import com.vaadin.flow.component.HasStyle;
 import jakarta.annotation.Nullable;
 import org.dom4j.Element;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 /**
  * Vaadin component loader for Studio view designer preview.
- * <h4>
- *     Register new loaders via SPI in {@code META-INF/services/io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader}
- * </h4>
+ * <p>
+ * <b>Register new loaders via SPI in
+ * {@code META-INF/services/io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader}</b>
+ * </p>
+ *
  * @see StudioPreviewComponentProvider
  */
 public interface StudioPreviewComponentLoader {
@@ -45,8 +47,9 @@ public interface StudioPreviewComponentLoader {
 
     /**
      * Create vaadin component from component xml element.
+     *
      * @param componentElement xml element of component
-     * @param viewElement xml element of view containing {@code componentElement}
+     * @param viewElement      xml element of view containing {@code componentElement}
      * @see Element
      */
     @Nullable
@@ -97,7 +100,7 @@ public interface StudioPreviewComponentLoader {
         loadEnum(element, type, attributeName).ifPresent(setter);
     }
 
-    default  void loadWidth(HasSize component, Element element) {
+    default void loadWidth(HasSize component, Element element) {
         loadString(element, "width").ifPresent(component::setWidth);
     }
 

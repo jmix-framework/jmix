@@ -27,7 +27,16 @@
                                required="true" requiredMessage="msg://codeField.requiredMessage"/>
                     <fileUploadField id="templateUploadField" fileNameVisible="true"
                                      label="msg://templateUploadField.label" width="100%"/>
-                    <textArea id="templateFileEditor" width="100%" height="20em"/>
+                    <div width="100%" classNames="flex, justify-end">
+                        <button id="templateFileEditorFullScreenBtn"
+                                text="msg:///fullScreenBtn.title"
+                                themeNames="tertiary-inline"/>
+                    </div>
+                    <div width="100%" classNames="flex, items-start">
+                        <codeEditor id="templateFileEditor"
+                                width="100%"
+                                height="20em"/>
+                    </div>
                     <comboBox id="outputTypeField" property="reportOutputType" label="msg://outputTypeField.label"
                               width="100%"
                               required="true" requiredMessage="msg://outputTypeField.requiredMessage"/>

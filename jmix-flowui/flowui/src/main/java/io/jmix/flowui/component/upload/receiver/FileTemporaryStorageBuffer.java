@@ -54,6 +54,7 @@ public class FileTemporaryStorageBuffer implements Receiver {
         return outputBuffer;
     }
 
+    @Nullable
     public TemporaryStorageFileData getFileData() {
         return fileData;
     }

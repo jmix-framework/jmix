@@ -370,6 +370,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
     @Override
     protected void onFailedEvent(FailedEvent event) {
+        log.error("Upload failed", event.getReason());
         deleteTempFile();
 
         super.onFailedEvent(event);
@@ -378,7 +379,13 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
     protected void deleteTempFile() {
         Receiver receiver = uploadButton.getReceiver();
         if (receiver instanceof FileTemporaryStorageBuffer) {
-            UUID tempFileId = ((FileTemporaryStorageBuffer) receiver).getFileData().getFileInfo().getId();
+            TemporaryStorageFileData fileData = ((FileTemporaryStorageBuffer) receiver).getFileData();
+            if (fileData == null) {
+                log.warn("The temporary file wasn't saved after broken uploading");
+                return;
+            }
+
+            UUID tempFileId = fileData.getFileInfo().getId();
             try {
                 temporaryStorage.deleteFile(tempFileId);
             } catch (Exception e) {

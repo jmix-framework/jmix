@@ -62,6 +62,7 @@ public class GenericFilterMakeDefaultAction extends GenericFilterAction<GenericF
     protected boolean isApplicable() {
         return super.isApplicable()
                 && target.getId().isPresent()
+                && target.isAttached()
                 && ViewControllerUtils.getViewFacet(getParentView(), SettingsFacet.class) != null
                 && target.getCurrentConfiguration() != target.getEmptyConfiguration();
     }

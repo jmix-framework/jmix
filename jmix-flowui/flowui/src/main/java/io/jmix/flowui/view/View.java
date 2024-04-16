@@ -75,6 +75,12 @@ public class View<T extends Component> extends Composite<T>
 
     public View() {
         closeDelegate = createDefaultViewDelegate();
+        addAfterCloseListener(this::onAfterClose);
+    }
+
+    private void onAfterClose(AfterCloseEvent event) {
+        removeApplicationListeners();
+        removeViewAttributes();
     }
 
     private Consumer<View<T>> createDefaultViewDelegate() {
@@ -143,8 +149,6 @@ public class View<T extends Component> extends Composite<T>
                     closeActionPerformed = false;
                     return;
                 }
-
-                removeViewAttributes();
 
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
                 Sample afterCloseSample = startTimerSample(meterRegistry);
@@ -236,9 +240,6 @@ public class View<T extends Component> extends Composite<T>
         closeActionPerformed = true;
 
         closeDelegate.accept(this);
-
-        removeApplicationListeners();
-        removeViewAttributes();
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
         fireEvent(afterCloseEvent);

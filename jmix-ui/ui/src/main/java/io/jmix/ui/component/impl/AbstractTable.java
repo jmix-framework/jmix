@@ -1627,7 +1627,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 }
 
                 if (column.isCollapsed() && component.isColumnCollapsingAllowed()) {
-                    setCollapsedUiPermissionsAware(columnId, true);
+                    setColumnCollapsedUiPermissionsAware(columnId, true);
                 }
 
                 if (column.getAggregation() != null) {
@@ -1653,7 +1653,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         }
     }
 
-    protected void setCollapsedUiPermissionsAware(Object columnId, boolean collapsed) {
+    protected void setColumnCollapsedUiPermissionsAware(Object columnId, boolean collapsed) {
         UiEntityAttributeContext attributeContext = null;
 
         if (columnId instanceof MetaPropertyPath) {
@@ -2031,7 +2031,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                     this.collapsed = collapsed;
 
                     if (owner != null) {
-                        owner.setCollapsedUiPermissionsAware(id, collapsed);
+                        owner.setColumnCollapsedUiPermissionsAware(id, collapsed);
                     }
                 }
             }

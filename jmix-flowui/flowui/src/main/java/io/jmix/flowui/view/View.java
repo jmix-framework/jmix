@@ -81,6 +81,7 @@ public class View<T extends Component> extends Composite<T>
     private void onAfterClose(AfterCloseEvent event) {
         removeApplicationListeners();
         removeViewAttributes();
+        unregisterBackNavigation();
     }
 
     private Consumer<View<T>> createDefaultViewDelegate() {
@@ -180,7 +181,6 @@ public class View<T extends Component> extends Composite<T>
         if (UiComponentUtils.isComponentAttachedToDialog(this)) {
             removeViewAttributes();
         }
-        unregisterBackNavigation();
 
         if (isPreventBrowserTabClosing()) {
             WebBrowserTools.allowBrowserTabClosing(this);

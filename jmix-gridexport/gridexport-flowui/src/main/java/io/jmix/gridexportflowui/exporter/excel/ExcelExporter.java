@@ -338,16 +338,27 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     protected void createFormats() {
         timeFormatCellStyle = wb.createCellStyle();
+        DataFormat dataFormat = wb.getCreationHelper().createDataFormat();
+
         String timeFormat = getMessage("excelExporter.timeFormat");
-        timeFormatCellStyle.setDataFormat(getBuiltinFormat(timeFormat));
+        short timeDataFormat = getBuiltinFormat(timeFormat) == -1
+                ? dataFormat.getFormat(timeFormat)
+                : getBuiltinFormat(timeFormat);
+        timeFormatCellStyle.setDataFormat(timeDataFormat);
 
         dateFormatCellStyle = wb.createCellStyle();
         String dateFormat = getMessage("excelExporter.dateFormat");
-        dateFormatCellStyle.setDataFormat(getBuiltinFormat(dateFormat));
+        short dateDataFormat = getBuiltinFormat(dateFormat) == -1
+                ? dataFormat.getFormat(dateFormat)
+                : getBuiltinFormat(dateFormat);
+        dateFormatCellStyle.setDataFormat(dateDataFormat);
 
         dateTimeFormatCellStyle = wb.createCellStyle();
         String dateTimeFormat = getMessage("excelExporter.dateTimeFormat");
-        dateTimeFormatCellStyle.setDataFormat(getBuiltinFormat(dateTimeFormat));
+        short dateTimeDataFormat = getBuiltinFormat(dateTimeFormat) == -1
+                ? dataFormat.getFormat(dateTimeFormat)
+                : getBuiltinFormat(dateTimeFormat);
+        dateTimeFormatCellStyle.setDataFormat(dateTimeDataFormat);
 
         integerFormatCellStyle = wb.createCellStyle();
         String integerFormat = getMessage("excelExporter.integerFormat");

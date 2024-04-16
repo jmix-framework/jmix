@@ -134,11 +134,15 @@ public class GridMenuItemActionSupport {
             case Action.PROP_VISIBLE -> updateVisible();
             case Action.PROP_DESCRIPTION -> menuItem.setTooltipText(action.getDescription());
             case Action.PROP_ICON -> {
-                menuItem.setPrefixComponent(action.getIcon());
+                if (isShowActionIconEnabled()) {
+                    menuItem.setPrefixComponent(action.getIcon());
+                }
                 updateVisible();
             }
             case Action.PROP_SHORTCUT_COMBINATION -> {
-                menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
+                if (isShowActionShortcutEnabled()) {
+                    menuItem.setSuffixComponent(createShortcutComponent(action.getShortcutCombination()));
+                }
                 updateVisible();
             }
             default -> {/* do nothing */}

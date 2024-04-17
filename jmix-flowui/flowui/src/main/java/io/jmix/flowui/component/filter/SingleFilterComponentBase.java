@@ -60,6 +60,7 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     protected DataLoader dataLoader;
     protected boolean autoApply;
+    protected AutoApplyResolver autoApplyResolver;
     protected Condition queryCondition;
 
     @Internal
@@ -203,10 +204,14 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
     public void apply() {
         if (dataLoader != null) {
             setupLoaderFirstResult();
-            if (autoApply) {
+            if (shouldAutoApply() && autoApply) {
                 dataLoader.load();
             }
         }
+    }
+
+    protected boolean shouldAutoApply() {
+        return autoApplyResolver == null || autoApplyResolver.shouldAutoApply();
     }
 
     protected void setupLoaderFirstResult() {
@@ -525,6 +530,10 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         } else {
             super.blur();
         }
+    }
+
+    public void setAutoApplyResolver(@Nullable AutoApplyResolver autoApplyResolver) {
+        this.autoApplyResolver = autoApplyResolver;
     }
 
     protected void checkValueComponentState() {

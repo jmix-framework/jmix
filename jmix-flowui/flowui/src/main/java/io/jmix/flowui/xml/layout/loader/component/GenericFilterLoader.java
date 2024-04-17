@@ -19,6 +19,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.vaadin.flow.component.ComponentUtil;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
@@ -27,6 +28,7 @@ import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfigurat
 import io.jmix.flowui.component.genericfilter.inspector.FilterPropertiesInspector;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.ViewData;
@@ -49,6 +51,10 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
 
     @Override
     public void loadComponent() {
+        //Prevent filterComponents from calling DataLoader#load to skip unnecessary executions
+        // while genericFilter is being loaded
+        resultComponent.setAutoApplyResolver(new AutoApplyResolver(false));
+
         loadResourceString(element, "summaryText", context.getMessageGroup(), resultComponent::setSummaryText);
 
         componentLoader().loadEnabled(resultComponent, element);
@@ -72,6 +78,9 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
         loadConfigurations(resultComponent, element);
 
         loadActions(resultComponent, element);
+
+        resetAutoApplyResolver();
+        applyFilterIfNeeded();
     }
 
     protected void loadDataLoader(GenericFilter component, Element element) {
@@ -199,6 +208,9 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
         filterComponentLoader.initComponent();
 
         FilterComponent filterResultComponent = (FilterComponent) filterComponentLoader.getResultComponent();
+        if (filterResultComponent instanceof SingleFilterComponent<?> singleFilterComponent) {
+            singleFilterComponent.setAutoApplyResolver(resultComponent.getAutoApplyResolver());
+        }
 
         filterResultComponent.setConditionModificationDelegated(true);
         filterResultComponent.setDataLoader(resultComponent.getDataLoader());
@@ -238,5 +250,53 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
         }
 
         return actionLoaderSupport;
+    }
+
+    protected void applyFilterIfNeeded() {
+        getComponentContext().addInitTask((context, view) -> {
+            DataLoadCoordinator dataLoadCoordinator = ViewControllerUtils.getViewFacet(view, DataLoadCoordinator.class);
+            if (dataLoadCoordinator == null || dataLoadCoordinator.getTriggers().isEmpty()) {
+                List<FilterComponent> filterComponents =
+                        resultComponent.getCurrentConfiguration().getRootLogicalFilterComponent().getFilterComponents();
+                Optional<FilterComponent> filterWithValue = filterComponents.stream()
+                        .filter(filterComponent -> {
+                            if (!(filterComponent instanceof SingleFilterComponent<?> singleFilterComponent)) {
+                                return false;
+                            }
+                            return singleFilterComponent.getValueComponent().getOptionalValue().isPresent();
+                        })
+                        .findFirst();
+                if (filterWithValue.isPresent()) {
+                    resultComponent.apply();
+                }
+            }
+        });
+    }
+
+    protected void resetAutoApplyResolver() {
+        getComponentContext().addInitTask((context, view) -> {
+            SingleFilterComponent.AutoApplyResolver resolver = resultComponent.getAutoApplyResolver();
+            if (resolver instanceof AutoApplyResolver autoApplyResolver) {
+                autoApplyResolver.setShouldAutoApply(true);
+            }
+        });
+    }
+
+    public static class AutoApplyResolver implements SingleFilterComponent.AutoApplyResolver {
+
+        private boolean shouldAutoApply;
+
+        public AutoApplyResolver(boolean shouldAutoApply) {
+            this.shouldAutoApply = shouldAutoApply;
+        }
+
+        public void setShouldAutoApply(boolean shouldAutoApply) {
+            this.shouldAutoApply = shouldAutoApply;
+        }
+
+        @Override
+        public boolean shouldAutoApply() {
+            return shouldAutoApply;
+        }
     }
 }

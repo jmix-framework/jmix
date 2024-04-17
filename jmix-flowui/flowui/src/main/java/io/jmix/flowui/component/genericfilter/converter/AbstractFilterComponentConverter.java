@@ -19,6 +19,7 @@ package io.jmix.flowui.component.genericfilter.converter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.entity.filter.FilterCondition;
 
@@ -39,6 +40,10 @@ public abstract class AbstractFilterComponentConverter<C extends Component & Fil
         filterComponent.setConditionModificationDelegated(true);
         filterComponent.setDataLoader(filter.getDataLoader());
         filterComponent.setAutoApply(filter.isAutoApply());
+
+        if (filterComponent instanceof SingleFilterComponent<?> singleFilterComponent) {
+            singleFilterComponent.setAutoApplyResolver(filter.getAutoApplyResolver());
+        }
 
         filterComponent.setVisible(model.getVisible());
         filterComponent.setEnabled(model.getEnabled());

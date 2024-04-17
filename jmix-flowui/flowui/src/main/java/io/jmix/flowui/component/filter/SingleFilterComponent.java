@@ -18,6 +18,7 @@ package io.jmix.flowui.component.filter;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValueAndElement;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.jpqlfilter.JpqlFilter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
@@ -101,4 +102,17 @@ public interface SingleFilterComponent<V> extends FilterComponent, HasSubParts {
      * @param labelVisible whether to show label or not
      */
     void setLabelVisible(boolean labelVisible);
+
+    /**
+     * Sets a {@link AutoApplyResolver} to prevent unnecessary calls of DataLoader#load
+     * @param autoApplyResolver {@link AutoApplyResolver}
+     */
+    @Internal
+    void setAutoApplyResolver(@Nullable AutoApplyResolver autoApplyResolver);
+
+    interface AutoApplyResolver {
+        default boolean shouldAutoApply() {
+            return true;
+        }
+    }
 }

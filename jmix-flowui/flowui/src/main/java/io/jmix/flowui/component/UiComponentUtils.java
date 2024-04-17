@@ -34,6 +34,11 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * Utility class working with Jmix UI component specifics.
+ *
+ * @see io.jmix.flowui.kit.component.ComponentUtils
+ */
 public final class UiComponentUtils {
 
     private static final Logger log = LoggerFactory.getLogger(UiComponentUtils.class);
@@ -41,6 +46,16 @@ public final class UiComponentUtils {
     private UiComponentUtils() {
     }
 
+    /**
+     * Returns an {@link Optional} describing the component with given id,
+     * or an empty {@link Optional}.
+     *
+     * @param view view to find component from
+     * @param id   component id
+     * @return an {@link Optional} describing the component,
+     * or an empty {@link Optional}
+     * @throws IllegalStateException if view content is not a container
+     */
     public static Optional<Component> findComponent(View<?> view, String id) {
         Component content = view.getContent();
         if (isContainer(content)) {
@@ -50,12 +65,30 @@ public final class UiComponentUtils {
         throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
     }
 
+    /**
+     * Returns the component with given id.
+     *
+     * @param view view to find component from
+     * @param id   component id
+     * @return the component with given id
+     * @throws IllegalStateException    if view content is not a container
+     * @throws IllegalArgumentException if a component with given id is not found
+     */
     public static Component getComponent(View<?> view, String id) {
         return findComponent(view, id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         String.format("Component with id '%s' not found", id)));
     }
 
+    /**
+     * Returns an {@link Optional} describing the component with given id,
+     * or an empty {@link Optional}.
+     *
+     * @param container container to find component
+     * @param id        component id to find
+     * @return an {@link Optional} describing the found component,
+     * or an empty {@link Optional}
+     */
     public static Optional<Component> findComponent(Component container, String id) {
         String[] elements = ValuePathHelper.parse(id);
         if (elements.length == 1) {
@@ -143,6 +176,13 @@ public final class UiComponentUtils {
         return Optional.empty();
     }
 
+    /**
+     * Returns a collection of direct children of passed component.
+     *
+     * @param container the container to get own components
+     * @return a collection of own components
+     * @throws IllegalArgumentException if passed component has no API to obtain component list
+     */
     public static Collection<Component> getOwnComponents(Component container) {
         if (container instanceof ComponentContainer) {
             return ((ComponentContainer) container).getOwnComponents();
@@ -156,6 +196,12 @@ public final class UiComponentUtils {
         }
     }
 
+    /**
+     * Returns a collection of all child components.
+     *
+     * @param container the container to get child components
+     * @return a collection of all child components
+     */
     public static Collection<Component> getComponents(Component container) {
         // do not return LinkedHashSet, it uses much more memory than ArrayList
         Collection<Component> components = new ArrayList<>();
@@ -169,6 +215,15 @@ public final class UiComponentUtils {
         return Collections.unmodifiableCollection(components);
     }
 
+    /**
+     * Returns an {@link Optional} describing the direct component with given id,
+     * or an empty {@link Optional}.
+     *
+     * @param container the container to find own component
+     * @param id        component id to find
+     * @return an {@link Optional} describing the found own component,
+     * or an empty {@link Optional}
+     */
     public static Optional<Component> findOwnComponent(Component container, String id) {
         if (container instanceof ComponentContainer) {
             return ((ComponentContainer) container).findOwnComponent(id);
@@ -182,6 +237,15 @@ public final class UiComponentUtils {
         }
     }
 
+    /**
+     * Returns an {@link Optional} describing the component with given id
+     * from {@link HasSubParts} component, or an empty {@link Optional}.
+     *
+     * @param container the container to find component
+     * @param id        component id to find
+     * @return an {@link Optional} describing the found component,
+     * or an empty {@link Optional}
+     */
     public static Optional<Component> findSubPart(HasSubParts container, String id) {
         Object subPart = container.getSubPart(id);
 
@@ -204,11 +268,29 @@ public final class UiComponentUtils {
         }
     }
 
+    /**
+     * Returns whether the component has the same id as passed.
+     *
+     * @param component component to compare id
+     * @param id        id to compare
+     * @return {@code true} if the component has the same id as passed,
+     * {@code false} otherwise
+     */
     public static boolean sameId(Component component, String id) {
         Optional<String> componentId = component.getId();
         return componentId.isPresent() && id.equals(componentId.get());
     }
 
+    /**
+     * Returns an {@link Optional} describing the focusable component of passed
+     * view content with given id, or an empty {@link Optional}.
+     *
+     * @param view        view to find focusable component from
+     * @param componentId component id
+     * @return an {@link Optional} describing the focusable component,
+     * or an empty {@link Optional}
+     * @throws IllegalStateException if view content is not a container
+     */
     public static Optional<Focusable<?>> findFocusComponent(View<?> view, String componentId) {
         Optional<Component> optionalComponent = findComponent(view, componentId);
         if (optionalComponent.isEmpty()) {
@@ -226,6 +308,15 @@ public final class UiComponentUtils {
         }
     }
 
+    /**
+     * Returns an {@link Optional} describing the first focusable component of passed
+     * view content, or an empty {@link Optional}.
+     *
+     * @param view view to find focusable component from
+     * @return an {@link Optional} describing the first focusable component,
+     * or an empty {@link Optional}
+     * @throws IllegalStateException if view content is not a container
+     */
     public static Optional<Focusable<?>> findFocusComponent(View<?> view) {
         Component content = view.getContent();
         if (isContainer(content)) {
@@ -235,11 +326,29 @@ public final class UiComponentUtils {
         throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
     }
 
+    /**
+     * Returns an {@link Optional} describing the first focusable component of passed
+     * container component, or an empty {@link Optional}. If the child components of
+     * container contains containers then their child components are also checked.
+     *
+     * @param container container to find focusable component from
+     * @return an {@link Optional} describing the first focusable component,
+     * or an empty {@link Optional}
+     */
     public static Optional<Focusable<?>> findFocusComponent(Component container) {
         Collection<Component> ownComponents = getOwnComponents(container);
         return findFocusComponent(ownComponents);
     }
 
+    /**
+     * Returns an {@link Optional} describing the first focusable component of passed
+     * component collection, or an empty {@link Optional}. If the passed component
+     * collection contains containers then their child components are also checked.
+     *
+     * @param components component collection to find focusable component from
+     * @return an {@link Optional} describing the first focusable component,
+     * or an empty {@link Optional}
+     */
     public static Optional<Focusable<?>> findFocusComponent(Collection<Component> components) {
         for (Component child : components) {
             if (child instanceof Accordion
@@ -262,6 +371,13 @@ public final class UiComponentUtils {
         return Optional.empty();
     }
 
+    /**
+     * Returns whether the passed component is a container, i.e. can have child components.
+     *
+     * @param component the component to test
+     * @return Returns {@code true} if the passed component is a container,
+     * {@code false} otherwise
+     */
     public static boolean isContainer(Component component) {
         return component instanceof ComponentContainer
                 || component instanceof HasComponents;
@@ -281,6 +397,12 @@ public final class UiComponentUtils {
         return component.isVisible();
     }
 
+    /**
+     * Returns a dialog to which the passed component is attached, {@code null} otherwise.
+     *
+     * @param component the component to find a parent dialog
+     * @return a dialog to which the passed component is attached, {@code null} otherwise
+     */
     @Nullable
     public static Dialog findDialog(Component component) {
         if (component instanceof Dialog) {
@@ -291,6 +413,13 @@ public final class UiComponentUtils {
         return parent.map(UiComponentUtils::findDialog).orElse(null);
     }
 
+    /**
+     * Returns a view to which the passed component is attached.
+     *
+     * @param component the component to find a parent view
+     * @return a view to which the passed component is attached
+     * @throws IllegalStateException if a component isn't attached to a view
+     */
     public static View<?> getView(Component component) {
         View<?> view = findView(component);
         if (view == null) {
@@ -301,6 +430,12 @@ public final class UiComponentUtils {
         return view;
     }
 
+    /**
+     * Returns a view to which the passed component is attached, {@code null} otherwise.
+     *
+     * @param component the component to find a parent view
+     * @return a view to which the passed component is attached, {@code null} otherwise
+     */
     @Nullable
     public static View<?> findView(Component component) {
         if (component instanceof View) {
@@ -328,7 +463,8 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Tests if component visible and its container visible.
+     * Tests if component is visible considering the visibility of
+     * its parent container recursively.
      *
      * @param child component
      * @return component visibility
@@ -342,7 +478,8 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Tests if component enabled and its container enabled.
+     * Tests if component is enabled considering the enabled state of
+     * its parent container recursively.
      *
      * @param child component
      * @return component enabled state
@@ -359,6 +496,14 @@ public final class UiComponentUtils {
                 || isComponentEnabled(child.getParent().get()));
     }
 
+    /**
+     * Returns {@code true} if the component is attached to a dialog
+     * window, {@code false} otherwise
+     *
+     * @param component the component to test
+     * @return {@code true} if the component is attached to a dialog
+     * window, {@code false} otherwise
+     */
     public static boolean isComponentAttachedToDialog(Component component) {
         Preconditions.checkNotNullArgument(component);
 
@@ -380,6 +525,14 @@ public final class UiComponentUtils {
         }
     }
 
+    /**
+     * Returns the value that represents an empty value of the passed component
+     * if it supports it.
+     *
+     * @param component the component to get empty value
+     * @param <V>       value type
+     * @return empty value
+     */
     @SuppressWarnings("unchecked")
     @Nullable
     public static <V> V getEmptyValue(Component component) {
@@ -388,6 +541,13 @@ public final class UiComponentUtils {
                 : null;
     }
 
+    /**
+     * Returns the current value of the passed component considering {@link SupportsTypedValue}.
+     *
+     * @param component the component to get value
+     * @param <V>       value type
+     * @return the current component value
+     */
     @SuppressWarnings("unchecked")
     @Nullable
     public static <V> V getValue(HasValue<?, V> component) {
@@ -396,6 +556,13 @@ public final class UiComponentUtils {
                 : component.getValue();
     }
 
+    /**
+     * Sets the current value of the passed component considering {@link SupportsTypedValue}.
+     *
+     * @param component the component to set value
+     * @param value     the value to set
+     * @param <V>       value type
+     */
     @SuppressWarnings("unchecked")
     public static <V> void setValue(HasValue<?, V> component, @Nullable V value) {
         if (component instanceof SupportsTypedValue) {

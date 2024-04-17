@@ -23,6 +23,7 @@ vaadin-form-item[theme~='jmix-group-filter-form-item']:not([label-position='top'
 }
 
 vaadin-form-item[theme~='label-align-end']:not([label-position='top'])::part(label) {
-  display: flex;
-  justify-content: end;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

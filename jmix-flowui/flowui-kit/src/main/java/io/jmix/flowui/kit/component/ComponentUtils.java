@@ -22,11 +22,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.icon.AbstractIcon;
-import com.vaadin.flow.component.icon.FontIcon;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.SvgIcon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.icon.*;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -45,6 +41,11 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Utility class working with Vaadin UI components.
+ *
+ * @see com.vaadin.flow.component.ComponentUtil
+ */
 public final class ComponentUtils {
 
     private static final String SIZE_PATTERN_REGEXP =
@@ -55,6 +56,16 @@ public final class ComponentUtils {
     private ComponentUtils() {
     }
 
+    /**
+     * Creates a new {@link Icon} instance with the icon determined by the
+     * passed string. If a passed string contains ':' delimiter then a new
+     * {@link Icon} is created using icon collection and icon name values,
+     * otherwise the passed string is considered as {@link VaadinIcon} constant
+     * name.
+     *
+     * @param iconString a string representing an icon
+     * @return a new instance of {@link Icon} component
+     */
     public static Icon parseIcon(String iconString) {
         if (iconString.contains(":")) {
             String[] parts = iconString.split(":");
@@ -69,6 +80,12 @@ public final class ComponentUtils {
         }
     }
 
+    /**
+     * Creates a new {@link Icon} instance with the icon determined by the passed {@link VaadinIcon}.
+     *
+     * @param icon a {@link VaadinIcon} instance
+     * @return a new instance of {@link Icon} component
+     */
     @Nullable
     public static Icon convertToIcon(@Nullable VaadinIcon icon) {
         return icon != null ? icon.create() : null;
@@ -174,6 +191,15 @@ public final class ComponentUtils {
                 .forEach(element::removeChild);
     }
 
+    /**
+     * Returns the index of the first occurrence of the action with specified id
+     * in the passed actions list, or -1 if this list does not contain the action.
+     *
+     * @param actions  actions list to search from
+     * @param actionId action id to search for
+     * @return the index of the first occurrence of the action with specified id
+     * in the passed actions list, or -1 if this list does not contain the action
+     */
     public static int findActionIndexById(List<Action> actions, String actionId) {
         int index = -1;
         for (int i = 0; i < actions.size(); i++) {
@@ -187,36 +213,98 @@ public final class ComponentUtils {
         return index;
     }
 
+    /**
+     * Sets key set from passed {@link Map} as component's items and {@link Map}
+     * values as visual representation of corresponding item, effectively defining
+     * {@link ItemLabelGenerator}.
+     *
+     * @param component the component to set items and {@link ItemLabelGenerator}
+     * @param items     a map to be used as a source of items and their visual representation
+     * @param <T>       the component items type
+     */
     public static <T> void setItemsMap(CheckboxGroup<T> component, Map<T, String> items) {
         setItemsMapInternal(component, items);
         component.setItemLabelGenerator(createItemLabelGenerator(items));
     }
 
+    /**
+     * Sets key set from passed {@link Map} as component's items and {@link Map}
+     * values as visual representation of corresponding item, effectively defining
+     * {@link ItemLabelGenerator}.
+     *
+     * @param component the component to set items and {@link ItemLabelGenerator}
+     * @param items     a map to be used as a source of items and their visual representation
+     * @param <T>       the component items type
+     */
     public static <T> void setItemsMap(RadioButtonGroup<T> component, Map<T, String> items) {
         setItemsMapInternal(component, items);
         component.setItemLabelGenerator(createItemLabelGenerator(items));
     }
 
+    /**
+     * Sets key set from passed {@link Map} as component's items and {@link Map}
+     * values as visual representation of corresponding item, effectively defining
+     * {@link ItemLabelGenerator}.
+     *
+     * @param component the component to set items and {@link ItemLabelGenerator}
+     * @param items     a map to be used as a source of items and their visual representation
+     * @param <T>       the component items type
+     */
     public static <T> void setItemsMap(ListBox<T> component, Map<T, String> items) {
         setItemsMapInternal(component, items);
         component.setItemLabelGenerator(createItemLabelGenerator(items));
     }
 
+    /**
+     * Sets key set from passed {@link Map} as component's items and {@link Map}
+     * values as visual representation of corresponding item, effectively defining
+     * {@link ItemLabelGenerator}.
+     *
+     * @param component the component to set items and {@link ItemLabelGenerator}
+     * @param items     a map to be used as a source of items and their visual representation
+     * @param <T>       the component items type
+     */
     public static <T> void setItemsMap(MultiSelectListBox<T> component, Map<T, String> items) {
         setItemsMapInternal(component, items);
         component.setItemLabelGenerator(createItemLabelGenerator(items));
     }
 
+    /**
+     * Sets key set from passed {@link Map} as component's items and {@link Map}
+     * values as visual representation of corresponding item, effectively defining
+     * {@link ItemLabelGenerator}.
+     *
+     * @param component the component to set items and {@link ItemLabelGenerator}
+     * @param items     a map to be used as a source of items and their visual representation
+     * @param <T>       the component items type
+     */
     public static <T> void setItemsMap(ComboBox<T> component, Map<T, String> items) {
         setItemsMapInternal(component, items);
         component.setItemLabelGenerator(createItemLabelGenerator(items));
     }
 
+    /**
+     * Sets key set from passed {@link Map} as component's items and {@link Map}
+     * values as visual representation of corresponding item, effectively defining
+     * {@link ItemLabelGenerator}.
+     *
+     * @param component the component to set items and {@link ItemLabelGenerator}
+     * @param items     a map to be used as a source of items and their visual representation
+     * @param <T>       the component items type
+     */
     public static <T> void setItemsMap(Select<T> component, Map<T, String> items) {
         setItemsMapInternal(component, items);
         component.setItemLabelGenerator(createItemLabelGenerator(items));
     }
 
+    /**
+     * Sets key set from passed {@link Map} as component's items and {@link Map}
+     * values as visual representation of corresponding item, effectively defining
+     * {@link ItemLabelGenerator}.
+     *
+     * @param component the component to set items and {@link ItemLabelGenerator}
+     * @param items     a map to be used as a source of items and their visual representation
+     */
     public static void setItemsMap(EnhancedLoginForm component, Map<Locale, String> items) {
         component.setLocaleItems(items.keySet());
         component.setLocaleItemLabelGenerator(createItemLabelGenerator(items));
@@ -230,6 +318,13 @@ public final class ComponentUtils {
         return item -> items.getOrDefault(item, item != null ? String.valueOf(item) : "");
     }
 
+    /**
+     * Checks if a passed string represents 'auto' size. Should be in a format
+     * understood by the browser, e.g. "100px" or "2.5em".
+     *
+     * @param size a
+     * @return {@code true} if passed string represents 'auto' size, {@code false} otherwise
+     */
     public static boolean isAutoSize(@Nullable String size) {
         // CSS attribute is removed if null or empty value passed,
         // so default 'auto' size will be used.
@@ -254,6 +349,14 @@ public final class ComponentUtils {
         return Strings.isNullOrEmpty(sizeValue) || Strings.isNullOrEmpty(sizeUnit);
     }
 
+    /**
+     * Sets the component visibility value. If the component is wrapped
+     * inside {@link FormLayout.FormItem} then its visibility value is
+     * also changed.
+     *
+     * @param component the component to set visibility value
+     * @param visible   the component visibility value
+     */
     public static void setVisible(Component component, boolean visible) {
         component.setVisible(visible);
 
@@ -264,6 +367,14 @@ public final class ComponentUtils {
         });
     }
 
+    /**
+     * Sets the component enabled state. If the component is wrapped
+     * inside {@link FormLayout.FormItem} then its enabled state is
+     * also changed.
+     *
+     * @param hasEnabled the component to set enabled state
+     * @param enabled    the component enabled state
+     */
     public static void setEnabled(HasEnabled hasEnabled, boolean enabled) {
         hasEnabled.setEnabled(enabled);
 
@@ -276,6 +387,14 @@ public final class ComponentUtils {
         }
     }
 
+    /**
+     * Gets the component visibility value. Throws an exception
+     * if a passed object is not a component.
+     *
+     * @param component the component to get visibility value
+     * @return {@code true} if the component is visible, {@code false} otherwise
+     * @throws IllegalArgumentException if a passed object is not a component
+     */
     public static boolean isVisible(Object component) {
         Preconditions.checkArgument(component != null, "Passed object is null");
 

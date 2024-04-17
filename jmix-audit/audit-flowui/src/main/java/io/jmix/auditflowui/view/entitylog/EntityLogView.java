@@ -886,9 +886,18 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
             List<Object> importedEntities = getImportedEntityList(event.getFileName(), bytes);
 
-            if (importedEntities.size() > 0) {
+            if (!importedEntities.isEmpty()) {
                 loggedEntityDl.load();
-                loggedAttrDl.load();
+                List<LoggedEntity> entityLogImportedList = importedEntities.stream()
+                        .filter(entity -> entity instanceof LoggedEntity)
+                        .map(entity -> (LoggedEntity) entity)
+                        .toList();
+
+                if(entityLogImportedList.size() == 1) {
+                    LoggedEntity entity = entityLogImportedList.get(0);
+                    loggedAttrDl.setParameter("entityId", entity.getId());
+                    loggedAttrDl.load();
+                }
 
                 notifications.create(messages.getMessage(EntityLogView.class, "importSuccessful"))
                         .withType(Notifications.Type.SUCCESS)

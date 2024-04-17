@@ -17,6 +17,8 @@
 package io.jmix.reportsflowui.view.report;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
@@ -119,11 +121,6 @@ public class ReportListView extends StandardListView<Report> {
     }
 
     private void initColumnDataGrid() {
-        reportsDataGrid.addColumn(report -> metadataTools.getInstanceName(report))
-                .setKey("name")
-                .setHeader(messageBundle.getMessage("reportsDataGrid.name.header"))
-                .setResizable(true)
-                .setSortable(true);
 
         List<Grid.Column<Report>> columnList = Arrays.asList(
                 reportsDataGrid.getColumnByKey("name"),
@@ -133,6 +130,12 @@ public class ReportListView extends StandardListView<Report> {
         );
 
         reportsDataGrid.setColumnOrder(columnList);
+    }
+
+    @Supply(to = "reportsDataGrid.name", subject = "renderer")
+    private Renderer<Report> nameCellRenderer() {
+        return new TextRenderer<>(report ->
+                metadataTools.getInstanceName(report));
     }
 
     @Subscribe("reportsDataGrid.runReport")

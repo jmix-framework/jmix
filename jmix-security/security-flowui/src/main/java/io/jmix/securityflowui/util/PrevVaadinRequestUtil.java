@@ -26,6 +26,9 @@ import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.server.auth.NavigationAccessControl;
 import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.flow.spring.VaadinConfigurationProperties;
+import io.jmix.core.AccessManager;
+import io.jmix.flowui.accesscontext.UiShowViewContext;
+import io.jmix.flowui.sys.ViewDescriptorUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,9 @@ public class PrevVaadinRequestUtil {
 
     @Autowired
     private AccessAnnotationChecker accessAnnotationChecker;
+
+    @Autowired
+    private AccessManager accessManager;
 
     @Autowired
     private VaadinConfigurationProperties configurationProperties;
@@ -100,11 +106,18 @@ public class PrevVaadinRequestUtil {
 
         // Check if a not authenticated user can access the view
         boolean result = accessAnnotationChecker.hasAccess(targetView, null,
-                role -> false);
+                role -> false) || isViewHasSecurityPermission(targetView);
         if (result) {
             getLogger().debug(path + " refers to a public view");
         }
         return result;
+    }
+
+    protected boolean isViewHasSecurityPermission(Class<?> target) {
+        String viewId = ViewDescriptorUtils.getInferredViewId(target);
+        UiShowViewContext context = new UiShowViewContext(viewId);
+        accessManager.applyRegisteredConstraints(context);
+        return context.isPermitted();
     }
 
     private Logger getLogger() {

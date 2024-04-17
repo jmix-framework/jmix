@@ -24,7 +24,6 @@ import io.jmix.core.Resources;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrflowui.facet.DynAttrFacet;
-import io.jmix.flowui.component.formlayout.JmixFormLayout;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +43,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 @Component("dynattr_DynAttrFacetInfo")
 public class DynAttrFacetInfo {
-
+    private static final String DATAGRID_XML_TAG = "dataGrid";
+    private static final String FORM_LAYOUT_XML_TAG = "formLayout";
     private static final Logger log = LoggerFactory.getLogger(DynAttrFacetInfo.class);
 
     protected final ViewRegistry viewRegistry;
@@ -222,9 +222,12 @@ public class DynAttrFacetInfo {
 
     private void findTargetElementNames(List<String> targetElementList, Element searchElement) {
         for (var child : searchElement.elements()) {
-            if (child.getQName().getName().equals(JmixFormLayout.QUALIFIED_XML_NAME) ||
-                    child.getQName().getName().equals("dataGrid")) {
-                targetElementList.add(child.attributeValue("id"));
+            if (child.getQName().getName().equals(FORM_LAYOUT_XML_TAG) ||
+                    child.getQName().getName().equals(DATAGRID_XML_TAG)) {
+                String idAttribute = child.attributeValue("id");
+                if (StringUtils.isNotBlank(idAttribute)) {
+                    targetElementList.add(idAttribute);
+                }
             }
             if (!child.elements().isEmpty()) {
                 findTargetElementNames(targetElementList, child);

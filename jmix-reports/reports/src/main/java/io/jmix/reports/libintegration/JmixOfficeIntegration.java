@@ -15,13 +15,13 @@
  */
 package io.jmix.reports.libintegration;
 
+import com.sun.star.comp.helper.BootstrapException;
 import io.jmix.reports.yarg.exception.OpenOfficeException;
 import io.jmix.reports.yarg.exception.ReportingInterruptedException;
 import io.jmix.reports.yarg.formatters.impl.doc.connector.NoFreePortsException;
 import io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeConnection;
 import io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeIntegration;
 import io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeTask;
-import com.sun.star.comp.helper.BootstrapException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 

@@ -15,6 +15,7 @@
  */
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
+import io.jmix.core.FileStorageException;
 import io.jmix.reports.yarg.exception.OpenOfficeException;
 import io.jmix.reports.yarg.exception.ReportFormattingException;
 import io.jmix.reports.yarg.formatters.impl.doc.OfficeInputStream;
@@ -160,7 +161,11 @@ public class OfficeResourceProvider {
             String tempFileExt = ".tmp";
             if (StringUtils.isNotBlank(officeIntegration.getTemporaryDirPath())) {
                 Path tempDir = Paths.get(officeIntegration.getTemporaryDirPath());
-                tempDir.toFile().mkdirs();
+
+                if (!tempDir.toFile().exists() && !tempDir.toFile().mkdirs()) {
+                    throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
+                            "Cannot create directory: " + tempDir.toAbsolutePath());
+                }
 
                 temporaryFile = Files.createTempFile(
                         tempDir,

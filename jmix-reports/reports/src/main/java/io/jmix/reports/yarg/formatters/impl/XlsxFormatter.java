@@ -17,6 +17,7 @@ package io.jmix.reports.yarg.formatters.impl;
 
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.LinkedHashMultimap;
+import com.opencsv.CSVWriter;
 import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverter;
@@ -27,7 +28,6 @@ import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reports.yarg.structure.BandVisitor;
 import io.jmix.reports.yarg.structure.ReportOutputType;
 import io.jmix.reports.yarg.util.docx4j.XmlCopyUtils;
-import com.opencsv.CSVWriter;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,17 +57,21 @@ import org.xlsx4j.jaxb.Context;
 import org.xlsx4j.sml.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 
 public class XlsxFormatter extends AbstractFormatter {
+
+    protected static final Logger log = LoggerFactory.getLogger(XlsxFormatter.class);
+
     private static final String TRUE_AS_STRING = "1";
     private static final String FALSE_AS_STRING = "0";
 
     protected DocumentConverter documentConverter;
     protected Document template;
-    protected Document result;
 
+    protected Document result;
     protected RangeDependencies rangeDependencies = new RangeDependencies();
     protected BandsForRanges bandsForRanges = new BandsForRanges();
     protected LinkedHashMultimap<Range, Range> rangeVerticalIntersections = LinkedHashMultimap.create();
@@ -86,8 +90,6 @@ public class XlsxFormatter extends AbstractFormatter {
 
     protected Unmarshaller unmarshaller;
     protected Marshaller marshaller;
-
-    protected static final Logger log = LoggerFactory.getLogger(XlsxFormatter.class);
 
     public XlsxFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -175,7 +177,7 @@ public class XlsxFormatter extends AbstractFormatter {
                     } else {
                         throw new UnsupportedOperationException(
                                 "XlsxFormatter could not convert result to pdf without Libre/Open office connected. " +
-                                        "Please setup Libre/Open office connection details.");
+                                "Please setup Libre/Open office connection details.");
                     }
                 } else if (ReportOutputType.html.equals(outputType)) {
                     if (documentConverter != null) {
@@ -184,7 +186,7 @@ public class XlsxFormatter extends AbstractFormatter {
                     } else {
                         throw new UnsupportedOperationException(
                                 "XlsxFormatter could not convert result to html without Libre/Open office connected. " +
-                                        "Please setup Libre/Open office connection details.");
+                                "Please setup Libre/Open office connection details.");
                     }
                 } else {
                     throw new UnsupportedOperationException(String.format("XlsxFormatter could not output file with type [%s]", outputType));
@@ -201,7 +203,7 @@ public class XlsxFormatter extends AbstractFormatter {
 
     protected boolean isFormulasPostProcessingEvaluationRequired() {
         return formulasPostProcessingEvaluationEnabled
-                && (innerFormulas.size() > 0 || outerFormulas.size() > 0);
+               && (innerFormulas.size() > 0 || outerFormulas.size() > 0);
     }
 
     protected ByteArrayOutputStream evaluateFormulas(byte[] content) {
@@ -656,7 +658,7 @@ public class XlsxFormatter extends AbstractFormatter {
 
         //we suppose that when we render HORIZONTAL first level band, it should not be any right offset
         if (isFirstLevelBand ||
-                (previousRangeBandData != null && !previousRangeBandData.getParentBand().equals(band.getParentBand()))) {
+            (previousRangeBandData != null && !previousRangeBandData.getParentBand().equals(band.getParentBand()))) {
             setPreviousRangeVerticalOffset(0, null);
         }
 
@@ -840,10 +842,10 @@ public class XlsxFormatter extends AbstractFormatter {
     protected Row createNewRow(Worksheet resultSheet) {
         Row newRow = Context.getsmlObjectFactory().createRow();
         Long currentRow = lastRowForSheet.get(resultSheet);
-        currentRow = currentRow != null ? currentRow : 0;
-        currentRow++;
-        newRow.setR(currentRow);
-        lastRowForSheet.put(resultSheet, currentRow);
+        Long newCurrentRow = currentRow != null ? currentRow + 1 : 0;
+
+        newRow.setR(newCurrentRow);
+        lastRowForSheet.put(resultSheet, newCurrentRow);
         resultSheet.getSheetData().getRow().add(newRow);
         newRow.setParent(resultSheet.getSheetData());
 
@@ -1041,7 +1043,8 @@ public class XlsxFormatter extends AbstractFormatter {
     }
 
     protected void saveXlsxAsCsv(Document document, OutputStream outputStream) throws IOException, Docx4JException {
-        CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream), ';', CSVWriter.DEFAULT_QUOTE_CHARACTER,
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), ';',
+                CSVWriter.DEFAULT_QUOTE_CHARACTER,
                 CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
         for (Document.SheetWrapper sheetWrapper : document.getWorksheets()) {

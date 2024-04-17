@@ -15,18 +15,18 @@
  */
 package io.jmix.reports.libintegration;
 
-import io.jmix.reports.yarg.formatters.impl.DefaultFormatProvider;
-import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Entity;
+import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.reports.yarg.formatters.impl.ValueFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
-public class JmixFieldFormatProvider implements DefaultFormatProvider {
+public class JmixFieldFormatProvider implements ValueFormat {
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

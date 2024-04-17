@@ -15,19 +15,19 @@
  */
 package io.jmix.reports.yarg.formatters.impl;
 
-import io.jmix.reports.yarg.exception.ReportingException;
-import io.jmix.reports.yarg.exception.UnsupportedFormatException;
-import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
-import io.jmix.reports.yarg.formatters.factory.HtmlToPdfConverterFactory;
-import io.jmix.reports.yarg.formatters.impl.pdf.ITextPdfConverter;
-import io.jmix.reports.yarg.formatters.impl.pdf.HtmlToPdfConverter;
-import io.jmix.reports.yarg.structure.BandData;
-import io.jmix.reports.yarg.structure.ReportOutputType;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.MapModel;
 import freemarker.template.*;
 import groovy.text.GStringTemplateEngine;
+import io.jmix.reports.yarg.exception.ReportingException;
+import io.jmix.reports.yarg.exception.UnsupportedFormatException;
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
+import io.jmix.reports.yarg.formatters.factory.HtmlToPdfConverterFactory;
+import io.jmix.reports.yarg.formatters.impl.pdf.HtmlToPdfConverter;
+import io.jmix.reports.yarg.formatters.impl.pdf.ITextPdfConverter;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.ReportOutputType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -82,9 +82,8 @@ public class HtmlFormatter extends AbstractFormatter {
             ByteArrayOutputStream htmlOutputStream = new ByteArrayOutputStream();
             writeHtmlDocument(rootBand, htmlOutputStream);
 
-            String htmlContent = new String(htmlOutputStream.toByteArray());
+            String htmlContent = htmlOutputStream.toString(StandardCharsets.UTF_8);
             renderPdfDocument(htmlContent, outputStream);
-
         } else {
             throw new UnsupportedFormatException();
         }
@@ -120,8 +119,8 @@ public class HtmlFormatter extends AbstractFormatter {
     }
 
     /**
-     * @deprecated
      * @see #loadFonts(HtmlToPdfConverter)
+     * @deprecated
      */
     @Deprecated
     protected void loadFonts(ITextRenderer renderer) {
@@ -129,8 +128,8 @@ public class HtmlFormatter extends AbstractFormatter {
     }
 
     /**
-     * @deprecated
      * @see #loadFontsFromDirectory(HtmlToPdfConverter, File)
+     * @deprecated
      */
     @Deprecated
     protected void loadFontsFromDirectory(ITextRenderer renderer, File fontsDir) {

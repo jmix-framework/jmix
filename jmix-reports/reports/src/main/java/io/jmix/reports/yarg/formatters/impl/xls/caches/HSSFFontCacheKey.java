@@ -31,7 +31,7 @@ public class HSSFFontCacheKey implements Serializable {
     public HSSFFontCacheKey(HSSFFont font) {
         this.font = font;
         if (font != null) {
-            this.fontRecord = XslStyleHelper.getFieldValue(font, "font");
+            this.fontRecord = XslStyleHelper.getFontRecord(font);
         } else {
             this.fontRecord = null;
         }

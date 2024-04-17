@@ -45,8 +45,6 @@ import static java.lang.String.format;
 public class Reporting implements ReportingAPI {
     protected ReportFormatterFactory formatterFactory;
 
-    protected ReportLoaderFactory loaderFactory;
-
     protected DataExtractor dataExtractor;
 
     protected ObjectToStringConverter objectToStringConverter = new ObjectToStringConverterImpl();
@@ -58,7 +56,6 @@ public class Reporting implements ReportingAPI {
     }
 
     public void setLoaderFactory(ReportLoaderFactory loaderFactory) {
-        this.loaderFactory = loaderFactory;
         if (loaderFactory != null && dataExtractor == null) {
             dataExtractor = new DataExtractorImpl(loaderFactory);
         }
@@ -215,7 +212,7 @@ public class Reporting implements ReportingAPI {
                     if (fileName == null) {
                         throw new ReportingException(
                                 format("No data in band [%s] parameter [%s] found. " +
-                                        "This band and parameter is used for output file name generation.", bandWithFileName, paramName));
+                                       "This band and parameter is used for output file name generation.", bandWithFileName, paramName));
                     } else {
                         outputName = matcher.replaceFirst(fileName.toString());
                     }
@@ -228,7 +225,7 @@ public class Reporting implements ReportingAPI {
         }
 
         if (ReportOutputType.custom != reportTemplate.getOutputType()) {
-            ReportOutputType finalOutputType = (outputType != null ) ? outputType : reportTemplate.getOutputType();
+            ReportOutputType finalOutputType = (outputType != null) ? outputType : reportTemplate.getOutputType();
             outputName = format("%s.%s", StringUtils.substringBeforeLast(outputName, "."), finalOutputType.getId());
         }
 

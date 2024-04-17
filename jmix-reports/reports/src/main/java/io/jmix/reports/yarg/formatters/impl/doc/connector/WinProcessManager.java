@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -51,10 +52,10 @@ public class WinProcessManager extends JavaProcessManager implements ProcessMana
                 localAddress = matcher.group(1);
                 String value = matcher.group(2);
                 if (isNotBlank(value))
-                    localPort = Integer.valueOf(value);
+                    localPort = Integer.parseInt(value);
                 value = matcher.group(5);
                 if (isNotBlank(value))
-                    pid = Long.valueOf(value);
+                    pid = Long.parseLong(value);
             }
         }
     }
@@ -66,9 +67,9 @@ public class WinProcessManager extends JavaProcessManager implements ProcessMana
             if ("localhost".equalsIgnoreCase(host))
                 host = LOCAL_HOST;
             Process process = Runtime.getRuntime().exec(String.format(FIND_PID_COMMAND, port));
-            List r = IOUtils.readLines(process.getInputStream());
-            for (Object output : r) {
-                NetStatInfo info = new NetStatInfo((String) output);
+            List<String> r = IOUtils.readLines(process.getInputStream(), StandardCharsets.UTF_8);
+            for (String output : r) {
+                NetStatInfo info = new NetStatInfo(output);
                 if (info.localPort == port && Objects.equals(host, info.localAddress))
                     return Collections.singletonList(info.pid);
             }

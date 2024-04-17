@@ -26,6 +26,8 @@ import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 
@@ -49,6 +51,8 @@ import java.util.function.Supplier;
  * complaining about "no office executable found!".
  */
 public class BootstrapConnector {
+
+    private static final Logger log = LoggerFactory.getLogger(BootstrapConnector.class);
 
     /**
      * The OOo server.
@@ -172,10 +176,10 @@ public class BootstrapConnector {
             // get desktop to terminate office
             Object desktop = xRemoteContext.getServiceManager().createInstanceWithContext(
                     "com.sun.star.frame.Desktop", xRemoteContext);
-            XDesktop xDesktop = (XDesktop) UnoRuntime.queryInterface(XDesktop.class, desktop);
+            XDesktop xDesktop = UnoRuntime.queryInterface(XDesktop.class, desktop);
             xDesktop.terminate();
         } catch (Exception e) {
-            // Bad luck, unable to terminate office
+            log.error("Unable to terminate office", e);
         }
 
         oooServer.kill();
@@ -205,7 +209,7 @@ public class BootstrapConnector {
             ConnectionSetupException, IllegalArgumentException, NoConnectException {
 
         Object context = xUrlResolver.resolve(oooConnectionString);
-        XComponentContext xContext = (XComponentContext) UnoRuntime.queryInterface(XComponentContext.class, context);
+        XComponentContext xContext = UnoRuntime.queryInterface(XComponentContext.class, context);
         if (xContext == null) {
             throw new BootstrapException("no component context!");
         }

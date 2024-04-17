@@ -34,11 +34,15 @@ public class XslStyleHelper {
     }
 
     public static ExtendedFormatRecord getFormatFromStyle(HSSFCellStyle style) {
-        return XslStyleHelper.getFieldValue(style, "_format");
+        return getFieldValue(style, "_format");
     }
 
     public static InternalWorkbook getWorkbookFromStyle(HSSFCellStyle style) {
-        return XslStyleHelper.getFieldValue(style, "_workbook");
+        return getFieldValue(style, "_workbook");
+    }
+
+    public static FontRecord getFontRecord(HSSFFont font) {
+        return XslStyleHelper.getFieldValue(font, "font");
     }
 
     public static void cloneStyleRelations(HSSFCellStyle source, HSSFCellStyle target) {
@@ -63,37 +67,30 @@ public class XslStyleHelper {
             FontRecord fr = targetWorkbook.createNewFont();
             fr.cloneStyleFrom(sourceWorkbook.getFontRecordAt(source.getFontIndex()));
             HSSFFont font = newInstance(HSSFFont.class, new Class[]{int.class, FontRecord.class},
-                    (short)targetWorkbook.getFontIndex(fr), fr);
+                    (short) targetWorkbook.getFontIndex(fr), fr);
             target.setFont(font);
         }
     }
 
 
     @SuppressWarnings("unchecked")
-    public static <T> T getFieldValue(Object obj, String fieldName) {
+    private static <T> T getFieldValue(Object obj, String fieldName) {
         try {
             Field field = obj.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
             return (T) field.get(obj);
-        } catch (NoSuchFieldException e) {
-            throw new IllegalStateException(format("Unable to access field '%s' for %s", fieldName, obj.getClass().getSimpleName()), e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new IllegalStateException(format("Unable to access field '%s' for %s", fieldName, obj.getClass().getSimpleName()), e);
         }
     }
 
-    protected static <T> T newInstance(Class<T> clazz, Class<?>[] parameterTypes, Object... args) {
+    private static <T> T newInstance(Class<T> clazz, Class<?>[] parameterTypes, Object... args) {
         try {
             Constructor<T> constructor = clazz.getDeclaredConstructor(parameterTypes);
             constructor.setAccessible(true);
             return constructor.newInstance(args);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException(format("Unable to instantiate %s", clazz), e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(format("Unable to instantiate %s", clazz), e);
-        } catch (InstantiationException e) {
-            throw new IllegalStateException(format("Unable to instantiate %s", clazz), e);
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
+                 InvocationTargetException e) {
             throw new IllegalStateException(format("Unable to instantiate %s", clazz), e);
         }
     }

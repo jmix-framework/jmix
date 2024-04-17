@@ -15,6 +15,7 @@
  */
 package io.jmix.reports.yarg.formatters.factory;
 
+import io.jmix.reports.libintegration.JmixFieldFormatProvider;
 import io.jmix.reports.yarg.exception.UnsupportedFormatException;
 import io.jmix.reports.yarg.formatters.ReportFormatter;
 import io.jmix.reports.yarg.formatters.factory.inline.DefaultInlinersProvider;
@@ -37,7 +38,7 @@ import java.util.Map;
 public class DefaultFormatterFactory implements ReportFormatterFactory {
     protected OfficeIntegrationAPI officeIntegration;
     protected DocumentConverter documentConverter;
-    protected DefaultFormatProvider defaultFormatProvider;
+    protected JmixFieldFormatProvider defaultFormatProvider;
     protected HtmlImportProcessor htmlImportProcessor;
     protected HtmlToPdfConverterFactory htmlToPdfConverterFactory;
     protected String fontsDirectory;
@@ -119,7 +120,7 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
         this.htmlImportProcessor = htmlImportProcessor;
     }
 
-    public void setDefaultFormatProvider(DefaultFormatProvider defaultFormatProvider) {
+    public void setDefaultFormatProvider(JmixFieldFormatProvider defaultFormatProvider) {
         this.defaultFormatProvider = defaultFormatProvider;
     }
 

@@ -23,11 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ObjectToStringConverterImpl extends AbstractObjectToStringConverter {
-    public static final SimpleDateFormat DEFAULT_DATETIME_FORMAT = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-    public static final SimpleDateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
-    protected SimpleDateFormat dateTimeFormat = DEFAULT_DATETIME_FORMAT;
-    protected SimpleDateFormat dateFormat = DEFAULT_DATE_FORMAT;
+    private final SimpleDateFormat DEFAULT_DATETIME_FORMAT = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+    private final SimpleDateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
     @Override
     public String convertToString(Class parameterClass, Object paramValue) {
@@ -36,7 +34,7 @@ public class ObjectToStringConverterImpl extends AbstractObjectToStringConverter
         } else if (String.class.isAssignableFrom(parameterClass)) {
             return (String) paramValue;
         } else if (Date.class.isAssignableFrom(parameterClass)) {
-            return dateTimeFormat.format(paramValue);
+            return DEFAULT_DATETIME_FORMAT.format(paramValue);
         }
 
         return String.valueOf(paramValue);
@@ -63,14 +61,14 @@ public class ObjectToStringConverterImpl extends AbstractObjectToStringConverter
 
     private Date parseDate(String paramValueStr) {
         try {
-            return dateTimeFormat.parse(paramValueStr);
+            return DEFAULT_DATETIME_FORMAT.parse(paramValueStr);
         } catch (ParseException e) {
             try {
-                return dateFormat.parse(paramValueStr);
+                return DEFAULT_DATE_FORMAT.parse(paramValueStr);
             } catch (ParseException e1) {
                 throw new ReportingException(
                         String.format("Couldn't read date from value [%s]. Date format should be [%s].",
-                                paramValueStr, dateTimeFormat.toPattern()));
+                                paramValueStr, DEFAULT_DATETIME_FORMAT.toPattern()));
             }
         }
     }

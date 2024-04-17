@@ -198,7 +198,6 @@ public class DocFormatter extends AbstractFormatter {
             throws com.sun.star.uno.Exception {
         // Lock clipboard, cause uno uses it to grow tables, relevant for desktops
         synchronized (clipboardLock) {
-            XTextTable xTextTable = tableManager.getXTextTable();
             if (officeIntegration.isDisplayDeviceAvailable()) {
                 clearClipboard();
             }

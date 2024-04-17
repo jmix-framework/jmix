@@ -16,6 +16,7 @@
 package io.jmix.reports.yarg.formatters.impl;
 
 import com.google.common.base.Preconditions;
+import io.jmix.reports.libintegration.JmixFieldFormatProvider;
 import io.jmix.reports.yarg.exception.ReportFormattingException;
 import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.exception.ReportingInterruptedException;
@@ -64,7 +65,7 @@ public abstract class AbstractFormatter implements ReportFormatter {
     protected ReportOutputType outputType;
     protected OutputStream outputStream;
     protected Set<ReportOutputType> supportedOutputTypes = new HashSet<>();
-    protected DefaultFormatProvider defaultFormatProvider;
+    protected JmixFieldFormatProvider defaultFormatProvider;
     protected Scripting scripting = new DefaultScriptingImpl();
 
     /**
@@ -104,7 +105,7 @@ public abstract class AbstractFormatter implements ReportFormatter {
         this.contentInliners = contentInliners;
     }
 
-    public void setDefaultFormatProvider(DefaultFormatProvider defaultFormatProvider) {
+    public void setDefaultFormatProvider(JmixFieldFormatProvider defaultFormatProvider) {
         this.defaultFormatProvider = defaultFormatProvider;
     }
 

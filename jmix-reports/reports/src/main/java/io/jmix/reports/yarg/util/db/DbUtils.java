@@ -16,6 +16,7 @@
 package io.jmix.reports.yarg.util.db;
 
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -86,10 +87,10 @@ public final class DbUtils {
      *
      * @param conn Connection to close.
      * @param stmt Statement to close.
-     * @param rs ResultSet to close.
+     * @param rs   ResultSet to close.
      */
     public static void closeQuietly(Connection conn, Statement stmt,
-            ResultSet rs) {
+                                    ResultSet rs) {
 
         try {
             closeQuietly(rs);
@@ -194,14 +195,14 @@ public final class DbUtils {
      * @param e SQLException to print stack trace of
      */
     public static void printStackTrace(SQLException e) {
-        printStackTrace(e, new PrintWriter(System.err));
+        printStackTrace(e, new PrintWriter(System.err, false, StandardCharsets.UTF_8));
     }
 
     /**
      * Print the stack trace for a SQLException to a
      * specified PrintWriter.
      *
-     * @param e SQLException to print stack trace of
+     * @param e  SQLException to print stack trace of
      * @param pw PrintWriter to print to
      */
     public static void printStackTrace(SQLException e, PrintWriter pw) {
@@ -222,14 +223,14 @@ public final class DbUtils {
      * @param conn Connection to print warnings from
      */
     public static void printWarnings(Connection conn) {
-        printWarnings(conn, new PrintWriter(System.err));
+        printWarnings(conn, new PrintWriter(System.err, false, StandardCharsets.UTF_8));
     }
 
     /**
      * Print warnings on a Connection to a specified PrintWriter.
      *
      * @param conn Connection to print warnings from
-     * @param pw PrintWriter to print to
+     * @param pw   PrintWriter to print to
      */
     public static void printWarnings(Connection conn, PrintWriter pw) {
         if (conn != null) {
@@ -243,6 +244,7 @@ public final class DbUtils {
 
     /**
      * Rollback any changes made on the given connection.
+     *
      * @param conn Connection to rollback.  A null value is legal.
      * @throws SQLException if a database access error occurs
      */

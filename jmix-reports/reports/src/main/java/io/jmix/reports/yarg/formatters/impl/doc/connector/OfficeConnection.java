@@ -15,7 +15,6 @@
  */
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
-import io.jmix.reports.yarg.exception.OpenOfficeException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.bridge.XBridge;
 import com.sun.star.bridge.XBridgeFactory;
@@ -23,6 +22,7 @@ import com.sun.star.connection.XConnection;
 import com.sun.star.connection.XConnector;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.XComponentContext;
+import io.jmix.reports.yarg.exception.OpenOfficeException;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -31,7 +31,6 @@ import static io.jmix.reports.yarg.formatters.impl.doc.UnoConverter.as;
 public class OfficeConnection {
     protected static AtomicLong bridgeIndex = new AtomicLong();
 
-    protected String openOfficePath;
     protected OOServer oooServer;
     protected Integer port;
     protected OfficeIntegration officeIntegration;
@@ -48,7 +47,6 @@ public class OfficeConnection {
         this.oooServer = new OOServer(openOfficePath, OOServer.getDefaultOOoOptions(),
                 "localhost", port, officeIntegration::getTemporaryDirPath, processManager);
         this.bsc = new BootstrapSocketConnector(oooServer, officeIntegration::getConnectionTimeoutSec);
-        this.openOfficePath = openOfficePath;
     }
 
     public OfficeResourceProvider getOOResourceProvider() {

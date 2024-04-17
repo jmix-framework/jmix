@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 public class OfficeIntegration implements OfficeIntegrationAPI {
+
     protected volatile boolean platformDependProcessManagement = true;
     protected final ExecutorService executor;
     protected final BlockingQueue<OfficeConnection> connectionsQueue = new LinkedBlockingDeque<>();
@@ -33,7 +34,6 @@ public class OfficeIntegration implements OfficeIntegrationAPI {
 
     protected String openOfficePath;
     protected String temporaryDirPath;
-    protected Integer[] openOfficePorts;
     protected Integer timeoutInSeconds = DEFAULT_TIMEOUT;
     protected int connectionTimeoutSec = DEFAULT_CONNECTION_TIMEOUT;
     protected int countOfRetry = DEFAULT_RETRY_COUNT;
@@ -42,7 +42,6 @@ public class OfficeIntegration implements OfficeIntegrationAPI {
 
     public OfficeIntegration(String openOfficePath, Integer... ports) {
         this.openOfficePath = openOfficePath;
-        this.openOfficePorts = ports;
         initConnections(ports);
         executor = createExecutor();
     }

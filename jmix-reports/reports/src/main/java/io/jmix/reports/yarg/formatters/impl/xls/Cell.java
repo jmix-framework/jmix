@@ -69,6 +69,13 @@ public class Cell {
     }
 
     @Override
+    public int hashCode() {
+        int result = row;
+        result = 31 * result + col;
+        return result;
+    }
+
+    @Override
     public String toString() {
         return Character.toString((char) ('A' + (char) (col))) + (row +1);
     }

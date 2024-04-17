@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -157,7 +158,7 @@ public class OOServer {
         new Thread(String.format("OOServer: %s", prefix)) {
             @Override
             public void run() {
-                BufferedReader r = new BufferedReader(new InputStreamReader(in));
+                BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
                 try {
                     for (; ; ) {
                         String s = r.readLine();

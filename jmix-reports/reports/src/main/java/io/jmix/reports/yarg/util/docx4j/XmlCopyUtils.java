@@ -27,15 +27,7 @@ import javax.xml.namespace.QName;
 
 public class XmlCopyUtils {
 
-    private final static String cellName;
-
-    static {
-        if (org.docx4j.XmlUtils.getTransformerFactory() != null) {
-            cellName = Cell.class.getSimpleName();
-        } else {
-            cellName = Cell.class.getSimpleName();
-        }
-    }
+    private final static String cellName = Cell.class.getSimpleName();
 
     private XmlCopyUtils() {
     }
@@ -126,36 +118,36 @@ public class XmlCopyUtils {
             throw new SAXNotRecognizedException(name);
         }
 
-        public void setEntityResolver(EntityResolver resolver) {
-            this.entityResolver = resolver;
-        }
-
         public EntityResolver getEntityResolver() {
             return entityResolver;
         }
 
-        public void setDTDHandler(DTDHandler handler) {
-            this.dtdHandler = handler;
+        public void setEntityResolver(EntityResolver resolver) {
+            this.entityResolver = resolver;
         }
 
         public DTDHandler getDTDHandler() {
             return dtdHandler;
         }
 
-        public void setContentHandler(ContentHandler handler) {
-            repeater.setContentHandler(handler);
+        public void setDTDHandler(DTDHandler handler) {
+            this.dtdHandler = handler;
         }
 
         public ContentHandler getContentHandler() {
             return repeater.getContentHandler();
         }
 
-        public void setErrorHandler(ErrorHandler handler) {
-            this.errorHandler = handler;
+        public void setContentHandler(ContentHandler handler) {
+            repeater.setContentHandler(handler);
         }
 
         public ErrorHandler getErrorHandler() {
             return errorHandler;
+        }
+
+        public void setErrorHandler(ErrorHandler handler) {
+            this.errorHandler = handler;
         }
 
         public void parse(InputSource input) throws SAXException {

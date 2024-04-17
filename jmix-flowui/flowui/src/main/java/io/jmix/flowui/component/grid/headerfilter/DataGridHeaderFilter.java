@@ -140,6 +140,10 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
             getContent().replace(this.headerComponent, headerComponent);
         }
 
+        if (headerComponent instanceof HasText hasText) {
+            propertyFilter.setLabel(hasText.getText());
+        }
+
         this.headerComponent = headerComponent;
     }
 

@@ -74,7 +74,7 @@
                                       requiredMessage="msg://entityClassField.required"/>
                             <comboBox id="screenField" label="msg://io.jmix.dynattr.model/CategoryAttribute.screen"
                                       required="true"
-                                      requiredMessage="msg://screenField.required"/>
+                                      requiredMessage="msg://viewField.required"/>
                             <textField id="rowsCountField" property="rowsCount">
                                 <validators>
                                     <min value="1" message="msg://rowsCountField.validationMessage"/>

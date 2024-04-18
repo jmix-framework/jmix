@@ -24,6 +24,8 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <settings id="facet" auto="true"/>
+        <urlQueryParameters id="urlQueryParameters"/>
     </facets>
     <layout>
         <hbox id="searchFieldBox" width="100%">

@@ -888,13 +888,13 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
             if (!importedEntities.isEmpty()) {
                 loggedEntityDl.load();
-                List<LoggedEntity> entityLogImportedList = importedEntities.stream()
+                List<LoggedEntity> loggedEntityImportedList = importedEntities.stream()
                         .filter(entity -> entity instanceof LoggedEntity)
                         .map(entity -> (LoggedEntity) entity)
                         .toList();
 
-                if(entityLogImportedList.size() == 1) {
-                    LoggedEntity entity = entityLogImportedList.get(0);
+                if(loggedEntityImportedList.size() == 1) {
+                    LoggedEntity entity = loggedEntityImportedList.get(0);
                     loggedAttrDl.setParameter("entityId", entity.getId());
                     loggedAttrDl.load();
                 }

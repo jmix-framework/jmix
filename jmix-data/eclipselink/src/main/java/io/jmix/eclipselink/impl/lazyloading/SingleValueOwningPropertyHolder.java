@@ -54,8 +54,8 @@ public class SingleValueOwningPropertyHolder extends AbstractSingleValueHolder {
 
         LoadContext<?> loadContext = new LoadContext<>(metaClass)
                 .setId(getEntityId())
-                .setHint(PersistenceHints.SOFT_DELETION, false)
                 .setHints(loadOptions.getHints())
+                .setHint(PersistenceHints.SOFT_DELETION, false)
                 .setAccessConstraints(loadOptions.getAccessConstraints());
 
         Object value = getDataManager().load(loadContext);

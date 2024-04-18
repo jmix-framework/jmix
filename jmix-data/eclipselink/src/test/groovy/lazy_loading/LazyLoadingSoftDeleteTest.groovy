@@ -17,11 +17,18 @@
 package lazy_loading
 
 import io.jmix.core.*
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext
+import io.jmix.core.constraint.InMemoryConstraint
+import io.jmix.core.constraint.RowLevelConstraint
+import io.jmix.core.metamodel.model.MetaClass
+import io.jmix.core.security.CurrentAuthentication
+import io.jmix.core.security.SystemAuthenticator
 import io.jmix.data.PersistenceHints
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.GrantedAuthority
 import test_support.DataSpec
-import test_support.entity.lazyloading.OneToOneFieldEntity
-import test_support.entity.lazyloading.OneToOneNoFieldEntity
+import test_support.entity.lazyloading.*
 import test_support.entity.lazyloading.soft_deletion_vh_propagation.Activity
 import test_support.entity.lazyloading.soft_deletion_vh_propagation.Customer
 import test_support.entity.lazyloading.soft_deletion_vh_propagation.Details
@@ -96,6 +103,61 @@ class LazyLoadingSoftDeleteTest extends DataSpec {
         jdbc.update("delete from TESTVH_CUSTOMER")
     }
 
+    def "soft deleted collection items not loaded for nested collection with constraints"() {
+        setup:
+        Customer customer = dataManager.create(Customer)
+        Details details = dataManager.create(Details)
+        Activity firstActivity = dataManager.create(Activity)
+        Activity secondActivity = dataManager.create(Activity)
+
+        customer.name = "Customer one"
+        details.customer = customer
+        firstActivity.name = "First"
+        firstActivity.details = details
+        secondActivity.name = "Second"
+        secondActivity.details = details
+
+        dataManager.save(customer, details, firstActivity, secondActivity)
+        dataManager.remove(secondActivity)
+
+        when:
+        Customer loadedCompany = dataManager.load(Id.of(customer))
+                .fetchPlan(b -> b.add("name"))
+                .accessConstraints(Collections.singleton(new TestDummyConstraint()))
+                .one()
+
+        then:
+        loadedCompany.getDetails().getActivities().size() == 1
+
+
+        when:
+        loadedCompany = dataManager.load(Id.of(customer))
+                .hint(PersistenceHints.SOFT_DELETION, true)
+                .fetchPlan(b -> b.add("name"))
+                .accessConstraints(Collections.singleton(new TestDummyConstraint()))
+                .one()
+
+        then:
+        loadedCompany.getDetails().getActivities().size() == 1
+
+
+        when:
+        loadedCompany = dataManager.load(Id.of(customer))
+                .hint(PersistenceHints.SOFT_DELETION, false)
+                .fetchPlan(b -> b.add("name"))
+                .accessConstraints(Collections.singleton(new TestDummyConstraint()))
+                .one()
+
+        then:
+        loadedCompany.getDetails().getActivities().size() == 2
+
+
+        cleanup:
+        jdbc.update("delete from TESTVH_ACTIVITY")
+        jdbc.update("delete from TESTVH_DETAILS")
+        jdbc.update("delete from TESTVH_CUSTOMER")
+    }
+
 
     def "OneToOne with field test (referenced entity soft deleted)"() {
         setup:
@@ -156,9 +218,9 @@ class LazyLoadingSoftDeleteTest extends DataSpec {
         loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(OneToOneFieldEntity.class, "OneToOneFieldEntity"))
         fieldEntity = dataManager.load(loadContext)
 
-        then: "BUG: Soft deleted entity is not loaded, unlike in other cases, see https://github.com/jmix-framework/jmix/issues/2466"
+        then: "OK, soft deleted entity must be loaded like in other cases, see https://github.com/jmix-framework/jmix/issues/2466"
         fieldEntity.getName() == "Field name"
-        fieldEntity.getOneToOneNoFieldEntity() == null
+        fieldEntity.getOneToOneNoFieldEntity() == noFieldEntity
     }
 
     def "OneToOne without field test (owning side entity soft deleted)"() {
@@ -221,8 +283,158 @@ class LazyLoadingSoftDeleteTest extends DataSpec {
         loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(OneToOneNoFieldEntity.class, "OneToOneNoFieldEntity"))
         noFieldEntity = dataManager.load(loadContext)
 
-        then: "BUG: reference is not null unlike in other cases."
+        then: "OK, reference must be null like in other cases."
         noFieldEntity.getName() == "No field name"
-        noFieldEntity.getOneToOneFieldEntity() == fieldEntity
+        noFieldEntity.getOneToOneFieldEntity() == null
+    }
+
+
+    def "ManyToOne field test"() {
+        setup:
+
+        OneToManyEntity oneToManyEntity = dataManager.create(OneToManyEntity)
+        oneToManyEntity.name = "Test OneToManyEntity"
+
+        ManyToOneEntity manyToOneEntity = dataManager.create(ManyToOneEntity)
+
+        manyToOneEntity.oneToManyEntity = oneToManyEntity
+        manyToOneEntity.name = "Test ManyToOneEntity"
+
+        dataManager.save(oneToManyEntity, manyToOneEntity)
+        dataManager.remove(oneToManyEntity)
+        UUID id = manyToOneEntity.id
+
+
+        when:
+        manyToOneEntity = transaction.execute {
+            ManyToOneEntity entity = entityManager.find(ManyToOneEntity, id);
+            entity.getOneToManyEntity()
+            return entity
+        }
+
+        then:
+        manyToOneEntity.oneToManyEntity == oneToManyEntity
+
+
+        when:
+        manyToOneEntity = dataManager.load(Id.of(manyToOneEntity))
+                .fetchPlan(builder -> builder.add("oneToManyEntity"))
+                .one()
+
+        then:
+        manyToOneEntity.oneToManyEntity == oneToManyEntity
+
+
+        when:
+        manyToOneEntity = dataManager.load(Id.of(manyToOneEntity)).one()
+
+        then: "OneToManyEntity must be the same as for eager fetching"
+        manyToOneEntity.oneToManyEntity == oneToManyEntity
+    }
+
+    def "OneToMany field test"() {
+        setup:
+
+        OneToManyEntity oneToManyEntity = dataManager.create(OneToManyEntity)
+        oneToManyEntity.name = "Test OneToManyEntity"
+
+        ManyToOneEntity manyToOneEntity = dataManager.create(ManyToOneEntity)
+
+        manyToOneEntity.oneToManyEntity = oneToManyEntity
+        manyToOneEntity.name = "Test ManyToOneEntity"
+
+        dataManager.save(oneToManyEntity, manyToOneEntity)
+
+        dataManager.remove(manyToOneEntity)
+        UUID id = oneToManyEntity.id
+
+
+        when:
+        oneToManyEntity = transaction.execute {
+            OneToManyEntity entity = entityManager.find(OneToManyEntity, id);
+            List<ManyToOneEntity> manyToOneEntities = entity.getManyToOneEntities()
+            println manyToOneEntities.size();
+            return entity
+        }
+
+        then:
+        oneToManyEntity.manyToOneEntities.size() == 0
+
+
+        when:
+        oneToManyEntity = dataManager.load(Id.of(oneToManyEntity))
+                .fetchPlan(builder -> builder.add("manyToOneEntities"))
+                .one()
+
+        then:
+        oneToManyEntity.manyToOneEntities.size() == 0
+
+
+        when:
+        oneToManyEntity = dataManager.load(Id.of(oneToManyEntity)).one()
+
+        then:
+        oneToManyEntity.manyToOneEntities.size() == 0
+    }
+
+    def "ManyToMany field test"() {
+        setup:
+
+        ManyToManyFirstEntity manyToManyFirstEntity = dataManager.create(ManyToManyFirstEntity)
+        manyToManyFirstEntity.name = "Test ManyToManyFirstEntity"
+
+        ManyToManySecondEntity manyToManySecondEntity = dataManager.create(ManyToManySecondEntity)
+
+        manyToManySecondEntity.name = "Test ManyToManySecondEntity"
+        manyToManySecondEntity.manyToManyFirstEntities = new ArrayList<>()
+        manyToManySecondEntity.manyToManyFirstEntities.add(manyToManyFirstEntity)
+
+        dataManager.save(manyToManyFirstEntity, manyToManySecondEntity)
+
+        dataManager.remove(manyToManyFirstEntity)
+        UUID id = manyToManySecondEntity.id
+
+
+        when:
+        manyToManySecondEntity = transaction.execute {
+            ManyToManySecondEntity entity = entityManager.find(ManyToManySecondEntity, id);
+            List<ManyToManyFirstEntity> manyToOneEntities = entity.getManyToManyFirstEntities()
+            println manyToOneEntities.size();
+            return entity
+        }
+
+        then:
+        manyToManySecondEntity.manyToManyFirstEntities.size() == 0
+
+
+        when:
+        manyToManySecondEntity = dataManager.load(Id.of(manyToManySecondEntity))
+                .fetchPlan(builder -> builder.add("manyToManyFirstEntities"))
+                .one()
+
+        then:
+        manyToManySecondEntity.manyToManyFirstEntities.size() == 0
+
+        when:
+        manyToManySecondEntity = dataManager.load(Id.of(manyToManySecondEntity))
+                .one()
+
+        then:
+        manyToManySecondEntity.manyToManyFirstEntities.size() == 0
+    }
+
+    /**
+     * Does nothing but triggering loading through SingleValueMappedByPropertyHolder#createLoadContextByOwner(..)
+     */
+    static class TestDummyConstraint implements InMemoryConstraint<InMemoryCrudEntityContext>, RowLevelConstraint<InMemoryCrudEntityContext> {
+        @Override
+        Class<InMemoryCrudEntityContext> getContextType() {
+            return InMemoryCrudEntityContext.class;
+        }
+
+        @Override
+        void applyTo(InMemoryCrudEntityContext context) {
+
+        }
     }
 }

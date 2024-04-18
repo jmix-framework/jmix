@@ -75,12 +75,6 @@
                             <comboBox id="screenField" label="msg://io.jmix.dynattr.model/CategoryAttribute.screen"
                                       required="true"
                                       requiredMessage="msg://screenField.required"/>
-                            <textField id="widthField" property="width">
-                                <validators>
-                                    <regexp regexp="^(-?\d+(?:\.\d+)?)(%|px)?$"
-                                            message="msg://widthField.validationMessage"/>
-                                </validators>
-                            </textField>
                             <textField id="rowsCountField" property="rowsCount">
                                 <validators>
                                     <min value="1" message="msg://rowsCountField.validationMessage"/>

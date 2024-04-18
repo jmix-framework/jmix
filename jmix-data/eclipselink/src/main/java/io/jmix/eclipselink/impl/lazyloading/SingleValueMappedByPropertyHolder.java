@@ -22,7 +22,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.data.PersistenceHints;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.springframework.beans.factory.BeanFactory;
 
@@ -75,18 +74,12 @@ public class SingleValueMappedByPropertyHolder extends AbstractSingleValueHolder
                                 .add(getPropertyInfo().getName(), builder -> builder.addFetchPlan(FetchPlan.BASE))
                                 .build())
                 .setAccessConstraints(getLoadOptions().getAccessConstraints())
-                .setHints(getLoadOptions().getHints())
-                .setHint(PREV_SOFT_DELETION,
-                        getLoadOptions().getHints().getOrDefault(PersistenceHints.SOFT_DELETION, SOFT_DELETION_ABSENT))
-                .setHint(PersistenceHints.SOFT_DELETION, false);
+                .setHints(getLoadOptions().getHints());
     }
 
     protected LoadContext<?> createLoadContextByInverseProperty(MetaClass metaClass, String primaryKeyName) {
         LoadContext<?> loadContext = new LoadContext<>(metaClass)
-                .setHints(getLoadOptions().getHints())
-                .setHint(PREV_SOFT_DELETION,
-                        getLoadOptions().getHints().getOrDefault(PersistenceHints.SOFT_DELETION, SOFT_DELETION_ABSENT))
-                .setHint(PersistenceHints.SOFT_DELETION, false);
+                .setHints(getLoadOptions().getHints());
         loadContext.setQueryString(String.format("select e from %s e where e.%s.%s = :entityId", metaClass.getName(),
                 getPropertyInfo().getInversePropertyName(), primaryKeyName))
                 .setParameter("entityId", Objects.requireNonNull(EntityValues.getId(getOwner())));

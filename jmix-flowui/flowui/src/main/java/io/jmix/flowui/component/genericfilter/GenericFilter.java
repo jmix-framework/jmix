@@ -65,8 +65,6 @@ import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.model.BaseCollectionLoader;
 import io.jmix.flowui.model.DataLoader;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewControllerUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -111,7 +109,6 @@ public class GenericFilter extends Composite<JmixDetails>
     protected DataLoader dataLoader;
     protected Condition initialDataLoaderCondition;
     protected Predicate<MetaPropertyPath> propertyFiltersPredicate;
-    protected SingleFilterComponent.AutoApplyResolver autoApplyResolver;
 
     protected VerticalLayout contentWrapper;
     protected HorizontalLayout controlsLayout;
@@ -163,17 +160,6 @@ public class GenericFilter extends Composite<JmixDetails>
         initDefaultResponsiveSteps();
         initEmptyConfiguration();
         initLayout();
-//        initViewListener();
-    }
-
-    protected void initViewListener() {
-        ViewControllerUtils.addBeforeShowEventListener(UiComponentUtils.getView(this), new ComponentEventListener<View.BeforeShowEvent>() {
-            @Override
-            public void onComponentEvent(View.BeforeShowEvent event) {
-                updateCurrentConfigurationAutoApply(autoApply);
-            }
-        });
-
     }
 
     protected void initDefaultResponsiveSteps() {
@@ -570,15 +556,6 @@ public class GenericFilter extends Composite<JmixDetails>
         } else {
             this.propertyFiltersPredicate = this.propertyFiltersPredicate.and(propertyFiltersPredicate);
         }
-    }
-
-    @Nullable
-    public SingleFilterComponent.AutoApplyResolver getAutoApplyResolver() {
-        return autoApplyResolver;
-    }
-
-    public void setAutoApplyResolver(@Nullable SingleFilterComponent.AutoApplyResolver autoApplyResolver) {
-        this.autoApplyResolver = autoApplyResolver;
     }
 
     /**

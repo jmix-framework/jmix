@@ -51,10 +51,6 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
 
     @Override
     public void loadComponent() {
-        //Prevent filterComponents from calling DataLoader#load to skip unnecessary executions
-        // while genericFilter is being loaded
-        resultComponent.setAutoApplyResolver(new AutoApplyResolver(false));
-
         loadResourceString(element, "summaryText", context.getMessageGroup(), resultComponent::setSummaryText);
 
         componentLoader().loadEnabled(resultComponent, element);
@@ -79,7 +75,6 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
 
         loadActions(resultComponent, element);
 
-        resetAutoApplyResolver();
         applyFilterIfNeeded();
     }
 
@@ -208,9 +203,6 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
         filterComponentLoader.initComponent();
 
         FilterComponent filterResultComponent = (FilterComponent) filterComponentLoader.getResultComponent();
-        if (filterResultComponent instanceof SingleFilterComponent<?> singleFilterComponent) {
-            singleFilterComponent.setAutoApplyResolver(resultComponent.getAutoApplyResolver());
-        }
 
         filterResultComponent.setConditionModificationDelegated(true);
         filterResultComponent.setDataLoader(resultComponent.getDataLoader());
@@ -271,32 +263,5 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
                 }
             }
         });
-    }
-
-    protected void resetAutoApplyResolver() {
-        getComponentContext().addInitTask((context, view) -> {
-            SingleFilterComponent.AutoApplyResolver resolver = resultComponent.getAutoApplyResolver();
-            if (resolver instanceof AutoApplyResolver autoApplyResolver) {
-                autoApplyResolver.setShouldAutoApply(true);
-            }
-        });
-    }
-
-    public static class AutoApplyResolver implements SingleFilterComponent.AutoApplyResolver {
-
-        private boolean shouldAutoApply;
-
-        public AutoApplyResolver(boolean shouldAutoApply) {
-            this.shouldAutoApply = shouldAutoApply;
-        }
-
-        public void setShouldAutoApply(boolean shouldAutoApply) {
-            this.shouldAutoApply = shouldAutoApply;
-        }
-
-        @Override
-        public boolean shouldAutoApply() {
-            return shouldAutoApply;
-        }
     }
 }

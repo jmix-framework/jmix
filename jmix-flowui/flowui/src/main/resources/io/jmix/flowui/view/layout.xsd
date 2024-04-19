@@ -3121,6 +3121,32 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- TwinColumn -->
+    <xs:complexType name="twinColumnComponent">
+        <xs:complexContent>
+            <xs:extension base="validatableBaseFieldComponent">
+                <xs:attribute name="addAllBtnEnabled" type="xs:boolean"/>
+                <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="leftColumnCaption" type="resourceString"/>
+                <xs:attribute name="rightColumnCaption" type="resourceString"/>
+                <xs:attribute name="reorderable" type="xs:boolean"/>
+                <xs:attribute name="rows" type="xs:integer"/>
+
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- ActionItem-->
     <xs:complexType name="dropdownActionItemType">
         <xs:choice>
@@ -4725,6 +4751,7 @@
                 <xs:element name="menuFilterField" type="menuFilterFieldComponent"/>
                 <xs:element name="horizontalMenu" type="horizontalMenuComponent"/>
                 <xs:element name="richTextEditor" type="richTextEditorComponent"/>
+                <xs:element name="twinColumn" type="twinColumnComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

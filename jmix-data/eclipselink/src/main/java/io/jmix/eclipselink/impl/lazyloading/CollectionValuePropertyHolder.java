@@ -87,7 +87,7 @@ public class CollectionValuePropertyHolder extends AbstractValueHolder {
                                 .add(getPropertyInfo().getName(), builder -> builder.addFetchPlan(FetchPlan.BASE))
                                 .build())
                 .setAccessConstraints(getLoadOptions().getAccessConstraints())
-                .setHints(getLoadOptions().getHints());
+                .setHints(getLoadOptions().getHintsCopy());
     }
 
     protected void replaceCollectionExistingReferences(Collection<Object> collection, Object entityToReplace) {

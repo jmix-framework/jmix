@@ -22,6 +22,7 @@ import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.SupportsAfterViewNavigationHandler.AfterViewNavigationEvent;
 import org.slf4j.Logger;
@@ -50,21 +51,28 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         RouteParameters routeParameters = getRouteParameters(navigator);
         QueryParameters queryParameters = getQueryParameters(navigator);
 
+        View<?> origin = navigator.getOrigin();
         if (navigator.isBackwardNavigation()) {
             log.trace("Fetching current URL for backward navigation");
             UI.getCurrent().getPage().fetchCurrentURL(url -> {
                 log.trace("Fetched URL: {}", url.toString());
 
-                Optional<View> view = navigationSupport.navigate(viewClass, routeParameters, queryParameters);
-                if (view.isPresent()) {
-                    viewSupport.registerBackwardNavigation(viewClass, url);
-                    fireAfterViewNavigation(navigator, view.get());
-                }
+                ViewControllerUtils.addAfterCloseListener(origin, __ -> {
+                    Optional<View> view = navigationSupport.findCurrentNavigationTarget(viewClass);
+                    if (view.isPresent()) {
+                        viewSupport.registerBackwardNavigation(viewClass, url);
+                        fireAfterViewNavigation(navigator, view.get());
+                    }
+                });
+                navigationSupport.navigate(viewClass, routeParameters, queryParameters);
             });
         } else {
-            Optional<View> view = navigationSupport.navigate(viewClass, routeParameters, queryParameters);
-            view.ifPresent(value ->
-                    fireAfterViewNavigation(navigator, value));
+            ViewControllerUtils.addAfterCloseListener(origin, __ -> {
+                Optional<View> view = navigationSupport.findCurrentNavigationTarget(viewClass);
+                view.ifPresent(value ->
+                        fireAfterViewNavigation(navigator, value));
+            });
+            navigationSupport.navigate(viewClass, routeParameters, queryParameters);
         }
     }
 

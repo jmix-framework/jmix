@@ -16,14 +16,17 @@
 
 package io.jmix.securityflowui.action;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.component.ComponentUtils;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.securityflowui.view.roleassignment.RoleAssignmentView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +92,8 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
     }
 
     protected void navigate(E selectedItem) {
-        viewNavigators.view(RoleAssignmentView.class)
+        View<?> origin = UiComponentUtils.getView(((Component) target));
+        viewNavigators.view(origin, RoleAssignmentView.class)
                 .withRouteParameters(routeSupport.createRouteParameters("username", selectedItem.getUsername()))
                 .withBackwardNavigation(true)
                 .navigate();

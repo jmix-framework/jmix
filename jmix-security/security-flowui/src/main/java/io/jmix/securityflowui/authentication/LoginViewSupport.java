@@ -39,6 +39,7 @@ import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.app.main.StandardMainView;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.sys.AppCookies;
 import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import io.jmix.flowui.view.DetailView;
@@ -317,18 +318,18 @@ public class LoginViewSupport {
 
     protected void navigateToMainView() {
         String mainViewId = uiProperties.getMainViewId();
-        viewNavigators.view(mainViewId)
+        viewNavigators.view(UiComponentUtils.getCurrentView(), mainViewId)
                 .navigate();
     }
 
     protected void navigateToDefaultView(String defaultViewId) {
         ViewInfo viewInfo = viewRegistry.getViewInfo(defaultViewId);
         if (DetailView.class.isAssignableFrom(viewInfo.getControllerClass())) {
-            viewNavigators.detailView(getEntityClass(viewInfo))
+            viewNavigators.detailView(UiComponentUtils.getCurrentView(), getEntityClass(viewInfo))
                     .withBackwardNavigation(false)
                     .navigate();
         } else {
-            viewNavigators.view(defaultViewId)
+            viewNavigators.view(UiComponentUtils.getCurrentView(), defaultViewId)
                     .navigate();
         }
     }

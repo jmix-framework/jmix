@@ -138,6 +138,10 @@ public final class ViewControllerUtils {
         return view.addBeforeShowListener(listener);
     }
 
+    public static Registration addAfterCloseListener(View<?> view, ComponentEventListener<View.AfterCloseEvent> listener) {
+        return view.addAfterCloseListener(listener);
+    }
+
     public static Registration addValidationEventListener(StandardDetailView<?> view, ComponentEventListener<StandardDetailView.ValidationEvent> listener) {
         return view.addValidationEventListener(listener);
     }

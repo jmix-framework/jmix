@@ -37,9 +37,18 @@ public class ViewClassNavigator<V extends View<?>> extends ViewNavigator
 
     protected Consumer<SupportsAfterViewNavigationHandler.AfterViewNavigationEvent<V>> afterNavigationHandler;
 
+    @Deprecated(since = "2.3", forRemoval = true)
     public ViewClassNavigator(Consumer<? extends ViewNavigator> handler,
                               Class<V> viewClass) {
         super(handler);
+
+        this.viewClass = viewClass;
+    }
+
+    public ViewClassNavigator(View<?> origin,
+                              Consumer<? extends ViewNavigator> handler,
+                              Class<V> viewClass) {
+        super(origin, handler);
 
         this.viewClass = viewClass;
     }

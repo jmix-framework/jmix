@@ -43,8 +43,18 @@ public class DetailViewNavigator<E> extends AbstractViewNavigator {
 
     protected DetailViewMode mode = DetailViewMode.CREATE;
 
+    @Deprecated(since = "2.3", forRemoval = true)
     public DetailViewNavigator(Class<E> entityClass, Consumer<? extends DetailViewNavigator<E>> handler) {
         super(handler);
+        checkNotNullArgument(entityClass);
+
+        this.entityClass = entityClass;
+    }
+
+    public DetailViewNavigator(View<?> origin,
+                               Class<E> entityClass,
+                               Consumer<? extends DetailViewNavigator<E>> handler) {
+        super(origin, handler);
         checkNotNullArgument(entityClass);
 
         this.entityClass = entityClass;

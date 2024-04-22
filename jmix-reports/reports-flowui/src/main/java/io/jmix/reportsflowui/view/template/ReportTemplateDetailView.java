@@ -21,6 +21,7 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -38,7 +39,9 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
+import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.upload.event.FileUploadFailedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadStartedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
@@ -92,7 +95,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     @ViewComponent
     protected TypedTextField<String> outputNamePatternField;
     @ViewComponent
-    protected JmixTextArea templateFileEditor;
+    protected JmixCodeEditor templateFileEditor;
     @ViewComponent
     protected JmixComboBox<ReportOutputType> outputTypeField;
     @ViewComponent
@@ -123,6 +126,8 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     protected Icon customDefinitionHelpIcon;
     protected Icon customDefinitionExpandIcon;
     protected TableEditFragment tableEditComposite;
+    @ViewComponent
+    private JmixButton templateFileEditorFullScreenBtn;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -381,9 +386,24 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         String extension = FilenameUtils.getExtension(templateUploadField.getFileName());
         if (extension == null) {
             templateFileEditor.setVisible(false);
+            templateFileEditorFullScreenBtn.setVisible(false);
             return;
         }
         templateFileEditor.setVisible(hasHtmlCsvTemplateOutput(outputType));
+        templateFileEditorFullScreenBtn.setVisible(true);
+    }
+
+    @Subscribe("templateFileEditorFullScreenBtn")
+    public void onTemplateFileEditorFullScreenBtnClick(final ClickEvent<Button> event) {
+        String extension = FilenameUtils.getExtension(templateUploadField.getFileName());
+        ReportOutputType outputType = ReportOutputType.getTypeFromExtension(extension.toUpperCase());
+        reportScriptEditor.create(this)
+                .withTitle( messageBundle.getMessage("templateFileEditorFullScreen.title"))
+                .withValue(new String(reportTemplateDc.getItem().getContent(), StandardCharsets.UTF_8))
+                .withEditorMode(outputType == ReportOutputType.HTML ? CodeEditorMode.HTML : CodeEditorMode.TEXT)
+                .withCloseOnClick(value -> reportTemplateDc.getItem().setContent(value.getBytes()))
+                .withHelpOnClick(() -> {})
+                .open();
     }
 
     protected void setupVisibility(boolean customEnabled, ReportOutputType reportOutputType) {

@@ -90,7 +90,7 @@ public class ViewNavigators {
      * <p>
      * Example of navigating to a view for creating a new entity instance:
      * <pre>{@code
-     * viewNavigators.detailView(Customer.class)
+     * viewNavigators.detailView(this, Customer.class)
      *         .newEntity()
      *         .withViewClass(CustomerDetailView.class)
      *         .navigate();

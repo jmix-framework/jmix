@@ -62,6 +62,9 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
                     if (view.isPresent()) {
                         viewSupport.registerBackwardNavigation(viewClass, url);
                         fireAfterViewNavigation(navigator, view.get());
+                    } else {
+                        log.warn("Can't find current navigation target: {}. Cannot set backward navigation and fire {}",
+                                viewClass.getName(), AfterViewNavigationEvent.class.getSimpleName());
                     }
                 });
                 navigationSupport.navigate(viewClass, routeParameters, queryParameters);
@@ -69,8 +72,12 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         } else {
             ViewControllerUtils.addAfterCloseListener(origin, __ -> {
                 Optional<View> view = navigationSupport.findCurrentNavigationTarget(viewClass);
-                view.ifPresent(value ->
-                        fireAfterViewNavigation(navigator, value));
+                if (view.isPresent()) {
+                    fireAfterViewNavigation(navigator, view.get());
+                } else {
+                    log.warn("Can't find current navigation target: {}. Cannot fire {}",
+                            viewClass.getName(), AfterViewNavigationEvent.class.getSimpleName());
+                }
             });
             navigationSupport.navigate(viewClass, routeParameters, queryParameters);
         }

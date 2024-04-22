@@ -84,7 +84,7 @@ public class DataGridSettings implements Settings {
         protected int flexGrow;
 
         public String getKey() {
-            return key;
+            return key != null ? key : this.toString();
         }
 
         public void setKey(String key) {

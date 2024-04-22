@@ -83,8 +83,9 @@ public class DataGridSettings implements Settings {
         protected Boolean visible;
         protected int flexGrow;
 
+        @Nullable
         public String getKey() {
-            return key != null ? key : this.toString();
+            return key;
         }
 
         public void setKey(String key) {

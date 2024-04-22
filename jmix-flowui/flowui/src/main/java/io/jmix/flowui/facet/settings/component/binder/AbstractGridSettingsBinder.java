@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends DataGridSettings>
@@ -47,7 +48,8 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
 
         List<String> componentColumnKeys = componentColumns.stream().map(Grid.Column::getKey).toList();
-        List<String> settingsColumnKeys = settings.getColumns().stream().map(DataGridSettings.Column::getKey).toList();
+        List<String> settingsColumnKeys = settings.getColumns().stream()
+                .map(DataGridSettings.Column::getKey).filter(key -> !isNull(key)).toList();
 
         // Checks only size of collections and same elements. It does not consider the order in collections.
         // So settings won't be applied if DataGrid contains columns that are missed in settings.
@@ -86,6 +88,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         }
 
         List sortOrder = settings.getSortOrder().stream()
+                .filter(o -> !Objects.isNull(o.getKey()))
                 .map(sSortOrder -> new GridSortOrder<>(
                         component.getColumnByKey(sSortOrder.getKey()),
                         SortDirection.valueOf(sSortOrder.getSortDirection())))
@@ -113,7 +116,8 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
             setSortOrderToSettings(sortOrder, settings);
             changed = true;
         }
-        List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
+        List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component).stream()
+                .filter(c -> !isNull(c.getKey())).toList();
         if (isColumnSettingsChanged(componentColumns, settings.getColumns())) {
             setColumnsToSettings(componentColumns, settings);
             changed = true;
@@ -128,7 +132,8 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         settings.setId(component.getId().orElse(null));
 
         setSortOrderToSettings(component.getSortOrder(), settings);
-        setColumnsToSettings(getOrderedColumns(component), settings);
+        setColumnsToSettings(getOrderedColumns(component).stream()
+                .filter(c -> !isNull(c.getKey())).toList(), settings);
 
         return settings;
     }
@@ -166,7 +171,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
 
             DataGridSettings.SortOrder sSortOrder = settingsSortOrder.get(i);
 
-            if (!key.equals(sSortOrder.getKey())) {
+            if (key != null && !key.equals(sSortOrder.getKey())) {
                 return true;
             }
             if (!sortOrder.getDirection().name().equals(sSortOrder.getSortDirection())) {

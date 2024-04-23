@@ -26,6 +26,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Provides Vaadin security to the project. Configures authentication using the OAuth 2.0 or OpenID Connect provider.
@@ -87,7 +88,6 @@ public class OidcVaadinWebSecurity extends VaadinWebSecurity {
     @Override
     protected void configure(WebSecurity web) throws Exception {
         super.configure(web);
-        web.ignoring().requestMatchers("/VAADIN/push/**");
+        web.ignoring().requestMatchers(new AntPathRequestMatcher("/VAADIN/push/**"));
     }
-
 }

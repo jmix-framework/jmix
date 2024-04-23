@@ -37,6 +37,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
@@ -157,6 +158,6 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     @Override
     protected void configure(WebSecurity web) throws Exception {
         super.configure(web);
-        web.ignoring().requestMatchers("/VAADIN/push/**");
+        web.ignoring().requestMatchers(new AntPathRequestMatcher("/VAADIN/push/**"));
     }
 }

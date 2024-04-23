@@ -60,11 +60,12 @@ public class DataGridSettings implements Settings {
         protected String key;
         protected String sortDirection;
 
+        @Nullable
         public String getKey() {
             return key;
         }
 
-        public void setKey(String key) {
+        public void setKey(@Nullable String key) {
             this.key = key;
         }
 
@@ -82,11 +83,12 @@ public class DataGridSettings implements Settings {
         protected String width;
         protected Boolean visible;
 
+        @Nullable
         public String getKey() {
             return key;
         }
 
-        public void setKey(String key) {
+        public void setKey(@Nullable String key) {
             this.key = key;
         }
 

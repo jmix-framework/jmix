@@ -113,7 +113,8 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
     protected List<? extends Grid.Column<?>> getApplicableColumns(V component) {
         List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
         if (componentColumns.stream().anyMatch(c -> c.getKey() == null)) {
-            log.debug("{} has column without key specified, settings for it would not be stored", component.getClass().getSimpleName());
+            log.warn("{} contains columns without key specified, settings for them would not be stored",
+                    component.getClass().getSimpleName());
             componentColumns = componentColumns.stream()
                     .filter(c -> c.getKey() != null).toList();
         }

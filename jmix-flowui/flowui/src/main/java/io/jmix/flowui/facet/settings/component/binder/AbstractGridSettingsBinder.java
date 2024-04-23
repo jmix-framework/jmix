@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.Objects.isNull;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends DataGridSettings>

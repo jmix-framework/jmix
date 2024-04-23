@@ -29,6 +29,9 @@ import io.jmix.flowui.view.ViewRegistry;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
+import java.util.function.Function;
+
 /**
  * Class checks UI access permission.
  */
@@ -83,8 +86,25 @@ public class UiAccessChecker {
     }
 
     /**
-     * Checks for access to the view.
-     * Throws exception if no access.
+     * The current method is used instead of {@link #isViewPermitted(Class)} when
+     * {@link com.vaadin.flow.server.VaadinRequest} is not available.
+     *
+     * @see #isViewPermitted(Class)
+     */
+    public boolean isViewPermitted(Class<?> target, Principal principal,
+                                   Function<String, Boolean> roleChecker) {
+        boolean hasAccess = accessAnnotationChecker != null &&
+                accessAnnotationChecker.hasAccess(target, principal, roleChecker);
+
+        if (!hasAccess && isSupportedView(target)) {
+            hasAccess = isViewHasSecurityPermission(target);
+        }
+
+        return hasAccess;
+    }
+
+    /**
+     * Checks for access to the view. Throws exception if no access.
      *
      * @param target class to check
      * @throws AccessDeniedException if the user does not have access to the view

@@ -18,7 +18,9 @@ package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.spring.security.AuthenticationContext;
 import io.jmix.flowui.util.WebBrowserTools;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -29,16 +31,27 @@ public class LogoutSupport {
 
     protected ServletContext servletContext;
 
+    protected AuthenticationContext authenticationContext;
+
     public LogoutSupport(@Nullable ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 
+    @Autowired(required = false)
+    public void setAuthenticationContext(AuthenticationContext authenticationContext) {
+        this.authenticationContext = authenticationContext;
+    }
+
     public void logout() {
-        // window's 'beforeunload' event is triggered by changing Page's location,
-        // so we need to remove 'beforeunload' event listener, because logout happens
-        // anyway, even if a user stops browser tab closing, as a result it breaks app
-        WebBrowserTools.allowBrowserTabClosing(UI.getCurrent())
-                .then(jsonValue -> doLogout());
+        if (authenticationContext != null) {
+            authenticationContext.logout();
+        } else {
+            // window's 'beforeunload' event is triggered by changing Page's location,
+            // so we need to remove 'beforeunload' event listener, because logout happens
+            // anyway, even if a user stops browser tab closing, as a result it breaks app
+            WebBrowserTools.allowBrowserTabClosing(UI.getCurrent())
+                    .then(jsonValue -> doLogout());
+        }
     }
 
     protected void doLogout() {

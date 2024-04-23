@@ -53,7 +53,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
 
         List<String> componentColumnKeys = componentColumns.stream().map(Grid.Column::getKey).toList();
         List<String> settingsColumnKeys = settings.getColumns().stream()
-                .map(DataGridSettings.Column::getKey).filter(key -> !isNull(key)).toList();
+                .map(DataGridSettings.Column::getKey).filter(Objects::nonNull).toList();
 
         // Checks only size of collections and same elements. It does not consider the order in collections.
         // So settings won't be applied if DataGrid contains columns that are missed in settings.
@@ -113,7 +113,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
 
     protected List<? extends Grid.Column<?>> getApplicableColumns(V component) {
         List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
-        if (componentColumns.stream().anyMatch(c -> c.getKey() != null)) {
+        if (componentColumns.stream().anyMatch(c -> c.getKey() == null)) {
             log.debug("Grid has column without key specified, settings for it would not be stored");
             componentColumns = componentColumns.stream()
                     .filter(c -> c.getKey() != null).toList();

@@ -26,6 +26,8 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.HasLoader;
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -37,6 +39,8 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends DataGridSettings>
         implements DataLoadingSettingsBinder<V, S> {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractGridSettingsBinder.class);
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
@@ -107,6 +111,16 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         }
     }
 
+    protected List<? extends Grid.Column<?>> getApplicableColumns(V component) {
+        List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
+        List<? extends Grid.Column<?>> applicableColumns = componentColumns.stream()
+                .filter(c -> Objects.nonNull(c.getKey())).toList();
+        if (componentColumns.size() != applicableColumns.size()) {
+            log.debug("Grid has column without key specified, settings for it would not be stored");
+        }
+        return applicableColumns;
+    }
+
     @Override
     public boolean saveSettings(V component, S settings) {
         boolean changed = false;
@@ -116,10 +130,9 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
             setSortOrderToSettings(sortOrder, settings);
             changed = true;
         }
-        List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component).stream()
-                .filter(c -> !isNull(c.getKey())).toList();
-        if (isColumnSettingsChanged(componentColumns, settings.getColumns())) {
-            setColumnsToSettings(componentColumns, settings);
+        List<? extends Grid.Column<?>> applicableColumns = getApplicableColumns(component);
+        if (isColumnSettingsChanged(applicableColumns, settings.getColumns())) {
+            setColumnsToSettings(applicableColumns, settings);
             changed = true;
         }
 
@@ -132,8 +145,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         settings.setId(component.getId().orElse(null));
 
         setSortOrderToSettings(component.getSortOrder(), settings);
-        setColumnsToSettings(getOrderedColumns(component).stream()
-                .filter(c -> !isNull(c.getKey())).toList(), settings);
+        setColumnsToSettings(getApplicableColumns(component), settings);
 
         return settings;
     }

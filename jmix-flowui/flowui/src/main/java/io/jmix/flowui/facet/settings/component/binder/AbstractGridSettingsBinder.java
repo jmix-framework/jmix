@@ -92,7 +92,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         }
 
         List sortOrder = settings.getSortOrder().stream()
-                .filter(o -> !Objects.isNull(o.getKey()))
+                .filter(o -> o.getKey() != null)
                 .map(sSortOrder -> new GridSortOrder<>(
                         component.getColumnByKey(sSortOrder.getKey()),
                         SortDirection.valueOf(sSortOrder.getSortDirection())))
@@ -113,12 +113,12 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
 
     protected List<? extends Grid.Column<?>> getApplicableColumns(V component) {
         List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
-        List<? extends Grid.Column<?>> applicableColumns = componentColumns.stream()
-                .filter(c -> Objects.nonNull(c.getKey())).toList();
-        if (componentColumns.size() != applicableColumns.size()) {
+        if (componentColumns.stream().anyMatch(c -> c.getKey() != null)) {
             log.debug("Grid has column without key specified, settings for it would not be stored");
+            componentColumns = componentColumns.stream()
+                    .filter(c -> c.getKey() != null).toList();
         }
-        return applicableColumns;
+        return componentColumns;
     }
 
     @Override

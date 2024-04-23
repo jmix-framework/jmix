@@ -842,7 +842,7 @@ public class XlsxFormatter extends AbstractFormatter {
     protected Row createNewRow(Worksheet resultSheet) {
         Row newRow = Context.getsmlObjectFactory().createRow();
         Long currentRow = lastRowForSheet.get(resultSheet);
-        Long newCurrentRow = currentRow != null ? currentRow + 1 : 0;
+        Long newCurrentRow = currentRow != null ? currentRow + 1 : 1;
 
         newRow.setR(newCurrentRow);
         lastRowForSheet.put(resultSheet, newCurrentRow);

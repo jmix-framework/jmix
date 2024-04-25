@@ -384,13 +384,12 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
 
     protected void visibleTemplateEditor(@Nullable ReportOutputType outputType) {
         String extension = FilenameUtils.getExtension(templateUploadField.getFileName());
-        if (extension == null) {
-            templateFileEditor.setVisible(false);
-            templateFileEditorFullScreenBtn.setVisible(false);
-            return;
+        boolean codeEditorVisible = false;
+        if (extension != null && !extension.isEmpty()) {
+            codeEditorVisible = hasHtmlCsvTemplateOutput(outputType);
         }
-        templateFileEditor.setVisible(hasHtmlCsvTemplateOutput(outputType));
-        templateFileEditorFullScreenBtn.setVisible(true);
+        templateFileEditor.setVisible(codeEditorVisible);
+        templateFileEditorFullScreenBtn.setVisible(codeEditorVisible);
     }
 
     @Subscribe("templateFileEditorFullScreenBtn")

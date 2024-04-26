@@ -387,7 +387,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 .withTitle( messageBundle.getMessage("templateFileEditorFullScreen.title"))
                 .withValue(new String(reportTemplateDc.getItem().getContent(), StandardCharsets.UTF_8))
                 .withEditorMode(outputType == ReportOutputType.HTML ? CodeEditorMode.HTML : CodeEditorMode.TEXT)
-                .withCloseOnClick(value -> reportTemplateDc.getItem().setContent(value.getBytes()))
+                .withCloseOnClick(value -> reportTemplateDc.getItem().setContent(value.getBytes(StandardCharsets.UTF_8)))
                 .withHelpOnClick(() -> {})
                 .open();
     }

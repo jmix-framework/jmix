@@ -50,7 +50,6 @@ public class TwinColumnLoader extends AbstractComponentLoader<TwinColumn> {
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadSizeAttributes(resultComponent, element);
-        componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
     }

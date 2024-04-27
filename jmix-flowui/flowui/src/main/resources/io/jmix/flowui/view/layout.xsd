@@ -3141,7 +3141,6 @@
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasValueChangeMode"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
             </xs:extension>
         </xs:complexContent>

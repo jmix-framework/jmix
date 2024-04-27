@@ -1,0 +1,23 @@
+.twin-column-list-box-border {
+    border: 1px solid var(--lumo-contrast-20pct);
+    border-radius: var(--lumo-border-radius-m);
+    padding: calc(var(--lumo-border-radius-m) / 2);
+}
+
+.twin-column-list-box-border vaadin-item::part(content) {
+    padding-left: calc(var(--lumo-border-radius-m) * 2);
+}
+
+.twin-column-list-box-border vaadin-item::part(checkmark) {
+    display: none;
+}
+
+.twin-column-list-box-border vaadin-item[selected] {
+    background-color: var(--lumo-primary-color);
+    color: var(--lumo-primary-contrast-color);
+}
+
+.twin-column-list-box-border vaadin-item[selected][focused]::after {
+    background-color: var(--lumo-primary-text-color);
+}
+

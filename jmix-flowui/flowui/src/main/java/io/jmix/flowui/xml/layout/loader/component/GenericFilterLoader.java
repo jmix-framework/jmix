@@ -75,6 +75,10 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
 
         loadActions(resultComponent, element);
 
+         //Before SingleFilterComponentBase#apply started to check for attachment to UI,
+         // GenericFilter loaded data during initialisation. Now if the DataLoadCoordinator facet is missed,
+         // the user will see an empty components on a view. So we apply filter manually if DataLoadCoordinator is missed
+         // and there is at least one filter condition with default value.
         applyFilterIfNeeded();
     }
 

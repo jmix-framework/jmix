@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.meta.component;
 
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -3247,5 +3248,5 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER)
             }
     )
-    Div html();
+    Html html();
 }

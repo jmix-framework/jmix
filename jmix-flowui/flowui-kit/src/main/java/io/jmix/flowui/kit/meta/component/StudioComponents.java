@@ -3244,7 +3244,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "content", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "file", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "file", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER)
             }
     )

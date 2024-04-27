@@ -98,3 +98,13 @@
     padding: calc(0.5em + var(--lumo-border-radius-l));
     line-height: normal;
 }
+.report-bordered {
+    border: 1px solid;
+    border-color: var(--lumo-contrast-20pct);
+    border-radius: var(--lumo-border-radius-l);
+    margin-top: var(--lumo-space-s);
+    margin-bottom: var(--lumo-space-s);
+}
+.report-codeeditor-box jmix-code-editor[has-label] {
+    padding: 0;
+}

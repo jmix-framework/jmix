@@ -87,7 +87,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     @ViewComponent
     protected JmixSelect<CustomTemplateDefinedBy> customDefinedByField;
     @ViewComponent
-    protected JmixTextArea customDefinitionField;
+    protected JmixCodeEditor customDefinitionField;
     @ViewComponent
     protected JmixCheckbox alterableField;
     @ViewComponent
@@ -124,10 +124,11 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     protected ReportScriptEditor reportScriptEditor;
 
     protected Icon customDefinitionHelpIcon;
-    protected Icon customDefinitionExpandIcon;
     protected TableEditFragment tableEditComposite;
     @ViewComponent
-    private JmixButton templateFileEditorFullScreenBtn;
+    private VerticalLayout customDefinitionBox;
+    @ViewComponent
+    private VerticalLayout templateFileEditorBox;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -138,7 +139,6 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         initOutputTypeList();
         initOutputNamePatternField();
         initCustomDefinitionHelpIcon();
-        initCustomDefinitionExpandIcon();
     }
 
     @Subscribe
@@ -255,15 +255,6 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         customDefinitionHelpIcon.addClickListener(this::onCustomDefinitionHelpIconClick);
     }
 
-    protected void initCustomDefinitionExpandIcon() {
-        customDefinitionExpandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        customDefinitionExpandIcon.addClassNames(
-                ReportStyleConstants.FIELD_ICON_SIZE_CLASS_NAME,
-                ReportStyleConstants.FIELD_ICON_CLASS_NAME
-        );
-        customDefinitionExpandIcon.addClickListener(this::onExpandCustomDefinitionExpandIconClick);
-    }
-
     protected void initDescriptionComposites() {
         tableEditComposite = uiComponents.create(TableEditFragment.class);
         tableEditComposite.setVisible(false);
@@ -273,13 +264,19 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     }
 
     protected void onCustomDefinitionHelpIconClick(ClickEvent<Icon> event) {
-        dialogs.createMessageDialog()
+        openCustomDefinitionHelpDialog();
+    }
+
+    protected void openCustomDefinitionHelpDialog() {
+        if ( hasScriptCustomDefinedBy(getEditedEntity().getCustomDefinedBy())) {
+            dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage("customDefinitionField.helpIcon.dialog.header"))
                 .withContent(new Html(messageBundle.getMessage("customDefinitionField.helpIcon.dialog.content")))
                 .withResizable(true)
                 .withModal(false)
                 .withWidth("50em")
                 .open();
+        }
     }
 
     protected void initOutputNamePatternField() {
@@ -299,12 +296,14 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 .open();
     }
 
-    protected void onExpandCustomDefinitionExpandIconClick(ClickEvent<Icon> event) {
+    @Subscribe("customDefinitionFullScreenBtn")
+    public void onCustomDefinitionFullScreenBtnClick(final ClickEvent<Button> event) {
         reportScriptEditor.create(this)
                 .withTitle(messageBundle.getMessage("customDefinitionField.label"))
                 .withValue(getEditedEntity().getCustomDefinition())
                 .withEditorMode(CodeEditorMode.GROOVY)
                 .withCloseOnClick(value -> getEditedEntity().setCustomDefinition(value))
+                .withHelpOnClick(this::openCustomDefinitionHelpDialog)
                 .open();
     }
 
@@ -338,22 +337,11 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 setupVisibility(Boolean.TRUE.equals(event.getValue()), reportTemplate.getReportOutputType());
                 break;
             }
-            case CUSTOM_DEFINE_BY_PROPERTY: {
-                boolean isGroovyScript = hasScriptCustomDefinedBy(reportTemplate.getCustomDefinedBy());
-                setCustomDefinitionIconsVisible(isGroovyScript);
-                break;
-            }
         }
     }
 
     protected Collection<AbstractDescriptionEditFragment<?>> getDescriptionEditors() {
         return List.of(tableEditComposite);
-    }
-
-    protected void setCustomDefinitionIconsVisible(boolean visible) {
-        customDefinitionField.setSuffixComponent(visible
-                ? new Div(customDefinitionExpandIcon, customDefinitionHelpIcon)
-                : null);
     }
 
     protected void initOutputTypeList() {
@@ -388,8 +376,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         if (extension != null && !extension.isEmpty()) {
             codeEditorVisible = hasHtmlCsvTemplateOutput(outputType);
         }
-        templateFileEditor.setVisible(codeEditorVisible);
-        templateFileEditorFullScreenBtn.setVisible(codeEditorVisible);
+        templateFileEditorBox.setVisible(codeEditorVisible);
     }
 
     @Subscribe("templateFileEditorFullScreenBtn")
@@ -412,9 +399,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
 
         customField.setVisible(templateOutputVisibility);
         customDefinedByField.setVisible(enabled);
-        customDefinitionField.setVisible(enabled);
-
-        setCustomDefinitionIconsVisible(groovyScriptVisibility);
+        customDefinitionBox.setVisible(enabled);
 
         customDefinedByField.setRequired(enabled);
         customDefinitionField.setRequired(enabled);

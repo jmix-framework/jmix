@@ -194,6 +194,7 @@ public class AwsFileStorage implements FileStorage {
     @Override
     public FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters) {
         String fileKey = createFileKey(fileName);
+        String bucket = this.bucket;
         int s3ChunkSizeBytes = this.chunkSize * 1024;
         try (BufferedInputStream bos = new BufferedInputStream(inputStream, s3ChunkSizeBytes)) {
             S3Client s3Client = s3ClientReference.get();

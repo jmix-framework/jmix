@@ -196,16 +196,19 @@ public class AwsFileStorage implements FileStorage {
         String fileKey = createFileKey(fileName);
         String bucket = this.bucket;
         int s3ChunkSizeBytes = this.chunkSize * 1024;
+
+        Map<String, String> fileRefParameters = Maps.toMap(parameters.keySet(), key -> parameters.get(key).toString());
+        FileRef fileRef = new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
+
         try (BufferedInputStream bos = new BufferedInputStream(inputStream, s3ChunkSizeBytes)) {
             S3Client s3Client = s3ClientReference.get();
             int totalSizeBytes = bos.available();
-            Map<String, String> fileRefParameters = Maps.toMap(parameters.keySet(), key -> parameters.get(key).toString());
             if (totalSizeBytes == 0) {
                 s3Client.putObject(PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(fileKey)
                         .build(), RequestBody.empty());
-                return new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
+                return fileRef;
             }
 
             CreateMultipartUploadRequest createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
@@ -242,7 +245,7 @@ public class AwsFileStorage implements FileStorage {
                             .uploadId(response.uploadId())
                             .multipartUpload(completedMultipartUpload).build();
             s3Client.completeMultipartUpload(completeMultipartUploadRequest);
-            return new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
+            return fileRef;
         } catch (IOException | SdkException e) {
             log.error("Error saving file to S3 storage", e);
             String message = String.format("Could not save file %s.", fileName);

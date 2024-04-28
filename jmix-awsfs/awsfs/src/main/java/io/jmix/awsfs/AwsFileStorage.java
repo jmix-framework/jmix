@@ -45,18 +45,15 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
-import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
 import software.amazon.awssdk.services.s3.model.CompletedPart;
-import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
+import software.amazon.awssdk.services.s3.model.UploadPartResponse;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -215,41 +212,34 @@ public class AwsFileStorage implements FileStorage {
                 return fileRef;
             }
 
-            CreateMultipartUploadRequest createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
+            CreateMultipartUploadResponse response = s3Client.createMultipartUpload(uploadBuilder -> uploadBuilder
                     .bucket(bucket)
-                    .key(fileKey)
-                    .build();
-            CreateMultipartUploadResponse response = s3Client.createMultipartUpload(createMultipartUploadRequest);
+                    .key(fileKey));
 
             List<CompletedPart> completedParts = new ArrayList<>();
             long readBytes = nBytes;
+            UploadPartRequest.Builder partBuilder = UploadPartRequest.builder()
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .uploadId(response.uploadId());
             for (int partNumber = 1; 0 < nBytes; partNumber++) {
-                UploadPartRequest uploadPartRequest = UploadPartRequest.builder()
-                        .bucket(bucket)
-                        .key(fileKey)
-                        .uploadId(response.uploadId())
+                UploadPartResponse partResponse = s3Client.uploadPart(partBuilder
                         .partNumber(partNumber)
-                        .build();
-                String eTag = s3Client.uploadPart(uploadPartRequest, fromBytes(chunkBytes, nBytes)).eTag();
-                CompletedPart part = CompletedPart.builder()
+                        .build(), fromBytes(chunkBytes, nBytes));
+                CompletedPart completedPart = CompletedPart.builder()
                         .partNumber(partNumber)
-                        .eTag(eTag)
+                        .eTag(partResponse.eTag())
                         .build();
                 readBytes += nBytes;
-                completedParts.add(part);
+                completedParts.add(completedPart);
                 nBytes = bos.read(chunkBytes);
             }
 
-            CompletedMultipartUpload completedMultipartUpload = CompletedMultipartUpload.builder()
-                    .parts(completedParts)
-                    .build();
-            CompleteMultipartUploadRequest completeMultipartUploadRequest =
-                    CompleteMultipartUploadRequest.builder()
-                            .bucket(bucket)
-                            .key(fileKey)
-                            .uploadId(response.uploadId())
-                            .multipartUpload(completedMultipartUpload).build();
-            s3Client.completeMultipartUpload(completeMultipartUploadRequest);
+            s3Client.completeMultipartUpload(completeBuilder -> completeBuilder
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .uploadId(response.uploadId())
+                    .multipartUpload(multipartBuilder -> multipartBuilder.parts(completedParts)));
             return fileRef;
         } catch (IOException | SdkException e) {
             log.error("Error saving file to S3 storage", e);

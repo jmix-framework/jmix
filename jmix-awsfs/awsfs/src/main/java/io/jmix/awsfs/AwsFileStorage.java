@@ -204,13 +204,14 @@ public class AwsFileStorage implements FileStorage {
         FileRef fileRef = new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
 
         try (BufferedInputStream bos = new BufferedInputStream(inputStream, s3ChunkSizeBytes)) {
+            byte[] chunkBytes = new byte[s3ChunkSizeBytes];
+            int nBytes = bos.read(chunkBytes);
             S3Client s3Client = s3ClientReference.get();
-            int totalSizeBytes = bos.available();
-            if (totalSizeBytes == 0) {
-                s3Client.putObject(PutObjectRequest.builder()
+            if (nBytes < s3ChunkSizeBytes) {
+                s3Client.putObject(objectBuilder -> objectBuilder
                         .bucket(bucket)
                         .key(fileKey)
-                        .build(), RequestBody.empty());
+                        .build(), fromBytes(chunkBytes, nBytes));
                 return fileRef;
             }
 
@@ -221,21 +222,22 @@ public class AwsFileStorage implements FileStorage {
             CreateMultipartUploadResponse response = s3Client.createMultipartUpload(createMultipartUploadRequest);
 
             List<CompletedPart> completedParts = new ArrayList<>();
-            for (int partNumber = 1, readBytes = 0; readBytes != totalSizeBytes; partNumber++) {
-                byte[] chunkBytes = new byte[Math.min(totalSizeBytes - readBytes, s3ChunkSizeBytes)];
-                readBytes += bos.read(chunkBytes);
+            long readBytes = nBytes;
+            for (int partNumber = 1; 0 < nBytes; partNumber++) {
                 UploadPartRequest uploadPartRequest = UploadPartRequest.builder()
                         .bucket(bucket)
                         .key(fileKey)
                         .uploadId(response.uploadId())
                         .partNumber(partNumber)
                         .build();
-                String eTag = s3Client.uploadPart(uploadPartRequest, RequestBody.fromBytes(chunkBytes)).eTag();
+                String eTag = s3Client.uploadPart(uploadPartRequest, fromBytes(chunkBytes, nBytes)).eTag();
                 CompletedPart part = CompletedPart.builder()
                         .partNumber(partNumber)
                         .eTag(eTag)
                         .build();
+                readBytes += nBytes;
                 completedParts.add(part);
+                nBytes = bos.read(chunkBytes);
             }
 
             CompletedMultipartUpload completedMultipartUpload = CompletedMultipartUpload.builder()

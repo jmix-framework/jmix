@@ -249,6 +249,7 @@ public class AwsFileStorage implements FileStorage {
     }
 
     private RequestBody fromBytes(byte[] buffer, int length) {
+        length = Math.max(0, length);
         byte[] bytes = Arrays.copyOf(buffer, length);
         return RequestBody.fromContentProvider(() -> new ByteArrayInputStream(bytes), length, Mimetype.MIMETYPE_OCTET_STREAM);
     }

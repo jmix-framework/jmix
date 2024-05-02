@@ -78,7 +78,6 @@ import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -947,6 +946,9 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
             if (!metadataTools.isSystemLevel(metaClass)) {
                 if (metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
+                    continue;
+                }
+                if(!Stores.isMain(metaClass.getStore().getName())) {
                     continue;
                 }
                 optionsMap.put(metaClass.getJavaClass().getName(), messageTools.getDetailedEntityCaption(metaClass));

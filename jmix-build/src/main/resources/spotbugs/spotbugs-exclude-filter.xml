@@ -407,4 +407,10 @@
         <Class name="name.fraser.neil.plaintext.diff_match_patch"/>
     </Match>
 
+    <Match>
+        <Bug pattern="SF_SWITCH_NO_DEFAULT"/>
+        <Class name="io.jmix.reportsflowui.view.template.ReportTemplateDetailView"/>
+        <Method name="onReportTemplateDcItemPropertyChange"/>
+    </Match>
+
 </FindBugsFilter>

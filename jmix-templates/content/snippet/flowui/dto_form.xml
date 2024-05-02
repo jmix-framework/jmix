@@ -66,6 +66,14 @@ def initDefaultFieldAttrs(attr) {
 		field.tag = 'checkbox'
 	}
 
+	if (attr.isDeepInheritor('byte[]')) {
+		field.tag = 'fileUploadField'
+	}
+
+	if (attr.isDeepInheritor('io.jmix.core.FileRef')) {
+		field.tag = 'fileStorageUploadField'
+	}
+
 	if(lookupActions) {
 		def actions = attr.getLookupActions()
 		if(!actions.isEmpty()) {

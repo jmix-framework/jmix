@@ -302,6 +302,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     protected Stream<String> onUserFieldFetchCallback(Query<String, String> query) {
+        // Call limit and offset methods to avoid runtime exception
         query.getOffset();
         query.getLimit();
 

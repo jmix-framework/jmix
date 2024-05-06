@@ -28,13 +28,20 @@ import org.springframework.core.env.Environment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class BeanExclusionProcessor implements BeanDefinitionRegistryPostProcessor, EnvironmentAware {
 
     private static final Logger log = LoggerFactory.getLogger(BeanExclusionProcessor.class);
 
+    private final JmixModules modules;
+
     private List<String> beansToExclude = new ArrayList<>();
+
+    public BeanExclusionProcessor(JmixModules modules) {
+        this.modules = modules;
+    }
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
@@ -52,9 +59,15 @@ public class BeanExclusionProcessor implements BeanDefinitionRegistryPostProcess
 
     @Override
     public void setEnvironment(Environment environment) {
-        String property = environment.getProperty("jmix.core.exclude-beans");
-        if (property != null) {
-            beansToExclude = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(property);
-        }
+        List<String> propertyValues = modules.getPropertyValues("jmix.core.exclude-beans");
+
+        // put the list in default order - from the app down to the add-ons
+        Collections.reverse(propertyValues);
+
+        beansToExclude = propertyValues.stream()
+                .map(property ->
+                        Splitter.on(",").trimResults().omitEmptyStrings().splitToList(property))
+                .flatMap(List::stream)
+                .toList();
     }
 }

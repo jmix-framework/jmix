@@ -301,6 +301,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         setupWrapper.setColspan(loggedEntityTableBox, 2);
     }
 
+    @SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
     protected Stream<String> onUserFieldFetchCallback(Query<String, String> query) {
         // Call limit and offset methods to avoid runtime exception
         query.getOffset();

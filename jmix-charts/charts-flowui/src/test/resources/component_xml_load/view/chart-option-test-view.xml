@@ -32,6 +32,7 @@
                       animationDelayUpdate="15"
                       blendMode="LIGHTER"
                       hoverLayerThreshold="6000"
+                      renderer="SVG"
                       useUtc="true"
                       height="50px"
                       maxHeight="55px"

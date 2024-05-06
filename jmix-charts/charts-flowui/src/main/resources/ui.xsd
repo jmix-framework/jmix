@@ -66,6 +66,7 @@
                     <xs:attribute name="animationEasingUpdate" type="xs:string"/>
                     <xs:attribute name="animationDelayUpdate" type="xs:integer"/>
                     <xs:attribute name="hoverLayerThreshold" type="xs:integer"/>
+                    <xs:attribute name="renderer" type="rendererType"/>
                     <xs:attribute name="useUtc" type="xs:boolean"/>
 
                     <xs:attribute name="blendMode" type="blendMode"/>
@@ -2903,6 +2904,13 @@
     </xs:attributeGroup>
 
     <!-- Enum-->
+    <xs:simpleType name="rendererType">
+        <xs:restriction>
+            <xs:enumeration value="CANVAS"/>
+            <xs:enumeration value="SVG"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="axisType">
         <xs:restriction>
             <xs:enumeration value="CATEGORY"/>

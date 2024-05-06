@@ -86,7 +86,7 @@ public class UiProperties {
                         @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
                         @DefaultValue("true") boolean useSessionFixationProtection,
-                        @DefaultValue("true") boolean websocketRequestSecurityContextProvided
+                        @DefaultValue("false") boolean websocketRequestSecurityContextProvided
     ) {
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;

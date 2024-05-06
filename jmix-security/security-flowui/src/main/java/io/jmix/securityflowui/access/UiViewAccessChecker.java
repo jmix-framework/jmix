@@ -31,6 +31,11 @@ import org.springframework.security.core.Authentication;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * @deprecated Use {@link JmixNavigationAccessChecker} instead. Vaadin introduced new
+ * {@link com.vaadin.flow.server.auth.NavigationAccessControl} mechanism.
+ */
+@Deprecated(since = "2.3", forRemoval = true)
 public class UiViewAccessChecker implements BeforeEnterListener {
 
     private static final Logger log = LoggerFactory.getLogger(UiViewAccessChecker.class);

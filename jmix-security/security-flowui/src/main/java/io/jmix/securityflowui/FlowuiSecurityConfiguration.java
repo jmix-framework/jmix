@@ -20,6 +20,7 @@ import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.RememberMeConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.securityflowui.access.UiViewAccessChecker;
+import io.jmix.securityflowui.security.FlowuiVaadinWebSecurity;
 import io.jmix.securityflowui.util.PrevVaadinRequestUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -65,8 +66,12 @@ import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * @deprecated {@link FlowuiVaadinWebSecurity} is used instead.
+ */
 //@EnableWebSecurity
 //@Configuration
+@Deprecated(since = "2.3", forRemoval = true)
 public class FlowuiSecurityConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(FlowuiSecurityConfiguration.class);

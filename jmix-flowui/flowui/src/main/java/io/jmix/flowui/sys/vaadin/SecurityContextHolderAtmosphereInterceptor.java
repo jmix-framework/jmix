@@ -11,6 +11,10 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
+/**
+ * @deprecated the problem solved by this class doesn't appear anymore. This class will be removed in future releases.
+ */
+@Deprecated(since = "2.3", forRemoval = true)
 public class SecurityContextHolderAtmosphereInterceptor implements AtmosphereInterceptor {
 
     @EventListener

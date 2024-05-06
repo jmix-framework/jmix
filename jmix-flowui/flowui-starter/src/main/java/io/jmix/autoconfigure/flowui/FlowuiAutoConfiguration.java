@@ -63,7 +63,7 @@ public class FlowuiAutoConfiguration {
     }
 
     @Bean("flowui_SecurityContextHolderAtmosphereInterceptor")
-    @ConditionalOnProperty(name = "jmix.ui.websocket-request-security-context-provided", matchIfMissing = true)
+    @ConditionalOnProperty(name = "jmix.ui.websocket-request-security-context-provided")
     public SecurityContextHolderAtmosphereInterceptor securityContextHolderAtmosphereInterceptor() {
         return new SecurityContextHolderAtmosphereInterceptor();
     }

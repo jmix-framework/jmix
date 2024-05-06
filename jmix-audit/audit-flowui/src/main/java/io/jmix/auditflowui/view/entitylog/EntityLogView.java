@@ -303,7 +303,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
     @SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
     protected Stream<String> onUserFieldFetchCallback(Query<String, String> query) {
-        // Call limit and offset methods to avoid runtime exception
+        // Ignore offset and limit since methods called to avoid exception
         query.getOffset();
         query.getLimit();
 

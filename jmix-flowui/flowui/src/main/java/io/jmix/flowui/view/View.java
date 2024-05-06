@@ -20,8 +20,8 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiViewProperties;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.model.ViewData;
@@ -75,13 +75,6 @@ public class View<T extends Component> extends Composite<T>
 
     public View() {
         closeDelegate = createDefaultViewDelegate();
-        addAfterCloseListener(this::onAfterClose);
-    }
-
-    private void onAfterClose(AfterCloseEvent event) {
-        removeApplicationListeners();
-        removeViewAttributes();
-        unregisterBackNavigation();
     }
 
     private Consumer<View<T>> createDefaultViewDelegate() {
@@ -177,28 +170,32 @@ public class View<T extends Component> extends Composite<T>
     protected void onDetach(DetachEvent detachEvent) {
         super.onDetach(detachEvent);
 
-        removeApplicationListeners();
-        if (UiComponentUtils.isComponentAttachedToDialog(this)) {
-            removeViewAttributes();
-        }
+        onDetachInternal();
 
         if (isPreventBrowserTabClosing()) {
             WebBrowserTools.allowBrowserTabClosing(this);
         }
     }
 
-    private void unregisterBackNavigation() {
+    @Internal
+    protected void onDetachInternal() {
+        removeApplicationListeners();
+        removeViewAttributes();
+        unregisterBackNavigation();
+    }
+
+    protected void unregisterBackNavigation() {
         getViewSupport().unregisterBackwardNavigation(this);
     }
 
-    private void removeApplicationListeners() {
+    protected void removeApplicationListeners() {
         VaadinSession session = VaadinSession.getCurrent();
         if (session != null) {
             session.getAttribute(UiEventsManager.class).removeApplicationListeners(this);
         }
     }
 
-    private void removeViewAttributes() {
+    protected void removeViewAttributes() {
         getViewAttributes().removeAllAttributes();
     }
 

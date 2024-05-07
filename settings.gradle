@@ -142,6 +142,12 @@ includeProject('security-flowui-starter', 'jmix-security/security-flowui-starter
 //includeProject('sessions', 'jmix-sessions/sessions')
 //includeProject('sessions-starter', 'jmix-sessions/sessions-starter')
 
+includeProject('superset', 'jmix-superset/superset')
+includeProject('superset-starter', 'jmix-superset/superset-starter')
+includeProject('superset-flowui', 'jmix-superset/superset-flowui')
+includeProject('superset-flowui-kit', 'jmix-superset/superset-flowui-kit')
+includeProject('superset-flowui-starter', 'jmix-superset/superset-flowui-starter')
+
 void includeProject(String name, String path, boolean changeBuildFileName = true) {
     include ":$name"
     project(":$name").projectDir = new File(settingsDir, "$path")

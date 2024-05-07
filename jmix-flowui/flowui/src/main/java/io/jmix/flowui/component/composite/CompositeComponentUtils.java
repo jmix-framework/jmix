@@ -32,6 +32,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Optional;
 
+// TODO: gg, JavaDoc
 public final class CompositeComponentUtils {
 
     public static final String ID_KEY = "compositeId";
@@ -45,7 +46,7 @@ public final class CompositeComponentUtils {
     }
 
     public static void setComponentId(Component component, String id) {
-        ComponentUtil.setData(component, ID_KEY, "id");
+        ComponentUtil.setData(component, ID_KEY, id);
     }
 
     public static boolean sameId(Component component, String id) {
@@ -55,14 +56,12 @@ public final class CompositeComponentUtils {
 
     public static Optional<Component> findComponent(CompositeComponent<?> compositeComponent, String id) {
         Component content = compositeComponent.getContent();
-
         if (CompositeComponentUtils.sameId(content, id)) {
             return Optional.of(content);
         }
 
         if (UiComponentUtils.isContainer(content)) {
-            // TODO: gg, re-implement
-            return UiComponentUtils.findComponent(content, id);
+            return UiComponentUtils.findComponent(content, id, CompositeComponentUtils::sameId);
         }
 
         throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");

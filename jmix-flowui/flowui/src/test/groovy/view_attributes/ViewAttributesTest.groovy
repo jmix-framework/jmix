@@ -16,6 +16,7 @@
 
 package view_attributes
 
+import com.vaadin.flow.component.ComponentUtil
 import com.vaadin.flow.server.VaadinSession
 import io.jmix.flowui.view.StandardOutcome
 import io.jmix.flowui.view.ViewAttributes
@@ -54,6 +55,10 @@ class ViewAttributesTest extends FlowuiTestSpecification {
 
         and: "After closing View attribute should be removed from Vaadin session"
         view.close(StandardOutcome.CLOSE)
+        // All views, except detail view, remove view attribute on detach,
+        // so we need to trigger it explicitly, because on the time of assertion,
+        // DetachEvent hasn't fired yet.
+        ComponentUtil.onComponentDetach(view)
 
         def sessionAttrs1 = getAttributesFromSession(view.getId().get())
         sessionAttrs1 == null

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.xml.layout.loader.component;
+package component.composite.loader;
 
-import io.jmix.flowui.component.main.JmixUserIndicator;
+import component.composite.component.TestStepperField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 
-public class UserIndicatorLoader extends AbstractComponentLoader<JmixUserIndicator> {
-
+public class TestStepperFieldLoader extends AbstractComponentLoader<TestStepperField> {
     @Override
-    protected JmixUserIndicator createComponent() {
-        return factory.create(JmixUserIndicator.class);
+    protected TestStepperField createComponent() {
+        return factory.create(TestStepperField.class);
     }
 
     @Override
     public void loadComponent() {
-        componentLoader().loadTitle(resultComponent, element, getContext());
-        componentLoader().loadSizeAttributes(resultComponent, element);
-        componentLoader().loadClassNames(resultComponent, element);
-        componentLoader().loadEnabled(resultComponent, element);
-
-        resultComponent.refreshUser();
+        // TODO: gg, implement
     }
 }

@@ -78,7 +78,7 @@ public class MenuFilterFieldLoader extends AbstractComponentLoader<MenuFilterFie
 
         Optional<String> valueOptional = loadString(element, "value");
 
-        getComponentContext().addInitTask((context, view) -> {
+        getContext().addInitTask((context, view) -> {
             Component menuComponent = UiComponentUtils.findComponent(view, menuId).orElse(null);
 
             if (!(menuComponent instanceof HasMenuItemProvider<?> hasMenuItemProvider)) {

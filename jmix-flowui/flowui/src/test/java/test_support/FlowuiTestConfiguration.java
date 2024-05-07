@@ -16,6 +16,8 @@
 
 package test_support;
 
+import component.composite.component.TestStepperField;
+import component.composite.loader.TestStepperFieldLoader;
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
@@ -28,6 +30,8 @@ import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.sys.registration.ComponentRegistration;
+import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
 import io.jmix.flowui.testassist.vaadin.TestServletContext;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
@@ -108,6 +112,13 @@ public class FlowuiTestConfiguration {
     @Bean
     public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
         return new LocalApplicationEventChannelSupplier();
+    }
+
+    @Bean
+    public ComponentRegistration testStepperField() {
+        return ComponentRegistrationBuilder.create(TestStepperField.class)
+                .withComponentLoader("testStepperField", TestStepperFieldLoader.class)
+                .build();
     }
 
     @EnableWebSecurity

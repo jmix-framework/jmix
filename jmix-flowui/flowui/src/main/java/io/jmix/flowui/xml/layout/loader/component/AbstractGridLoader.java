@@ -719,8 +719,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     protected void loadContextMenuItemAction(GridContextMenuItemComponent<?> component, Element element) {
         loadString(element, "action")
-                .ifPresent(actionId -> getComponentContext().addInitTask(
-                        new AssignActionInitTask<>(component, actionId, getComponentContext().getView())));
+                .ifPresent(actionId -> getContext().addInitTask(
+                        new AssignActionInitTask<>(component, actionId)));
     }
 
     protected void loadActions() {

@@ -63,7 +63,7 @@ public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGrid
         loadMenuItems(element, loadContext);
 
         InitTask initTask = new AssignGridColumnVisibilityPropertiesInitTask(loadContext);
-        getComponentContext().addInitTask(initTask);
+        getContext().addInitTask(initTask);
     }
 
     protected String loadDataGridId(Element element) {

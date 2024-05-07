@@ -55,9 +55,10 @@ public class GroupFilterLoader extends AbstractComponentLoader<GroupFilter> {
                     DataLoader dataLoader = getComponentContext().getViewData().getLoader(dataLoaderId);
                     resultComponent.setDataLoader(dataLoader);
 
-                    getComponentContext().addInitTask((context, view) ->
+                    getContext().addInitTask((context, view) ->
                             GroupFilterUtils.updateDataLoaderInitialCondition(resultComponent,
                                     dataLoader.getCondition())
+
                     );
                 });
     }

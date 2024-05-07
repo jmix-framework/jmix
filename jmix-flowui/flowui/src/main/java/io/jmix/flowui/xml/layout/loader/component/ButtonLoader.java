@@ -66,9 +66,9 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
         loadString(element, "action")
                 .ifPresent(actionId -> {
                     AssignActionInitTask<JmixButton> task =
-                            new AssignActionInitTask<>(component, actionId, getComponentContext().getView());
+                            new AssignActionInitTask<>(component, actionId);
                     task.setAfterExecuteHandler(this::afterActionSet);
-                    getComponentContext().addInitTask(task);
+                    getContext().addInitTask(task);
                 });
     }
 

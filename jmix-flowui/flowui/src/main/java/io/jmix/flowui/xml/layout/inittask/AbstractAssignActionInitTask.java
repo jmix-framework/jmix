@@ -19,6 +19,8 @@ package io.jmix.flowui.xml.layout.inittask;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.composite.CompositeComponent;
+import io.jmix.flowui.component.composite.CompositeComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
@@ -27,8 +29,9 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
-
+import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -36,21 +39,38 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
 
     protected C component;
     protected String actionId;
-    protected View<?> view;
 
     protected Consumer<Action> afterExecuteHandler;
 
+    @Deprecated(since = "2.3", forRemoval = true)
     public AbstractAssignActionInitTask(C component, String actionId, View<?> view) {
+        this(component, actionId);
+    }
+
+    public AbstractAssignActionInitTask(C component, String actionId) {
         this.component = component;
         this.actionId = actionId;
-        this.view = view;
     }
 
     @Override
     public void execute(ComponentContext context, View<?> view) {
-        if (!(UiComponentUtils.isContainer(view.getContent())
-                || view.getContent() instanceof AppLayout)) {
-            throw new GuiDevelopmentException("View cannot contain components", context.getFullFrameId());
+        execute(context);
+    }
+
+    @Override
+    public void execute(Context context) {
+        Component origin = context.getOrigin();
+
+        // TODO: gg, simplify?
+        if (origin instanceof View<?> view) {
+            Component content = view.getContent();
+            if (!UiComponentUtils.isContainer(content)
+                    || content instanceof AppLayout) {
+                throw new GuiDevelopmentException("View cannot contain components", context);
+            }
+        } else if (!(origin instanceof CompositeComponent)
+                && !UiComponentUtils.isContainer(origin)) {
+            throw new GuiDevelopmentException("Component cannot contain components", context);
         }
 
         String[] elements = ValuePathHelper.parse(actionId);
@@ -58,7 +78,7 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
             String id = elements[elements.length - 1];
 
             String prefix = ValuePathHelper.pathPrefix(elements);
-            Component holder = getComponent(view, prefix).orElse(null);
+            Component holder = getComponent(origin, prefix).orElse(null);
             if (holder == null) {
                 throw new GuiDevelopmentException(
                         String.format("Can't find component: %s for action: %s", prefix, actionId),
@@ -82,25 +102,28 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
             runAfterExecuteHandler(action);
         } else if (elements.length == 1) {
             String id = elements[0];
-            Action action = getActionRecursively(context, id);
+            if (!(context instanceof ComponentContext)) {
+                throw new IllegalStateException("'context' must implement " + ComponentContext.class.getName());
+            }
+            Action action = getActionRecursively(((ComponentContext) context), id);
 
             if (action == null) {
                 if (!hasOwnAction(id)) {
                     String message = getExceptionMessage(id);
-                    throw new GuiDevelopmentException(message, context.getFullFrameId());
+                    throw new GuiDevelopmentException(message, context);
                 }
             } else {
                 addAction(context, action);
                 runAfterExecuteHandler(action);
             }
         } else {
-            throw new GuiDevelopmentException("Empty action name", context.getFullFrameId());
+            throw new GuiDevelopmentException("Empty action name", context);
         }
     }
 
     protected abstract boolean hasOwnAction(String id);
 
-    protected abstract void addAction(ComponentContext context, Action action);
+    protected abstract void addAction(Context context, Action action);
 
     public void setAfterExecuteHandler(@Nullable Consumer<Action> afterExecuteHandler) {
         this.afterExecuteHandler = afterExecuteHandler;
@@ -129,7 +152,15 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
         return String.format("Can't find action with %s id", id);
     }
 
-    protected Optional<Component> getComponent(View<?> view, String id) {
-        return UiComponentUtils.findComponent(view, id);
+    protected Optional<Component> getComponent(Component component, String id) {
+        if (component instanceof View<?> view) {
+            return UiComponentUtils.findComponent(view, id);
+        } else if (component instanceof CompositeComponent<?> compositeComponent) {
+            return CompositeComponentUtils.findComponent(compositeComponent, id);
+        } else if (UiComponentUtils.isContainer(component)) {
+            return UiComponentUtils.findComponent(component, id);
+        }
+        // TODO: gg, throw exception?
+        return Optional.empty();
     }
 }

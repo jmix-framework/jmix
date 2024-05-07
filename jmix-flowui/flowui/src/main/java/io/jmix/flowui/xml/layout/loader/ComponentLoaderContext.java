@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader;
 
 
+import com.vaadin.flow.component.Component;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
@@ -64,6 +65,11 @@ public class ComponentLoaderContext implements ComponentContext {
 
     public void setViewActions(ViewActions viewActions) {
         this.viewActions = viewActions;
+    }
+
+    @Override
+    public Component getOrigin() {
+        return getView();
     }
 
     @Override

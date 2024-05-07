@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.composite.CompositeComponent;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
@@ -31,7 +32,13 @@ import java.util.Optional;
 public interface ComponentLoader<T extends Component> {
 
     interface Context {
+
+        Component getOrigin();
+
         String getMessageGroup();
+
+        void addInitTask(InitTask task);
+        void executeInitTasks();
     }
 
     interface ComponentContext extends Context {
@@ -50,9 +57,13 @@ public interface ComponentLoader<T extends Component> {
 
         void addPreInitTask(InitTask task);
         void executePreInitTasks();
+    }
 
-        void addInitTask(InitTask task);
-        void executeInitTasks();
+    interface CompositeComponentContext extends Context {
+
+        CompositeComponent<?> getComposite();
+
+        String getDescriptorPath();
     }
 
     /**
@@ -65,7 +76,21 @@ public interface ComponentLoader<T extends Component> {
          * @param context loader context
          * @param view    view
          */
+        @Deprecated(since = "2.3", forRemoval = true)
         void execute(ComponentContext context, View<?> view);
+
+        /**
+         * This method will be invoked after component's content initialization.
+         *
+         * @param context   loader context
+         */
+        default void execute(Context context) {
+            if (context instanceof ComponentContext componentContext) {
+                execute(componentContext, componentContext.getView());
+            } else {
+                throw new IllegalArgumentException("'context' must implement " + ComponentContext.class.getName());
+            }
+        }
     }
 
     Context getContext();

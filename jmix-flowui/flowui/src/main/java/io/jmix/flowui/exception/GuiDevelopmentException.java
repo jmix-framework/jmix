@@ -17,7 +17,9 @@
 package io.jmix.flowui.exception;
 
 import io.jmix.core.DevelopmentException;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
+import io.jmix.flowui.xml.layout.ComponentLoader.CompositeComponentContext;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 
 import org.springframework.lang.Nullable;
@@ -66,7 +68,11 @@ public class GuiDevelopmentException extends DevelopmentException {
 
     @Override
     public String toString() {
-        String frameId = getFrameId();
-        return super.toString() + (frameId != null ? ", frameId=" + frameId : "");
+        return super.toString() +
+                (getFrameId() != null
+                        ? ", frameId=" + getFrameId()
+                        : context instanceof CompositeComponentContext
+                        ? "componentClass=" + ((CompositeComponentContext) context).getComposite().getClass()
+                        : "");
     }
 }

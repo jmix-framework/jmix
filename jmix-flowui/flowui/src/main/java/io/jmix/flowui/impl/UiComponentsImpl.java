@@ -54,6 +54,9 @@ import io.jmix.flowui.component.accordion.JmixAccordionPanel;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.composite.CompositeComponent;
+import io.jmix.flowui.component.composite.CompositeComponentUtils;
+import io.jmix.flowui.component.composite.CompositeDescriptor;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.details.JmixDetails;
@@ -78,8 +81,14 @@ import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
+import io.jmix.flowui.xml.layout.loader.CompositeComponentLayoutLoader;
+import io.jmix.flowui.xml.layout.loader.CompositeComponentLoaderContext;
+import io.jmix.flowui.xml.layout.loader.CompositeDescriptorLoader;
+import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.lang.Nullable;
 
@@ -91,11 +100,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @org.springframework.stereotype.Component("flowui_UiComponents")
 public class UiComponentsImpl implements UiComponents {
+
     private static final Logger log = LoggerFactory.getLogger(UiComponentsImpl.class);
 
-    protected DatatypeRegistry datatypeRegistry;
+    protected final ApplicationContext applicationContext;
+    protected final DatatypeRegistry datatypeRegistry;
 
-    public UiComponentsImpl(DatatypeRegistry datatypeRegistry) {
+    public UiComponentsImpl(ApplicationContext applicationContext,
+                            DatatypeRegistry datatypeRegistry) {
+        this.applicationContext = applicationContext;
         this.datatypeRegistry = datatypeRegistry;
     }
 
@@ -144,7 +157,52 @@ public class UiComponentsImpl implements UiComponents {
 
         log.trace("Creating {} component", componentToCreate.getName());
 
-        return (T) Instantiator.get(UI.getCurrent()).getOrCreate(componentToCreate);
+        Component component = Instantiator.get(UI.getCurrent()).getOrCreate(componentToCreate);
+        initCompositeComponent(component, componentToCreate);
+        return (T) component;
+    }
+
+    protected void initCompositeComponent(Component component, Class<? extends Component> type) {
+        if (!(component instanceof CompositeComponent<?> compositeComponent)) {
+            return;
+        }
+
+        // TODO: gg, ApplicationListener
+
+        // TODO: gg, do we need type?
+        CompositeDescriptor descriptor = type.getAnnotation(CompositeDescriptor.class);
+        if (descriptor != null) {
+            String descriptorPath = descriptor.value();
+            if (!descriptorPath.startsWith("/")) {
+                String packageName = CompositeComponentUtils.getPackage(type);
+                if (StringUtils.isNotEmpty(packageName)) {
+                    String relativePath = packageName.replace('.', '/');
+                    descriptorPath = "/" + relativePath + "/" + descriptorPath;
+                }
+            }
+
+            CompositeComponentLoaderContext context = new CompositeComponentLoaderContext();
+            context.setComposite(compositeComponent);
+            context.setDescriptorPath(descriptorPath);
+            context.setMessageGroup(CompositeComponentUtils.getMessageGroup(descriptorPath));
+
+            Component content = processCompositeDescriptor(context);
+            CompositeComponentUtils.setContent(compositeComponent, content);
+
+            context.executeInitTasks();
+        }
+    }
+
+    protected Component processCompositeDescriptor(CompositeComponentLoaderContext context) {
+        CompositeDescriptorLoader compositeDescriptorLoader =
+                applicationContext.getBean(CompositeDescriptorLoader.class);
+        Element element = compositeDescriptorLoader.load(context.getDescriptorPath());
+
+        CompositeComponentLayoutLoader layoutLoader =
+                applicationContext.getBean(CompositeComponentLayoutLoader.class, context);
+
+        // TODO: gg, check type
+        return layoutLoader.createComponent(element);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

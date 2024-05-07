@@ -4801,4 +4801,11 @@
         </xs:sequence>
     </xs:complexType>
 
+    <!-- Composite Component -->
+    <xs:complexType name="compositeType">
+        <xs:sequence>
+            <xs:group ref="singleLayoutOrComponent"/>
+        </xs:sequence>
+    </xs:complexType>
+
 </xs:schema>

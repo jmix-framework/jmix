@@ -36,6 +36,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.accesscontext.UiEntityContext;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.model.*;
@@ -96,6 +97,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         addBeforeShowListener(this::onBeforeShow);
         addReadyListener(this::onReady);
         addBeforeCloseListener(this::onBeforeClose);
+        addAfterCloseListener(this::onAfterClose);
 
         setPreventBrowserTabClosing(true);
     }
@@ -111,6 +113,26 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private void onBeforeClose(BeforeCloseEvent event) {
         preventUnsavedChanges(event);
+    }
+
+    private void onAfterClose(AfterCloseEvent event) {
+        removeApplicationListeners();
+        removeViewAttributes();
+        unregisterBackNavigation();
+    }
+
+    @Override
+    protected void onDetachInternal() {
+        removeApplicationListeners();
+
+        // In case of Detail View, we remove ViewAttributes in detach event,
+        // only if it is attached to a dialog, because we want to preserve
+        // them if page is reloaded. For same reason, we don't unregister
+        // backward navigation here and do it if we leave a detail view
+        // by properly closing it.
+        if (UiComponentUtils.isComponentAttachedToDialog(this)) {
+            removeViewAttributes();
+        }
     }
 
     private void setupModifiedTracking() {

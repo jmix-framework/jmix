@@ -59,19 +59,7 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
 
     @Override
     public void execute(Context context) {
-        Component origin = context.getOrigin();
-
-        // TODO: gg, simplify?
-        if (origin instanceof View<?> view) {
-            Component content = view.getContent();
-            if (!UiComponentUtils.isContainer(content)
-                    || content instanceof AppLayout) {
-                throw new GuiDevelopmentException("View cannot contain components", context);
-            }
-        } else if (!(origin instanceof CompositeComponent)
-                && !UiComponentUtils.isContainer(origin)) {
-            throw new GuiDevelopmentException("Component cannot contain components", context);
-        }
+        Component origin = getOrigin(context);
 
         String[] elements = ValuePathHelper.parse(actionId);
         if (elements.length > 1) {
@@ -119,6 +107,25 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
         } else {
             throw new GuiDevelopmentException("Empty action name", context);
         }
+    }
+
+    protected Component getOrigin(Context context) {
+        Component origin = context.getOrigin();
+
+        if (origin instanceof View<?> view) {
+            Component content = view.getContent();
+            if (!(UiComponentUtils.isContainer(content)
+                    || content instanceof AppLayout)) {
+                throw new GuiDevelopmentException(view.getClass().getSimpleName() +
+                        "'s content cannot contain components", context);
+            }
+        } else if (!(origin instanceof CompositeComponent)
+                && !UiComponentUtils.isContainer(origin)) {
+            throw new GuiDevelopmentException(origin.getClass().getSimpleName() +
+                    " cannot contain components", context);
+        }
+
+        return origin;
     }
 
     protected abstract boolean hasOwnAction(String id);

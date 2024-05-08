@@ -34,11 +34,12 @@ public class GuestTokenBody implements Serializable {
         this.rls = rls;
     }
 
-    public GuestTokenBodyBuilder builder() {
+    public static GuestTokenBodyBuilder builder() {
         return new GuestTokenBodyBuilder();
     }
 
     public record Resource(String id, String type) implements Serializable {
+        public static final String DASHBOARD_TYPE = "dashboard";
     }
 
     public record RowLevelRole(String clause, Integer dataset) implements Serializable {
@@ -73,6 +74,10 @@ public class GuestTokenBody implements Serializable {
         public GuestTokenBodyBuilder withUser(User user) {
             body.setUser(user);
             return this;
+        }
+
+        public GuestTokenBody build() {
+            return body;
         }
     }
 }

@@ -60,6 +60,9 @@ import java.util.*;
 @JsModule("./src/chart/jmix-chart.js")
 public class JmixChart extends Component implements HasSize {
 
+    protected static final String PROPERTY_RENDERER = "renderer";
+    protected static final String PROPERTY_RENDERER_CHANGED_EVENT = "renderer-changed";
+
     protected ChartOptions options;
 
     protected JmixChartSerializer serializer;
@@ -796,6 +799,24 @@ public class JmixChart extends Component implements HasSize {
         options.setUseUtc(useUtc);
     }
 
+    /**
+     * @return the current chart component renderer type
+     */
+    @Synchronize(property = PROPERTY_RENDERER, value = PROPERTY_RENDERER_CHANGED_EVENT)
+    public ChartRenderer getRenderer() {
+        return ChartRenderer.fromId(getElement().getProperty(PROPERTY_RENDERER, ChartRenderer.CANVAS.getId()));
+    }
+
+    /**
+     * Sets the renderer type of the chart. The renderer type is {@link ChartRenderer#CANVAS} by default.
+     *
+     * @param renderer renderer type to be applied
+     * @see <a href="https://echarts.apache.org/handbook/en/best-practices/canvas-vs-svg/">Apache ECharts renderer documentation</a>
+     */
+    public void setRenderer(ChartRenderer renderer) {
+        getElement().setProperty(PROPERTY_RENDERER, renderer.getId());
+    }
+
     protected void initChartOptionsChangeListener() {
         options.setChartObjectChangeListener(this::onChartOptionsChange);
     }
@@ -929,7 +950,7 @@ public class JmixChart extends Component implements HasSize {
      * Execute JavaScript function with the {@code resultJson} passed. Execution will be delayed till
      * the client-side is ready.
      *
-     * @param function JavaScript function to execute
+     * @param function   JavaScript function to execute
      * @param resultJson resultJson
      */
     protected synchronized void callPendingJsFunction(String function, JsonObject resultJson) {

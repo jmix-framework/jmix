@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.component.loader;
 import com.google.common.base.Strings;
 import io.jmix.chartsflowui.component.Chart;
 import io.jmix.chartsflowui.data.ContainerChartItems;
+import io.jmix.chartsflowui.kit.component.ChartRenderer;
 import io.jmix.chartsflowui.kit.component.model.*;
 import io.jmix.chartsflowui.kit.component.model.axis.*;
 import io.jmix.chartsflowui.kit.component.model.datazoom.AbstractDataZoom;
@@ -72,6 +73,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
         loadInteger(element, "animationDelayUpdate", resultComponent::setAnimationDelayUpdate);
         loadEnum(element, ChartOptions.BlendMode.class, "blendMode", resultComponent::setBlendMode);
         loadInteger(element, "hoverLayerThreshold", resultComponent::setHoverLayerThreshold);
+        loadEnum(element, ChartRenderer.class, "renderer", resultComponent::setRenderer);
         loadBoolean(element, "useUtc", resultComponent::setUseUtc);
 
         chartLoaderSupport().loadColor(element, "backgroundColor", resultComponent::setBackgroundColor);

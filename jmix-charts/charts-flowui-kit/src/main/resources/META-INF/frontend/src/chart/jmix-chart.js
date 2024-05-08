@@ -46,6 +46,13 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
                 notify: true
             },
 
+            renderer: {
+                type: String,
+                observer: '_onRendererChange',
+                value: 'canvas',
+                notify: true
+            },
+
             /** @private */
             _options: {
                 type: Object
@@ -117,13 +124,21 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
     }
 
     _onThemeChange() {
+        this._recreateChart();
+    }
+
+    _onRendererChange() {
+        this._recreateChart();
+    }
+
+    _recreateChart() {
         if (this._root === undefined) {
             return;
         }
 
         this._destroyChart();
         const chart = this.shadowRoot.querySelector('[part="root"]');
-        this._root = echarts.init(chart, this.theme);
+        this._root = echarts.init(chart, this.theme, {renderer: this.renderer});
         this._resetOptions();
         this._resetDataSet();
         this._forwardEvents();
@@ -182,7 +197,7 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
     _updateChart(changes) {
         if (this._root == null) {
             const chart = this.shadowRoot.querySelector('[part="root"]');
-            this._root = echarts.init(chart, this.theme);
+            this._root = echarts.init(chart, this.theme, {renderer: this.renderer});
             this._forwardEvents();
         }
 

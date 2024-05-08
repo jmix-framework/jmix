@@ -18,6 +18,7 @@ package component_xml_load;
 
 import component_xml_load.view.*;
 import io.jmix.chartsflowui.component.Chart;
+import io.jmix.chartsflowui.kit.component.ChartRenderer;
 import io.jmix.chartsflowui.kit.component.model.*;
 import io.jmix.chartsflowui.kit.component.model.axis.*;
 import io.jmix.chartsflowui.kit.component.model.datazoom.AbstractDataZoom;
@@ -77,6 +78,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         assertEquals(15, chart.getAnimationDelayUpdate());
         assertEquals(LIGHTER, chart.getBlendMode());
         assertEquals(6000, chart.getHoverLayerThreshold());
+        assertEquals(ChartRenderer.SVG, chart.getRenderer());
         assertTrue(chart.getUseUtc());
         assertEquals("50px", chart.getHeight());
         assertEquals("55px", chart.getMaxHeight());

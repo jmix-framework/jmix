@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class TestStepperField extends CompositeComponent<HorizontalLayout>
         implements HasValue<ComponentValueChangeEvent<TestStepperField, Integer>, Integer> {
 
-    private UiComponents uiComponents;
+//    private UiComponents uiComponents;
 
     private TypedTextField<Integer> valueField;
     private Button upBtn;

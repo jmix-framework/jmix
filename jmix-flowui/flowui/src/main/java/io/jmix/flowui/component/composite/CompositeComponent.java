@@ -16,98 +16,27 @@
 
 package io.jmix.flowui.component.composite;
 
-import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.component.Composite;
+import io.jmix.flowui.UiComponents;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
-public abstract class CompositeComponent<T extends Component> extends Component {
+public abstract class CompositeComponent<T extends Component> extends Composite<T> {
 
-    private transient boolean contentIsInitializing = false;
+    protected UiComponents uiComponents;
 
-    protected T content;
-
-    protected CompositeComponent() {
-        super(null);
+    @Autowired
+    public void setUiComponents(UiComponents uiComponents) {
+        this.uiComponents = uiComponents;
     }
 
     @SuppressWarnings("unchecked")
     protected T initContent() {
-        return CompositeComponentUtils.createContent((Class<? extends CompositeComponent<T>>) getClass());
-    }
-
-    /**
-     * Gets the content of the composite, i.e. the component the composite is
-     * wrapping.
-     *
-     * @return the content for the composite, never {@code null}
-     */
-    public T getContent() {
-//        Preconditions.checkState(content != null, "Composition content is not initialized");
-        if (content == null) {
-            try {
-                if (contentIsInitializing) {
-                    throw new IllegalStateException(
-                            "The content is not yet initialized. "
-                                    + "Detected direct or indirect call to 'getContent' from 'initContent'. "
-                                    + "You may not call any framework method on a '"
-                                    + CompositeComponent.class.getSimpleName()
-                                    + "' instance before 'initContent' has completed initializing the component.");
-                }
-                contentIsInitializing = true;
-                T newContent = initContent();
-                if (newContent == null) {
-                    throw new IllegalStateException("'initContent' returned null instead of a component");
-                }
-                setContent(newContent);
-            } finally {
-                contentIsInitializing = false;
-            }
-        }
-        return content;
-    }
-
-    protected void setContent(T content) {
-        io.jmix.core.common.util.Preconditions.checkNotNullArgument(content, "Composition content cannot be 'null'");
-        Preconditions.checkState(content.getElement().getComponent().isPresent(),
-                "Composite should never be attached to an element which is not attached to a component");
-        Preconditions.checkState(this.content == null, "Composition content has already been initialized");
-        this.content = content;
-        Element element = content.getElement();
-        // Always replace the composite reference as this will be called from
-        // inside out, so the end result is that the element refers to the
-        // outermost composite in the probably rare case that multiple
-        // composites are nested
-        // TODO: gg, replace somehow
-//        CompositeComponentUtils.setComponent(element, this);
-    }
-
-    /**
-     * Gets the root element of this composite.
-     * <p>
-     * For a composite, the root element is the same as the root element of the
-     * content of the composite.
-     *
-     * @return the root element of this component
-     */
-    @Override
-    public Element getElement() {
-        return getContent().getElement();
-    }
-
-    /**
-     * Gets the child components of this composite.
-     * <p>
-     * A composite always has one child component, returned by
-     * {@link #getContent()}.
-     *
-     * @return the child component of this composite
-     */
-    @Override
-    public Stream<Component> getChildren() {
-        return Stream.of(getContent());
+        Class<? extends Component> type = CompositeComponentUtils
+                .findContentType((Class<? extends CompositeComponent<?>>) getClass());
+        return ((T) uiComponents.create(type));
     }
 
     @SuppressWarnings("unchecked")

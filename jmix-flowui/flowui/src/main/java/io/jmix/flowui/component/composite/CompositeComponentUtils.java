@@ -67,17 +67,12 @@ public final class CompositeComponentUtils {
         throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static void setContent(CompositeComponent<?> compositeComponent, Component content) {
-        ((CompositeComponent) compositeComponent).setContent(content);
-    }
-
     @SuppressWarnings("unchecked")
     public static <C extends Component> C createContent(Class<? extends CompositeComponent<C>> compositeClass) {
         return (C) ReflectTools.createInstance(findContentType(compositeClass));
     }
 
-    private static Class<? extends Component> findContentType(Class<? extends CompositeComponent<?>> compositeClass) {
+    public static Class<? extends Component> findContentType(Class<? extends CompositeComponent<?>> compositeClass) {
         Type type = GenericTypeReflector.getTypeParameter(
                 compositeClass.getGenericSuperclass(),
                 CompositeComponent.class.getTypeParameters()[0]);

@@ -4481,6 +4481,15 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- Actions -->
+
+    <xs:complexType name="viewActions">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="action" type="viewAction"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
 
     <!-- Facets -->
 
@@ -4748,6 +4757,12 @@
         </xs:sequence>
     </xs:group>
 
+    <xs:complexType name="singleLayoutOrComponentType">
+        <xs:sequence minOccurs="0">
+            <xs:group ref="singleLayoutOrComponent"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="rootLayout">
         <xs:complexContent>
             <xs:extension base="baseLayout">
@@ -4798,13 +4813,6 @@
     <xs:complexType name="conditionType">
         <xs:sequence>
             <xs:any namespace="##other" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <!-- Composite Component -->
-    <xs:complexType name="compositeType">
-        <xs:sequence>
-            <xs:group ref="singleLayoutOrComponent"/>
         </xs:sequence>
     </xs:complexType>
 

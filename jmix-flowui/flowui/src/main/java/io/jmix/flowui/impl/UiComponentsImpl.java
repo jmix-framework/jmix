@@ -81,7 +81,7 @@ import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
-import io.jmix.flowui.xml.layout.loader.CompositeComponentLayoutLoader;
+import io.jmix.flowui.xml.layout.loader.CompositeComponentLoader;
 import io.jmix.flowui.xml.layout.loader.CompositeComponentLoaderContext;
 import io.jmix.flowui.xml.layout.loader.CompositeDescriptorLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -171,38 +171,38 @@ public class UiComponentsImpl implements UiComponents {
 
         // TODO: gg, do we need type?
         CompositeDescriptor descriptor = type.getAnnotation(CompositeDescriptor.class);
-        if (descriptor != null) {
-            String descriptorPath = descriptor.value();
-            if (!descriptorPath.startsWith("/")) {
-                String packageName = CompositeComponentUtils.getPackage(type);
-                if (StringUtils.isNotEmpty(packageName)) {
-                    String relativePath = packageName.replace('.', '/');
-                    descriptorPath = "/" + relativePath + "/" + descriptorPath;
-                }
-            }
-
-            CompositeComponentLoaderContext context = new CompositeComponentLoaderContext();
-            context.setComposite(compositeComponent);
-            context.setDescriptorPath(descriptorPath);
-            context.setMessageGroup(CompositeComponentUtils.getMessageGroup(descriptorPath));
-
-            Component content = processCompositeDescriptor(context);
-            CompositeComponentUtils.setContent(compositeComponent, content);
-
-            context.executeInitTasks();
+        if (descriptor == null) {
+            return;
         }
+
+        String descriptorPath = descriptor.value();
+        if (!descriptorPath.startsWith("/")) {
+            String packageName = CompositeComponentUtils.getPackage(type);
+            if (StringUtils.isNotEmpty(packageName)) {
+                String relativePath = packageName.replace('.', '/');
+                descriptorPath = "/" + relativePath + "/" + descriptorPath;
+            }
+        }
+
+        CompositeComponentLoaderContext context = new CompositeComponentLoaderContext();
+        context.setComposite(compositeComponent);
+        context.setDescriptorPath(descriptorPath);
+        context.setMessageGroup(CompositeComponentUtils.getMessageGroup(descriptorPath));
+
+        processCompositeDescriptor(context);
+
+        context.executeInitTasks();
     }
 
-    protected Component processCompositeDescriptor(CompositeComponentLoaderContext context) {
+    protected void processCompositeDescriptor(CompositeComponentLoaderContext context) {
         CompositeDescriptorLoader compositeDescriptorLoader =
                 applicationContext.getBean(CompositeDescriptorLoader.class);
         Element element = compositeDescriptorLoader.load(context.getDescriptorPath());
 
-        CompositeComponentLayoutLoader layoutLoader =
-                applicationContext.getBean(CompositeComponentLayoutLoader.class, context);
+        CompositeComponentLoader compositeLoader =
+                applicationContext.getBean(CompositeComponentLoader.class, context, element);
 
-        // TODO: gg, check type
-        return layoutLoader.createComponent(element);
+        compositeLoader.createContent();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

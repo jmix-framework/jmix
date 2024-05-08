@@ -15,25 +15,31 @@
   -->
 
 <composite xmlns="http://jmix.io/schema/flowui/composite">
-    <vbox id="contentBox" classNames="overflow-auto">
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createBtn" action="usersDataGrid.create"/>
-            <button id="editBtn" action="usersDataGrid.edit"/>
-            <button id="removeBtn" action="usersDataGrid.remove"/>
-        </hbox>
-        <dataGrid id="usersDataGrid"
-                  width="100%"
-                  minHeight="20em"
-                  metaClass="test_Product">
-            <actions>
-                <action id="create" type="list_create"/>
-                <action id="edit" type="list_edit"/>
-                <action id="remove" type="list_remove"/>
-            </actions>
-            <columns resizable="true">
-                <column property="name"/>
-                <column property="price"/>
-            </columns>
-        </dataGrid>
-    </vbox>
+    <actions>
+        <action id="testAction" text="Test" icon="PLUS"/>
+    </actions>
+    <layout>
+        <vbox id="contentBox" classNames="overflow-auto">
+            <hbox id="buttonsPanel" classNames="buttons-panel">
+                <button id="createBtn" action="usersDataGrid.create"/>
+                <button id="editBtn" action="usersDataGrid.edit"/>
+                <button id="removeBtn" action="usersDataGrid.remove"/>
+<!--                <button id="testBtn" action="testAction"/>-->
+            </hbox>
+            <dataGrid id="usersDataGrid"
+                      width="100%"
+                      minHeight="20em"
+                      metaClass="test_Product">
+                <actions>
+                    <action id="create" type="list_create"/>
+                    <action id="edit" type="list_edit"/>
+                    <action id="remove" type="list_remove"/>
+                </actions>
+                <columns resizable="true">
+                    <column property="name"/>
+                    <column property="price"/>
+                </columns>
+            </dataGrid>
+        </vbox>
+    </layout>
 </composite>

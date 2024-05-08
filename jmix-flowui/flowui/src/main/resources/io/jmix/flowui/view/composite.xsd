@@ -22,5 +22,19 @@
 
     <xs:include schemaLocation="http://jmix.io/schema/flowui/layout"/>
 
-    <xs:element name="composite" type="layout:compositeType"/>
+    <xs:element name="composite">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="actions" type="layout:viewActions" minOccurs="0"/>
+                <xs:element name="layout" type="compositeContent"/>
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Composite Component -->
+    <xs:complexType name="compositeContent">
+        <xs:complexContent>
+            <xs:extension base="layout:singleLayoutOrComponentType"/>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>

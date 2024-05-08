@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.exception.GuiDevelopmentException;
@@ -34,11 +34,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+// TODO: gg, base class with LayoutLoader
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@org.springframework.stereotype.Component("flowui_CompositeComponentLayoutLoader")
-public class CompositeComponentLayoutLoader {
+@org.springframework.stereotype.Component("flowui_CompositeComponentLoader")
+public class CompositeComponentLoader {
 
-    public static final String COMPOSITE_COMPONENT_ELEMENT_NAME = "composite";
+    //    public static final String COMPOSITE_COMPONENT_ELEMENT_NAME = "composite";
+    public static final String CONTENT_ELEMENT_NAME = "layout";
 
     protected ApplicationContext applicationContext;
     protected Environment environment;
@@ -46,10 +48,12 @@ public class CompositeComponentLayoutLoader {
     protected LoaderResolver loaderResolver;
     protected LoaderSupport loaderSupport;
 
-    protected final ComponentLoader.Context context;
+    protected final CompositeComponentLoaderContext context;
+    protected final Element element;
 
-    public CompositeComponentLayoutLoader(ComponentLoader.Context context) {
+    public CompositeComponentLoader(CompositeComponentLoaderContext context, Element element) {
         this.context = context;
+        this.element = element;
     }
 
     @Autowired
@@ -77,26 +81,50 @@ public class CompositeComponentLayoutLoader {
         this.loaderSupport = loaderSupport;
     }
 
-    public ComponentLoader<?> createComponentLoader(Element element) {
-        return getLoader(element);
-    }
+    public void createContent() {
+        Element contentElement = getContentElement(element);
 
-    public Component createComponent(Element element) {
-        ComponentLoader componentLoader = getLoader(element);
+        loadActions(element);
 
+        ComponentLoader componentLoader = getLoader(contentElement);
         componentLoader.initComponent();
         componentLoader.loadComponent();
-        return componentLoader.getResultComponent();
+//        Component resultComponent = componentLoader.getResultComponent();
+
+//        Component content = context.getComposite().getContent();
+    }
+
+    protected Element getContentElement(Element element) {
+        Element contentElement = element.element(CONTENT_ELEMENT_NAME);
+        if (contentElement == null) {
+            throw new GuiDevelopmentException(
+                    String.format("Required '%s' element is not found", CONTENT_ELEMENT_NAME), context);
+        }
+
+        List<Element> elements = contentElement.elements();
+        if (elements.size() != 1) {
+            throw new GuiDevelopmentException(
+                    String.format("'%s' must contain a single child element", CONTENT_ELEMENT_NAME), context);
+        }
+
+        return elements.get(0);
+    }
+
+    protected void loadActions(Element element) {
+        Element actionsElement = element.element("actions");
+        if (actionsElement == null) {
+            return;
+        }
+
+        // TODO: gg, load Actions
+
+        /*ViewActions viewActions = ViewControllerUtils.getViewActions(view);
+        for (Element actionEl : actionsEl.elements("action")) {
+            viewActions.addAction(loadDeclarativeAction(actionEl));
+        }*/
     }
 
     protected ComponentLoader<?> getLoader(Element element) {
-        if (COMPOSITE_COMPONENT_ELEMENT_NAME.equals(element.getName())) {
-            List<Element> elements = element.elements();
-            Preconditions.checkArgument(elements.size() == 1,
-                    "%s must contain a single root element", COMPOSITE_COMPONENT_ELEMENT_NAME);
-            element = elements.get(0);
-        }
-
         Class<? extends ComponentLoader> loaderClass = loaderResolver.getLoader(element);
         if (loaderClass == null) {
             throw new GuiDevelopmentException("Unknown component: " + element.getName(), context);
@@ -106,6 +134,7 @@ public class CompositeComponentLayoutLoader {
     }
 
     protected ComponentLoader<?> initLoader(Element element, Class<? extends ComponentLoader> loaderClass) {
+        // In case if of changes, sync with 'io.jmix.flowui.xml.layout.loader.LayoutLoader.initLoader'
         ComponentLoader<?> loader;
 
         Constructor<? extends ComponentLoader> constructor;
@@ -127,7 +156,21 @@ public class CompositeComponentLayoutLoader {
         loader.setContext(context);
         loader.setLoaderResolver(loaderResolver);
         loader.setLoaderSupport(loaderSupport);
-        loader.setFactory(factory);
+        loader.setFactory(new UiComponents() {
+            @Override
+            public <T extends Component> T create(Class<T> type) {
+                Component content = context.getComposite().getContent();
+                if (!type.isAssignableFrom(content.getClass())) {
+                    throw new GuiDevelopmentException("Composite content type and XML content type don't match",
+                            context, ImmutableMap.of(
+                            "Composite content type", content.getClass().getName(),
+                            "XML content type", type.getName()
+                    ));
+                }
+
+                return ((T) content);
+            }
+        });
         loader.setElement(element);
 
         return loader;

@@ -116,12 +116,8 @@ public class FilterMetadataTools {
 
         return context.canView()
                 && !metadataTools.isSystemLevel(propertyPath.getMetaProperty())
-                && ((metadataTools.isJpa(propertyPath)
-                || (propertyPath.getMetaClass() instanceof KeyValueMetaClass
-                && !isAggregateFunction(propertyPath, query)
-                && isKeyValueCrossDataStoreReferenceAllowed(propertyPath, query)))
-                || (isCrossDataStoreReference(propertyPath.getMetaProperty())
-                && !(propertyPath.getMetaClass() instanceof KeyValueMetaClass)))
+                && (!isAggregateFunction(propertyPath, query) && isKeyValueCrossDataStoreReferenceAllowed(propertyPath, query)
+                        || isCrossDataStoreReference(propertyPath.getMetaProperty()) && !(propertyPath.getMetaClass() instanceof KeyValueMetaClass))
                 && !(byte[].class.equals(propertyPath.getMetaProperty().getJavaType()));
     }
 

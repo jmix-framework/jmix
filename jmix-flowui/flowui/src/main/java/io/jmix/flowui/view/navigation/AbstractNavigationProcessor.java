@@ -59,6 +59,9 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         QueryParameters queryParameters = getQueryParameters(navigator);
 
         View<?> origin = navigator.getOrigin();
+        // If navigation is interrupted and never proceed, e.g. by clicking 'Cancel', sequential
+        // navigation attempts from the same view will produce multiple DetachEvent subscriptions,
+        // so we need to remember the last subscription for the view and remove it.
         unregisterViewDetachListener(origin);
 
         if (navigator.isBackwardNavigation()) {

@@ -17,10 +17,7 @@
 package io.jmix.flowui.view;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.shared.Registration;
@@ -136,6 +133,10 @@ public final class ViewControllerUtils {
 
     public static Registration addBeforeShowEventListener(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
         return view.addBeforeShowListener(listener);
+    }
+
+    public static Registration addDetachListener(View<?> view, ComponentEventListener<DetachEvent> listener) {
+        return view.addDetachListener(listener);
     }
 
     public static Registration addAfterCloseListener(View<?> view, ComponentEventListener<View.AfterCloseEvent> listener) {

@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.view.navigation;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
@@ -38,6 +41,10 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
     protected ViewRegistry viewRegistry;
     protected ViewNavigationSupport navigationSupport;
 
+    protected Cache<View<?>, Registration> detachRegistrationsCache = CacheBuilder.newBuilder()
+            .maximumSize(5)
+            .build();
+
     protected AbstractNavigationProcessor(ViewSupport viewSupport,
                                           ViewRegistry viewRegistry,
                                           ViewNavigationSupport navigationSupport) {
@@ -52,12 +59,14 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         QueryParameters queryParameters = getQueryParameters(navigator);
 
         View<?> origin = navigator.getOrigin();
+        unregisterViewDetachListener(origin);
+
         if (navigator.isBackwardNavigation()) {
             log.trace("Fetching current URL for backward navigation");
             UI.getCurrent().getPage().fetchCurrentURL(url -> {
                 log.trace("Fetched URL: {}", url.toString());
 
-                ViewControllerUtils.addAfterCloseListener(origin, __ -> {
+                Registration detachRegistration = ViewControllerUtils.addDetachListener(origin, __ -> {
                     Optional<View> view = navigationSupport.findCurrentNavigationTarget(viewClass);
                     if (view.isPresent()) {
                         viewSupport.registerBackwardNavigation(viewClass, url);
@@ -66,11 +75,13 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
                         log.warn("Can't find current navigation target: {}. Cannot set backward navigation and fire {}",
                                 viewClass.getName(), AfterViewNavigationEvent.class.getSimpleName());
                     }
+                    unregisterViewDetachListener(origin);
                 });
+                detachRegistrationsCache.put(origin, detachRegistration);
                 navigationSupport.navigate(viewClass, routeParameters, queryParameters);
             });
         } else {
-            ViewControllerUtils.addAfterCloseListener(origin, __ -> {
+            Registration detachRegistration = ViewControllerUtils.addDetachListener(origin, __ -> {
                 Optional<View> view = navigationSupport.findCurrentNavigationTarget(viewClass);
                 if (view.isPresent()) {
                     fireAfterViewNavigation(navigator, view.get());
@@ -78,8 +89,18 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
                     log.warn("Can't find current navigation target: {}. Cannot fire {}",
                             viewClass.getName(), AfterViewNavigationEvent.class.getSimpleName());
                 }
+                unregisterViewDetachListener(origin);
             });
+            detachRegistrationsCache.put(origin, detachRegistration);
             navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+        }
+    }
+
+    protected void unregisterViewDetachListener(View<?> origin) {
+        Registration registration = detachRegistrationsCache.getIfPresent(origin);
+        if (registration != null) {
+            registration.remove();
+            detachRegistrationsCache.invalidate(origin);
         }
     }
 

@@ -69,6 +69,7 @@ public class ViewNavigators {
      * }</pre>
      *
      * @param entityClass edited entity class
+     * @deprecated use {@link #detailView(View, Class)} instead
      */
     @Deprecated(since = "2.3", forRemoval = true)
     public <E> DetailViewNavigator<E> detailView(Class<E> entityClass) {
@@ -82,7 +83,7 @@ public class ViewNavigators {
      * <p>
      * Example of navigating to a view for editing an entity:
      * <pre>{@code
-     * viewNavigators.detailView(Customer.class)
+     * viewNavigators.detailView(this, Customer.class)
      *         .editEntity(customersTable.getSingleSelectedItem())
      *         .withViewClass(CustomerDetailView.class)
      *         .navigate();
@@ -96,7 +97,7 @@ public class ViewNavigators {
      *         .navigate();
      * }</pre>
      *
-     * @param origin calling view
+     * @param origin      calling view
      * @param entityClass edited entity class
      */
     public <E> DetailViewNavigator<E> detailView(View<?> origin, Class<E> entityClass) {
@@ -110,7 +111,6 @@ public class ViewNavigators {
      * Creates a detail view navigator to edit an entity selected in the list component.
      *
      * @param listDataComponent the component which provides a selected entity to edit
-     *
      * @see #detailView(View, Class)
      */
     public <E> DetailViewNavigator<E> detailView(ListDataComponent<E> listDataComponent) {
@@ -135,7 +135,6 @@ public class ViewNavigators {
      * Creates a detail view navigator to edit an entity selected in the picker component.
      *
      * @param picker the component which provides an entity to edit
-     *
      * @see #detailView(View, Class)
      */
     public <E> DetailViewNavigator<E> detailView(EntityPickerComponent<E> picker) {
@@ -171,6 +170,7 @@ public class ViewNavigators {
      * }</pre>
      *
      * @param entityClass edited entity class
+     * @deprecated use {@link #listView(View, Class)} instead
      */
     @Deprecated(since = "2.3", forRemoval = true)
     public <E> ListViewNavigator<E> listView(Class<E> entityClass) {
@@ -203,6 +203,7 @@ public class ViewNavigators {
      * Creates a view navigator.
      *
      * @param viewClass class of the view to navigate to
+     * @deprecated use {@link #view(View, Class)} instead
      */
     @Deprecated(since = "2.3", forRemoval = true)
     public <V extends View<?>> ViewClassNavigator<V> view(Class<V> viewClass) {
@@ -223,6 +224,7 @@ public class ViewNavigators {
      * Creates a view navigator.
      *
      * @param viewId id of the view to navigate to (as set in the {@link ViewController} annotation)
+     * @deprecated use {@link #view(View, String)} instead
      */
     @Deprecated(since = "2.3", forRemoval = true)
     public ViewNavigator view(String viewId) {

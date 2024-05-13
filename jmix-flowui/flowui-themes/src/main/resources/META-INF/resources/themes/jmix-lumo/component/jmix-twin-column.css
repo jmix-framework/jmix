@@ -1,23 +1,156 @@
-.twin-column-list-box-border {
+/* Grid and Rounded themes */
+:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"], jmix-twin-column[theme~="listbox"]) vaadin-list-box  {
     border: 1px solid var(--lumo-contrast-20pct);
+}
+:is(jmix-twin-column[theme~="rounded"], jmix-twin-column[theme~="listbox"]) vaadin-list-box  {
     border-radius: var(--lumo-border-radius-m);
     padding: calc(var(--lumo-border-radius-m) / 2);
 }
 
-.twin-column-list-box-border vaadin-item::part(content) {
-    padding-left: calc(var(--lumo-border-radius-m) * 2);
+jmix-twin-column[theme~="grid"] vaadin-list-box  {
+    border-radius: 0;
+    padding: 0;
 }
 
-.twin-column-list-box-border vaadin-item::part(checkmark) {
+:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"])  vaadin-item::part(content) {
+    padding-left: var(--lumo-space-s);
+}
+
+jmix-twin-column[theme~="listbox"]  vaadin-item:not([selected])::part(content) {
+    padding-left: var(--lumo-space-s);
+}
+
+jmix-twin-column[theme~="listbox"]  vaadin-item:not([selected])::part(checkmark) {
     display: none;
 }
 
-.twin-column-list-box-border vaadin-item[selected] {
-    background-color: var(--lumo-primary-color);
+:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"]) vaadin-item::part(checkmark) {
+    display: none;
+}
+
+:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"]) vaadin-item[selected] {
+    background-color: var(--lumo-primary-color-50pct);
+}
+
+:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"]) vaadin-item[selected]::part(content) {
     color: var(--lumo-primary-contrast-color);
 }
 
-.twin-column-list-box-border vaadin-item[selected][focused]::after {
-    background-color: var(--lumo-primary-text-color);
+jmix-twin-column[theme~="grid"] vaadin-item:hover < vaadin-item[selected] {
+    background-color: transparent;
 }
 
+jmix-twin-column[theme~="rounded"] .twin-column-list-box-border {
+    border: 1px solid var(--lumo-contrast-20pct);
+    border-radius: var(--lumo-border-radius-m);
+}
+
+:is(jmix-twin-column[theme~="rounded"], jmix-twin-column[theme~="grid"]) vaadin-item:not([selected]):hover {
+    background-color: transparent;
+}
+
+:is(jmix-twin-column[theme~="rounded"], jmix-twin-column[theme~="grid"]) vaadin-item[selected]:hover::part(content) {
+    background-color: transparent;
+}
+
+jmix-twin-column[theme~="rounded"] .first {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+jmix-twin-column[theme~="rounded"] .middle {
+    border-radius: 0;
+}
+
+jmix-twin-column[theme~="rounded"] .last {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+jmix-twin-column[theme~="grid"] .line {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: 1px solid var(--lumo-contrast-20pct);
+}
+
+jmix-twin-column[theme~="grid"] .line:nth-last-of-type(1) {
+    border-bottom: 0px;
+}
+
+jmix-twin-column[theme~="grid"] :is(.first, .middle, .last, .single) {
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+jmix-twin-column :is(span[class~='label'], div[class~='label']) {
+    color: var(--lumo-secondary-text-color);
+    font-weight: 500;
+    line-height: 1;
+}
+
+jmix-twin-column span[class~='label'] {
+    font-size: var(--lumo-font-size-m);
+    padding-bottom: var(--lumo-space-s);
+}
+
+jmix-twin-column div[class~='label'] {
+    font-size: var(--lumo-font-size-s);
+    padding-bottom: var(--lumo-space-xs);
+    margin-top: auto;
+}
+
+jmix-twin-column span[class~='label']::after {
+    content: var(--lumo-required-field-indicator, '\2022');
+    transition: opacity 0.2s;
+    color: var(--lumo-primary-text-color);
+    width: 1em;
+    text-align: center;
+    display: inline-block;
+}
+
+jmix-twin-column span[class~='label'][class~='error-indicator']::after {
+    color: var(--lumo-error-text-color);
+}
+
+jmix-twin-column .helper {
+    font-size: var(--lumo-font-size-xs);
+    font-weight: 400;
+    color: (--lumo-secondary-text-color);
+    margin-top: 0.4em;
+}
+
+jmix-twin-column .stub {
+    height: 1px;
+    align-self: end;
+    visibility: hidden;
+}
+
+jmix-twin-column .error-label {
+    font-size: var(--lumo-font-size-xs);
+    line-height: var(--lumo-line-height-xs);
+    font-weight: 400;
+    color: var(--lumo-error-text-color);
+}
+
+/* Toolbar theme for buttons */
+jmix-twin-column[theme~="toolbar"] .button-first {
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+jmix-twin-column[theme~="toolbar"] .button-middle {
+    margin-top: 0;
+    margin-bottom: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+jmix-twin-column[theme~="toolbar"] .button-last {
+    margin-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}

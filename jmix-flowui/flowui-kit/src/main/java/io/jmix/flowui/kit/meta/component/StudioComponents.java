@@ -3246,8 +3246,6 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -3271,8 +3269,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "itemsContainer", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "leftColumnCaption", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "rightColumnCaption", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "reorderable", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "rows", type = StudioPropertyType.INTEGER)
+                    @StudioProperty(xmlAttribute = "reorderable", type = StudioPropertyType.BOOLEAN)
             },
             propertiesBindings = {
                 @StudioPropertiesBinding(

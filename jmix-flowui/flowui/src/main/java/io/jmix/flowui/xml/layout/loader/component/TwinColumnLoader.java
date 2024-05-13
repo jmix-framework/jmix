@@ -37,7 +37,6 @@ public class TwinColumnLoader extends AbstractComponentLoader<TwinColumn> {
         loadResourceString(element, "rightColumnCaption",
                 context.getMessageGroup(), resultComponent::setRightColumnCaption);
         loadBoolean(element, "reorderable", resultComponent::setReorderable);
-        loadInteger(element, "rows", resultComponent::setRows);
 
         getDataLoaderSupport().loadData(resultComponent, element);
         getDataLoaderSupport().loadItems(resultComponent, element);
@@ -45,7 +44,6 @@ public class TwinColumnLoader extends AbstractComponentLoader<TwinColumn> {
         componentLoader().loadAriaLabel(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);

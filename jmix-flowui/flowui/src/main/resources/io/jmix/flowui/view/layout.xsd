@@ -3130,13 +3130,11 @@
                 <xs:attribute name="leftColumnCaption" type="resourceString"/>
                 <xs:attribute name="rightColumnCaption" type="resourceString"/>
                 <xs:attribute name="reorderable" type="xs:boolean"/>
-                <xs:attribute name="rows" type="xs:integer"/>
 
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasRequired"/>

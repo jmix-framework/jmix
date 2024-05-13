@@ -26,7 +26,6 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;

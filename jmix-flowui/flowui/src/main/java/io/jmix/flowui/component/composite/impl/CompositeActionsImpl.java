@@ -21,6 +21,7 @@ import com.vaadin.flow.component.Shortcuts;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.composite.CompositeActions;
 import io.jmix.flowui.component.composite.CompositeComponent;
+import io.jmix.flowui.component.composite.CompositeComponentAction;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
 import jakarta.annotation.Nullable;
@@ -95,6 +96,7 @@ public class CompositeActionsImpl implements CompositeActions {
                 .findFirst();
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void attachAction(Action action) {
         addShortcutListenerIfNeeded(action);
 
@@ -105,10 +107,9 @@ public class CompositeActionsImpl implements CompositeActions {
             }
         });
 
-        // TODO: gg, CompositeComponentAction
-        /*if (action instanceof ViewAction) {
-            ((ViewAction) action).setTarget(getView());
-        }*/
+        if (action instanceof CompositeComponentAction compositeComponentAction) {
+            compositeComponentAction.setTarget(compositeComponent);
+        }
     }
 
     protected void addShortcutListenerIfNeeded(Action action) {
@@ -141,8 +142,13 @@ public class CompositeActionsImpl implements CompositeActions {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void detachAction(Action action) {
         removeShortcutListener(action);
+
+        if (action instanceof CompositeComponentAction compositeComponentAction) {
+            compositeComponentAction.setTarget(null);
+        }
     }
 
     protected Map<Action, ShortcutRegistration> getActionShortcutBinding() {

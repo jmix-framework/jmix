@@ -284,6 +284,10 @@ public class Range {
         return firstColumn == lastColumn && firstRow == lastRow;
     }
 
+    public boolean isOneRowRange() {
+        return firstRow == lastRow;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

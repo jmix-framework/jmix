@@ -39,10 +39,9 @@ import java.util.List;
 
 import static io.jmix.flowui.component.composite.CompositeComponentUtils.getCompositeComponentActions;
 
-// TODO: gg, base class with LayoutLoader
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@org.springframework.stereotype.Component("flowui_CompositeComponentLoader")
-public class CompositeComponentLoader {
+@org.springframework.stereotype.Component("flowui_CompositeComponentContentLoader")
+public class CompositeComponentContentLoader {
 
     public static final String CONTENT_ELEMENT_NAME = "layout";
 
@@ -55,7 +54,7 @@ public class CompositeComponentLoader {
     protected final CompositeComponentLoaderContext context;
     protected final Element element;
 
-    public CompositeComponentLoader(CompositeComponentLoaderContext context, Element element) {
+    public CompositeComponentContentLoader(CompositeComponentLoaderContext context, Element element) {
         this.context = context;
         this.element = element;
     }

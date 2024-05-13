@@ -27,19 +27,19 @@ public abstract class CompositeComponent<T extends Component> extends Composite<
 
     protected UiComponents uiComponents;
 
-    protected CompositeActions compositeActions;
+    protected CompositeComponentActions compositeComponentActions;
 
     @Autowired
     public void setUiComponents(UiComponents uiComponents) {
         this.uiComponents = uiComponents;
     }
 
-    protected CompositeActions getCompositeActions() {
-        return compositeActions;
+    protected CompositeComponentActions getCompositeComponentActions() {
+        return compositeComponentActions;
     }
 
-    protected void setCompositeActions(CompositeActions compositeActions) {
-        this.compositeActions = compositeActions;
+    protected void setCompositeComponentActions(CompositeComponentActions compositeComponentActions) {
+        this.compositeComponentActions = compositeComponentActions;
     }
 
     @SuppressWarnings("unchecked")

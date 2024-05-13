@@ -18,5 +18,5 @@ package io.jmix.flowui.component.composite;
 
 import io.jmix.flowui.kit.component.HasActions;
 
-public interface CompositeActions extends HasActions {
+public interface CompositeComponentActions extends HasActions {
 }

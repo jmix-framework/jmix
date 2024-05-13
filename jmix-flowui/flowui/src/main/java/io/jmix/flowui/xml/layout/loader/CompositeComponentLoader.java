@@ -19,8 +19,7 @@ package io.jmix.flowui.xml.layout.loader;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.component.composite.CompositeActions;
-import io.jmix.flowui.component.composite.CompositeComponentUtils;
+import io.jmix.flowui.component.composite.CompositeComponentActions;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -37,6 +36,8 @@ import org.springframework.core.env.Environment;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
+import static io.jmix.flowui.component.composite.CompositeComponentUtils.getCompositeComponentActions;
 
 // TODO: gg, base class with LayoutLoader
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -111,9 +112,9 @@ public class CompositeComponentLoader {
             return;
         }
 
-        CompositeActions compositeActions = CompositeComponentUtils.getCompositeActions(context.getComposite());
+        CompositeComponentActions actions = getCompositeComponentActions(context.getComposite());
         for (Element actionElement : actionsElement.elements("action")) {
-            compositeActions.addAction(loadDeclarativeAction(actionElement));
+            actions.addAction(loadDeclarativeAction(actionElement));
         }
     }
 

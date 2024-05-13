@@ -19,9 +19,6 @@ package io.jmix.flowui.component.composite;
 import com.googlecode.gentyref.GenericTypeReflector;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.dom.Element;
-import com.vaadin.flow.internal.ReflectTools;
-import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
@@ -49,12 +46,13 @@ public final class CompositeComponentUtils {
         ComponentUtil.setData(component, ID_KEY, id);
     }
 
-    public static CompositeActions getCompositeActions(CompositeComponent<?> compositeComponent) {
-        return compositeComponent.getCompositeActions();
+    public static CompositeComponentActions getCompositeComponentActions(CompositeComponent<?> compositeComponent) {
+        return compositeComponent.getCompositeComponentActions();
     }
 
-    public static void setCompositeActions(CompositeComponent<?> compositeComponent, CompositeActions actions) {
-        compositeComponent.setCompositeActions(actions);
+    public static void setCompositeComponentActions(CompositeComponent<?> compositeComponent,
+                                                    CompositeComponentActions actions) {
+        compositeComponent.setCompositeComponentActions(actions);
     }
 
     public static boolean sameId(Component component, String id) {

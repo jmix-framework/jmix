@@ -19,9 +19,13 @@ package io.jmix.flowui.xml.layout.loader;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.composite.CompositeActions;
+import io.jmix.flowui.component.composite.CompositeComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.LoaderResolver;
+import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +43,13 @@ import java.util.List;
 @org.springframework.stereotype.Component("flowui_CompositeComponentLoader")
 public class CompositeComponentLoader {
 
-    //    public static final String COMPOSITE_COMPONENT_ELEMENT_NAME = "composite";
     public static final String CONTENT_ELEMENT_NAME = "layout";
 
     protected ApplicationContext applicationContext;
     protected Environment environment;
-    protected UiComponents factory;
     protected LoaderResolver loaderResolver;
     protected LoaderSupport loaderSupport;
+    protected ActionLoaderSupport actionLoaderSupport;
 
     protected final CompositeComponentLoaderContext context;
     protected final Element element;
@@ -67,11 +70,6 @@ public class CompositeComponentLoader {
     }
 
     @Autowired
-    public void setFactory(UiComponents factory) {
-        this.factory = factory;
-    }
-
-    @Autowired
     public void setLoaderResolver(LoaderResolver loaderResolver) {
         this.loaderResolver = loaderResolver;
     }
@@ -86,12 +84,9 @@ public class CompositeComponentLoader {
 
         loadActions(element);
 
-        ComponentLoader componentLoader = getLoader(contentElement);
+        ComponentLoader<?> componentLoader = getLoader(contentElement);
         componentLoader.initComponent();
         componentLoader.loadComponent();
-//        Component resultComponent = componentLoader.getResultComponent();
-
-//        Component content = context.getComposite().getContent();
     }
 
     protected Element getContentElement(Element element) {
@@ -116,14 +111,19 @@ public class CompositeComponentLoader {
             return;
         }
 
-        // TODO: gg, load Actions
-
-        /*ViewActions viewActions = ViewControllerUtils.getViewActions(view);
-        for (Element actionEl : actionsEl.elements("action")) {
-            viewActions.addAction(loadDeclarativeAction(actionEl));
-        }*/
+        CompositeActions compositeActions = CompositeComponentUtils.getCompositeActions(context.getComposite());
+        for (Element actionElement : actionsElement.elements("action")) {
+            compositeActions.addAction(loadDeclarativeAction(actionElement));
+        }
     }
 
+    protected Action loadDeclarativeAction(Element element) {
+        return getActionLoaderSupport().loadDeclarativeActionByType(element)
+                .orElseGet(() ->
+                        getActionLoaderSupport().loadDeclarativeAction(element));
+    }
+
+    @SuppressWarnings("rawtypes")
     protected ComponentLoader<?> getLoader(Element element) {
         Class<? extends ComponentLoader> loaderClass = loaderResolver.getLoader(element);
         if (loaderClass == null) {
@@ -133,6 +133,7 @@ public class CompositeComponentLoader {
         return initLoader(element, loaderClass);
     }
 
+    @SuppressWarnings("rawtypes")
     protected ComponentLoader<?> initLoader(Element element, Class<? extends ComponentLoader> loaderClass) {
         // In case if of changes, sync with 'io.jmix.flowui.xml.layout.loader.LayoutLoader.initLoader'
         ComponentLoader<?> loader;
@@ -168,11 +169,19 @@ public class CompositeComponentLoader {
                     ));
                 }
 
+                //noinspection unchecked
                 return ((T) content);
             }
         });
         loader.setElement(element);
 
         return loader;
+    }
+
+    protected ActionLoaderSupport getActionLoaderSupport() {
+        if (actionLoaderSupport == null) {
+            actionLoaderSupport = applicationContext.getBean(ActionLoaderSupport.class, context);
+        }
+        return actionLoaderSupport;
     }
 }

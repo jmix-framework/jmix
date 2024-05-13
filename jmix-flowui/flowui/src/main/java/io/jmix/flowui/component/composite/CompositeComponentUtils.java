@@ -49,6 +49,14 @@ public final class CompositeComponentUtils {
         ComponentUtil.setData(component, ID_KEY, id);
     }
 
+    public static CompositeActions getCompositeActions(CompositeComponent<?> compositeComponent) {
+        return compositeComponent.getCompositeActions();
+    }
+
+    public static void setCompositeActions(CompositeComponent<?> compositeComponent, CompositeActions actions) {
+        compositeComponent.setCompositeActions(actions);
+    }
+
     public static boolean sameId(Component component, String id) {
         Optional<String> componentId = getComponentId(component);
         return componentId.isPresent() && id.equals(componentId.get());
@@ -65,11 +73,6 @@ public final class CompositeComponentUtils {
         }
 
         throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <C extends Component> C createContent(Class<? extends CompositeComponent<C>> compositeClass) {
-        return (C) ReflectTools.createInstance(findContentType(compositeClass));
     }
 
     public static Class<? extends Component> findContentType(Class<? extends CompositeComponent<?>> compositeClass) {
@@ -112,35 +115,5 @@ public final class CompositeComponentUtils {
         int start = messageGroup.startsWith(".") ? 1 : 0;
         messageGroup = messageGroup.substring(start);
         return messageGroup;
-    }
-
-    /**
-     * Defines a mapping between this element and the given {@link Component}.
-     * <p>
-     * An element can only be mapped to one component and the mapping cannot be
-     * changed. The only exception is {@link CompositeComponent} which can
-     * overwrite the mapping for its content.
-     *
-     * @param element   the element to map to the component
-     * @param component the component this element is attached to
-     */
-    // CAUTION: copied from com.vaadin.flow.dom.ElementUtil.setComponent [last update Vaadin 24.3.3]
-    // TODO: gg, remove?
-    public static void setComponent(Element element, Component component) {
-        Preconditions.checkNotNullArgument(element, "Element must not be null");
-        Preconditions.checkNotNullArgument(component, "Component must not be null");
-
-        Optional<Component> currentComponent = element.getComponent();
-        if (currentComponent.isPresent()) {
-            // Composite can replace its content
-            boolean isCompositeReplacingItsContent = component instanceof CompositeComponent<?>
-                    && component.getChildren().findFirst().get() == currentComponent.get();
-            if (!isCompositeReplacingItsContent) {
-                throw new IllegalStateException("A component of type "
-                        + currentComponent.get().getClass().getName()
-                        + " is already attached to this element");
-            }
-        }
-        element.getStateProvider().setComponent(element.getNode(), component);
     }
 }

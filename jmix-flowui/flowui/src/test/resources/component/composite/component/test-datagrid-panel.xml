@@ -24,7 +24,7 @@
                 <button id="createBtn" action="usersDataGrid.create"/>
                 <button id="editBtn" action="usersDataGrid.edit"/>
                 <button id="removeBtn" action="usersDataGrid.remove"/>
-<!--                <button id="testBtn" action="testAction"/>-->
+                <button id="testBtn" action="testAction"/>
             </hbox>
             <dataGrid id="usersDataGrid"
                       width="100%"

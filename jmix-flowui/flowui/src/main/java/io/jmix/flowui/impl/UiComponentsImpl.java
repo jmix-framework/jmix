@@ -54,6 +54,7 @@ import io.jmix.flowui.component.accordion.JmixAccordionPanel;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.composite.CompositeActions;
 import io.jmix.flowui.component.composite.CompositeComponent;
 import io.jmix.flowui.component.composite.CompositeComponentUtils;
 import io.jmix.flowui.component.composite.CompositeDescriptor;
@@ -167,6 +168,9 @@ public class UiComponentsImpl implements UiComponents {
             return;
         }
 
+        CompositeActions actions = applicationContext.getBean(CompositeActions.class, compositeComponent);
+        CompositeComponentUtils.setCompositeActions(compositeComponent, actions);
+
         // TODO: gg, ApplicationListener
 
         // TODO: gg, do we need type?
@@ -188,6 +192,7 @@ public class UiComponentsImpl implements UiComponents {
         context.setComposite(compositeComponent);
         context.setDescriptorPath(descriptorPath);
         context.setMessageGroup(CompositeComponentUtils.getMessageGroup(descriptorPath));
+        context.setActionsHolder(actions);
 
         processCompositeDescriptor(context);
 

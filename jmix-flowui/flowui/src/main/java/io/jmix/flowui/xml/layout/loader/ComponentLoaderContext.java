@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.loader;
 
 
 import com.vaadin.flow.component.Component;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
@@ -36,7 +37,7 @@ public class ComponentLoaderContext implements ComponentContext {
     protected ComponentContext parent;
 
     protected ViewData viewData;
-    protected ViewActions viewActions;
+    protected HasActions viewActions;
 
     protected String messageGroup;
     protected View<?> view;
@@ -59,12 +60,30 @@ public class ComponentLoaderContext implements ComponentContext {
     }
 
     @Override
-    public ViewActions getViewActions() {
+    public HasActions getActionsHolder() {
         return viewActions;
     }
 
-    public void setViewActions(ViewActions viewActions) {
+    public void setActionsHolder(HasActions viewActions) {
         this.viewActions = viewActions;
+    }
+
+    @Override
+    public ViewActions getViewActions() {
+        if (viewActions instanceof ViewActions) {
+            return (ViewActions) viewActions;
+        }
+
+        throw new IllegalStateException("actions holder is not an instance of " +
+                ViewActions.class.getSimpleName());
+    }
+
+    /**
+     * @deprecated Use {@link #setActionsHolder(HasActions)} instead
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
+    public void setViewActions(ViewActions viewActions) {
+        setActionsHolder(viewActions);
     }
 
     @Override
@@ -147,7 +166,7 @@ public class ComponentLoaderContext implements ComponentContext {
     public void executePreInitTasks() {
         if (CollectionUtils.isNotEmpty(preInitTasks)) {
             for (ComponentLoader.InitTask initTask : preInitTasks) {
-                initTask.execute(this, view);
+                initTask.execute(this);
             }
             preInitTasks.clear();
         }
@@ -157,7 +176,7 @@ public class ComponentLoaderContext implements ComponentContext {
     public void executeInitTasks() {
         if (CollectionUtils.isNotEmpty(initTasks)) {
             for (ComponentLoader.InitTask initTask : initTasks) {
-                initTask.execute(this, view);
+                initTask.execute(this);
             }
             initTasks.clear();
         }

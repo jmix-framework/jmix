@@ -94,7 +94,7 @@ public class ViewLoaderSupport implements ApplicationContextAware {
             viewActions.addAction(loadDeclarativeAction(actionEl));
         }
 
-        ((ComponentLoaderContext) context).setViewActions(viewActions);
+        ((ComponentLoaderContext) context).setActionsHolder(viewActions);
     }
 
     public void loadFacets(Element element) {

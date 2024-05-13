@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.view;
-
-import io.jmix.flowui.kit.action.Action;
+package io.jmix.flowui.component.composite;
 
 import io.jmix.flowui.kit.component.HasActions;
-import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-public interface ViewActions extends HasActions {
+public interface CompositeActions extends HasActions {
 }

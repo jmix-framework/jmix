@@ -19,6 +19,7 @@ package io.jmix.flowui.xml.layout;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.composite.CompositeComponent;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
@@ -39,12 +40,19 @@ public interface ComponentLoader<T extends Component> {
 
         void addInitTask(InitTask task);
         void executeInitTasks();
+
+        HasActions getActionsHolder();
     }
 
     interface ComponentContext extends Context {
 
         ViewData getViewData();
 
+        /**
+         * @return actions holder object
+         * @deprecated Use {@link #getActionsHolder()} instead
+         */
+        @Deprecated(since = "2.3", forRemoval = true)
         ViewActions getViewActions();
 
         Optional<ComponentContext> getParent();
@@ -75,6 +83,7 @@ public interface ComponentLoader<T extends Component> {
          *
          * @param context loader context
          * @param view    view
+         * @deprecated Use {@link #execute(Context)} instead
          */
         @Deprecated(since = "2.3", forRemoval = true)
         void execute(ComponentContext context, View<?> view);

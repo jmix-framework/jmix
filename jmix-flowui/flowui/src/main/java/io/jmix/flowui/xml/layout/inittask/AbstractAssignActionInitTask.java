@@ -90,11 +90,7 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
             runAfterExecuteHandler(action);
         } else if (elements.length == 1) {
             String id = elements[0];
-            if (!(context instanceof ComponentContext)) {
-                throw new IllegalStateException("'context' must implement " + ComponentContext.class.getName());
-            }
-            Action action = getActionRecursively(((ComponentContext) context), id);
-
+            Action action = getActionRecursively(context, id);
             if (action == null) {
                 if (!hasOwnAction(id)) {
                     String message = getExceptionMessage(id);
@@ -143,15 +139,16 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
     }
 
     @Nullable
-    protected Action getActionRecursively(ComponentContext context, String actionId) {
-        ViewActions viewActions = context.getViewActions();
-        Action action = viewActions.getAction(actionId);
-        if (action == null) {
-            Optional<ComponentContext> parentContext = context.getParent();
+    protected Action getActionRecursively(Context context, String actionId) {
+        HasActions actionsHolder = context.getActionsHolder();
+        Action action = actionsHolder.getAction(actionId);
+        if (action == null && context instanceof ComponentContext componentContext) {
+            Optional<ComponentContext> parentContext = componentContext.getParent();
             if (parentContext.isPresent()) {
                 return getActionRecursively(parentContext.get(), actionId);
             }
         }
+
         return action;
     }
 

@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.loader;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.composite.CompositeComponent;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -31,6 +32,7 @@ public class CompositeComponentLoaderContext implements ComponentLoader.Composit
 
     protected CompositeComponent<?> composite;
     protected String descriptorPath;
+    protected HasActions actionsHolder;
 
     @Override
     public String getMessageGroup() {
@@ -62,6 +64,15 @@ public class CompositeComponentLoaderContext implements ComponentLoader.Composit
 
     public void setDescriptorPath(String descriptorPath) {
         this.descriptorPath = descriptorPath;
+    }
+
+    @Override
+    public HasActions getActionsHolder() {
+        return actionsHolder;
+    }
+
+    public void setActionsHolder(HasActions actionsHolder) {
+        this.actionsHolder = actionsHolder;
     }
 
     @Override

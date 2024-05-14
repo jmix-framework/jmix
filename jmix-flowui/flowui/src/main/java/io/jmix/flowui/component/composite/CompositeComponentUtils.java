@@ -47,12 +47,12 @@ public final class CompositeComponentUtils {
     }
 
     public static CompositeComponentActions getCompositeComponentActions(CompositeComponent<?> compositeComponent) {
-        return compositeComponent.getCompositeComponentActions();
+        return compositeComponent.getActions();
     }
 
     public static void setCompositeComponentActions(CompositeComponent<?> compositeComponent,
                                                     CompositeComponentActions actions) {
-        compositeComponent.setCompositeComponentActions(actions);
+        compositeComponent.setActions(actions);
     }
 
     public static boolean sameId(Component component, String id) {

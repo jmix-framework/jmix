@@ -17,6 +17,7 @@
 package io.jmix.flowui.impl;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
@@ -197,6 +198,8 @@ public class UiComponentsImpl implements UiComponents {
         processCompositeDescriptor(context);
 
         context.executeInitTasks();
+
+        ComponentUtil.fireEvent(compositeComponent, new CompositeComponent.PostInitEvent(compositeComponent));
     }
 
     protected void processCompositeDescriptor(CompositeComponentLoaderContext context) {

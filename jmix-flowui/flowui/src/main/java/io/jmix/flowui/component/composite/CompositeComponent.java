@@ -17,7 +17,10 @@
 package io.jmix.flowui.component.composite;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.UiComponents;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,11 +37,11 @@ public abstract class CompositeComponent<T extends Component> extends Composite<
         this.uiComponents = uiComponents;
     }
 
-    protected CompositeComponentActions getCompositeComponentActions() {
+    protected CompositeComponentActions getActions() {
         return compositeComponentActions;
     }
 
-    protected void setCompositeComponentActions(CompositeComponentActions compositeComponentActions) {
+    protected void setActions(CompositeComponentActions compositeComponentActions) {
         this.compositeComponentActions = compositeComponentActions;
     }
 
@@ -58,5 +61,16 @@ public abstract class CompositeComponent<T extends Component> extends Composite<
     @SuppressWarnings("unchecked")
     protected <C extends Component> Optional<C> findInnerComponent(String id) {
         return (Optional<C>) CompositeComponentUtils.findComponent(this, id);
+    }
+
+    protected Registration addPostInitListener(ComponentEventListener<PostInitEvent> listener) {
+        return getEventBus().addListener(PostInitEvent.class, listener);
+    }
+
+    public static class PostInitEvent extends ComponentEvent<CompositeComponent<?>> {
+
+        public PostInitEvent(CompositeComponent<?> source) {
+            super(source, false);
+        }
     }
 }

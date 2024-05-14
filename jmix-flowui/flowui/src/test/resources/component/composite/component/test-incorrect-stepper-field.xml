@@ -15,12 +15,12 @@
   -->
 
 <composite xmlns="http://jmix.io/schema/flowui/composite">
-    <layout>
+    <content>
         <textField id="valueField" datatype="int"
                    width="100%"/>
         <button id="upBtn"
                 icon="CHEVRON_UP"/>
         <button id="downBtn"
                 icon="CHEVRON_DOWN"/>
-    </layout>
+    </content>
 </composite>

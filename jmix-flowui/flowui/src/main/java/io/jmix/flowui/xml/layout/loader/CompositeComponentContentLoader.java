@@ -43,7 +43,7 @@ import static io.jmix.flowui.component.composite.CompositeComponentUtils.getComp
 @org.springframework.stereotype.Component("flowui_CompositeComponentContentLoader")
 public class CompositeComponentContentLoader {
 
-    public static final String CONTENT_ELEMENT_NAME = "layout";
+    public static final String CONTENT_ELEMENT_NAME = "content";
 
     protected ApplicationContext applicationContext;
     protected Environment environment;

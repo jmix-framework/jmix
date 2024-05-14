@@ -15,7 +15,7 @@
   -->
 
 <composite xmlns="http://jmix.io/schema/flowui/composite">
-    <layout>
+    <content>
         <hbox id="fieldWrapper" width="100%">
             <textField id="valueField" datatype="int"
                        width="100%" />
@@ -24,5 +24,5 @@
             <button id="downBtn"
                     icon="CHEVRON_DOWN"/>
         </hbox>
-    </layout>
+    </content>
 </composite>

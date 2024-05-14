@@ -18,7 +18,7 @@
     <actions>
         <action id="testAction" text="Test" icon="PLUS"/>
     </actions>
-    <layout>
+    <content>
         <vbox id="contentBox" classNames="overflow-auto">
             <hbox id="buttonsPanel" classNames="buttons-panel">
                 <button id="createBtn" action="dataGrid.create"/>
@@ -41,5 +41,5 @@
                 </columns>
             </dataGrid>
         </vbox>
-    </layout>
+    </content>
 </composite>

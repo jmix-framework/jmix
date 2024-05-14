@@ -15,7 +15,7 @@
   -->
 
 <composite xmlns="http://jmix.io/schema/flowui/composite">
-    <layout>
+    <content>
         <button id="button"/>
-    </layout>
+    </content>
 </composite>

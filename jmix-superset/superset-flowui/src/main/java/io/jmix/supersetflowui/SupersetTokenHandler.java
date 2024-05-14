@@ -19,6 +19,7 @@ package io.jmix.supersetflowui;
 import com.google.common.base.Strings;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.common.util.ParamsMap;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
@@ -26,6 +27,9 @@ import io.jmix.superset.SupersetService;
 import io.jmix.superset.model.GuestTokenBody;
 import io.jmix.superset.model.GuestTokenResponse;
 import io.jmix.superset.model.LoginResponse;
+import jakarta.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -36,11 +40,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 @Component("superset_SupersetTokenHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SupersetTokenHandler {
+    private static final Logger log = LoggerFactory.getLogger(SupersetTokenHandler.class);
 
     protected final SupersetService supersetService;
     protected final BackgroundWorker backgroundWorker;
@@ -52,33 +57,18 @@ public class SupersetTokenHandler {
     }
 
     public void requestGuestToken(GuestTokenBody body, Consumer<GuestTokenResponse> callback) {
-        new OperationOrder()
-                .operation(() ->
-                        loginToSuperset()
-                                .onFail(result -> {
-                                    throw new IllegalStateException("Failed to log in to Superset: \"" + result.getMessage() + "\"");
-                                })
-                                .onSuccess(result -> {
-                                    // todo rp when update cached tokens or remove?
-                                    VaadinSession.getCurrent().setAttribute(LoginResponse.class, result);
-                                }))
-                // after first operation success
-                .operation(() ->
-                        requestGuestToken(body)
-                                .onFail(result -> {
-                                    /*just fail*/
-                                })
-                                .onSuccess(result -> {
-                                    // cache guest token for UI for View for Component
-                                    callback.accept(result);
-                                }))
-                .start();
+        if (Strings.isNullOrEmpty(getAccessToken())) {
+            doLoginAndRequestGuestToken(body, callback);
+        } else {
+            doRequestGuestToken(body, callback);
+        }
     }
 
-    protected OperationResultCallback<LoginResponse> loginToSuperset() {
-        OperationResultCallback<LoginResponse> operationResultCallback = new OperationResultCallback<>();
-
+    protected OperationCallback<LoginResponse> loginToSuperset() {
         SupersetTask<LoginResponse> loginTask = createSupersetLoginTask();
+
+        OperationCallback<LoginResponse> operationResultCallback = new OperationCallback<>(loginTask);
+
         loginTask.addProgressListener(new BackgroundTask.ProgressListenerAdapter<>() {
             @Override
             public void onDone(LoginResponse response) {
@@ -89,7 +79,6 @@ public class SupersetTokenHandler {
                 }
             }
         });
-        backgroundWorker.handle(loginTask).execute();
 
         return operationResultCallback;
     }
@@ -98,10 +87,66 @@ public class SupersetTokenHandler {
         // todo rp
     }
 
-    protected OperationResultCallback<GuestTokenResponse> requestGuestToken(GuestTokenBody body) {
-        OperationResultCallback<GuestTokenResponse> callback = new OperationResultCallback<>();
+    protected void doLoginAndRequestGuestToken(GuestTokenBody body, Consumer<GuestTokenResponse> callback) {
+        new OperationsChain()
+                .operation((prevOperation) ->
+                        loginToSuperset()
+                                .onOperationFinish(result -> {
+                                    if (result.succeed()) {
+                                        // todo rp when update cached tokens or remove?
+                                        VaadinSession.getCurrent().setAttribute(LoginResponse.class, result.result());
+                                    }
+                                }))
+                .operation((prevOperation) -> {
+                    return prevOperation.getResult().succeed() ?
+                            requestGuestToken(body)
+                                    .onOperationFinish(result -> {
+                                        if (result.succeed()) {
+                                            // todo cache guest token for UI for View for Component
+                                            callback.accept(result.result());
+                                        } else {
+                                            /*just fail todo error or log*/
+                                        }
+                                    })
+                            : null; // Break the operations chain
+                })
+                .start();
+    }
 
+    protected void doRequestGuestToken(GuestTokenBody body, Consumer<GuestTokenResponse> callback) {
+        new OperationsChain()
+                .operation((prevOperation) ->
+                        requestGuestToken(body)
+                                .onOperationFinish(result -> {
+                                    if (result.succeed()) {
+                                        // todo cache guest token for UI for View for Component
+                                        callback.accept(result.result());
+                                    } else if (!Strings.isNullOrEmpty(result.result().getMessage())) {
+                                        throw new IllegalStateException("Guest token request failed: "
+                                                + result.result().getMessage());
+                                    }
+                                }))
+                .operation(prevOperation -> {
+                    if (!prevOperation.getResult().succeed()) {
+                        GuestTokenResponse response = (GuestTokenResponse) prevOperation.getResult().result();
+                        if (!Strings.isNullOrEmpty(response.getMsg())) {
+                            // expired access token
+                            doLoginAndRequestGuestToken(body, callback);
+                        } else {
+                            throw new IllegalStateException();
+                        }
+                    }
+                    // Break the operations chain
+                    return null;
+                })
+                .start();
+    }
+
+    protected OperationCallback<GuestTokenResponse> requestGuestToken(GuestTokenBody body) {
         SupersetTask<GuestTokenResponse> guestTokenTask = createSupersetGuestTokenTask(body);
+
+        OperationCallback<GuestTokenResponse> callback = new OperationCallback<>(guestTokenTask);
+
         guestTokenTask.addProgressListener(new BackgroundTask.ProgressListenerAdapter<>() {
             @Override
             public void onDone(GuestTokenResponse response) {
@@ -112,7 +157,6 @@ public class SupersetTokenHandler {
                 }
             }
         });
-        backgroundWorker.handle(guestTokenTask).execute();
 
         return callback;
     }
@@ -126,15 +170,19 @@ public class SupersetTokenHandler {
         };
     }
 
+    protected void updateAccessToken() {
+
+    }
+
     protected SupersetTask<GuestTokenResponse> createSupersetGuestTokenTask(GuestTokenBody body) {
-        // by logic here should be available access token
-        LoginResponse loginResponse = VaadinSession.getCurrent().getAttribute(LoginResponse.class);
-        if (loginResponse == null) {
+        // by logic here must be available access token
+        String accessToken = getAccessToken();
+        if (Strings.isNullOrEmpty(accessToken)) {
             throw new IllegalStateException("Cannot get guest token, since access token is null");
         }
         return new SupersetTask<>(supersetService, ParamsMap.of(
                 "body", body,
-                "accessToken", loginResponse.getAccessToken())) {
+                "accessToken", accessToken)) {
             @Override
             public GuestTokenResponse run(TaskLifeCycle<Void> taskLifeCycle) {
                 // todo rp when update cached tokens or remove?
@@ -142,6 +190,14 @@ public class SupersetTokenHandler {
                 return supersetService.getGuestToken(body, (String) params.get("accessToken"));
             }
         };
+    }
+
+    @Nullable
+    protected String getAccessToken() {
+        LoginResponse loginResponse = VaadinSession.getCurrent().getAttribute(LoginResponse.class);
+        return loginResponse != null
+                ? loginResponse.getAccessToken()
+                : null;
     }
 
     protected static abstract class SupersetTask<R> extends BackgroundTask<Void, R> {
@@ -156,72 +212,133 @@ public class SupersetTokenHandler {
         }
     }
 
-    protected static class OperationOrder {
+    protected static class OperationsChain {
 
-        protected List<Supplier<OperationResultCallback<?>>> operationInvokers = new ArrayList<>(2);
+        protected List<Function<OperationCallback<?>, OperationCallback<?>>> operationInvokers =
+                new ArrayList<>(2);
 
-        OperationOrder operation(Supplier<OperationResultCallback<?>> operationInvoker) {
+        protected OperationCallback<?> previousResult;
+
+        OperationsChain operation(Function<OperationCallback<?>, OperationCallback<?>> operationInvoker) {
             operationInvokers.add(operationInvoker);
             return this;
         }
 
         void start() {
-            Supplier<OperationResultCallback<?>> operationInvoker = operationInvokers.get(0);
+            Function<OperationCallback<?>, OperationCallback<?>> operationInvoker = operationInvokers.get(0);
             startRecursively(operationInvoker);
         }
 
-        void startRecursively(Supplier<OperationResultCallback<?>> operationInvoker) {
-            OperationResultCallback<?> callback = operationInvoker.get();
-            callback.onAfterSuccess(o -> {
+        void startRecursively(Function<OperationCallback<?>, OperationCallback<?>> operationInvoker) {
+            previousResult = operationInvoker.apply(previousResult);
+            if (previousResult == null) {
+                log.debug("The operation result is null. Next operations won't be started");
+                return;
+            }
+
+            previousResult.onOperationFinishInternal(o -> {
                 if (hasNextInvoker(operationInvoker)) {
-                    Supplier<OperationResultCallback<?>> nextOperationInvoker =
+                    Function<OperationCallback<?>, OperationCallback<?>> nextOperationInvoker =
                             operationInvokers.get(operationInvokers.indexOf(operationInvoker) + 1);
                     startRecursively(nextOperationInvoker);
                 }
             });
+            previousResult.start();
         }
 
-        boolean hasNextInvoker(Supplier<OperationResultCallback<?>> operationInvoker) {
+        boolean hasNextInvoker(Function<OperationCallback<?>, OperationCallback<?>> operationInvoker) {
             int i = operationInvokers.indexOf(operationInvoker) + 1;
             return operationInvokers.size() > i;
         }
     }
 
-    protected static class OperationResultCallback<T> {
+    protected class OperationCallback<T> {
 
-        protected Consumer<T> failCallback;
-        protected Consumer<T> successCallback;
-        protected Consumer<T> afterSuccessCallback;
+        protected Consumer<OperationResult<T>> failCallback;
+        protected Consumer<OperationResult<T>> successCallback;
+        protected Consumer<OperationResult<T>> operationFinishCallback;
+        protected Consumer<OperationResult<T>> operationFinishInternalCallback;
 
+        protected boolean succeed = true;
+        protected T result;
+
+        protected final SupersetTask<?> task;
+
+        public OperationCallback(SupersetTask<?> task) {
+            Preconditions.checkNotNullArgument(task);
+            this.task = task;
+        }
 
         public void fail(T result) {
+            this.succeed = false;
+
             if (failCallback != null) {
-                failCallback.accept(result);
+                failCallback.accept(new OperationResult<>(result, false));
             }
+
+            onFinish();
         }
 
         public void success(T result) {
-            if (successCallback != null) {
-                successCallback.accept(result);
+            this.succeed = true;
 
-                if (afterSuccessCallback != null) {
-                    afterSuccessCallback.accept(result);
-                }
+            if (successCallback != null) {
+                successCallback.accept(new OperationResult<>(result, true));
             }
+
+            onFinish();
         }
 
-        public OperationResultCallback<T> onSuccess(Consumer<T> resultCallback) {
+        public OperationCallback<T> onFail(Consumer<OperationResult<T>> resultCallback) {
+            this.failCallback = resultCallback;
+            return this;
+        }
+
+        public OperationCallback<T> onSuccess(Consumer<OperationResult<T>> resultCallback) {
             this.successCallback = resultCallback;
             return this;
         }
 
-        public void onAfterSuccess(Consumer<T> resultCallback) {
-            this.afterSuccessCallback = resultCallback;
-        }
-
-        public OperationResultCallback<T> onFail(Consumer<T> resultCallback) {
-            this.failCallback = resultCallback;
+        /**
+         * Sets a callback that will be invoked in any case: success or fail.
+         *
+         * @param resultCallback callback to invoke after operation finish
+         * @return current instance
+         */
+        public OperationCallback<T> onOperationFinish(Consumer<OperationResult<T>> resultCallback) {
+            this.operationFinishCallback = resultCallback;
             return this;
         }
+
+        public OperationResult<T> getResult() {
+            return new OperationResult<>(result, succeed);
+        }
+
+        void start() {
+            backgroundWorker.handle(task).execute();
+        }
+
+        void onFinish() {
+            if (operationFinishCallback != null) {
+                operationFinishCallback.accept(new OperationResult<>(result, succeed));
+            }
+            if (operationFinishInternalCallback != null) {
+                operationFinishInternalCallback.accept(new OperationResult<>(result, succeed));
+            }
+        }
+
+        /**
+         * Sets a callback that will be invoked in any case: success or fail.
+         *
+         * @param resultCallback callback to invoke after operation finish
+         * @return current instance
+         */
+        OperationCallback<T> onOperationFinishInternal(Consumer<OperationResult<T>> resultCallback) {
+            this.operationFinishInternalCallback = resultCallback;
+            return this;
+        }
+    }
+
+    protected record OperationResult<T>(T result, boolean succeed) {
     }
 }

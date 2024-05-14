@@ -18,12 +18,16 @@ package io.jmix.supersetflowui.component;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.internal.ExecutionContext;
+import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.backgroundtask.*;
+import io.jmix.flowui.sys.event.UiEventsManager;
+import io.jmix.superset.SupersetAccessTokenManager;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.SupersetService;
+import io.jmix.superset.event.SupersetAccessTokenUpdated;
 import io.jmix.superset.model.GuestTokenBody;
-import io.jmix.superset.model.GuestTokenResponse;
 import io.jmix.supersetflowui.SupersetTokenHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +36,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
+import org.springframework.context.ApplicationEvent;
 
 import static io.jmix.superset.model.GuestTokenBody.Resource.DASHBOARD_TYPE;
 
@@ -42,6 +47,9 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     protected SupersetTokenHandler supersetTokenHandler;
     protected CurrentUserSubstitution currentUserSubstitution;
     protected SupersetProperties supersetProperties;
+    protected SupersetAccessTokenManager accessTokenManager;
+
+    protected String accessToken;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -55,13 +63,28 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
                 applicationContext.getBean(BackgroundWorker.class));
         currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
         supersetProperties = applicationContext.getBean(SupersetProperties.class);
+        accessTokenManager = applicationContext.getBean(SupersetAccessTokenManager.class);
+
+        initAccessTokenUpdatedListener();
+    }
+
+    protected void initAccessTokenUpdatedListener() {
+        VaadinSession session = VaadinSession.getCurrent();
+        if (session == null) {
+            return;
+        }
+
+        UiEventsManager uiEventsManager = session.getAttribute(UiEventsManager.class);
+        if (uiEventsManager != null) {
+            uiEventsManager.addApplicationListener(this, this::onSupersetAccessTokenUpdated);
+
+            // Remove on detach event
+            addDetachListener(event -> uiEventsManager.removeApplicationListeners(this));
+        }
     }
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
-        initSupersetDomain();
-        initGuestToken();
-
         requestUpdateDashboard();
     }
 
@@ -89,18 +112,29 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
                 : supersetProperties.getUrl());
     }
 
-    protected void initGuestToken() {
-        if (guestToken == null) {
-            supersetTokenHandler.requestGuestToken(buildGuestTokenBody(), this::onGuestTokenSuccess);
-        } else {
-            setGuestTokenInternal(guestToken);
+    protected void initTokens() {
+        // Do not use access token if custom guest token is set
+        if (Strings.isNullOrEmpty(getGuestToken())) {
+            accessToken = Strings.isNullOrEmpty(accessToken)
+                    ? accessTokenManager.getAccessToken()
+                    : accessToken;
+            setAccessTokenInternal(accessToken);
         }
     }
 
-    protected void onGuestTokenSuccess(GuestTokenResponse response) {
-        setGuestTokenInternal(response.getToken());
+    protected void onSupersetAccessTokenUpdated(ApplicationEvent event) {
+        // todo rework with https://github.com/jmix-framework/jmix/issues/3232
+        if (event instanceof SupersetAccessTokenUpdated accessTokenEvent) {
+            accessToken = accessTokenEvent.getAccessToken();
+            requestUpdateDashboard();
+        }
+    }
 
-        // todo rp
-        requestUpdateDashboard();
+    @Override
+    protected void updateDashboard(ExecutionContext context) {
+        initSupersetDomain();
+        initTokens();
+
+        super.updateDashboard(context);
     }
 }

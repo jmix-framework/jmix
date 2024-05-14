@@ -31,6 +31,7 @@ import com.vaadin.flow.internal.StateTree;
 public class JmixSupersetDashboard extends Component implements HasSize, HasStyle {
 
     private static final String PROPERTY_GUEST_TOKEN = "guestToken";
+    private static final String PROPERTY_ACCESS_TOKEN = "accessToken";
     private static final String PROPERTY_EMBEDDED_ID = "embeddedId";
     private static final String PROPERTY_SUPERSET_DOMAIN = "supersetDomain";
     private static final String PROPERTY_TAB_VISIBILITY = "tabVisibility";
@@ -39,22 +40,25 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     //    private static final String PROPERTY_FILTERS_VISIBILITY = "filtersVisibility";
     private static final String PROPERTY_FILTERS_EXPANDED = "filtersExpanded";
 
-    protected String guestToken;
     protected String supersetDomain;
 
     protected StateTree.ExecutionRegistration updateDashboardExecution;
 
     public String getGuestToken() {
-        return getElement().getProperty(PROPERTY_GUEST_TOKEN, guestToken);
+        return getElement().getProperty(PROPERTY_GUEST_TOKEN);
     }
 
     /**
-     * Sets "geust" token from Superset
+     * Sets guest token from Superset
      *
      * @param guestToken guest token
      */
     public void setGuestToken(String guestToken) {
-        this.guestToken = guestToken;
+        getElement().setProperty(PROPERTY_GUEST_TOKEN, guestToken);
+    }
+
+    public void setAccessTokenInternal(String accessToken) {
+        getElement().setProperty(PROPERTY_ACCESS_TOKEN, accessToken);
     }
 
     public String getEmbeddedId() {

@@ -18,10 +18,7 @@ package io.jmix.superset;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jmix.superset.model.GuestTokenBody;
-import io.jmix.superset.model.GuestTokenResponse;
-import io.jmix.superset.model.LoginBody;
-import io.jmix.superset.model.LoginResponse;
+import io.jmix.superset.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -87,10 +84,40 @@ public class SupersetService {
             throw new IllegalStateException("Failed to log in to Superset", e);
         }
 
+        log.debug("Login request is finished");
+
         try {
             return new ObjectMapper().readValue(responseBody, LoginResponse.class);
-        } catch (JsonProcessingException ex) {
-            throw new IllegalStateException("Cannot parse login response", ex);
+            // todo rp check when no VPN exception is not handled?
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Cannot parse login response", e);
+        }
+    }
+
+    public RefreshResponse refresh(String refreshToken) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(properties.getUrl() + "/api/v1/security/refresh"))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + refreshToken)
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        log.debug("Sends a refresh request");
+
+        String responseBody;
+        try {
+            responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
+        } catch (IOException | InterruptedException e) {
+            throw new IllegalStateException("Failed to refresh access token", e);
+        }
+
+        log.debug("Refresh request is finished");
+
+        try {
+            return new ObjectMapper().readValue(responseBody, RefreshResponse.class);
+            // todo rp check when no VPN exception is not handled?
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Cannot parse refresh response", e);
         }
     }
 
@@ -119,6 +146,8 @@ public class SupersetService {
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
 
+        log.debug("Sends guest token request");
+
         String responseBody;
         try {
             responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
@@ -126,8 +155,11 @@ public class SupersetService {
             throw new IllegalStateException("Failed to get a guest token from Superset", e);
         }
 
+        log.debug("Guest token request is finished");
+
         try {
             return new ObjectMapper().readValue(responseBody, GuestTokenResponse.class);
+            // todo rp check when no VPN exception is not handled?
         } catch (JsonProcessingException ex) {
             throw new IllegalStateException("Cannot parse guest token response", ex);
         }

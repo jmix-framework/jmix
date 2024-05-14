@@ -31,6 +31,10 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
     static get properties() {
         return {
+            accessToken : {
+                type: String,
+                value: ''
+            },
             guestToken: {
                 type: String,
                 value: ''
@@ -97,6 +101,33 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             })
         };
         embed();
+    }
+
+    // todo method works, delete hardcoded body
+    getToken = async () => {
+        const response = await fetch(this.supersetDomain + '/api/v1/security/guest_token/', {
+            method: 'post',
+            headers: {
+                'Accept': '*/*',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.accessToken
+            },
+            body: JSON.stringify({
+                "resources": [
+                    {
+                        "id": "5defeb1a-dbe9-4999-987d-e88e9a1da89a",
+                        "type": "dashboard"
+                    }
+                ],
+                "rls": [],
+                "user": {
+                    "username": "admin admin"
+                }
+            }),
+            credentials: "include",
+        });
+        const responseJson = await response.json();
+        return responseJson.token;
     }
 
     static get observers() {

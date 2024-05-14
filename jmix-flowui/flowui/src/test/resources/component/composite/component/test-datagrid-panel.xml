@@ -21,12 +21,12 @@
     <layout>
         <vbox id="contentBox" classNames="overflow-auto">
             <hbox id="buttonsPanel" classNames="buttons-panel">
-                <button id="createBtn" action="usersDataGrid.create"/>
-                <button id="editBtn" action="usersDataGrid.edit"/>
-                <button id="removeBtn" action="usersDataGrid.remove"/>
+                <button id="createBtn" action="dataGrid.create"/>
+                <button id="editBtn" action="dataGrid.edit"/>
+                <button id="removeBtn" action="dataGrid.remove"/>
                 <button id="testBtn" action="testAction"/>
             </hbox>
-            <dataGrid id="usersDataGrid"
+            <dataGrid id="dataGrid"
                       width="100%"
                       minHeight="20em"
                       metaClass="test_Product">

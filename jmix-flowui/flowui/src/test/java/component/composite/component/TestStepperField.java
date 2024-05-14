@@ -19,51 +19,46 @@ package component.composite.component;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.composite.CompositeComponent;
+import io.jmix.flowui.component.composite.CompositeDescriptor;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import org.springframework.beans.factory.annotation.Autowired;
 
-//@CompositeDescriptor("test-stepper-field.xml")
+@CompositeDescriptor("/component/composite/component/test-stepper-field.xml")
 public class TestStepperField extends CompositeComponent<HorizontalLayout>
         implements HasValue<ComponentValueChangeEvent<TestStepperField, Integer>, Integer> {
-
-//    private UiComponents uiComponents;
 
     private TypedTextField<Integer> valueField;
     private Button upBtn;
     private Button downBtn;
 
-    @Autowired
-    public void setUiComponents(UiComponents uiComponents) {
-        this.uiComponents = uiComponents;
+    public TestStepperField() {
+        addPostInitListener(this::onPostInit);
     }
 
-    @Override
-    protected HorizontalLayout initContent() {
-        HorizontalLayout horizontalLayout = super.initContent();
-        horizontalLayout.setWidthFull();
+    private void onPostInit(PostInitEvent postInitEvent) {
+        valueField = getInnerComponent("valueField");
+        setValue(0);
 
-        valueField = uiComponents.create(TypedTextField.class);
-        valueField.setWidthFull();
-
-        upBtn = uiComponents.create(Button.class);
-        upBtn.setIcon(VaadinIcon.CHEVRON_UP.create());
+        upBtn = getInnerComponent("upBtn");
         upBtn.addClickListener(__ -> updateValue(1));
 
-        downBtn = uiComponents.create(Button.class);
-        downBtn.setIcon(VaadinIcon.CHEVRON_DOWN.create());
+        downBtn = getInnerComponent("downBtn");
         downBtn.addClickListener(__ -> updateValue(-1));
-
-        return horizontalLayout;
     }
 
     private void updateValue(int adjustment) {
         Integer currentValue = getValue();
         setValue(currentValue != null ? currentValue + adjustment : adjustment);
+    }
+
+    public void clickUp() {
+        upBtn.click();
+    }
+
+    public void clickDown() {
+        downBtn.click();
     }
 
     @Override
@@ -77,9 +72,11 @@ public class TestStepperField extends CompositeComponent<HorizontalLayout>
     }
 
     @Override
-    public Registration addValueChangeListener(ValueChangeListener<? super ComponentValueChangeEvent<TestStepperField, Integer>> listener) {
+    public Registration addValueChangeListener(
+            ValueChangeListener<? super ComponentValueChangeEvent<TestStepperField, Integer>> listener) {
         return valueField.addTypedValueChangeListener(event ->
-                listener.valueChanged(new ComponentValueChangeEvent<>(this, this, event.getOldValue(), event.isFromClient())));
+                listener.valueChanged(new ComponentValueChangeEvent<>(this, this,
+                        event.getOldValue(), event.isFromClient())));
     }
 
     @Override

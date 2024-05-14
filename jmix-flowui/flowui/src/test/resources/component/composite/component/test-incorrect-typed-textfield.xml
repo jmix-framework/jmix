@@ -16,13 +16,6 @@
 
 <composite xmlns="http://jmix.io/schema/flowui/composite">
     <layout>
-        <hbox id="fieldWrapper" width="100%">
-            <textField id="valueField" datatype="int"
-                       width="100%" />
-            <button id="upBtn"
-                    icon="CHEVRON_UP"/>
-            <button id="downBtn"
-                    icon="CHEVRON_DOWN"/>
-        </hbox>
+        <button id="button"/>
     </layout>
 </composite>

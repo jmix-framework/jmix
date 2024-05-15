@@ -16,19 +16,18 @@
 
 package io.jmix.supersetflowui.component;
 
-import com.google.common.base.Strings;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.internal.ExecutionContext;
-import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.component.DetachEvent;
+import elemental.json.JsonArray;
+import elemental.json.JsonObject;
+import elemental.json.JsonValue;
+import elemental.json.impl.JreJsonFactory;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
-import io.jmix.flowui.backgroundtask.*;
-import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.superset.SupersetAccessTokenManager;
 import io.jmix.superset.SupersetProperties;
-import io.jmix.superset.SupersetService;
 import io.jmix.superset.event.SupersetAccessTokenUpdated;
-import io.jmix.superset.model.GuestTokenBody;
-import io.jmix.supersetflowui.SupersetTokenHandler;
+import io.jmix.supersetflowui.component.dataconstraint.SupersetDataConstrainsProvider;
+import io.jmix.supersetflowui.component.dataconstraint.SupersetDataConstraint;
+import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -36,20 +35,18 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
-import org.springframework.context.ApplicationEvent;
 
-import static io.jmix.superset.model.GuestTokenBody.Resource.DASHBOARD_TYPE;
+import java.util.List;
 
 public class SupersetDashboard extends JmixSupersetDashboard implements ApplicationContextAware, InitializingBean {
     private static final Logger log = LoggerFactory.getLogger(SupersetDashboard.class);
 
     protected ApplicationContext applicationContext;
-    protected SupersetTokenHandler supersetTokenHandler;
     protected CurrentUserSubstitution currentUserSubstitution;
     protected SupersetProperties supersetProperties;
     protected SupersetAccessTokenManager accessTokenManager;
 
-    protected String accessToken;
+    protected SupersetDataConstrainsProvider dataConstrainsProvider;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -58,83 +55,60 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
 
     @Override
     public void afterPropertiesSet() {
-        supersetTokenHandler = applicationContext.getBean(SupersetTokenHandler.class,
-                applicationContext.getBean(SupersetService.class),
-                applicationContext.getBean(BackgroundWorker.class));
         currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
         supersetProperties = applicationContext.getBean(SupersetProperties.class);
         accessTokenManager = applicationContext.getBean(SupersetAccessTokenManager.class);
 
         initAccessTokenUpdatedListener();
+        setSupersetDomainInternal(supersetProperties.getUrl());
+        setAccessToken(accessTokenManager.getAccessToken());
+        setUserInfo(currentUserSubstitution.getEffectiveUser().getUsername());
     }
 
     protected void initAccessTokenUpdatedListener() {
-        VaadinSession session = VaadinSession.getCurrent();
-        if (session == null) {
-            return;
-        }
-
-        UiEventsManager uiEventsManager = session.getAttribute(UiEventsManager.class);
-        if (uiEventsManager != null) {
-            uiEventsManager.addApplicationListener(this, this::onSupersetAccessTokenUpdated);
-
-            // Remove on detach event
-            addDetachListener(event -> uiEventsManager.removeApplicationListeners(this));
-        }
+        accessTokenManager.addAccessTokenUpdatedListener(this::onSupersetAccessTokenUpdated);
     }
 
     @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        requestUpdateDashboard();
+    protected void onDetach(DetachEvent detachEvent) {
+        super.onDetach(detachEvent);
+
+        accessTokenManager.removeAccessTokenUpdatedListener(this::onSupersetAccessTokenUpdated);
     }
 
-    protected GuestTokenBody buildGuestTokenBody() {
-        if (Strings.isNullOrEmpty(getEmbeddedId())) {
-            throw new IllegalStateException("Embedded id is required");
-        }
-
-        return GuestTokenBody.builder()
-                .withResource(new GuestTokenBody.Resource(getEmbeddedId(), DASHBOARD_TYPE))
-                .withUser(new GuestTokenBody.User(currentUserSubstitution.getEffectiveUser().getUsername()))
-                .build();
+    @Nullable
+    public SupersetDataConstrainsProvider getDataConstrainsProvider() {
+        return dataConstrainsProvider;
     }
 
-    protected void initSupersetDomain() {
-        if (Strings.isNullOrEmpty(supersetDomain)
-                && Strings.isNullOrEmpty(supersetProperties.getUrl())) {
-            log.warn("Superset dashboard url is empty. Specify 'jmix.superset.url' property or" +
-                    " set 'domain' attribute directly");
-            return;
-        }
+    public void setDataConstrainsProvider(@Nullable SupersetDataConstrainsProvider dataConstrainsProvider) {
+        this.dataConstrainsProvider = dataConstrainsProvider;
 
-        setSupersetDomainInternal(!Strings.isNullOrEmpty(supersetDomain)
-                ? supersetDomain
-                : supersetProperties.getUrl());
-    }
-
-    protected void initTokens() {
-        // Do not use access token if custom guest token is set
-        if (Strings.isNullOrEmpty(getGuestToken())) {
-            accessToken = Strings.isNullOrEmpty(accessToken)
-                    ? accessTokenManager.getAccessToken()
-                    : accessToken;
-            setAccessTokenInternal(accessToken);
+        if (dataConstrainsProvider != null) {
+            setDataConstraints(convertDataConstrainsToJson(dataConstrainsProvider.getConstraints()));
         }
     }
 
-    protected void onSupersetAccessTokenUpdated(ApplicationEvent event) {
-        // todo rework with https://github.com/jmix-framework/jmix/issues/3232
-        if (event instanceof SupersetAccessTokenUpdated accessTokenEvent) {
-            accessToken = accessTokenEvent.getAccessToken();
-            requestUpdateDashboard();
-        }
+    public void forceEmbed() {
+        requestEmbedComponent();
     }
 
-    @Override
-    protected void updateDashboard(ExecutionContext context) {
-        initSupersetDomain();
-        initTokens();
+    protected JsonValue convertDataConstrainsToJson(List<SupersetDataConstraint> dataConstraints) {
+        JreJsonFactory factory = new JreJsonFactory();
+        JsonArray array = factory.createArray();
+        for (int i = 0; i < dataConstraints.size(); i++) {
+            SupersetDataConstraint dataConstraint = dataConstraints.get(0);
+            JsonObject constraint = factory.createObject();
+            constraint.put("dataset", dataConstraint.dataset());
+            constraint.put("clause", dataConstraint.clause());
+            array.set(i, constraint);
+        }
+        return array;
+    }
 
-        super.updateDashboard(context);
+    protected void onSupersetAccessTokenUpdated(SupersetAccessTokenUpdated event) {
+        getUI().ifPresent(ui -> {
+            ui.access(() -> setAccessToken(event.getAccessToken()));
+        });
     }
 }

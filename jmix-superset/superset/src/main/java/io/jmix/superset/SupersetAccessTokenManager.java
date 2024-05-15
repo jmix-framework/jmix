@@ -20,69 +20,52 @@ import com.google.common.base.Strings;
 import io.jmix.superset.event.SupersetAccessTokenUpdated;
 import io.jmix.superset.model.LoginResponse;
 import io.jmix.superset.model.RefreshResponse;
+import io.jmix.superset.service.SupersetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 
 @Component("superset_SupersetAccessTokenManager")
 public class SupersetAccessTokenManager {
 
     private static final Logger log = LoggerFactory.getLogger(SupersetAccessTokenManager.class);
-    private final ApplicationEventPublisher eventPublisher;
     private final SupersetService supersetService;
+
+    private final List<Consumer<SupersetAccessTokenUpdated>> listeners =
+            Collections.synchronizedList(new ArrayList<>());
 
     private String accessToken;
     private String refreshToken;
 
-    public SupersetAccessTokenManager(ApplicationEventPublisher eventPublisher, SupersetService supersetService) {
-        this.eventPublisher = eventPublisher;
+    public SupersetAccessTokenManager(SupersetService supersetService) {
         this.supersetService = supersetService;
     }
 
     public synchronized void updateAccessToken() {
+        boolean success;
         if (accessToken == null) {
-            performLogin();
+            success = performLogin();
         } else {
-            performRefresh();
+            success = refreshAccessToken();
         }
 
-        eventPublisher.publishEvent(new SupersetAccessTokenUpdated(this, accessToken));
-    }
-
-    private void performLogin() {
-        LoginResponse response;
-        try {
-            response = supersetService.login();
-        } catch (Exception e) {
-            log.error("Cannot log in to superset. Dashboard functionality may work incorrectly", e);
-            return;
-        }
-
-        if (response.getMessage() == null) {
-            accessToken = response.getAccessToken();
-            refreshToken = response.getRefreshToken();
-        } else {
-            log.error("Cannot log in to superset. Dashboard functionality may work incorrectly. Message from Superset:" +
-                    " {}", response.getMessage());
+        if (success) {
+            publishAccessTokenUpdatedEvent(new SupersetAccessTokenUpdated(this, accessToken));
         }
     }
 
-    private void performRefresh() {
-        RefreshResponse response;
-        try {
-            response = supersetService.refresh(refreshToken);
-        } catch (Exception e) {
-            log.error("Failed to update access token. Dashboard functionality may work incorrectly", e);
-            return;
-        }
+    public void addAccessTokenUpdatedListener(Consumer<SupersetAccessTokenUpdated> listener) {
+        if (!listeners.contains(listener))
+            listeners.add(listener);
+    }
 
-        if (response.getErrorMessage() == null) {
-            accessToken = response.getAccessToken();
-        } else {
-            log.error("Failed to update access token. Dashboard functionality may work incorrectly. Message from Superset:" +
-                    " {}", response.getErrorMessage());
-        }
+    public void removeAccessTokenUpdatedListener(Consumer<SupersetAccessTokenUpdated> listener) {
+        listeners.remove(listener);
     }
 
     public String getAccessToken() {
@@ -92,10 +75,78 @@ public class SupersetAccessTokenManager {
         return accessToken;
     }
 
-    public String refreshAccessToken() {
+    public String getRefreshAccessToken() {
         if (Strings.isNullOrEmpty(refreshToken)) {
             throw new IllegalStateException("Refresh token is not initialized");
         }
         return refreshToken;
+    }
+
+    protected boolean performLogin() {
+        LoginResponse response;
+        try {
+            response = supersetService.login();
+        } catch (Exception e) {
+            log.error("Cannot log in to superset. Dashboard functionality may work incorrectly", e);
+            return false;
+        }
+
+        if (response.getMessage() == null) {
+            accessToken = response.getAccessToken();
+            refreshToken = response.getRefreshToken();
+            return true;
+        } else {
+            log.error("Cannot log in to superset. Dashboard functionality may work incorrectly. Message from Superset:" +
+                    " {}", response.getMessage());
+            return false;
+        }
+    }
+
+    protected boolean refreshAccessToken() {
+        boolean retry = false;
+        RefreshResponse response = null;
+        try {
+            response = supersetService.refresh(refreshToken);
+        } catch (Exception e) {
+            Throwable cause = e.getCause();
+            if (!Strings.isNullOrEmpty(cause.getMessage()) && cause.getMessage().contains("GOAWAY received")) {
+                log.error("Failed to refresh access token. Retrying request");
+                retry = true;
+            } else {
+                log.error("Failed to refresh access token. Dashboard functionality may work incorrectly", e);
+                return false;
+            }
+        }
+
+        if (retry) {
+            try {
+                response = supersetService.refresh(refreshToken);
+            } catch (Exception e) {
+                Throwable cause = e.getCause();
+                if (!Strings.isNullOrEmpty(cause.getMessage()) && cause.getMessage().contains("GOAWAY received")) {
+                    log.error("Retrying the request failed. Dashboard functionality may work incorrectly.", e);
+                    return false;
+                } else {
+                    log.error("Failed to refresh access token. Dashboard functionality may work incorrectly", e);
+                    return false;
+                }
+            }
+        }
+
+        // Response cannot be null here
+        if (response.getErrorMessage() == null) {
+            accessToken = response.getAccessToken();
+            return true;
+        } else {
+            log.error("Failed to update access token. Dashboard functionality may work incorrectly. Message from Superset:" +
+                    " {}", response.getErrorMessage());
+            return false;
+        }
+    }
+
+    private void publishAccessTokenUpdatedEvent(SupersetAccessTokenUpdated event) {
+        for (Consumer<SupersetAccessTokenUpdated> listener : listeners) {
+            listener.accept(event);
+        }
     }
 }

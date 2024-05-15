@@ -1,48 +1,47 @@
 package io.jmix.superset;
 
+import jakarta.annotation.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.Duration;
 
-@Configuration
 @ConfigurationProperties("jmix.superset")
 public class SupersetProperties {
 
-    private String url;
-    private String username;
-    private String password;
-    private Duration accessTokenExpiration = Duration.ofMinutes(14); // default value in superset is 15
+    String url;
+    String username;
+    String password;
+    Duration accessTokenExpiration;
 
+    public SupersetProperties(String url,
+                              String username,
+                              String password,
+                              @DefaultValue("14m") Duration accessTokenExpiration) { // todo rp check default value
+        this.url = url;
+        this.username = username;
+        this.password = password;
+        this.accessTokenExpiration = accessTokenExpiration;
+    }
+
+    @Nullable
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
+    @Nullable
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
+    @Nullable
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+    // todo rp nullable?
     public Duration getAccessTokenExpiration() {
         return accessTokenExpiration;
     }
 
-    public void setAccessTokenExpiration(Duration accessTokenExpiration) {
-        this.accessTokenExpiration = accessTokenExpiration;
-    }
 }

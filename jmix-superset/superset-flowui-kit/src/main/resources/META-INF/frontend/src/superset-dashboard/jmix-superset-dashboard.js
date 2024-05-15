@@ -31,64 +31,79 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
     static get properties() {
         return {
-            accessToken : {
-                type: String,
-                value: ''
-            },
             guestToken: {
                 type: String,
-                value: ''
+                value: '',
             },
             embeddedId: {
                 type: String,
-                value: ''
+                value: '',
             },
             supersetDomain: {
                 type: String,
-                value: ''
+                value: '',
             },
             titleVisibility: {
                 type: Boolean,
-                value: false
+                value: false,
             },
             tabVisibility: {
                 type: Boolean,
-                value: false
+                value: false,
             },
             chartControlsVisibility: {
                 type: Boolean,
-                value: false
+                value: false,
             },
             filtersVisibility: {
                 type: Boolean,
-                value: false
+                value: false,
             },
             filtersExpanded: {
                 type: Boolean,
-                value: true
+                value: true,
+            },
+            /**
+             * @protected
+             */
+            _userInfo: {
+                type: Object,
+                value: {
+                    username: "undefined",
+                }
+            },
+            /**
+             * @protected
+             */
+            _dataConstraints: {
+                type: Object,
+                value: [],
+            },
+            /**
+             * @protected
+             */
+            _accessToken: {
+                type: String,
+                value: '',
+            },
+            /**
+             * @protected
+             */
+            _supersetDomain: {
+                type: String,
+                value: '',
             }
         }
     }
 
-    ready() {
-        super.ready();
-
-        this.updateDashboard();
-    }
-
     updateDashboard() {
-        // todo do not load without token?
-        if (!this.guestToken) {
-            return;
-        }
-
-        const embed = async () => {
+        const embedDashboardInternal = async () => {
             await embedDashboard({
                 id: this.embeddedId, // given by the Superset embedding UI
-                supersetDomain: this.supersetDomain,
+                supersetDomain: this.getDomain(),
                 // @ts-ignore
                 mountPoint: this.$.dashboard, // html element in which iframe render
-                fetchGuestToken: () => this.guestToken,
+                fetchGuestToken: () => this.getGuestToken(),
                 dashboardUiConfig: {
                     hideTitle: !this.titleVisibility,
                     hideChartControls: !this.chartControlsVisibility,
@@ -100,29 +115,31 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                 },
             })
         };
-        embed();
+        embedDashboardInternal();
     }
 
-    // todo method works, delete hardcoded body
-    getToken = async () => {
-        const response = await fetch(this.supersetDomain + '/api/v1/security/guest_token/', {
+    getGuestToken = async () => {
+        // Use custom guest token if is set
+        if (this.guestToken) {
+            return this.guestToken;
+        }
+
+        const response = await fetch(this.getDomain() + '/api/v1/security/guest_token/', {
             method: 'post',
             headers: {
                 'Accept': '*/*',
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.accessToken
+                'Authorization': 'Bearer ' + this._accessToken
             },
             body: JSON.stringify({
                 "resources": [
                     {
-                        "id": "5defeb1a-dbe9-4999-987d-e88e9a1da89a",
+                        "id": this.embeddedId,
                         "type": "dashboard"
                     }
                 ],
-                "rls": [],
-                "user": {
-                    "username": "admin admin"
-                }
+                "rls": this._dataConstraints,
+                "user": this._userInfo,
             }),
             credentials: "include",
         });
@@ -130,14 +147,12 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
         return responseJson.token;
     }
 
-    static get observers() {
-        return [
-            '_onGuestTokenPropertyChanged(guestToken)',
-        ]
+    getDomain() {
+        return this.supersetDomain ? this.supersetDomain : this._supersetDomain;
     }
 
-    _onGuestTokenPropertyChanged(guestToken) {
-        this.updateDashboard();
+    _isReadyToEmbed() {
+
     }
 }
 

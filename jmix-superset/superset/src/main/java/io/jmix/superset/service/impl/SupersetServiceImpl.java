@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.superset;
+package io.jmix.superset.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.model.*;
+import io.jmix.superset.service.SupersetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -32,19 +34,20 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 @Service("superset_SupersetService")
-public class SupersetService {
-    private static final Logger log = LoggerFactory.getLogger(SupersetService.class);
+public class SupersetServiceImpl implements SupersetService {
+    private static final Logger log = LoggerFactory.getLogger(SupersetServiceImpl.class);
 
     protected final SupersetProperties properties;
 
     protected HttpClient httpClient;
 
-    public SupersetService(SupersetProperties properties) {
+    public SupersetServiceImpl(SupersetProperties properties) {
         this.properties = properties;
 
         httpClient = buildHttpClient();
     }
 
+    @Override
     public LoginResponse login() {
         return login(new LoginBody()
                 .withUsername(properties.getUsername())
@@ -61,6 +64,7 @@ public class SupersetService {
      * @param body the body to send
      * @return response
      */
+    @Override
     public LoginResponse login(LoginBody body) {
         String requestBody;
         try {
@@ -94,6 +98,7 @@ public class SupersetService {
         }
     }
 
+    @Override
     public RefreshResponse refresh(String refreshToken) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(properties.getUrl() + "/api/v1/security/refresh"))
@@ -131,6 +136,7 @@ public class SupersetService {
      * @param accessToken access token that can be taken from {@link #login(LoginBody)}
      * @return response
      */
+    @Override
     public GuestTokenResponse getGuestToken(GuestTokenBody body, String accessToken) {
         String jsonBody;
         try {

@@ -16,14 +16,14 @@
 
 package io.jmix.supersetflowui.kit.component;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
+import elemental.json.JsonObject;
+import elemental.json.JsonValue;
+import elemental.json.impl.JreJsonFactory;
 
 @Tag("jmix-superset-dashboard")
 @NpmPackage(value = "@superset-ui/embedded-sdk", version = "0.1.0-alpha.10")
@@ -31,7 +31,6 @@ import com.vaadin.flow.internal.StateTree;
 public class JmixSupersetDashboard extends Component implements HasSize, HasStyle {
 
     private static final String PROPERTY_GUEST_TOKEN = "guestToken";
-    private static final String PROPERTY_ACCESS_TOKEN = "accessToken";
     private static final String PROPERTY_EMBEDDED_ID = "embeddedId";
     private static final String PROPERTY_SUPERSET_DOMAIN = "supersetDomain";
     private static final String PROPERTY_TAB_VISIBILITY = "tabVisibility";
@@ -40,25 +39,31 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     //    private static final String PROPERTY_FILTERS_VISIBILITY = "filtersVisibility";
     private static final String PROPERTY_FILTERS_EXPANDED = "filtersExpanded";
 
-    protected String supersetDomain;
+    private static final String PROPERTY_ACCESS_TOKEN = "_accessToken";
+    private static final String PROPERTY_SUPERSET_DOMAIN_INTERNAL = "_supersetDomain";
+    private static final String PROPERTY_USER_INFO = "_userInfo";
+    private static final String PROPERTY_DATA_CONSTRAINS = "_dataConstraints";
 
-    protected StateTree.ExecutionRegistration updateDashboardExecution;
+    protected StateTree.ExecutionRegistration updateComponentExecution;
 
+    /**
+     * @return guest token or {@code null} if not set
+     */
     public String getGuestToken() {
         return getElement().getProperty(PROPERTY_GUEST_TOKEN);
     }
 
     /**
-     * Sets guest token from Superset
+     * Sets guest token to perform a dashboard request. It is not required to set custom
+     * guest token since component gets the guest token internally using Superset access token.
+     * <p>
+     * Note, if custom guest token is set, you should manually handle the expiration time and
+     * set new guest token to the component.
      *
      * @param guestToken guest token
      */
     public void setGuestToken(String guestToken) {
         getElement().setProperty(PROPERTY_GUEST_TOKEN, guestToken);
-    }
-
-    public void setAccessTokenInternal(String accessToken) {
-        getElement().setProperty(PROPERTY_ACCESS_TOKEN, accessToken);
     }
 
     public String getEmbeddedId() {
@@ -70,11 +75,11 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     }
 
     public String getSupersetDomain() {
-        return getElement().getProperty(PROPERTY_SUPERSET_DOMAIN, supersetDomain);
+        return getElement().getProperty(PROPERTY_SUPERSET_DOMAIN);
     }
 
     public void setSupersetDomain(String supersetDomain) {
-        this.supersetDomain = supersetDomain;
+        getElement().setProperty(PROPERTY_SUPERSET_DOMAIN, supersetDomain);
     }
 
     public Boolean getTabVisibility() {
@@ -117,23 +122,47 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
         return getElement().getProperty(PROPERTY_FILTERS_EXPANDED, Boolean.TRUE);
     }
 
-    protected void setGuestTokenInternal(String guestToken) {
-        getElement().setProperty(PROPERTY_GUEST_TOKEN, guestToken);
-
-        // todo rp update token if embedded ID is changed?
+    protected String getSupersetDomainInternal() {
+        return getElement().getProperty(PROPERTY_SUPERSET_DOMAIN_INTERNAL);
     }
 
     protected void setSupersetDomainInternal(String supersetDomain) {
-        getElement().setProperty(PROPERTY_SUPERSET_DOMAIN, supersetDomain);
+        getElement().setProperty(PROPERTY_SUPERSET_DOMAIN_INTERNAL, supersetDomain);
     }
 
-    protected void requestUpdateDashboard() {
+    protected String getAccessToken() {
+        return getElement().getProperty(PROPERTY_ACCESS_TOKEN);
+    }
+
+    protected void setAccessToken(String accessToken) {
+        getElement().setProperty(PROPERTY_ACCESS_TOKEN, accessToken);
+    }
+
+    protected void setUserInfo(String username) {
+        JsonObject json = new JreJsonFactory().createObject();
+        json.put("username", username);
+        getElement().setPropertyJson(PROPERTY_USER_INFO, json);
+    }
+
+    protected void setDataConstraints(JsonValue dataConstraints) {
+        getElement().setPropertyJson(PROPERTY_DATA_CONSTRAINS, dataConstraints);
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+
+        requestEmbedComponent();
+    }
+
+    protected void requestEmbedComponent() {
         // Do not call if it's still updating
-        if (updateDashboardExecution != null) {
+        if (updateComponentExecution != null) {
             return;
         }
+
         getUI().ifPresent(ui ->
-                updateDashboardExecution = ui.beforeClientResponse(this, this::updateDashboard));
+                updateComponentExecution = ui.beforeClientResponse(this, this::updateDashboard));
     }
 
     protected void updateDashboard(ExecutionContext context) {

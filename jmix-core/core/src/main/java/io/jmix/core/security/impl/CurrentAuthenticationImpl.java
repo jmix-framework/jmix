@@ -38,6 +38,9 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     private List<AuthenticationResolver> authenticationResolvers;
 
     @Autowired(required = false)
+    private List<AuthenticationPrincipalResolver> authenticationPrincipalResolvers;
+
+    @Autowired(required = false)
     private List<AuthenticationLocaleResolver> localeResolvers;
 
     @Autowired
@@ -63,7 +66,17 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     @Override
     public UserDetails getUser() {
         Authentication authentication = getAuthentication();
-        Object principal = authentication.getPrincipal();
+        Object principal = null;
+        if (authenticationPrincipalResolvers != null) {
+            principal = authenticationPrincipalResolvers.stream()
+                    .filter(resolver -> resolver.supports(authentication))
+                    .findFirst()
+                    .map(resolver -> resolver.resolveAuthenticationPrincipal(authentication))
+                    .orElse(null);
+        }
+        if (principal == null) {
+            principal = authentication.getPrincipal();
+        }
         if (principal instanceof UserDetails) {
             return (UserDetails) principal;
         } else {

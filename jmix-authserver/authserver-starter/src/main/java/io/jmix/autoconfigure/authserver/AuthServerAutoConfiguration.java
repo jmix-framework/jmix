@@ -22,6 +22,7 @@ import io.jmix.authserver.authentication.OAuth2ResourceOwnerPasswordTokenEndpoin
 import io.jmix.authserver.filter.AsResourceServerEventSecurityFilter;
 import io.jmix.authserver.introspection.AuthorizationServiceOpaqueTokenIntrospector;
 import io.jmix.authserver.introspection.TokenIntrospectorRolesHelper;
+import io.jmix.authserver.principal.AuthServerAuthenticationPrincipalResolver;
 import io.jmix.authserver.roleassignment.InMemoryRegisteredClientRoleAssignmentRepository;
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignment;
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentPropertiesMapper;
@@ -154,6 +155,12 @@ public class AuthServerAutoConfiguration {
             Collection<RegisteredClientRoleAssignment> registeredClientRoleAssignments =
                     new RegisteredClientRoleAssignmentPropertiesMapper(authServerProperties).asRegisteredClientRoleAssignments();
             return new InMemoryRegisteredClientRoleAssignmentRepository(registeredClientRoleAssignments);
+        }
+
+        @Bean("authsr_AuthServerAuthenticationPrincipalResolver")
+        @Order(100)
+        AuthServerAuthenticationPrincipalResolver authServerAuthenticationPrincipalResolver() {
+            return new AuthServerAuthenticationPrincipalResolver();
         }
     }
 

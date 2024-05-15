@@ -370,10 +370,15 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
         String valueString = conditionString.substring(separatorIndex + 1);
         if (!Strings.isNullOrEmpty(valueString)) {
-            Object parsedValue = filterUrlQueryParametersSupport
-                    .parseValue(dataLoader.getContainer().getEntityMetaClass(),
-                            property, operation.getType(), valueString);
-            propertyFilter.setValue(parsedValue);
+            try {
+                Object parsedValue = filterUrlQueryParametersSupport
+                        .parseValue(dataLoader.getContainer().getEntityMetaClass(),
+                                property, operation.getType(), valueString);
+                propertyFilter.setValue(parsedValue);
+            } catch (Exception e) {
+                log.info("Cannot parse URL parameter. {}", e.toString());
+                propertyFilter.setValue(null);
+            }
         }
 
         return propertyFilter;

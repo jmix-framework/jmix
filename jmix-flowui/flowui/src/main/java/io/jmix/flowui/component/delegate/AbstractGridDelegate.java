@@ -407,7 +407,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         Map<AggregationInfo, String> aggregationInfoMap = getAggregatableDelegate().aggregate(
                 aggregationInfos.toArray(new AggregationInfo[0]),
                 getItems().getItems().stream()
-                        .map(EntityValues::getId)
+                        .map(EntityValues::getIdOrEntity)
                         .toList()
         );
 

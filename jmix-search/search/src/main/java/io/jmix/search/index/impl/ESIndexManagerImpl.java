@@ -17,7 +17,6 @@
 package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
@@ -31,8 +30,6 @@ import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetIndexResponse;
-import org.elasticsearch.cluster.metadata.MappingMetadata;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +54,8 @@ public class ESIndexManagerImpl implements ESIndexManager {
     protected SearchProperties searchProperties;
     @Autowired
     protected IndexStateRegistry indexStateRegistry;
+    @Autowired
+    private IndexConfigurationsChecker indexConfigurationsChecker;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -288,36 +287,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());
-        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexResponse);
-        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexResponse);
 
-        return indexMappingActual && indexSettingsActual;
-    }
-
-    protected boolean isIndexMappingActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
-        Map<String, MappingMetadata> mappings = indexResponse.getMappings();
-        MappingMetadata indexMappingMetadata = mappings.get(indexConfiguration.getIndexName());
-        Map<String, Object> currentMapping = indexMappingMetadata.getSourceAsMap();
-        Map<String, Object> actualMapping = objectMapper.convertValue(
-                indexConfiguration.getMapping(),
-                new TypeReference<Map<String, Object>>() {
-                }
-        );
-        log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
-                indexConfiguration.getIndexName(), currentMapping, actualMapping);
-        return actualMapping.equals(currentMapping);
-    }
-
-    protected boolean isIndexSettingsActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
-        Map<String, Settings> settings = indexResponse.getSettings();
-        Settings currentSettings = settings.get(indexConfiguration.getIndexName());
-        Settings actualSettings = indexConfiguration.getSettings();
-        long unmatchedSettings = actualSettings.keySet().stream().filter(key -> {
-            String actualValue = actualSettings.get(key);
-            String currentValue = currentSettings.get(key);
-            return !actualValue.equals(currentValue);
-        }).count();
-
-        return unmatchedSettings == 0;
+        return indexConfigurationsChecker.areConfigurationsCompatible(indexConfiguration, indexResponse);
     }
 }

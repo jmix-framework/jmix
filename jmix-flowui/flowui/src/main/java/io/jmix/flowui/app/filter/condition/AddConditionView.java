@@ -138,7 +138,7 @@ public class AddConditionView extends StandardListView<FilterCondition> {
                         new UiGenericFilterModifyJpqlConditionContext();
                 accessManager.applyRegisteredConstraints(jpqlConditionsContext);
 
-                if (!jpqlConditionsContext.isPermitted()) {
+                if (!jpqlConditionsContext.isPermitted() || !filterMetaClass.getStore().getDescriptor().isJpa()) {
                     continue;
                 }
             }

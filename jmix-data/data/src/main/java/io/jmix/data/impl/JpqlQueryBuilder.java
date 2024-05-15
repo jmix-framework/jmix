@@ -24,7 +24,10 @@ import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.data.JmixQuery;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
@@ -265,8 +268,45 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                         .processParameters(resultParameters, queryParameters, actualized, entityName);
             }
 
+            Condition jpaOnlyCondition = removeNonJpaPropertyConditions(actualized);
+
             resultQuery = conditionJpqlGenerator
-                    .processQuery(resultQuery, createConditionGenerationContext(actualized));
+                    .processQuery(resultQuery, createConditionGenerationContext(jpaOnlyCondition));
+        }
+    }
+
+    @Nullable
+    protected Condition removeNonJpaPropertyConditions(@Nullable Condition condition) {
+        if (condition == null)
+            return null;
+
+        if (condition instanceof LogicalCondition logicalCondition) {
+            LogicalCondition newLogicalCondition = new LogicalCondition(logicalCondition.getType());
+            for (Condition nestedCondition : logicalCondition.getConditions()) {
+                Condition newNestedCondition = removeNonJpaPropertyConditions(nestedCondition);
+                if (newNestedCondition != null) {
+                    newLogicalCondition.add(newNestedCondition);
+                }
+            }
+            return newLogicalCondition.getConditions().isEmpty() ? null : newLogicalCondition;
+
+        } else if (condition instanceof PropertyCondition propertyCondition) {
+            String property = propertyCondition.getProperty();
+            MetaClass metaClass = metadata.getClass(entityName);
+            MetaPropertyPath propertyPath = metaClass.getPropertyPath(property);
+            if (propertyPath == null) {
+                return null;
+            }
+            for (MetaProperty metaProperty : propertyPath.getMetaProperties()) {
+                if (!metadataTools.isJpa(metaProperty)) {
+                    resultParameters.remove(propertyCondition.getParameterName());
+                    return null;
+                }
+            }
+            return condition.copy();
+
+        } else {
+            return condition.copy();
         }
     }
 

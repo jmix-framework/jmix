@@ -21,6 +21,18 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 
 public class TestTypedTextField extends CompositeComponent<TypedTextField<String>> {
 
+    private boolean isPostInitListenerFired = false;
+
+    public TestTypedTextField() {
+        addPostInitListener(event -> {
+
+        });
+    }
+
+    public boolean isPostInitListenerFired() {
+        return isPostInitListenerFired;
+    }
+
     @Override
     protected TypedTextField<String> initContent() {
         TypedTextField<String> textField = super.initContent();

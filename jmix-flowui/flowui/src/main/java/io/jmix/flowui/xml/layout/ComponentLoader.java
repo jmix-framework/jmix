@@ -34,18 +34,40 @@ public interface ComponentLoader<T extends Component> {
 
     interface Context {
 
+        /**
+         * @return a target component for which an XML descriptor is processed
+         */
         Component getOrigin();
 
+        /**
+         * @return a message group associated with XML descriptor
+         */
         String getMessageGroup();
 
+        /**
+         * Adds {@link InitTask} that will be executed according to the
+         * origin component lifecycle.
+         *
+         * @param task a task to add
+         */
         void addInitTask(InitTask task);
+
+        /**
+         * Executes all added {@link InitTask}s
+         */
         void executeInitTasks();
 
+        /**
+         * @return an object that stores actions associated with the origin component
+         */
         HasActions getActionsHolder();
     }
 
     interface ComponentContext extends Context {
 
+        /**
+         * @return an instance of {@link ViewData} object associated with the origin view
+         */
         ViewData getViewData();
 
         /**
@@ -61,17 +83,33 @@ public interface ComponentLoader<T extends Component> {
 
         String getCurrentFrameId();
 
+        /**
+         * @return an origin view
+         */
         View<?> getView();
 
+        /**
+         * Adds Pre {@link InitTask} that will be executed according to the
+         * origin component lifecycle.
+         *
+         * @param task a task to add
+         * @apiNote Pre InitTasks wil be executed before DependencyManager
+         * invocation to have precedence over @Subscribe methods
+         */
         void addPreInitTask(InitTask task);
+
+        /**
+         * Executes all added {@link InitTask}s
+         */
         void executePreInitTasks();
     }
 
     interface CompositeComponentContext extends Context {
 
+        /**
+         * @return an origin composite component
+         */
         CompositeComponent<?> getComposite();
-
-        String getDescriptorPath();
     }
 
     /**
@@ -91,7 +129,7 @@ public interface ComponentLoader<T extends Component> {
         /**
          * This method will be invoked after component's content initialization.
          *
-         * @param context   loader context
+         * @param context loader context
          */
         default void execute(Context context) {
             if (context instanceof ComponentContext componentContext) {

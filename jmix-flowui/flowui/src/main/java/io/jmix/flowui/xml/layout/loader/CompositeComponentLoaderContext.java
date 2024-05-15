@@ -31,7 +31,6 @@ public class CompositeComponentLoaderContext implements ComponentLoader.Composit
     protected List<ComponentLoader.InitTask> initTasks;
 
     protected CompositeComponent<?> composite;
-    protected String descriptorPath;
     protected HasActions actionsHolder;
 
     @Override
@@ -55,15 +54,6 @@ public class CompositeComponentLoaderContext implements ComponentLoader.Composit
 
     public void setComposite(CompositeComponent<?> composite) {
         this.composite = composite;
-    }
-
-    @Override
-    public String getDescriptorPath() {
-        return descriptorPath;
-    }
-
-    public void setDescriptorPath(String descriptorPath) {
-        this.descriptorPath = descriptorPath;
     }
 
     @Override

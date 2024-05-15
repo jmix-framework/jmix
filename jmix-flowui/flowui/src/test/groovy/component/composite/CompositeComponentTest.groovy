@@ -18,17 +18,17 @@ package component.composite
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.icon.VaadinIcon
-import component.composite.component.TestDataGridPanel
-import component.composite.component.TestIncorrectStepperField
-import component.composite.component.TestIncorrectTypedTextField
-import component.composite.component.TestStepperField
-import component.composite.component.TestTypedTextField
+import component.composite.component.*
+import io.jmix.core.Metadata
 import io.jmix.flowui.UiComponents
+import io.jmix.flowui.data.grid.ContainerDataGridItems
 import io.jmix.flowui.data.grid.EmptyDataGridItems
 import io.jmix.flowui.exception.GuiDevelopmentException
+import io.jmix.flowui.model.DataComponents
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.lang.Nullable
+import test_support.entity.sales.Product
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
@@ -36,6 +36,10 @@ class CompositeComponentTest extends FlowuiTestSpecification {
 
     @Autowired
     UiComponents uiComponents
+    @Autowired
+    DataComponents dataComponents
+    @Autowired
+    Metadata metadata
 
     def "Composite component containing a DataGrid with MetaClass and relative path to descriptor"() {
         when:
@@ -54,7 +58,17 @@ class CompositeComponentTest extends FlowuiTestSpecification {
         then:
         dataGridPanel.getClicks() == 1
 
-        // TODO: gg, items
+        when:
+        def container = dataComponents.createCollectionContainer(Product)
+        container.setItems(List.of(
+                metadata.create(Product),
+                metadata.create(Product)
+        ))
+        dataGridPanel.setDataContainer(container)
+
+        then:
+        dataGridPanel.items instanceof ContainerDataGridItems
+        dataGridPanel.items.items.size() == 2
     }
 
     def "Composite component as field and full path to descriptor"() {
@@ -85,9 +99,10 @@ class CompositeComponentTest extends FlowuiTestSpecification {
         then:
         noExceptionThrown()
         textField.getContent().isClearButtonVisible()
+        !textField.postInitListenerFired
     }
 
-    def "Composite component with several root components in XML" () {
+    def "Composite component with several root components in XML"() {
         when:
         def component = uiComponents.create(TestIncorrectStepperField)
 

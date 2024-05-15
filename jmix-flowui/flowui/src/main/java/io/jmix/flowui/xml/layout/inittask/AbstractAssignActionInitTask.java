@@ -163,7 +163,6 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
         } else if (UiComponentUtils.isContainer(component)) {
             return UiComponentUtils.findComponent(component, id);
         }
-        // TODO: gg, throw exception?
         return Optional.empty();
     }
 }

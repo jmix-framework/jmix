@@ -55,8 +55,8 @@ import io.jmix.flowui.component.accordion.JmixAccordionPanel;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.component.composite.CompositeComponentActions;
 import io.jmix.flowui.component.composite.CompositeComponent;
+import io.jmix.flowui.component.composite.CompositeComponentActions;
 import io.jmix.flowui.component.composite.CompositeComponentUtils;
 import io.jmix.flowui.component.composite.CompositeDescriptor;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
@@ -173,8 +173,6 @@ public class UiComponentsImpl implements UiComponents {
                 applicationContext.getBean(CompositeComponentActions.class, compositeComponent);
         CompositeComponentUtils.setCompositeComponentActions(compositeComponent, actions);
 
-        // TODO: gg, ApplicationListener
-
         CompositeDescriptor descriptor = type.getAnnotation(CompositeDescriptor.class);
         if (descriptor == null) {
             return;
@@ -191,21 +189,20 @@ public class UiComponentsImpl implements UiComponents {
 
         CompositeComponentLoaderContext context = new CompositeComponentLoaderContext();
         context.setComposite(compositeComponent);
-        context.setDescriptorPath(descriptorPath);
         context.setMessageGroup(CompositeComponentUtils.getMessageGroup(descriptorPath));
         context.setActionsHolder(actions);
 
-        processCompositeDescriptor(context);
+        processCompositeDescriptor(context, descriptorPath);
 
         context.executeInitTasks();
 
         ComponentUtil.fireEvent(compositeComponent, new CompositeComponent.PostInitEvent(compositeComponent));
     }
 
-    protected void processCompositeDescriptor(CompositeComponentLoaderContext context) {
+    protected void processCompositeDescriptor(CompositeComponentLoaderContext context, String descriptorPath) {
         CompositeDescriptorLoader compositeDescriptorLoader =
                 applicationContext.getBean(CompositeDescriptorLoader.class);
-        Element element = compositeDescriptorLoader.load(context.getDescriptorPath());
+        Element element = compositeDescriptorLoader.load(descriptorPath);
 
         CompositeComponentContentLoader compositeLoader =
                 applicationContext.getBean(CompositeComponentContentLoader.class, context, element);

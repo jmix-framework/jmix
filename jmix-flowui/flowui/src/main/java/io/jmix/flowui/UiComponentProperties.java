@@ -78,6 +78,11 @@ public class UiComponentProperties {
     boolean filterShowConfigurationIdField;
 
     /**
+     * Whether non-JPA properties for filter should be visible in the {@link AddConditionView}.
+     */
+    boolean filterShowNonJpaProperties;
+
+    /**
      * Whether validation of filter configuration name uniqueness should be enabled
      */
     boolean filterConfigurationUniqueNamesEnabled;
@@ -105,6 +110,7 @@ public class UiComponentProperties {
             String filterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("false") boolean filterShowConfigurationIdField,
+            @DefaultValue("true") boolean filterShowNonJpaProperties,
             @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled,
             @DefaultValue("true") boolean showErrorMessageBelowField) {
         this.gridCreateShortcut = gridCreateShortcut;
@@ -127,6 +133,7 @@ public class UiComponentProperties {
         this.filterApplyShortcut = filterApplyShortcut;
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
+        this.filterShowNonJpaProperties = filterShowNonJpaProperties;
         this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
 
         this.showErrorMessageBelowField = showErrorMessageBelowField;
@@ -219,6 +226,13 @@ public class UiComponentProperties {
      */
     public boolean isFilterShowConfigurationIdField() {
         return filterShowConfigurationIdField;
+    }
+
+    /**
+     * @see #filterShowNonJpaProperties
+     */
+    public boolean isFilterShowNonJpaProperties() {
+        return filterShowNonJpaProperties;
     }
 
     /**

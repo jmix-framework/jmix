@@ -25,6 +25,7 @@
                 <button id="editBtn" action="dataGrid.edit"/>
                 <button id="removeBtn" action="dataGrid.remove"/>
                 <button id="testBtn" action="testAction"/>
+                <gridColumnVisibility dataGrid="dataGrid" icon="COG_O"/>
             </hbox>
             <dataGrid id="dataGrid"
                       width="100%"

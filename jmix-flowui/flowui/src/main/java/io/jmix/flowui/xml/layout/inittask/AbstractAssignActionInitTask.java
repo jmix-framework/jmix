@@ -17,16 +17,11 @@
 package io.jmix.flowui.xml.layout.inittask;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.applayout.AppLayout;
-import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.composite.CompositeComponent;
-import io.jmix.flowui.component.composite.CompositeComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import org.springframework.lang.Nullable;
@@ -34,7 +29,7 @@ import org.springframework.lang.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public abstract class AbstractAssignActionInitTask<C extends Component> implements ComponentLoader.InitTask {
+public abstract class AbstractAssignActionInitTask<C extends Component> extends AbstractInitTask {
 
     protected C component;
     protected String actionId;
@@ -52,11 +47,6 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
     }
 
     @Override
-    public void execute(ComponentContext context, View<?> view) {
-        execute(context);
-    }
-
-    @Override
     public void execute(Context context) {
         Component origin = getOrigin(context);
 
@@ -65,7 +55,7 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
             String id = elements[elements.length - 1];
 
             String prefix = ValuePathHelper.pathPrefix(elements);
-            Component holder = getComponent(origin, prefix).orElse(null);
+            Component holder = findComponent(origin, prefix).orElse(null);
             if (holder == null) {
                 throw new GuiDevelopmentException(
                         String.format("Can't find component: %s for action: %s", prefix, actionId),
@@ -104,25 +94,6 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
         }
     }
 
-    protected Component getOrigin(Context context) {
-        Component origin = context.getOrigin();
-
-        if (origin instanceof View<?> view) {
-            Component content = view.getContent();
-            if (!(UiComponentUtils.isContainer(content)
-                    || content instanceof AppLayout)) {
-                throw new GuiDevelopmentException(view.getClass().getSimpleName() +
-                        "'s content cannot contain components", context);
-            }
-        } else if (!(origin instanceof CompositeComponent)
-                && !UiComponentUtils.isContainer(origin)) {
-            throw new GuiDevelopmentException(origin.getClass().getSimpleName() +
-                    " cannot contain components", context);
-        }
-
-        return origin;
-    }
-
     protected abstract boolean hasOwnAction(String id);
 
     protected abstract void addAction(Context context, Action action);
@@ -153,16 +124,5 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
 
     protected String getExceptionMessage(String id) {
         return String.format("Can't find action with %s id", id);
-    }
-
-    protected Optional<Component> getComponent(Component component, String id) {
-        if (component instanceof View<?> view) {
-            return UiComponentUtils.findComponent(view, id);
-        } else if (component instanceof CompositeComponent<?> compositeComponent) {
-            return CompositeComponentUtils.findComponent(compositeComponent, id);
-        } else if (UiComponentUtils.isContainer(component)) {
-            return UiComponentUtils.findComponent(component, id);
-        }
-        return Optional.empty();
     }
 }

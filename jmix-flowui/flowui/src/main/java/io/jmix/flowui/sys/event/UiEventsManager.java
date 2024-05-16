@@ -20,23 +20,26 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiEventPublisher;
-import io.jmix.flowui.sys.ViewControllerDependencyInjector;
+import io.jmix.flowui.sys.autowire.EventListenerDependencyInjector;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.context.event.GenericApplicationListenerAdapter;
 import org.springframework.core.ResolvableType;
-
 import org.springframework.lang.Nullable;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
  * @see UiEventPublisher
- * @see ViewControllerDependencyInjector
+ * @see EventListenerDependencyInjector
  * @see UiEventListenerMethodAdapter
  */
 @Internal

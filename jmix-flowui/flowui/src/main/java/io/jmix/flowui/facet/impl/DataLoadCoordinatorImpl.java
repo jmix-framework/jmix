@@ -32,12 +32,12 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
+import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.View.BeforeShowEvent;
 import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowui.sys.ViewControllerReflectionInspector;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,12 +54,12 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
     protected List<Trigger> triggers = new ArrayList<>();
 
-    protected ViewControllerReflectionInspector reflectionInspector;
+    protected ReflectionCacheManager reflectionCacheManager;
     private final QueryParamValuesManager queryParamValuesManager;
 
-    public DataLoadCoordinatorImpl(ViewControllerReflectionInspector reflectionInspector,
+    public DataLoadCoordinatorImpl(ReflectionCacheManager reflectionCacheManager,
                                    QueryParamValuesManager queryParamValuesManager) {
-        this.reflectionInspector = reflectionInspector;
+        this.reflectionCacheManager = reflectionCacheManager;
         this.queryParamValuesManager = queryParamValuesManager;
     }
 
@@ -80,7 +80,7 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
     @Override
     public void addOnViewEventLoadTrigger(DataLoader loader, Class<?> eventClass) {
-        triggers.add(new OnViewEventLoadTrigger(getOwnerNN(), reflectionInspector, loader, eventClass));
+        triggers.add(new OnViewEventLoadTrigger(getOwnerNN(), reflectionCacheManager, loader, eventClass));
     }
 
     @Override

@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-package dependency_injector
+package autowire
 
 
-import dependency_injector.view.DependencyInjectorView
+import autowire.view.SupplyDependencyInjectorView
+import com.vaadin.flow.data.renderer.ComponentRenderer
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class ViewControllerDependencyInjectorTest extends FlowuiTestSpecification {
+class SupplyDependencyInjectorTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerViewBasePackages("dependency_injector.view")
+        registerViewBasePackages("autowire.view")
     }
 
-    def "Tab injection when TabSheet is placed in component container"() {
-        when: "Open the DependencyInjectorView"
-        def dependencyInjectorView = navigateToView(DependencyInjectorView.class)
+    def "Autowire renderers"() {
+        when: "SupplyDependencyInjectorView is opened"
+        def view = navigateToView SupplyDependencyInjectorView
 
-        then: "Tab fields should be injected correctly"
-        dependencyInjectorView.tabSheet != null
-        dependencyInjectorView.tabSheetTab1 != null
-        dependencyInjectorView.tabSheetTab1.id.get() == "tab1"
-        dependencyInjectorView.tabSheetTab2 != null
-        dependencyInjectorView.tabSheetTab2.id.get() == "tab2"
+        then: "The renderers will be set"
+        view.dataGrid.getColumnByKey("name").getRenderer() instanceof ComponentRenderer
+        view.component.getItemRenderer() instanceof ComponentRenderer
     }
 }

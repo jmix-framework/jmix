@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.sys;
 
+import io.jmix.flowui.sys.autowire.DependencyInjector;
 import io.jmix.flowui.view.View;
 
 /**
@@ -23,7 +24,9 @@ import io.jmix.flowui.view.View;
  * additional dependency injectors to the base {@link ViewControllerDependencyInjector}.
  *
  * @see ViewControllerDependencyManager
+ * @deprecated use {@link DependencyInjector} instead
  */
+@Deprecated(forRemoval = true, since = "2.3")
 public interface ControllerDependencyInjector {
 
     /**

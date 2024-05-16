@@ -33,6 +33,7 @@ import io.jmix.flowui.model.*;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector.AnnotatedMethod;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector.InjectElement;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector.ViewIntrospectionData;
+import io.jmix.flowui.sys.autowire.DependencyInjector;
 import io.jmix.flowui.sys.delegate.*;
 import io.jmix.flowui.sys.event.UiEventListenerMethodAdapter;
 import io.jmix.flowui.sys.event.UiEventsManager;
@@ -62,6 +63,10 @@ import static io.jmix.flowui.sys.ValuePathHelper.*;
 import static java.lang.reflect.Proxy.newProxyInstance;
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
+/**
+ * @deprecated use {@link DependencyInjector} instead
+ */
+@Deprecated
 @org.springframework.stereotype.Component("flowui_ViewControllerDependencyInjector")
 public class ViewControllerDependencyInjector {
 

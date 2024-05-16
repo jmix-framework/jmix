@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.sys;
 
+import io.jmix.flowui.sys.autowire.AutowireManager;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.sys.ControllerDependencyInjector.InjectionContext;
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,7 +25,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.lang.Nullable;
 import java.util.List;
 
+/**
+ * @deprecated use {@link AutowireManager} instead
+ */
 @Component("flowui_ViewControllerDependencyManager")
+@Deprecated(forRemoval = true, since = "2.3")
 public class ViewControllerDependencyManager {
 
     protected ViewControllerDependencyInjector controllerDependencyInjector;

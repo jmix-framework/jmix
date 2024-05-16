@@ -29,6 +29,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +53,10 @@ import java.util.function.Supplier;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
+/**
+ * @deprecated use {@link ReflectionCacheManager} instead
+ */
+@Deprecated(forRemoval = true, since = "2.3")
 @Component("flowui_ViewControllerReflectionInspector")
 public class ViewControllerReflectionInspector {
 

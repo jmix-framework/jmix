@@ -40,8 +40,8 @@ import java.util.List;
 import static io.jmix.flowui.component.composite.CompositeComponentUtils.getCompositeComponentActions;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@org.springframework.stereotype.Component("flowui_CompositeComponentContentLoader")
-public class CompositeComponentContentLoader {
+@org.springframework.stereotype.Component("flowui_CompositeComponentLoader")
+public class CompositeComponentLoader {
 
     public static final String CONTENT_ELEMENT_NAME = "content";
 
@@ -54,7 +54,7 @@ public class CompositeComponentContentLoader {
     protected final CompositeComponentLoaderContext context;
     protected final Element element;
 
-    public CompositeComponentContentLoader(CompositeComponentLoaderContext context, Element element) {
+    public CompositeComponentLoader(CompositeComponentLoaderContext context, Element element) {
         this.context = context;
         this.element = element;
     }

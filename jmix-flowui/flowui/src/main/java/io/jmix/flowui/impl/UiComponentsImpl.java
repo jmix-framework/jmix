@@ -83,7 +83,7 @@ import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
-import io.jmix.flowui.xml.layout.loader.CompositeComponentContentLoader;
+import io.jmix.flowui.xml.layout.loader.CompositeComponentLoader;
 import io.jmix.flowui.xml.layout.loader.CompositeComponentLoaderContext;
 import io.jmix.flowui.xml.layout.loader.CompositeDescriptorLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -204,8 +204,8 @@ public class UiComponentsImpl implements UiComponents {
                 applicationContext.getBean(CompositeDescriptorLoader.class);
         Element element = compositeDescriptorLoader.load(descriptorPath);
 
-        CompositeComponentContentLoader compositeLoader =
-                applicationContext.getBean(CompositeComponentContentLoader.class, context, element);
+        CompositeComponentLoader compositeLoader =
+                applicationContext.getBean(CompositeComponentLoader.class, context, element);
 
         compositeLoader.createContent();
     }

@@ -290,7 +290,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
             }
             return newLogicalCondition.getConditions().isEmpty() ? null : newLogicalCondition;
 
-        } else if (condition instanceof PropertyCondition propertyCondition) {
+        } else if (condition instanceof PropertyCondition propertyCondition && entityName != null) {
             String property = propertyCondition.getProperty();
             MetaClass metaClass = metadata.getClass(entityName);
             MetaPropertyPath propertyPath = metaClass.getPropertyPath(property);

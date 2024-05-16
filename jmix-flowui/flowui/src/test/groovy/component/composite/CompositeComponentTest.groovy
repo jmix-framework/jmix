@@ -46,7 +46,6 @@ class CompositeComponentTest extends FlowuiTestSpecification {
         def dataGridPanel = uiComponents.create(TestDataGridPanel)
 
         then:
-        noExceptionThrown()
         dataGridPanel.clicks == 0
         dataGridPanel.testBtn.text == "Test"
         getIconAttribute(dataGridPanel.testBtn.icon) == getIconAttribute(VaadinIcon.PLUS.create())
@@ -76,7 +75,6 @@ class CompositeComponentTest extends FlowuiTestSpecification {
         def stepperField = uiComponents.create(TestStepperField)
 
         then:
-        noExceptionThrown()
         stepperField.value == 0
 
         when:
@@ -97,7 +95,6 @@ class CompositeComponentTest extends FlowuiTestSpecification {
         def textField = uiComponents.create(TestTypedTextField)
 
         then:
-        noExceptionThrown()
         textField.getContent().isClearButtonVisible()
         !textField.postInitListenerFired
     }

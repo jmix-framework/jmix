@@ -22,7 +22,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.listbox.dataview.ListBoxListDataView;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -31,27 +30,25 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.data.binder.HasItemComponents;
 import com.vaadin.flow.data.provider.*;
-import com.vaadin.flow.data.selection.MultiSelectionEvent;
 import com.vaadin.flow.data.selection.MultiSelectionListener;
 import com.vaadin.flow.dom.DomEventListener;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.function.SerializableComparator;
+import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import elemental.json.JsonValue;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
-import io.jmix.flowui.component.listbox.JmixListBox;
 import io.jmix.flowui.component.listbox.JmixMultiSelectListBox;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
-import io.jmix.flowui.exception.ComponentValidationException;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,9 +58,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
-import javax.print.DocFlavor;
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
@@ -73,18 +70,19 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
                        HasDataView<V, Void, TwinColumnDataView<V>>, HasListDataView<V, TwinColumnListDataView<V>>,
                        HasItemComponents<V>, HasSubParts, HasThemeVariant<TwinColumnVariant>,
                        SupportsItemsContainer<V>, SupportsValueSource<Collection<V>>, SupportsItemsEnum<V>,
-                       SupportsDataProvider<V>, SupportsValidation<V>,
+                       SupportsDataProvider<V>, SupportsValidation<Collection<V>>,
                        ApplicationContextAware, InitializingBean {
 
     private static final String LIST_BOX_DEFAULT_HEIGHT = "16em";
     private static final String COMPONENT_DEFAULT_WIDTH = "32em";
     private static final String LIST_BOX_MIN_WIDTH = "12em";
-    private static final String LIST_BOX_MIN_HEIGHT = "14em";
+    private static final String LIST_BOX_MIN_HEIGHT = "14.6em";
+    private static final String JS_SCROLL_TOP_VARIABLE = "this._scrollerElement.scrollTop";
 
     protected ApplicationContext applicationContext;
     protected UiComponents uiComponents;
 
-    protected TwinColumnDelegate fieldDelegate;
+    protected TwinColumnDelegate<TwinColumn<V>, Collection<V>, Collection<V>> fieldDelegate;
     protected DataViewDelegate<TwinColumn<V>, V> dataViewDelegate;
 
     protected JmixMultiSelectListBox<V> selected;
@@ -109,13 +107,16 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     protected JmixButton moveLeftAll;
     protected JmixButton clearSelection;
 
+    protected List<Component> subParts;
     protected List<V> optionsData;
     protected Map<Element, Integer> optionsListeners = new HashMap<>();
     protected Map<Element, Integer> selectedListeners = new HashMap<>();
-    protected List<Component> subParts;
+    protected Map<JmixMultiSelectListBox<V>, Integer> listToScrollValue = new HashMap<>();
+    protected Set<JmixMultiSelectListBox<V>> listBoxesWithSavedScrollPosition = new HashSet<>();
 
     protected Boolean reorderable = false;
     protected Boolean allBtnEnabled = true;
+    protected Boolean moveJustPerformed = false;
 
     public TwinColumn() {
         super(null);
@@ -197,6 +198,34 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     }
 
     @Override
+    public void setMinWidth(String minWidth) {
+        HasSize.super.setMinWidth(minWidth);
+
+        contentWrapper.setMinWidth(minWidth);
+    }
+
+    @Override
+    public void setMinHeight(String minHeight) {
+        HasSize.super.setMinHeight(minHeight);
+
+        contentWrapper.setMinHeight(minHeight);
+    }
+
+    @Override
+    public void setMaxWidth(String maxWidth) {
+        HasSize.super.setMaxWidth(maxWidth);
+
+        contentWrapper.setMaxWidth(maxWidth);
+    }
+
+    @Override
+    public void setMaxHeight(String maxHeight) {
+        HasSize.super.setMaxHeight(maxHeight);
+
+        contentWrapper.setMaxHeight(maxHeight);
+    }
+
+    @Override
     public void setHelperText(String helperText) {
         HasHelper.super.setHelperText(helperText);
 
@@ -217,7 +246,7 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     public void setItems(CollectionContainer<V> container) {
         dataViewDelegate.setItems(container);
 
-        dataViewDelegate.getDataProvider().addDataProviderListener((DataProviderListener<V>) event -> {
+        Objects.requireNonNull(dataViewDelegate.getDataProvider()).addDataProviderListener((DataProviderListener<V>) event -> {
             List<V> newOptions = event.getSource()
                     .fetch(DataViewUtils.getQuery(TwinColumn.this))
                     .toList();
@@ -272,7 +301,7 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     }
 
     @Override
-    public Registration addValidator(Validator<? super V> validator) {
+    public Registration addValidator(Validator<? super Collection<V>> validator) {
         return fieldDelegate.addValidator(validator);
     }
 
@@ -285,13 +314,9 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     public void setInvalid(boolean invalid) {
         if (fieldDelegate != null) {
             fieldDelegate.setInvalid(invalid);
-        }
-
-        errorLabel.setVisible(invalid);
-        if (invalid) {
-            componentLabel.addClassName("error-indicator");
+            updateValidationVisibleElements(invalid, isRequired(), fieldDelegate.getErrorMessage());
         } else {
-            componentLabel.removeClassName("error-indicator");
+            updateValidationVisibleElements(false, false, "");
         }
     }
 
@@ -324,7 +349,9 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
-        fieldDelegate.updateInvalidState();
+        if (fieldDelegate != null) {
+            fieldDelegate.updateInvalidState();
+        }
     }
 
     @Override
@@ -386,13 +413,20 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         fieldDelegate.updateInvalidState();
     }
 
+    @Override
+    public void setValue(Collection<V> value) {
+        super.setValue(value);
+
+        updateListBoxesInAccordanceWithNewValue(value);
+    }
+
     protected void autowireDependencies() {
         uiComponents = applicationContext.getBean(UiComponents.class);
     }
 
     @Override
     protected void setPresentationValue(Collection<V> newPresentationValue) {
-        updateColumnComponents(newPresentationValue);
+        updateListBoxesInAccordanceWithNewValue(newPresentationValue);
     }
 
     protected void initComponent() {
@@ -404,77 +438,16 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         createValueChangeListener();
     }
 
-    protected void createHelper() {
-        helperLabel = uiComponents.create(Span.class);
-        helperLabel.setClassName("helper");
-
-        contentWrapper.add(helperLabel);
-    }
-
-    protected void createListBoxesLayout() {
-        HorizontalLayout horizontalLayout = uiComponents.create(HorizontalLayout.class);
-        horizontalLayout.setSpacing(false);
-        horizontalLayout.setWidth("100%");
-        horizontalLayout.setHeight("100%");
-
-        horizontalLayout.add(options);
-        horizontalLayout.add(buttonsPanel);
-        horizontalLayout.add(selected);
-
-        contentWrapper.add(horizontalLayout);
-    }
-
-    protected void createSubParts() {
-        subParts = new LinkedList<>();
-
-        subParts.add(componentLabel);
-        subParts.add(selectedLabel);
-        subParts.add(optionsLabel);
-        subParts.add(options);
-        subParts.add(selected);
-        subParts.add(moveRight);
-        subParts.add(moveRightAll);
-        subParts.add(moveLeft);
-        subParts.add(moveLeftAll);
-        subParts.add(clearSelection);
-    }
-
-    protected JmixMultiSelectListBox<V> createListBox(String id) {
-        JmixMultiSelectListBox<V> listBox = uiComponents.create(JmixMultiSelectListBox.class);
-        listBox.setId(id);
-        listBox.setMinWidth(LIST_BOX_MIN_WIDTH);
-        listBox.setMinHeight(LIST_BOX_MIN_HEIGHT);
-        listBox.setHeight("100%");
-        listBox.setWidth("50%");
-        return listBox;
-    }
-
-    private void createValueChangeListener() {
+    protected void createValueChangeListener() {
         addValueChangeListener((ValueChangeListener<ComponentValueChangeEvent<TwinColumn<V>, Collection<V>>>) event -> {
-            String errorMessage = null;
-            try {
-                executeValidators();
-                errorLabel.setVisible(false);
-                componentLabel.removeClassName("error-indicator");
-            } catch (ComponentValidationException e) {
-                errorMessage = getErrorMessage();
-                errorLabel.setVisible(true);
-                componentLabel.addClassName("error-indicator");
-            }
-            errorLabel.setText(errorMessage);
+            fieldDelegate.updateInvalidState();
+
+            updateValidationVisibleElements(fieldDelegate.isInvalid(), isRequired(), fieldDelegate.getErrorMessage());
         });
     }
 
-    protected void createErrorLabel() {
-        errorLabel = uiComponents.create(Span.class);
-        errorLabel.setVisible(false);
-        errorLabel.setClassName("error-label");
-
-        contentWrapper.add(errorLabel);
-    }
-
-    private void createContent() {
-        addClassName(LumoUtility.Overflow.AUTO);
+    protected void createContent() {
+        setThemeName(TwinColumnVariant.GRID.getVariantName());
 
         initContentWrapper();
         createComponentLabel();
@@ -485,28 +458,29 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         createHelper();
         createErrorLabel();
 
+        updateValidationVisibleElements(false, false, "");
+
         createSubParts();
     }
 
-    protected JmixButton createButton(String id, String className, Icon icon,
-                                      ComponentEventListener<ClickEvent<Button>> clickListener) {
-        JmixButton button = uiComponents.create(JmixButton.class);
+    protected void initContentWrapper() {
+        contentWrapper = uiComponents.create(VerticalLayout.class);
+        add(contentWrapper);
 
-        button.setId(id);
-        button.setClassName(className);
-        button.setIcon(icon);
-        button.addClickListener(clickListener);
+        contentWrapper.setSpacing(false);
 
-        return button;
+        if (getWidth() == null) {
+            contentWrapper.setWidth(COMPONENT_DEFAULT_WIDTH);
+        }
     }
 
-    protected Div createListBoxLabel(String id) {
-        Div label = uiComponents.create(Div.class);
-        label.setId(id);
-        label.addClassName(LumoUtility.Margin.Top.AUTO);
-        label.setWidth("100%");
-        label.setClassName("label");
-        return label;
+    protected void createComponentLabel() {
+        componentLabel = uiComponents.create(Span.class);
+        componentLabel.setId("label");
+        componentLabel.setClassName("label");
+        componentLabel.setVisible(false);
+
+        contentWrapper.add(componentLabel);
     }
 
     protected void createListBoxLabels() {
@@ -529,55 +503,25 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         listBoxesLabelsLayout.add(selectedLabel);
     }
 
-    protected void createComponentLabel() {
-        componentLabel = uiComponents.create(Span.class);
-        componentLabel.setId("label");
-        componentLabel.setClassName("label");
+    protected void createListBoxes() {
+        options = createListBox("options");
+        selected = createListBox("selected");
 
-        contentWrapper.add(componentLabel);
-    }
+        options.addSelectionListener((MultiSelectionListener<MultiSelectListBox<V>, V>) event -> {
+            updateListBoxSelectionStyles(options, optionsDataView);
+        });
+        selected.addSelectionListener((MultiSelectionListener<MultiSelectListBox<V>, V>) event -> {
+            updateListBoxSelectionStyles(selected, selectedDataView);
+        });
 
-    protected void initContentWrapper() {
-        contentWrapper = uiComponents.create(VerticalLayout.class);
-        add(contentWrapper);
+        optionsDataView = options.setItems(new LinkedList<>());
+        selectedDataView = selected.setItems(new LinkedList<>());
 
-        contentWrapper.setSpacing(false);
-
-        if (getWidth() == null) {
-            contentWrapper.setWidth(COMPONENT_DEFAULT_WIDTH);
+        if (isReorderable()) {
+            updateListBoxesReorderableComparator();
         }
-    }
 
-    protected void bindDataProvider(DataProvider<V, ?> dataProvider) {
-        // One of binding methods is called from a constructor so bean can be null
-        if (dataViewDelegate != null) {
-            dataViewDelegate.bind(dataProvider);
-        }
-    }
-
-    protected void listBoxItemDoubleClicked(JmixMultiSelectListBox<V> from,
-                                            JmixMultiSelectListBox<V> to,
-                                            Integer itemIndex) {
-        moveItems(from, to, Collections.singletonList(from.getListDataView().getItem(itemIndex)));
-    }
-
-    protected void moveItems(JmixMultiSelectListBox<V> from, JmixMultiSelectListBox<V> to, List<V> selectedItems) {
-        from.getListDataView().removeItems(selectedItems);
-        to.getListDataView().addItems(selectedItems);
-        from.select(Collections.emptySet());
-        to.select(selectedItems);
-
-        setModelValue(from.getListDataView().getItems().toList(), true);
-
-        updateDoubleClickListeners();
-    }
-
-    protected TwinColumnDelegate createFieldDelegate() {
-        return applicationContext.getBean(TwinColumnDelegate.class, this);
-    }
-
-    protected DataViewDelegate<TwinColumn<V>, V> createDataViewDelegate() {
-        return applicationContext.getBean(DataViewDelegate.class, this);
+        updateListBoxesLabelsLayoutVisibility();
     }
 
     protected void createButtonsPanel() {
@@ -624,23 +568,148 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         buttonsPanel.add(moveRight, moveRightAll, moveLeft, moveLeftAll, clearSelection);
     }
 
-    protected void createListBoxes() {
-        options = createListBox("options");
-        selected = createListBox("selected");
+    protected void createListBoxesLayout() {
+        HorizontalLayout horizontalLayout = uiComponents.create(HorizontalLayout.class);
+        horizontalLayout.setSpacing(false);
+        horizontalLayout.setWidth("100%");
+        horizontalLayout.setHeight("100%");
 
-        options.addSelectionListener((MultiSelectionListener<MultiSelectListBox<V>, V>) event ->
-                updateListBoxSelectionStyles(options, optionsDataView));
-        selected.addSelectionListener((MultiSelectionListener<MultiSelectListBox<V>, V>) event ->
-                updateListBoxSelectionStyles(selected, selectedDataView));
+        horizontalLayout.add(options);
+        horizontalLayout.add(buttonsPanel);
+        horizontalLayout.add(selected);
 
-        optionsDataView = options.setItems(new LinkedList<>());
-        selectedDataView = selected.setItems(new LinkedList<>());
+        contentWrapper.add(horizontalLayout);
+    }
 
-        if (isReorderable()) {
-            updateListBoxesReorderableComparator();
+    protected void createHelper() {
+        helperLabel = uiComponents.create(Span.class);
+        helperLabel.setClassName("helper");
+
+        contentWrapper.add(helperLabel);
+    }
+
+    protected void createErrorLabel() {
+        errorLabel = uiComponents.create(Span.class);
+        errorLabel.setClassName("error-label");
+
+        contentWrapper.add(errorLabel);
+    }
+
+    protected void createSubParts() {
+        subParts = new LinkedList<>();
+
+        subParts.add(componentLabel);
+        subParts.add(selectedLabel);
+        subParts.add(optionsLabel);
+        subParts.add(options);
+        subParts.add(selected);
+        subParts.add(moveRight);
+        subParts.add(moveRightAll);
+        subParts.add(moveLeft);
+        subParts.add(moveLeftAll);
+        subParts.add(clearSelection);
+    }
+
+    protected Div createListBoxLabel(String id) {
+        Div label = uiComponents.create(Div.class);
+        label.setId(id);
+        label.addClassName(LumoUtility.Margin.Top.AUTO);
+        label.setWidth("100%");
+        label.setClassName("label");
+        return label;
+    }
+
+    protected JmixMultiSelectListBox<V> createListBox(String id) {
+        JmixMultiSelectListBox<V> listBox = uiComponents.create(JmixMultiSelectListBox.class);
+        listBox.setId(id);
+        listBox.setMinWidth(LIST_BOX_MIN_WIDTH);
+        listBox.setMinHeight(LIST_BOX_MIN_HEIGHT);
+        listBox.setWidth("50%");
+        listBox.setHeight("100%");
+        return listBox;
+    }
+
+    protected JmixButton createButton(String id, String className, Icon icon,
+                                      ComponentEventListener<ClickEvent<Button>> clickListener) {
+        JmixButton button = uiComponents.create(JmixButton.class);
+
+        button.setId(id);
+        button.setClassName(className);
+        button.setIcon(icon);
+        button.addClickListener(clickListener);
+
+        return button;
+    }
+
+    protected void bindDataProvider(DataProvider<V, ?> dataProvider) {
+        // One of binding methods is called from a constructor so bean can be null
+        if (dataViewDelegate != null) {
+            dataViewDelegate.bind(dataProvider);
+        }
+    }
+
+    protected void listBoxItemDoubleClicked(JmixMultiSelectListBox<V> from,
+                                            JmixMultiSelectListBox<V> to,
+                                            Integer itemIndex) {
+        moveItems(from, to, Collections.singletonList(from.getListDataView().getItem(itemIndex)));
+    }
+
+    protected void recreateOptions(Collection<V> newOptions) {
+        if (optionsData == null) {
+            optionsData = new LinkedList<>();
         }
 
-        updateListBoxesLabelsLayoutVisibility();
+        optionsDataView.removeItems(optionsData);
+        optionsData.clear();
+
+        optionsDataView.addItems(newOptions);
+        optionsData.addAll(newOptions);
+
+        updateListBoxesListenersAndStyles();
+    }
+
+    protected void moveItems(JmixMultiSelectListBox<V> from, JmixMultiSelectListBox<V> to, List<V> selectedItems) {
+        Runnable moveItems = () -> {
+            from.select(Collections.emptySet());
+            from.getListDataView().removeItems(selectedItems);
+
+            to.getListDataView().addItems(selectedItems);
+            to.select(selectedItems);
+
+            setModelValue(selected.getListDataView().getItems().collect(Collectors.toList()),false);
+
+            updateListBoxesListenersAndStyles();
+
+            moveJustPerformed = true;
+            listBoxesWithSavedScrollPosition.clear();
+
+            restoreScrollPosition(options);
+            restoreScrollPosition(selected);
+        };
+
+        Consumer<JmixMultiSelectListBox<V>> moveItemsIfScrollPositionsSaved = listBox -> {
+            listBoxesWithSavedScrollPosition.add(listBox);
+            if (listBoxesWithSavedScrollPosition.size() == 2) {
+                moveItems.run();
+            }
+        };
+
+        saveScrollPosition(options, moveItemsIfScrollPositionsSaved);
+        saveScrollPosition(selected, moveItemsIfScrollPositionsSaved);
+    }
+
+    private void updateListBoxesListenersAndStyles() {
+        updateDoubleClickListeners();
+        updateListBoxSelectionStyles(options, optionsDataView);
+        updateListBoxSelectionStyles(selected, selectedDataView);
+    }
+
+    protected TwinColumnDelegate<TwinColumn<V>, Collection<V>, Collection<V>>  createFieldDelegate() {
+        return applicationContext.getBean(TwinColumnDelegate.class, this);
+    }
+
+    protected DataViewDelegate<TwinColumn<V>, V> createDataViewDelegate() {
+        return applicationContext.getBean(DataViewDelegate.class, this);
     }
 
     private void moveItems(JmixMultiSelectListBox<V> from, JmixMultiSelectListBox<V> to, boolean moveAllItems) {
@@ -651,22 +720,45 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         moveItems(from, to, selectedItems);
     }
 
-    protected void updateListBoxesReorderableComparator() {
+    private void updateListBoxesReorderableComparator() {
         SerializableComparator<V> listBoxReorderableComparator = (value1, value2) ->
                 Integer.compare(optionsData.indexOf(value1), optionsData.indexOf(value2));
         optionsDataView.setSortComparator(isReorderable() ? listBoxReorderableComparator : null);
         selectedDataView.setSortComparator(isReorderable() ? listBoxReorderableComparator : null);
+        updateListBoxesListenersAndStyles();
     }
 
-    protected void updateAllBtnEnabled() {
+    private void updateAllBtnEnabled() {
         moveRightAll.setVisible(isAllBtnEnabled());
         moveLeftAll.setVisible(isAllBtnEnabled());
     }
 
-    protected void updateListBoxesLabelsLayoutVisibility() {
+    private void updateListBoxesLabelsLayoutVisibility() {
         listBoxesLabelsLayout.setVisible(
                 StringUtils.isNotEmpty(optionsLabel.getText()) ||
                         StringUtils.isNotEmpty(selectedLabel.getText()));
+    }
+
+    private void saveScrollPosition(JmixMultiSelectListBox<V> listBox, Consumer<JmixMultiSelectListBox<V>> consumer) {
+        if (listBox.getElement().isEnabled()) {
+            listBox.getElement().executeJs("return " + JS_SCROLL_TOP_VARIABLE)
+                    .then(Integer.class, (SerializableConsumer<Integer>) scrollTop -> {
+                        listToScrollValue.put(listBox, scrollTop);
+                        consumer.accept(listBox);
+                    });
+        } else {
+            consumer.accept(listBox);
+        }
+    }
+
+    private void restoreScrollPosition(JmixMultiSelectListBox<V> listBox) {
+        if (listBox.getElement().isEnabled()) {
+            listBox.getElement()
+                    .executeJs(String.format(JS_SCROLL_TOP_VARIABLE + " = %s", listToScrollValue.getOrDefault(listBox, 0)))
+                    .then((SerializableConsumer<JsonValue>) jsonValue -> moveJustPerformed = false);
+        } else {
+            moveJustPerformed = false;
+        }
     }
 
     private void updateDoubleClickListeners() {
@@ -679,46 +771,58 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
 
     private void updateDoubleClickListeners(JmixMultiSelectListBox<V> from,
                                             JmixMultiSelectListBox<V> to,
-                                            Map<Element, Integer> fromDoubleClickListeners) {
+                                            Map<Element, Integer> doubleClickListeners) {
         int itemIndex = 0;
         for (Component child : from.getChildren().toList())  {
-            fromDoubleClickListeners.put(child.getElement(), itemIndex++);
+            doubleClickListeners.put(child.getElement(), itemIndex++);
 
             child.getElement().addEventListener("dblclick", (DomEventListener) event ->
-                    listBoxItemDoubleClicked(from, to, fromDoubleClickListeners.get(event.getSource()))
+                    listBoxItemDoubleClicked(from, to, doubleClickListeners.get(event.getSource()))
             );
         }
     }
 
-    private void updateColumnComponents(Collection<V> newPresentationValue) {
-        optionsDataView.removeItems(newPresentationValue);
-        selectedDataView.addItems(newPresentationValue);
+    private void updateValidationVisibleElements(boolean invalid, boolean required, String errorMessage) {
+        if (invalid) {
+            componentLabel.addClassName("invalid");
+        } else {
+            componentLabel.removeClassName("invalid");
+        }
+        if (required) {
+            componentLabel.addClassName("required");
+        } else {
+            componentLabel.removeClassName("required");
+        }
+        errorLabel.setText(errorMessage);
+        errorLabel.setVisible(invalid);
     }
 
-    private void recreateOptions(Collection<V> newOptions) {
-        if (optionsData == null) {
-            optionsData = new LinkedList<>();
+    private void updateListBoxesInAccordanceWithNewValue(Collection<V> value) {
+        List<V> selectedListBoxItems = selectedDataView.getItems().toList();
+        List<V> itemsToAdd = value.stream()
+                .filter(item -> !selectedListBoxItems.contains(item))
+                .toList();
+        List<V> itemsToRemove = selectedDataView.getItems()
+                .filter(item -> !value.contains(item))
+                .toList();
+
+        if (itemsToAdd.isEmpty() && itemsToRemove.isEmpty()) {
+            return;
         }
 
-        optionsDataView.removeItems(optionsData);
-        optionsData.clear();
+        selectedDataView.addItems(itemsToAdd);
+        selectedDataView.removeItems(itemsToRemove);
 
-        optionsDataView.addItems(newOptions);
-        optionsData.addAll(newOptions);
+        optionsDataView.addItems(itemsToRemove);
+        optionsDataView.removeItems(itemsToAdd);
 
-        updateListBoxSelectionStyles(options, optionsDataView);
-        updateListBoxSelectionStyles(selected, selectedDataView);
-        updateDoubleClickListeners();
+        updateListBoxesListenersAndStyles();
     }
 
     private void updateListBoxSelectionStyles(JmixMultiSelectListBox<V> listBox, ListBoxListDataView<V> listBoxDataView) {
         List<Component> list = listBox.getChildren().toList();
         for (int i = 0; i < list.size(); i++) {
             list.get(i).getElement().removeProperty("position");
-
-            if (!list.get(i).hasClassName("line")) {
-                list.get(i).addClassName("line");
-            }
 
             if (list.get(i).hasClassName("single")) {
                 list.get(i).removeClassName("single");

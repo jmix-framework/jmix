@@ -2,6 +2,7 @@
 :is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"], jmix-twin-column[theme~="listbox"]) vaadin-list-box  {
     border: 1px solid var(--lumo-contrast-20pct);
 }
+
 :is(jmix-twin-column[theme~="rounded"], jmix-twin-column[theme~="listbox"]) vaadin-list-box  {
     border-radius: var(--lumo-border-radius-m);
     padding: calc(var(--lumo-border-radius-m) / 2);
@@ -12,28 +13,20 @@ jmix-twin-column[theme~="grid"] vaadin-list-box  {
     padding: 0;
 }
 
-:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"])  vaadin-item::part(content) {
-    padding-left: var(--lumo-space-s);
-}
-
-jmix-twin-column[theme~="listbox"]  vaadin-item:not([selected])::part(content) {
-    padding-left: var(--lumo-space-s);
-}
-
-jmix-twin-column[theme~="listbox"]  vaadin-item:not([selected])::part(checkmark) {
-    display: none;
+:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"])  vaadin-item {
+    padding: var(--lumo-space-xs) var(--lumo-space-m);
 }
 
 :is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"]) vaadin-item::part(checkmark) {
     display: none;
 }
 
-:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"]) vaadin-item[selected] {
-    background-color: var(--lumo-primary-color-50pct);
+jmix-twin-column[theme~="grid"] vaadin-item[selected] {
+    background-color: var(--lumo-primary-color-10pct);
 }
 
-:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"]) vaadin-item[selected]::part(content) {
-    color: var(--lumo-primary-contrast-color);
+jmix-twin-column[theme~="rounded"] vaadin-item[selected] {
+    background-color: var(--lumo-primary-color-50pct);
 }
 
 jmix-twin-column[theme~="grid"] vaadin-item:hover < vaadin-item[selected] {
@@ -53,6 +46,11 @@ jmix-twin-column[theme~="rounded"] .twin-column-list-box-border {
     background-color: transparent;
 }
 
+jmix-twin-column[theme~="rounded"] vaadin-item[selected]::part(content) {
+    background-color: transparent;
+    color: var(--lumo-primary-contrast-color);
+}
+
 jmix-twin-column[theme~="rounded"] .first {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -67,20 +65,18 @@ jmix-twin-column[theme~="rounded"] .last {
     border-top-right-radius: 0;
 }
 
-jmix-twin-column[theme~="grid"] .line {
+jmix-twin-column[theme~="grid"] vaadin-item {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    border-bottom: 1px solid var(--lumo-contrast-20pct);
+    border-bottom: 1px solid var(--lumo-contrast-10pct);
 }
 
-jmix-twin-column[theme~="grid"] .line:nth-last-of-type(1) {
+jmix-twin-column[theme~="grid"] vaadin-item:nth-last-of-type(1) {
     border-bottom: 0px;
 }
 
 jmix-twin-column[theme~="grid"] :is(.first, .middle, .last, .single) {
     border-radius: 0;
-    padding-left: 0;
-    padding-right: 0;
 }
 
 jmix-twin-column :is(span[class~='label'], div[class~='label']) {
@@ -96,11 +92,11 @@ jmix-twin-column span[class~='label'] {
 
 jmix-twin-column div[class~='label'] {
     font-size: var(--lumo-font-size-s);
-    padding-bottom: var(--lumo-space-xs);
+    padding-bottom: var(--lumo-space-s);
     margin-top: auto;
 }
 
-jmix-twin-column span[class~='label']::after {
+jmix-twin-column span[class~='label'][class~='required']::after {
     content: var(--lumo-required-field-indicator, '\2022');
     transition: opacity 0.2s;
     color: var(--lumo-primary-text-color);
@@ -109,7 +105,7 @@ jmix-twin-column span[class~='label']::after {
     display: inline-block;
 }
 
-jmix-twin-column span[class~='label'][class~='error-indicator']::after {
+jmix-twin-column span[class~='label'][class~='invalid'][class~='required']::after {
     color: var(--lumo-error-text-color);
 }
 
@@ -135,6 +131,7 @@ jmix-twin-column .error-label {
 
 /* Toolbar theme for buttons */
 jmix-twin-column[theme~="toolbar"] .button-first {
+    margin-top: 0;
     margin-bottom: 0;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;

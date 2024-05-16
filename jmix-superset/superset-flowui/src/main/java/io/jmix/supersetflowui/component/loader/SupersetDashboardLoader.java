@@ -18,6 +18,12 @@ package io.jmix.supersetflowui.component.loader;
 
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.supersetflowui.component.SupersetDashboard;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
+import org.apache.commons.collections4.CollectionUtils;
+import org.dom4j.Element;
+
+import java.util.List;
 
 public class SupersetDashboardLoader extends AbstractComponentLoader<SupersetDashboard> {
 
@@ -28,6 +34,43 @@ public class SupersetDashboardLoader extends AbstractComponentLoader<SupersetDas
 
     @Override
     public void loadComponent() {
-        // todo rp implement
+        loadId(resultComponent, element);
+
+        componentLoaderSupport.loadSizeAttributes(resultComponent, element);
+        componentLoaderSupport.loadClassNames(resultComponent, element);
+
+        loadString(element, "embeddedId", resultComponent::setEmbeddedId);
+        loadString(element, "url", resultComponent::setUrl);
+        loadBoolean(element, "tabVisibility", resultComponent::setTabVisibility);
+        loadBoolean(element, "titleVisibility", resultComponent::setTitleVisibility);
+        loadBoolean(element, "chartControlsVisibility", resultComponent::setChartControlsVisibility);
+        loadBoolean(element, "filtersExpanded", resultComponent::setFiltersExpanded);
+
+        loadDatasetConstraints();
+    }
+
+    protected void loadDatasetConstraints() {
+        Element datasetConstraintsElement = element.element("datasetConstraints");
+        if (datasetConstraintsElement != null) {
+            List<DatasetConstraint> datasetConstraints = loadDatasetConstraintsList(datasetConstraintsElement);
+            if (CollectionUtils.isNotEmpty(datasetConstraints)) {
+                resultComponent.setDatasetConstrainsProvider(() -> datasetConstraints);
+            }
+        } else {
+            loadString(element, "datasetConstraintsProviderBean")
+                    .ifPresent(beanName ->
+                            resultComponent.setDatasetConstrainsProvider(
+                                    (DatasetConstrainsProvider) applicationContext.getBean(beanName)));
+        }
+    }
+
+    protected List<DatasetConstraint> loadDatasetConstraintsList(Element datasetConstraintsElement) {
+        List<Element> datasetConstraint = datasetConstraintsElement.elements("datasetConstraint");
+        return datasetConstraint.stream()
+                .map(element ->
+                        new DatasetConstraint(
+                                Integer.parseInt(element.attributeValue("datasetId")),
+                                element.getText().trim()))
+                .toList();
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.model;
+package io.jmix.superset.service.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

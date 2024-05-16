@@ -25,11 +25,9 @@ import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.superset.SupersetAccessTokenManager;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.event.SupersetAccessTokenUpdated;
-import io.jmix.supersetflowui.component.dataconstraint.SupersetDataConstrainsProvider;
-import io.jmix.supersetflowui.component.dataconstraint.SupersetDataConstraint;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 import jakarta.annotation.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -39,14 +37,13 @@ import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
 import java.util.List;
 
 public class SupersetDashboard extends JmixSupersetDashboard implements ApplicationContextAware, InitializingBean {
-    private static final Logger log = LoggerFactory.getLogger(SupersetDashboard.class);
 
     protected ApplicationContext applicationContext;
     protected CurrentUserSubstitution currentUserSubstitution;
     protected SupersetProperties supersetProperties;
     protected SupersetAccessTokenManager accessTokenManager;
 
-    protected SupersetDataConstrainsProvider dataConstrainsProvider;
+    protected DatasetConstrainsProvider datasetConstrainsProvider;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -60,7 +57,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         accessTokenManager = applicationContext.getBean(SupersetAccessTokenManager.class);
 
         initAccessTokenUpdatedListener();
-        setSupersetDomainInternal(supersetProperties.getUrl());
+        setUrlInternal(supersetProperties.getUrl());
         setAccessToken(accessTokenManager.getAccessToken());
         setUserInfo(currentUserSubstitution.getEffectiveUser().getUsername());
     }
@@ -77,15 +74,15 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     }
 
     @Nullable
-    public SupersetDataConstrainsProvider getDataConstrainsProvider() {
-        return dataConstrainsProvider;
+    public DatasetConstrainsProvider getDatasetConstrainsProvider() {
+        return datasetConstrainsProvider;
     }
 
-    public void setDataConstrainsProvider(@Nullable SupersetDataConstrainsProvider dataConstrainsProvider) {
-        this.dataConstrainsProvider = dataConstrainsProvider;
+    public void setDatasetConstrainsProvider(@Nullable DatasetConstrainsProvider datasetConstrainsProvider) {
+        this.datasetConstrainsProvider = datasetConstrainsProvider;
 
-        if (dataConstrainsProvider != null) {
-            setDataConstraints(convertDataConstrainsToJson(dataConstrainsProvider.getConstraints()));
+        if (datasetConstrainsProvider != null) {
+            setDatasetConstraints(convertDatasetConstrainsToJson(datasetConstrainsProvider.getConstraints()));
         }
     }
 
@@ -93,11 +90,11 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         requestEmbedComponent();
     }
 
-    protected JsonValue convertDataConstrainsToJson(List<SupersetDataConstraint> dataConstraints) {
+    protected JsonValue convertDatasetConstrainsToJson(List<DatasetConstraint> dataConstraints) {
         JreJsonFactory factory = new JreJsonFactory();
         JsonArray array = factory.createArray();
         for (int i = 0; i < dataConstraints.size(); i++) {
-            SupersetDataConstraint dataConstraint = dataConstraints.get(0);
+            DatasetConstraint dataConstraint = dataConstraints.get(0);
             JsonObject constraint = factory.createObject();
             constraint.put("dataset", dataConstraint.dataset());
             constraint.put("clause", dataConstraint.clause());

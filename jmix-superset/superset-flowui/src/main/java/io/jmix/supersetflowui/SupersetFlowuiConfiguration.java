@@ -34,9 +34,9 @@ import org.springframework.context.annotation.Configuration;
 public class SupersetFlowuiConfiguration {
 
     @Bean
-    ComponentRegistration supersetFlowuiRegistration() {
+    ComponentRegistration dashboardRegistration() {
         return ComponentRegistrationBuilder.create(SupersetDashboard.class)
-                .withComponentLoader("supersetDashboard", SupersetDashboardLoader.class)
+                .withComponentLoader("dashboard", SupersetDashboardLoader.class)
                 .build();
     }
 }

@@ -16,5 +16,9 @@
 
 package io.jmix.supersetflowui.component.dataconstraint;
 
-public record SupersetDataConstraint(Integer dataset, String clause) {
+import java.util.List;
+
+public interface DatasetConstrainsProvider {
+
+    List<DatasetConstraint> getConstraints();
 }

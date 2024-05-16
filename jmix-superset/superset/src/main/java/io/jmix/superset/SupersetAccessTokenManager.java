@@ -18,8 +18,8 @@ package io.jmix.superset;
 
 import com.google.common.base.Strings;
 import io.jmix.superset.event.SupersetAccessTokenUpdated;
-import io.jmix.superset.model.LoginResponse;
-import io.jmix.superset.model.RefreshResponse;
+import io.jmix.superset.service.model.LoginResponse;
+import io.jmix.superset.service.model.RefreshResponse;
 import io.jmix.superset.service.SupersetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

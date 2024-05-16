@@ -39,7 +39,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                 type: String,
                 value: '',
             },
-            supersetDomain: {
+            url: {
                 type: String,
                 value: '',
             },
@@ -75,7 +75,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             /**
              * @protected
              */
-            _dataConstraints: {
+            _datasetConstraints: {
                 type: Object,
                 value: [],
             },
@@ -89,7 +89,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             /**
              * @protected
              */
-            _supersetDomain: {
+            _domain: {
                 type: String,
                 value: '',
             }
@@ -100,7 +100,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
         const embedDashboardInternal = async () => {
             await embedDashboard({
                 id: this.embeddedId, // given by the Superset embedding UI
-                supersetDomain: this.getDomain(),
+                supersetDomain: this.getBaseUrl(),
                 // @ts-ignore
                 mountPoint: this.$.dashboard, // html element in which iframe render
                 fetchGuestToken: () => this.getGuestToken(),
@@ -124,7 +124,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             return this.guestToken;
         }
 
-        const response = await fetch(this.getDomain() + '/api/v1/security/guest_token/', {
+        const response = await fetch(this.getBaseUrl() + '/api/v1/security/guest_token/', {
             method: 'post',
             headers: {
                 'Accept': '*/*',
@@ -138,7 +138,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                         "type": "dashboard"
                     }
                 ],
-                "rls": this._dataConstraints,
+                "rls": this._datasetConstraints,
                 "user": this._userInfo,
             }),
             credentials: "include",
@@ -147,12 +147,12 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
         return responseJson.token;
     }
 
-    getDomain() {
-        return this.supersetDomain ? this.supersetDomain : this._supersetDomain;
+    getBaseUrl() {
+        return this.url ? this.url : this._domain;
     }
 
     _isReadyToEmbed() {
-
+        return this.guestToken || this._accessToken
     }
 }
 

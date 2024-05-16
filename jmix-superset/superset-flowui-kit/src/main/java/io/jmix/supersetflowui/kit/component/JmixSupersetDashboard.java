@@ -32,7 +32,7 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
 
     private static final String PROPERTY_GUEST_TOKEN = "guestToken";
     private static final String PROPERTY_EMBEDDED_ID = "embeddedId";
-    private static final String PROPERTY_SUPERSET_DOMAIN = "supersetDomain";
+    private static final String PROPERTY_URL = "url";
     private static final String PROPERTY_TAB_VISIBILITY = "tabVisibility";
     private static final String PROPERTY_TITLE_VISIBILITY = "titleVisibility";
     private static final String PROPERTY_CHART_CONTROLS_VISIBILITY = "chartControlsVisibility";
@@ -40,9 +40,9 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     private static final String PROPERTY_FILTERS_EXPANDED = "filtersExpanded";
 
     private static final String PROPERTY_ACCESS_TOKEN = "_accessToken";
-    private static final String PROPERTY_SUPERSET_DOMAIN_INTERNAL = "_supersetDomain";
+    private static final String PROPERTY_URL_INTERNAL = "_domain";
     private static final String PROPERTY_USER_INFO = "_userInfo";
-    private static final String PROPERTY_DATA_CONSTRAINS = "_dataConstraints";
+    private static final String PROPERTY_DATASET_CONSTRAINS = "_datasetConstraints";
 
     protected StateTree.ExecutionRegistration updateComponentExecution;
 
@@ -74,12 +74,12 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
         getElement().setProperty(PROPERTY_EMBEDDED_ID, embeddedId);
     }
 
-    public String getSupersetDomain() {
-        return getElement().getProperty(PROPERTY_SUPERSET_DOMAIN);
+    public String getUrl() {
+        return getElement().getProperty(PROPERTY_URL);
     }
 
-    public void setSupersetDomain(String supersetDomain) {
-        getElement().setProperty(PROPERTY_SUPERSET_DOMAIN, supersetDomain);
+    public void setUrl(String url) {
+        getElement().setProperty(PROPERTY_URL, url);
     }
 
     public Boolean getTabVisibility() {
@@ -122,12 +122,12 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
         return getElement().getProperty(PROPERTY_FILTERS_EXPANDED, Boolean.TRUE);
     }
 
-    protected String getSupersetDomainInternal() {
-        return getElement().getProperty(PROPERTY_SUPERSET_DOMAIN_INTERNAL);
+    protected String getUrlInternal() {
+        return getElement().getProperty(PROPERTY_URL_INTERNAL);
     }
 
-    protected void setSupersetDomainInternal(String supersetDomain) {
-        getElement().setProperty(PROPERTY_SUPERSET_DOMAIN_INTERNAL, supersetDomain);
+    protected void setUrlInternal(String url) {
+        getElement().setProperty(PROPERTY_URL_INTERNAL, url);
     }
 
     protected String getAccessToken() {
@@ -144,8 +144,8 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
         getElement().setPropertyJson(PROPERTY_USER_INFO, json);
     }
 
-    protected void setDataConstraints(JsonValue dataConstraints) {
-        getElement().setPropertyJson(PROPERTY_DATA_CONSTRAINS, dataConstraints);
+    protected void setDatasetConstraints(JsonValue dataConstraints) {
+        getElement().setPropertyJson(PROPERTY_DATASET_CONSTRAINS, dataConstraints);
     }
 
     @Override

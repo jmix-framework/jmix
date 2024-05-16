@@ -16,7 +16,7 @@
 
 package io.jmix.superset.service;
 
-import io.jmix.superset.model.*;
+import io.jmix.superset.service.model.*;
 
 public interface SupersetService {
 

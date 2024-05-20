@@ -19,6 +19,7 @@ package component.composite
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.icon.VaadinIcon
 import component.composite.component.*
+import component.composite.component.ext.TestStepperFieldExt
 import io.jmix.core.Metadata
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.data.grid.ContainerDataGridItems
@@ -113,6 +114,26 @@ class CompositeComponentTest extends FlowuiTestSpecification {
 
         then:
         thrown(GuiDevelopmentException)
+    }
+
+    def "Extended Composite component inherits a full path XML descriptor"() {
+        when:
+        def stepperField = uiComponents.create(TestStepperFieldExt)
+
+        then:
+        stepperField.value == 0
+
+        when:
+        stepperField.clickUp()
+
+        then:
+        stepperField.value == 1
+
+        when:
+        stepperField.clickDown()
+
+        then:
+        stepperField.value == 0
     }
 
     @Nullable

@@ -16,10 +16,12 @@
 
 package io.jmix.flowui.component.composite;
 
+import com.google.common.base.Strings;
 import com.googlecode.gentyref.GenericTypeReflector;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.server.Attributes;
+import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
@@ -178,5 +180,37 @@ public final class CompositeComponentUtils {
         int start = messageGroup.startsWith(".") ? 1 : 0;
         messageGroup = messageGroup.substring(start);
         return messageGroup;
+    }
+
+    /**
+     * Resolves a path to the XML descriptor. If the value contains a file name
+     * only (i.e. don't start with '/'), it is assumed that the file is located
+     * in the package of the composite component class.
+     *
+     * @param componentClass a component class for which to resolve XML descriptor path
+     * @return a path to the XML descriptor
+     */
+    @Nullable
+    public static String resolveDescriptorPath(Class<? extends Component> componentClass) {
+        CompositeDescriptor descriptor = componentClass.getAnnotation(CompositeDescriptor.class);
+        if (descriptor == null) {
+            return null;
+        }
+
+        String descriptorPath = descriptor.value();
+        if (Strings.isNullOrEmpty(descriptorPath)) {
+            throw new DevelopmentException("Composite Component class annotated with @" +
+                    CompositeDescriptor.class.getSimpleName() + " without template: " + componentClass);
+        }
+
+        if (!descriptorPath.startsWith("/")) {
+            String packageName = CompositeComponentUtils.getPackage(componentClass);
+            if (!Strings.isNullOrEmpty(packageName)) {
+                String relativePath = packageName.replace('.', '/');
+                descriptorPath = "/" + relativePath + "/" + descriptorPath;
+            }
+        }
+
+        return descriptorPath;
     }
 }

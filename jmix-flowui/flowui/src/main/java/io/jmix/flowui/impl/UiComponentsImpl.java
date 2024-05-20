@@ -173,18 +173,9 @@ public class UiComponentsImpl implements UiComponents {
                 applicationContext.getBean(CompositeComponentActions.class, compositeComponent);
         CompositeComponentUtils.setCompositeComponentActions(compositeComponent, actions);
 
-        CompositeDescriptor descriptor = type.getAnnotation(CompositeDescriptor.class);
-        if (descriptor == null) {
+        String descriptorPath = CompositeComponentUtils.resolveDescriptorPath(type);
+        if (descriptorPath == null) {
             return;
-        }
-
-        String descriptorPath = descriptor.value();
-        if (!descriptorPath.startsWith("/")) {
-            String packageName = CompositeComponentUtils.getPackage(type);
-            if (StringUtils.isNotEmpty(packageName)) {
-                String relativePath = packageName.replace('.', '/');
-                descriptorPath = "/" + relativePath + "/" + descriptorPath;
-            }
         }
 
         CompositeComponentLoaderContext context = new CompositeComponentLoaderContext();

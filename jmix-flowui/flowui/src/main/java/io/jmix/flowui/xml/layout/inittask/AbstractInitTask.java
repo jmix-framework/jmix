@@ -20,12 +20,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.composite.CompositeComponent;
-import io.jmix.flowui.component.composite.CompositeComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-
-import java.util.Optional;
 
 public abstract class AbstractInitTask implements ComponentLoader.InitTask {
 
@@ -39,6 +36,7 @@ public abstract class AbstractInitTask implements ComponentLoader.InitTask {
      *
      * @param context a context object
      * @return a context origin component if it can contain nexted components
+     * @throws GuiDevelopmentException if origin cannot contain components
      */
     protected Component getOrigin(ComponentLoader.Context context) {
         Component origin = context.getOrigin();
@@ -57,16 +55,5 @@ public abstract class AbstractInitTask implements ComponentLoader.InitTask {
         }
 
         return origin;
-    }
-
-    protected Optional<Component> findComponent(Component component, String id) {
-        if (component instanceof View<?> view) {
-            return UiComponentUtils.findComponent(view, id);
-        } else if (component instanceof CompositeComponent<?> compositeComponent) {
-            return CompositeComponentUtils.findComponent(compositeComponent, id);
-        } else if (UiComponentUtils.isContainer(component)) {
-            return UiComponentUtils.findComponent(component, id);
-        }
-        return Optional.empty();
     }
 }

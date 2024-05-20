@@ -82,7 +82,7 @@ public class MenuFilterFieldLoader extends AbstractComponentLoader<MenuFilterFie
         getContext().addInitTask(new AbstractInitTask() {
             @Override
             public void execute(Context context) {
-                Component menuComponent = findComponent(context.getOrigin(), menuId).orElse(null);
+                Component menuComponent = UiComponentUtils.findComponent(context.getOrigin(), menuId).orElse(null);
                 if (!(menuComponent instanceof HasMenuItemProvider<?> hasMenuItemProvider)) {
                     throw new GuiDevelopmentException("Failed to find a menu with item provider",
                             context, "Menu", menuId);

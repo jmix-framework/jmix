@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.inittask;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
@@ -55,7 +56,7 @@ public abstract class AbstractAssignActionInitTask<C extends Component> extends 
             String id = elements[elements.length - 1];
 
             String prefix = ValuePathHelper.pathPrefix(elements);
-            Component holder = findComponent(origin, prefix).orElse(null);
+            Component holder = UiComponentUtils.findComponent(origin, prefix).orElse(null);
             if (holder == null) {
                 throw new GuiDevelopmentException(
                         String.format("Can't find component: %s for action: %s", prefix, actionId),

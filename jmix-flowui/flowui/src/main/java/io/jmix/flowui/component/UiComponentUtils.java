@@ -22,6 +22,8 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.component.composite.CompositeComponent;
+import io.jmix.flowui.component.composite.CompositeComponentUtils;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
@@ -60,7 +62,7 @@ public final class UiComponentUtils {
     public static Optional<Component> findComponent(View<?> view, String id) {
         Component content = view.getContent();
         if (isContainer(content)) {
-            return findComponent(content, id);
+            return findComponent(content, id, UiComponentUtils::sameId);
         }
 
         throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
@@ -85,13 +87,20 @@ public final class UiComponentUtils {
      * Returns an {@link Optional} describing the component with given id,
      * or an empty {@link Optional}.
      *
-     * @param container container to find component
+     * @param component component to find inner component
      * @param id        component id to find
      * @return an {@link Optional} describing the found component,
      * or an empty {@link Optional}
      */
-    public static Optional<Component> findComponent(Component container, String id) {
-        return findComponent(container, id, UiComponentUtils::sameId);
+    public static Optional<Component> findComponent(Component component, String id) {
+        if (component instanceof View<?> view) {
+            return UiComponentUtils.findComponent(view, id);
+        } else if (component instanceof CompositeComponent<?> compositeComponent) {
+            return CompositeComponentUtils.findComponent(compositeComponent, id);
+        } else if (UiComponentUtils.isContainer(component)) {
+            return UiComponentUtils.findComponent(component, id, UiComponentUtils::sameId);
+        }
+        return Optional.empty();
     }
 
     /**

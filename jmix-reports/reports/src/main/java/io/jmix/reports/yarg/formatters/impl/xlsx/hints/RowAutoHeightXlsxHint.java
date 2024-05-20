@@ -66,15 +66,13 @@ public class RowAutoHeightXlsxHint implements XlsxHint {
 
     @Override
     public void add(Cell templateCell, Cell resultCell, BandData bandData, List<String> params) {
-        CellDataObject cellDataObject = new CellDataObject(templateCell, resultCell, bandData, params);
-
         String resultSheet = document.getWorksheets().stream()
                 .filter(sheetWrapper -> sheetWrapper.getWorksheet() == WorksheetPart.getWorksheetPart(resultCell))
                 .map(Document.SheetWrapper::getName)
                 .findFirst()
                 .orElse(null);
 
-        cellDataObject.setResultSheet(resultSheet);
+        CellDataObject cellDataObject = new CellDataObject(resultCell, resultSheet);
 
         data.add(cellDataObject);
     }
@@ -120,7 +118,10 @@ public class RowAutoHeightXlsxHint implements XlsxHint {
             }
         }
 
-        rowMaxHeights.forEach(Row::setHt);
+        rowMaxHeights.forEach((row, approximateHeight) -> {
+            row.setHt(approximateHeight);
+            row.setCustomHeight(false); //gives an ability to recalculate a row height when opening a file
+        });
     }
 
     @Nullable
@@ -191,7 +192,7 @@ public class RowAutoHeightXlsxHint implements XlsxHint {
         }
 
         double fontSize = font.getSize() != null ? font.getSize() : DEFAULT_FONT_SIZE;
-        double cellHeight = (fontSize * 1.2) * lineCnt; //approximate cell height
+        double cellHeight = (fontSize * 1.3) * lineCnt; //approximate cell height
 
         return Math.ceil(cellHeight * 4) / 4f; //ceil to the nearest 0.25
     }
@@ -263,24 +264,11 @@ public class RowAutoHeightXlsxHint implements XlsxHint {
     }
 
     protected static class CellDataObject {
-        protected Cell templateCell;
         protected Cell resultCell;
-        protected BandData bandData;
-        protected List<String> params;
         protected String resultSheet;
 
-        public CellDataObject(Cell templateCell, Cell resultCell, BandData bandData, List<String> params) {
-            this.templateCell = templateCell;
+        public CellDataObject(Cell resultCell, String resultSheet) {
             this.resultCell = resultCell;
-            this.bandData = bandData;
-            this.params = params;
-        }
-
-        public String getResultSheet() {
-            return resultSheet;
-        }
-
-        public void setResultSheet(String resultSheet) {
             this.resultSheet = resultSheet;
         }
 

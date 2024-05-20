@@ -12,16 +12,19 @@ public class SupersetProperties {
     String url;
     String username;
     String password;
-    Duration accessTokenExpiration;
+    Duration refreshAccessTokenScheduler;
+    Duration fallbackAccessTokenExpiration;
 
     public SupersetProperties(String url,
                               String username,
                               String password,
-                              @DefaultValue("14m") Duration accessTokenExpiration) { // todo rp check default value
+                              @DefaultValue("1m") Duration refreshAccessTokenScheduler,
+                              @DefaultValue("3m") Duration fallbackAccessTokenExpiration) {
         this.url = url;
         this.username = username;
         this.password = password;
-        this.accessTokenExpiration = accessTokenExpiration;
+        this.refreshAccessTokenScheduler = refreshAccessTokenScheduler;
+        this.fallbackAccessTokenExpiration = fallbackAccessTokenExpiration;
     }
 
     @Nullable
@@ -39,9 +42,11 @@ public class SupersetProperties {
         return password;
     }
 
-    // todo rp nullable?
-    public Duration getAccessTokenExpiration() {
-        return accessTokenExpiration;
+    public Duration getRefreshAccessTokenScheduler() {
+        return refreshAccessTokenScheduler;
     }
 
+    public Duration getFallbackAccessTokenExpiration() {
+        return fallbackAccessTokenExpiration;
+    }
 }

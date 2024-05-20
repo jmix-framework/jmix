@@ -43,6 +43,6 @@ public class SupersetAccessTokenScheduleConfigurer {
     public void onContextRefreshedEvent(ContextRefreshedEvent event) {
         taskScheduler.scheduleWithFixedDelay(
                 accessTokenManager::updateAccessToken,
-                supersetProperties.getAccessTokenExpiration());
+                supersetProperties.getRefreshAccessTokenScheduler());
     }
 }

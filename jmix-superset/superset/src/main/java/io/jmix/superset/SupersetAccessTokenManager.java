@@ -16,56 +16,50 @@
 
 package io.jmix.superset;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import io.jmix.superset.event.SupersetAccessTokenUpdated;
 import io.jmix.superset.service.model.LoginResponse;
 import io.jmix.superset.service.model.RefreshResponse;
 import io.jmix.superset.service.SupersetService;
+import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
+import java.time.Duration;
+import java.util.Base64;
+import java.util.Date;
+import java.util.Map;
 
 @Component("superset_SupersetAccessTokenManager")
 public class SupersetAccessTokenManager {
 
     private static final Logger log = LoggerFactory.getLogger(SupersetAccessTokenManager.class);
+
     private final SupersetService supersetService;
+    private final SupersetProperties supersetProperties;
 
-    private final List<Consumer<SupersetAccessTokenUpdated>> listeners =
-            Collections.synchronizedList(new ArrayList<>());
-
+    protected final ObjectMapper objectMapper;
     private String accessToken;
+    private Long accessTokenExpiresIn;
     private String refreshToken;
 
-    public SupersetAccessTokenManager(SupersetService supersetService) {
+    public SupersetAccessTokenManager(SupersetService supersetService,
+                                      SupersetProperties supersetProperties) {
         this.supersetService = supersetService;
+        this.supersetProperties = supersetProperties;
+
+        objectMapper = buildObjectMapper();
     }
 
     public synchronized void updateAccessToken() {
-        boolean success;
         if (accessToken == null) {
-            success = performLogin();
-        } else {
-            success = refreshAccessToken();
+            performLogin();
+        } else if (isAboutToExpire()) {
+            refreshAccessToken();
         }
-
-        if (success) {
-            publishAccessTokenUpdatedEvent(new SupersetAccessTokenUpdated(this, accessToken));
-        }
-    }
-
-    public void addAccessTokenUpdatedListener(Consumer<SupersetAccessTokenUpdated> listener) {
-        if (!listeners.contains(listener))
-            listeners.add(listener);
-    }
-
-    public void removeAccessTokenUpdatedListener(Consumer<SupersetAccessTokenUpdated> listener) {
-        listeners.remove(listener);
     }
 
     public String getAccessToken() {
@@ -82,27 +76,25 @@ public class SupersetAccessTokenManager {
         return refreshToken;
     }
 
-    protected boolean performLogin() {
+    protected void performLogin() {
         LoginResponse response;
         try {
             response = supersetService.login();
         } catch (Exception e) {
             log.error("Cannot log in to superset. Dashboard functionality may work incorrectly", e);
-            return false;
+            return;
         }
 
         if (response.getMessage() == null) {
-            accessToken = response.getAccessToken();
+            updateAccessToken(response.getAccessToken());
             refreshToken = response.getRefreshToken();
-            return true;
         } else {
             log.error("Cannot log in to superset. Dashboard functionality may work incorrectly. Message from Superset:" +
                     " {}", response.getMessage());
-            return false;
         }
     }
 
-    protected boolean refreshAccessToken() {
+    protected void refreshAccessToken() {
         boolean retry = false;
         RefreshResponse response = null;
         try {
@@ -114,7 +106,7 @@ public class SupersetAccessTokenManager {
                 retry = true;
             } else {
                 log.error("Failed to refresh access token. Dashboard functionality may work incorrectly", e);
-                return false;
+                return;
             }
         }
 
@@ -122,31 +114,63 @@ public class SupersetAccessTokenManager {
             try {
                 response = supersetService.refresh(refreshToken);
             } catch (Exception e) {
-                Throwable cause = e.getCause();
-                if (!Strings.isNullOrEmpty(cause.getMessage()) && cause.getMessage().contains("GOAWAY received")) {
-                    log.error("Retrying the request failed. Dashboard functionality may work incorrectly.", e);
-                    return false;
-                } else {
-                    log.error("Failed to refresh access token. Dashboard functionality may work incorrectly", e);
-                    return false;
-                }
+                log.error("Failed to refresh access token. Dashboard functionality may work incorrectly", e);
+                return;
             }
         }
 
         // Response cannot be null here
         if (response.getErrorMessage() == null) {
-            accessToken = response.getAccessToken();
-            return true;
+            updateAccessToken(response.getAccessToken());
         } else {
             log.error("Failed to update access token. Dashboard functionality may work incorrectly. Message from Superset:" +
                     " {}", response.getErrorMessage());
-            return false;
         }
     }
 
-    private void publishAccessTokenUpdatedEvent(SupersetAccessTokenUpdated event) {
-        for (Consumer<SupersetAccessTokenUpdated> listener : listeners) {
-            listener.accept(event);
+    protected void updateAccessToken(String newToken) {
+        this.accessToken = newToken;
+        this.accessTokenExpiresIn = parseExpiresIn(newToken);
+    }
+
+    protected ObjectMapper buildObjectMapper() {
+        return new ObjectMapper()
+                .configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
+    }
+
+    @Nullable
+    protected Long parseExpiresIn(String accessToken) {
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String[] chunks = accessToken.split("\\.");
+        if (chunks.length >= 2) { // chunks[0] - header, chunks[1] - payload
+            String payloadJson = new String(decoder.decode(chunks[1]));
+            Map<String, Object> payloadMap;
+            try {
+                payloadMap = objectMapper.readValue(payloadJson, Map.class);
+            } catch (JsonProcessingException e) {
+                log.error("Cannot parse JWT", e);
+                return null;
+            }
+            Long exp = (Long) payloadMap.get("exp");
+            if (exp == null) {
+                log.error("There is no 'exp' field in decoded JWT");
+                return null;
+            }
+            return exp;
         }
+        log.error("JWT does not contain payload part");
+        return null;
+    }
+
+    protected boolean isAboutToExpire() {
+        long currentTimePoint = new Date().getTime();
+        if (accessTokenExpiresIn == null) {
+            accessTokenExpiresIn = getFallbackExpirationTime();
+        }
+        return accessTokenExpiresIn - currentTimePoint < Duration.ofMinutes(1).getSeconds();
+    }
+
+    protected Long getFallbackExpirationTime() {
+        return supersetProperties.fallbackAccessTokenExpiration.getSeconds();
     }
 }

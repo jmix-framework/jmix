@@ -16,7 +16,6 @@
 
 package io.jmix.supersetflowui.component;
 
-import com.vaadin.flow.component.DetachEvent;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
@@ -24,7 +23,6 @@ import elemental.json.impl.JreJsonFactory;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.superset.SupersetAccessTokenManager;
 import io.jmix.superset.SupersetProperties;
-import io.jmix.superset.event.SupersetAccessTokenUpdated;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 import jakarta.annotation.Nullable;
@@ -56,21 +54,9 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         supersetProperties = applicationContext.getBean(SupersetProperties.class);
         accessTokenManager = applicationContext.getBean(SupersetAccessTokenManager.class);
 
-        initAccessTokenUpdatedListener();
         setUrlInternal(supersetProperties.getUrl());
         setAccessToken(accessTokenManager.getAccessToken());
         setUserInfo(currentUserSubstitution.getEffectiveUser().getUsername());
-    }
-
-    protected void initAccessTokenUpdatedListener() {
-        accessTokenManager.addAccessTokenUpdatedListener(this::onSupersetAccessTokenUpdated);
-    }
-
-    @Override
-    protected void onDetach(DetachEvent detachEvent) {
-        super.onDetach(detachEvent);
-
-        accessTokenManager.removeAccessTokenUpdatedListener(this::onSupersetAccessTokenUpdated);
     }
 
     @Nullable
@@ -103,9 +89,8 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         return array;
     }
 
-    protected void onSupersetAccessTokenUpdated(SupersetAccessTokenUpdated event) {
-        getUI().ifPresent(ui -> {
-            ui.access(() -> setAccessToken(event.getAccessToken()));
-        });
+    @Override
+    protected String fetchAccessToken() {
+        return accessTokenManager.getAccessToken();
     }
 }

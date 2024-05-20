@@ -40,7 +40,7 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     private static final String PROPERTY_FILTERS_EXPANDED = "filtersExpanded";
 
     private static final String PROPERTY_ACCESS_TOKEN = "_accessToken";
-    private static final String PROPERTY_URL_INTERNAL = "_domain";
+    private static final String PROPERTY_URL_INTERNAL = "_url";
     private static final String PROPERTY_USER_INFO = "_userInfo";
     private static final String PROPERTY_DATASET_CONSTRAINS = "_datasetConstraints";
 
@@ -167,5 +167,11 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
 
     protected void updateDashboard(ExecutionContext context) {
         getElement().callJsFunction("updateDashboard");
+    }
+
+    @ClientCallable
+    protected String fetchAccessToken() {
+        // implemented by inheritors
+        return null;
     }
 }

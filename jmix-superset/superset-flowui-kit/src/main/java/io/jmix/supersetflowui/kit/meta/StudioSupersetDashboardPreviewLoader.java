@@ -22,9 +22,6 @@ import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
 import jakarta.annotation.Nullable;
 import org.dom4j.Element;
 
-/**
- * See also {@code io.jmix.mapsflowui.component.loader.GeoMapLoader}
- */
 public class StudioSupersetDashboardPreviewLoader implements StudioPreviewComponentLoader {
     @Override
     public boolean isSupported(Element element) {

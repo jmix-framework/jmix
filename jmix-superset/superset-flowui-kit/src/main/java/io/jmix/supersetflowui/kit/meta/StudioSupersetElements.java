@@ -29,7 +29,7 @@ public interface StudioSupersetElements {
             classFqn = "io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint",
             xmlElement = "datasetConstraint",
             xmlns = "http://jmix.io/schema/superset/ui",
-            xmlnsAlias = "maps",
+            xmlnsAlias = "superset",
             icon = "io/jmix/supersetflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "datasetId", type = StudioPropertyType.INTEGER, required = true),

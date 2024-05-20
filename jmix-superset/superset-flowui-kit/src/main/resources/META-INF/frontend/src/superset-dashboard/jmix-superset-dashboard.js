@@ -89,7 +89,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             /**
              * @protected
              */
-            _domain: {
+            _url: {
                 type: String,
                 value: '',
             }
@@ -97,6 +97,10 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
     }
 
     updateDashboard() {
+        if (!this._isReadyToEmbed()) {
+            this.$.dashboard.replaceChildren() // remove all children
+            return;
+        }
         const embedDashboardInternal = async () => {
             await embedDashboard({
                 id: this.embeddedId, // given by the Superset embedding UI
@@ -124,6 +128,37 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             return this.guestToken;
         }
 
+        const responseJson = await this.fetchGuestToken();
+        if (responseJson.msg) {
+            if (responseJson.msg === 'Token has expired') {
+                this._accessToken = await this.$server.fetchAccessToken();
+                if (!this._accessToken) {
+                    console.error("Cannot fetch a guest token: 'access token is null'");
+                    return null;
+                }
+                const responseJson = await this.fetchGuestToken();
+                if (responseJson.message) {
+                    console.error("Cannot fetch a guest token: '" + responseJson.message + "'");
+                    return null;
+                } else if (responseJson.msg) {
+                    console.error("Cannot fetch a guest token: '" + responseJson.msg + "'");
+                    return null;
+                }
+                return responseJson.token;
+            } else {
+                console.error("Cannot fetch a guest token: '" + responseJson.msg + "'");
+                return null;
+            }
+        } else if (responseJson.message) {
+            console.error("Cannot fetch a guest token: '" + responseJson.message + "'");
+            return null;
+        }
+
+        return responseJson.token;
+    }
+
+    // todo rp check request without redirecting
+    fetchGuestToken = async () => {
         const response = await fetch(this.getBaseUrl() + '/api/v1/security/guest_token/', {
             method: 'post',
             headers: {
@@ -143,16 +178,17 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             }),
             credentials: "include",
         });
-        const responseJson = await response.json();
-        return responseJson.token;
+        return await response.json();
     }
 
     getBaseUrl() {
-        return this.url ? this.url : this._domain;
+        return this.url ? this.url : this._url;
     }
 
     _isReadyToEmbed() {
-        return this.guestToken || this._accessToken
+        return (this.guestToken || this._accessToken)
+            && this.embeddedId
+            && (this.getBaseUrl() && this.getBaseUrl().length > 0);
     }
 }
 

@@ -16,7 +16,7 @@
 
 <composite xmlns="http://jmix.io/schema/flowui/composite">
     <actions>
-        <action id="testAction" text="Test" icon="PLUS"/>
+        <action id="testAction" text="msg://testAction.text" icon="PLUS"/>
     </actions>
     <content>
         <vbox id="contentBox" classNames="overflow-auto">

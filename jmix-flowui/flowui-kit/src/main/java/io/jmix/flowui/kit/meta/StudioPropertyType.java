@@ -91,6 +91,11 @@ public enum StudioPropertyType {
     ENUM_CLASS,
 
     /**
+     * FQN of UI Component class.
+     */
+    COMPONENT_CLASS,
+
+    /**
      * Value from a strict list of property options.
      */
     ENUMERATION,

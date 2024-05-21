@@ -38,6 +38,7 @@ import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import elemental.json.JsonValue;
+import io.jmix.core.Messages;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
@@ -81,6 +82,7 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
 
     protected ApplicationContext applicationContext;
     protected UiComponents uiComponents;
+    protected Messages messages;
 
     protected TwinColumnDelegate<TwinColumn<V>, Collection<V>, Collection<V>> fieldDelegate;
     protected DataViewDelegate<TwinColumn<V>, V> dataViewDelegate;
@@ -96,16 +98,16 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     protected ListBoxListDataView<V> selectedDataView;
 
     protected Span componentLabel;
-    protected Div selectedLabel;
-    protected Div optionsLabel;
+    protected Div optionsColumnLabel;
+    protected Div selectedItemsColumnLabel;
     protected Span helperLabel;
     protected Span errorLabel;
 
-    protected JmixButton moveRight;
-    protected JmixButton moveRightAll;
-    protected JmixButton moveLeft;
-    protected JmixButton moveLeftAll;
-    protected JmixButton clearSelection;
+    protected JmixButton selectItems;
+    protected JmixButton selectAllItems;
+    protected JmixButton deselectItems;
+    protected JmixButton deselectAllItems;
+    protected JmixButton clearListBoxesSelection;
 
     protected List<Component> subParts;
     protected List<V> optionsData;
@@ -115,8 +117,12 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     protected Set<JmixMultiSelectListBox<V>> listBoxesWithSavedScrollPosition = new HashSet<>();
 
     protected Boolean reorderable = false;
-    protected Boolean allBtnEnabled = true;
+    protected Boolean selectAllButtonsVisible = false;
+    protected Boolean clearListBoxesSelectionButtonVisible = false;
     protected Boolean moveJustPerformed = false;
+
+    //change in tests using reflection
+    private final Boolean saveAndRestoreListBoxesScrollTopPosition = true;
 
     public TwinColumn() {
         super(null);
@@ -146,21 +152,26 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     public void setReorderable(Boolean reorderable) {
         this.reorderable = reorderable;
 
-        updateListBoxesReorderableComparator();
+        if (optionsData != null) {
+            updateListBoxesReorderableComparator();
+            updateListBoxesListenersAndStyles();
+        }
     }
 
     public Boolean isReorderable() {
         return reorderable;
     }
 
-    public void setAllBtnEnabled(Boolean allBtnEnabled) {
-        this.allBtnEnabled = allBtnEnabled;
+    public void setSelectAllButtonsVisible(Boolean allBtnEnabled) {
+        selectAllItems.setVisible(allBtnEnabled);
+        deselectAllItems.setVisible(allBtnEnabled);
+        this.selectAllButtonsVisible = allBtnEnabled;
 
-        updateAllBtnEnabled();
+        updateHiddenButtonsStyles();
     }
 
-    public Boolean isAllBtnEnabled() {
-        return allBtnEnabled;
+    public Boolean isSelectAllButtonsVisible() {
+        return selectAllButtonsVisible;
     }
 
     @Override
@@ -245,13 +256,6 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     @Override
     public void setItems(CollectionContainer<V> container) {
         dataViewDelegate.setItems(container);
-
-        Objects.requireNonNull(dataViewDelegate.getDataProvider()).addDataProviderListener((DataProviderListener<V>) event -> {
-            List<V> newOptions = event.getSource()
-                    .fetch(DataViewUtils.getQuery(TwinColumn.this))
-                    .toList();
-            recreateOptions(newOptions);
-        });
     }
 
     @Override
@@ -262,7 +266,15 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     @Override
     public TwinColumnDataView<V> setItems(DataProvider<V, Void> dataProvider) {
         bindDataProvider(dataProvider);
-        recreateOptions(dataProvider.fetch(DataViewUtils.getQuery(this)).toList());
+        dataProvider.addDataProviderListener((DataProviderListener<V>) event -> {
+            List<V> newOptions = event.getSource()
+                    .fetch(DataViewUtils.getQuery(TwinColumn.this))
+                    .toList();
+            recreateOptions(newOptions);
+            if (fieldDelegate != null) {
+                fieldDelegate.updateInvalidState();
+            }
+        });
         return getGenericDataView();
     }
 
@@ -276,6 +288,9 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     public TwinColumnListDataView<V> setItems(ListDataProvider<V> dataProvider) {
         bindDataProvider(dataProvider);
         recreateOptions(dataProvider.getItems());
+        if (fieldDelegate != null) {
+            fieldDelegate.updateInvalidState();
+        }
         return getListDataView();
     }
 
@@ -293,11 +308,6 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     @Override
     public TwinColumnDataView<V> getGenericDataView() {
         return new TwinColumnDataView<>(this::getDataProvider, this);
-    }
-
-    @Override
-    public String getHelperText() {
-        return helperLabel.getElement().getProperty("helperText");
     }
 
     @Override
@@ -376,16 +386,35 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         return fieldDelegate.getErrorMessage();
     }
 
-    public void setLeftColumnCaption(String leftColumnCaption) {
-        optionsLabel.setText(leftColumnCaption);
+    public void setOptionsColumnLabel(String optionsColumnLabel) {
+        this.optionsColumnLabel.setText(optionsColumnLabel);
 
         updateListBoxesLabelsLayoutVisibility();
     }
 
-    public void setRightColumnCaption(String rightColumnCaption) {
-        selectedLabel.setText(rightColumnCaption);
+    public String getOptionsColumnLabel() {
+        return optionsColumnLabel.getText();
+    }
+
+    public void setSelectedItemsColumnLabel(String selectedItemsColumnLabel) {
+        this.selectedItemsColumnLabel.setText(selectedItemsColumnLabel);
 
         updateListBoxesLabelsLayoutVisibility();
+    }
+
+    public String getSelectedItemsColumnLabel() {
+        return selectedItemsColumnLabel.getText();
+    }
+
+    public void setClearListBoxesSelectionButtonVisible(Boolean clearListBoxesSelectionButtonVisible) {
+        this.clearListBoxesSelection.setVisible(clearListBoxesSelectionButtonVisible);
+        this.clearListBoxesSelectionButtonVisible = clearListBoxesSelectionButtonVisible;
+
+        updateHiddenButtonsStyles();
+    }
+
+    public Boolean isClearListBoxesSelectionButtonVisible() {
+        return clearListBoxesSelectionButtonVisible;
     }
 
     @Override
@@ -405,10 +434,10 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         options.setEnabled(enabled);
         selected.setEnabled(enabled);
 
-        moveRight.setEnabled(enabled);
-        moveRightAll.setEnabled(enabled);
-        moveLeft.setEnabled(enabled);
-        moveLeftAll.setEnabled(enabled);
+        selectItems.setEnabled(enabled);
+        selectAllItems.setEnabled(enabled);
+        deselectItems.setEnabled(enabled);
+        deselectAllItems.setEnabled(enabled);
 
         fieldDelegate.updateInvalidState();
     }
@@ -422,6 +451,7 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
 
     protected void autowireDependencies() {
         uiComponents = applicationContext.getBean(UiComponents.class);
+        messages = applicationContext.getBean(Messages.class);
     }
 
     @Override
@@ -484,8 +514,8 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     }
 
     protected void createListBoxLabels() {
-        selectedLabel = createListBoxLabel("selectedLabel");
-        optionsLabel = createListBoxLabel("optionsLabel");
+        selectedItemsColumnLabel = createListBoxLabel("selectedLabel");
+        optionsColumnLabel = createListBoxLabel("optionsLabel");
 
         listBoxesLabelsLayout = uiComponents.create(HorizontalLayout.class);
         contentWrapper.add(listBoxesLabelsLayout);
@@ -498,9 +528,9 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         stub.setIcon(new Icon(VaadinIcon.THUMBS_UP));
         stub.setHeight("1px");
 
-        listBoxesLabelsLayout.add(optionsLabel);
+        listBoxesLabelsLayout.add(optionsColumnLabel);
         listBoxesLabelsLayout.add(stub);
-        listBoxesLabelsLayout.add(selectedLabel);
+        listBoxesLabelsLayout.add(selectedItemsColumnLabel);
     }
 
     protected void createListBoxes() {
@@ -517,10 +547,6 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         optionsDataView = options.setItems(new LinkedList<>());
         selectedDataView = selected.setItems(new LinkedList<>());
 
-        if (isReorderable()) {
-            updateListBoxesReorderableComparator();
-        }
-
         updateListBoxesLabelsLayoutVisibility();
     }
 
@@ -531,41 +557,51 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         buttonsPanel.setWidth("AUTO");
         buttonsPanel.setSpacing(false);
 
-        moveRight = createButton(
-                "moveRight",
+        selectItems = createButton(
+                "selectItems",
                 "button-first",
                 new Icon(VaadinIcon.ANGLE_RIGHT),
+                "twinColumn.selectItems",
+                true,
                 (ComponentEventListener<ClickEvent<Button>>) event ->
                         moveItems(options, selected, false));
-        moveRightAll = createButton(
-                "moveRightAll",
+        selectAllItems = createButton(
+                "selectAllItems",
                 "button-middle",
                 new Icon(VaadinIcon.ANGLE_DOUBLE_RIGHT),
+                "twinColumn.selectAllItems",
+                isSelectAllButtonsVisible(),
                 (ComponentEventListener<ClickEvent<Button>>) event ->
                         moveItems(options, selected, true));
-        moveLeft = createButton(
-                "moveLeft",
+        deselectItems = createButton(
+                "deselectItems",
                 "button-middle",
                 new Icon(VaadinIcon.ANGLE_LEFT),
+                "twinColumn.deselectItems",
+                true,
                 (ComponentEventListener<ClickEvent<Button>>) event ->
                         moveItems(selected, options, false));
-        moveLeftAll = createButton(
-                "moveLeftAll",
+        deselectAllItems = createButton(
+                "deselectAllItems",
                 "button-middle",
                 new Icon(VaadinIcon.ANGLE_DOUBLE_LEFT),
+                "twinColumn.deselectAllItems",
+                isSelectAllButtonsVisible(),
                 (ComponentEventListener<ClickEvent<Button>>) event ->
                         moveItems(selected, options, true));
-        clearSelection = createButton(
-                "clearSelection",
+        clearListBoxesSelection = createButton(
+                "clearListBoxesSelection",
                 "button-last",
                 new Icon(VaadinIcon.CLOSE_SMALL),
+                "twinColumn.clearListBoxesSelection",
+                isClearListBoxesSelectionButtonVisible(),
                 (ComponentEventListener<ClickEvent<Button>>) event -> {
-                    selected.deselectAll();
-                    options.deselectAll();
+                    options.deselect(optionsDataView.getItems().toList());
+                    selected.deselect(selectedDataView.getItems().toList());
                 }
         );
-
-        buttonsPanel.add(moveRight, moveRightAll, moveLeft, moveLeftAll, clearSelection);
+        updateHiddenButtonsStyles();
+        buttonsPanel.add(selectItems, selectAllItems, deselectItems, deselectAllItems, clearListBoxesSelection);
     }
 
     protected void createListBoxesLayout() {
@@ -599,15 +635,15 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         subParts = new LinkedList<>();
 
         subParts.add(componentLabel);
-        subParts.add(selectedLabel);
-        subParts.add(optionsLabel);
+        subParts.add(selectedItemsColumnLabel);
+        subParts.add(optionsColumnLabel);
         subParts.add(options);
         subParts.add(selected);
-        subParts.add(moveRight);
-        subParts.add(moveRightAll);
-        subParts.add(moveLeft);
-        subParts.add(moveLeftAll);
-        subParts.add(clearSelection);
+        subParts.add(selectItems);
+        subParts.add(selectAllItems);
+        subParts.add(deselectItems);
+        subParts.add(deselectAllItems);
+        subParts.add(clearListBoxesSelection);
     }
 
     protected Div createListBoxLabel(String id) {
@@ -629,13 +665,15 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         return listBox;
     }
 
-    protected JmixButton createButton(String id, String className, Icon icon,
+    protected JmixButton createButton(String id, String className, Icon icon, String tooltipKey, Boolean visible,
                                       ComponentEventListener<ClickEvent<Button>> clickListener) {
         JmixButton button = uiComponents.create(JmixButton.class);
 
         button.setId(id);
         button.setClassName(className);
         button.setIcon(icon);
+        button.setTooltipText(messages.getMessage(tooltipKey));
+        button.setVisible(visible);
         button.addClickListener(clickListener);
 
         return button;
@@ -646,6 +684,14 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         if (dataViewDelegate != null) {
             dataViewDelegate.bind(dataProvider);
         }
+    }
+
+    protected TwinColumnDelegate<TwinColumn<V>, Collection<V>, Collection<V>>  createFieldDelegate() {
+        return applicationContext.getBean(TwinColumnDelegate.class, this);
+    }
+
+    protected DataViewDelegate<TwinColumn<V>, V> createDataViewDelegate() {
+        return applicationContext.getBean(DataViewDelegate.class, this);
     }
 
     protected void listBoxItemDoubleClicked(JmixMultiSelectListBox<V> from,
@@ -665,10 +711,19 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         optionsDataView.addItems(newOptions);
         optionsData.addAll(newOptions);
 
+        updateListBoxesReorderableComparator();
         updateListBoxesListenersAndStyles();
     }
 
-    protected void moveItems(JmixMultiSelectListBox<V> from, JmixMultiSelectListBox<V> to, List<V> selectedItems) {
+    private void moveItems(JmixMultiSelectListBox<V> from, JmixMultiSelectListBox<V> to, boolean moveAllItems) {
+        List<V> selectedItems = moveAllItems ?
+                from.getListDataView().getItems().toList() :
+                from.getSelectedItems().stream().toList();
+
+        moveItems(from, to, selectedItems);
+    }
+
+    private void moveItems(JmixMultiSelectListBox<V> from, JmixMultiSelectListBox<V> to, List<V> selectedItems) {
         Runnable moveItems = () -> {
             from.select(Collections.emptySet());
             from.getListDataView().removeItems(selectedItems);
@@ -683,60 +738,25 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
             moveJustPerformed = true;
             listBoxesWithSavedScrollPosition.clear();
 
-            restoreScrollPosition(options);
-            restoreScrollPosition(selected);
-        };
-
-        Consumer<JmixMultiSelectListBox<V>> moveItemsIfScrollPositionsSaved = listBox -> {
-            listBoxesWithSavedScrollPosition.add(listBox);
-            if (listBoxesWithSavedScrollPosition.size() == 2) {
-                moveItems.run();
+            if (saveAndRestoreListBoxesScrollTopPosition) {
+                restoreScrollPosition(options);
+                restoreScrollPosition(selected);
             }
         };
 
-        saveScrollPosition(options, moveItemsIfScrollPositionsSaved);
-        saveScrollPosition(selected, moveItemsIfScrollPositionsSaved);
-    }
+        if (saveAndRestoreListBoxesScrollTopPosition) {
+            Consumer<JmixMultiSelectListBox<V>> moveItemsIfScrollPositionsSaved = listBox -> {
+                listBoxesWithSavedScrollPosition.add(listBox);
+                if (listBoxesWithSavedScrollPosition.size() == 2) {
+                    moveItems.run();
+                }
+            };
 
-    private void updateListBoxesListenersAndStyles() {
-        updateDoubleClickListeners();
-        updateListBoxSelectionStyles(options, optionsDataView);
-        updateListBoxSelectionStyles(selected, selectedDataView);
-    }
-
-    protected TwinColumnDelegate<TwinColumn<V>, Collection<V>, Collection<V>>  createFieldDelegate() {
-        return applicationContext.getBean(TwinColumnDelegate.class, this);
-    }
-
-    protected DataViewDelegate<TwinColumn<V>, V> createDataViewDelegate() {
-        return applicationContext.getBean(DataViewDelegate.class, this);
-    }
-
-    private void moveItems(JmixMultiSelectListBox<V> from, JmixMultiSelectListBox<V> to, boolean moveAllItems) {
-        List<V> selectedItems = moveAllItems ?
-                from.getListDataView().getItems().toList() :
-                from.getSelectedItems().stream().toList();
-
-        moveItems(from, to, selectedItems);
-    }
-
-    private void updateListBoxesReorderableComparator() {
-        SerializableComparator<V> listBoxReorderableComparator = (value1, value2) ->
-                Integer.compare(optionsData.indexOf(value1), optionsData.indexOf(value2));
-        optionsDataView.setSortComparator(isReorderable() ? listBoxReorderableComparator : null);
-        selectedDataView.setSortComparator(isReorderable() ? listBoxReorderableComparator : null);
-        updateListBoxesListenersAndStyles();
-    }
-
-    private void updateAllBtnEnabled() {
-        moveRightAll.setVisible(isAllBtnEnabled());
-        moveLeftAll.setVisible(isAllBtnEnabled());
-    }
-
-    private void updateListBoxesLabelsLayoutVisibility() {
-        listBoxesLabelsLayout.setVisible(
-                StringUtils.isNotEmpty(optionsLabel.getText()) ||
-                        StringUtils.isNotEmpty(selectedLabel.getText()));
+            saveScrollPosition(options, moveItemsIfScrollPositionsSaved);
+            saveScrollPosition(selected, moveItemsIfScrollPositionsSaved);
+        } else {
+            moveItems.run();
+        }
     }
 
     private void saveScrollPosition(JmixMultiSelectListBox<V> listBox, Consumer<JmixMultiSelectListBox<V>> consumer) {
@@ -759,6 +779,42 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         } else {
             moveJustPerformed = false;
         }
+    }
+
+    private void updateListBoxesListenersAndStyles() {
+        updateDoubleClickListeners();
+        updateListBoxSelectionStyles(options, optionsDataView);
+        updateListBoxSelectionStyles(selected, selectedDataView);
+    }
+
+    private void updateListBoxesReorderableComparator() {
+        SerializableComparator<V> listBoxReorderableComparator = (value1, value2) ->
+                Integer.compare(optionsData.indexOf(value1), optionsData.indexOf(value2));
+        optionsDataView.setSortComparator(isReorderable() ? listBoxReorderableComparator : null);
+        selectedDataView.setSortComparator(isReorderable() ? listBoxReorderableComparator : null);
+    }
+
+    private void updateHiddenButtonsStyles() {
+        List<Component> buttonsList = buttonsPanel.getChildren()
+                .filter(component -> component instanceof JmixButton && component.isVisible())
+                .toList();
+        for (int i = 0; i < buttonsList.size(); i++) {
+            Component button = buttonsList.get(i);
+            button.removeClassNames("button-first", "button-middle", "button-last");
+            if (i == 0) {
+                button.addClassName("button-first");
+            } else if (i == buttonsList.size() - 1) {
+                button.addClassName("button-last");
+            } else {
+                button.addClassName("button-middle");
+            }
+        }
+    }
+
+    private void updateListBoxesLabelsLayoutVisibility() {
+        listBoxesLabelsLayout.setVisible(
+                StringUtils.isNotEmpty(optionsColumnLabel.getText()) ||
+                        StringUtils.isNotEmpty(selectedItemsColumnLabel.getText()));
     }
 
     private void updateDoubleClickListeners() {
@@ -799,11 +855,11 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
 
     private void updateListBoxesInAccordanceWithNewValue(Collection<V> value) {
         List<V> selectedListBoxItems = selectedDataView.getItems().toList();
-        List<V> itemsToAdd = value.stream()
-                .filter(item -> !selectedListBoxItems.contains(item))
-                .toList();
+        List<V> itemsToAdd = value != null
+                ? value.stream().filter(item -> !selectedListBoxItems.contains(item)).toList()
+                : new LinkedList<>();
         List<V> itemsToRemove = selectedDataView.getItems()
-                .filter(item -> !value.contains(item))
+                .filter(item -> value == null || !value.contains(item))
                 .toList();
 
         if (itemsToAdd.isEmpty() && itemsToRemove.isEmpty()) {

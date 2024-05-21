@@ -151,3 +151,7 @@ jmix-twin-column[theme~="toolbar"] .button-last {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+
+jmix-twin-column vaadin-button vaadin-icon[dir="rtl"] {
+    rotate: 180deg;
+}

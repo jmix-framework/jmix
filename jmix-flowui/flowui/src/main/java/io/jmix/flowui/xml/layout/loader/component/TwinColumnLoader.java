@@ -31,12 +31,15 @@ public class TwinColumnLoader extends AbstractComponentLoader<TwinColumn> {
 
     @Override
     public void loadComponent() {
-        loadBoolean(element, "addAllBtnEnabled", resultComponent::setAllBtnEnabled);
-        loadResourceString(element, "leftColumnCaption",
-                context.getMessageGroup(), resultComponent::setLeftColumnCaption);
-        loadResourceString(element, "rightColumnCaption",
-                context.getMessageGroup(), resultComponent::setRightColumnCaption);
+        loadBoolean(element, "selectAllButtonsVisible",
+                resultComponent::setSelectAllButtonsVisible);
+        loadBoolean(element, "clearListBoxesSelectionButtonVisible",
+                resultComponent::setClearListBoxesSelectionButtonVisible);
         loadBoolean(element, "reorderable", resultComponent::setReorderable);
+        loadResourceString(element, "optionsColumnLabel",
+                context.getMessageGroup(), resultComponent::setOptionsColumnLabel);
+        loadResourceString(element, "selectedItemsColumnLabel",
+                context.getMessageGroup(), resultComponent::setSelectedItemsColumnLabel);
 
         getDataLoaderSupport().loadData(resultComponent, element);
         getDataLoaderSupport().loadItems(resultComponent, element);

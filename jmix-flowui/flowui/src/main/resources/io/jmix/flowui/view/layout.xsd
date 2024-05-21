@@ -2151,6 +2151,22 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="twinColumnThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="grid"/>
+                    <xs:enumeration value="rounded"/>
+                    <xs:enumeration value="listbox"/>
+                    <xs:enumeration value="toolbar"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -3125,11 +3141,13 @@
     <xs:complexType name="twinColumnComponent">
         <xs:complexContent>
             <xs:extension base="validatableBaseFieldComponent">
-                <xs:attribute name="addAllBtnEnabled" type="xs:boolean"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
-                <xs:attribute name="leftColumnCaption" type="resourceString"/>
-                <xs:attribute name="rightColumnCaption" type="resourceString"/>
+                <xs:attribute name="selectAllButtonsVisible" type="xs:boolean"/>
+                <xs:attribute name="clearListBoxesSelectionButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="reorderable" type="xs:boolean"/>
+                <xs:attribute name="optionsColumnLabel" type="resourceString"/>
+                <xs:attribute name="selectedItemsColumnLabel" type="resourceString"/>
+                <xs:attribute name="themeNames" type="twinColumnThemeNames"/>
 
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasClassNames"/>

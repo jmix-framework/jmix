@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.superset;
+package io.jmix.superset.schedule.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import io.jmix.core.annotation.Internal;
+import io.jmix.superset.SupersetProperties;
+import io.jmix.superset.schedule.AccessTokenManager;
 import io.jmix.superset.service.model.LoginResponse;
 import io.jmix.superset.service.model.RefreshResponse;
 import io.jmix.superset.service.SupersetService;
@@ -33,10 +36,11 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
-@Component("superset_SupersetAccessTokenManager")
-public class SupersetAccessTokenManager {
+@Internal
+@Component("superset_AccessTokenManagerImpl")
+public class AccessTokenManagerImpl implements AccessTokenManager {
 
-    private static final Logger log = LoggerFactory.getLogger(SupersetAccessTokenManager.class);
+    private static final Logger log = LoggerFactory.getLogger(AccessTokenManagerImpl.class);
 
     private final SupersetService supersetService;
     private final SupersetProperties supersetProperties;
@@ -46,22 +50,24 @@ public class SupersetAccessTokenManager {
     private Long accessTokenExpiresIn;
     private String refreshToken;
 
-    public SupersetAccessTokenManager(SupersetService supersetService,
-                                      SupersetProperties supersetProperties) {
+    public AccessTokenManagerImpl(SupersetService supersetService,
+                                  SupersetProperties supersetProperties) {
         this.supersetService = supersetService;
         this.supersetProperties = supersetProperties;
 
         objectMapper = buildObjectMapper();
     }
 
+    @Override
     public synchronized void updateAccessToken() {
         if (accessToken == null) {
             performLogin();
-        } else if (isAboutToExpire()) {
+        } else if (isAccessTokenAboutToExpire()) {
             refreshAccessToken();
         }
     }
 
+    @Override
     public String getAccessToken() {
         if (Strings.isNullOrEmpty(accessToken)) {
             throw new IllegalStateException("Access token is not initialized");
@@ -69,7 +75,8 @@ public class SupersetAccessTokenManager {
         return accessToken;
     }
 
-    public String getRefreshAccessToken() {
+    @Override
+    public String getRefreshToken() {
         if (Strings.isNullOrEmpty(refreshToken)) {
             throw new IllegalStateException("Refresh token is not initialized");
         }
@@ -162,8 +169,9 @@ public class SupersetAccessTokenManager {
         return null;
     }
 
-    protected boolean isAboutToExpire() {
+    protected boolean isAccessTokenAboutToExpire() {
         long currentTimePoint = new Date().getTime();
+        // todo rp discuss
         if (accessTokenExpiresIn == null) {
             accessTokenExpiresIn = getFallbackExpirationTime();
         }
@@ -171,6 +179,6 @@ public class SupersetAccessTokenManager {
     }
 
     protected Long getFallbackExpirationTime() {
-        return supersetProperties.fallbackAccessTokenExpiration.getSeconds();
+        return supersetProperties.getFallbackAccessTokenExpiration().getSeconds();
     }
 }

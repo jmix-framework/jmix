@@ -16,24 +16,24 @@
 
 package io.jmix.superset.schedule;
 
-import io.jmix.superset.SupersetAccessTokenManager;
 import io.jmix.superset.SupersetProperties;
+import io.jmix.superset.schedule.impl.AccessTokenManagerImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
-@Component("superset_SupersetAccessTokenScheduleConfigurer")
-public class SupersetAccessTokenScheduleConfigurer {
+@Component("superset_AccessTokenScheduleConfigurer")
+public class AccessTokenScheduleConfigurer {
 
     private final TaskScheduler taskScheduler;
     private final SupersetProperties supersetProperties;
-    private final SupersetAccessTokenManager accessTokenManager;
+    private final AccessTokenManagerImpl accessTokenManager;
 
-    public SupersetAccessTokenScheduleConfigurer(@Qualifier("superset_ThreadPoolTaskScheduler") TaskScheduler taskScheduler,
-                                                 SupersetProperties supersetProperties,
-                                                 SupersetAccessTokenManager accessTokenManager) {
+    public AccessTokenScheduleConfigurer(@Qualifier("superset_ThreadPoolTaskScheduler") TaskScheduler taskScheduler,
+                                         SupersetProperties supersetProperties,
+                                         AccessTokenManagerImpl accessTokenManager) {
         this.taskScheduler = taskScheduler;
         this.supersetProperties = supersetProperties;
         this.accessTokenManager = accessTokenManager;

@@ -21,7 +21,7 @@ import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
-import io.jmix.superset.SupersetAccessTokenManager;
+import io.jmix.superset.schedule.AccessTokenManager;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
@@ -39,7 +39,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     protected ApplicationContext applicationContext;
     protected CurrentUserSubstitution currentUserSubstitution;
     protected SupersetProperties supersetProperties;
-    protected SupersetAccessTokenManager accessTokenManager;
+    protected AccessTokenManager accessTokenManager;
 
     protected DatasetConstrainsProvider datasetConstrainsProvider;
 
@@ -52,7 +52,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     public void afterPropertiesSet() {
         currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
         supersetProperties = applicationContext.getBean(SupersetProperties.class);
-        accessTokenManager = applicationContext.getBean(SupersetAccessTokenManager.class);
+        accessTokenManager = applicationContext.getBean(AccessTokenManager.class);
 
         setUrlInternal(supersetProperties.getUrl());
         setAccessToken(accessTokenManager.getAccessToken());

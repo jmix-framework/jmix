@@ -5,7 +5,7 @@
 
 @Internal
 @NonNullApi
-package io.jmix.superset.schedule;
+package io.jmix.superset.schedule.impl;
 
 import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

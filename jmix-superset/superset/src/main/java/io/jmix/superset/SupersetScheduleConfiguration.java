@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.schedule;
+package io.jmix.superset;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

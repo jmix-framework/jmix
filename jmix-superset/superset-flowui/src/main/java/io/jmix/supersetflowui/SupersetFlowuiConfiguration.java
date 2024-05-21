@@ -16,7 +16,6 @@
 
 package io.jmix.supersetflowui;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.registration.ComponentRegistration;
@@ -30,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan
-@JmixModule(dependsOn = {CoreConfiguration.class, FlowuiConfiguration.class, SupersetConfiguration.class})
+@JmixModule(dependsOn = {FlowuiConfiguration.class, SupersetConfiguration.class})
 public class SupersetFlowuiConfiguration {
 
     @Bean

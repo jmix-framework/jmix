@@ -111,7 +111,7 @@ public abstract class CompositeComponent<T extends Component> extends Composite<
     }
 
     /**
-     * The event that is fred after the composite component and all its
+     * The event that is fired after the composite component and all its
      * declaratively defined inner components are created and fully
      * initialized.
      * <p>

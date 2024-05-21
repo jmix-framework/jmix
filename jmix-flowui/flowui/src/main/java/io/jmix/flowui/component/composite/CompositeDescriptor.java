@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 
 /**
  * Specifies a string value that is a file path to an xml descriptor
- * that can be used for a {@link com.vaadin.flow.component.Composite} initialization.
+ * that can be used for a {@link CompositeComponent} initialization.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

@@ -67,7 +67,7 @@ import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
 @Tag("jmix-twin-column")
 public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
-            implements HasSize, HasHelper, HasAriaLabel, HasLabel, HasRequired, HasTheme,
+            implements HasSize, HasHelper, HasAriaLabel, HasLabel, HasRequired,
                        HasDataView<V, Void, TwinColumnDataView<V>>, HasListDataView<V, TwinColumnListDataView<V>>,
                        HasItemComponents<V>, HasSubParts, HasThemeVariant<TwinColumnVariant>,
                        SupportsItemsContainer<V>, SupportsValueSource<Collection<V>>, SupportsItemsEnum<V>,
@@ -878,8 +878,6 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     private void updateListBoxSelectionStyles(JmixMultiSelectListBox<V> listBox, ListBoxListDataView<V> listBoxDataView) {
         List<Component> list = listBox.getChildren().toList();
         for (int i = 0; i < list.size(); i++) {
-            list.get(i).getElement().removeProperty("position");
-
             if (list.get(i).hasClassName("single")) {
                 list.get(i).removeClassName("single");
             }
@@ -902,21 +900,7 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
 
             String className = getListBoxComponentClassName(prevSelected, nextSelected);
             list.get(i).addClassName(className);
-
-            String position = getPosition(prevSelected, nextSelected);
-            list.get(i).getElement().setProperty("position", position);
         }
-    }
-
-    private String getPosition(boolean prevSelected, boolean nextSelected) {
-        if (!prevSelected && !nextSelected) {
-            return "0";
-        } else if (!prevSelected) {
-            return "1";
-        } else if (!nextSelected) {
-            return "-1";
-        }
-        return "0";
     }
 
     private String getListBoxComponentClassName(boolean prevSelected, boolean nextSelected) {

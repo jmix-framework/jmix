@@ -16,30 +16,36 @@
 
 package io.jmix.supersetflowui.component;
 
-import elemental.json.JsonArray;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
+import com.google.common.base.Strings;
+import com.vaadin.flow.component.AttachEvent;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.superset.schedule.AccessTokenManager;
 import io.jmix.superset.SupersetProperties;
+import io.jmix.superset.service.SupersetService;
+import io.jmix.superset.service.model.GuestTokenBody;
+import io.jmix.supersetflowui.SupersetTokenHandler;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 import jakarta.annotation.Nullable;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
 
+import java.util.Collections;
 import java.util.List;
+
+import static io.jmix.superset.service.model.GuestTokenBody.Resource.DASHBOARD_TYPE;
 
 public class SupersetDashboard extends JmixSupersetDashboard implements ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
     protected CurrentUserSubstitution currentUserSubstitution;
     protected SupersetProperties supersetProperties;
-    protected AccessTokenManager accessTokenManager;
+    protected SupersetTokenHandler guestTokenHandler;
 
     protected DatasetConstrainsProvider datasetConstrainsProvider;
 
@@ -52,11 +58,12 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     public void afterPropertiesSet() {
         currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
         supersetProperties = applicationContext.getBean(SupersetProperties.class);
-        accessTokenManager = applicationContext.getBean(AccessTokenManager.class);
+        guestTokenHandler = applicationContext.getBean(SupersetTokenHandler.class,
+                applicationContext.getBean(SupersetService.class),
+                applicationContext.getBean(AccessTokenManager.class),
+                applicationContext.getBean(BackgroundWorker.class));
 
         setUrlInternal(supersetProperties.getUrl());
-        setAccessToken(accessTokenManager.getAccessToken());
-        setUserInfo(currentUserSubstitution.getEffectiveUser().getUsername());
     }
 
     @Nullable
@@ -66,31 +73,54 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
 
     public void setDatasetConstrainsProvider(@Nullable DatasetConstrainsProvider datasetConstrainsProvider) {
         this.datasetConstrainsProvider = datasetConstrainsProvider;
-
-        if (datasetConstrainsProvider != null) {
-            setDatasetConstraints(convertDatasetConstrainsToJson(datasetConstrainsProvider.getConstraints()));
-        }
     }
 
     public void forceEmbed() {
         requestEmbedComponent();
     }
 
-    protected JsonValue convertDatasetConstrainsToJson(List<DatasetConstraint> dataConstraints) {
-        JreJsonFactory factory = new JreJsonFactory();
-        JsonArray array = factory.createArray();
-        for (int i = 0; i < dataConstraints.size(); i++) {
-            DatasetConstraint dataConstraint = dataConstraints.get(0);
-            JsonObject constraint = factory.createObject();
-            constraint.put("dataset", dataConstraint.dataset());
-            constraint.put("clause", dataConstraint.clause());
-            array.set(i, constraint);
-        }
-        return array;
+    @Override
+    protected void refreshGuestToken() {
+        super.refreshGuestToken();
+
+        startGuestTokenRefreshing();
     }
 
     @Override
-    protected String fetchAccessToken() {
-        return accessTokenManager.getAccessToken();
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+
+        startGuestTokenRefreshing();
+    }
+
+    protected void startGuestTokenRefreshing() {
+        guestTokenHandler.requestGuestToken(buildGuestTokenBody(), guestTokenResponse -> {
+            setGuestTokenInternal(guestTokenResponse.getToken());
+        });
+    }
+
+    protected GuestTokenBody buildGuestTokenBody() {
+        if (Strings.isNullOrEmpty(getEmbeddedId())) {
+            throw new IllegalStateException("Embedded id is required");
+        }
+
+        List<GuestTokenBody.RowLevelRole> rls = Collections.emptyList();
+        if (datasetConstrainsProvider != null) {
+            rls = convertToSupersetRls(datasetConstrainsProvider.getConstraints());
+        }
+
+        return GuestTokenBody.builder()
+                .withResource(new GuestTokenBody.Resource(getEmbeddedId(), DASHBOARD_TYPE))
+                .withRowLevelRoles(rls)
+                .withUser(new GuestTokenBody.User(currentUserSubstitution.getEffectiveUser().getUsername()))
+                .build();
+    }
+
+    protected List<GuestTokenBody.RowLevelRole> convertToSupersetRls(List<DatasetConstraint> datasetConstraints) {
+        return CollectionUtils.isNotEmpty(datasetConstraints)
+                ? datasetConstraints.stream()
+                        .map(dc -> new GuestTokenBody.RowLevelRole(dc.clause(), dc.dataset()))
+                        .toList()
+                : Collections.emptyList();
     }
 }

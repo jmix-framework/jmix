@@ -20,13 +20,13 @@ import jakarta.annotation.Nullable;
 
 public interface AccessTokenManager {
 
-    void updateAccessToken();
-
-    void updateCsrfToken();
+    void refreshAccessToken();
 
     String getAccessToken();
 
     String getRefreshToken();
+
+    void refreshCsrfToken();
 
     @Nullable
     String getCsrfToken();

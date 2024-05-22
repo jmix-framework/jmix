@@ -21,9 +21,6 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
 
 @Tag("jmix-superset-dashboard")
 @NpmPackage(value = "@superset-ui/embedded-sdk", version = "0.1.0-alpha.10")
@@ -36,13 +33,10 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     private static final String PROPERTY_TAB_VISIBILITY = "tabVisibility";
     private static final String PROPERTY_TITLE_VISIBILITY = "titleVisibility";
     private static final String PROPERTY_CHART_CONTROLS_VISIBILITY = "chartControlsVisibility";
-    //    private static final String PROPERTY_FILTERS_VISIBILITY = "filtersVisibility";
     private static final String PROPERTY_FILTERS_EXPANDED = "filtersExpanded";
 
-    private static final String PROPERTY_ACCESS_TOKEN = "_accessToken";
+    private static final String PROPERTY_GUEST_TOKEN_INTERNAL = "_guestToken";
     private static final String PROPERTY_URL_INTERNAL = "_url";
-    private static final String PROPERTY_USER_INFO = "_userInfo";
-    private static final String PROPERTY_DATASET_CONSTRAINS = "_datasetConstraints";
 
     protected StateTree.ExecutionRegistration updateComponentExecution;
 
@@ -106,14 +100,6 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
         getElement().setProperty(PROPERTY_CHART_CONTROLS_VISIBILITY, chartControlsVisibility);
     }
 
-    // todo rp it seems the configuration of superset server is needed, for now it ignores parameter in URL
-/*    public Boolean getFiltersVisibility() {
-        return getElement().getProperty(PROPERTY_FILTERS_VISIBILITY, Boolean.FALSE);
-    }
-    public void setFiltersVisibility(Boolean filtersVisibility) {
-        getElement().setProperty(PROPERTY_FILTERS_VISIBILITY, filtersVisibility);
-    }*/
-
     public void setFiltersExpanded(Boolean filtersExpanded) {
         getElement().setProperty(PROPERTY_FILTERS_EXPANDED, filtersExpanded);
     }
@@ -122,37 +108,12 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
         return getElement().getProperty(PROPERTY_FILTERS_EXPANDED, Boolean.TRUE);
     }
 
-    protected String getUrlInternal() {
-        return getElement().getProperty(PROPERTY_URL_INTERNAL);
-    }
-
     protected void setUrlInternal(String url) {
         getElement().setProperty(PROPERTY_URL_INTERNAL, url);
     }
 
-    protected String getAccessToken() {
-        return getElement().getProperty(PROPERTY_ACCESS_TOKEN);
-    }
-
-    protected void setAccessToken(String accessToken) {
-        getElement().setProperty(PROPERTY_ACCESS_TOKEN, accessToken);
-    }
-
-    protected void setUserInfo(String username) {
-        JsonObject json = new JreJsonFactory().createObject();
-        json.put("username", username);
-        getElement().setPropertyJson(PROPERTY_USER_INFO, json);
-    }
-
-    protected void setDatasetConstraints(JsonValue dataConstraints) {
-        getElement().setPropertyJson(PROPERTY_DATASET_CONSTRAINS, dataConstraints);
-    }
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-
-        requestEmbedComponent();
+    protected void setGuestTokenInternal(String guestToken) {
+        getElement().setProperty(PROPERTY_GUEST_TOKEN_INTERNAL, guestToken);
     }
 
     protected void requestEmbedComponent() {
@@ -170,8 +131,7 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     }
 
     @ClientCallable
-    protected String fetchAccessToken() {
+    protected void refreshGuestToken() {
         // implemented by inheritors
-        return null;
     }
 }

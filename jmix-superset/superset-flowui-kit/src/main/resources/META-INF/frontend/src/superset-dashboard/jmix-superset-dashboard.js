@@ -2,6 +2,9 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin';
 import {embedDashboard} from "@superset-ui/embedded-sdk";
+import {getGuestTokenRefreshTiming} from "@superset-ui/embedded-sdk/lib/guestTokenRefresh";
+
+const GUEST_TOKEN_REFRESH_BUFFER = 5000;
 
 class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) {
 
@@ -55,10 +58,6 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                 type: Boolean,
                 value: false,
             },
-            filtersVisibility: {
-                type: Boolean,
-                value: false,
-            },
             filtersExpanded: {
                 type: Boolean,
                 value: true,
@@ -66,25 +65,10 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             /**
              * @protected
              */
-            _userInfo: {
-                type: Object,
-                value: {
-                    username: "undefined",
-                }
-            },
-            /**
-             * @protected
-             */
-            _datasetConstraints: {
-                type: Object,
-                value: [],
-            },
-            /**
-             * @protected
-             */
-            _accessToken: {
+            _guestToken: {
                 type: String,
                 value: '',
+                observer: '_onGuestTokenChanged',
             },
             /**
              * @protected
@@ -113,72 +97,23 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                     hideChartControls: !this.chartControlsVisibility,
                     hideTab: !this.tabVisibility,
                     filters: {
-                        visible: this.filtersVisibility,
                         expanded: this.filtersExpanded
                     }
                 },
             })
+            this.dashboardEmbedded = true;
         };
         embedDashboardInternal();
     }
 
     getGuestToken = async () => {
-        // Use custom guest token if is set
         if (this.guestToken) {
             return this.guestToken;
         }
 
-        const responseJson = await this.fetchGuestToken();
-        if (responseJson.msg) {
-            if (responseJson.msg === 'Token has expired') {
-                this._accessToken = await this.$server.fetchAccessToken();
-                if (!this._accessToken) {
-                    console.error("Cannot fetch a guest token: 'access token is null'");
-                    return null;
-                }
-                const responseJson = await this.fetchGuestToken();
-                if (responseJson.message) {
-                    console.error("Cannot fetch a guest token: '" + responseJson.message + "'");
-                    return null;
-                } else if (responseJson.msg) {
-                    console.error("Cannot fetch a guest token: '" + responseJson.msg + "'");
-                    return null;
-                }
-                return responseJson.token;
-            } else {
-                console.error("Cannot fetch a guest token: '" + responseJson.msg + "'");
-                return null;
-            }
-        } else if (responseJson.message) {
-            console.error("Cannot fetch a guest token: '" + responseJson.message + "'");
-            return null;
+        if (this._guestToken) {
+            return this._guestToken;
         }
-
-        return responseJson.token;
-    }
-
-    // todo rp check request without redirecting
-    fetchGuestToken = async () => {
-        const response = await fetch(this.getBaseUrl() + '/api/v1/security/guest_token/', {
-            method: 'post',
-            headers: {
-                'Accept': '*/*',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this._accessToken
-            },
-            body: JSON.stringify({
-                "resources": [
-                    {
-                        "id": this.embeddedId,
-                        "type": "dashboard"
-                    }
-                ],
-                "rls": this._datasetConstraints,
-                "user": this._userInfo,
-            }),
-            credentials: "include",
-        });
-        return await response.json();
     }
 
     getBaseUrl() {
@@ -186,9 +121,24 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
     }
 
     _isReadyToEmbed() {
-        return (this.guestToken || this._accessToken)
+        return (this.guestToken || this._guestToken)
             && this.embeddedId
             && (this.getBaseUrl() && this.getBaseUrl().length > 0);
+    }
+
+    _onGuestTokenChanged(_guestToken) {
+        if (_guestToken) {
+            this._startGuestTokenRefreshTimer(_guestToken);
+
+            if (!this.dashboardEmbedded) {
+                this.updateDashboard();
+            }
+        }
+    }
+
+    _startGuestTokenRefreshTimer(_guestToken) {
+        let supersetTiming = getGuestTokenRefreshTiming(_guestToken);
+        setTimeout(this.$server.refreshGuestToken, supersetTiming - GUEST_TOKEN_REFRESH_BUFFER);
     }
 }
 

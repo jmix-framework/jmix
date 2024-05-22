@@ -48,7 +48,7 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
 
     protected final ObjectMapper objectMapper;
     private String accessToken;
-    private Long accessTokenExpiresIn;
+    private Long accessTokenExpiresIn; // seconds
     private String refreshToken;
     private String csrfToken;
 
@@ -61,16 +61,16 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
     }
 
     @Override
-    public synchronized void updateAccessToken() {
+    public synchronized void refreshAccessToken() {
         if (accessToken == null) {
             performLogin();
         } else if (isAccessTokenAboutToExpire()) {
-            refreshAccessToken();
+            performRefreshingAccessToken();
         }
     }
 
     @Override
-    public synchronized void updateCsrfToken() {
+    public synchronized void refreshCsrfToken() {
         if (supersetProperties.isCsrfProtectionEnabled()) {
             performCsrfTokenRequest();
         }
@@ -116,7 +116,7 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
         }
     }
 
-    protected void refreshAccessToken() {
+    protected void performRefreshingAccessToken() {
         boolean retry = false;
         RefreshResponse response = null;
         try {
@@ -142,7 +142,7 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
         }
 
         // Response cannot be null here
-        if (Strings.isNullOrEmpty(response.getSystemMessage())) {
+        if (response.getSystemMessage() == null) {
             updateAccessToken(response.getAccessToken());
         } else {
             log.error("Failed to update access token. Dashboard functionality may work incorrectly. Message from Superset:" +
@@ -175,7 +175,8 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
 
     protected ObjectMapper buildObjectMapper() {
         return new ObjectMapper()
-                .configure(DeserializationFeature.USE_LONG_FOR_INTS, true);
+                .configure(DeserializationFeature.USE_LONG_FOR_INTS, true)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Nullable
@@ -204,14 +205,14 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
 
     protected boolean isAccessTokenAboutToExpire() {
         long currentTimePoint = new Date().getTime();
-        // todo rp discuss
         if (accessTokenExpiresIn == null) {
             accessTokenExpiresIn = getFallbackExpirationTime();
         }
-        return accessTokenExpiresIn - currentTimePoint < Duration.ofMinutes(1).getSeconds();
+        return (accessTokenExpiresIn * 1000) - currentTimePoint < Duration.ofMinutes(1).getSeconds();
     }
 
     protected Long getFallbackExpirationTime() {
+        // todo rp discuss
         return supersetProperties.getFallbackAccessTokenExpiration().getSeconds();
     }
 }

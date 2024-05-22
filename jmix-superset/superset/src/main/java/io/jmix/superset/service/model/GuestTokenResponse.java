@@ -19,6 +19,8 @@ package io.jmix.superset.service.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 public class GuestTokenResponse implements Serializable {
 
@@ -28,6 +30,8 @@ public class GuestTokenResponse implements Serializable {
 
     @JsonProperty("msg")
     private String systemMessage; // e.g. token is expired
+
+    private List<Error> errors;
 
     public String getToken() {
         return token;
@@ -51,5 +55,30 @@ public class GuestTokenResponse implements Serializable {
 
     public void setSystemMessage(String systemMessage) {
         this.systemMessage = systemMessage;
+    }
+
+    public List<Error> getErrors() {
+        return errors == null ? Collections.emptyList() : errors;
+    }
+
+    public void setErrors(List<Error> errors) {
+        this.errors = errors;
+    }
+
+    public static class Error {
+        private String message;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return "{\"message\":\"" + message + "\"}";
+        }
     }
 }

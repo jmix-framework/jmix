@@ -24,7 +24,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @Configuration(proxyBeanMethods = false)
 public class SupersetScheduleConfiguration {
 
-    @Bean("superset_ThreadPoolTaskScheduler")
+    @Bean("superset_ThreadPoolAccessTokenTaskScheduler")
     public TaskScheduler threadPoolTaskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
         threadPoolTaskScheduler.setThreadNamePrefix("superset_AccessTokenScheduler-");

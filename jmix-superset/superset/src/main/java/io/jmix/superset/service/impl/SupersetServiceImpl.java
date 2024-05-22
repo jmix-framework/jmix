@@ -17,8 +17,8 @@
 package io.jmix.superset.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.service.SupersetService;
@@ -31,11 +31,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.CookieManager;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
 
 @Service("superset_SupersetService")
 public class SupersetServiceImpl implements SupersetService {
@@ -152,16 +152,18 @@ public class SupersetServiceImpl implements SupersetService {
             throw new IllegalStateException("Cannot serialize guest token body to JSON string", e);
         }
 
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .uri(URI.create(properties.getUrl() + "/api/v1/security/guest_token"))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
+        HttpRequest request;
         if (properties.isCsrfProtectionEnabled()) {
             Preconditions.checkNotEmptyString(csrfToken, "CSRF token cannot be empty");
-            request.headers().map().put("X-Csrf-Token", List.of(csrfToken));
+            request = builder.header("X-Csrf-Token", csrfToken).build();
+        } else {
+            request = builder.build();
         }
 
         log.debug("Sends guest token request");
@@ -195,7 +197,8 @@ public class SupersetServiceImpl implements SupersetService {
         log.debug("Sends CSRF token request");
 
         try {
-            responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
+            HttpResponse<String> send = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            responseBody = send.body();
         } catch (IOException | InterruptedException e) {
             throw new IllegalStateException("Failed to get a guest a CSRF token from Superset", e);
         }
@@ -212,10 +215,12 @@ public class SupersetServiceImpl implements SupersetService {
     protected HttpClient buildHttpClient() {
         return HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.ALWAYS)
+                .cookieHandler(new CookieManager()) // todo rp?
                 .build();
     }
 
     protected ObjectMapper buildObjectMapper() {
-        return new ObjectMapper();
+        return new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 }

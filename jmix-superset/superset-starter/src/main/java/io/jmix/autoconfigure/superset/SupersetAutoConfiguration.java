@@ -21,20 +21,20 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @AutoConfiguration
 @Import(SupersetConfiguration.class)
 public class SupersetAutoConfiguration {
 
     @ConditionalOnProperty(value = "jmix.superset.csrf-protection-enabled", matchIfMissing = true)
-    @Bean("superset_TaskExecutor")
-    public TaskExecutor taskExecutor() {
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(1);
-        threadPoolTaskExecutor.setMaxPoolSize(1);
-        threadPoolTaskExecutor.setQueueCapacity(1);
-        return threadPoolTaskExecutor;
+    @Bean("superset_ThreadPoolCsrfTokenTaskScheduler")
+    public TaskScheduler threadPoolTaskScheduler() {
+        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setThreadNamePrefix("superset_CsrfTokenScheduler-");
+        threadPoolTaskScheduler.setPoolSize(1);
+        threadPoolTaskScheduler.setDaemon(true);
+        return threadPoolTaskScheduler;
     }
 }

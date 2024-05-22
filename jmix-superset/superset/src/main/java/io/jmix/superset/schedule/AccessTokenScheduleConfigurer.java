@@ -17,43 +17,49 @@
 package io.jmix.superset.schedule;
 
 import io.jmix.superset.SupersetProperties;
-import io.jmix.superset.schedule.impl.AccessTokenManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
+
+import java.time.Instant;
 
 @Component("superset_AccessTokenScheduleConfigurer")
 public class AccessTokenScheduleConfigurer {
 
     private final TaskScheduler taskScheduler;
-    private final TaskExecutor taskExecutor;
+    private final TaskScheduler csrfTaskScheduler;
     private final SupersetProperties supersetProperties;
-    private final AccessTokenManagerImpl accessTokenManager;
+    private final AccessTokenManager accessTokenManager;
 
-    public AccessTokenScheduleConfigurer(@Qualifier("superset_ThreadPoolTaskScheduler") TaskScheduler taskScheduler,
-                                         @Autowired(required = false) @Qualifier("superset_TaskExecutor") TaskExecutor taskExecutor,
+    public AccessTokenScheduleConfigurer(@Qualifier("superset_ThreadPoolAccessTokenTaskScheduler")
+                                         TaskScheduler taskScheduler,
+                                         @Autowired(required = false)
+                                         @Qualifier("superset_ThreadPoolCsrfTokenTaskScheduler")
+                                         TaskScheduler csrfTaskScheduler,
                                          SupersetProperties supersetProperties,
-                                         AccessTokenManagerImpl accessTokenManager) {
+                                         AccessTokenManager accessTokenManager) {
         this.taskScheduler = taskScheduler;
-        this.taskExecutor = taskExecutor;
+        this.csrfTaskScheduler = csrfTaskScheduler;
         this.supersetProperties = supersetProperties;
         this.accessTokenManager = accessTokenManager;
     }
 
     @EventListener
     public void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        // Schedule updating an access token
+        // Schedule refreshing an access token
         taskScheduler.scheduleWithFixedDelay(
-                accessTokenManager::updateAccessToken,
-                supersetProperties.getRefreshAccessTokenScheduler());
+                accessTokenManager::refreshAccessToken,
+                supersetProperties.getAccessTokenRefreshSchedule());
 
-        // Initially gets a CSRF token
+        // Schedule refreshing a CSRF token
         if (supersetProperties.isCsrfProtectionEnabled()) {
-            taskExecutor.execute(accessTokenManager::updateCsrfToken);
+            csrfTaskScheduler.scheduleWithFixedDelay(
+                    accessTokenManager::refreshCsrfToken,
+                    Instant.now().plusSeconds(2),
+                    supersetProperties.getCsrfTokenRefreshSchedule());
         }
     }
 }

@@ -12,22 +12,25 @@ public class SupersetProperties {
     String url;
     String username;
     String password;
-    Duration refreshAccessTokenScheduler;
+    Duration accessTokenRefreshSchedule;
     Duration fallbackAccessTokenExpiration;
+    Duration csrfTokenRefreshSchedule; // default is 6d and 23h
     boolean csrfProtectionEnabled;
 
     public SupersetProperties(String url,
                               String username,
                               String password,
-                              @DefaultValue("1m") Duration refreshAccessTokenScheduler,
+                              @DefaultValue("1m") Duration accessTokenRefreshSchedule,
                               @DefaultValue("3m") Duration fallbackAccessTokenExpiration,
-                              @DefaultValue("true") boolean csrfProtectionEnabled) {
+                              @DefaultValue("true") boolean csrfProtectionEnabled,
+                              @DefaultValue("167h") Duration csrfTokenRefreshSchedule) {
         this.url = url;
         this.username = username;
         this.password = password;
-        this.refreshAccessTokenScheduler = refreshAccessTokenScheduler;
+        this.accessTokenRefreshSchedule = accessTokenRefreshSchedule;
         this.fallbackAccessTokenExpiration = fallbackAccessTokenExpiration;
         this.csrfProtectionEnabled = csrfProtectionEnabled;
+        this.csrfTokenRefreshSchedule = csrfTokenRefreshSchedule;
     }
 
     @Nullable
@@ -45,8 +48,8 @@ public class SupersetProperties {
         return password;
     }
 
-    public Duration getRefreshAccessTokenScheduler() {
-        return refreshAccessTokenScheduler;
+    public Duration getAccessTokenRefreshSchedule() {
+        return accessTokenRefreshSchedule;
     }
 
     public Duration getFallbackAccessTokenExpiration() {
@@ -55,5 +58,9 @@ public class SupersetProperties {
 
     public boolean isCsrfProtectionEnabled() {
         return csrfProtectionEnabled;
+    }
+
+    public Duration getCsrfTokenRefreshSchedule() {
+        return csrfTokenRefreshSchedule;
     }
 }

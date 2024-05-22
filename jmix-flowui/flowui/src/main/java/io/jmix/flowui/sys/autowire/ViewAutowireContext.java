@@ -38,6 +38,7 @@ public class ViewAutowireContext implements DependencyInjector.AutowireContext {
         return view;
     }
 
+    @Override
     public Collection<Object> getAutowired() {
         return autowired;
     }

@@ -18,7 +18,7 @@ package io.jmix.flowui.sys.autowire;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.HasValue.ValueChangeListener;
+import com.vaadin.flow.component.HasValue;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.JmixOrder;
 import io.jmix.flowui.model.ViewData;
@@ -36,7 +36,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * An injector that autowires method that are annotated by the {@link Subscribe} annotation.
@@ -137,11 +136,14 @@ public class SubscribeDependencyInjector implements DependencyInjector {
 
         Object listener;
         if (ComponentEventListener.class.isAssignableFrom(addListenerMethod.type().parameterType(1))) {
-            listener = getComponentEventListener(view, annotatedMethod, eventType);
-        } else if (ValueChangeListener.class.isAssignableFrom(addListenerMethod.type().parameterType(1))) {
-            listener = getValueChangeEventListener(view, annotatedMethod, eventType);
+            listener = AutowireUtils.getComponentEventListener(getClass(), view,
+                    annotatedMethod, eventType, reflectionCacheManager);
+        } else if (HasValue.ValueChangeListener.class.isAssignableFrom(addListenerMethod.type().parameterType(1))) {
+            listener = AutowireUtils.getValueChangeEventListener(getClass(), view,
+                    annotatedMethod, eventType, reflectionCacheManager);
         } else {
-            listener = getConsumerListener(view, annotatedMethod, eventType);
+            listener = AutowireUtils.getConsumerListener(getClass(), view,
+                    annotatedMethod, eventType, reflectionCacheManager);
         }
 
         try {
@@ -153,109 +155,6 @@ public class SubscribeDependencyInjector implements DependencyInjector {
         }
 
         autowired.add(annotatedMethod);
-    }
-
-    protected ComponentEventListener<?> getComponentEventListener(View<?> view,
-                                                                  AnnotatedMethod<Subscribe> annotatedMethod,
-                                                                  Class<?> eventType) {
-        ComponentEventListener<?> listener;
-
-        // If view controller class was hot-deployed, then it will be loaded
-        // by different class loader. This will make impossible to create lambda
-        // using LambdaMetaFactory for producing the listener method in Java 17+
-        if (getClass().getClassLoader() == view.getClass().getClassLoader()) {
-            MethodHandle consumerMethodFactory =
-                    reflectionCacheManager.getComponentEventListenerMethodFactory(
-                            view.getClass(), annotatedMethod, eventType
-                    );
-            try {
-                listener = (ComponentEventListener<?>) consumerMethodFactory.invoke(view);
-            } catch (Error e) {
-                throw e;
-            } catch (Throwable e) {
-                throw new RuntimeException(String.format("Unable to bind %s handler",
-                        ComponentEventListener.class.getSimpleName()), e);
-            }
-        } else {
-            listener = event -> {
-                try {
-                    annotatedMethod.getMethodHandle().invoke(view, event);
-                } catch (Throwable e) {
-                    throw new RuntimeException(String.format("Error subscribe %s listener method invocation",
-                            ComponentEventListener.class.getSimpleName()), e);
-                }
-            };
-        }
-
-        return listener;
-    }
-
-    protected ValueChangeListener<?> getValueChangeEventListener(View<?> view,
-                                                                 AnnotatedMethod<Subscribe> annotatedMethod,
-                                                                 Class<?> eventType) {
-        ValueChangeListener<?> listener;
-
-        // If view controller class was hot-deployed, then it will be loaded
-        // by different class loader. This will make impossible to create lambda
-        // using LambdaMetaFactory for producing the listener method in Java 17+
-        if (getClass().getClassLoader() == view.getClass().getClassLoader()) {
-            MethodHandle consumerMethodFactory =
-                    reflectionCacheManager.getValueChangeEventMethodFactory(
-                            view.getClass(), annotatedMethod, eventType
-                    );
-            try {
-                listener = (ValueChangeListener<?>) consumerMethodFactory.invokeWithArguments(view);
-            } catch (Error e) {
-                throw e;
-            } catch (Throwable e) {
-                throw new RuntimeException(String.format("Unable to bind %s handler",
-                        ValueChangeListener.class.getSimpleName()), e);
-            }
-        } else {
-            listener = event -> {
-                try {
-                    annotatedMethod.getMethodHandle().invoke(view, event);
-                } catch (Throwable e) {
-                    throw new RuntimeException(String.format("Error subscribe %s listener method invocation",
-                            ValueChangeListener.class.getSimpleName()), e);
-                }
-            };
-        }
-
-        return listener;
-    }
-
-    protected Consumer<?> getConsumerListener(View<?> view,
-                                              AnnotatedMethod<Subscribe> annotatedMethod,
-                                              Class<?> eventType) {
-        Consumer<?> listener;
-
-        // If view controller class was hot-deployed, then it will be loaded
-        // by different class loader. This will make impossible to create lambda
-        // using LambdaMetaFactory for producing the listener method in Java 17+
-        if (getClass().getClassLoader() == view.getClass().getClassLoader()) {
-            MethodHandle consumerMethodFactory =
-                    reflectionCacheManager.getConsumerMethodFactory(view.getClass(), annotatedMethod, eventType);
-            try {
-                listener = (Consumer<?>) consumerMethodFactory.invoke(view);
-            } catch (Error e) {
-                throw e;
-            } catch (Throwable e) {
-                throw new RuntimeException(String.format("Unable to bind %s handler", Consumer.class.getSimpleName()), e);
-            }
-        } else {
-            listener = event -> {
-                try {
-                    annotatedMethod.getMethodHandle().invoke(view, event);
-                } catch (Throwable e) {
-                    throw new RuntimeException(String.format("Error subscribe %s listener method invocation",
-                            Consumer.class.getSimpleName()), e);
-                }
-            };
-        }
-
-
-        return listener;
     }
 
     @Override

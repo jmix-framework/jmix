@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.sys.autowire;
 
+import java.util.Collection;
+
 /**
  * Implementations of the interface are used for wiring of fields/setters and additional dependency
  * injectors to the UI components.
@@ -43,5 +45,7 @@ public interface DependencyInjector {
      * Base injection context interface.
      */
     interface AutowireContext {
+
+        Collection<Object> getAutowired();
     }
 }

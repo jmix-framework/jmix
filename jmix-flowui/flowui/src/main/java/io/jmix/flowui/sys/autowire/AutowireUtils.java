@@ -19,6 +19,9 @@ package io.jmix.flowui.sys.autowire;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.HasValue;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
@@ -42,6 +45,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static io.jmix.flowui.sys.ValuePathHelper.*;
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
@@ -57,45 +61,42 @@ public final class AutowireUtils {
     }
 
     /**
-     * Finds the target of the annotated method in passed view by ID.
+     * Finds the target of the annotated method in passed composite by ID.
      *
-     * @param view     view for search
-     * @param targetId target ID
+     * @param composite composite for search
+     * @param targetId  target ID
      * @return found target object or {@code null} if target no found
      * @throws IllegalStateException if the view content is not a container
      */
     @Nullable
-    public static Object findMethodTarget(View<?> view, String targetId) {
-        Component viewLayout = view.getContent();
-        if (!UiComponentUtils.isContainer(viewLayout)) {
-            throw new IllegalStateException(View.class.getSimpleName() + "'s layout component " +
+    public static Object findMethodTarget(Composite<?> composite, String targetId) {
+        Component componentLayout = composite.getContent();
+        if (!UiComponentUtils.isContainer(componentLayout)) {
+            throw new IllegalStateException(composite.getClass().getSimpleName() + "'s layout composite " +
                     "doesn't support child components");
         }
 
-        ViewFacets viewFacets = ViewControllerUtils.getViewFacets(view);
-
         String[] elements = parse(targetId);
         if (elements.length == 1) {
-            ViewActions viewActions = ViewControllerUtils.getViewActions(view);
-            Action action = viewActions.getAction(targetId);
+            Action action = findActionCandidate(composite, targetId);
             if (action != null) {
                 return action;
             }
 
-            Optional<Component> component = UiComponentUtils.findComponent(viewLayout, targetId);
+            Optional<Component> component = UiComponentUtils.findComponent(composite, targetId);
             if (component.isPresent()) {
                 return component.get();
             }
 
-            return viewFacets.getFacet(targetId);
+            return findFacetCandidate(composite, targetId);
         } else if (elements.length > 1) {
             if (targetId.contains(".@")) {
-                return findSubTargetRecursively(viewLayout, elements);
+                return findSubTargetRecursively(composite, elements);
             }
 
             String id = elements[elements.length - 1];
 
-            Optional<Component> componentOpt = UiComponentUtils.findComponent(viewLayout, pathPrefix(elements));
+            Optional<Component> componentOpt = UiComponentUtils.findComponent(composite, pathPrefix(elements));
 
             if (componentOpt.isPresent()) {
                 Component component = componentOpt.get();
@@ -122,12 +123,12 @@ public final class AutowireUtils {
                 }
             }
 
-            Facet facet = viewFacets.getFacet(pathPrefix(elements));
+            Facet facet = findFacetCandidate(composite, pathPrefix(elements));
             if (facet instanceof HasSubParts hasSubParts) {
                 return hasSubParts.getSubPart(id);
             }
 
-            Object dropdownItemCandidate = findMethodTarget(view, pathPrefix(elements));
+            Object dropdownItemCandidate = findMethodTarget(composite, pathPrefix(elements));
             if (dropdownItemCandidate instanceof ComponentItem componentItem) {
                 Component content = componentItem.getContent();
                 if (content == null) {
@@ -424,12 +425,157 @@ public final class AutowireUtils {
         }
     }
 
+    /**
+     * Creates a component event listener method using the factory if the component class has not been reloaded
+     * by hot-deploy, otherwise uses the {@link MethodHandle}
+     *
+     * @param callerClass            caller class
+     * @param component              owner class for target component event listener method handle
+     * @param annotatedMethod        annotated method
+     * @param eventType              event class
+     * @param reflectionCacheManager reflection cache manager to get a method factory
+     * @return lambda-proxy for listener
+     * @see ReflectionCacheManager#getComponentEventListenerMethodFactory(Class, AnnotatedMethod, Class)
+     */
+    public static ComponentEventListener<?> getComponentEventListener(Class<?> callerClass,
+                                                                      Component component,
+                                                                      AnnotatedMethod<Subscribe> annotatedMethod,
+                                                                      Class<?> eventType,
+                                                                      ReflectionCacheManager reflectionCacheManager) {
+        ComponentEventListener<?> listener;
+
+        // If component class was hot-deployed, then it will be loaded
+        // by different class loader. This will make impossible to create lambda
+        // using LambdaMetaFactory for producing the listener method in Java 17+
+        if (callerClass.getClassLoader() == component.getClass().getClassLoader()) {
+            MethodHandle consumerMethodFactory =
+                    reflectionCacheManager.getComponentEventListenerMethodFactory(
+                            component.getClass(), annotatedMethod, eventType
+                    );
+            try {
+                listener = (ComponentEventListener<?>) consumerMethodFactory.invoke(component);
+            } catch (Error e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new RuntimeException(String.format("Unable to bind %s handler",
+                        ComponentEventListener.class.getSimpleName()), e);
+            }
+        } else {
+            listener = event -> {
+                try {
+                    annotatedMethod.getMethodHandle().invoke(component, event);
+                } catch (Throwable e) {
+                    throw new RuntimeException(String.format("Error subscribe %s listener method invocation",
+                            ComponentEventListener.class.getSimpleName()), e);
+                }
+            };
+        }
+
+        return listener;
+    }
+
+    /**
+     * Creates a component value change listener method using the factory if the component class has not been reloaded
+     * by hot-deploy, otherwise uses the {@link MethodHandle}
+     *
+     * @param callerClass            caller class
+     * @param component              owner class for target component value change event listener method handle
+     * @param annotatedMethod        annotated method
+     * @param eventType              event class
+     * @param reflectionCacheManager reflection cache manager to get a method factory
+     * @return lambda-proxy for listener
+     * @see ReflectionCacheManager#getValueChangeEventMethodFactory(Class, AnnotatedMethod, Class)
+     */
+    public static HasValue.ValueChangeListener<?> getValueChangeEventListener(Class<?> callerClass,
+                                                                              Component component,
+                                                                              AnnotatedMethod<Subscribe> annotatedMethod,
+                                                                              Class<?> eventType,
+                                                                              ReflectionCacheManager reflectionCacheManager) {
+        HasValue.ValueChangeListener<?> listener;
+
+        // If component class was hot-deployed, then it will be loaded
+        // by different class loader. This will make impossible to create lambda
+        // using LambdaMetaFactory for producing the listener method in Java 17+
+        if (callerClass.getClassLoader() == component.getClass().getClassLoader()) {
+            MethodHandle consumerMethodFactory =
+                    reflectionCacheManager.getValueChangeEventMethodFactory(
+                            component.getClass(), annotatedMethod, eventType
+                    );
+            try {
+                listener = (HasValue.ValueChangeListener<?>) consumerMethodFactory.invokeWithArguments(component);
+            } catch (Error e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new RuntimeException(String.format("Unable to bind %s handler",
+                        HasValue.ValueChangeListener.class.getSimpleName()), e);
+            }
+        } else {
+            listener = event -> {
+                try {
+                    annotatedMethod.getMethodHandle().invoke(component, event);
+                } catch (Throwable e) {
+                    throw new RuntimeException(String.format("Error subscribe %s listener method invocation",
+                            HasValue.ValueChangeListener.class.getSimpleName()), e);
+                }
+            };
+        }
+
+        return listener;
+    }
+
+    /**
+     * Creates a consumer listener method using the factory if the component class has not been reloaded
+     * by hot-deploy, otherwise uses the {@link MethodHandle}
+     *
+     * @param callerClass            caller class
+     * @param component              owner class for target consumer listener method handle
+     * @param annotatedMethod        annotated method
+     * @param eventType              event class
+     * @param reflectionCacheManager reflection cache manager to get a method factory
+     * @return lambda-proxy for listener
+     * @see ReflectionCacheManager#getConsumerMethodFactory(Class, AnnotatedMethod, Class)
+     */
+    public static Consumer<?> getConsumerListener(Class<?> callerClass,
+                                                  Component component,
+                                                  AnnotatedMethod<Subscribe> annotatedMethod,
+                                                  Class<?> eventType,
+                                                  ReflectionCacheManager reflectionCacheManager) {
+        Consumer<?> listener;
+
+        // If component class was hot-deployed, then it will be loaded
+        // by different class loader. This will make impossible to create lambda
+        // using LambdaMetaFactory for producing the listener method in Java 17+
+        if (callerClass.getClassLoader() == component.getClass().getClassLoader()) {
+            MethodHandle consumerMethodFactory =
+                    reflectionCacheManager.getConsumerMethodFactory(component.getClass(), annotatedMethod, eventType);
+            try {
+                listener = (Consumer<?>) consumerMethodFactory.invoke(component);
+            } catch (Error e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new RuntimeException(String.format("Unable to bind %s handler", Consumer.class.getSimpleName()), e);
+            }
+        } else {
+            listener = event -> {
+                try {
+                    annotatedMethod.getMethodHandle().invoke(component, event);
+                } catch (Throwable e) {
+                    throw new RuntimeException(String.format("Error subscribe %s listener method invocation",
+                            Consumer.class.getSimpleName()), e);
+                }
+            };
+        }
+
+
+        return listener;
+    }
+
     @Nullable
-    private static Object findSubTargetRecursively(Component viewLayout, String[] elements) {
+    private static Object findSubTargetRecursively(Composite<?> layout, String[] elements) {
         String parentComponentId = pathPrefix(elements, elements.length - 1);
         String[] subTargets = parse(pathSuffix(elements));
 
-        Optional<Component> component = UiComponentUtils.findComponent(viewLayout, parentComponentId);
+        Optional<Component> component = UiComponentUtils.findComponent(layout, parentComponentId);
 
         if (component.isPresent()) {
             Object subTarget = component.get();
@@ -461,6 +607,27 @@ public final class AutowireUtils {
             }
 
             return subTarget;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static Action findActionCandidate(Composite<?> component, String targetId) {
+        ViewActions hasActions = null;
+        if (component instanceof View<?> view) {
+            hasActions = ViewControllerUtils.getViewActions(view);
+        }
+
+        return hasActions == null
+                ? null
+                : hasActions.getAction(targetId);
+    }
+
+    @Nullable
+    private static Facet findFacetCandidate(Composite<?> component, String targetId) {
+        if (component instanceof View<?> view) {
+            return ViewControllerUtils.getViewFacets(view).getFacet(targetId);
         }
 
         return null;

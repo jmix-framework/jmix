@@ -520,11 +520,11 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         listBoxesLabelsLayout = uiComponents.create(HorizontalLayout.class);
         contentWrapper.add(listBoxesLabelsLayout);
 
-        listBoxesLabelsLayout.setPadding(false);
+        listBoxesLabelsLayout.setSpacing(false);
         listBoxesLabelsLayout.setWidth("100%");
 
         JmixButton stub = uiComponents.create(JmixButton.class);
-        stub.addClassName("stub");
+        stub.addClassNames("stub", LumoUtility.Margin.Left.SMALL, LumoUtility.Margin.Right.SMALL);
         stub.setIcon(new Icon(VaadinIcon.THUMBS_UP));
         stub.setHeight("1px");
 

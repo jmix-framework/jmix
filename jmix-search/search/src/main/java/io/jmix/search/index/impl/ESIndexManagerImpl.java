@@ -171,9 +171,17 @@ public class ESIndexManagerImpl implements ESIndexManager {
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            if (isIndexActual(indexConfiguration)) {
+            //TODO code duplication
+            IndexConfigurationsChecker.ComparingResult result = isIndexActual(indexConfiguration);
+            if (result.isCompartible()) {
                 status = IndexValidationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
+                if(result.isMappingMustBeActualized()){
+                    actualizeMapping(indexConfiguration);
+                }
+                if(result.isSettingsMustBeActualized()){
+                    actualizeSettings(indexConfiguration);
+                }
             } else {
                 status = IndexValidationStatus.IRRELEVANT;
                 indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
@@ -232,10 +240,17 @@ public class ESIndexManagerImpl implements ESIndexManager {
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            boolean indexActual = isIndexActual(indexConfiguration);
-            if (indexActual) {
+            IndexConfigurationsChecker.ComparingResult result = isIndexActual(indexConfiguration);
+            if (result.isCompartible()) {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
+                if(result.isMappingMustBeActualized()){
+                    actualizeMapping(indexConfiguration);
+                }
+                if(result.isSettingsMustBeActualized()){
+                    actualizeSettings(indexConfiguration);
+                }
+
             } else {
                 status = handleIrrelevantIndex(indexConfiguration, strategy);
             }
@@ -245,6 +260,14 @@ public class ESIndexManagerImpl implements ESIndexManager {
         log.info("Synchronization status of search index '{}' (entity '{}'): {}",
                 indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), status);
         return status;
+    }
+
+    private void actualizeSettings(IndexConfiguration indexConfiguration) {
+        throw new UnsupportedOperationException();
+    }
+
+    private void actualizeMapping(IndexConfiguration indexConfiguration) {
+        throw new UnsupportedOperationException();
     }
 
     protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
@@ -283,7 +306,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
+    protected IndexConfigurationsChecker.ComparingResult isIndexActual(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());

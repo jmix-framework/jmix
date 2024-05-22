@@ -30,10 +30,12 @@ import java.util.Map;
 
 @Component
 public class IndexConfigurationsChecker {
-    private final SearchMappingChecker searchMappingChecker;
+    private final SearchMappingComparator mappingComparator;
+    private final SearchSettingsComparator settingsComparator;
 
-    public IndexConfigurationsChecker(SearchMappingChecker searchMappingChecker) {
-        this.searchMappingChecker = searchMappingChecker;
+    public IndexConfigurationsChecker(SearchMappingComparator searchMappingChecker, SearchSettingsComparator settingsComparator) {
+        this.mappingComparator = searchMappingChecker;
+        this.settingsComparator = settingsComparator;
     }
 
     private static final Logger log = LoggerFactory.getLogger(IndexConfigurationsChecker.class);
@@ -41,14 +43,18 @@ public class IndexConfigurationsChecker {
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
-    public boolean areConfigurationsCompatible(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
-        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexResponse);
-        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexResponse);
+    public ComparingResult areConfigurationsCompatible(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+        ComparingState mappingState = isIndexMappingActual(indexConfiguration, indexResponse);
+        ComparingState settingsState = isIndexSettingsActual(indexConfiguration, indexResponse);
 
-        return indexMappingActual && indexSettingsActual;
-        }
+        return new ComparingResult(
+                mappingState.isReindexingNotRequired() && settingsState.isReindexingNotRequired(),
+                mappingState.isConfigurationUpdateRequired(),
+                settingsState.isConfigurationUpdateRequired()
+        );
+    }
 
-    protected boolean isIndexMappingActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+    protected ComparingState isIndexMappingActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
         Map<String, MappingMetadata> mappings = indexResponse.getMappings();
         MappingMetadata indexMappingMetadata = mappings.get(indexConfiguration.getIndexName());
         Map<String, Object> applicationMapping = indexMappingMetadata.getSourceAsMap();
@@ -59,20 +65,38 @@ public class IndexConfigurationsChecker {
         );
         log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
                 indexConfiguration.getIndexName(), applicationMapping, searchIndexMapping);
-        return searchMappingChecker.areMappingsCompatible(searchIndexMapping, applicationMapping);
+        return mappingComparator.compare(searchIndexMapping, applicationMapping);
 
     }
 
-    protected boolean isIndexSettingsActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+    protected ComparingState isIndexSettingsActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
         Map<String, Settings> settings = indexResponse.getSettings();
         Settings currentSettings = settings.get(indexConfiguration.getIndexName());
         Settings actualSettings = indexConfiguration.getSettings();
-        long unmatchedSettings = actualSettings.keySet().stream().filter(key -> {
-            String actualValue = actualSettings.get(key);
-            String currentValue = currentSettings.get(key);
-            return !actualValue.equals(currentValue);
-        }).count();
+        return settingsComparator.compare(currentSettings, actualSettings);
+    }
 
-        return unmatchedSettings == 0;
+    public class ComparingResult {
+        private final boolean compartible;
+        private final boolean mappingMustBeActualized;
+        private final boolean settingsMustBeActualized;
+
+        ComparingResult(boolean compartible, boolean mappingMustBeActualized, boolean settingsMustBeActualized) {
+            this.compartible = compartible;
+            this.mappingMustBeActualized = mappingMustBeActualized;
+            this.settingsMustBeActualized = settingsMustBeActualized;
+        }
+
+        public boolean isCompartible() {
+            return compartible;
+        }
+
+        public boolean isMappingMustBeActualized() {
+            return mappingMustBeActualized;
+        }
+
+        public boolean isSettingsMustBeActualized() {
+            return settingsMustBeActualized;
+        }
     }
 }

@@ -20,6 +20,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-public interface SearchMappingChecker {
-    boolean areMappingsCompatible(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping);
+@Component
+public class SearchMappingComparator {
+
+    public ComparingState compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
+        return applicationMapping.equals(searchIndexMapping) ? ComparingState.EQUAL : ComparingState.NOT_COMPATIBLE;
+    }
 }

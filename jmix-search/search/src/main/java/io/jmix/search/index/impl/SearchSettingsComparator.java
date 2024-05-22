@@ -16,13 +16,19 @@
 
 package io.jmix.search.index.impl;
 
+import org.elasticsearch.common.settings.Settings;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-@Component
-public class SearchMappingCheckerImpl implements SearchMappingChecker {
-    @Override
-    public boolean areMappingsCompatible(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
-        return applicationMapping.equals(searchIndexMapping);
+@Component("zndfl_SearchSettingsComparator")
+public class SearchSettingsComparator {
+    public ComparingState compare(Settings searchServerSettings, Settings applicationSettings) {
+
+        long unmatchedSettings = applicationSettings.keySet().stream().filter(key -> {
+            String actualValue = applicationSettings.get(key);
+            String currentValue = searchServerSettings.get(key);
+            return !actualValue.equals(currentValue);
+        }).count();
+
+        return unmatchedSettings == 0 ? ComparingState.EQUAL : ComparingState.NOT_COMPATIBLE;
     }
 }

@@ -23,7 +23,13 @@ import java.util.Map;
 @Component
 public class SearchMappingComparator {
 
+    public static final String PROPERTIES_KEY = "properties";
+
     public ComparingState compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
+        return innerCompare((Map<String, Object>) searchIndexMapping.get(PROPERTIES_KEY), (Map<String, Object>) applicationMapping.get(PROPERTIES_KEY));
+    }
+
+    ComparingState innerCompare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
         return applicationMapping.equals(searchIndexMapping) ? ComparingState.EQUAL : ComparingState.NOT_COMPATIBLE;
     }
 }

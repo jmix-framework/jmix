@@ -271,9 +271,7 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
                     .fetch(DataViewUtils.getQuery(TwinColumn.this))
                     .toList();
             recreateOptions(newOptions);
-            if (fieldDelegate != null) {
-                fieldDelegate.updateInvalidState();
-            }
+            updateInvalidState();
         });
         return getGenericDataView();
     }
@@ -288,9 +286,7 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     public TwinColumnListDataView<V> setItems(ListDataProvider<V> dataProvider) {
         bindDataProvider(dataProvider);
         recreateOptions(dataProvider.getItems());
-        if (fieldDelegate != null) {
-            fieldDelegate.updateInvalidState();
-        }
+        updateInvalidState();
         return getListDataView();
     }
 
@@ -470,9 +466,7 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
 
     protected void createValueChangeListener() {
         addValueChangeListener((ValueChangeListener<ComponentValueChangeEvent<TwinColumn<V>, Collection<V>>>) event -> {
-            fieldDelegate.updateInvalidState();
-
-            updateValidationVisibleElements(fieldDelegate.isInvalid(), isRequired(), fieldDelegate.getErrorMessage());
+            updateInvalidState();
         });
     }
 
@@ -713,6 +707,13 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
 
         updateListBoxesReorderableComparator();
         updateListBoxesListenersAndStyles();
+    }
+
+    private void updateInvalidState() {
+        if (fieldDelegate != null) {
+            fieldDelegate.updateInvalidState();
+            updateValidationVisibleElements(fieldDelegate.isInvalid(), isRequired(), fieldDelegate.getErrorMessage());
+        }
     }
 
     private void moveItems(JmixMultiSelectListBox<V> from, JmixMultiSelectListBox<V> to, boolean moveAllItems) {

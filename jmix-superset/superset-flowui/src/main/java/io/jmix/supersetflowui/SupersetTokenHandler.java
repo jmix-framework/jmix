@@ -129,7 +129,7 @@ public class SupersetTokenHandler {
                 .operation(prevOperation -> {
                     if (!prevOperation.getResult().succeed()) {
                         GuestTokenResponse response = (GuestTokenResponse) prevOperation.getResult().result();
-                        if (!Strings.isNullOrEmpty(response.getMsg())) {
+                        if (!Strings.isNullOrEmpty(response.getSystemMessage())) {
                             // expired access token
                             doLoginAndRequestGuestToken(body, callback);
                         } else {
@@ -150,7 +150,7 @@ public class SupersetTokenHandler {
         guestTokenTask.addProgressListener(new BackgroundTask.ProgressListenerAdapter<>() {
             @Override
             public void onDone(GuestTokenResponse response) {
-                if (!Strings.isNullOrEmpty(response.getMessage()) || !Strings.isNullOrEmpty(response.getMsg())) {
+                if (!Strings.isNullOrEmpty(response.getMessage()) || !Strings.isNullOrEmpty(response.getSystemMessage())) {
                     callback.fail(response);
                 } else {
                     callback.success(response);
@@ -187,7 +187,7 @@ public class SupersetTokenHandler {
             public GuestTokenResponse run(TaskLifeCycle<Void> taskLifeCycle) {
                 // todo rp when update cached tokens or remove?
 
-                return supersetService.getGuestToken(body, (String) params.get("accessToken"));
+                return supersetService.getGuestToken(body, (String) params.get("accessToken"), null);
             }
         };
     }

@@ -18,9 +18,11 @@ package io.jmix.superset.schedule;
 
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.schedule.impl.AccessTokenManagerImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
@@ -28,21 +30,30 @@ import org.springframework.stereotype.Component;
 public class AccessTokenScheduleConfigurer {
 
     private final TaskScheduler taskScheduler;
+    private final TaskExecutor taskExecutor;
     private final SupersetProperties supersetProperties;
     private final AccessTokenManagerImpl accessTokenManager;
 
     public AccessTokenScheduleConfigurer(@Qualifier("superset_ThreadPoolTaskScheduler") TaskScheduler taskScheduler,
+                                         @Autowired(required = false) @Qualifier("superset_TaskExecutor") TaskExecutor taskExecutor,
                                          SupersetProperties supersetProperties,
                                          AccessTokenManagerImpl accessTokenManager) {
         this.taskScheduler = taskScheduler;
+        this.taskExecutor = taskExecutor;
         this.supersetProperties = supersetProperties;
         this.accessTokenManager = accessTokenManager;
     }
 
     @EventListener
     public void onContextRefreshedEvent(ContextRefreshedEvent event) {
+        // Schedule updating an access token
         taskScheduler.scheduleWithFixedDelay(
                 accessTokenManager::updateAccessToken,
                 supersetProperties.getRefreshAccessTokenScheduler());
+
+        // Initially gets a CSRF token
+        if (supersetProperties.isCsrfProtectionEnabled()) {
+            taskExecutor.execute(accessTokenManager::updateCsrfToken);
+        }
     }
 }

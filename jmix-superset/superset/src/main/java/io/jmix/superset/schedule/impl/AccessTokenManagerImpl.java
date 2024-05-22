@@ -23,6 +23,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.annotation.Internal;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.schedule.AccessTokenManager;
+import io.jmix.superset.service.model.CsrfTokenResponse;
 import io.jmix.superset.service.model.LoginResponse;
 import io.jmix.superset.service.model.RefreshResponse;
 import io.jmix.superset.service.SupersetService;
@@ -49,6 +50,7 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
     private String accessToken;
     private Long accessTokenExpiresIn;
     private String refreshToken;
+    private String csrfToken;
 
     public AccessTokenManagerImpl(SupersetService supersetService,
                                   SupersetProperties supersetProperties) {
@@ -68,6 +70,13 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
     }
 
     @Override
+    public synchronized void updateCsrfToken() {
+        if (supersetProperties.isCsrfProtectionEnabled()) {
+            performCsrfTokenRequest();
+        }
+    }
+
+    @Override
     public String getAccessToken() {
         if (Strings.isNullOrEmpty(accessToken)) {
             throw new IllegalStateException("Access token is not initialized");
@@ -81,6 +90,12 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
             throw new IllegalStateException("Refresh token is not initialized");
         }
         return refreshToken;
+    }
+
+    @Nullable
+    @Override
+    public String getCsrfToken() {
+        return csrfToken;
     }
 
     protected void performLogin() {
@@ -127,11 +142,29 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
         }
 
         // Response cannot be null here
-        if (response.getErrorMessage() == null) {
+        if (Strings.isNullOrEmpty(response.getSystemMessage())) {
             updateAccessToken(response.getAccessToken());
         } else {
             log.error("Failed to update access token. Dashboard functionality may work incorrectly. Message from Superset:" +
-                    " {}", response.getErrorMessage());
+                    " {}", response.getSystemMessage());
+        }
+    }
+
+    protected void performCsrfTokenRequest() {
+        CsrfTokenResponse response;
+        try {
+            response = supersetService.getCsrfToken(accessToken);
+        } catch (Exception e) {
+            log.error("Cannot get CSRF token from Superset. Dashboard functionality may work incorrectly", e);
+            return;
+        }
+
+        if (!Strings.isNullOrEmpty(response.getMessage())
+                || !Strings.isNullOrEmpty(response.getSystemMessage())) {
+            log.error("Failed to update CSRF token. Dashboard functionality may work incorrectly. Message from Superset:" +
+                    " {}", response.getSystemMessage());
+        } else {
+            csrfToken = response.getResult();
         }
     }
 

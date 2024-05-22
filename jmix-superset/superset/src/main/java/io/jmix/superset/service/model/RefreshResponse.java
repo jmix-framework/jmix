@@ -24,7 +24,7 @@ public class RefreshResponse {
     private String accessToken;
 
     @JsonProperty("msg")
-    private String errorMessage;
+    private String systemMessage;
 
     public String getAccessToken() {
         return accessToken;
@@ -34,11 +34,11 @@ public class RefreshResponse {
         this.accessToken = accessToken;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getSystemMessage() {
+        return systemMessage;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setSystemMessage(String systemMessage) {
+        this.systemMessage = systemMessage;
     }
 }

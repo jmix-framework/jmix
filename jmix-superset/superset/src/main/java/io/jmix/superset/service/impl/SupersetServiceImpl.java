@@ -18,9 +18,12 @@ package io.jmix.superset.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.service.SupersetService;
 import io.jmix.superset.service.model.*;
+import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +35,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 @Service("superset_SupersetService")
 public class SupersetServiceImpl implements SupersetService {
@@ -40,11 +44,13 @@ public class SupersetServiceImpl implements SupersetService {
     protected final SupersetProperties properties;
 
     protected HttpClient httpClient;
+    protected ObjectMapper objectMapper;
 
     public SupersetServiceImpl(SupersetProperties properties) {
         this.properties = properties;
 
         httpClient = buildHttpClient();
+        objectMapper = buildObjectMapper();
     }
 
     @Override
@@ -91,7 +97,7 @@ public class SupersetServiceImpl implements SupersetService {
         log.debug("Login request is finished");
 
         try {
-            return new ObjectMapper().readValue(responseBody, LoginResponse.class);
+            return objectMapper.readValue(responseBody, LoginResponse.class);
             // todo rp check when no VPN exception is not handled?
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Cannot parse login response", e);
@@ -119,7 +125,7 @@ public class SupersetServiceImpl implements SupersetService {
         log.debug("Refresh request is finished");
 
         try {
-            return new ObjectMapper().readValue(responseBody, RefreshResponse.class);
+            return objectMapper.readValue(responseBody, RefreshResponse.class);
             // todo rp check when no VPN exception is not handled?
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Cannot parse refresh response", e);
@@ -134,23 +140,29 @@ public class SupersetServiceImpl implements SupersetService {
      *
      * @param body        the body to send
      * @param accessToken access token that can be taken from {@link #login(LoginBody)}
+     * @param csrfToken   CSRF token should be passed if {@link SupersetProperties#isCsrfProtectionEnabled()} is enabled
      * @return response
      */
     @Override
-    public GuestTokenResponse getGuestToken(GuestTokenBody body, String accessToken) {
+    public GuestTokenResponse getGuestToken(GuestTokenBody body, String accessToken, @Nullable String csrfToken) {
         String jsonBody;
         try {
-            jsonBody = new ObjectMapper().writeValueAsString(body);
+            jsonBody = objectMapper.writeValueAsString(body);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Cannot serialize guest token body to JSON string", e);
         }
 
         HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .uri(URI.create(properties.getUrl() + "/api/v1/security/guest_token"))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
+
+        if (properties.isCsrfProtectionEnabled()) {
+            Preconditions.checkNotEmptyString(csrfToken, "CSRF token cannot be empty");
+            request.headers().map().put("X-Csrf-Token", List.of(csrfToken));
+        }
 
         log.debug("Sends guest token request");
 
@@ -164,45 +176,46 @@ public class SupersetServiceImpl implements SupersetService {
         log.debug("Guest token request is finished");
 
         try {
-            return new ObjectMapper().readValue(responseBody, GuestTokenResponse.class);
+            return objectMapper.readValue(responseBody, GuestTokenResponse.class);
             // todo rp check when no VPN exception is not handled?
         } catch (JsonProcessingException ex) {
             throw new IllegalStateException("Cannot parse guest token response", ex);
         }
     }
 
-    /**
-     * Sends a request that blocks current thread.
-     *
-     * @return
-     */
-    /*public String getCsrfToken(String accessToken) {
+    @Override
+    public CsrfTokenResponse getCsrfToken(String accessToken) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(properties.getUrl() + "/api/v1/security/csrf_token"))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .GET()
                 .build();
+        String responseBody;
+
+        log.debug("Sends CSRF token request");
 
         try {
-            return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::body)
-                    .thenApply(e -> {
-                        try {
-                            return new ObjectMapper().readValue(e, CsrfTokenResponse.class);
-                        } catch (JsonProcessingException ex) {
-                            //todo
-                            throw new RuntimeException(ex);
-                        }
-                    }).get()
-                    .getResult();
-        } catch (InterruptedException | ExecutionException e) {
-            //todo
-            throw new RuntimeException(e);
+            responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
+        } catch (IOException | InterruptedException e) {
+            throw new IllegalStateException("Failed to get a guest a CSRF token from Superset", e);
         }
-    }*/
+
+        log.debug("CSRF token request is finished");
+
+        try {
+            return objectMapper.readValue(responseBody, CsrfTokenResponse.class);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Cannot parse CSRF token response", e);
+        }
+    }
+
     protected HttpClient buildHttpClient() {
         return HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.ALWAYS)
                 .build();
+    }
+
+    protected ObjectMapper buildObjectMapper() {
+        return new ObjectMapper();
     }
 }

@@ -16,11 +16,18 @@
 
 package io.jmix.superset.schedule;
 
+import jakarta.annotation.Nullable;
+
 public interface AccessTokenManager {
 
     void updateAccessToken();
 
+    void updateCsrfToken();
+
     String getAccessToken();
 
     String getRefreshToken();
+
+    @Nullable
+    String getCsrfToken();
 }

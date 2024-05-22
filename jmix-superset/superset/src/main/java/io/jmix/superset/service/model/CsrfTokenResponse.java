@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.service;
+package io.jmix.superset.service.model;
 
-import io.jmix.superset.service.model.*;
-import jakarta.annotation.Nullable;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public interface SupersetService {
+public class CsrfTokenResponse {
 
-    LoginResponse login();
+    private String result;
 
-    LoginResponse login(LoginBody body);
+    private String message;
 
-    RefreshResponse refresh(String refreshToken);
+    @JsonProperty("msg")
+    private String systemMessage;
 
-    GuestTokenResponse getGuestToken(GuestTokenBody body, String accessToken, @Nullable String csrfToken);
+    public String getResult() {
+        return result;
+    }
 
-    CsrfTokenResponse getCsrfToken(String accessToken);
+    public String getMessage() {
+        return message;
+    }
+
+    public String getSystemMessage() {
+        return systemMessage;
+    }
 }

@@ -16,13 +16,18 @@
 
 package io.jmix.superset.service.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 public class GuestTokenResponse implements Serializable {
 
     private String token;
+
     private String message; // when error occurs
-    private String msg; // when token is expired
+
+    @JsonProperty("msg")
+    private String systemMessage; // e.g. token is expired
 
     public String getToken() {
         return token;
@@ -40,11 +45,11 @@ public class GuestTokenResponse implements Serializable {
         this.message = message;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getSystemMessage() {
+        return systemMessage;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setSystemMessage(String systemMessage) {
+        this.systemMessage = systemMessage;
     }
 }

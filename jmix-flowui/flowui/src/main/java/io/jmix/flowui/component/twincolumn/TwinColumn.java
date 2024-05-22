@@ -878,18 +878,7 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     private void updateListBoxSelectionStyles(JmixMultiSelectListBox<V> listBox, ListBoxListDataView<V> listBoxDataView) {
         List<Component> list = listBox.getChildren().toList();
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).hasClassName("single")) {
-                list.get(i).removeClassName("single");
-            }
-            if (list.get(i).hasClassName("first")) {
-                list.get(i).removeClassName("first");
-            }
-            if (list.get(i).hasClassName("middle")) {
-                list.get(i).removeClassName("middle");
-            }
-            if (list.get(i).hasClassName("last")) {
-                list.get(i).removeClassName("last");
-            }
+            list.get(i).removeClassNames("single", "first", "middle", "last");
 
             if (i >= listBoxDataView.getItemCount() || !listBox.isSelected(listBoxDataView.getItem(i))) {
                 continue;

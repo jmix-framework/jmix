@@ -66,7 +66,7 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
 /**
  * @deprecated use {@link DependencyInjector} instead
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2.3")
 @org.springframework.stereotype.Component("flowui_ViewControllerDependencyInjector")
 public class ViewControllerDependencyInjector {
 

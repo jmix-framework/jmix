@@ -31,9 +31,19 @@ public class DetailViewClassNavigator<E, V extends View<?>> extends DetailViewNa
 
     protected Consumer<AfterViewNavigationEvent<V>> afterNavigationHandler;
 
+    @Deprecated(since = "2.3", forRemoval = true)
     public DetailViewClassNavigator(Class<E> entityClass, Consumer<? extends DetailViewNavigator<E>> handler,
                                     Class<V> viewClass) {
         super(entityClass, handler);
+
+        this.viewClass = viewClass;
+    }
+
+    public DetailViewClassNavigator(View<?> origin,
+                                    Class<E> entityClass,
+                                    Consumer<? extends DetailViewNavigator<E>> handler,
+                                    Class<V> viewClass) {
+        super(origin, entityClass, handler);
 
         this.viewClass = viewClass;
     }

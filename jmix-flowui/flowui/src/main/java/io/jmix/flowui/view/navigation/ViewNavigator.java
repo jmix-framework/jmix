@@ -31,8 +31,14 @@ import java.util.function.Consumer;
  */
 public class ViewNavigator extends AbstractViewNavigator {
 
+    @Deprecated(since = "2.3", forRemoval = true)
     public ViewNavigator(Consumer<? extends ViewNavigator> handler) {
         super(handler);
+    }
+
+    public ViewNavigator(View<?> origin,
+                         Consumer<? extends ViewNavigator> handler) {
+        super(origin, handler);
     }
 
     protected ViewNavigator(ViewNavigator viewNavigator) {

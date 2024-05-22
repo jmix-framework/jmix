@@ -447,6 +447,26 @@ public final class UiComponentUtils {
     }
 
     /**
+     * Returns the currently active view shown in this UI.
+     * <p>
+     * Note, that the current route might not be initialized if this method
+     * is called while still building the view chain, for example in the
+     * constructor of layouts. Thus, consider postponing the usage of this
+     * method to for example {@link io.jmix.flowui.view.View.ReadyEvent}.
+     *
+     * @return the currently active view instance if available
+     * @throws IllegalStateException if current view is not yet available or is not {@link View}
+     */
+    public static View<?> getCurrentView() {
+        Component currentView = UI.getCurrent().getCurrentView();
+        if (!(currentView instanceof View<?>)) {
+            throw new IllegalStateException(String.format("A component '%s' is not a %s",
+                    currentView.getClass().getSimpleName(), View.class.getSimpleName()));
+        }
+        return (View<?>) currentView;
+    }
+
+    /**
      * Focuses component (or its nearest focusable parent).
      *
      * @param component component to focus

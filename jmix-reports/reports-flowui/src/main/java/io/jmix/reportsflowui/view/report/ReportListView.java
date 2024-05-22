@@ -252,7 +252,7 @@ public class ReportListView extends StandardListView<Report> {
                 Report item = build.getView().getItem().getGeneratedReport();
                 reportsDc.getMutableItems().add(item);
                 reportsDataGrid.select(item);
-                viewNavigators.detailView(Report.class)
+                viewNavigators.detailView(this, Report.class)
                         .editEntity(reportsDc.getItem())
                         .withViewClass(ReportDetailView.class)
                         .navigate();

@@ -37,7 +37,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-@Service("superset_SupersetService")
+@Service("sprset_SupersetService")
 public class SupersetServiceImpl implements SupersetService {
     private static final Logger log = LoggerFactory.getLogger(SupersetServiceImpl.class);
 
@@ -57,7 +57,7 @@ public class SupersetServiceImpl implements SupersetService {
     }
 
     @Override
-    public LoginResponse login() {
+    public LoginResponse login() throws IOException, InterruptedException {
         return login(new LoginBody()
                 .withUsername(properties.getUsername())
                 .withPassword(properties.getPassword())
@@ -65,16 +65,8 @@ public class SupersetServiceImpl implements SupersetService {
                 .withRefresh(true));
     }
 
-    /**
-     * Performs login to Superset. It sends a request that blocks current thread.
-     * <p>
-     * Note, that failed request will return response with {@code message} property.
-     *
-     * @param body the body to send
-     * @return response
-     */
     @Override
-    public LoginResponse login(LoginBody body) {
+    public LoginResponse login(LoginBody body) throws IOException, InterruptedException {
         String requestBody;
         try {
             requestBody = new ObjectMapper().writeValueAsString(body);
@@ -90,12 +82,7 @@ public class SupersetServiceImpl implements SupersetService {
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-        String responseBody;
-        try {
-            responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
-        } catch (IOException | InterruptedException e) {
-            throw new IllegalStateException("Failed to log in to Superset", e);
-        }
+        String responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
 
         log.debug("Login request is finished");
 
@@ -108,7 +95,7 @@ public class SupersetServiceImpl implements SupersetService {
     }
 
     @Override
-    public RefreshResponse refresh(String refreshToken) {
+    public RefreshResponse refresh(String refreshToken) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(properties.getUrl() + "/api/v1/security/refresh"))
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -118,12 +105,7 @@ public class SupersetServiceImpl implements SupersetService {
 
         log.debug("Sends a refresh request");
 
-        String responseBody;
-        try {
-            responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
-        } catch (IOException | InterruptedException e) {
-            throw new IllegalStateException("Failed to refresh access token", e);
-        }
+        String responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
 
         log.debug("Refresh request is finished");
 
@@ -135,19 +117,9 @@ public class SupersetServiceImpl implements SupersetService {
         }
     }
 
-    /**
-     * Gets a guest token from Superset that can be used to embed dashboard.
-     * It sends a request that blocks current thread.
-     * <p>
-     * Note, that failed request will return response with {@code message} property.
-     *
-     * @param body        the body to send
-     * @param accessToken access token that can be taken from {@link #login(LoginBody)}
-     * @param csrfToken   CSRF token should be passed if {@link SupersetProperties#isCsrfProtectionEnabled()} is enabled
-     * @return response
-     */
     @Override
-    public GuestTokenResponse getGuestToken(GuestTokenBody body, String accessToken, @Nullable String csrfToken) {
+    public GuestTokenResponse getGuestToken(GuestTokenBody body, String accessToken, @Nullable String csrfToken)
+            throws IOException, InterruptedException {
         String jsonBody;
         try {
             jsonBody = objectMapper.writeValueAsString(body);
@@ -171,12 +143,7 @@ public class SupersetServiceImpl implements SupersetService {
 
         log.debug("Sends guest token request");
 
-        String responseBody;
-        try {
-            responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
-        } catch (IOException | InterruptedException e) {
-            throw new IllegalStateException("Failed to get a guest token from Superset", e);
-        }
+        String responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
 
         log.debug("Guest token request is finished");
 

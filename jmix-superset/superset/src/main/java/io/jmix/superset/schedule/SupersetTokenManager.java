@@ -19,14 +19,51 @@ package io.jmix.superset.schedule;
 import io.jmix.superset.SupersetProperties;
 import jakarta.annotation.Nullable;
 
+/**
+ * Provides Superset tokens management: access token, CSRF token (if is enabled). It stores tokens and cares about
+ * refreshing tokens if it is needed.
+ */
 public interface SupersetTokenManager {
 
+    /**
+     * Refreshes an access token. It sends a "login" request for the first time and then sends "refresh" requests. A
+     * refresh request is sent only when the difference between expiration time and current time is less than or equal
+     * to one minute.
+     * <p>
+     * This method is managed by {@link SupersetTokenScheduleConfigurer}. The Spring scheduler is configured to invoke
+     * this method with {@link SupersetProperties#getAccessTokenRefreshSchedule()} delay.
+     */
     void refreshAccessToken();
 
+    /**
+     * The access token is available after Spring context refresh when a "login" request is sent to Superset.
+     *
+     * @return access token
+     * @throws IllegalStateException if the token is not initialized yet
+     */
     String getAccessToken();
 
+    /**
+     * The refresh token is available after Spring context refresh when a "login" request is sent to Superset.
+     *
+     * @return refresh token
+     * @throws IllegalStateException if the token is not initialized yet
+     */
     String getRefreshToken();
 
+    /**
+     * Depends on {@link SupersetProperties#isCsrfProtectionEnabled()} application property. If it's enabled
+     * a request will be sent to get a new CSRF token. Then the {@link #getCsrfToken()} method will return new CSRF
+     * token.
+     * <p>
+     * This method is managed by {@link SupersetTokenScheduleConfigurer}. The Spring scheduler is configured to invoke
+     * this method with {@link SupersetProperties#getCsrfTokenRefreshSchedule()} delay.
+     * <p>
+     * Note, that CSRF token does not encode the expiration time so the schedule delay duration is configured almost
+     * equal to a default value of CSRF token expiration in Superset (WTF_CSRF_TIME_LIMIT property). If the value of
+     * expiration time is changed in Superset, the {@link SupersetProperties#getCsrfTokenRefreshSchedule()} should be
+     * changed too.
+     */
     void refreshCsrfToken();
 
     /**

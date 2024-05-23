@@ -22,7 +22,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
 
 @ManagedResource(description = "Manages Superset tokens", objectName = "jmix.superset:type=SupersetTokenManager")
-@Component("superset_SupersetManagementFacade")
+@Component("sprset_SupersetManagementFacade")
 public class SupersetManagementFacade {
 
     private final SupersetTokenManager tokenManager;

@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.function.Consumer;
 
-@Component("superset_GuestTokenHandler")
+@Component("sprset_GuestTokenHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class GuestTokenHandler {
     private static final Logger log = LoggerFactory.getLogger(GuestTokenHandler.class);
@@ -119,6 +119,7 @@ public class GuestTokenHandler {
 
         @Override
         public GuestTokenResponse run(TaskLifeCycle<Void> taskLifeCycle) {
+            // todo rp handle exceptions
             return supersetService.getGuestToken(body, accessToken, csrfToken);
         }
     }

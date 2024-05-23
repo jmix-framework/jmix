@@ -26,7 +26,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
-@Component("superset_SupersetTokenScheduleConfigurer")
+@Component("sprset_SupersetTokenScheduleConfigurer")
 public class SupersetTokenScheduleConfigurer {
     private static final Logger log = LoggerFactory.getLogger(SupersetTokenScheduleConfigurer.class);
 
@@ -37,10 +37,10 @@ public class SupersetTokenScheduleConfigurer {
 
     private boolean csrfTokenSchedulerStarted = false;
 
-    public SupersetTokenScheduleConfigurer(@Qualifier("superset_ThreadPoolAccessTokenTaskScheduler")
+    public SupersetTokenScheduleConfigurer(@Qualifier("sprset_ThreadPoolAccessTokenTaskScheduler")
                                            TaskScheduler taskScheduler,
                                            @Autowired(required = false)
-                                           @Qualifier("superset_ThreadPoolCsrfTokenTaskScheduler")
+                                           @Qualifier("sprset_ThreadPoolCsrfTokenTaskScheduler")
                                            TaskScheduler csrfTaskScheduler,
                                            SupersetProperties supersetProperties,
                                            SupersetTokenManager accessTokenManager) {

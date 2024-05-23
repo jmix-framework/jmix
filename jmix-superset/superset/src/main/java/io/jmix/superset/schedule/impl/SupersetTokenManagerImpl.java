@@ -35,8 +35,9 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
-@Component("superset_SupersetTokenManagerImpl")
+@Component("sprset_SupersetTokenManagerImpl")
 public class SupersetTokenManagerImpl implements SupersetTokenManager {
 
     private static final Logger log = LoggerFactory.getLogger(SupersetTokenManagerImpl.class);
@@ -106,7 +107,7 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
         }
 
         if (response.getMessage() == null) {
-            updateAccessToken(response.getAccessToken());
+            updateAccessToken(Objects.requireNonNull(response.getAccessToken()));
             refreshToken = response.getRefreshToken();
         } else {
             log.error("Cannot log in to superset. Dashboard functionality may work incorrectly. Message from Superset:" +
@@ -206,7 +207,7 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
         if (accessTokenExpiresIn == null) {
             accessTokenExpiresIn = getFallbackExpirationTime();
         }
-        return (accessTokenExpiresIn * 1000) - currentTimePoint < Duration.ofMinutes(1).getSeconds();
+        return (accessTokenExpiresIn * 1000) - currentTimePoint <= Duration.ofMinutes(1).toMillis();
     }
 
     protected Long getFallbackExpirationTime() {

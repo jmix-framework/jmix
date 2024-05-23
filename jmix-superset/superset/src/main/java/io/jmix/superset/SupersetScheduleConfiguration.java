@@ -24,10 +24,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @Configuration(proxyBeanMethods = false)
 public class SupersetScheduleConfiguration {
 
-    @Bean("superset_ThreadPoolAccessTokenTaskScheduler")
+    @Bean("sprset_ThreadPoolAccessTokenTaskScheduler")
     public TaskScheduler threadPoolTaskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setThreadNamePrefix("superset_AccessTokenScheduler-");
+        threadPoolTaskScheduler.setThreadNamePrefix("sprset_AccessTokenScheduler-");
         threadPoolTaskScheduler.setPoolSize(1);
         threadPoolTaskScheduler.setDaemon(true);
         return threadPoolTaskScheduler;

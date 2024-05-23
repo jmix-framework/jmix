@@ -31,10 +31,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 public class SupersetAutoConfiguration {
 
     @ConditionalOnProperty(value = "jmix.superset.csrf-protection-enabled", matchIfMissing = true)
-    @Bean("superset_ThreadPoolCsrfTokenTaskScheduler")
+    @Bean("sprset_ThreadPoolCsrfTokenTaskScheduler")
     public TaskScheduler threadPoolTaskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setThreadNamePrefix("superset_CsrfTokenScheduler-");
+        threadPoolTaskScheduler.setThreadNamePrefix("sprset_CsrfTokenScheduler-");
         threadPoolTaskScheduler.setPoolSize(1);
         threadPoolTaskScheduler.setDaemon(true);
         return threadPoolTaskScheduler;

@@ -117,7 +117,7 @@ public final class UiComponentUtils {
                                                     BiPredicate<Component, String> idComparator) {
         String[] elements = ValuePathHelper.parse(id);
         if (elements.length == 1) {
-            Optional<Component> component = findOwnComponent(container, id);
+            Optional<Component> component = findOwnComponent(container, id, idComparator);
             if (component.isPresent()) {
                 return component;
             } else {
@@ -132,7 +132,7 @@ public final class UiComponentUtils {
                 return getComponentRecursively(getOwnComponents(container), id, idComparator);
             }
         } else {
-            Optional<Component> innerComponentOpt = findOwnComponent(container, elements[0]);
+            Optional<Component> innerComponentOpt = findOwnComponent(container, elements[0], idComparator);
             if (innerComponentOpt.isEmpty()) {
                 return getComponentRecursively(getOwnComponents(container), id, idComparator);
             } else {

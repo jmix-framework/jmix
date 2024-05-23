@@ -136,6 +136,53 @@ class CompositeComponentTest extends FlowuiTestSpecification {
         stepperField.value == 0
     }
 
+    def "Composite component with different components"() {
+        when:
+        def component = uiComponents.create(TestCompositeComponent)
+        def tabSheet = component.tabSheet
+
+        then: "TabSheet correctly loads tabs"
+        tabSheet.getTabAt(0).getId().orElse("") == "tab1"
+        tabSheet.getTabAt(0).getLabel() == "Tab 1"
+
+        tabSheet.getTabAt(1).getId().orElse("") == "tab2"
+        tabSheet.getTabAt(1).getLabel() == "Tab 2"
+
+        when:
+        def tabs = component.tabs
+
+        then: "Tabs correctly loads tabs"
+        tabs.getTabAt(0).getId().orElse("") == "tab1"
+        tabs.getTabAt(0).getLabel() == "Tab 1"
+
+        tabs.getTabAt(1).getId().orElse("") == "tab2"
+        tabs.getTabAt(1).getLabel() == "Tab 2"
+
+        when:
+        def accordionPanel1 = component.accordionPanel1
+        def accordionPanel2 = component.accordionPanel2
+
+        then: "Accordion panels are found"
+        accordionPanel1.summaryText == "Panel 1"
+        accordionPanel2.summaryText == "Panel 2"
+
+        when:
+        def dropdownButton = component.dropdownButton
+        def dropdownButtonItem1 = dropdownButton.getItem("componentItem")
+        def dropdownButtonSubpart1 = dropdownButton.getSubPart("componentItem")
+        def dropdownButtonItem2 = dropdownButton.getItem("textItem")
+        def dropdownButtonSubpart2 = dropdownButton.getSubPart("textItem")
+
+        then: "DropdownButton items can be found by id"
+        dropdownButtonItem1 != null
+        dropdownButtonSubpart1 != null
+        dropdownButtonItem1 == dropdownButtonSubpart1
+
+        dropdownButtonItem2 != null
+        dropdownButtonSubpart2 != null
+        dropdownButtonItem2 == dropdownButtonSubpart2
+    }
+
     @Nullable
     private static String getIconAttribute(Component icon) {
         return icon != null ? icon.element.getAttribute("icon") : null

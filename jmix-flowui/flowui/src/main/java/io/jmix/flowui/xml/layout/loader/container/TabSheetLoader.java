@@ -126,6 +126,11 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
         }
 
         @Override
+        protected void loadId(Component component, Element element) {
+            loaderSupport.loadString(element, "id", component::setId);
+        }
+
+        @Override
         public void initComponent() {
             super.initComponent();
             if (resultComponent.getId().isEmpty()) {

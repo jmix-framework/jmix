@@ -71,15 +71,17 @@ class BackwardNavigationTest extends FlowuiTestSpecification {
     def "Back to standard-view"() {
         when: "Navigate to standard-view"
 
-        def view = navigateToView(BackwardNavigationStandardView)
+        def origin = navigateToView(BlankTestView)
+        viewNavigators.view(origin, BackwardNavigationStandardView)
+                .navigate()
 
         then: "Standard-view should be opened"
 
-        view.getClass() == BackwardNavigationStandardView
+        currentView.getClass() == BackwardNavigationStandardView
 
         when: "Open another view with backward navigation"
 
-        view.navigateToViewBtn.click()
+        ((BackwardNavigationStandardView) currentView).navigateToViewBtn.click()
 
         then: "Another view should be opened"
 
@@ -96,15 +98,17 @@ class BackwardNavigationTest extends FlowuiTestSpecification {
 
     def "Create new entity instance using CreateAction and back to list-view"() {
         when: "Navigate to list view"
-        def view = navigateToView(BackwardNavigationListView)
+        def origin = navigateToView(BlankTestView)
+        viewNavigators.view(origin, BackwardNavigationListView)
+                .navigate()
 
         then: "List view is opened"
 
-        view.getClass() == BackwardNavigationListView
+        currentView.getClass() == BackwardNavigationListView
 
         when: "Create new entity instance by clicking create button"
 
-        view.createBtn.click()
+        ((BackwardNavigationListView) currentView).createBtn.click()
 
         then: "Current opened view should be detail-view"
 

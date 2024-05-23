@@ -217,7 +217,6 @@ public class AwsFileStorage implements FileStorage {
                     .key(fileKey));
 
             List<CompletedPart> completedParts = new ArrayList<>();
-            long readBytes = nBytes;
             UploadPartRequest.Builder partBuilder = UploadPartRequest.builder()
                     .bucket(bucket)
                     .key(fileKey)
@@ -230,7 +229,6 @@ public class AwsFileStorage implements FileStorage {
                         .partNumber(partNumber)
                         .eTag(partResponse.eTag())
                         .build();
-                readBytes += nBytes;
                 completedParts.add(completedPart);
                 nBytes = bos.read(chunkBytes);
             }
@@ -248,7 +246,7 @@ public class AwsFileStorage implements FileStorage {
         }
     }
 
-    private RequestBody fromBytes(byte[] buffer, int length) {
+    protected RequestBody fromBytes(byte[] buffer, int length) {
         length = Math.max(0, length);
         byte[] bytes = Arrays.copyOf(buffer, length);
         return RequestBody.fromContentProvider(() -> new ByteArrayInputStream(bytes), length, Mimetype.MIMETYPE_OCTET_STREAM);

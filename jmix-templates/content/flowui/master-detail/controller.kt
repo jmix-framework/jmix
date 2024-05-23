@@ -1,3 +1,7 @@
+<%
+        def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
+        def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
+        %>
 package ${packageName}
 
 import ${entity.fqn}<%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%>
@@ -17,6 +21,10 @@ import io.jmix.flowui.kit.component.button.JmixButton
 import io.jmix.flowui.model.*
 import io.jmix.flowui.view.*
 import io.jmix.flowui.view.Target
+<%if (useDataRepositories){%>import io.jmix.core.LoadContext
+import io.jmix.core.SaveContext
+import ${repository.getQualifiedName()}
+import io.jmix.core.repository.JmixDataRepositoryUtils.*<%}%>
 
 <%if (classComment) {%>
 ${classComment}
@@ -25,7 +33,7 @@ ${classComment}
 @ViewDescriptor("${viewDescriptorName}.xml")
 @LookupComponent("${tableId}")
 @DialogMode(width = "64em")
-class ${viewControllerName} : StandardListView<${entity.className}>() {
+class ${viewControllerName}(private val repository: ${repository.getName()}) : StandardListView<${entity.className}>() {
 
     @ViewComponent
     private lateinit var dataContext: DataContext
@@ -123,5 +131,41 @@ class ${viewControllerName} : StandardListView<${entity.className}>() {
 
     private fun getViewValidation(): ViewValidation {
         return applicationContext.getBean(ViewValidation::class.java)
+    }<%if (useDataRepositories){%>
+
+    @Install(to = "${tableDl}", target = Target.DATA_LOADER)
+    private fun listLoadDelegate(context: LoadContext<${entity.className}>): List<${entity.className}> {
+        return repository.findAll(buildPageRequest(context), buildRepositoryContext(context)).content
+    }<%if (tableActions.contains("remove")) {%>
+
+    @Install(to = "${tableId}.remove", subject = "delegate")
+    private fun ${tableId}RemoveDelegate(collection: Collection<${entity.className}>) {
+        repository.deleteAll(collection)
+    }<%}%>
+
+    @Install(target = Target.DATA_CONTEXT)
+    private fun saveDelegate(saveContext: SaveContext): Set<Any> {
+        <%
+    def compositeAttrs = ''
+    detailFetchPlan.orderedRootProperties.each {property ->
+            def propAttr = detailFetchPlan.entity.getAttribute(property.name)
+            if (propAttr != null && propAttr.hasAnnotation('Composition')) {
+                compositeAttrs = compositeAttrs + property.name + ', '
+            }
     }
+    if (compositeAttrs.length() > 0){
+        compositeAttrs = compositeAttrs.substring(0, compositeAttrs.length() - 2);
+        print """/*
+         * ${entity.className} has next @Composition attributes: $compositeAttrs.
+         * Changes for corresponding entities have to be saved here.
+         * Please make sure that these attributes have cascade saving enabled or save them manually.
+         * Entities with unsaved changes are provided in 'saveContext' method parameter.
+         */"""}%>
+        return mutableSetOf(repository.save(${detailDc}.item))
+    }
+
+    @Install(to = "${detailDl}", target = Target.DATA_LOADER)
+    private fun detailLoadDelegate(context: LoadContext<${entity.className}>): ${entity.className} {
+        return repository.getById(extractId(context), context.fetchPlan)
+    }<%}%>
 }

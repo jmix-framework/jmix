@@ -37,11 +37,11 @@ def tableXml = api.processSnippet('table.xml',
                     class="${entity.fqn}"<%if (!is_inline_listFetchPlan) {%>
         fetchPlan="${listFetchPlan.name}"<%}%>> <%if (is_inline_listFetchPlan) {%>
             ${inline_listFetchPlan}
-            <%}%><loader id="${tableDl}" readOnly="true">
+            <%}%><loader id="${tableDl}" readOnly="true"<%if (!useDataRepositories){%>>
                 <query>
                     <![CDATA[select e from ${entity.name} e]]>
                 </query>
-            </loader>
+            </loader><%} else {%>/><%}%>
         </collection>
     </data>
     <facets>

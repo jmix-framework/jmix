@@ -16,9 +16,10 @@
 
 package io.jmix.superset.schedule;
 
+import io.jmix.superset.SupersetProperties;
 import jakarta.annotation.Nullable;
 
-public interface AccessTokenManager {
+public interface SupersetTokenManager {
 
     void refreshAccessToken();
 
@@ -28,6 +29,13 @@ public interface AccessTokenManager {
 
     void refreshCsrfToken();
 
+    /**
+     * Depends on {@link SupersetProperties#isCsrfProtectionEnabled()} application property. If it's enabled a CSRF
+     * token will be fetched on Spring context refresh. Otherwise, no CSRF token will be fetched and method will return
+     * {@code null}.
+     *
+     * @return a CSRF token or {@code null} if CSRF protection is disabled
+     */
     @Nullable
     String getCsrfToken();
 }

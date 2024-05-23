@@ -17,6 +17,7 @@
 package io.jmix.superset.service.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.Nullable;
 
 public class RefreshResponse {
 
@@ -26,19 +27,21 @@ public class RefreshResponse {
     @JsonProperty("msg")
     private String systemMessage;
 
+    @Nullable
     public String getAccessToken() {
         return accessToken;
     }
 
-    public void setAccessToken(String accessToken) {
+    public void setAccessToken(@Nullable String accessToken) {
         this.accessToken = accessToken;
     }
 
+    @Nullable
     public String getSystemMessage() {
         return systemMessage;
     }
 
-    public void setSystemMessage(String systemMessage) {
+    public void setSystemMessage(@Nullable String systemMessage) {
         this.systemMessage = systemMessage;
     }
 }

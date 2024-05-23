@@ -105,7 +105,7 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     }
 
     public Boolean getFiltersExpanded() {
-        return getElement().getProperty(PROPERTY_FILTERS_EXPANDED, Boolean.TRUE);
+        return getElement().getProperty(PROPERTY_FILTERS_EXPANDED, Boolean.FALSE);
     }
 
     protected void setUrlInternal(String url) {

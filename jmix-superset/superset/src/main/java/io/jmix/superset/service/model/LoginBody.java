@@ -16,6 +16,8 @@
 
 package io.jmix.superset.service.model;
 
+import jakarta.annotation.Nullable;
+
 import java.io.Serializable;
 
 public class LoginBody implements Serializable {
@@ -25,54 +27,58 @@ public class LoginBody implements Serializable {
     private String provider;
     private Boolean refresh;
 
+    @Nullable
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(@Nullable String username) {
         this.username = username;
     }
 
-    public LoginBody withUsername(String username) {
+    public LoginBody withUsername(@Nullable String username) {
         setUsername(username);
         return this;
     }
 
+    @Nullable
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(@Nullable String password) {
         this.password = password;
     }
 
-    public LoginBody withPassword(String password) {
+    public LoginBody withPassword(@Nullable String password) {
         setPassword(password);
         return this;
     }
 
+    @Nullable
     public String getProvider() {
         return provider;
     }
 
-    public void setProvider(String provider) {
+    public void setProvider(@Nullable String provider) {
         this.provider = provider;
     }
 
-    public LoginBody withProvider(String provider) {
+    public LoginBody withProvider(@Nullable String provider) {
         setProvider(provider);
         return this;
     }
 
+    @Nullable
     public Boolean getRefresh() {
         return refresh;
     }
 
-    public void setRefresh(Boolean refresh) {
+    public void setRefresh(@Nullable Boolean refresh) {
         this.refresh = refresh;
     }
 
-    public LoginBody withRefresh(Boolean refresh) {
+    public LoginBody withRefresh(@Nullable Boolean refresh) {
         setRefresh(refresh);
         return this;
     }

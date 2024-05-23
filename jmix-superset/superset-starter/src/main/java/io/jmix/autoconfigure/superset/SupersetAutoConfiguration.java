@@ -17,7 +17,9 @@
 package io.jmix.autoconfigure.superset;
 
 import io.jmix.superset.SupersetConfiguration;
+import io.jmix.superset.service.cookie.SupersetCookieManager;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -36,5 +38,12 @@ public class SupersetAutoConfiguration {
         threadPoolTaskScheduler.setPoolSize(1);
         threadPoolTaskScheduler.setDaemon(true);
         return threadPoolTaskScheduler;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public SupersetCookieManager supersetCookieManager() {
+        return new SupersetCookieManager() {
+        };
     }
 }

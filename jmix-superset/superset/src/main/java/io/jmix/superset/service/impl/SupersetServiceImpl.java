@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.service.SupersetService;
+import io.jmix.superset.service.cookie.SupersetCookieManager;
 import io.jmix.superset.service.model.*;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
@@ -31,7 +32,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.CookieManager;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -45,9 +45,12 @@ public class SupersetServiceImpl implements SupersetService {
 
     protected HttpClient httpClient;
     protected ObjectMapper objectMapper;
+    protected SupersetCookieManager cookieManager;
 
-    public SupersetServiceImpl(SupersetProperties properties) {
+    public SupersetServiceImpl(SupersetProperties properties,
+                               SupersetCookieManager cookieManager) {
         this.properties = properties;
+        this.cookieManager = cookieManager;
 
         httpClient = buildHttpClient();
         objectMapper = buildObjectMapper();
@@ -215,7 +218,7 @@ public class SupersetServiceImpl implements SupersetService {
     protected HttpClient buildHttpClient() {
         return HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.ALWAYS)
-                .cookieHandler(new CookieManager()) // todo rp?
+                .cookieHandler(cookieManager)
                 .build();
     }
 

@@ -17,6 +17,7 @@
 package io.jmix.superset.service.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.Nullable;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -33,27 +34,30 @@ public class GuestTokenResponse implements Serializable {
 
     private List<Error> errors;
 
+    @Nullable
     public String getToken() {
         return token;
     }
 
-    public void setToken(String token) {
+    public void setToken(@Nullable String token) {
         this.token = token;
     }
 
+    @Nullable
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(@Nullable String message) {
         this.message = message;
     }
 
+    @Nullable
     public String getSystemMessage() {
         return systemMessage;
     }
 
-    public void setSystemMessage(String systemMessage) {
+    public void setSystemMessage(@Nullable String systemMessage) {
         this.systemMessage = systemMessage;
     }
 
@@ -61,18 +65,19 @@ public class GuestTokenResponse implements Serializable {
         return errors == null ? Collections.emptyList() : errors;
     }
 
-    public void setErrors(List<Error> errors) {
+    public void setErrors(@Nullable List<Error> errors) {
         this.errors = errors;
     }
 
     public static class Error {
         private String message;
 
+        @Nullable
         public String getMessage() {
             return message;
         }
 
-        public void setMessage(String message) {
+        public void setMessage(@Nullable String message) {
             this.message = message;
         }
 

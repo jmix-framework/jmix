@@ -13,7 +13,6 @@ public class SupersetProperties {
     String username;
     String password;
     Duration accessTokenRefreshSchedule;
-    Duration fallbackAccessTokenExpiration;
     Duration csrfTokenRefreshSchedule; // default is 6d and 23h
     boolean csrfProtectionEnabled;
 
@@ -21,14 +20,12 @@ public class SupersetProperties {
                               String username,
                               String password,
                               @DefaultValue("1m") Duration accessTokenRefreshSchedule,
-                              @DefaultValue("3m") Duration fallbackAccessTokenExpiration,
                               @DefaultValue("true") boolean csrfProtectionEnabled,
                               @DefaultValue("167h") Duration csrfTokenRefreshSchedule) {
         this.url = url;
         this.username = username;
         this.password = password;
         this.accessTokenRefreshSchedule = accessTokenRefreshSchedule;
-        this.fallbackAccessTokenExpiration = fallbackAccessTokenExpiration;
         this.csrfProtectionEnabled = csrfProtectionEnabled;
         this.csrfTokenRefreshSchedule = csrfTokenRefreshSchedule;
     }
@@ -50,10 +47,6 @@ public class SupersetProperties {
 
     public Duration getAccessTokenRefreshSchedule() {
         return accessTokenRefreshSchedule;
-    }
-
-    public Duration getFallbackAccessTokenExpiration() {
-        return fallbackAccessTokenExpiration;
     }
 
     public boolean isCsrfProtectionEnabled() {

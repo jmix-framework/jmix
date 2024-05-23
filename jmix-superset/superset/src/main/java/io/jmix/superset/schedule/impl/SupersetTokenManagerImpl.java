@@ -20,9 +20,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import io.jmix.core.annotation.Internal;
 import io.jmix.superset.SupersetProperties;
-import io.jmix.superset.schedule.AccessTokenManager;
+import io.jmix.superset.schedule.SupersetTokenManager;
 import io.jmix.superset.service.model.CsrfTokenResponse;
 import io.jmix.superset.service.model.LoginResponse;
 import io.jmix.superset.service.model.RefreshResponse;
@@ -37,11 +36,10 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
-@Internal
-@Component("superset_AccessTokenManagerImpl")
-public class AccessTokenManagerImpl implements AccessTokenManager {
+@Component("superset_SupersetTokenManagerImpl")
+public class SupersetTokenManagerImpl implements SupersetTokenManager {
 
-    private static final Logger log = LoggerFactory.getLogger(AccessTokenManagerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(SupersetTokenManagerImpl.class);
 
     private final SupersetService supersetService;
     private final SupersetProperties supersetProperties;
@@ -52,8 +50,8 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
     private String refreshToken;
     private String csrfToken;
 
-    public AccessTokenManagerImpl(SupersetService supersetService,
-                                  SupersetProperties supersetProperties) {
+    public SupersetTokenManagerImpl(SupersetService supersetService,
+                                    SupersetProperties supersetProperties) {
         this.supersetService = supersetService;
         this.supersetProperties = supersetProperties;
 
@@ -213,6 +211,6 @@ public class AccessTokenManagerImpl implements AccessTokenManager {
 
     protected Long getFallbackExpirationTime() {
         // todo rp discuss
-        return supersetProperties.getFallbackAccessTokenExpiration().getSeconds();
+        return Duration.ofMinutes(3).getSeconds();
     }
 }

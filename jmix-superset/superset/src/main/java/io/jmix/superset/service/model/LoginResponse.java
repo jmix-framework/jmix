@@ -17,6 +17,7 @@
 package io.jmix.superset.service.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.Nullable;
 
 import java.io.Serializable;
 
@@ -30,27 +31,30 @@ public class LoginResponse implements Serializable {
 
     private String message;
 
+    @Nullable
     public String getAccessToken() {
         return accessToken;
     }
 
-    public void setAccessToken(String accessToken) {
+    public void setAccessToken(@Nullable String accessToken) {
         this.accessToken = accessToken;
     }
 
+    @Nullable
     public String getRefreshToken() {
         return refreshToken;
     }
 
-    public void setRefreshToken(String refreshToken) {
+    public void setRefreshToken(@Nullable String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
+    @Nullable
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(@Nullable String message) {
         this.message = message;
     }
 }

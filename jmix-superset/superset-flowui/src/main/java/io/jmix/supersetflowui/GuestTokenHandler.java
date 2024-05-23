@@ -17,12 +17,11 @@
 package io.jmix.supersetflowui;
 
 import com.google.common.base.Strings;
-import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
-import io.jmix.superset.schedule.AccessTokenManager;
+import io.jmix.superset.schedule.SupersetTokenManager;
 import io.jmix.superset.service.model.GuestTokenBody;
 import io.jmix.superset.service.model.GuestTokenResponse;
 import io.jmix.superset.service.SupersetService;
@@ -36,25 +35,20 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
-@Component("superset_SupersetTokenHandler")
+@Component("superset_GuestTokenHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SupersetTokenHandler {
-    private static final Logger log = LoggerFactory.getLogger(SupersetTokenHandler.class);
+public class GuestTokenHandler {
+    private static final Logger log = LoggerFactory.getLogger(GuestTokenHandler.class);
 
     protected final SupersetService supersetService;
-    protected final AccessTokenManager accessTokenManager;
+    protected final SupersetTokenManager accessTokenManager;
     protected final BackgroundWorker backgroundWorker;
 
-    public SupersetTokenHandler(SupersetService supersetService,
-                                AccessTokenManager accessTokenManager,
-                                BackgroundWorker backgroundWorker) {
+    public GuestTokenHandler(SupersetService supersetService,
+                             SupersetTokenManager accessTokenManager,
+                             BackgroundWorker backgroundWorker) {
         this.supersetService = supersetService;
         this.accessTokenManager = accessTokenManager;
         this.backgroundWorker = backgroundWorker;

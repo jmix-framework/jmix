@@ -17,6 +17,7 @@
 package io.jmix.superset.service.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.Nullable;
 
 public class CsrfTokenResponse {
 
@@ -27,15 +28,30 @@ public class CsrfTokenResponse {
     @JsonProperty("msg")
     private String systemMessage;
 
+    @Nullable
     public String getResult() {
         return result;
     }
 
+    public void setResult(@Nullable String result) {
+        this.result = result;
+    }
+
+    @Nullable
     public String getMessage() {
         return message;
     }
 
+    public void setMessage(@Nullable String message) {
+        this.message = message;
+    }
+
+    @Nullable
     public String getSystemMessage() {
         return systemMessage;
+    }
+
+    public void setSystemMessage(@Nullable String systemMessage) {
+        this.systemMessage = systemMessage;
     }
 }

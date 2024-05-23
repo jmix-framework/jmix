@@ -14,6 +14,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                 #dashboard {
                     width: 100%;
                     height: 100%;
+                    background-color: #f7f7f7;
                 }
 
                 #dashboard iframe {
@@ -22,9 +23,23 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
                     border: none;
                 }
-            </style>
 
-            <div id="dashboard"/>
+                #stub-image-container {
+                    align-items: center;
+                    display: flex;
+                    justify-content: center;
+                    height: 100%;
+                }
+                
+                #stub-image-container img {
+                    width: 50px;
+                }
+            </style>
+            <div id="dashboard">
+                <div id="stub-image-container">
+                    <img src="superset-dashboard/icons/superset.png"/>    
+                </div>
+            </div>
         `;
     }
 
@@ -60,7 +75,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             },
             filtersExpanded: {
                 type: Boolean,
-                value: true,
+                value: false,
             },
             /**
              * @protected
@@ -82,14 +97,14 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
     updateDashboard() {
         if (!this._isReadyToEmbed()) {
-            this.$.dashboard.replaceChildren() // remove all children
+            this.$.dashboard.replaceChildren() // removes all children
+            this.$.dashboard.appendChild(this._createStubImageContainer());
             return;
         }
         const embedDashboardInternal = async () => {
             await embedDashboard({
-                id: this.embeddedId, // given by the Superset embedding UI
+                id: this.embeddedId, // the embedded ID specified in component
                 supersetDomain: this.getBaseUrl(),
-                // @ts-ignore
                 mountPoint: this.$.dashboard, // html element in which iframe render
                 fetchGuestToken: () => this.getGuestToken(),
                 dashboardUiConfig: {
@@ -126,9 +141,9 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             && (this.getBaseUrl() && this.getBaseUrl().length > 0);
     }
 
-    _onGuestTokenChanged(_guestToken) {
-        if (_guestToken) {
-            this._startGuestTokenRefreshTimer(_guestToken);
+    _onGuestTokenChanged(token) {
+        if (token) {
+            this._startGuestTokenRefreshTimer(token);
 
             if (!this.dashboardEmbedded) {
                 this.updateDashboard();
@@ -138,7 +153,18 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
     _startGuestTokenRefreshTimer(_guestToken) {
         let supersetTiming = getGuestTokenRefreshTiming(_guestToken);
-        setTimeout(this.$server.refreshGuestToken, supersetTiming - GUEST_TOKEN_REFRESH_BUFFER);
+        setTimeout(() => this.$server.refreshGuestToken(), supersetTiming - GUEST_TOKEN_REFRESH_BUFFER);
+    }
+
+    _createStubImageContainer() {
+        const img = document.createElement('img');
+        img.src = 'superset-dashboard/icons/superset.png';
+
+        const container = document.createElement('div');
+        container.id = 'stub-image-container'
+        container.appendChild(img);
+
+        return container;
     }
 }
 

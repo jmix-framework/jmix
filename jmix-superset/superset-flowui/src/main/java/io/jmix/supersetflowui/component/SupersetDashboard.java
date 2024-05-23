@@ -20,11 +20,11 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.AttachEvent;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
-import io.jmix.superset.schedule.AccessTokenManager;
+import io.jmix.superset.schedule.SupersetTokenManager;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.service.SupersetService;
 import io.jmix.superset.service.model.GuestTokenBody;
-import io.jmix.supersetflowui.SupersetTokenHandler;
+import io.jmix.supersetflowui.GuestTokenHandler;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 import jakarta.annotation.Nullable;
@@ -45,7 +45,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     protected ApplicationContext applicationContext;
     protected CurrentUserSubstitution currentUserSubstitution;
     protected SupersetProperties supersetProperties;
-    protected SupersetTokenHandler guestTokenHandler;
+    protected GuestTokenHandler guestTokenHandler;
 
     protected DatasetConstrainsProvider datasetConstrainsProvider;
 
@@ -58,9 +58,9 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     public void afterPropertiesSet() {
         currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
         supersetProperties = applicationContext.getBean(SupersetProperties.class);
-        guestTokenHandler = applicationContext.getBean(SupersetTokenHandler.class,
+        guestTokenHandler = applicationContext.getBean(GuestTokenHandler.class,
                 applicationContext.getBean(SupersetService.class),
-                applicationContext.getBean(AccessTokenManager.class),
+                applicationContext.getBean(SupersetTokenManager.class),
                 applicationContext.getBean(BackgroundWorker.class));
 
         setUrlInternal(supersetProperties.getUrl());
@@ -110,17 +110,24 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         }
 
         return GuestTokenBody.builder()
-                .withResource(new GuestTokenBody.Resource(getEmbeddedId(), DASHBOARD_TYPE))
+                .withResource(
+                        new GuestTokenBody.Resource()
+                                .withId(getEmbeddedId())
+                                .withType(DASHBOARD_TYPE))
                 .withRowLevelRoles(rls)
-                .withUser(new GuestTokenBody.User(currentUserSubstitution.getEffectiveUser().getUsername()))
+                .withUser(
+                        new GuestTokenBody.User()
+                                .withUsername(currentUserSubstitution.getEffectiveUser().getUsername()))
                 .build();
     }
 
     protected List<GuestTokenBody.RowLevelRole> convertToSupersetRls(List<DatasetConstraint> datasetConstraints) {
         return CollectionUtils.isNotEmpty(datasetConstraints)
                 ? datasetConstraints.stream()
-                        .map(dc -> new GuestTokenBody.RowLevelRole(dc.clause(), dc.dataset()))
-                        .toList()
+                        .map(dc -> new GuestTokenBody.RowLevelRole()
+                                        .withClause(dc.clause())
+                                        .withDataset(dc.dataset()))
+                .toList()
                 : Collections.emptyList();
     }
 }

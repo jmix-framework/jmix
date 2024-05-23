@@ -16,6 +16,6 @@ import org.springframework.security.web.SecurityFilterChain
  * @see io.jmix.securityflowui.security.FlowuiVaadinWebSecurity
  */
 @Configuration
-class ${project_classPrefix}SecurityConfiguration {
+open class ${project_classPrefix}SecurityConfiguration {
 
 }

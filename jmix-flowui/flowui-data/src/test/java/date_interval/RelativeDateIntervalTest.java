@@ -19,11 +19,11 @@ package date_interval;
 import date_interval.view.RelativeDateIntervalTestView;
 import io.jmix.core.DataManager;
 import io.jmix.core.security.SystemAuthenticator;
-import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
+import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.flowuidata.dateinterval.model.RelativeDateInterval;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -51,7 +51,7 @@ public class RelativeDateIntervalTest {
     @Autowired
     JdbcTemplate jdbcTemplate;
     @Autowired
-    ViewNavigators viewNavigators;
+    ViewNavigationSupport navigationSupport;
 
     @BeforeEach
     void setup() {
@@ -76,7 +76,7 @@ public class RelativeDateIntervalTest {
     @Test
     @DisplayName("Apply propertyFilter with RelativeDateInterval")
     protected void relativeDateIntervalTest() {
-        viewNavigators.view(RelativeDateIntervalTestView.class).navigate();
+        navigationSupport.navigate(RelativeDateIntervalTestView.class);
         RelativeDateIntervalTestView relativeDateIntervalTestView = UiTestUtils.getCurrentView();
 
         assertEquals(2, relativeDateIntervalTestView.getItems().size());

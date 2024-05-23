@@ -18,6 +18,7 @@ package navigation
 
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.router.QueryParameters
+import component.standarddetailview.view.BlankTestView
 import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.view.StandardOutcome
 import io.jmix.flowui.view.View
@@ -36,13 +37,14 @@ class BackwardNavigationTest extends FlowuiTestSpecification {
     ViewNavigators viewNavigators
 
     void setup() {
-        registerViewBasePackages("navigation.view")
+        registerViewBasePackages("component.standarddetailview.view", "navigation.view")
     }
 
     def "Back to detail-view"() {
         when: "Navigate to detail-view"
 
-        viewNavigators.detailView(Customer)
+        def origin = navigateToView(BlankTestView)
+        viewNavigators.detailView(origin, Customer)
                 .newEntity()
                 .navigate()
 
@@ -119,7 +121,8 @@ class BackwardNavigationTest extends FlowuiTestSpecification {
 
     def "Backward navigation with URL query parameters"() {
         when: "Navigate to view with some query parameters"
-        viewNavigators.view(BackwardNavigationListView)
+        def origin = navigateToView(BlankTestView)
+        viewNavigators.view(origin, BackwardNavigationListView)
                 .withQueryParameters(QueryParameters.of("param", "value"))
                 .navigate()
 

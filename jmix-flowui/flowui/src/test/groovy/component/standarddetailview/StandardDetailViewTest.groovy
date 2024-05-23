@@ -66,7 +66,8 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
         def entity = metadata.create(TestCopyingSystemStateEntity)
         entity.setName("test")
 
-        navigators.detailView(TestCopyingSystemStateEntity)
+        def origin = navigateToView(BlankTestView)
+        navigators.detailView(origin, TestCopyingSystemStateEntity)
                 .withViewClass(TestCopyingSystemStateDetailTestView)
                 .withBackwardNavigation(false)
                 .withRouteParameters(RouteParameters.empty())
@@ -105,7 +106,8 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
     def "Edit JPA entity in standard detail view"() {
         when: "Edit JPA entity in standard detail view"
 
-        navigators.detailView(Order)
+        def origin = navigateToView(BlankTestView)
+        navigators.detailView(origin, Order)
                 .editEntity(orderToEdit)
                 .withViewClass(OrderDetailTestView)
                 .withBackwardNavigation(false)

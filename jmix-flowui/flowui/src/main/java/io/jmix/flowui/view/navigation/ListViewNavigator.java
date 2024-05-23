@@ -29,7 +29,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Provides a fluent interface to configure navigation parameters and navigate to an entity list {@link View}.
  * <p>
- * An instance of this class should be obtained through {@link ViewNavigators#listView(Class)}.
+ * An instance of this class should be obtained through {@link ViewNavigators#listView(View, Class)}.
  */
 public class ListViewNavigator<E> extends AbstractViewNavigator {
 

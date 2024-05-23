@@ -77,7 +77,7 @@ public class SimplePaginationSettingsTest extends AbstractSettingsTest {
         assertEquals(5, paginationSettings.getItemsPerPageValue());
 
         // Open View again, change itemsPerPage value, close View
-        view = navigateTo(SimplePaginationSettingsTestView.class);;
+        view = navigateTo(SimplePaginationSettingsTestView.class);
 
         var changedValue = 3;
         PaginationSettingsUtils.setItemsPerPageValue(view.pagination, changedValue);
@@ -125,8 +125,7 @@ public class SimplePaginationSettingsTest extends AbstractSettingsTest {
         SimplePaginationSettingsTestView view = navigateTo(SimplePaginationSettingsTestView.class);
         view.closeWithDefaultAction();
 
-        viewNavigators.view(SimplePaginationSettingsTestView.class)
-                .navigate();
+        navigationSupport.navigate(SimplePaginationSettingsTestView.class);
         view = UiTestUtils.getCurrentView();
 
         PaginationSettingsUtils.setItemsPerPageValue(view.pagination, null);
@@ -154,8 +153,7 @@ public class SimplePaginationSettingsTest extends AbstractSettingsTest {
         SimplePaginationSettingsTestView view = navigateTo(SimplePaginationSettingsTestView.class);
         view.closeWithDefaultAction();
 
-        viewNavigators.view(SimplePaginationSettingsTestView.class)
-                .navigate();
+        navigationSupport.navigate(SimplePaginationSettingsTestView.class);
         view = UiTestUtils.getCurrentView();
 
         PaginationSettingsUtils.setItemsPerPageValue(view.pagination, null);

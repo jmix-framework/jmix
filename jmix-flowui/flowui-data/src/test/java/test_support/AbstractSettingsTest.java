@@ -17,13 +17,13 @@
 package test_support;
 
 import io.jmix.core.security.SystemAuthenticator;
-import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.facet.settings.ViewSettings;
 import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.facet.settings.ViewSettingsJson;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
@@ -39,7 +39,7 @@ public abstract class AbstractSettingsTest {
     @Autowired
     protected ViewSettingsComponentManager settingsManager;
     @Autowired
-    protected ViewNavigators viewNavigators;
+    protected ViewNavigationSupport navigationSupport;
 
     protected void saveSettings(ViewSettings viewSettings) {
         authenticator.runWithSystem(() -> settingsManager.saveSettings(Collections.emptyList(), viewSettings));
@@ -57,8 +57,7 @@ public abstract class AbstractSettingsTest {
     }
 
     protected <T extends View<?>> T navigateTo(Class<T> view) {
-        viewNavigators.view(view)
-                .navigate();
+        navigationSupport.navigate(view);
         return UiTestUtils.getCurrentView();
     }
 }

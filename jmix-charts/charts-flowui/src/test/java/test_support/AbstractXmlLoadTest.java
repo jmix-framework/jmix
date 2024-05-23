@@ -16,19 +16,18 @@
 
 package test_support;
 
-import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractXmlLoadTest {
 
     @Autowired
-    protected ViewNavigators viewNavigators;
+    protected ViewNavigationSupport navigationSupport;
 
     protected <T extends View<?>> T navigateTo(Class<T> view) {
-        viewNavigators.view(view)
-                .navigate();
+        navigationSupport.navigate(view);
         return UiTestUtils.getCurrentView();
     }
 }

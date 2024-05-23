@@ -44,6 +44,7 @@ import io.jmix.flowui.testassist.vaadin.TestVaadinRequest
 import io.jmix.flowui.testassist.vaadin.TestVaadinSession
 import io.jmix.flowui.view.View
 import io.jmix.flowui.view.ViewRegistry
+import io.jmix.flowui.view.navigation.ViewNavigationSupport
 import org.apache.commons.lang3.ArrayUtils
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
@@ -71,6 +72,9 @@ class FlowuiTestSpecification extends Specification {
 
     @Autowired
     ViewNavigators viewNavigators
+
+    @Autowired
+    ViewNavigationSupport navigationSupport
 
     @Autowired
     ViewRegistry viewRegistry
@@ -274,9 +278,7 @@ class FlowuiTestSpecification extends Specification {
     }
 
     protected List<HasElement> getRouterChain(Class<View> viewClass) {
-        viewNavigators.view(viewClass)
-                .navigate()
-
+        navigationSupport.navigate(viewClass)
         UI.getCurrent().getInternals().getActiveRouterTargetsChain()
     }
 }

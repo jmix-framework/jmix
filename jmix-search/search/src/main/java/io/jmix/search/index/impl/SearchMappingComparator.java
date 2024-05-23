@@ -1,4 +1,4 @@
-/*
+                                    /*
  * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,13 +23,45 @@ import java.util.Map;
 @Component
 public class SearchMappingComparator {
 
-    public static final String PROPERTIES_KEY = "properties";
-
     public ComparingState compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
-        return innerCompare((Map<String, Object>) searchIndexMapping.get(PROPERTIES_KEY), (Map<String, Object>) applicationMapping.get(PROPERTIES_KEY));
+
+        if (!applicationMapping.keySet().containsAll(searchIndexMapping.keySet())) {
+            return ComparingState.NOT_COMPATIBLE;
+        }
+
+        if (isCorrectLeafElement(searchIndexMapping)) {
+            if(isCorrectLeafElement(applicationMapping)){
+                return compareDataTypes((String) searchIndexMapping.get("type"), (String) applicationMapping.get("type"));
+            }else {
+                return ComparingState.NOT_COMPATIBLE;
+            }
+        }
+
+        ComparingState result = ComparingState.EQUAL;
+        for (Map.Entry<String, Object> mapEntry: searchIndexMapping.entrySet()){
+            if (!(mapEntry.getValue() instanceof Map)){
+                return ComparingState.NOT_COMPATIBLE;
+            }
+
+            ComparingState currentResult = compare((Map<String, Object>) mapEntry.getValue(), (Map<String, Object>) applicationMapping.get(mapEntry.getKey()));
+            if(currentResult == ComparingState.NOT_COMPATIBLE) return ComparingState.NOT_COMPATIBLE;
+            if(currentResult == ComparingState.COMPATIBLE && result != ComparingState.COMPATIBLE){
+                result = ComparingState.COMPATIBLE;
+            }
+        }
+
+        if(result == ComparingState.EQUAL && applicationMapping.size()>searchIndexMapping.size())
+            return ComparingState.COMPATIBLE;
+
+        return result;
     }
 
-    ComparingState innerCompare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
-        return applicationMapping.equals(searchIndexMapping) ? ComparingState.EQUAL : ComparingState.NOT_COMPATIBLE;
+    private ComparingState compareDataTypes(String type, String type1) {
+        return type.equals(type1) ? ComparingState.EQUAL: ComparingState.NOT_COMPATIBLE;
     }
+
+    private boolean isCorrectLeafElement(Map<String, Object> mapping) {
+        return mapping.size() == 1 && mapping.get("type") != null && mapping.get("type") instanceof String;
+    }
+
 }

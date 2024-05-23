@@ -25,46 +25,207 @@ import static org.junit.jupiter.api.Assertions.*;
 class SearchMappingComparatorTest {
 
     @Test
-    void compare_equal() {
-        Map<String, Object> searchIndexMapping = Map.of(
-                "number",
-                Map.of("type", "text"),
-                "product",
-                Map.of("type", "text")
-        );
+    void compare_equal_one_level() {
+        Map<String, Object> searchIndexMapping =
+                Map.of(
+                        "properties",
+                        Map.of(
+                                "number",
+                                Map.of("type", "text"),
+                                "product",
+                                Map.of("type", "text")
+                        )
+                );
 
 
         Map<String, Object> applicationMapping = Map.of(
-                "number",
-                Map.of("type", "text"),
-                "product",
-                Map.of("type", "text")
-        );
+                "properties",
+                Map.of(
+                        "number",
+                        Map.of("type", "text"),
+                        "product",
+                        Map.of("type", "text")
+                ));
 
         SearchMappingComparator comparator = new SearchMappingComparator();
-        ComparingState result = comparator.innerCompare(searchIndexMapping, applicationMapping);
+        ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.EQUAL, result);
     }
 
     @Test
-    void compare_not_additive_firstLevel() {
-        Map<String, Object> searchIndexMapping = Map.of(
-                "number",
-                Map.of("type", "text"),
-                "product",
-                Map.of("type", "text")
-        );
+    void compare_equal_different_key_order() {
+        Map<String, Object> searchIndexMapping =
+                Map.of(
+                        "properties",
+                        Map.of(
+                                "number",
+                                Map.of("type", "text"),
+                                "product",
+                                Map.of("type", "text")
+                        )
+                );
 
 
         Map<String, Object> applicationMapping = Map.of(
-                "number",
-                Map.of("type", "text")
-        );
+                "properties",
+                Map.of(
+                        "product",
+                        Map.of("type", "text"),
+                        "number",
+                        Map.of("type", "text")
+                ));
 
         SearchMappingComparator comparator = new SearchMappingComparator();
-        ComparingState result = comparator.innerCompare(searchIndexMapping, applicationMapping);
+        ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
+
+        assertEquals(ComparingState.EQUAL, result);
+    }
+
+    @Test
+    void compare_equal_two_levels() {
+        Map<String, Object> searchIndexMapping =
+                Map.of(
+                        "properties",
+                        Map.of(
+                                "field1",
+                                Map.of("type", "text"),
+                                "field2",
+                                Map.of("type", "text"),
+                                "referenceField1",
+                                Map.of(
+                                        "field1_1",
+                                        Map.of("type", "text"),
+                                        "field1_2",
+                                        Map.of("type", "text")
+                                )
+                        )
+                );
+
+
+        Map<String, Object> applicationMapping =
+                Map.of(
+                        "properties",
+                        Map.of(
+                                "referenceField1",
+                                Map.of(
+                                        "field1_2",
+                                        Map.of("type", "text"),
+                                        "field1_1",
+                                        Map.of("type", "text")
+                                ),
+                                "field1",
+                                Map.of("type", "text"),
+                                "field2",
+                                Map.of("type", "text")
+                        )
+                );
+
+        SearchMappingComparator comparator = new SearchMappingComparator();
+        ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
+
+        assertEquals(ComparingState.EQUAL, result);
+    }
+
+    @Test
+    void compare_equal_two_levels_not_compatible() {
+        Map<String, Object> searchIndexMapping =
+                Map.of(
+                        "properties",
+                        Map.of(
+                                "field1",
+                                Map.of("type", "text"),
+                                "field2",
+                                Map.of("type", "text"),
+                                "referenceField1",
+                                Map.of(
+                                        "field1_1",
+                                        Map.of("type", "text"),
+                                        "field1_2",
+                                        Map.of("type", "text")
+                                )
+                        )
+                );
+
+
+        Map<String, Object> applicationMapping =
+                Map.of(
+                        "properties",
+                        Map.of(
+                                "referenceField1",
+                                Map.of(
+                                        "field1_2",
+                                        Map.of("type", "text"),
+                                        "field1_1",
+                                        Map.of("type", "text")
+                                ),
+                                "field1",
+                                Map.of("type", "text")
+                        )
+                );
+
+        SearchMappingComparator comparator = new SearchMappingComparator();
+        ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
+    }
+
+    @Test
+    void compare_not_not_compatible() {
+        Map<String, Object> searchIndexMapping =
+                Map.of(
+                        "properties",
+                        Map.of(
+                                "number",
+                                Map.of("type", "text"),
+                                "product",
+                                Map.of("type", "text")
+                        )
+                );
+
+
+        Map<String, Object> applicationMapping = Map.of(
+                "properties",
+                Map.of(
+                        "number",
+                        Map.of("type", "text")
+                ));
+
+        SearchMappingComparator comparator = new SearchMappingComparator();
+        ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
+
+        assertEquals(ComparingState.NOT_COMPATIBLE, result);
+    }
+
+    @Test
+    void compare_compatible() {
+
+        Map<String, Object> searchIndexMapping =
+                Map.of(
+                        "properties",
+                        Map.of(
+                                "number",
+                                Map.of("type", "text"),
+                                "product",
+                                Map.of("type", "text")
+                        )
+                );
+
+
+        Map<String, Object> applicationMapping = Map.of(
+                "properties",
+                Map.of(
+                        "number",
+                        Map.of("type", "text"),
+                        "product",
+                        Map.of("type", "text"),
+                        "field3",
+                        Map.of("type", "text")
+                ));
+
+        SearchMappingComparator comparator = new SearchMappingComparator();
+        ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
+
+        assertEquals(ComparingState.COMPATIBLE, result);
     }
 }

@@ -35,7 +35,7 @@ public class JmixDataRepositoryUtils {
      * @throws RuntimeException if {@link LoadContext#getQuery()}} is null
      */
     public static JmixDataRepositoryContext buildRepositoryContext(LoadContext<?> context) {
-        LoadContext.Query query = getQueryNN(context);
+        LoadContext.Query query = getQuery(context);
         Map<String, Serializable> hints = new HashMap<>();
         context.getHints().forEach((s, o) -> hints.put(s, (Serializable) o));
         hints.put("jmix.cacheable", query.isCacheable());
@@ -47,7 +47,7 @@ public class JmixDataRepositoryUtils {
      * @throws RuntimeException if {@link LoadContext#getQuery()}} is null
      */
     public static PageRequest buildPageRequest(LoadContext<?> context) {
-        LoadContext.Query query = getQueryNN(context);
+        LoadContext.Query query = getQuery(context);
         return PageRequest.of(
                 query.getFirstResult() / query.getMaxResults(),
                 query.getMaxResults(),
@@ -70,9 +70,9 @@ public class JmixDataRepositoryUtils {
 
     /**
      * @return {@code Query} for {@code context}
-     * @throws RuntimeException if context have no {@code Query}
+     * @throws RuntimeException if context has no {@code Query}
      */
-    protected static LoadContext.Query getQueryNN(LoadContext<?> context) {
+    private static LoadContext.Query getQuery(LoadContext<?> context) {
         if (context.getQuery() == null) {
             //query should always exist in collection loader
             throw new RuntimeException("No query in CollectionLoader");

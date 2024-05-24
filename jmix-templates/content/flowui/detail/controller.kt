@@ -25,23 +25,18 @@ class ${detailControllerName}(private val repository: ${repository.getName()}) :
 
     @Install(target = Target.DATA_CONTEXT)
     private fun saveDelegate(saveContext: SaveContext): Set<Any> {
-        <%
-    def compositeAttrs = ''
-    detailFetchPlan.orderedRootProperties.each {property ->
-            def propAttr = detailFetchPlan.entity.getAttribute(property.name)
-            if (propAttr != null && propAttr.hasAnnotation('Composition')) {
-                compositeAttrs = compositeAttrs + property.name + ', '
-            }
-    }
-    if (compositeAttrs.length() > 0){
-        compositeAttrs = compositeAttrs.substring(0, compositeAttrs.length() - 2);
-        print """/*
-         * ${entity.className} has next @Composition attributes: $compositeAttrs.
-         * Changes for corresponding entities have to be saved here.
-         * Please make sure that these attributes have cascade saving enabled or save them manually.
-         * Entities with unsaved changes are provided in 'saveContext' method parameter.
-         */"""}%>
-        return mutableSetOf(repository.save(editedEntity))
+        <%def compositeAttrs = ''
+          detailFetchPlan.orderedRootProperties.each {property ->
+              def propAttr = detailFetchPlan.entity.getAttribute(property.name)
+              if (propAttr != null && propAttr.hasAnnotation('Composition')) {
+                  compositeAttrs = compositeAttrs + property.name + ', '
+              }
+          }
+          if (compositeAttrs.length() > 0){
+              compositeAttrs = compositeAttrs.substring(0, compositeAttrs.length() - 2);
+              println """// ${entity.className} has the following @Composition attributes: $compositeAttrs.
+               // To save them, either add cascade in JPA annotation or pass to appropriate repository manually."""}
+        %>return mutableSetOf(repository.save(editedEntity))
     }
 
     @Install(to = "${dlId}", target = Target.DATA_LOADER)

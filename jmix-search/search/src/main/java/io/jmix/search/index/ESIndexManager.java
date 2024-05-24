@@ -133,4 +133,11 @@ public interface ESIndexManager {
      * @return {@link IndexSynchronizationStatus}
      */
     IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration);
+
+    /**
+     * TODO
+     * @param indexConfiguration
+     * @return
+     */
+    boolean saveIndexMapping(IndexConfiguration indexConfiguration);
 }

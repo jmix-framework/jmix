@@ -43,11 +43,11 @@ public class IndexConfigurationsChecker {
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
-    public ComparingResult areConfigurationsCompatible(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+    public ConfiguarionComparingResult compareConfigurations(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
         ComparingState mappingState = isIndexMappingActual(indexConfiguration, indexResponse);
         ComparingState settingsState = isIndexSettingsActual(indexConfiguration, indexResponse);
 
-        return new ComparingResult(
+        return new ConfiguarionComparingResult(
                 mappingState.isReindexingNotRequired() && settingsState.isReindexingNotRequired(),
                 mappingState.isConfigurationUpdateRequired(),
                 settingsState.isConfigurationUpdateRequired()
@@ -76,12 +76,12 @@ public class IndexConfigurationsChecker {
         return settingsComparator.compare(currentSettings, actualSettings);
     }
 
-    public class ComparingResult {
+    public class ConfiguarionComparingResult {
         private final boolean compartible;
         private final boolean mappingMustBeActualized;
         private final boolean settingsMustBeActualized;
 
-        ComparingResult(boolean compartible, boolean mappingMustBeActualized, boolean settingsMustBeActualized) {
+        ConfiguarionComparingResult(boolean compartible, boolean mappingMustBeActualized, boolean settingsMustBeActualized) {
             this.compartible = compartible;
             this.mappingMustBeActualized = mappingMustBeActualized;
             this.settingsMustBeActualized = settingsMustBeActualized;

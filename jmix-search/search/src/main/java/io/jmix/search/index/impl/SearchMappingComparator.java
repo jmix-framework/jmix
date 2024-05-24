@@ -23,6 +23,8 @@ import java.util.Map;
 @Component
 public class SearchMappingComparator {
 
+    public static final String TYPE_KEY = "type";
+
     public ComparingState compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
 
         if (!applicationMapping.keySet().containsAll(searchIndexMapping.keySet())) {
@@ -31,7 +33,7 @@ public class SearchMappingComparator {
 
         if (isCorrectLeafElement(searchIndexMapping)) {
             if(isCorrectLeafElement(applicationMapping)){
-                return compareDataTypes((String) searchIndexMapping.get("type"), (String) applicationMapping.get("type"));
+                return compareDataTypes((String) searchIndexMapping.get(TYPE_KEY), (String) applicationMapping.get(TYPE_KEY));
             }else {
                 return ComparingState.NOT_COMPATIBLE;
             }
@@ -61,7 +63,7 @@ public class SearchMappingComparator {
     }
 
     private boolean isCorrectLeafElement(Map<String, Object> mapping) {
-        return mapping.size() == 1 && mapping.get("type") != null && mapping.get("type") instanceof String;
+        return mapping.size() == 1 && mapping.get(TYPE_KEY) != null && mapping.get(TYPE_KEY) instanceof String;
     }
 
 }

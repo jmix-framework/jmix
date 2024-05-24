@@ -26,10 +26,7 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.elasticsearch.client.indices.CreateIndexResponse;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.client.indices.GetIndexResponse;
+import org.elasticsearch.client.indices.*;
 import org.elasticsearch.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,13 +168,12 @@ public class ESIndexManagerImpl implements ESIndexManager {
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            //TODO code duplication
-            IndexConfigurationsChecker.ComparingResult result = isIndexActual(indexConfiguration);
+            IndexConfigurationsChecker.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
             if (result.isCompartible()) {
                 status = IndexValidationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
                 if(result.isMappingMustBeActualized()){
-                    actualizeMapping(indexConfiguration);
+                    saveIndexMapping(indexConfiguration);
                 }
                 if(result.isSettingsMustBeActualized()){
                     actualizeSettings(indexConfiguration);
@@ -234,18 +230,40 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return synchronizeIndexSchema(indexConfiguration, strategy);
     }
 
+    @Override
+    public boolean saveIndexMapping(IndexConfiguration indexConfiguration) {
+        PutMappingRequest request = new PutMappingRequest(indexConfiguration.getIndexName());
+
+        String mappingBody;
+        try {
+            mappingBody = objectMapper.writeValueAsString(indexConfiguration.getMapping());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Unable to create index '" + indexConfiguration.getIndexName() + "': Failed to parse index definition", e);
+        }
+
+        request.source(mappingBody, XContentType.JSON);
+        AcknowledgedResponse response;
+        try {
+            response = esClient.indices().putMapping(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            //TODO handle
+            throw new RuntimeException(e);
+        }
+        return response.isAcknowledged();
+    }
+
     protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         log.info("Synchronize search index '{}' (entity '{}') according to strategy '{}'",
                 indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), strategy);
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            IndexConfigurationsChecker.ComparingResult result = isIndexActual(indexConfiguration);
+            IndexConfigurationsChecker.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
             if (result.isCompartible()) {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
                 if(result.isMappingMustBeActualized()){
-                    actualizeMapping(indexConfiguration);
+                    saveIndexMapping(indexConfiguration);
                 }
                 if(result.isSettingsMustBeActualized()){
                     actualizeSettings(indexConfiguration);
@@ -263,10 +281,6 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     private void actualizeSettings(IndexConfiguration indexConfiguration) {
-        throw new UnsupportedOperationException();
-    }
-
-    private void actualizeMapping(IndexConfiguration indexConfiguration) {
         throw new UnsupportedOperationException();
     }
 
@@ -306,11 +320,11 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    protected IndexConfigurationsChecker.ComparingResult isIndexActual(IndexConfiguration indexConfiguration) {
+    protected IndexConfigurationsChecker.ConfiguarionComparingResult isIndexActual(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());
 
-        return indexConfigurationsChecker.areConfigurationsCompatible(indexConfiguration, indexResponse);
+        return indexConfigurationsChecker.compareConfigurations(indexConfiguration, indexResponse);
     }
 }

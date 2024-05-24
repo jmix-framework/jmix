@@ -311,6 +311,8 @@ dependencies {
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
         api 'org.apache.httpcomponents:httpclient:4.5.14'
+        api 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+        //api 'org.apache.httpcomponents.client5:httpclient5-fluent:5.3.1'
 
         api 'commons-logging:commons-logging:1.2'
 
@@ -396,6 +398,7 @@ dependencies {
         api 'org.jetbrains:annotations:22.0.0'
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
+        api 'org.opensearch.client:opensearch-java:2.9.1'
     }
 }
 

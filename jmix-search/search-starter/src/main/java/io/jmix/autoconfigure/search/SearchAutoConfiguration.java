@@ -17,11 +17,18 @@
 package io.jmix.autoconfigure.search;
 
 import com.google.common.base.Strings;
-import io.jmix.core.CoreConfiguration;
+import io.jmix.core.*;
 import io.jmix.data.DataConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
+import io.jmix.search.index.ESIndexManager;
+import io.jmix.search.index.EntityIndexer;
+import io.jmix.search.index.OpenSearchIndexSettingsConfigurerProcessor;
+import io.jmix.search.index.impl.*;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.utils.ElasticsearchSslConfigurer;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -31,12 +38,16 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.RestHighLevelClientBuilder;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.transport.OpenSearchTransport;
+import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 import javax.annotation.Nullable;
@@ -78,6 +89,111 @@ public class SearchAutoConfiguration {
         return new RestHighLevelClientBuilder(restClientBuilder.build())
                 .setApiCompatibilityMode(searchProperties.isRestHighLevelClientApiCompatibilityModeEnabled())
                 .build();
+    }
+
+    @Bean("search_OpenSearchClient") //todo
+    public OpenSearchClient openSearchClient() {
+        /*System.setProperty("javax.net.ssl.trustStore", "com/company/sandbox/keystore/localhost.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "123qwe");*/
+
+        final org.apache.hc.core5.http.HttpHost host = new org.apache.hc.core5.http.HttpHost("http", "localhost", 9200);
+        final org.apache.hc.client5.http.auth.CredentialsProvider credentialsProvider = new org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider();
+        // Only for demo purposes. Don't specify your credentials in code.
+        //credentialsProvider.setCredentials(new AuthScope(host), new UsernamePasswordCredentials("admin", "admin".toCharArray()));
+
+        /*final SSLContext sslcontext = SSLContextBuilder
+                .create()
+                .loadTrustMaterial(null, (chains, authType) -> true)
+                .build();*/
+
+        final ApacheHttpClient5TransportBuilder builder = ApacheHttpClient5TransportBuilder.builder(host);
+        builder.setHttpClientConfigCallback(httpClientBuilder -> {
+            /*final TlsStrategy tlsStrategy = ClientTlsStrategyBuilder.create()
+                    .setSslContext(SSLContextBuilder.create().build())
+                    // See https://issues.apache.org/jira/browse/HTTPCLIENT-2219
+                    .setTlsDetailsFactory(new Factory<SSLEngine, TlsDetails>() {
+                        @Override
+                        public TlsDetails create(final SSLEngine sslEngine) {
+                            return new TlsDetails(sslEngine.getSession(), sslEngine.getApplicationProtocol());
+                        }
+                    })
+                    .build();*/
+
+            final PoolingAsyncClientConnectionManager connectionManager = PoolingAsyncClientConnectionManagerBuilder
+                    .create()
+                    //.setTlsStrategy(tlsStrategy)
+                    .build();
+
+            return httpClientBuilder
+                    .setDefaultCredentialsProvider(credentialsProvider)
+                    .setConnectionManager(connectionManager);
+        });
+
+        final OpenSearchTransport transport = ApacheHttpClient5TransportBuilder.builder(host).build();
+        return new OpenSearchClient(transport);
+    }
+
+    @Bean("search_ElasticsearchIndexManager")
+    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "es") //todo
+    protected ESIndexManager elasticsearchIndexManager(RestHighLevelClient esClient,
+                                                       IndexConfigurationManager indexConfigurationManager,
+                                                       SearchProperties searchProperties,
+                                                       IndexStateRegistry indexStateRegistry) {
+        return new ESIndexManagerImpl(esClient, indexConfigurationManager, searchProperties, indexStateRegistry);
+    }
+
+    @Bean("search_OpenSearchIndexManager")
+    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "os") //todo
+    protected ESIndexManager openSearchIndexManager(OpenSearchClient client,
+                                                    IndexStateRegistry indexStateRegistry,
+                                                    IndexConfigurationManager indexConfigurationManager,
+                                                    SearchProperties searchProperties,
+                                                    OpenSearchIndexSettingsConfigurerProcessor indexSettingsProcessor) {
+        return new OpenSearchIndexManager(client, indexStateRegistry, indexConfigurationManager, searchProperties, indexSettingsProcessor);
+    }
+
+    @Bean("search_ElasticsearchEntityIndexer")
+    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "es") //todo
+    protected EntityIndexer elasticsearchEntityIndexer(UnconstrainedDataManager dataManager,
+                                                       FetchPlans fetchPlans,
+                                                       IndexConfigurationManager indexConfigurationManager,
+                                                       Metadata metadata,
+                                                       IdSerialization idSerialization,
+                                                       IndexStateRegistry indexStateRegistry,
+                                                       MetadataTools metadataTools,
+                                                       SearchProperties searchProperties,
+                                                       RestHighLevelClient client) {
+        return new ElasticSearchEntityIndexer(dataManager,
+                fetchPlans,
+                indexConfigurationManager,
+                metadata,
+                idSerialization,
+                indexStateRegistry,
+                metadataTools,
+                searchProperties,
+                client);
+    }
+
+    @Bean("search_OpenSearchEntityIndexer")
+    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "os") //todo
+    protected EntityIndexer openSearchEntityIndexer(UnconstrainedDataManager dataManager,
+                                                    FetchPlans fetchPlans,
+                                                    IndexConfigurationManager indexConfigurationManager,
+                                                    Metadata metadata,
+                                                    IdSerialization idSerialization,
+                                                    IndexStateRegistry indexStateRegistry,
+                                                    MetadataTools metadataTools,
+                                                    SearchProperties searchProperties,
+                                                    OpenSearchClient client) {
+        return new OpenSearchEntityIndexer(dataManager,
+                fetchPlans,
+                indexConfigurationManager,
+                metadata,
+                idSerialization,
+                indexStateRegistry,
+                metadataTools,
+                searchProperties,
+                client);
     }
 
     @Nullable

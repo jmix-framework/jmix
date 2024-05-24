@@ -71,7 +71,7 @@ public class IndexingTestConfiguration {
     @Bean
     @Primary
     public EntityIndexer testEntityIndexer() {
-        return beanFactory.createBean(TestEntityIndexer.class);
+        return beanFactory.createBean(TestElasticSearchEntityIndexer.class);
     }
 
     @Bean

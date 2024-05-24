@@ -18,8 +18,8 @@ package io.jmix.search;
 
 import io.jmix.core.Resources;
 import io.jmix.search.index.IndexSchemaManagementStrategy;
+import io.jmix.search.index.UnifiedRefresh;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -122,6 +122,8 @@ public class SearchProperties {
      */
     protected final List<String> enqueueIndexAllOnStartupIndexRecreationEntities;
 
+    protected final String platform; //todo
+
     public SearchProperties(
             @DefaultValue("100") int searchResultPageSize,
             @DefaultValue("100") int maxSearchPageCount,
@@ -139,6 +141,7 @@ public class SearchProperties {
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
             @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
             @DefaultValue("0/5 * * * * ?") String enqueueingSessionProcessingCron,
+            @DefaultValue("es") String platform,
             @DefaultValue Elasticsearch elasticsearch) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
@@ -157,6 +160,11 @@ public class SearchProperties {
         this.restHighLevelClientApiCompatibilityModeEnabled = restHighLevelClientApiCompatibilityModeEnabled;
         this.enqueueIndexAllOnStartupIndexRecreationEntities = prepareStartupEnqueueingEntities(enqueueIndexAllOnStartupIndexRecreationEntities);
         this.searchIndexNamePrefix = searchIndexNamePrefix;
+        this.platform = platform;
+    }
+
+    public String getPlatform() {
+        return platform;
     }
 
     /**
@@ -316,7 +324,7 @@ public class SearchProperties {
     /**
      * @see Elasticsearch#bulkRequestRefreshPolicy
      */
-    public RefreshPolicy getElasticsearchBulkRequestRefreshPolicy() {
+    public UnifiedRefresh getElasticsearchBulkRequestRefreshPolicy() { //todo string?
         return elasticsearch.bulkRequestRefreshPolicy;
     }
 
@@ -357,9 +365,9 @@ public class SearchProperties {
         protected final SSL ssl;
 
         /**
-         * Refresh policy that should be used with bulk requests to Elasticsearch: NONE (default), WAIT_UNTIL, IMMEDIATE
+         * UnifiedRefresh policy that should be used with bulk requests to Elasticsearch: NONE (default), WAIT_UNTIL, IMMEDIATE
          */
-        protected final RefreshPolicy bulkRequestRefreshPolicy;
+        protected final UnifiedRefresh bulkRequestRefreshPolicy;
 
         public Elasticsearch(
                 @DefaultValue("localhost:9200") String url,
@@ -374,12 +382,12 @@ public class SearchProperties {
             this.bulkRequestRefreshPolicy = resolveRefreshPolicy(bulkRequestRefreshPolicy.toUpperCase());
         }
 
-        protected RefreshPolicy resolveRefreshPolicy(String propertyValue) {
-            RefreshPolicy refreshPolicy;
+        protected UnifiedRefresh resolveRefreshPolicy(String propertyValue) {
+            UnifiedRefresh refreshPolicy;
             try {
-                refreshPolicy = RefreshPolicy.valueOf(propertyValue);
+                refreshPolicy = UnifiedRefresh.valueOf(propertyValue);
             } catch (Exception e) {
-                refreshPolicy = RefreshPolicy.NONE;
+                refreshPolicy = UnifiedRefresh.FALSE;
                 log.warn("Unknown refresh policy '{}'. Default one ('{}') will be used.", propertyValue, refreshPolicy);
             }
             return refreshPolicy;

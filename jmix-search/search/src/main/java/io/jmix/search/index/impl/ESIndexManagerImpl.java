@@ -36,29 +36,34 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("search_ESIndexManager")
+//@Component("search_ESIndexManager")
 public class ESIndexManagerImpl implements ESIndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(ESIndexManagerImpl.class);
 
-    @Autowired
-    protected RestHighLevelClient esClient;
-    @Autowired
-    protected IndexConfigurationManager indexConfigurationManager;
-    @Autowired
-    protected SearchProperties searchProperties;
-    @Autowired
-    protected IndexStateRegistry indexStateRegistry;
+    //@Autowired
+    protected final RestHighLevelClient esClient;
+    //@Autowired
+    protected final IndexConfigurationManager indexConfigurationManager;
+    //@Autowired
+    protected final SearchProperties searchProperties;
+    //@Autowired
+    protected final IndexStateRegistry indexStateRegistry;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
+
+    public ESIndexManagerImpl(RestHighLevelClient esClient, IndexConfigurationManager indexConfigurationManager, SearchProperties searchProperties, IndexStateRegistry indexStateRegistry) {
+        this.esClient = esClient;
+        this.indexConfigurationManager = indexConfigurationManager;
+        this.searchProperties = searchProperties;
+        this.indexStateRegistry = indexStateRegistry;
+    }
 
     @Override
     public boolean createIndex(IndexConfiguration indexConfiguration) {
@@ -139,12 +144,11 @@ public class ESIndexManagerImpl implements ESIndexManager {
     @Override
     public boolean isIndexExist(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
-
-        GetIndexRequest request = new GetIndexRequest(indexName);
         try {
+            GetIndexRequest request = new GetIndexRequest(indexName);
             return esClient.indices().exists(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to check existence of index '" + indexName + "': Request failed", e);
+            throw new RuntimeException("Unable to check existence of index '" + indexName + "'", e);
         }
     }
 
@@ -189,17 +193,13 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    @Override
-    public GetIndexResponse getIndex(String indexName) {
+    //@Override
+    /*public Map<String, ObjectNode> getIndexMetadata(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
 
-        GetIndexRequest request = new GetIndexRequest(indexName);
-        try {
-            return esClient.indices().get(request, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to get info of index '" + indexName + "': Request failed", e);
-        }
-    }
+        GetIndexResponse response = getIndexMetadataInternal(indexName);
+        //todo convert to object nodes
+    }*/
 
     @Override
     public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas() {
@@ -284,10 +284,21 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
+    protected GetIndexResponse getIndexMetadataInternal(String indexName) {
+        Preconditions.checkNotNullArgument(indexName);
+
+        GetIndexRequest request = new GetIndexRequest(indexName);
+        try {
+            return esClient.indices().get(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to get info of index '" + indexName + "': Request failed", e);
+        }
+    }
+
     protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
-        GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());
+        GetIndexResponse indexResponse = getIndexMetadataInternal(indexConfiguration.getIndexName());
         boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexResponse);
         boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexResponse);
 
@@ -301,7 +312,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         Map<String, Object> actualMapping = objectMapper.convertValue(
                 indexConfiguration.getMapping(),
                 new TypeReference<Map<String, Object>>() {
-                }
+                } //todo extract to class variable?
         );
         log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
                 indexConfiguration.getIndexName(), currentMapping, actualMapping);

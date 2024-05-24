@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package io.jmix.search.index.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.*;
@@ -31,50 +30,46 @@ import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
-import org.elasticsearch.action.bulk.BulkItemResponse;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Component("search_EntityIndexer")
-public class EntityIndexerImpl implements EntityIndexer {
+public abstract class BaseEntityIndexer implements EntityIndexer {
 
-    private static final Logger log = LoggerFactory.getLogger(EntityIndexerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseEntityIndexer.class);
 
-    @Autowired
-    protected UnconstrainedDataManager dataManager;
-    @Autowired
-    protected FetchPlans fetchPlans;
-    @Autowired
-    protected RestHighLevelClient esClient;
-    @Autowired
-    protected IndexConfigurationManager indexConfigurationManager;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected IdSerialization idSerialization;
-    @Autowired
-    protected IndexStateRegistry indexStateRegistry;
-    @Autowired
-    protected MetadataTools metadataTools;
-    @Autowired
-    protected SearchProperties searchProperties;
+    protected final UnconstrainedDataManager dataManager;
+    protected final FetchPlans fetchPlans;
+    protected final IndexConfigurationManager indexConfigurationManager;
+    protected final Metadata metadata;
+    protected final IdSerialization idSerialization;
+    protected final IndexStateRegistry indexStateRegistry;
+    protected final MetadataTools metadataTools;
+    protected final SearchProperties searchProperties;
 
-    protected ObjectMapper objectMapper = new ObjectMapper();
+    protected final ObjectMapper objectMapper;
+
+    public BaseEntityIndexer(UnconstrainedDataManager dataManager,
+                             FetchPlans fetchPlans,
+                             IndexConfigurationManager indexConfigurationManager,
+                             Metadata metadata,
+                             IdSerialization idSerialization,
+                             IndexStateRegistry indexStateRegistry,
+                             MetadataTools metadataTools,
+                             SearchProperties searchProperties) {
+        this.dataManager = dataManager;
+        this.fetchPlans = fetchPlans;
+        this.indexConfigurationManager = indexConfigurationManager;
+        this.metadata = metadata;
+        this.idSerialization = idSerialization;
+        this.indexStateRegistry = indexStateRegistry;
+        this.metadataTools = metadataTools;
+        this.searchProperties = searchProperties;
+        this.objectMapper = new ObjectMapper();
+    }
 
     @Override
     public IndexResult index(Object entityInstance) {
@@ -106,7 +101,7 @@ public class EntityIndexerImpl implements EntityIndexer {
     @Override
     public IndexResult deleteCollection(Collection<Object> entityInstances) {
         Map<IndexConfiguration, Collection<String>> groupedIndexIds = prepareIndexIdsByEntityInstances(entityInstances);
-        return deleteByGroupedIndexIds(groupedIndexIds);
+        return deleteByGroupedIndexIdsInternal(groupedIndexIds);
     }
 
     @Override
@@ -117,56 +112,53 @@ public class EntityIndexerImpl implements EntityIndexer {
     @Override
     public IndexResult deleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
         Map<IndexConfiguration, Collection<String>> groupedIndexIds = prepareIndexIdsByEntityIds(entityIds);
-        return deleteByGroupedIndexIds(groupedIndexIds);
+        return deleteByGroupedIndexIdsInternal(groupedIndexIds);
     }
 
-    protected IndexResult indexGroupedInstances(Map<IndexConfiguration, Collection<Object>> groupedInstancesForIndexing) {
+    protected abstract IndexResult indexDocuments(List<IndexDocumentData> documents);
+
+    protected abstract IndexResult deleteByGroupedDocIds(Map<IndexConfiguration, Collection<String>> groupedDocIds);
+
+    protected IndexResult indexGroupedInstances(Map<IndexConfiguration, Collection<Object>> groupedInstances) {
         if (log.isDebugEnabled()) {
-            Integer amountOfInstances = groupedInstancesForIndexing.values().stream()
+            Integer amountOfInstances = groupedInstances.values().stream()
                     .map(Collection::size)
                     .reduce(Integer::sum)
                     .orElse(0);
-            log.debug("Prepared {} instances within {} entities", amountOfInstances, groupedInstancesForIndexing.keySet().size());
+            log.debug("[INDEX] Prepared {} instances within {} entities", amountOfInstances, groupedInstances.keySet().size());
         }
 
-        BulkRequest request = new BulkRequest();
-        for (Map.Entry<IndexConfiguration, Collection<Object>> entry : groupedInstancesForIndexing.entrySet()) {
+        List<IndexDocumentData> documents = new ArrayList<>();
+        for (Map.Entry<IndexConfiguration, Collection<Object>> entry : groupedInstances.entrySet()) {
             IndexConfiguration indexConfiguration = entry.getKey();
             if (indexStateRegistry.isIndexAvailable(indexConfiguration.getEntityName())) {
                 Predicate<Object> indexablePredicate = indexConfiguration.getIndexablePredicate();
                 for (Object instance : entry.getValue()) {
                     if (indexablePredicate.test(instance)) {
-                        addIndexActionToBulkRequest(request, indexConfiguration, instance);
+                        documents.add(generateIndexDocument(indexConfiguration, instance));
                     }
                 }
             }
         }
 
-        BulkResponse bulkResponse = request.requests().isEmpty()
-                ? createNoopBulkResponse()
-                : executeBulkRequest(request);
-        return IndexResult.create(bulkResponse);
+        return indexDocuments(documents);
     }
 
-    protected BulkResponse executeBulkRequest(BulkRequest request) {
-        try {
-            RefreshPolicy refreshPolicy = searchProperties.getElasticsearchBulkRequestRefreshPolicy();
-            log.debug("Refresh policy: {}", refreshPolicy);
-            request.setRefreshPolicy(refreshPolicy);
-            BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
-            log.debug("Bulk Response: Took {}, Status = {}, With Failures = {}{}",
-                    bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures(),
-                    bulkResponse.hasFailures() ? ": " + bulkResponse.buildFailureMessage() : "");
-            return bulkResponse;
-        } catch (IOException e) {
-            throw new RuntimeException("Bulk request failed", e);
+    protected IndexResult deleteByGroupedIndexIdsInternal(Map<IndexConfiguration, Collection<String>> groupedIndexIds) {
+        if (log.isDebugEnabled()) {
+            Integer amountOfInstances = groupedIndexIds.values().stream()
+                    .map(Collection::size)
+                    .reduce(Integer::sum)
+                    .orElse(0);
+            log.debug("[DELETE] Prepared {} instances within {} entities", amountOfInstances, groupedIndexIds.keySet().size());
         }
+        return deleteByGroupedDocIds(groupedIndexIds);
     }
 
     protected Map<IndexConfiguration, Collection<Object>> prepareInstancesForIndexing(Collection<Object> instances) {
         Map<MetaClass, List<Object>> idsGroupedByMetaClass = instances.stream().collect(
                 Collectors.groupingBy(
-                        instance -> metadata.getClass(instance),
+                        metadata::getClass,
                         Collectors.mapping(EntityValues::getId, Collectors.toList())
                 )
         );
@@ -183,6 +175,36 @@ public class EntityIndexerImpl implements EntityIndexer {
         );
 
         return reloadEntityInstances(idsGroupedByMetaClass);
+    }
+
+    protected Map<IndexConfiguration, Collection<String>> prepareIndexIdsByEntityInstances(Collection<Object> instances) {
+        Map<IndexConfiguration, Collection<String>> result = new HashMap<>();
+        instances.forEach(instance -> {
+            MetaClass metaClass = metadata.getClass(instance);
+            Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName());
+            if (indexConfigurationOpt.isPresent()) {
+                IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
+                String indexId = idSerialization.idToString(Id.of(instance));
+                Collection<String> idsForConfig = result.computeIfAbsent(indexConfiguration, k -> new HashSet<>());
+                idsForConfig.add(indexId);
+            }
+        });
+        return result;
+    }
+
+    protected Map<IndexConfiguration, Collection<String>> prepareIndexIdsByEntityIds(Collection<Id<?>> entityIds) {
+        Map<IndexConfiguration, Collection<String>> result = new HashMap<>();
+        entityIds.forEach(entityId -> {
+            MetaClass metaClass = metadata.getClass(entityId.getEntityClass());
+            Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName());
+            if (indexConfigurationOpt.isPresent()) {
+                IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
+                String indexId = idSerialization.idToString(entityId);
+                Collection<String> idsForConfig = result.computeIfAbsent(indexConfiguration, k -> new HashSet<>());
+                idsForConfig.add(indexId);
+            }
+        });
+        return result;
     }
 
     protected Map<IndexConfiguration, Collection<Object>> reloadEntityInstances(Map<MetaClass, List<Object>> idsGroupedByMetaClass) {
@@ -251,9 +273,9 @@ public class EntityIndexerImpl implements EntityIndexer {
         return fetchPlanBuilder.build();
     }
 
-    protected void addIndexActionToBulkRequest(BulkRequest request,
-                                               IndexConfiguration indexConfiguration,
-                                               Object instance) {
+    // document generation
+    protected IndexDocumentData generateIndexDocument(IndexConfiguration indexConfiguration,
+                                                      Object instance) {
         ObjectNode sourceObject = JsonNodeFactory.instance.objectNode();
         IndexMappingConfiguration indexMappingConfiguration = indexConfiguration.getMapping();
         indexMappingConfiguration.getFields()
@@ -267,71 +289,19 @@ public class EntityIndexerImpl implements EntityIndexer {
         sourceObject.set(displayedNameDescriptor.getIndexPropertyFullName(), displayedName);
 
         log.debug("Source object: {}", sourceObject);
-        try {
-            String serializedEntityId = idSerialization.idToString(Id.of(instance));
-            request.add(new IndexRequest()
-                    .index(indexConfiguration.getIndexName())
-                    .id(serializedEntityId)
-                    .source(objectMapper.writeValueAsString(sourceObject), XContentType.JSON));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to create index request: unable to parse source object", e);
+        String serializedEntityId = idSerialization.idToString(Id.of(instance));
+        return new IndexDocumentData(indexConfiguration.getIndexName(), serializedEntityId, sourceObject);
+    }
+
+    protected void addFieldValueToEntityIndexContent(ObjectNode entityIndexContent, MappingFieldDescriptor field, Object entity) {
+        log.trace("Extract value of property '{}' from entity {}", field.getMetaPropertyPath(), entity);
+        JsonNode propertyValue = field.getValue(entity);
+        if (!propertyValue.isNull()) {
+            String indexPropertyFullName = field.getIndexPropertyFullName();
+            ObjectNode objectNodeForField = createObjectNodeForField(indexPropertyFullName, propertyValue);
+            log.trace("Field value tree: {}", objectNodeForField);
+            merge(objectNodeForField, entityIndexContent);
         }
-    }
-
-    protected Map<IndexConfiguration, Collection<String>> prepareIndexIdsByEntityInstances(Collection<Object> instances) {
-        Map<IndexConfiguration, Collection<String>> result = new HashMap<>();
-        instances.forEach(instance -> {
-            MetaClass metaClass = metadata.getClass(instance);
-            Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName());
-            if (indexConfigurationOpt.isPresent()) {
-                IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
-                String indexId = idSerialization.idToString(Id.of(instance));
-                Collection<String> idsForConfig = result.computeIfAbsent(indexConfiguration, k -> new HashSet<>());
-                idsForConfig.add(indexId);
-            }
-        });
-        return result;
-    }
-
-    protected Map<IndexConfiguration, Collection<String>> prepareIndexIdsByEntityIds(Collection<Id<?>> entityIds) {
-        Map<IndexConfiguration, Collection<String>> result = new HashMap<>();
-        entityIds.forEach(entityId -> {
-            MetaClass metaClass = metadata.getClass(entityId.getEntityClass());
-            Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName());
-            if (indexConfigurationOpt.isPresent()) {
-                IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
-                String indexId = idSerialization.idToString(entityId);
-                Collection<String> idsForConfig = result.computeIfAbsent(indexConfiguration, k -> new HashSet<>());
-                idsForConfig.add(indexId);
-            }
-        });
-        return result;
-    }
-
-    protected IndexResult deleteByGroupedIndexIds(Map<IndexConfiguration, Collection<String>> groupedIndexIds) {
-        if (log.isDebugEnabled()) {
-            Integer amountOfInstances = groupedIndexIds.values().stream().map(Collection::size).reduce(Integer::sum).orElse(0);
-            log.debug("Prepared {} instances within {} entities", amountOfInstances, groupedIndexIds.keySet().size());
-        }
-
-        BulkRequest request = new BulkRequest();
-        for (Map.Entry<IndexConfiguration, Collection<String>> entry : groupedIndexIds.entrySet()) {
-            IndexConfiguration indexConfiguration = entry.getKey();
-            for (String indexId : entry.getValue()) {
-                addDeleteActionToBulkRequest(request, indexConfiguration, indexId);
-            }
-        }
-
-        BulkResponse bulkResponse = request.requests().isEmpty()
-                ? createNoopBulkResponse()
-                : executeBulkRequest(request);
-        return IndexResult.create(bulkResponse);
-    }
-
-    protected void addDeleteActionToBulkRequest(BulkRequest request,
-                                                IndexConfiguration indexConfiguration,
-                                                String indexId) {
-        request.add(new DeleteRequest(indexConfiguration.getIndexName(), indexId));
     }
 
     protected ObjectNode createObjectNodeForField(String key, JsonNode value) {
@@ -349,23 +319,7 @@ public class EntityIndexerImpl implements EntityIndexer {
         return root;
     }
 
-    protected void addFieldValueToEntityIndexContent(ObjectNode entityIndexContent, MappingFieldDescriptor field, Object entity) {
-        log.trace("Extract value of property '{}' from entity {}", field.getMetaPropertyPath(), entity);
-        JsonNode propertyValue = field.getValue(entity);
-        if (!propertyValue.isNull()) {
-            String indexPropertyFullName = field.getIndexPropertyFullName();
-            ObjectNode objectNodeForField = createObjectNodeForField(indexPropertyFullName, propertyValue);
-            log.trace("Field value tree: {}", objectNodeForField);
-            merge(objectNodeForField, entityIndexContent);
-        }
-    }
-
-    protected BulkResponse createNoopBulkResponse() {
-        return new BulkResponse(new BulkItemResponse[]{}, 0L);
-    }
-
-    //todo move to tools?
-    private void merge(JsonNode toBeMerged, JsonNode mergedInTo) {
+    protected void merge(JsonNode toBeMerged, JsonNode mergedInTo) {
         log.trace("Merge object {} into {}", toBeMerged, mergedInTo);
         Iterator<Map.Entry<String, JsonNode>> incomingFieldsIterator = toBeMerged.fields();
         Iterator<Map.Entry<String, JsonNode>> mergedIterator;
@@ -423,12 +377,12 @@ public class EntityIndexerImpl implements EntityIndexer {
         }
     }
 
-    private void updateArray(JsonNode valueToBePlaced, Map.Entry<String, JsonNode> toBeMerged) {
+    protected void updateArray(JsonNode valueToBePlaced, Map.Entry<String, JsonNode> toBeMerged) {
         toBeMerged.setValue(valueToBePlaced);
     }
 
-    private void updateObject(JsonNode mergeInTo, ValueNode valueToBePlaced,
-                              Map.Entry<String, JsonNode> toBeMerged) {
+    protected void updateObject(JsonNode mergeInTo, ValueNode valueToBePlaced,
+                                Map.Entry<String, JsonNode> toBeMerged) {
         boolean newEntry = true;
         Iterator<Map.Entry<String, JsonNode>> mergedIterator = mergeInTo.fields();
         while (mergedIterator.hasNext()) {
@@ -442,4 +396,7 @@ public class EntityIndexerImpl implements EntityIndexer {
             ((ObjectNode) mergeInTo).replace(toBeMerged.getKey(), toBeMerged.getValue());
         }
     }
+
+    protected record IndexDocumentData(String indexName, String id, ObjectNode source) {
+    } //todo naming
 }

@@ -16,7 +16,7 @@
 
 package io.jmix.search.index;
 
-import org.elasticsearch.client.indices.GetIndexResponse;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.Collection;
 import java.util.Map;
@@ -102,7 +102,9 @@ public interface ESIndexManager {
      * @param indexName index name
      * @return response
      */
-    GetIndexResponse getIndex(String indexName);
+    //GetIndexResponse getIndex(String indexName);
+
+    //Map<String, ObjectNode> getIndexMetadata(String indexName);
 
     /**
      * Synchronizes schemas of all search indexes defined in application.

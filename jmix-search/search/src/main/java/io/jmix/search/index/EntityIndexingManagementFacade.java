@@ -206,7 +206,7 @@ public class EntityIndexingManagementFacade {
             message = "Entity instance not found or can't be processed";
         } else if (indexResult.hasFailures()) {
             IndexResult.Failure failure = indexResult.getFailures().iterator().next();
-            String errorMessage = failure.getCause().getLocalizedMessage();
+            String errorMessage = failure.getCause();
             message = String.format("Failed to index instance of entity '%s' with id '%s': %s",
                     entityName, serializedId, errorMessage);
         } else {
@@ -251,7 +251,7 @@ public class EntityIndexingManagementFacade {
             message = "Entity instance not found or can't be processed";
         } else if (indexResult.hasFailures()) {
             IndexResult.Failure failure = indexResult.getFailures().iterator().next();
-            String errorMessage = failure.getCause().getLocalizedMessage();
+            String errorMessage = failure.getCause();
             message = String.format("Failed to delete document related to instance of entity '%s' with id '%s': %s",
                     entityName, serializedId, errorMessage);
         } else {

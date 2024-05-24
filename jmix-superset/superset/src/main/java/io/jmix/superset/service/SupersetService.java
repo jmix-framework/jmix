@@ -17,6 +17,8 @@
 package io.jmix.superset.service;
 
 import io.jmix.superset.SupersetProperties;
+import io.jmix.superset.schedule.SupersetTokenManager;
+import io.jmix.superset.schedule.SupersetTokenScheduleConfigurer;
 import io.jmix.superset.service.model.*;
 import jakarta.annotation.Nullable;
 
@@ -31,19 +33,19 @@ public interface SupersetService {
 
     /**
      * Performs POST login request {@code /api/v1/security/login} with default body configuration.
-     * It sends a request that blocks current thread.
+     * The request blocks current thread.
      * <p>
      * Note, that failed request will return response with {@code message} property.
      *
      * @return response with JWT access token and refresh token
      * @throws IOException           if an I/ O error occurs when sending or receiving
      * @throws InterruptedException  if the operation is interrupted
-     * @throws IllegalStateException if it cannot write or read JSON value,
+     * @throws IllegalStateException if it cannot write or read JSON value
      */
     LoginResponse login() throws IOException, InterruptedException;
 
     /**
-     * Performs POST login request {@code /api/v1/security/login}. It sends a request that blocks current thread.
+     * Performs POST login request {@code /api/v1/security/login}. The request blocks current thread.
      * <p>
      * Note, that failed request will return response with {@code message} property.
      *
@@ -51,13 +53,12 @@ public interface SupersetService {
      * @return response with JWT access token and refresh token
      * @throws IOException           if an I/ O error occurs when sending or receiving
      * @throws InterruptedException  if the operation is interrupted
-     * @throws IllegalStateException if it cannot write or read JSON value,
+     * @throws IllegalStateException if it cannot write or read JSON value
      */
     LoginResponse login(LoginBody body) throws IOException, InterruptedException;
 
     /**
-     * Performs refresh access token request {@code /api/v1/security/refresh}. It sends a request that blocks
-     * current thread.
+     * Performs refresh access token request {@code /api/v1/security/refresh}. The request blocks current thread.
      * <p>
      * Note, that failed request will return response with {@code systemMessage} property.
      *
@@ -65,13 +66,13 @@ public interface SupersetService {
      * @return response with new JWT access token
      * @throws IOException           if an I/ O error occurs when sending or receiving
      * @throws InterruptedException  if the operation is interrupted
-     * @throws IllegalStateException if it cannot write or read JSON value,
+     * @throws IllegalStateException if it cannot write or read JSON value
      */
     RefreshResponse refresh(String refreshToken) throws IOException, InterruptedException;
 
     /**
-     * Performs a guest token request {@code }. The guest token can be used to embed a dashboard.
-     * It sends a request that blocks current thread.
+     * Performs a guest token request {@code /api/v1/security/guest_token}. The request blocks current thread. The
+     * guest token can be used to embed a dashboard.
      * <p>
      * Note, that failed request will return response with {@code message} or {@code systemMessage} property.
      *
@@ -81,10 +82,23 @@ public interface SupersetService {
      * @return response with guest token
      * @throws IOException           if an I/ O error occurs when sending or receiving
      * @throws InterruptedException  if the operation is interrupted
-     * @throws IllegalStateException if it cannot write or read JSON value,
+     * @throws IllegalStateException if it cannot write or read JSON value
      */
-    GuestTokenResponse getGuestToken(GuestTokenBody body, String accessToken, @Nullable String csrfToken)
+    GuestTokenResponse fetchGuestToken(GuestTokenBody body, String accessToken, @Nullable String csrfToken)
             throws IOException, InterruptedException;
 
-    CsrfTokenResponse getCsrfToken(String accessToken);
+    /**
+     * Performs a request to get a CSRF token {@code /api/v1/security/csrf_token}. The request blocks
+     * current thread. CSRF token is required when Superset configures CSRF protection.
+     * <p>
+     * When {@link SupersetProperties#isCsrfProtectionEnabled()} is enabled a Spring scheduler gets CSRF token on
+     * Spring refresh context. See {@link SupersetTokenScheduleConfigurer} and {@link SupersetTokenManager}.
+     *
+     * @param accessToken access token to send
+     * @return response with CSRF token
+     * @throws IOException           if an I/ O error occurs when sending or receiving
+     * @throws InterruptedException  if the operation is interrupted
+     * @throws IllegalStateException if it cannot read JSON value
+     */
+    CsrfTokenResponse fetchCsrfToken(String accessToken) throws IOException, InterruptedException;
 }

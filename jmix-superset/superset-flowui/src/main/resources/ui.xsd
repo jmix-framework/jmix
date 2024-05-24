@@ -29,9 +29,8 @@
 
                     <xs:attribute name="embeddedId" type="xs:string"/>
                     <xs:attribute name="url" type="xs:string"/>
-                    <xs:attribute name="tabVisibility" type="xs:boolean"/>
-                    <xs:attribute name="titleVisibility" type="xs:boolean"/>
-                    <xs:attribute name="chartControlsVisibility" type="xs:boolean"/>
+                    <xs:attribute name="titleVisible" type="xs:boolean"/>
+                    <xs:attribute name="chartControlsVisible" type="xs:boolean"/>
                     <xs:attribute name="filtersExpanded" type="xs:boolean"/>
 
                     <xs:attribute name="datasetConstraintsProviderBean" type="xs:string"/>

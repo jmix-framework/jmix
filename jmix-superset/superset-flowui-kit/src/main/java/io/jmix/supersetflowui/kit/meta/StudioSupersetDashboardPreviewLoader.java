@@ -38,9 +38,8 @@ public class StudioSupersetDashboardPreviewLoader implements StudioPreviewCompon
 
         loadString(componentElement, "embeddedId", resultComponent::setEmbeddedId);
         loadString(componentElement, "url", resultComponent::setUrl);
-        loadBoolean(componentElement, "tabVisibility", resultComponent::setTabVisibility);
-        loadBoolean(componentElement, "titleVisibility", resultComponent::setTitleVisibility);
-        loadBoolean(componentElement, "chartControlsVisibility", resultComponent::setChartControlsVisibility);
+        loadBoolean(componentElement, "titleVisibility", resultComponent::setTitleVisible);
+        loadBoolean(componentElement, "chartControlsVisibility", resultComponent::setChartControlsVisible);
         loadBoolean(componentElement, "filtersExpanded", resultComponent::setFiltersExpanded);
 
 

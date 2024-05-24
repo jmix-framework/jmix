@@ -152,7 +152,7 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
     protected void performCsrfTokenRequest() {
         CsrfTokenResponse response;
         try {
-            response = supersetService.getCsrfToken(accessToken);
+            response = supersetService.fetchCsrfToken(accessToken);
         } catch (Exception e) {
             log.error("Cannot get CSRF token from Superset. Dashboard functionality may work incorrectly", e);
             return;

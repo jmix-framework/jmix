@@ -66,17 +66,21 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         setUrlInternal(supersetProperties.getUrl());
     }
 
+    /**
+     * @return dataset constraints providers or {@code null} if not set
+     */
     @Nullable
     public DatasetConstrainsProvider getDatasetConstrainsProvider() {
         return datasetConstrainsProvider;
     }
 
+    /**
+     * Sets dataset constraints providers that will be used in guest token request.
+     *
+     * @param datasetConstrainsProvider dataset constraints providers
+     */
     public void setDatasetConstrainsProvider(@Nullable DatasetConstrainsProvider datasetConstrainsProvider) {
         this.datasetConstrainsProvider = datasetConstrainsProvider;
-    }
-
-    public void forceEmbed() {
-        requestEmbedComponent();
     }
 
     @Override
@@ -90,7 +94,10 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        startGuestTokenRefreshing();
+        // Do not start internal guest token if custom is defined
+        if (Strings.isNullOrEmpty(getGuestToken())) {
+            startGuestTokenRefreshing();
+        }
     }
 
     protected void startGuestTokenRefreshing() {

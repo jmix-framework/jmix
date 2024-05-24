@@ -37,7 +37,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             </style>
             <div id="dashboard">
                 <div id="stub-image-container">
-                    <img src="superset-dashboard/icons/superset.png"/>    
+                    <img src="superset-dashboard/icons/superset.png"/>
                 </div>
             </div>
         `;
@@ -49,33 +49,42 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
     static get properties() {
         return {
-            guestToken: {
-                type: String,
-                value: '',
-            },
-            embeddedId: {
+            /**
+             * @protected
+             */
+            _url: {
                 type: String,
                 value: '',
             },
             url: {
                 type: String,
                 value: '',
+                observer: '_onPropertyChanged'
             },
-            titleVisibility: {
+            embeddedId: {
+                type: String,
+                value: '',
+                observer: '_onPropertyChanged'
+            },
+            titleVisible: {
                 type: Boolean,
                 value: false,
+                observer: '_onPropertyChanged'
             },
-            tabVisibility: {
+            chartControlsVisible: {
                 type: Boolean,
                 value: false,
-            },
-            chartControlsVisibility: {
-                type: Boolean,
-                value: false,
+                observer: '_onPropertyChanged'
             },
             filtersExpanded: {
                 type: Boolean,
                 value: false,
+                observer: '_onPropertyChanged'
+            },
+            guestToken: {
+                type: String,
+                value: '',
+                observer: '_onGuestTokenChanged'
             },
             /**
              * @protected
@@ -83,15 +92,8 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             _guestToken: {
                 type: String,
                 value: '',
-                observer: '_onGuestTokenChanged',
+                observer: '_onInternalGuestTokenChanged',
             },
-            /**
-             * @protected
-             */
-            _url: {
-                type: String,
-                value: '',
-            }
         }
     }
 
@@ -108,15 +110,14 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                 mountPoint: this.$.dashboard, // html element in which iframe render
                 fetchGuestToken: () => this.getGuestToken(),
                 dashboardUiConfig: {
-                    hideTitle: !this.titleVisibility,
-                    hideChartControls: !this.chartControlsVisibility,
-                    hideTab: !this.tabVisibility,
+                    hideTitle: !this.titleVisible,
+                    hideChartControls: !this.chartControlsVisible,
                     filters: {
                         expanded: this.filtersExpanded
                     }
                 },
             })
-            this.dashboardEmbedded = true;
+            this.dashboardInitialized = true;
         };
         embedDashboardInternal();
     }
@@ -141,19 +142,45 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             && (this.getBaseUrl() && this.getBaseUrl().length > 0);
     }
 
-    _onGuestTokenChanged(token) {
-        if (token) {
-            this._startGuestTokenRefreshTimer(token);
-
-            if (!this.dashboardEmbedded) {
-                this.updateDashboard();
-            }
+    _onPropertyChanged() {
+        if (this.dashboardInitialized) {
+            // If property changed after dashboard embedding, update it
+            this.updateDashboard();
         }
+    }
+
+    _onGuestTokenChanged(token) {
+        if (!token) {
+            return;
+        }
+
+        this._stopGuestTokenRefreshTimer(this._guestTokenTimerId);
+
+        if (!this.dashboardInitialized) {
+            this.updateDashboard();
+        }
+    }
+
+    _onInternalGuestTokenChanged(token) {
+        if (!token) {
+            return;
+        }
+
+        this._guestTokenTimerId = this._startGuestTokenRefreshTimer(token);
+
+        if (!this.dashboardInitialized) {
+            this.updateDashboard();
+        }
+    }
+
+    _stopGuestTokenRefreshTimer(timerId) {
+        clearTimeout(timerId);
     }
 
     _startGuestTokenRefreshTimer(_guestToken) {
         let supersetTiming = getGuestTokenRefreshTiming(_guestToken);
-        setTimeout(() => this.$server.refreshGuestToken(), supersetTiming - GUEST_TOKEN_REFRESH_BUFFER);
+        return setTimeout(() => this.$server.refreshGuestToken(),
+            supersetTiming - GUEST_TOKEN_REFRESH_BUFFER);
     }
 
     _createStubImageContainer() {

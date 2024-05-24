@@ -41,9 +41,8 @@ public class SupersetDashboardLoader extends AbstractComponentLoader<SupersetDas
 
         loadString(element, "embeddedId", resultComponent::setEmbeddedId);
         loadString(element, "url", resultComponent::setUrl);
-        loadBoolean(element, "tabVisibility", resultComponent::setTabVisibility);
-        loadBoolean(element, "titleVisibility", resultComponent::setTitleVisibility);
-        loadBoolean(element, "chartControlsVisibility", resultComponent::setChartControlsVisibility);
+        loadBoolean(element, "titleVisible", resultComponent::setTitleVisible);
+        loadBoolean(element, "chartControlsVisible", resultComponent::setChartControlsVisible);
         loadBoolean(element, "filtersExpanded", resultComponent::setFiltersExpanded);
 
         loadDatasetConstraints();

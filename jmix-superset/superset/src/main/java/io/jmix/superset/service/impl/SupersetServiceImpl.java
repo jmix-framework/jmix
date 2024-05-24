@@ -118,7 +118,7 @@ public class SupersetServiceImpl implements SupersetService {
     }
 
     @Override
-    public GuestTokenResponse getGuestToken(GuestTokenBody body, String accessToken, @Nullable String csrfToken)
+    public GuestTokenResponse fetchGuestToken(GuestTokenBody body, String accessToken, @Nullable String csrfToken)
             throws IOException, InterruptedException {
         String jsonBody;
         try {
@@ -156,24 +156,20 @@ public class SupersetServiceImpl implements SupersetService {
     }
 
     @Override
-    public CsrfTokenResponse getCsrfToken(String accessToken) {
+    public CsrfTokenResponse fetchCsrfToken(String accessToken) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(properties.getUrl() + "/api/v1/security/csrf_token"))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .GET()
                 .build();
-        String responseBody;
 
         log.debug("Sends CSRF token request");
 
-        try {
-            HttpResponse<String> send = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            responseBody = send.body();
-        } catch (IOException | InterruptedException e) {
-            throw new IllegalStateException("Failed to get a guest a CSRF token from Superset", e);
-        }
+        HttpResponse<String> send = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         log.debug("CSRF token request is finished");
+
+        String responseBody = send.body();
 
         try {
             return objectMapper.readValue(responseBody, CsrfTokenResponse.class);

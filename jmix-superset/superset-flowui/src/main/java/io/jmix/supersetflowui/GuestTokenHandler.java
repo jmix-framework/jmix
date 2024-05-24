@@ -34,6 +34,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.function.Consumer;
 
@@ -118,9 +119,8 @@ public class GuestTokenHandler {
         }
 
         @Override
-        public GuestTokenResponse run(TaskLifeCycle<Void> taskLifeCycle) {
-            // todo rp handle exceptions
-            return supersetService.getGuestToken(body, accessToken, csrfToken);
+        public GuestTokenResponse run(TaskLifeCycle<Void> taskLifeCycle) throws IOException, InterruptedException {
+            return supersetService.fetchGuestToken(body, accessToken, csrfToken);
         }
     }
 

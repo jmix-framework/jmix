@@ -172,12 +172,6 @@ public class ESIndexManagerImpl implements ESIndexManager {
             if (result.isCompartible()) {
                 status = IndexValidationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-                if(result.isMappingMustBeActualized()){
-                    saveIndexMapping(indexConfiguration);
-                }
-                if(result.isSettingsMustBeActualized()){
-                    actualizeSettings(indexConfiguration);
-                }
             } else {
                 status = IndexValidationStatus.IRRELEVANT;
                 indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());

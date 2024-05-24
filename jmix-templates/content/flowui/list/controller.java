@@ -32,7 +32,6 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Autowired
     private ${repository.getQualifiedName()} repository;
 
-
     @Install(to = "${tableDl}", target = Target.DATA_LOADER)
     private List<${entity.className}> loadDelegate(LoadContext<${entity.className}> context){
         return repository.findAll(buildPageRequest(context), buildRepositoryContext(context)).getContent();

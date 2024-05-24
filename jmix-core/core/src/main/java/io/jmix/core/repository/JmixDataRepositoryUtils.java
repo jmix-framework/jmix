@@ -60,7 +60,7 @@ public class JmixDataRepositoryUtils {
      * @return typed id
      * @throws RuntimeException if {@code id} absent in {@code context}
      */
-    public static <T> T extractId(LoadContext<?> context) {
+    public static <T> T extractEntityId(LoadContext<?> context) {
         if (context.getId() == null) {
             throw new RuntimeException("Id is not specified for LoadContext");
         }

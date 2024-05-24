@@ -157,7 +157,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 
     @Install(to = "${detailDl}", target = Target.DATA_LOADER)
     private ${entity.className} detailLoadDelegate(LoadContext<${entity.className}> context){
-        return repository.getById(extractId(context), context.getFetchPlan());
+        return repository.getById(extractEntityId(context), context.getFetchPlan());
     }
 
     @Install(target = Target.DATA_CONTEXT)

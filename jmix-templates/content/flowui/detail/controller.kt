@@ -22,7 +22,6 @@ ${classComment}
 @EditedEntityContainer("${dcId}")
 class ${detailControllerName}(private val repository: ${repository.getName()}) : StandardDetailView<${entity.className}>() {<%if (useDataRepositories){%>
 
-
     @Install(target = Target.DATA_CONTEXT)
     private fun saveDelegate(saveContext: SaveContext): Set<Any> {
         <%def compositeAttrs = ''
@@ -41,6 +40,6 @@ class ${detailControllerName}(private val repository: ${repository.getName()}) :
 
     @Install(to = "${dlId}", target = Target.DATA_LOADER)
     private fun loadDelegate(context: LoadContext<${entity.className}>): ${entity.className} {
-        return repository.getById(extractId(context), context.fetchPlan)
+        return repository.getById(extractEntityId(context), context.fetchPlan)
     }<%}%>
 }

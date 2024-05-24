@@ -161,6 +161,6 @@ class ${viewControllerName}(private val repository: ${repository.getName()}) : S
 
     @Install(to = "${detailDl}", target = Target.DATA_LOADER)
     private fun detailLoadDelegate(context: LoadContext<${entity.className}>): ${entity.className} {
-        return repository.getById(extractId(context), context.fetchPlan)
+        return repository.getById(extractEntityId(context), context.fetchPlan)
     }<%}%>
 }

@@ -31,7 +31,6 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
     @Autowired
     private ${repository.getQualifiedName()} repository;
 
-
     @Install(target = Target.DATA_CONTEXT)
     private Set<Object> saveDelegate(SaveContext saveContext) {
         <%def compositeAttrs = ''
@@ -50,6 +49,6 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
 
     @Install(to = "${dlId}", target = Target.DATA_LOADER)
     private ${entity.className} loadDelegate(LoadContext<${entity.className}> context){
-        return repository.getById(extractId(context), context.getFetchPlan());
+        return repository.getById(extractEntityId(context), context.getFetchPlan());
     }<%}%>
 }

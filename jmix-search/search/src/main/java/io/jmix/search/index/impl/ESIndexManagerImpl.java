@@ -257,7 +257,11 @@ public class ESIndexManagerImpl implements ESIndexManager {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
                 if(result.isMappingMustBeActualized()){
-                    saveIndexMapping(indexConfiguration);
+                    boolean mappingSavingResult = saveIndexMapping(indexConfiguration);
+                    if (!mappingSavingResult) {
+                        //TODO enhance message
+                        log.error("Problem with index mapping saving.");
+                    }
                 }
                 if(result.isSettingsMustBeActualized()){
                     actualizeSettings(indexConfiguration);
@@ -275,6 +279,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     private void actualizeSettings(IndexConfiguration indexConfiguration) {
+        // TODO is not used currently
         throw new UnsupportedOperationException();
     }
 

@@ -23,6 +23,9 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsAction;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -264,7 +267,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
                     }
                 }
                 if(result.isSettingsMustBeActualized()){
-                    actualizeSettings(indexConfiguration);
+                    saveSettings(indexConfiguration);
                 }
 
             } else {
@@ -278,7 +281,10 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    private void actualizeSettings(IndexConfiguration indexConfiguration) {
+    private void saveSettings(IndexConfiguration indexConfiguration) {
+        //new UpdateSettingsRequestBuilder()
+
+        new UpdateSettingsRequestBuilder(esClient, UpdateSettingsAction.INSTANCE, indexConfiguration.getIndexName()).setSettings(indexConfiguration.getSettings()).
         // TODO is not used currently
         throw new UnsupportedOperationException();
     }

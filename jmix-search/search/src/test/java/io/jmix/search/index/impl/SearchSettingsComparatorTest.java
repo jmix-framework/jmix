@@ -58,10 +58,7 @@ class SearchSettingsComparatorTest {
     private static Settings mockSettings(Map<String, Object> settingsMap) {
         Settings mock = mock(Settings.class);
         when(mock.keySet()).thenReturn(settingsMap.keySet());
-        when(mock.get(anyString())).thenAnswer(invocation -> {
-           String key = invocation.getArgument(0);
-           return settingsMap.get(key);
-        });
+        when(mock.get(anyString())).thenAnswer(invocation -> settingsMap.get((String) invocation.getArgument(0)));
         return mock;
     }
 }

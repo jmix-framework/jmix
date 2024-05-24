@@ -57,8 +57,8 @@ public class IndexConfigurationsChecker {
     protected ComparingState isIndexMappingActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
         Map<String, MappingMetadata> mappings = indexResponse.getMappings();
         MappingMetadata indexMappingMetadata = mappings.get(indexConfiguration.getIndexName());
-        Map<String, Object> applicationMapping = indexMappingMetadata.getSourceAsMap();
-        Map<String, Object> searchIndexMapping = objectMapper.convertValue(
+        Map<String, Object> searchIndexMapping = indexMappingMetadata.getSourceAsMap();
+        Map<String, Object> applicationMapping = objectMapper.convertValue(
                 indexConfiguration.getMapping(),
                 new TypeReference<Map<String, Object>>() {
                 }

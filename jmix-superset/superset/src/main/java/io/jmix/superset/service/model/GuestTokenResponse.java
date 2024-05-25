@@ -27,7 +27,7 @@ public class GuestTokenResponse implements Serializable {
 
     private String token;
 
-    private String message; // when error occurs
+    private String message;
 
     @JsonProperty("msg")
     private String systemMessage; // e.g. token is expired

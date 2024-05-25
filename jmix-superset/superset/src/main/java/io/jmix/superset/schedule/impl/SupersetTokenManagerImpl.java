@@ -75,19 +75,15 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
         }
     }
 
+    @Nullable
     @Override
     public String getAccessToken() {
-        if (Strings.isNullOrEmpty(accessToken)) {
-            throw new IllegalStateException("Access token is not initialized");
-        }
         return accessToken;
     }
 
+    @Nullable
     @Override
     public String getRefreshToken() {
-        if (Strings.isNullOrEmpty(refreshToken)) {
-            throw new IllegalStateException("Refresh token is not initialized");
-        }
         return refreshToken;
     }
 
@@ -116,6 +112,11 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
     }
 
     protected void performRefreshingAccessToken() {
+        if (Strings.isNullOrEmpty(refreshToken)) {
+            log.error("Failed to refresh access token. Refresh token is null or empty");
+            return;
+        }
+
         boolean retry = false;
         RefreshResponse response = null;
         try {
@@ -150,6 +151,11 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
     }
 
     protected void performCsrfTokenRequest() {
+        if (Strings.isNullOrEmpty(accessToken)) {
+            log.error("Cannot get CSRF token from Superset. Access token is null or empty");
+            return;
+        }
+
         CsrfTokenResponse response;
         try {
             response = supersetService.fetchCsrfToken(accessToken);

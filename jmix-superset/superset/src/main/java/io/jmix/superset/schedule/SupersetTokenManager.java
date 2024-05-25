@@ -38,17 +38,17 @@ public interface SupersetTokenManager {
     /**
      * The access token is available after Spring context refresh when a "login" request is sent to Superset.
      *
-     * @return access token
-     * @throws IllegalStateException if the token is not initialized yet
+     * @return access token or {@code null} if it's not initialized
      */
+    @Nullable
     String getAccessToken();
 
     /**
      * The refresh token is available after Spring context refresh when a "login" request is sent to Superset.
      *
-     * @return refresh token
-     * @throws IllegalStateException if the token is not initialized yet
+     * @return refresh token or {@code null} if it's not initialized
      */
+    @Nullable
     String getRefreshToken();
 
     /**

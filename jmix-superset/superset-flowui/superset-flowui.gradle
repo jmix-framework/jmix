@@ -23,4 +23,6 @@ dependencies {
     api project(":superset")
     api project(":superset-flowui-kit")
     api project(":flowui")
+
+    testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
 }

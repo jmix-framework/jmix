@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.supersetflowui.component.dataconstraint;
+package test_support;
 
-/**
- * Represents a dataset constraint. For instance:
- * <pre>
- * new DatasetConstraint(1, "country_name = 'United States'")
- * </pre>
- *
- * @param dataset an integer ID of Superset dataset
- * @param clause  native SQL condition that will be appended to "WHERE" clause
- */
-public record DatasetConstraint(Integer dataset, String clause) {
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
+
+import java.util.List;
+
+public class TestDatasetConstraintsProvider implements DatasetConstrainsProvider {
+
+    @Override
+    public List<DatasetConstraint> getConstraints() {
+        return List.of(new DatasetConstraint(1, "version > 1"));
+    }
 }

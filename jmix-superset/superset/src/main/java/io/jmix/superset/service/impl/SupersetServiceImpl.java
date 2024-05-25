@@ -19,12 +19,14 @@ package io.jmix.superset.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.service.SupersetService;
 import io.jmix.superset.service.cookie.SupersetCookieManager;
 import io.jmix.superset.service.model.*;
 import jakarta.annotation.Nullable;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +38,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 @Service("sprset_SupersetService")
 public class SupersetServiceImpl implements SupersetService {
@@ -67,6 +70,8 @@ public class SupersetServiceImpl implements SupersetService {
 
     @Override
     public LoginResponse login(LoginBody body) throws IOException, InterruptedException {
+        Preconditions.checkNotNullArgument(body);
+
         String requestBody;
         try {
             requestBody = new ObjectMapper().writeValueAsString(body);
@@ -88,7 +93,6 @@ public class SupersetServiceImpl implements SupersetService {
 
         try {
             return objectMapper.readValue(responseBody, LoginResponse.class);
-            // todo rp check when no VPN exception is not handled?
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Cannot parse login response", e);
         }
@@ -96,6 +100,8 @@ public class SupersetServiceImpl implements SupersetService {
 
     @Override
     public RefreshResponse refresh(String refreshToken) throws IOException, InterruptedException {
+        Preconditions.checkNotEmptyString(refreshToken);
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(properties.getUrl() + "/api/v1/security/refresh"))
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -111,7 +117,6 @@ public class SupersetServiceImpl implements SupersetService {
 
         try {
             return objectMapper.readValue(responseBody, RefreshResponse.class);
-            // todo rp check when no VPN exception is not handled?
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Cannot parse refresh response", e);
         }
@@ -120,6 +125,9 @@ public class SupersetServiceImpl implements SupersetService {
     @Override
     public GuestTokenResponse fetchGuestToken(GuestTokenBody body, String accessToken, @Nullable String csrfToken)
             throws IOException, InterruptedException {
+        checkGuestTokenResources(body.getResources());
+        Preconditions.checkNotEmptyString(accessToken);
+
         String jsonBody;
         try {
             jsonBody = objectMapper.writeValueAsString(body);
@@ -149,7 +157,6 @@ public class SupersetServiceImpl implements SupersetService {
 
         try {
             return objectMapper.readValue(responseBody, GuestTokenResponse.class);
-            // todo rp check when no VPN exception is not handled?
         } catch (JsonProcessingException ex) {
             throw new IllegalStateException("Cannot parse guest token response", ex);
         }
@@ -157,6 +164,8 @@ public class SupersetServiceImpl implements SupersetService {
 
     @Override
     public CsrfTokenResponse fetchCsrfToken(String accessToken) throws IOException, InterruptedException {
+        Preconditions.checkNotEmptyString(accessToken);
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(properties.getUrl() + "/api/v1/security/csrf_token"))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -188,5 +197,16 @@ public class SupersetServiceImpl implements SupersetService {
     protected ObjectMapper buildObjectMapper() {
         return new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    protected void checkGuestTokenResources(List<GuestTokenBody.Resource> resources) {
+        if (CollectionUtils.isEmpty(resources)) {
+            throw new IllegalArgumentException("Guest token resources cannot be empty");
+        }
+        for (GuestTokenBody.Resource resource : resources) {
+            if (Strings.isNullOrEmpty(resource.getId())) {
+                throw new IllegalArgumentException("Resource must contain an id");
+            }
+        }
     }
 }

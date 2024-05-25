@@ -67,7 +67,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     }
 
     /**
-     * @return dataset constraints providers or {@code null} if not set
+     * @return dataset constraints provider or {@code null} if not set
      */
     @Nullable
     public DatasetConstrainsProvider getDatasetConstrainsProvider() {
@@ -75,7 +75,8 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     }
 
     /**
-     * Sets dataset constraints providers that will be used in guest token request.
+     * Sets dataset constraints provider. These constraints are applied to datasets that are used in an embedded
+     * dashboard {@link #getEmbeddedId()}.
      *
      * @param datasetConstrainsProvider dataset constraints providers
      */
@@ -101,9 +102,8 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     }
 
     protected void startGuestTokenRefreshing() {
-        guestTokenHandler.requestGuestToken(buildGuestTokenBody(), guestTokenResponse -> {
-            setGuestTokenInternal(guestTokenResponse.getToken());
-        });
+        guestTokenHandler.requestGuestToken(buildGuestTokenBody(),
+                response -> setGuestTokenInternal(response.getToken()));
     }
 
     protected GuestTokenBody buildGuestTokenBody() {
@@ -117,23 +117,21 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         }
 
         return GuestTokenBody.builder()
-                .withResource(
-                        new GuestTokenBody.Resource()
-                                .withId(getEmbeddedId())
-                                .withType(DASHBOARD_TYPE))
+                .withResource(new GuestTokenBody.Resource()
+                        .withId(getEmbeddedId())
+                        .withType(DASHBOARD_TYPE))
                 .withRowLevelRoles(rls)
-                .withUser(
-                        new GuestTokenBody.User()
-                                .withUsername(currentUserSubstitution.getEffectiveUser().getUsername()))
+                .withUser(new GuestTokenBody.User()
+                        .withUsername(currentUserSubstitution.getEffectiveUser().getUsername()))
                 .build();
     }
 
     protected List<GuestTokenBody.RowLevelRole> convertToSupersetRls(List<DatasetConstraint> datasetConstraints) {
         return CollectionUtils.isNotEmpty(datasetConstraints)
                 ? datasetConstraints.stream()
-                        .map(dc -> new GuestTokenBody.RowLevelRole()
-                                        .withClause(dc.clause())
-                                        .withDataset(dc.dataset()))
+                .map(dc -> new GuestTokenBody.RowLevelRole()
+                        .withClause(dc.clause())
+                        .withDataset(dc.dataset()))
                 .toList()
                 : Collections.emptyList();
     }

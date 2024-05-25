@@ -43,7 +43,7 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     }
 
     /**
-     * Sets guest token to perform a dashboard request. It is not required to set custom
+     * Sets a guest token to perform a dashboard request. It is not required to set custom
      * guest token since component gets the token internally using Superset access token.
      * <p>
      * Note, if custom guest token is set, you should manually handle the expiration time and
@@ -73,14 +73,14 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     }
 
     /**
-     * @return URL where Superset is deployed or {@code null} if not set
+     * @return Superset URL or {@code null} if not set
      */
     public String getUrl() {
         return getElement().getProperty(PROPERTY_URL);
     }
 
     /**
-     * Sets a URL where Superset is deployed. If not set, will be used URL from application property.
+     * Sets a Superset URL. If not set, will be used URL from application property.
      *
      * @param url URL to set
      */
@@ -88,10 +88,18 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
         getElement().setProperty(PROPERTY_URL, url);
     }
 
+    /**
+     * @return {@code true} if dashboard title is visible
+     */
     public boolean isTitleVisible() {
         return getElement().getProperty(PROPERTY_TITLE_VISIBLE, Boolean.FALSE);
     }
 
+    /**
+     * Sets whether the dashboard title should be visible. The default value is {@code false}.
+     *
+     * @param titleVisible title visible option
+     */
     public void setTitleVisible(boolean titleVisible) {
         getElement().setProperty(PROPERTY_TITLE_VISIBLE, titleVisible);
     }
@@ -100,14 +108,27 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
         return getElement().getProperty(PROPERTY_CHART_CONTROLS_VISIBLE, Boolean.FALSE);
     }
 
+    /**
+     * Sets whether the chart's kebab menu should be visible. The default value is {@code false}.
+     *
+     * @param chartControlsVisible chart control visible option
+     */
     public void setChartControlsVisible(boolean chartControlsVisible) {
         getElement().setProperty(PROPERTY_CHART_CONTROLS_VISIBLE, chartControlsVisible);
     }
 
+    /**
+     * Sets whether the filter's bar should be expanded. The default value is {@code false}.
+     *
+     * @param filtersExpanded filters expanded option
+     */
     public void setFiltersExpanded(boolean filtersExpanded) {
         getElement().setProperty(PROPERTY_FILTERS_EXPANDED, filtersExpanded);
     }
 
+    /**
+     * @return {@code true} if filter's bar is expanded
+     */
     public boolean isFiltersExpanded() {
         return getElement().getProperty(PROPERTY_FILTERS_EXPANDED, Boolean.FALSE);
     }

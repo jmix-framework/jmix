@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
@@ -62,7 +61,7 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
     @Nullable
     @Override
     public Object getDefaultPropertyValue(Class<? extends AppSettingsEntity> clazz, String propertyName) {
-        Field field = ReflectionUtils.findField(clazz, propertyName);
+        Field field = ReflectionHelper.findField(clazz, propertyName);
         if (field == null) {
             throw new IllegalArgumentException("Unable to find property " + propertyName + " for class " + clazz);
         }

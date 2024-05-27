@@ -15,20 +15,33 @@
  */
 package io.jmix.core.common.util;
 
-import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.dom4j.Element;
-
-import org.springframework.lang.Nullable;
-import java.lang.reflect.*;
+import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.dom4j.Element;
 
 /**
  * Utility class to simplify work with Java reflection.
  */
 public final class ReflectionHelper {
+
+    private static final LoadingCache<Class<?>, Map<String, Field>> fieldsCache = CacheBuilder.newBuilder()
+            .weakKeys()
+            .build(CacheLoader.from(ReflectionHelper::getDeclaredFields));
 
     private ReflectionHelper() {
     }
@@ -92,7 +105,7 @@ public final class ReflectionHelper {
      * @throws NoSuchMethodException if the class has no constructor matching the given arguments
      */
     public static <T> T newInstance(Class<T> cls, Object... params) throws NoSuchMethodException {
-        Class[] paramTypes = getParamTypes(params);
+        Class<?>[] paramTypes = getParamTypes(params);
 
         Constructor<T> constructor = ConstructorUtils.getMatchingAccessibleConstructor(cls, paramTypes);
         if (constructor == null)
@@ -115,7 +128,7 @@ public final class ReflectionHelper {
      */
     @Nullable
     public static Method findMethod(Class<?> c, String name, Object... params) {
-        Class[] paramTypes = getParamTypes(params);
+        Class<?>[] paramTypes = getParamTypes(params);
 
         Method method = null;
         try {
@@ -124,7 +137,7 @@ public final class ReflectionHelper {
             try {
                 method = c.getMethod(name, paramTypes);
             } catch (NoSuchMethodException e1) {
-                Class superclass = c.getSuperclass();
+                Class<?> superclass = c.getSuperclass();
                 if (superclass != null) {
                     method = findMethod(superclass, name, params);
                 }
@@ -148,7 +161,7 @@ public final class ReflectionHelper {
      */
     @SuppressWarnings("unchecked")
     public static <T> T invokeMethod(Object obj, String name, Object... params) throws NoSuchMethodException {
-        Class[] paramTypes = getParamTypes(params);
+        Class<?>[] paramTypes = getParamTypes(params);
 
         final Class<?> aClass = obj.getClass();
         Method method;
@@ -171,13 +184,13 @@ public final class ReflectionHelper {
      * @param params arguments
      * @return the array of argument types
      */
-    public static Class[] getParamTypes(Object... params) {
-        List<Class> paramClasses = new ArrayList<>();
+    public static Class<?>[] getParamTypes(Object... params) {
+        List<Class<?>> paramClasses = new ArrayList<>();
         for (Object param : params) {
             if (param == null)
                 throw new IllegalStateException("Null parameter");
 
-            final Class aClass = param.getClass();
+            final Class<?> aClass = param.getClass();
             if (List.class.isAssignableFrom(aClass)) {
                 paramClasses.add(List.class);
             } else if (Set.class.isAssignableFrom(aClass)) {
@@ -199,22 +212,10 @@ public final class ReflectionHelper {
      * @return field value
      */
     public static Object getFieldValue(Object entity, String property) {
-        Class javaClass = entity.getClass();
-        Field field = null;
-        try {
-            field = javaClass.getDeclaredField(property);
-        } catch (NoSuchFieldException e) {
-            Class superclass = javaClass.getSuperclass();
-            while (superclass != null) {
-                try {
-                    field = superclass.getDeclaredField(property);
-                    break;
-                } catch (NoSuchFieldException e1) {
-                    superclass = superclass.getSuperclass();
-                }
-            }
-            if (field == null)
-                throw new RuntimeException("Field not found: " + property);
+        Class<?> javaClass = entity.getClass();
+        Field field = findField(javaClass, property);
+        if (field == null) {
+            throw new RuntimeException("Field not found: " + property);
         }
         if (!Modifier.isPublic(field.getModifiers())) {
             field.setAccessible(true);
@@ -224,5 +225,22 @@ public final class ReflectionHelper {
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Cannot get field:" + property);
         }
+    }
+
+    @Nullable
+    public static Field findField(Class<?> concreteClass, String name) {
+        return fieldsCache.getUnchecked(concreteClass).get(name);
+    }
+
+    private static Map<String, Field> getDeclaredFields(Class<?> javaClass) {
+        Map<String, Field> fields = new HashMap<>();
+        Class<?> current = javaClass;
+        while (current != null) {
+            for (Field declaredField : current.getDeclaredFields()) {
+                fields.putIfAbsent(declaredField.getName(), declaredField);
+            }
+            current = current.getSuperclass();
+        }
+        return Collections.unmodifiableMap(fields);
     }
 }

@@ -47,6 +47,9 @@ public class SearchSettingsComparator {
             "index.gc_deletes",
             "index.final_pipeline",
             "index.hidden"
+            //This setting is designated in documentation https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html.
+            // But Elastic search server of version 8.10.2 doesn't support it.
+            //"index.auto_expand_replicas"
     );
 
     public ComparingState compare(Settings searchServerSettings, Settings applicationSettings) {

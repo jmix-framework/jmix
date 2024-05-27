@@ -22,10 +22,9 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsAction;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -235,6 +234,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         try {
             mappingBody = objectMapper.writeValueAsString(indexConfiguration.getMapping());
         } catch (JsonProcessingException e) {
+            //TODO
             throw new RuntimeException("Unable to create index '" + indexConfiguration.getIndexName() + "': Failed to parse index definition", e);
         }
 
@@ -242,32 +242,37 @@ public class ESIndexManagerImpl implements ESIndexManager {
         AcknowledgedResponse response;
         try {
             response = esClient.indices().putMapping(request, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            //TODO handle
-            throw new RuntimeException(e);
+        } catch (IOException | ElasticsearchStatusException e) {
+            log.error("Problem with saving index mapping.", e);
+            return false;
         }
         return response.isAcknowledged();
     }
 
     protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+        String indexName = indexConfiguration.getIndexName();
         log.info("Synchronize search index '{}' (entity '{}') according to strategy '{}'",
-                indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), strategy);
+                indexName, indexConfiguration.getEntityName(), strategy);
         IndexSynchronizationStatus status;
-        boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
+        boolean indexExist = isIndexExist(indexName);
         if (indexExist) {
             IndexConfigurationsChecker.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
             if (result.isCompartible()) {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-                if(result.isMappingMustBeActualized()){
+                if (result.isMappingMustBeActualized()) {
                     boolean mappingSavingResult = saveIndexMapping(indexConfiguration);
                     if (!mappingSavingResult) {
-                        //TODO enhance message
-                        log.error("Problem with index mapping saving.");
+                        log.error("Problem with index mapping saving. Index name is {}.", indexName);
+                        status = handleIrrelevantIndex(indexConfiguration, strategy);
                     }
                 }
-                if(result.isSettingsMustBeActualized()){
-                    saveSettings(indexConfiguration);
+                if (result.isSettingsMustBeActualized()) {
+                    boolean settingsAreSavedSuccessfully = saveSettings(indexConfiguration);
+                    if (!settingsAreSavedSuccessfully) {
+                        log.error("Problem with index settings saving. Index name is {}.", indexName);
+                        status = handleIrrelevantIndex(indexConfiguration, strategy);
+                    }
                 }
 
             } else {
@@ -277,16 +282,23 @@ public class ESIndexManagerImpl implements ESIndexManager {
             status = handleMissingIndex(indexConfiguration, strategy);
         }
         log.info("Synchronization status of search index '{}' (entity '{}'): {}",
-                indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), status);
+                indexName, indexConfiguration.getEntityName(), status);
         return status;
     }
 
-    private void saveSettings(IndexConfiguration indexConfiguration) {
-        //new UpdateSettingsRequestBuilder()
+    private boolean saveSettings(IndexConfiguration indexConfiguration) {
+        UpdateSettingsRequest request = new UpdateSettingsRequest(indexConfiguration.getIndexName());
+        request.settings(indexConfiguration.getSettings());
 
-        new UpdateSettingsRequestBuilder(esClient, UpdateSettingsAction.INSTANCE, indexConfiguration.getIndexName()).setSettings(indexConfiguration.getSettings()).
-        // TODO is not used currently
-        throw new UnsupportedOperationException();
+        AcknowledgedResponse response;
+        try {
+            response = esClient.indices().putSettings(request, RequestOptions.DEFAULT);
+        } catch (IOException | ElasticsearchStatusException e) {
+            log.error("Problem with saving index settings.", e);
+            return false;
+        }
+
+        return response.isAcknowledged();
     }
 
     protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {

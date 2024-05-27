@@ -5,6 +5,7 @@ import io.jmix.appsettings.AppSettingsTools;
 import io.jmix.appsettings.defaults.*;
 import io.jmix.appsettings.entity.AppSettingsEntity;
 import io.jmix.core.*;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;

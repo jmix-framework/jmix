@@ -54,6 +54,18 @@ public class CorsProperties {
     List<String> allowedMethods;
 
     /**
+     * A list of response headers other than simple headers (i.e. Cache-Control, Content-Language, Content-Type,
+     *     Expires, Last-Modified, or Pragma) that an actual response might have and can be exposed.<br/>
+     *
+     * <p>The special value "*" allows all headers to be exposed for non-credentialed requests.</p>
+     *
+     * <p>By default this is not set.</p>
+     *
+     * @see CorsConfiguration#getExposedHeaders()
+     */
+    List<String> exposedHeaders;
+
+    /**
      * URL path patterns used for selecting a default CORS configurations provided by Jmix core starter.
      *
      * @see PathPattern
@@ -71,11 +83,13 @@ public class CorsProperties {
     public CorsProperties(@DefaultValue("*") List<String> allowedOrigins,
                           @DefaultValue("*") List<String> allowedHeaders,
                           @DefaultValue("*") List<String> allowedMethods,
+                          List<String> exposedHeaders,
                           @DefaultValue("/**") List<String> urlPatterns,
                           Boolean allowCredentials) {
         this.allowedOrigins = allowedOrigins;
         this.allowedHeaders = allowedHeaders;
         this.allowedMethods = allowedMethods;
+        this.exposedHeaders = exposedHeaders;
         this.urlPatterns = urlPatterns;
         this.allowCredentials = allowCredentials;
     }
@@ -90,6 +104,11 @@ public class CorsProperties {
 
     public List<String> getAllowedMethods() {
         return allowedMethods;
+    }
+
+    @Nullable
+    public List<String> getExposedHeaders() {
+        return exposedHeaders;
     }
 
     public List<String> getUrlPatterns() {

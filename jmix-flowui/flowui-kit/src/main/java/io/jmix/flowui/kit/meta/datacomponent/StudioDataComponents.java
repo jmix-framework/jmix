@@ -30,6 +30,7 @@ public interface StudioDataComponents {
             category = "Data Components",
             xmlElement = "collection",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/collection.svg",
+            documentationLink = "%VERSION%/flow-ui/data/collection-container.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS, required = true),
@@ -44,6 +45,7 @@ public interface StudioDataComponents {
             category = "Data Components",
             xmlElement = "instance",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/instance.svg",
+            documentationLink = "%VERSION%/flow-ui/data/instance-container.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS, required = true),
@@ -58,6 +60,7 @@ public interface StudioDataComponents {
             category = "Data Components",
             xmlElement = "keyValueInstance",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueInstance.svg",
+            documentationLink = "%VERSION%/flow-ui/data/key-value-containers.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }
@@ -70,6 +73,7 @@ public interface StudioDataComponents {
             category = "Data Components",
             xmlElement = "keyValueCollection",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueCollection.svg",
+            documentationLink = "%VERSION%/flow-ui/data/key-value-containers.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }

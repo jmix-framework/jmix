@@ -29,7 +29,8 @@ public class NativeButtonLoader extends AbstractHtmlContainerLoader<NativeButton
     public void loadComponent() {
         super.loadComponent();
 
-        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
     }
 }

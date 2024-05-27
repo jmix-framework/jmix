@@ -101,17 +101,17 @@ public class LockManagerImpl implements LockManager {
 
     @Override
     public LockInfo lock(String name, String id) {
+        LockDescriptor ld = getConfig().get(name);
+        if (ld == null) {
+            return new LockNotSupported();
+        }
+
         LockKey key = new LockKey(name, id);
 
         LockInfo lockInfo = locks.get(key, LockInfo.class);
         if (lockInfo != null) {
             log.debug("Already locked: {}", lockInfo);
             return lockInfo;
-        }
-
-        LockDescriptor ld = getConfig().get(name);
-        if (ld == null) {
-            return new LockNotSupported();
         }
 
         UserDetails user = currentAuthentication.getUser();

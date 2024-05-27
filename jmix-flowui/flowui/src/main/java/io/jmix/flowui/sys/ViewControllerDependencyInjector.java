@@ -27,6 +27,8 @@ import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
+import io.jmix.flowui.kit.component.dropdownbutton.ActionItem;
+import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector.AnnotatedMethod;
 import io.jmix.flowui.sys.ViewControllerReflectionInspector.InjectElement;
@@ -712,6 +714,38 @@ public class ViewControllerDependencyInjector {
             Facet facet = viewFacets.getFacet(pathPrefix(elements));
             if (facet instanceof HasSubParts) {
                 return ((HasSubParts) facet).getSubPart(id);
+            }
+
+            Object dropdownItemCandidate = findMethodTarget(controller, pathPrefix(elements));
+            if (dropdownItemCandidate instanceof ComponentItem componentItem) {
+                Component content = componentItem.getContent();
+                if (content == null) {
+                    return null;
+                }
+
+                if (content.getId().isPresent() && content.getId().get().equals(id)) {
+                    return content;
+                }
+
+                Optional<Component> childComponent = UiComponentUtils.findComponent(content, id);
+                if (childComponent.isPresent()) {
+                    return childComponent.get();
+                }
+            } else if (dropdownItemCandidate instanceof ActionItem actionItem) {
+                Action action = actionItem.getAction();
+                if (action == null) {
+                    return null;
+                }
+
+                if (id.equals(action.getId())) {
+                    return action;
+                }
+            } else if (dropdownItemCandidate instanceof Component dropdownContent) {
+                // For case where the method's target is deeper than the first level of children for the componentItem
+                Optional<Component> childComponent = UiComponentUtils.findComponent(dropdownContent, id);
+                if (childComponent.isPresent()) {
+                    return childComponent.get();
+                }
             }
         }
 

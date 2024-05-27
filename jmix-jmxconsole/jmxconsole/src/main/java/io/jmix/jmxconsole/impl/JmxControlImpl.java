@@ -16,6 +16,7 @@
 
 package io.jmix.jmxconsole.impl;
 
+import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.jmxconsole.JmxControl;
 import io.jmix.jmxconsole.JmxControlException;
@@ -65,13 +66,15 @@ public class JmxControlImpl implements JmxControl {
     protected static final String ROLE_SETTER = "setter";
 
     private final Logger log = LoggerFactory.getLogger(JmxControlImpl.class);
+    private final EntityStates entityStates;
 
     protected ApplicationContext applicationContext;
     protected Metadata metadata;
 
-    public JmxControlImpl(ApplicationContext applicationContext, Metadata metadata) {
+    public JmxControlImpl(ApplicationContext applicationContext, Metadata metadata, EntityStates entityStates) {
         this.applicationContext = applicationContext;
         this.metadata = metadata;
+        this.entityStates = entityStates;
     }
 
     @Override
@@ -141,6 +144,7 @@ public class JmxControlImpl implements JmxControl {
         mbi.setDomain(name.getDomain());
         mbi.setPropertyList(name.getKeyPropertyListString());
 
+        entityStates.setNew(mbi, false);
         return mbi;
     }
 
@@ -229,6 +233,8 @@ public class JmxControlImpl implements JmxControl {
                 mba.setWriteable(false);
             }
         }
+
+        entityStates.setNew(mba, false);
         return mba;
     }
 

@@ -60,11 +60,12 @@ public class DataGridSettings implements Settings {
         protected String key;
         protected String sortDirection;
 
+        @Nullable
         public String getKey() {
             return key;
         }
 
-        public void setKey(String key) {
+        public void setKey(@Nullable String key) {
             this.key = key;
         }
 
@@ -80,12 +81,15 @@ public class DataGridSettings implements Settings {
     public static class Column {
         protected String key;
         protected String width;
+        protected Boolean visible;
+        protected int flexGrow;
 
+        @Nullable
         public String getKey() {
             return key;
         }
 
-        public void setKey(String key) {
+        public void setKey(@Nullable String key) {
             this.key = key;
         }
 
@@ -96,6 +100,23 @@ public class DataGridSettings implements Settings {
 
         public void setWidth(@Nullable String width) {
             this.width = width;
+        }
+
+        @Nullable
+        public Boolean getVisible() {
+            return visible;
+        }
+
+        public void setVisible(@Nullable Boolean visible) {
+            this.visible = visible;
+        }
+
+        public int getFlexGrow() {
+            return flexGrow;
+        }
+
+        public void setFlexGrow(int flexGrow) {
+            this.flexGrow = flexGrow;
         }
     }
 }

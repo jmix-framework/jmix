@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.main.JmixListMenu;
+import io.jmix.flowui.menu.provider.MenuConfigListMenuItemProvider;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 
@@ -26,6 +27,7 @@ public class ListMenuLoader extends AbstractComponentLoader<JmixListMenu> {
     public void loadComponent() {
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadThemeNames(resultComponent, element);
 
         loadMenuConfig(element);
     }
@@ -41,7 +43,10 @@ public class ListMenuLoader extends AbstractComponentLoader<JmixListMenu> {
                 .orElse(true);
 
         if (loadMenuConfig) {
-            resultComponent.loadMenuConfig();
+            MenuConfigListMenuItemProvider itemProvider =
+                    applicationContext.getBean(MenuConfigListMenuItemProvider.class);
+            resultComponent.setMenuItemProvider(itemProvider);
+            itemProvider.load();
         }
     }
 }

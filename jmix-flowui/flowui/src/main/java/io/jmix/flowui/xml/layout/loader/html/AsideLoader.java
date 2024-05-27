@@ -24,4 +24,11 @@ public class AsideLoader extends AbstractHtmlContainerLoader<Aside> {
     protected Aside createComponent() {
         return factory.create(Aside.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

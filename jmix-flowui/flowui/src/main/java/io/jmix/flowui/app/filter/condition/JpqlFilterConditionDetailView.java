@@ -121,7 +121,7 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
         initParameterClassFieldItems();
         initEntityClassFieldItems();
         initEnumClassFieldItems();
-        initJpqlHelperButtons();
+        initJpqlHelpers();
     }
 
     @Subscribe
@@ -152,7 +152,8 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
         enumClassField.setItems(metadataTools.getAllEnums());
     }
 
-    protected void initJpqlHelperButtons() {
+    protected void initJpqlHelpers() {
+        createHelperText(joinField);
         createHelperButton(joinField);
         createHelperButton(whereField);
     }
@@ -328,6 +329,12 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
         );
 
         textArea.setSuffixComponent(helperButton);
+    }
+
+    protected void createHelperText(JmixTextArea textArea) {
+        String message = messageBundle.getMessage(
+                "jpqlFilterConditionDetailView." + textArea.getId().orElseThrow() + ".helperText");
+        textArea.setHelperComponent(new Html(message));
     }
 
     @Subscribe

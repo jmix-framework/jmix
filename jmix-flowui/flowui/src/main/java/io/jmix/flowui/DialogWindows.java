@@ -29,6 +29,8 @@ import io.jmix.flowui.data.HasType;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.builder.*;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 
@@ -44,13 +46,16 @@ public class DialogWindows {
     protected WindowBuilderProcessor windowBuilderProcessor;
     protected DetailWindowBuilderProcessor detailBuilderProcessor;
     protected LookupWindowBuilderProcessor lookupBuilderProcessor;
+    protected ObjectProvider<OpenedDialogWindows> openedDialogWindows;
 
     public DialogWindows(WindowBuilderProcessor windowBuilderProcessor,
                          DetailWindowBuilderProcessor detailBuilderProcessor,
-                         LookupWindowBuilderProcessor lookupBuilderProcessor) {
+                         LookupWindowBuilderProcessor lookupBuilderProcessor,
+                         @Autowired(required = false) ObjectProvider<OpenedDialogWindows> openedDialogWindows) {
         this.windowBuilderProcessor = windowBuilderProcessor;
         this.detailBuilderProcessor = detailBuilderProcessor;
         this.lookupBuilderProcessor = lookupBuilderProcessor;
+        this.openedDialogWindows = openedDialogWindows;
     }
 
     /**
@@ -225,6 +230,17 @@ public class DialogWindows {
      */
     public <V extends View<?>> WindowBuilder<V> view(View<?> origin, Class<V> viewClass) {
         return new WindowBuilder<>(origin, viewClass, windowBuilderProcessor::build);
+    }
+
+    /**
+     * @return the object that provides information about opened dialogs
+     * @throws IllegalStateException if {@link OpenedDialogWindows} is not available
+     */
+    public OpenedDialogWindows getOpenedDialogWindows() {
+        return openedDialogWindows.stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(OpenedDialogWindows.class.getSimpleName() +
+                        " is not available since no active Vaadin session"));
     }
 
     /**

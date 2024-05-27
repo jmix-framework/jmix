@@ -18,15 +18,26 @@ package io.jmix.flowui.testassist;
 
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
  * Class provides helper methods for testing.
  */
 public final class UiTestUtils {
+
+    private static final Method VALIDATE_VIEW_METHOD = ReflectionUtils.findMethod(StandardDetailView.class, "validateView");
+
+    static {
+        ReflectionUtils.makeAccessible(VALIDATE_VIEW_METHOD);
+    }
 
     private UiTestUtils() {
     }
@@ -53,5 +64,24 @@ public final class UiTestUtils {
                     " navigation was performed before getting current view");
         }
         return (T) targetsChain.get(0);
+    }
+
+    /**
+     * Returns a component defined in the view by the component id.
+     *
+     * @throws IllegalArgumentException if not found
+     */
+    public static <T> T getComponent(View<?> view, String componentId) {
+        return (T) UiComponentUtils.getComponent(view, componentId);
+    }
+
+    /**
+     * Validates provided {@link View} by calling {@code StandardDetailView#validateView()} method from it.
+     *
+     * @param view detail view to validate
+     * @return errors if validation failed, otherwise empty object will be returned
+     */
+    public static ValidationErrors validateView(StandardDetailView<?> view) {
+        return (ValidationErrors) ReflectionUtils.invokeMethod(VALIDATE_VIEW_METHOD, view);
     }
 }

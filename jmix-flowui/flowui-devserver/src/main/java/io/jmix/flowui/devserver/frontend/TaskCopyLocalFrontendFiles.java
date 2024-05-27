@@ -45,6 +45,7 @@ public class TaskCopyLocalFrontendFiles implements FallibleCommand {
      * Copy project local frontend files from defined frontendResourcesDirectory
      * (by default 'src/main/resources/META-INF/resources/frontend'). This
      * enables running jar projects locally.
+     *
      */
     TaskCopyLocalFrontendFiles(Options options) {
         this.options = options;
@@ -75,10 +76,13 @@ public class TaskCopyLocalFrontendFiles implements FallibleCommand {
      * specified target directory ignoring the file exclusions defined as a
      * relative paths to source directory.
      *
-     * @param source                 directory to copy the files from
-     * @param target                 directory to copy the files to
-     * @param relativePathExclusions files or directories that shouldn't be copied, relative to
-     *                               source directory
+     * @param source
+     *            directory to copy the files from
+     * @param target
+     *            directory to copy the files to
+     * @param relativePathExclusions
+     *            files or directories that shouldn't be copied, relative to
+     *            source directory
      * @return set of copied files
      */
     static Set<String> copyLocalResources(File source, File target,

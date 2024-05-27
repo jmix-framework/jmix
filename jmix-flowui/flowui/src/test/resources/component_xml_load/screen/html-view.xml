@@ -570,5 +570,43 @@
                value="paramValueString"
                visible="true"
                width="100px"/>
+
+        <nativeDetails id="nativeDetailsId"
+                       classNames="cssClassName1, cssClassName2"
+                       css="color: red;"
+                       height="50px"
+                       maxHeight="55px"
+                       maxWidth="120px"
+                       minHeight="40px"
+                       minWidth="80px"
+                       open="true"
+                       summaryText="detailsSummaryText"
+                       title="detailsTitle"
+                       visible="true"
+                       width="100px">
+
+            <span text="nativeDetailsContent"/>
+        </nativeDetails>
+
+        <rangeInput id="rangeInputId"
+                    ariaLabel="ariaLabelString"
+                    classNames="cssClassName1, cssClassName2"
+                    css="color: red;"
+                    enabled="true"
+                    height="50px"
+                    max="100"
+                    maxHeight="55px"
+                    maxWidth="120px"
+                    min="10"
+                    minHeight="40px"
+                    minWidth="80px"
+                    orientation="VERTICAL"
+                    readOnly="true"
+                    step="5"
+                    tabIndex="3"
+                    valueChangeMode="ON_CHANGE"
+                    valueChangeTimeout="50"
+                    visible="true"
+                    width="100px"/>
     </layout>
 </view>

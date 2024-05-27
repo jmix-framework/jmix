@@ -16,7 +16,7 @@ import {DelegateStateMixin} from '@vaadin/component-base/src/delegate-state-mixi
 import {Tabs} from '@vaadin/tabs/src/vaadin-tabs.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.2.1]
+// CAUTION: copied from @vaadin/tabsheet [last update Vaadin 24.3.1]
 /**
  * @private
  * A controller which observes the <vaadin-tabs> slotted to the tabs slot.
@@ -102,6 +102,7 @@ class TabsSlotController extends SlotController {
  * @fires {CustomEvent} items-changed - Fired when the `items` property changes.
  * @fires {CustomEvent} selected-changed - Fired when the `selected` property changes.
  *
+ * @customElement
  * @extends HTMLElement
  * @mixes ElementMixin
  * @mixes ThemableMixin

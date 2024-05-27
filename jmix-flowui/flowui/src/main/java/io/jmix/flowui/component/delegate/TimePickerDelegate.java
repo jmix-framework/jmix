@@ -52,8 +52,10 @@ public class TimePickerDelegate<V extends Comparable>
     }
 
     @Override
-    protected void setupProperties(EntityValueSource<?, V> valueSource) {
-        dataAwareComponentsTools.setupZoneId(component, valueSource);
-        dataAwareComponentsTools.setupRange(component, valueSource);
+    protected void setupProperties(ValueSource<V> valueSource) {
+        if (valueSource instanceof EntityValueSource<?,?> entityValueSource) {
+            dataAwareComponentsTools.setupZoneId(component, entityValueSource);
+            dataAwareComponentsTools.setupRange(component, entityValueSource);
+        }
     }
 }

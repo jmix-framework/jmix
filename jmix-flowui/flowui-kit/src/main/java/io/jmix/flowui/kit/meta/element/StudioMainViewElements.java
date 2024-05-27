@@ -30,7 +30,9 @@ public interface StudioMainViewElements {
             target = {"com.vaadin.flow.component.applayout.AppLayout"},
             icon = "io/jmix/flowui/kit/meta/icon/element/navigationBar.svg",
             unlimitedCount = false,
+            visible = true,
             properties = {
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "touchOptimized", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true")
             }
@@ -43,7 +45,11 @@ public interface StudioMainViewElements {
             xmlElement = "drawerLayout",
             icon = "io/jmix/flowui/kit/meta/icon/element/drawerLayout.svg",
             unlimitedCount = false,
-            target = {"com.vaadin.flow.component.applayout.AppLayout"}
+            visible = true,
+            target = {"com.vaadin.flow.component.applayout.AppLayout"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING)
+            }
     )
     Div drawerLayout();
 
@@ -54,12 +60,13 @@ public interface StudioMainViewElements {
             icon = "io/jmix/flowui/kit/meta/icon/layout/vbox.svg",
             target = {"com.vaadin.flow.component.applayout.AppLayout"},
             unlimitedCount = false,
+            visible = true,
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "alignItems", type = StudioPropertyType.ENUMERATION,
                             setParameterFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "STRETCH",
+                            defaultValue = "START",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "boxSizing", type = StudioPropertyType.ENUMERATION,
                             setParameterFqn = "com.vaadin.flow.component.orderedlayout.BoxSizing",

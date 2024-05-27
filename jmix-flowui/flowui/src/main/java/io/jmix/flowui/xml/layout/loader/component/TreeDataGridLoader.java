@@ -24,6 +24,7 @@ import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.data.grid.EmptyTreeDataGridItems;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import org.dom4j.Element;
 
 public class TreeDataGridLoader extends AbstractGridLoader<TreeDataGrid<?>> {
 
@@ -77,5 +78,21 @@ public class TreeDataGridLoader extends AbstractGridLoader<TreeDataGrid<?>> {
         }
 
         return super.addColumn(key, metaPropertyPath);
+    }
+
+    @Override
+    protected void loadActions() {
+        loadActionsAttributes();
+        super.loadActions();
+    }
+
+    protected void loadActionsAttributes() {
+        Element actions = element.element("actions");
+        if (actions == null) {
+            return;
+        }
+
+        loaderSupport.loadBoolean(actions, "showInContextMenuEnabled",
+                resultComponent.getActionsSupport()::setShowActionsInContextMenuEnabled);
     }
 }

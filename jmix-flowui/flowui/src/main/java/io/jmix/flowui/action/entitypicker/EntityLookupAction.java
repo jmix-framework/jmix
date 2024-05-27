@@ -157,6 +157,21 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
     }
 
     @Override
+    public <V extends View<?>> Consumer<AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
+    }
+
+    @Override
     public void execute() {
         MetaClass metaClass = target.getMetaClass();
         if (metaClass == null) {
@@ -202,6 +217,14 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
 
     public EntityLookupAction<E> withTransformation(Function<Collection<E>, Collection<E>> transformation) {
         setTransformation(transformation);
+        return this;
+    }
+
+    /**
+     * @see #setViewConfigurer(Consumer)
+     */
+    public <V extends View<?>> EntityLookupAction<E> withViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        setViewConfigurer(viewConfigurer);
         return this;
     }
 }

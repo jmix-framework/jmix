@@ -17,14 +17,13 @@
 package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.impl.CircularBeanReferencesEnabler;
 import io.jmix.core.impl.logging.LogMdcFilter;
 import io.jmix.core.impl.validation.JmixLocalValidatorFactoryBean;
-import io.jmix.core.impl.validation.ValidationClockProvider;
 import io.jmix.core.impl.validation.ValidationTraversableResolver;
 import io.jmix.core.security.CurrentAuthentication;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import jakarta.validation.MessageInterpolator;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
@@ -32,7 +31,6 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import jakarta.validation.MessageInterpolator;
 import java.util.Set;
 
 /**
@@ -54,8 +52,8 @@ public class CoreConfiguration {
     }
 
     @Bean("core_BeanExclusionProcessor")
-    public static BeanExclusionProcessor beanExclusionProcessor() {
-        return new BeanExclusionProcessor();
+    public static BeanExclusionProcessor beanExclusionProcessor(JmixModules modules) {
+        return new BeanExclusionProcessor(modules);
     }
 
     @Bean("core_Modules")
@@ -69,21 +67,14 @@ public class CoreConfiguration {
     }
 
     @Bean("core_Validator")
-    public static LocalValidatorFactoryBean validator(ValidationClockProvider clockProvider,
-                                                      ValidationTraversableResolver traversableResolver,
+    public static LocalValidatorFactoryBean validator(ValidationTraversableResolver traversableResolver,
                                                       MessageInterpolator messageInterpolator) {
         JmixLocalValidatorFactoryBean validatorFactory = new JmixLocalValidatorFactoryBean();
 
-        validatorFactory.setClockProvider(clockProvider);
         validatorFactory.setTraversableResolver(traversableResolver);
         validatorFactory.setJmixMessageInterpolator(messageInterpolator);
 
         return validatorFactory;
-    }
-
-    @Bean("core_CircularBeanReferencesEnabler")
-    public static CircularBeanReferencesEnabler circularBeanReferencesEnabler() {
-        return new CircularBeanReferencesEnabler();
     }
 
     @Bean("core_LogMdcFilterRegistrationBean")

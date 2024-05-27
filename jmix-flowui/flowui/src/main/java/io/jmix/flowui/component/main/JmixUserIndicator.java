@@ -28,6 +28,7 @@ import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.security.UserRepository;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.core.usersubstitution.event.UiUserSubstitutionsChangedEvent;
@@ -41,12 +42,15 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.main.UserIndicator;
 import io.jmix.flowui.sys.event.UiEventsManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -54,6 +58,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class JmixUserIndicator extends UserIndicator<UserDetails> implements ApplicationContextAware, InitializingBean {
+
+    private static final Logger log = LoggerFactory.getLogger(JmixUserIndicator.class);
 
     protected ApplicationContext applicationContext;
 
@@ -65,6 +71,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
     protected Dialogs dialogs;
     protected Messages messages;
     protected Actions actions;
+    protected UserRepository userRepository;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -87,6 +94,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         dialogs = applicationContext.getBean(Dialogs.class);
         messages = applicationContext.getBean(Messages.class);
         actions = applicationContext.getBean(Actions.class);
+        userRepository = applicationContext.getBean(UserRepository.class);
     }
 
     protected void initUiUserSubstitutionChangeListener() {
@@ -110,6 +118,11 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         getContent().removeAll();
 
         UserDetails user = currentUserSubstitution.getAuthenticatedUser();
+        try {
+            user = userRepository.loadUserByUsername(user.getUsername());
+        } catch (UsernameNotFoundException e) {
+            log.error("User repository doesn't contain user with username {}", user.getUsername());
+        }
 
         List<UserDetails> currentAndSubstitutedUsers = new LinkedList<>();
         currentAndSubstitutedUsers.add(user);

@@ -16,17 +16,17 @@
 
 package io.jmix.flowui.view.builder;
 
+import com.vaadin.flow.component.HasValue;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.DataContext;
+import io.jmix.flowui.view.DetailView;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
-import io.jmix.flowui.view.DetailView;
 import io.jmix.flowui.view.View;
-import com.vaadin.flow.component.HasValue;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.DataContext;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -132,6 +132,12 @@ public class DetailWindowClassBuilder<E, V extends View<?> & DetailView<E>> exte
     @Override
     public DetailWindowClassBuilder<E, V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
+        return this;
+    }
+
+    @Override
+    public DetailWindowClassBuilder<E, V> withViewConfigurer(@Nullable Consumer<V> configurer) {
+        super.withViewConfigurer(configurer);
         return this;
     }
 

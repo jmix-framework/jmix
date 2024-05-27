@@ -1,0 +1,95 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:charts="http://jmix.io/schema/charts/ui">
+    <layout>
+
+        <charts:chart id="axisPointerChartId">
+            <charts:axisPointer
+                    id="axisPointer"
+                    show="true"
+                    type="LINE"
+                    snap="true"
+                    z="0"
+                    value="100"
+                    triggerEmphasis="true"
+                    triggerTooltip="false"
+                    status="true">
+                <charts:handle
+                        show="true"
+                        color="BLACK"
+                        shadowBlur="2"
+                        shadowColor="BLACK"
+                        shadowOffsetX="0"
+                        shadowOffsetY="5"
+                        throttle="50"
+                        margin="10"
+                        icon="lumo:align-center"
+                        size="40 40"/>
+                <charts:label
+                        show="true"
+                        padding="0 5"
+                        backgroundColor="WHITE"
+                        borderColor="BLACK"
+                        borderWidth="1"
+                        shadowBlur="1"
+                        shadowColor="BLACK"
+                        shadowOffsetX="0"
+                        shadowOffsetY="0"
+                        height="10"
+                        width="20"
+                        overflow="BREAK"
+                        textShadowOffsetY="0"
+                        textShadowOffsetX="0"
+                        textShadowBlur="1"
+                        textShadowColor="BLACK"
+                        textBorderDashOffset="0"
+                        textBorderType="dashed"
+                        textBorderWidth="1"
+                        textBorderColor="BLACK"
+                        lineHeight="10"
+                        fontSize="12"
+                        fontFamily="sans-serif"
+                        fontWeight="500"
+                        fontStyle="ITALIC"
+                        color="BLACK"
+                        formatter="Pointer X"
+                        ellipsis=".."
+                        margin="0"
+                        precision="1"/>
+                <charts:lineStyle
+                        color="#000000"
+                        width="1"
+                        shadowBlur="0"
+                        miterLimit="0"
+                        shadowColor="BLACK"
+                        opacity="0.9"
+                        cap="ROUND"
+                        join="ROUND"
+                        shadowOffsetX="0"
+                        shadowOffsetY="0"/>
+                <charts:shadowStyle
+                        opacity="0.9"
+                        shadowBlur="1"
+                        shadowColor="BLACK"
+                        shadowOffsetX="0"
+                        shadowOffsetY="0"
+                        color="BLACK"/>
+            </charts:axisPointer>
+        </charts:chart>
+    </layout>
+</view>

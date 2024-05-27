@@ -381,12 +381,8 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
             } catch (ConversionException e) {
                 setErrorMessage(e.getLocalizedMessage());
                 setInvalid(true);
-                return;
             }
         }
-
-        // update invalid state
-        isInvalid();
     }
 
     protected void fireMultiSelectComboBoxValueChangeEvent(@Nullable Collection<V> oldValue, boolean isFromClient) {

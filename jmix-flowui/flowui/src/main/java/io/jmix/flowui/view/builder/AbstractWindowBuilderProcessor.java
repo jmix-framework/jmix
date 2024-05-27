@@ -73,5 +73,6 @@ public abstract class AbstractWindowBuilderProcessor {
     protected <V extends View<?>> void initDialog(DialogWindowBuilder<V> builder, DialogWindow<V> dialog) {
         builder.getAfterOpenListener().ifPresent(dialog::addAfterOpenListener);
         builder.getAfterCloseListener().ifPresent(dialog::addAfterCloseListener);
+        builder.getViewConfigurer().ifPresent(configurer -> configurer.accept(dialog.getView()));
     }
 }

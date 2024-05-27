@@ -29,11 +29,15 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.valuepicker.DateIntervalAction;
+import io.jmix.flowui.action.valuepicker.ValueClearAction;
+import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.valuepicker.JmixValuePicker;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.context.ApplicationContext;
@@ -91,6 +95,10 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
             return createCollectionField(context, mpp);
         } else if (pfContext.getOperation().getType() == Operation.Type.INTERVAL) {
             return createIntervalField(context, mpp);
+        } else if (mpp.getRange().getCardinality().isMany()
+                && pfContext.getOperation().getType() == PropertyFilter.Operation.Type.VALUE) {
+            //for 'member of' conditions of x-to-many property
+            return createEntityField(context);
         }
 
         return super.createComponentInternal(context);
@@ -189,16 +197,15 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
     }
 
     protected Component createIntervalField(ComponentGenerationContext context, MetaPropertyPath mpp) {
-        /*ValuePicker<BaseDateInterval> valuePicker = uiComponents.create(ValuePicker.NAME);
+        //noinspection unchecked
+        JmixValuePicker<BaseDateInterval> valuePicker = uiComponents.create(JmixValuePicker.class);
 
-        DateIntervalAction intervalAction = applicationContext.getBean(DateIntervalAction.class);
+        DateIntervalAction intervalAction = actions.create(DateIntervalAction.ID);
         intervalAction.setMetaPropertyPath(mpp);
 
         valuePicker.addAction(intervalAction);
         valuePicker.addAction(actions.create(ValueClearAction.ID));
-        return valuePicker;*/
-        // TODO: gg, implement
-        return null;
+        return valuePicker;
     }
 
     @Override

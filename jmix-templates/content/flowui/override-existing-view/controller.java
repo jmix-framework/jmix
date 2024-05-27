@@ -10,14 +10,14 @@ if (overrideActionType == "EMPTY") {
 }
 %>package ${packageName};
 
-import ${overrideView.layoutClassFqn};
+import ${overrideView.getLayoutClassFqn(module_basePackage)};
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 import ${importedClassFqn};
 <%if (classComment) {%>
     ${classComment}<%}%>
-@Route(value = "${viewRoute}", layout = ${overrideView.layoutClassName}.class)
+@Route(value = "${viewRoute}", layout = ${overrideView.getLayoutClassName(module_basePackage)}.class)
 @ViewController("${viewId}")
 @ViewDescriptor("${descriptorName}.xml")
 public class ${controllerName} extends ${extendedClassName} {

@@ -34,98 +34,102 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout>
-        <formLayout id="form" dataContainer="roleModelDc">
-            <textField id="nameField" property="name"/>
-            <textField id="sourceField" property="source" readOnly="true"/>
-            <textField id="codeField" property="code" readOnly="true"/>
-            <checkboxGroup id="scopesField" property="scopes" required="true"/>
-            <textArea id="descriptionField" property="description" height="9.5em"/>
-        </formLayout>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="contentBox">
+        <vbox id="contentBox" classNames="overflow-auto" expand="tabSheet">
+            <formLayout id="form" dataContainer="roleModelDc">
+                <textField id="nameField" property="name"/>
+                <textField id="sourceField" property="source" readOnly="true"/>
+                <textField id="codeField" property="code" readOnly="true"/>
+                <checkboxGroup id="scopesField" property="scopes" required="true"/>
+                <textArea id="descriptionField" property="description" height="9.5em"/>
+            </formLayout>
 
-        <tabs id="tabs" width="100%">
-            <tab id="resourcePoliciesTab"
-                 label="msg://io.jmix.securityflowui.model/ResourceRoleModel.resourcePolicies"/>
-            <tab id="childRolesTab"
-                 label="msg://io.jmix.securityflowui.model/ResourceRoleModel.childRoles"/>
-        </tabs>
+            <tabSheet id="tabSheet" width="100%" minHeight="30em">
+                <tab id="resourcePoliciesTab"
+                     label="msg://io.jmix.securityflowui.model/ResourceRoleModel.resourcePolicies">
+                    <vbox id="resourcePoliciesWrapper" padding="false" height="100%">
+                        <hbox id="resourcePoliciesButtonsPanel" classNames="buttons-panel">
+                            <dropdownButton id="createDropdownButton" text="msg:///actions.Create" themeNames="primary"
+                                            icon="PLUS">
+                                <items>
+                                    <actionItem id="createMenuPolicy"
+                                                ref="resourcePoliciesTable.createMenuPolicy"/>
+                                    <actionItem id="createViewPolicy"
+                                                ref="resourcePoliciesTable.createViewPolicy"/>
+                                    <actionItem id="createEntityPolicy"
+                                                ref="resourcePoliciesTable.createEntityPolicy"/>
+                                    <actionItem id="createEntityAttributePolicy"
+                                                ref="resourcePoliciesTable.createEntityAttributePolicy"/>
+                                    <actionItem id="createGraphQLPolicy"
+                                                ref="resourcePoliciesTable.createGraphQLPolicy"/>
+                                    <actionItem id="createSpecificPolicy"
+                                                ref="resourcePoliciesTable.createSpecificPolicy"/>
+                                </items>
+                            </dropdownButton>
+                            <button action="resourcePoliciesTable.edit"/>
+                            <button action="resourcePoliciesTable.read"/>
+                            <button action="resourcePoliciesTable.remove"/>
+                        </hbox>
+                        <dataGrid id="resourcePoliciesTable"
+                                  dataContainer="resourcePoliciesDc"
+                                  selectionMode="MULTI"
+                                  columnReorderingAllowed="true"
+                                  width="100%">
+                            <actions>
+                                <action id="createMenuPolicy" text="msg://actions.menuPolicy.text"/>
+                                <action id="createViewPolicy" text="msg://actions.viewPolicy.text"/>
+                                <action id="createEntityPolicy" text="msg://actions.entityPolicy.text"/>
+                                <action id="createEntityAttributePolicy" text="msg://actions.entityAttributePolicy.text"/>
+                                <action id="createGraphQLPolicy" text="msg://actions.graphQLPolicy.text"/>
+                                <action id="createSpecificPolicy" text="msg://actions.specificPolicy.text"/>
 
-        <vbox id="resourcePoliciesWrapper" width="100%" padding="false">
-            <hbox id="resourcePoliciesButtonsPanel" classNames="buttons-panel">
-                <dropdownButton id="createDropdownButton" text="msg:///actions.Create" themeNames="primary" icon="PLUS">
-                    <items>
-                        <actionItem id="createMenuPolicy"
-                                    ref="resourcePoliciesTable.createMenuPolicy"/>
-                        <actionItem id="createViewPolicy"
-                                    ref="resourcePoliciesTable.createViewPolicy"/>
-                        <actionItem id="createEntityPolicy"
-                                    ref="resourcePoliciesTable.createEntityPolicy"/>
-                        <actionItem id="createEntityAttributePolicy"
-                                    ref="resourcePoliciesTable.createEntityAttributePolicy"/>
-                        <actionItem id="createGraphQLPolicy"
-                                    ref="resourcePoliciesTable.createGraphQLPolicy"/>
-                        <actionItem id="createSpecificPolicy"
-                                    ref="resourcePoliciesTable.createSpecificPolicy"/>
-                    </items>
-                </dropdownButton>
-                <button action="resourcePoliciesTable.edit"/>
-                <button action="resourcePoliciesTable.read"/>
-                <button action="resourcePoliciesTable.remove"/>
-            </hbox>
-            <dataGrid id="resourcePoliciesTable"
-                      dataContainer="resourcePoliciesDc"
-                      selectionMode="MULTI"
-                      minHeight="20em"
-                      columnReorderingAllowed="true"
-                      width="100%">
-                <actions>
-                    <action id="createMenuPolicy" text="msg://actions.menuPolicy.text"/>
-                    <action id="createViewPolicy" text="msg://actions.viewPolicy.text"/>
-                    <action id="createEntityPolicy" text="msg://actions.entityPolicy.text"/>
-                    <action id="createEntityAttributePolicy" text="msg://actions.entityAttributePolicy.text"/>
-                    <action id="createGraphQLPolicy" text="msg://actions.graphQLPolicy.text"/>
-                    <action id="createSpecificPolicy" text="msg://actions.specificPolicy.text"/>
-
-                    <action id="edit" type="list_edit"/>
-                    <action id="read" type="list_read"/>
-                    <action id="remove" type="list_remove"/>
-                </actions>
-                <columns resizable="true">
-                    <column property="policyGroup"/>
-                    <column property="type"/>
-                    <column property="resource"/>
-                </columns>
-            </dataGrid>
+                                <action id="edit" type="list_edit"/>
+                                <action id="read" type="list_read"/>
+                                <action id="remove" type="list_remove"/>
+                            </actions>
+                            <columns resizable="true">
+                                <column property="policyGroup"/>
+                                <column property="type"/>
+                                <column property="resource"/>
+                            </columns>
+                        </dataGrid>
+                    </vbox>
+                </tab>
+                <tab id="childRolesTab"
+                     label="msg://io.jmix.securityflowui.model/ResourceRoleModel.childRoles">
+                    <vbox id="childRolesWrapper" padding="false" height="100%">
+                        <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
+                            <button action="childRolesTable.add"/>
+                            <button action="childRolesTable.remove"/>
+                        </hbox>
+                        <dataGrid id="childRolesTable"
+                                  dataContainer="childRolesDc"
+                                  selectionMode="MULTI"
+                                  columnReorderingAllowed="true"
+                                  width="100%">
+                            <actions>
+                                <action id="add" type="list_add"/>
+                                <action id="remove" type="list_remove">
+                                    <properties>
+                                        <property name="confirmation" value="false"/>
+                                    </properties>
+                                </action>
+                            </actions>
+                            <columns resizable="true">
+                                <column property="name" flexGrow="2"/>
+                                <column property="code"/>
+                                <column property="source"/>
+                            </columns>
+                        </dataGrid>
+                    </vbox>
+                </tab>
+            </tabSheet>
         </vbox>
 
-        <vbox id="childRolesWrapper" width="100%" padding="false" visible="false">
-            <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
-                <button action="childRolesTable.add"/>
-                <button action="childRolesTable.remove"/>
-            </hbox>
-            <dataGrid id="childRolesTable"
-                      dataContainer="childRolesDc"
-                      selectionMode="MULTI"
-                      minHeight="20em"
-                      columnReorderingAllowed="true"
-                      width="100%">
-                <actions>
-                    <action id="add" type="list_add"/>
-                    <action id="remove" type="list_remove">
-                        <properties>
-                            <property name="confirmation" value="false"/>
-                        </properties>
-                    </action>
-                </actions>
-                <columns resizable="true">
-                    <column property="name"/>
-                    <column property="code"/>
-                    <column property="source"/>
-                </columns>
-            </dataGrid>
-        </vbox>
-
-        <hbox id="detailActions">
+        <hbox id="detailActions"
+              classNames="px-m py-s bg-contrast-5">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>

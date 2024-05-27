@@ -1,0 +1,9 @@
+jmix-code-editor[readonly][has-error-message]::part(error-message),
+jmix-code-editor[disabled][has-error-message]::part(error-message) {
+    display:none;
+}
+
+jmix-code-editor[readonly][invalid],
+jmix-code-editor[disabled][invalid] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+}

@@ -12,27 +12,38 @@ public class OidcProperties {
     boolean useDefaultConfiguration;
 
     /**
+     * Post logout redirect uri template for OIDC logout. The property is used by OidcAutoConfiguration.
+     */
+    String postLogoutRedirectUri;
+
+    /**
      * DefaultClaimsRolesMapper configuration.
      */
     DefaultClaimsRolesMapperConfig defaultClaimsRolesMapper;
 
     /**
-     * JWT authentication converter configuration
+     * JWT authentication converter configuration.
      */
     JwtAuthenticationConverterConfig jwtAuthenticationConverter;
 
     public OidcProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
+            @DefaultValue("{baseUrl}") String postLogoutRedirectUri,
             @DefaultValue DefaultClaimsRolesMapperConfig defaultClaimsRolesMapper,
             @DefaultValue JwtAuthenticationConverterConfig jwtAuthenticationConverter
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
+        this.postLogoutRedirectUri = postLogoutRedirectUri;
         this.defaultClaimsRolesMapper = defaultClaimsRolesMapper;
         this.jwtAuthenticationConverter = jwtAuthenticationConverter;
     }
 
     public boolean isUseDefaultConfiguration() {
         return useDefaultConfiguration;
+    }
+
+    public String getPostLogoutRedirectUri() {
+        return postLogoutRedirectUri;
     }
 
     public DefaultClaimsRolesMapperConfig getDefaultClaimsRolesMapper() {

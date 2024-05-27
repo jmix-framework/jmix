@@ -42,6 +42,9 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -76,10 +79,18 @@ abstract class AbstractUpdateImports implements Runnable {
     private static final String REGISTER_STYLES_FOR_TEMPLATE = CSS_IMPORT_AND_MAKE_LIT_CSS
             + "%n" + "registerStyles('%s', $css_%1$d%s);";
 
+    static final String RESET_FOCUS_JS = "() => {\n"
+            + " let ae=document.activeElement;\n"
+            + " while(ae&&ae.shadowRoot) ae = ae.shadowRoot.activeElement;\n"
+            + " return !ae || ae.blur() || ae.focus() || true;\n" + "}";
     private static final String IMPORT_TEMPLATE = "import '%s';";
 
+    private static final Pattern STARTING_DOT_SLASH = Pattern.compile("^\\./+");
     final Options options;
 
+    private final UnaryOperator<String> themeToLocalPathConverter;
+
+    private final Map<Path, List<String>> resolvedImportPathsCache = new HashMap<>();
     private FrontendDependenciesScanner scanner;
 
     private ClassFinder classFinder;
@@ -95,6 +106,8 @@ abstract class AbstractUpdateImports implements Runnable {
         this.options = options;
         this.scanner = scanner;
         this.classFinder = classFinder;
+        this.themeToLocalPathConverter = createThemeToLocalPathConverter(
+                scanner.getTheme());
         this.theme = theme;
 
         generatedFlowImports = FrontendUtils
@@ -109,16 +122,56 @@ abstract class AbstractUpdateImports implements Runnable {
 
     @Override
     public void run() {
+        getLogger().debug("Start updating imports file and chunk files.");
+        long start = System.nanoTime();
         Map<ChunkInfo, List<CssData>> css = scanner.getCss();
-        Map<ChunkInfo, List<String>> javascript = mergeJavascript(
-                scanner.getModules(), scanner.getScripts());
+        Map<ChunkInfo, List<String>> javascript = getMergedJavascript();
         Map<File, List<String>> output = process(css, javascript);
         writeOutput(output);
+        getLogger().debug("Imports and chunks update took {} ms.",
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+    }
+
+    private Map<ChunkInfo, List<String>> getMergedJavascript() {
+        getLogger().debug("Start collecting scanned JS modules and scripts.");
+        long start = System.nanoTime();
+
+        Map<ChunkInfo, List<String>> javascript;
+        Map<ChunkInfo, List<String>> modules = scanner.getModules();
+        Map<ChunkInfo, List<String>> scripts = scanner.getScripts();
+
+        if (options.isProductionMode()) {
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug("Found {} modules, and {} scripts.",
+                        modules.size(), scripts.size());
+            }
+            javascript = mergeJavascript(modules, scripts);
+        } else {
+            Map<ChunkInfo, List<String>> modulesDevelopment = scanner
+                    .getModulesDevelopment();
+            Map<ChunkInfo, List<String>> scriptsDevelopment = scanner
+                    .getScriptsDevelopment();
+
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug(
+                        "Found {} modules, {} scripts, {} dev-mode modules and {} dev-mode scripts.",
+                        modules.size(), scripts.size(),
+                        modulesDevelopment.size(), scriptsDevelopment.size());
+            }
+
+            javascript = mergeJavascript(modules, modulesDevelopment, scripts,
+                    scriptsDevelopment);
+        }
+
+        getLogger().debug("JS modules and scripts collected in {} ms.",
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+
+        return javascript;
     }
 
     protected void writeOutput(Map<File, List<String>> outputFiles) {
         try {
-            for (Map.Entry<File, List<String>> output : outputFiles.entrySet()) {
+            for (Entry<File, List<String>> output : outputFiles.entrySet()) {
                 FileIOUtils.writeIfChanged(output.getKey(), output.getValue());
             }
             if (chunkFolder.exists() && chunkFolder.isDirectory()) {
@@ -146,13 +199,15 @@ abstract class AbstractUpdateImports implements Runnable {
      */
     private Map<File, List<String>> process(Map<ChunkInfo, List<CssData>> css,
             Map<ChunkInfo, List<String>> javascript) {
+        getLogger().debug("Start sorting imports to lazy and eager.");
+        long start = System.nanoTime();
         Map<File, List<String>> files = new HashMap<>();
 
         Map<ChunkInfo, List<String>> lazyJavascript = new LinkedHashMap<>();
         List<String> eagerJavascript = new ArrayList<>();
         Map<ChunkInfo, List<String>> lazyCss = new LinkedHashMap<>();
         List<CssData> eagerCssData = new ArrayList<>();
-        for (Map.Entry<ChunkInfo, List<String>> entry : javascript.entrySet()) {
+        for (Entry<ChunkInfo, List<String>> entry : javascript.entrySet()) {
             if (isLazyRoute(entry.getKey())) {
                 lazyJavascript.put(entry.getKey(), entry.getValue());
             } else {
@@ -160,8 +215,10 @@ abstract class AbstractUpdateImports implements Runnable {
             }
         }
 
-        for (Map.Entry<ChunkInfo, List<CssData>> entry : css.entrySet()) {
-            if (isLazyRoute(entry.getKey())) {
+        for (Entry<ChunkInfo, List<CssData>> entry : css.entrySet()) {
+            boolean hasThemeFor = entry.getValue().stream()
+                    .anyMatch(cssData -> cssData.getThemefor() != null);
+            if (isLazyRoute(entry.getKey()) && !hasThemeFor) {
                 List<String> cssLines = getCssLines(entry.getValue());
                 if (!cssLines.isEmpty()) {
                     lazyCss.put(entry.getKey(), cssLines);
@@ -171,42 +228,63 @@ abstract class AbstractUpdateImports implements Runnable {
             }
         }
 
+        getLogger().debug("Imports sorting took {} ms.",
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
         List<String> chunkLoader = new ArrayList<>();
         if (!lazyJavascript.isEmpty() || !lazyCss.isEmpty()) {
+            getLogger().debug("Start generating lazy loaded chunks.");
+            start = System.nanoTime();
             chunkLoader.add("");
             chunkLoader.add("const loadOnDemand = (key) => {");
             chunkLoader.add("  const pending = [];");
-            for (ChunkInfo chunkInfo : merge(lazyJavascript.keySet(),
-                    lazyCss.keySet())) {
-                String routeHash = BundleUtils.getChunkId(chunkInfo.getName());
-                String chunkFilename = "chunk-" + routeHash + ".js";
+            Set<ChunkInfo> mergedChunkKeys = merge(lazyJavascript.keySet(),
+                    lazyCss.keySet());
+            Set<String> processedChunkHashes = new HashSet<>(
+                    mergedChunkKeys.size());
 
-                String ifClauses = chunkInfo.getDependencyTriggers().stream()
-                        .map(cls -> BundleUtils.getChunkId(cls))
-                        .map(hash -> "key === '" + hash + "'")
-                        .collect(Collectors.joining(" || "));
-                chunkLoader.add("  if (" + ifClauses + ") {");
-                chunkLoader.add("    pending.push(import('./chunks/"
-                        + chunkFilename + "'));");
-                chunkLoader.add("  }");
+            for (ChunkInfo chunkInfo : mergedChunkKeys) {
 
                 List<String> chunkLines = new ArrayList<>();
                 if (lazyJavascript.containsKey(chunkInfo)) {
-                    chunkLines
-                            .addAll(getModuleLines(javascript.get(chunkInfo)));
+                    chunkLines.addAll(
+                            getModuleLines(lazyJavascript.get(chunkInfo)));
                 }
                 if (lazyCss.containsKey(chunkInfo)) {
                     chunkLines.add(IMPORT_INJECT);
                     chunkLines.add(THEMABLE_MIXIN_IMPORT);
                     chunkLines.addAll(lazyCss.get(chunkInfo));
                 }
+                if (chunkLines.isEmpty()) {
+                    continue;
+                }
+
+                String chunkContentHash = BundleUtils.getChunkHash(chunkLines);
+
+                String chunkFilename = "chunk-" + chunkContentHash + ".js";
+
+                String ifClauses = chunkInfo.getDependencyTriggers().stream()
+                        .map(BundleUtils::getChunkId)
+                        .map(hash -> String.format("key === '%s'", hash))
+                        .collect(Collectors.joining(" || "));
+                chunkLoader.add(String.format("  if (%s) {", ifClauses));
+                chunkLoader.add(String.format(
+                        "    pending.push(import('./chunks/%s'));",
+                        chunkFilename));
+                chunkLoader.add("  }");
+
+                boolean chunkNotExist = processedChunkHashes
+                        .add(chunkContentHash);
+                if (chunkNotExist) {
                 File chunkFile = new File(chunkFolder, chunkFilename);
                 files.put(chunkFile, chunkLines);
+            }
             }
 
             chunkLoader.add("  return Promise.all(pending);");
             chunkLoader.add("}");
             chunkLoader.add("");
+            getLogger().debug("Lazy chunks generation took {} ms.",
+                    TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
         } else {
             chunkLoader.add(
                     "const loadOnDemand = (key) => { return Promise.resolve(0); }");
@@ -226,6 +304,7 @@ abstract class AbstractUpdateImports implements Runnable {
         mainLines.add("window.Vaadin = window.Vaadin || {};");
         mainLines.add("window.Vaadin.Flow = window.Vaadin.Flow || {};");
         mainLines.add("window.Vaadin.Flow.loadOnDemand = loadOnDemand;");
+        mainLines.add("window.Vaadin.Flow.resetFocus = " + RESET_FOCUS_JS);
 
         files.put(generatedFlowImports, mainLines);
         files.put(generatedFlowDefinitions,
@@ -249,7 +328,7 @@ abstract class AbstractUpdateImports implements Runnable {
      *            class literal
      * @return the resource
      */
-    protected URL getResource(String name) {
+    private URL getResource(String name) {
         return classFinder.getResource(name);
     }
 
@@ -344,7 +423,8 @@ abstract class AbstractUpdateImports implements Runnable {
 
             // We only should check here those paths starting with './' when all
             // flow components have the './' prefix
-            String resource = resolved.replaceFirst("^\\./+", "");
+            String resource = STARTING_DOT_SLASH.matcher(resolved)
+                    .replaceFirst("");
             if (hasMetaInfResource(resource)) {
                 if (!resolved.startsWith("./")) {
                     String message = String.format(
@@ -370,19 +450,18 @@ abstract class AbstractUpdateImports implements Runnable {
 
     protected abstract String getImportsNotFoundMessage();
 
+    @SafeVarargs
     private Map<ChunkInfo, List<String>> mergeJavascript(
-            Map<ChunkInfo, List<String>> modules,
-            Map<ChunkInfo, List<String>> scripts) {
+            Map<ChunkInfo, List<String>>... javascripts) {
         Map<ChunkInfo, List<String>> result = new LinkedHashMap<>();
         Collection<? extends String> generated = resolveGeneratedModules(
                 getGeneratedModules());
-        for (Map.Entry<ChunkInfo, List<String>> entry : modules.entrySet()) {
+        for (Map<ChunkInfo, List<String>> javascript : javascripts) {
+
+            for (Entry<ChunkInfo, List<String>> entry : javascript.entrySet()) {
             result.computeIfAbsent(entry.getKey(), e -> new ArrayList<>())
                     .addAll(resolveModules(entry.getValue()));
         }
-        for (Map.Entry<ChunkInfo, List<String>> entry : scripts.entrySet()) {
-            result.computeIfAbsent(entry.getKey(), e -> new ArrayList<>())
-                    .addAll(resolveModules(entry.getValue()));
         }
         result.computeIfAbsent(ChunkInfo.GLOBAL, e -> new ArrayList<>())
                 .addAll(generated);
@@ -414,15 +493,8 @@ abstract class AbstractUpdateImports implements Runnable {
             if (theme != null
                     && translatedModulePath.contains(theme.getBaseUrl())) {
                 translatedModulePath = theme.translateUrl(translatedModulePath);
-                String themePath = theme.getThemeUrl();
-
-                // (#5964) Allows:
-                // - custom @Theme with files placed in /frontend
-                // - customize an already themed component
-                // @vaadin/vaadin-grid/theme/lumo/vaadin-grid.js ->
-                // theme/lumo/vaadin-grid.js
-                localModulePath = translatedModulePath
-                        .replaceFirst("@.+" + themePath, themePath);
+                localModulePath = themeToLocalPathConverter
+                        .apply(translatedModulePath);
             }
 
             if (localModulePath != null
@@ -489,6 +561,24 @@ abstract class AbstractUpdateImports implements Runnable {
         return es6ImportPaths;
     }
 
+    private static UnaryOperator<String> createThemeToLocalPathConverter(
+            AbstractTheme theme) {
+        UnaryOperator<String> convertToLocalPath;
+        if (theme != null) {
+            // (#5964) Allows:
+            // - custom @Theme with files placed in /frontend
+            // - customize an already themed component
+            // @vaadin/vaadin-grid/theme/lumo/vaadin-grid.js ->
+            // theme/lumo/vaadin-grid.js
+            String themePath = theme.getThemeUrl();
+            Pattern themePattern = Pattern.compile("@.+" + themePath);
+            convertToLocalPath = path -> themePattern.matcher(path)
+                    .replaceFirst(themePath);
+        } else {
+            convertToLocalPath = UnaryOperator.identity();
+        }
+        return convertToLocalPath;
+    }
     private boolean isGeneratedFlowFile(String localModulePath) {
         return localModulePath
                 .startsWith(FrontendUtils.FRONTEND_GENERATED_FLOW_IMPORT_PATH);
@@ -681,7 +771,8 @@ abstract class AbstractUpdateImports implements Runnable {
                 getLogger().warn(message);
                 FrontendUtils.logInFile(message);
             }
-            return FRONTEND_FOLDER_ALIAS + jsImport.replaceFirst("^\\./", "");
+            return FRONTEND_FOLDER_ALIAS
+                    + STARTING_DOT_SLASH.matcher(jsImport).replaceFirst("");
         }
         return jsImport;
     }
@@ -690,6 +781,7 @@ abstract class AbstractUpdateImports implements Runnable {
                                          AbstractTheme theme, Collection<String> imports,
                                          Set<String> visitedImports) throws IOException {
 
+        if (!resolvedImportPathsCache.containsKey(filePath)) {
         String content = null;
         try (final Stream<String> contentStream = Files.lines(filePath,
                 StandardCharsets.UTF_8)) {
@@ -706,15 +798,17 @@ abstract class AbstractUpdateImports implements Runnable {
             throw ioe;
         }
         ImportExtractor extractor = new ImportExtractor(content);
-        List<String> importedPaths = extractor.getImportedPaths();
-        for (String importedPath : importedPaths) {
-            // try to resolve path relatively to original filePath (inside user
+            resolvedImportPathsCache.put(filePath,
+                    extractor.getImportedPaths().stream().map(importedPath -> {
+                        // try to resolve path relatively to original filePath
+                        // (inside user
             // frontend folder)
             importedPath = StringUtil.stripSuffix(importedPath, "?inline");
             String resolvedPath = resolve(importedPath, filePath, path);
             File file = getImportedFrontendFile(resolvedPath);
             if (file == null && !importedPath.startsWith("./")) {
-                // In case such file doesn't exist it may be external: inside
+                            // In case such file doesn't exist it may be
+                            // external: inside
                 // node_modules folder
                 file = getFile(options.getNodeModulesFolder(), importedPath);
                 if (!file.exists()) {
@@ -723,10 +817,16 @@ abstract class AbstractUpdateImports implements Runnable {
                 resolvedPath = importedPath;
             }
             if (file == null) {
-                // don't do anything if such file doesn't exist at all
-                continue;
+                            // don't do anything if such file doesn't exist at
+                            // all
+                            return null;
             }
-            resolvedPath = normalizePath(resolvedPath);
+                        return normalizePath(resolvedPath);
+                    }).filter(Objects::nonNull).collect(Collectors.toList()));
+        }
+        List<String> resolvedPaths = resolvedImportPathsCache.get(filePath);
+
+        for (String resolvedPath : resolvedPaths) {
             if (resolvedPath.contains(theme.getBaseUrl())) {
                 String translatedPath = theme.translateUrl(resolvedPath);
                 if (!visitedImports.contains(translatedPath)

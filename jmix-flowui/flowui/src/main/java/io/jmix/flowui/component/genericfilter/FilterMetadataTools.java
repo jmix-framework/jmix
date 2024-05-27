@@ -116,14 +116,26 @@ public class FilterMetadataTools {
 
         return context.canView()
                 && !metadataTools.isSystemLevel(propertyPath.getMetaProperty())
-                && ((metadataTools.isJpa(propertyPath)
-                || (propertyPath.getMetaClass() instanceof KeyValueMetaClass
-                && !isAggregateFunction(propertyPath, query)
-                && isKeyValueCrossDataStoreReferenceAllowed(propertyPath, query)))
-                || (isCrossDataStoreReference(propertyPath.getMetaProperty())
-                && !(propertyPath.getMetaClass() instanceof KeyValueMetaClass)))
-                && !propertyPath.getMetaProperty().getRange().getCardinality().isMany()
-                && !(byte[].class.equals(propertyPath.getMetaProperty().getJavaType()));
+                && !(byte[].class.equals(propertyPath.getMetaProperty().getJavaType()))
+                && isMetaPropertyPathAllowedJpaAware(propertyPath, query);
+    }
+
+    protected boolean isMetaPropertyPathAllowedJpaAware(MetaPropertyPath propertyPath, String query) {
+        return componentProperties.isFilterShowNonJpaProperties()
+                ? isKeyValueQueryAllowed(propertyPath, query) || isCrossDataStoreReferenceAllowed(propertyPath)
+                : (metadataTools.isJpa(propertyPath)
+                || (propertyPath.getMetaClass() instanceof KeyValueMetaClass && isKeyValueQueryAllowed(propertyPath, query)))
+                || isCrossDataStoreReferenceAllowed(propertyPath);
+    }
+
+    protected boolean isKeyValueQueryAllowed(MetaPropertyPath propertyPath, String query) {
+        return !isAggregateFunction(propertyPath, query)
+                && isKeyValueCrossDataStoreReferenceAllowed(propertyPath, query);
+    }
+
+    protected boolean isCrossDataStoreReferenceAllowed(MetaPropertyPath propertyPath) {
+        return isCrossDataStoreReference(propertyPath.getMetaProperty())
+                && !(propertyPath.getMetaClass() instanceof KeyValueMetaClass);
     }
 
     @SuppressWarnings("unused")

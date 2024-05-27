@@ -33,8 +33,8 @@ import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.model.DataLoader;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
@@ -232,7 +232,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
     @Override
     protected PropertyCondition createQueryCondition() {
-        return new PropertyCondition();
+        return new PropertyCondition().skipNullOrEmpty();
     }
 
     /**
@@ -381,11 +381,13 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         NOT_CONTAINS(Type.VALUE),
         STARTS_WITH(Type.VALUE),
         ENDS_WITH(Type.VALUE),
-        IS_SET(Type.UNARY)/*,
-        IS_NOT_SET(Type.UNARY),
+        IS_SET(Type.UNARY),
         IN_LIST(Type.LIST),
         NOT_IN_LIST(Type.LIST),
-        DATE_INTERVAL(Type.INTERVAL)*/;
+        IN_INTERVAL(Type.INTERVAL),
+        IS_COLLECTION_EMPTY(Type.UNARY),
+        MEMBER_OF_COLLECTION(Type.VALUE),
+        NOT_MEMBER_OF_COLLECTION(Type.VALUE);
 
         private final Type type;
 

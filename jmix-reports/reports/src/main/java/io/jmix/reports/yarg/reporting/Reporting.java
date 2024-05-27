@@ -16,8 +16,7 @@
 package io.jmix.reports.yarg.reporting;
 
 import com.google.common.base.Preconditions;
-import io.jmix.reports.yarg.structure.*;
-import io.jmix.reports.yarg.util.converter.ObjectToStringConverterImpl;
+import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.exception.ReportingInterruptedException;
 import io.jmix.reports.yarg.exception.ValidationException;
@@ -25,7 +24,9 @@ import io.jmix.reports.yarg.formatters.ReportFormatter;
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.formatters.factory.ReportFormatterFactory;
 import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
+import io.jmix.reports.yarg.structure.*;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reports.yarg.util.converter.ObjectToStringConverterImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -157,7 +158,7 @@ public class Reporting implements ReportingAPI {
             }
 
             if (Boolean.TRUE.equals(reportParameter.getRequired()) && parameterValue == null) {
-                throw new IllegalArgumentException(format("Required report parameter \"%s\" not found", paramName));
+                throw new ReportParametersValidationException(format("Required report parameter \"%s\" not found", paramName));
             }
 
             if (!handledParams.containsKey(paramName)) {//make sure map contains all user parameters, even if value == null
@@ -225,7 +226,7 @@ public class Reporting implements ReportingAPI {
         }
 
         if (ReportOutputType.custom != reportTemplate.getOutputType()) {
-            ReportOutputType finalOutputType = (outputType != null ) ? outputType : reportTemplate.getOutputType();
+            ReportOutputType finalOutputType = (outputType != null) ? outputType : reportTemplate.getOutputType();
             outputName = format("%s.%s", StringUtils.substringBeforeLast(outputName, "."), finalOutputType.getId());
         }
 

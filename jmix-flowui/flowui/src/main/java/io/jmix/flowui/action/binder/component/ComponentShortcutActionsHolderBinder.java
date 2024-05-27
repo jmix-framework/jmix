@@ -22,6 +22,7 @@ import io.jmix.flowui.action.binder.ShortcutActionHandler;
 import io.jmix.flowui.action.binder.ShortcutActionsHolderBinding;
 import io.jmix.flowui.kit.action.Action;
 
+@Deprecated(since = "2.2", forRemoval = true)
 public interface ComponentShortcutActionsHolderBinder<C extends Component> {
 
     boolean supports(Component component);

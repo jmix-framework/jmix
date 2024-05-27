@@ -1,0 +1,110 @@
+/*
+ * Copyright 2023 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.jmix-horizontal-menu {
+  color: var(--lumo-secondary-text-color);
+}
+
+.jmix-horizontal-menu-root-item:hover {
+  color: var(--lumo-contrast-80pct);
+}
+
+.jmix-horizontal-menu vaadin-menu-bar-button {
+  color: inherit;
+  background-color: transparent;
+  border-radius: var(--lumo-border-radius-m);
+  padding: 0;
+}
+
+.jmix-horizontal-menu vaadin-menu-bar-button[expanded] {
+  background-color: var(--lumo-primary-color-10pct);
+}
+
+vaadin-menu-bar .jmix-horizontal-menu-item-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+vaadin-menu-bar-list-box .jmix-horizontal-menu-item-wrapper {
+  padding: 0;
+}
+
+vaadin-menu-bar-list-box vaadin-menu-bar-item[class~='jmix-horizontal-menu-item-wrapper']::part(checkmark) {
+  display: none;
+}
+
+.jmix-horizontal-menu-item-wrapper[aria-haspopup='true']::after {
+  margin: 0;
+  padding-inline-start: calc(var(--lumo-space-s) + var(--lumo-space-xs));
+  padding-inline-end: var(--lumo-space-s);
+}
+
+.jmix-horizontal-menu-content-item {
+  gap: var(--lumo-space-s);
+  align-items: center;
+}
+
+.jmix-horizontal-menu-content-item vaadin-icon.prefix-component {
+  width: var(--lumo-icon-size-s);
+  height: var(--lumo-icon-size-s);
+}
+
+.jmix-horizontal-menu-content-item .suffix-component {
+  margin-inline-start: auto;
+}
+
+vaadin-menu-bar .jmix-horizontal-menu-content-item {
+  padding-inline-start: calc(var(--lumo-size-m) / 3 + var(--lumo-border-radius-m) / 2);
+  padding-inline-end: calc(var(--lumo-size-m) / 3 + var(--lumo-border-radius-m) / 2);
+
+  /*explicit values are copied from vaadin-menu-bar-item component*/
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item {
+  /*The padding is equal to width of icon prefix when it's not set*/
+  padding-inline-start: calc(var(--lumo-icon-size-s) + var(--lumo-space-s) * 2);
+  padding-inline-end: 0;
+
+  /*explicit values are copied from vaadin-menu-bar-item component*/
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item[prefixed] {
+  padding-inline-start: var(--lumo-space-s);
+}
+
+vaadin-menu-bar-list-box .jmix-horizontal-menu-content-item .text-component:not(:last-child) {
+  margin-inline-end: var(--lumo-space-l);
+}
+
+.jmix-horizontal-menu-item:hover {
+  text-decoration: none;
+}
+
+vaadin-menu-bar-item .jmix-horizontal-menu-item {
+  color: inherit;
+  display: flex;
+  cursor: pointer;
+  width: 100%;
+}
+
+vaadin-menu-bar-list-box .jmix-horizontal-menu-item {
+  /*The padding is equal to width of 'greater' sign of expandable items*/
+  padding-inline-end: calc(var(--lumo-icon-size-s) + var(--lumo-space-s) * 2);
+}

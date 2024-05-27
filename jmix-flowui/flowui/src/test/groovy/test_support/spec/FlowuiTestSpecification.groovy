@@ -30,7 +30,9 @@ import com.vaadin.flow.server.VaadinSession
 import com.vaadin.flow.spring.SpringServlet
 import com.vaadin.flow.spring.VaadinServletContextInitializer
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
+import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticator
+import io.jmix.core.security.UserRepository
 import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.backgroundtask.BackgroundTaskManager
 import io.jmix.flowui.sys.ViewControllersConfiguration
@@ -42,11 +44,13 @@ import io.jmix.flowui.testassist.vaadin.TestVaadinRequest
 import io.jmix.flowui.testassist.vaadin.TestVaadinSession
 import io.jmix.flowui.view.View
 import io.jmix.flowui.view.ViewRegistry
+import io.jmix.flowui.view.navigation.ViewNavigationSupport
 import org.apache.commons.lang3.ArrayUtils
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.mock.web.MockServletConfig
+import org.springframework.security.core.userdetails.User
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
@@ -70,6 +74,9 @@ class FlowuiTestSpecification extends Specification {
     ViewNavigators viewNavigators
 
     @Autowired
+    ViewNavigationSupport navigationSupport
+
+    @Autowired
     ViewRegistry viewRegistry
 
     @Autowired
@@ -83,11 +90,13 @@ class FlowuiTestSpecification extends Specification {
         setupAuthentication()
         setupVaadinUi()
         registerViewBasePackages("test_support.view")
+        addSystemUser()
     }
 
     void cleanup() {
         removeAuthentication()
         resetViewRegistry()
+        removeSystemUser()
     }
 
     /**
@@ -136,11 +145,11 @@ class FlowuiTestSpecification extends Specification {
         VaadinService.setCurrent(springServlet.getService())
 
         vaadinSession = new TestVaadinSession(springServlet.getService())
-        vaadinSession.setAttribute(BackgroundTaskManager, new BackgroundTaskManager());
-        vaadinSession.setAttribute(UiEventsManager, new UiEventsManager());
+        vaadinSession.setAttribute(BackgroundTaskManager, new BackgroundTaskManager())
+        vaadinSession.setAttribute(UiEventsManager, new UiEventsManager())
         VaadinSession.setCurrent(vaadinSession)
 
-        vaadinSession.setConfiguration(springServlet.getService().getDeploymentConfiguration());
+        vaadinSession.setConfiguration(springServlet.getService().getDeploymentConfiguration())
 
         def request = new TestVaadinRequest(springServlet.getService())
         CurrentInstance.set(VaadinRequest, request)
@@ -158,6 +167,22 @@ class FlowuiTestSpecification extends Specification {
 
         ui.doInit(request, 1, APP_ID)
         UI.setCurrent(ui)
+    }
+
+    /**
+     * {@link io.jmix.flowui.component.main.JmixUserIndicator#refreshUser} loads
+     * current authenticated user from UserRepository. But UserRepository has empty users list.
+     * To prevent exception in those views which contain UserIndicator we add user with username "system".
+     */
+    protected addSystemUser() {
+        def userRepository = applicationContext.getBean(UserRepository)
+        if (userRepository instanceof InMemoryUserRepository)  {
+            ((InMemoryUserRepository) userRepository).addUser(User.builder()
+                    .username("system")
+                    .password("")
+                    .authorities(Collections.emptyList())
+                    .build())
+        }
     }
 
     protected void registerViewBasePackages(String[] viewBasePackages) {
@@ -217,7 +242,7 @@ class FlowuiTestSpecification extends Specification {
 
             // Provides ability to overriding Views like in ViewRegistry#registerRoute()
             if (routeConfiguration.isPathAvailable(route.value())) {
-                routeConfiguration.removeRoute(route.value());
+                routeConfiguration.removeRoute(route.value())
             }
 
             if (route.layout() == UI.class) {
@@ -237,6 +262,15 @@ class FlowuiTestSpecification extends Specification {
         viewRegistry.initialized = false
     }
 
+    protected void removeSystemUser() {
+        def userRepository = applicationContext.getBean(UserRepository)
+        if (userRepository instanceof InMemoryUserRepository) {
+            def system = ((InMemoryUserRepository) userRepository)
+                    .loadUserByUsername("system")
+            ((InMemoryUserRepository) userRepository).removeUser(system)
+        }
+    }
+
     protected <T extends View> T navigateToView(Class<T> view) {
         def activeRouterTargetsChain = getRouterChain(view)
 
@@ -244,9 +278,7 @@ class FlowuiTestSpecification extends Specification {
     }
 
     protected List<HasElement> getRouterChain(Class<View> viewClass) {
-        viewNavigators.view(viewClass)
-                .navigate()
-
+        navigationSupport.navigate(viewClass)
         UI.getCurrent().getInternals().getActiveRouterTargetsChain()
     }
 }

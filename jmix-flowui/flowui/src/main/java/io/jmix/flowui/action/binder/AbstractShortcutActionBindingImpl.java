@@ -26,6 +26,7 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated(since = "2.2", forRemoval = true)
 public abstract class AbstractShortcutActionBindingImpl<H extends Component, A extends Action, C extends Component>
         extends AbstractActionBindingImpl<H, A, C> implements ShortcutActionBinding<C, A> {
 

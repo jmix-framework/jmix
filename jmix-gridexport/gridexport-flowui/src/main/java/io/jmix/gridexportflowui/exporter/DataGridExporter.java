@@ -25,6 +25,8 @@ import java.util.function.Function;
 
 public interface DataGridExporter {
 
+    void setFileName(String fileName);
+
     /**
      * download <code>dataGrid</code> content via <code>downloader</code>
      */

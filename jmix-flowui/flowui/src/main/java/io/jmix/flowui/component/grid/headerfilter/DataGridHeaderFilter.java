@@ -140,6 +140,10 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
             getContent().replace(this.headerComponent, headerComponent);
         }
 
+        if (headerComponent instanceof HasText hasText) {
+            propertyFilter.setLabel(hasText.getText());
+        }
+
         this.headerComponent = headerComponent;
     }
 
@@ -370,7 +374,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
                 Preconditions.checkNotNullArgument(propertyPath);
 
                 metaClass = propertyPath.getMetaClass();
-                property = propertyPath.getFirstPropertyName();
+                property = propertyPath.toPathString();
             }
 
             if (column.getHeaderText() != null) {

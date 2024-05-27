@@ -1,0 +1,60 @@
+{
+  "grid": [
+    {
+      "id": "gridId",
+      "show": true,
+      "zlevel": 123,
+      "z": 84,
+      "left": "30%",
+      "top": "30%",
+      "right": "30%",
+      "bottom": "30%",
+      "width": "50%",
+      "height": "50%",
+      "containLabel": true,
+      "backgroundColor": "#FFFFF0",
+      "borderColor": "#FFFFF0",
+      "borderWidth": 13,
+      "shadowBlur": 32,
+      "shadowColor": "#FFFFF0",
+      "shadowOffsetX": 12,
+      "shadowOffsetY": 31,
+      "tooltip": {
+        "show": true,
+        "trigger": "axis",
+        "formatter": "{b0}: {c0}<br />{b1}: {c1}",
+        "valueFormatter": "(value) => '$' + value.toFixed(2)",
+        "backgroundColor": "#FFFFF0",
+        "borderColor": "#FFFFF0",
+        "borderWidth": 213,
+        "padding": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "textStyle": {
+          "color": "#FFFFF0",
+          "fontStyle": "italic",
+          "fontWeight": "bold",
+          "fontFamily": "monospace",
+          "fontSize": 40,
+          "lineHeight": 56,
+          "width": 50,
+          "height": 47,
+          "textBorderColor": "#FFFFF0",
+          "textBorderWidth": 2.5,
+          "textBorderType": "dashed",
+          "textBorderDashOffset": 3,
+          "textShadowColor": "#FFFFF0",
+          "textShadowBlur": 4,
+          "textShadowOffsetX": 4,
+          "textShadowOffsetY": 5,
+          "overflow": "breakAll",
+          "ellipsis": "........"
+        },
+        "extraCssText": "box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);"
+      }
+    }
+  ]
+}

@@ -30,6 +30,7 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.ComponentContainer;
+import io.jmix.flowui.kit.component.HasSubParts;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.lang.Nullable;
 
@@ -42,12 +43,12 @@ import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [last update Vaadin 24.2.1]
+// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [last update Vaadin 24.3.1]
 @Tag("jmix-tabsheet")
 @JsModule("./src/tabsheet/jmix-tabsheet.js")
 public class JmixTabSheet extends Component
         implements HasStyle, HasSize, HasThemeVariant<TabSheetVariant>, HasPrefix, HasSuffix,
-        ComponentContainer {
+        ComponentContainer, HasSubParts {
 
     protected static final String GENERATED_TAB_ID_PREFIX = "tabsheet-tab-";
 
@@ -126,20 +127,7 @@ public class JmixTabSheet extends Component
             tabs.addTabAtIndex(position, tab);
         }
 
-        // Make sure possible old content related to the same tab gets removed
-        if (tabToContent.containsKey(tab)) {
-            tabToContent.get(tab).getElement().removeFromParent();
-        }
-
-        // On the client, content is associated with a tab by id
-        String id = tab.getId()
-                .orElse(generateTabId());
-        tab.setId(id);
-        content.getElement().setAttribute("tab", id);
-
-        tabToContent.put(tab, content);
-
-        updateContent();
+        updateTabContent(tab, content);
 
         return tab;
     }
@@ -359,8 +347,39 @@ public class JmixTabSheet extends Component
         }
     }
 
+    /**
+     * Remove old tab content if exists and set new one
+     * @param tab updated tab
+     * @param content new content
+     */
+    protected void updateTabContent(Tab tab, Component content) {
+        // Make sure possible old content related to the same tab gets removed
+        if (tabToContent.containsKey(tab)) {
+            tabToContent.get(tab).getElement().removeFromParent();
+        }
+
+        // On the client, content is associated with a tab by id
+        String id = tab.getId()
+                .orElse(generateTabId());
+        tab.setId(id);
+        content.getElement().setAttribute("tab", id);
+
+        tabToContent.put(tab, content);
+
+        updateContent();
+    }
+
     protected String generateTabId() {
         return GENERATED_TAB_ID_PREFIX + RandomStringUtils.randomAlphanumeric(8);
+    }
+
+    @Nullable
+    @Override
+    public Object getSubPart(String name) {
+        return getChildren()
+                .filter(tab -> sameId(tab, name))
+                .findAny()
+                .orElse(null);
     }
 
     /**

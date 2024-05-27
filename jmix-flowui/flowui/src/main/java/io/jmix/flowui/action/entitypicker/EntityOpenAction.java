@@ -37,6 +37,7 @@ import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -172,6 +173,21 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         viewInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
+    @Override
+    public <V extends View<?>> Consumer<DialogWindow.AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute() {
@@ -237,6 +253,14 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
 
     public EntityOpenAction<E> withTransformation(Function<E, E> transformation) {
         setTransformation(transformation);
+        return this;
+    }
+
+    /**
+     * @see #setViewConfigurer(Consumer)
+     */
+    public <V extends View<?>> EntityOpenAction<E> withViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        setViewConfigurer(viewConfigurer);
         return this;
     }
 

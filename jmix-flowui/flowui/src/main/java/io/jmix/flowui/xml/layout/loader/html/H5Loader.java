@@ -24,4 +24,11 @@ public class H5Loader extends AbstractHtmlContainerLoader<H5> {
     protected H5 createComponent() {
         return factory.create(H5.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

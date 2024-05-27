@@ -7,7 +7,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.FileBuffer;
-import io.jmix.core.FileStorage;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -51,8 +50,6 @@ public class ReportImportDialogView extends StandardView {
     protected Notifications notifications;
     @Autowired
     protected ViewValidation viewValidation;
-    @Autowired
-    protected FileStorage fileStorage;
     @Autowired
     protected UiComponents uiComponents;
 

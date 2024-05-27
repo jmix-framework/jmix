@@ -24,4 +24,11 @@ public class UnorderedListLoader extends AbstractHtmlContainerLoader<UnorderedLi
     protected UnorderedList createComponent() {
         return factory.create(UnorderedList.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

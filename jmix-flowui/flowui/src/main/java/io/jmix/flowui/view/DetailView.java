@@ -63,4 +63,15 @@ public interface DetailView<E> extends ChangeTracker {
      * </ul>
      */
     LockStatus getLockStatus();
+
+    /**
+     * @return true if edited entity should be reloaded after closeWithSave action, false otherwise
+     */
+    boolean isReloadSaved();
+
+    /**
+     * Sets whether edited entity should be reloaded after closeWithSave action.
+     * @param reloadSaved flag indicating whether edited entity should be reloaded after closeWithSave action
+     */
+    void setReloadSaved(boolean reloadSaved);
 }

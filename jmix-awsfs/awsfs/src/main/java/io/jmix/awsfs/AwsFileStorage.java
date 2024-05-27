@@ -40,27 +40,27 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.core.internal.util.Mimetype;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
-import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
 import software.amazon.awssdk.services.s3.model.CompletedPart;
-import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
+import software.amazon.awssdk.services.s3.model.UploadPartResponse;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -194,59 +194,62 @@ public class AwsFileStorage implements FileStorage {
     @Override
     public FileRef saveStream(String fileName, InputStream inputStream, Map<String, Object> parameters) {
         String fileKey = createFileKey(fileName);
+        String bucket = this.bucket;
         int s3ChunkSizeBytes = this.chunkSize * 1024;
+
+        Map<String, String> fileRefParameters = Maps.toMap(parameters.keySet(), key -> parameters.get(key).toString());
+        FileRef fileRef = new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
+
         try (BufferedInputStream bos = new BufferedInputStream(inputStream, s3ChunkSizeBytes)) {
+            byte[] chunkBytes = new byte[s3ChunkSizeBytes];
+            int nBytes = bos.read(chunkBytes);
             S3Client s3Client = s3ClientReference.get();
-            int totalSizeBytes = bos.available();
-            Map<String, String> fileRefParameters = Maps.toMap(parameters.keySet(), key -> parameters.get(key).toString());
-            if (totalSizeBytes == 0) {
-                s3Client.putObject(PutObjectRequest.builder()
+            if (nBytes < s3ChunkSizeBytes) {
+                s3Client.putObject(objectBuilder -> objectBuilder
                         .bucket(bucket)
                         .key(fileKey)
-                        .build(), RequestBody.empty());
-                return new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
+                        .build(), fromBytes(chunkBytes, nBytes));
+                return fileRef;
             }
 
-            CreateMultipartUploadRequest createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
+            CreateMultipartUploadResponse response = s3Client.createMultipartUpload(uploadBuilder -> uploadBuilder
                     .bucket(bucket)
-                    .key(fileKey)
-                    .build();
-            CreateMultipartUploadResponse response = s3Client.createMultipartUpload(createMultipartUploadRequest);
+                    .key(fileKey));
 
             List<CompletedPart> completedParts = new ArrayList<>();
-            for (int partNumber = 1, readBytes = 0; readBytes != totalSizeBytes; partNumber++) {
-                byte[] chunkBytes = new byte[Math.min(totalSizeBytes - readBytes, s3ChunkSizeBytes)];
-                readBytes += bos.read(chunkBytes);
-                UploadPartRequest uploadPartRequest = UploadPartRequest.builder()
-                        .bucket(bucket)
-                        .key(fileKey)
-                        .uploadId(response.uploadId())
+            UploadPartRequest.Builder partBuilder = UploadPartRequest.builder()
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .uploadId(response.uploadId());
+            for (int partNumber = 1; 0 < nBytes; partNumber++) {
+                UploadPartResponse partResponse = s3Client.uploadPart(partBuilder
                         .partNumber(partNumber)
-                        .build();
-                String eTag = s3Client.uploadPart(uploadPartRequest, RequestBody.fromBytes(chunkBytes)).eTag();
-                CompletedPart part = CompletedPart.builder()
+                        .build(), fromBytes(chunkBytes, nBytes));
+                CompletedPart completedPart = CompletedPart.builder()
                         .partNumber(partNumber)
-                        .eTag(eTag)
+                        .eTag(partResponse.eTag())
                         .build();
-                completedParts.add(part);
+                completedParts.add(completedPart);
+                nBytes = bos.read(chunkBytes);
             }
 
-            CompletedMultipartUpload completedMultipartUpload = CompletedMultipartUpload.builder()
-                    .parts(completedParts)
-                    .build();
-            CompleteMultipartUploadRequest completeMultipartUploadRequest =
-                    CompleteMultipartUploadRequest.builder()
-                            .bucket(bucket)
-                            .key(fileKey)
-                            .uploadId(response.uploadId())
-                            .multipartUpload(completedMultipartUpload).build();
-            s3Client.completeMultipartUpload(completeMultipartUploadRequest);
-            return new FileRef(getStorageName(), fileKey, fileName, fileRefParameters);
+            s3Client.completeMultipartUpload(completeBuilder -> completeBuilder
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .uploadId(response.uploadId())
+                    .multipartUpload(multipartBuilder -> multipartBuilder.parts(completedParts)));
+            return fileRef;
         } catch (IOException | SdkException e) {
             log.error("Error saving file to S3 storage", e);
             String message = String.format("Could not save file %s.", fileName);
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, message);
         }
+    }
+
+    protected RequestBody fromBytes(byte[] buffer, int length) {
+        length = Math.max(0, length);
+        byte[] bytes = Arrays.copyOf(buffer, length);
+        return RequestBody.fromContentProvider(() -> new ByteArrayInputStream(bytes), length, Mimetype.MIMETYPE_OCTET_STREAM);
     }
 
     @Override

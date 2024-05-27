@@ -45,6 +45,10 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
 
     protected AbstractField<?, ?> attributeField;
 
+    public MBeanAttributeDetailView() {
+        setReloadEdited(false);
+    }
+
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         ManagedBeanAttribute managedBeanAttribute = getEditedEntity();

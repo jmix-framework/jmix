@@ -24,4 +24,11 @@ public class H4Loader extends AbstractHtmlContainerLoader<H4> {
     protected H4 createComponent() {
         return factory.create(H4.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

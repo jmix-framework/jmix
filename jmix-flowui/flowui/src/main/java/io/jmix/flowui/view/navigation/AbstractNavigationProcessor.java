@@ -16,12 +16,16 @@
 
 package io.jmix.flowui.view.navigation;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.SupportsAfterViewNavigationHandler.AfterViewNavigationEvent;
 import org.slf4j.Logger;
@@ -37,6 +41,10 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
     protected ViewRegistry viewRegistry;
     protected ViewNavigationSupport navigationSupport;
 
+    protected Cache<View<?>, Registration> detachRegistrationsCache = CacheBuilder.newBuilder()
+            .maximumSize(5)
+            .build();
+
     protected AbstractNavigationProcessor(ViewSupport viewSupport,
                                           ViewRegistry viewRegistry,
                                           ViewNavigationSupport navigationSupport) {
@@ -50,21 +58,52 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         RouteParameters routeParameters = getRouteParameters(navigator);
         QueryParameters queryParameters = getQueryParameters(navigator);
 
+        View<?> origin = navigator.getOrigin();
+        // If navigation is interrupted and never proceed, e.g. by clicking 'Cancel', sequential
+        // navigation attempts from the same view will produce multiple DetachEvent subscriptions,
+        // so we need to remember the last subscription for the view and remove it.
+        unregisterViewDetachListener(origin);
+
         if (navigator.isBackwardNavigation()) {
             log.trace("Fetching current URL for backward navigation");
             UI.getCurrent().getPage().fetchCurrentURL(url -> {
                 log.trace("Fetched URL: {}", url.toString());
 
-                Optional<View> view = navigationSupport.navigate(viewClass, routeParameters, queryParameters);
-                if (view.isPresent()) {
-                    viewSupport.registerBackwardNavigation(viewClass, url);
-                    fireAfterViewNavigation(navigator, view.get());
-                }
+                Registration detachRegistration = ViewControllerUtils.addDetachListener(origin, __ -> {
+                    Optional<View> view = navigationSupport.findCurrentNavigationTarget(viewClass);
+                    if (view.isPresent()) {
+                        viewSupport.registerBackwardNavigation(viewClass, url);
+                        fireAfterViewNavigation(navigator, view.get());
+                    } else {
+                        log.warn("Can't find current navigation target: {}. Cannot set backward navigation and fire {}",
+                                viewClass.getName(), AfterViewNavigationEvent.class.getSimpleName());
+                    }
+                    unregisterViewDetachListener(origin);
+                });
+                detachRegistrationsCache.put(origin, detachRegistration);
+                navigationSupport.navigate(viewClass, routeParameters, queryParameters);
             });
         } else {
-            Optional<View> view = navigationSupport.navigate(viewClass, routeParameters, queryParameters);
-            view.ifPresent(value ->
-                    fireAfterViewNavigation(navigator, value));
+            Registration detachRegistration = ViewControllerUtils.addDetachListener(origin, __ -> {
+                Optional<View> view = navigationSupport.findCurrentNavigationTarget(viewClass);
+                if (view.isPresent()) {
+                    fireAfterViewNavigation(navigator, view.get());
+                } else {
+                    log.warn("Can't find current navigation target: {}. Cannot fire {}",
+                            viewClass.getName(), AfterViewNavigationEvent.class.getSimpleName());
+                }
+                unregisterViewDetachListener(origin);
+            });
+            detachRegistrationsCache.put(origin, detachRegistration);
+            navigationSupport.navigate(viewClass, routeParameters, queryParameters);
+        }
+    }
+
+    protected void unregisterViewDetachListener(View<?> origin) {
+        Registration registration = detachRegistrationsCache.getIfPresent(origin);
+        if (registration != null) {
+            registration.remove();
+            detachRegistrationsCache.invalidate(origin);
         }
     }
 

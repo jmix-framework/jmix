@@ -21,7 +21,7 @@ import { ComboBoxPlaceholder } from '@vaadin/combo-box/src/vaadin-combo-box-plac
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.2.1]
+// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.3.1]
 class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBoxMixin(ThemableMixin(PolymerElement))) {
     static get is() {
         return 'jmix-multi-select-combo-box-internal';
@@ -88,12 +88,29 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
             },
 
             /**
+             * Set to true to group selected items at the top of the overlay.
+             * @attr {boolean} selected-items-on-top
+             */
+            selectedItemsOnTop: {
+                type: Boolean,
+                value: false,
+            },
+
+            /**
              * Last input value entered by the user before value is updated.
              * Used to store `filter` property value before clearing it.
              */
             lastFilter: {
                 type: String,
                 notify: true,
+            },
+
+            /**
+             * A subset of items to be shown at the top of the overlay.
+             */
+            topGroup: {
+                type: Array,
+                observer: '_topGroupChanged',
             },
 
             _target: {
@@ -141,6 +158,44 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
     }
 
     /**
+     * Override combo-box method to group selected
+     * items at the top of the overlay.
+     *
+     * @protected
+     * @override
+     */
+    _setDropdownItems(items) {
+        if (this.readonly) {
+            this._dropdownItems = this.selectedItems;
+            return;
+        }
+
+        if (this.filter || !this.selectedItemsOnTop) {
+            this._dropdownItems = items;
+            return;
+        }
+
+        if (items && items.length && this.topGroup && this.topGroup.length) {
+            // Filter out items included to the top group.
+            const filteredItems = items.filter(
+                (item) => this._comboBox._findIndex(item, this.topGroup, this.itemIdPath) === -1,
+            );
+
+            this._dropdownItems = this.topGroup.concat(filteredItems);
+            return;
+        }
+
+        this._dropdownItems = items;
+    }
+
+    /** @private */
+    _topGroupChanged(topGroup) {
+        if (topGroup) {
+            this._setDropdownItems(this.filteredItems);
+        }
+    }
+
+    /**
      * Override combo-box method to set correct owner for using by item renderers.
      * This needs to be done before the scroller gets added to the DOM to ensure
      * Lit directive works in case when combo-box is opened using attribute.
@@ -150,6 +205,8 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
      */
     _initScroller() {
         const comboBox = this.getRootNode().host;
+
+        this._comboBox = comboBox;
 
         super._initScroller(comboBox);
     }

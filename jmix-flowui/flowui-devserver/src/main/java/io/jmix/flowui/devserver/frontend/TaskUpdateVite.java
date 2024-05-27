@@ -62,6 +62,8 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
 
         try (InputStream resource = FrontendUtils.getResourceAsStream(FrontendUtils.VITE_CONFIG)) {
             String template = IOUtils.toString(resource, StandardCharsets.UTF_8);
+
+            // --- Special Studio logic start ---
             int freePort;
             try {
                 freePort = FrontendUtils.findFreePort(60_000, 65_000);
@@ -91,6 +93,8 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
                 FileUtils.writeLines(configFile, viteConfigLines);
                 FrontendUtils.logInFile(String.format("Vite configuration '%s' has been updated", configFile));
             }
+
+            // --- Special Studio logic end ---
         }
     }
 
@@ -109,8 +113,9 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
                             webComponentTags == null || webComponentTags.isEmpty()
                                     ? ""
                                     : String.join(";", webComponentTags));
-            FileUtils.write(generatedConfigFile, template, StandardCharsets.UTF_8);
-            log().debug("Created vite generated configuration file: '{}'", generatedConfigFile);
+            FileIOUtils.writeIfChanged(generatedConfigFile, template);
+            log().debug("Created vite generated configuration file: '{}'",
+                    generatedConfigFile);
         }
     }
 

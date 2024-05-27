@@ -26,6 +26,8 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.HasLoader;
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -37,6 +39,8 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends DataGridSettings>
         implements DataLoadingSettingsBinder<V, S> {
 
+    private static final Logger log = LoggerFactory.getLogger(AbstractGridSettingsBinder.class);
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void applySettings(V component, S settings) {
@@ -47,7 +51,8 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
 
         List<String> componentColumnKeys = componentColumns.stream().map(Grid.Column::getKey).toList();
-        List<String> settingsColumnKeys = settings.getColumns().stream().map(DataGridSettings.Column::getKey).toList();
+        List<String> settingsColumnKeys = settings.getColumns().stream()
+                .map(DataGridSettings.Column::getKey).filter(Objects::nonNull).toList();
 
         // Checks only size of collections and same elements. It does not consider the order in collections.
         // So settings won't be applied if DataGrid contains columns that are missed in settings.
@@ -59,7 +64,17 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
                 Objects.requireNonNull(column);
 
                 if (sColumn.getWidth() != null) {
+                    // Changing the column width manually works only if flexGrow is 0.
+                    // If flexGrow is >=1 then the column width is 100px. So we consider that user didn't resize
+                    //  the column if its width is 100px. And we keep the flexGrow value in this case.
+                    column.setFlexGrow(sColumn.getFlexGrow() > 0 && !"100px".equals(sColumn.getWidth())
+                            ? 0
+                            : sColumn.getFlexGrow());
+                            
                     column.setWidth(sColumn.getWidth());
+                }
+                if (sColumn.getVisible() != null) {
+                    column.setVisible(sColumn.getVisible());
                 }
                 newColumnsOrder.add(column);
             }
@@ -76,6 +91,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         }
 
         List sortOrder = settings.getSortOrder().stream()
+                .filter(o -> o.getKey() != null)
                 .map(sSortOrder -> new GridSortOrder<>(
                         component.getColumnByKey(sSortOrder.getKey()),
                         SortDirection.valueOf(sSortOrder.getSortDirection())))
@@ -94,6 +110,17 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         }
     }
 
+    protected List<? extends Grid.Column<?>> getApplicableColumns(V component) {
+        List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
+        if (componentColumns.stream().anyMatch(c -> c.getKey() == null)) {
+            log.warn("{} contains one or more columns without key specified, settings for them will not be stored",
+                    component.getClass().getSimpleName());
+            componentColumns = componentColumns.stream()
+                    .filter(c -> c.getKey() != null).toList();
+        }
+        return componentColumns;
+    }
+
     @Override
     public boolean saveSettings(V component, S settings) {
         boolean changed = false;
@@ -103,9 +130,9 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
             setSortOrderToSettings(sortOrder, settings);
             changed = true;
         }
-        List<? extends Grid.Column<?>> componentColumns = getOrderedColumns(component);
-        if (isColumnSettingsChanged(componentColumns, settings.getColumns())) {
-            setColumnsToSettings(componentColumns, settings);
+        List<? extends Grid.Column<?>> applicableColumns = getApplicableColumns(component);
+        if (isColumnSettingsChanged(applicableColumns, settings.getColumns())) {
+            setColumnsToSettings(applicableColumns, settings);
             changed = true;
         }
 
@@ -118,7 +145,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
         settings.setId(component.getId().orElse(null));
 
         setSortOrderToSettings(component.getSortOrder(), settings);
-        setColumnsToSettings(getOrderedColumns(component), settings);
+        setColumnsToSettings(getApplicableColumns(component), settings);
 
         return settings;
     }
@@ -156,7 +183,7 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
 
             DataGridSettings.SortOrder sSortOrder = settingsSortOrder.get(i);
 
-            if (!key.equals(sSortOrder.getKey())) {
+            if (key != null && !key.equals(sSortOrder.getKey())) {
                 return true;
             }
             if (!sortOrder.getDirection().name().equals(sSortOrder.getSortDirection())) {
@@ -206,6 +233,9 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
             if (!Objects.equals(column.getWidth(), sColumn.getWidth())) {
                 return true;
             }
+            if (!Objects.equals(column.isVisible(), sColumn.getVisible())) {
+                return true;
+            }
         }
         return false;
     }
@@ -222,6 +252,8 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
                     DataGridSettings.Column sColumn = new DataGridSettings.Column();
                     sColumn.setKey(column.getKey());
                     sColumn.setWidth(column.getWidth());
+                    sColumn.setVisible(column.isVisible());
+                    sColumn.setFlexGrow(column.getFlexGrow());
                     return sColumn;
                 }).toList();
 

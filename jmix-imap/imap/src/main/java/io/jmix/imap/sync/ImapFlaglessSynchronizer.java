@@ -18,12 +18,12 @@
 package io.jmix.imap.sync;
 
 
-import com.sun.mail.imap.IMAPFolder;
-import com.sun.mail.imap.IMAPMessage;
 import io.jmix.imap.entity.ImapFolder;
 import io.jmix.imap.entity.ImapMailBox;
 import io.jmix.imap.entity.ImapMessage;
 import org.apache.commons.collections4.CollectionUtils;
+import org.eclipse.angus.mail.imap.IMAPFolder;
+import org.eclipse.angus.mail.imap.IMAPMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

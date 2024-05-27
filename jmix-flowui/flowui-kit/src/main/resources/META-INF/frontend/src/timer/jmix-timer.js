@@ -15,6 +15,7 @@
  */
 
 import { html, PolymerElement } from '@polymer/polymer';
+import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
 
 
@@ -108,4 +109,4 @@ export class JmixTimer extends ElementMixin(PolymerElement) {
     }
 }
 
-window.customElements.define(JmixTimer.is, JmixTimer);
+defineCustomElement(JmixTimer);

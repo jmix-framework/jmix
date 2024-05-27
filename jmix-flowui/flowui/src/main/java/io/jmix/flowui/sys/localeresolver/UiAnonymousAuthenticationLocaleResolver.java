@@ -18,15 +18,13 @@ package io.jmix.flowui.sys.localeresolver;
 
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.JmixOrder;
-import io.jmix.core.MessageTools;
 import io.jmix.core.security.AuthenticationLocaleResolver;
 import io.jmix.core.security.CurrentAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.Locale;
 
 /**
@@ -37,9 +35,6 @@ import java.util.Locale;
  */
 @Component("flowui_AnonymousAuthenticationLocaleResolver")
 public class UiAnonymousAuthenticationLocaleResolver implements AuthenticationLocaleResolver {
-
-    @Autowired
-    protected MessageTools messageTools;
 
     @Override
     public boolean supports(Authentication authentication) {

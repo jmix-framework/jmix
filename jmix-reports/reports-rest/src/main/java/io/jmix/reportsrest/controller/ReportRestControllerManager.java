@@ -20,8 +20,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
-import io.jmix.reports.yarg.reporting.ReportOutputDocument;
-import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -31,16 +29,19 @@ import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
 import io.jmix.reports.exception.NoOpenOfficeFreePortsException;
+import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reports.exception.ReportingException;
 import io.jmix.reports.runner.ReportRunContext;
 import io.jmix.reports.runner.ReportRunner;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -133,7 +134,8 @@ public class ReportRestControllerManager {
         Report report = loadReportInternal(entityId);
         final ReportRunRestBody body;
         try {
-            body = createGson().fromJson(bodyJson, ReportRunRestBody.class);
+            body = Optional.ofNullable(createGson().fromJson(bodyJson, ReportRunRestBody.class))
+                    .orElse(new ReportRunRestBody());
         } catch (JsonSyntaxException e) {
             throw new RestAPIException("Invalid JSON body",
                     e.getMessage(),
@@ -151,36 +153,29 @@ public class ReportRestControllerManager {
             checkReportOutputType(report.getDefaultTemplate());
         }
         Map<String, Object> preparedValues = prepareValues(report, body.parameters);
-        if (body.template != null) {
-            try {
+        try {
+            if (body.template != null) {
                 ReportOutputDocument document = reportRunner.byReportEntity(report)
                         .withTemplateCode(body.template)
                         .withParams(preparedValues)
                         .run();
+
                 return new ReportRestResult(document, body.attachment);
-            } catch (FailedToConnectToOpenOfficeException e) {
-                throw new RestAPIException("Run report error", "Couldn't find LibreOffice instance",
-                        HttpStatus.INTERNAL_SERVER_ERROR);
-            } catch (NoOpenOfficeFreePortsException e) {
-                throw new RestAPIException("Run report error", "Couldn't connect to LibreOffice instance. No free ports available.",
-                        HttpStatus.INTERNAL_SERVER_ERROR);
-            } catch (ReportingException e) {
-                throw new RestAPIException("Run report error",
-                        e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            try {
+            } else {
                 return new ReportRestResult(reportRunner.run(new ReportRunContext(report).setParams(preparedValues)), body.attachment);
-            } catch (FailedToConnectToOpenOfficeException e) {
-                throw new RestAPIException("Run report error", "Couldn't find LibreOffice instance",
-                        HttpStatus.INTERNAL_SERVER_ERROR);
-            } catch (NoOpenOfficeFreePortsException e) {
-                throw new RestAPIException("Run report error", "Couldn't connect to LibreOffice instance. No free ports available.",
-                        HttpStatus.INTERNAL_SERVER_ERROR);
-            } catch (ReportingException e) {
-                throw new RestAPIException("Run report error",
-                        e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        } catch (FailedToConnectToOpenOfficeException e) {
+            throw new RestAPIException("Run report error", "Couldn't find LibreOffice instance",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NoOpenOfficeFreePortsException e) {
+            throw new RestAPIException("Run report error", "Couldn't connect to LibreOffice instance. No free ports available.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (ReportParametersValidationException e) {
+            throw new RestAPIException("Run report error",
+                    e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (ReportingException e) {
+            throw new RestAPIException("Run report error",
+                    e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

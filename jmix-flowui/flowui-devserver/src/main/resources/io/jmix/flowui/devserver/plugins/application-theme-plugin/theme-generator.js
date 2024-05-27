@@ -18,12 +18,10 @@
  * This file handles the generation of the '[theme-name].js' to
  * the themes/[theme-name] folder according to properties from 'theme.json'.
  */
-import glob from 'glob';
+import { globSync } from 'glob';
 import { resolve, basename } from 'path';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { checkModules } from './theme-copy.js';
-
-const { sync } = glob;
 
 // Special folder inside a theme for component themes that go inside the component shadow root
 const themeComponentsFolder = 'components';
@@ -63,7 +61,7 @@ function writeThemeFiles(themeFolder, themeName, themeProperties, options) {
   var componentsFiles;
 
   if (autoInjectComponents) {
-    componentsFiles = sync('*.css', {
+    componentsFiles = globSync('*.css', {
       cwd: resolve(themeFolder, themeComponentsFolder),
       nodir: true
     });
@@ -158,7 +156,7 @@ function writeThemeFiles(themeFolder, themeName, themeProperties, options) {
         "Missing npm modules or files '" +
           missingModules.join("', '") +
           "' for documentCss marked in 'theme.json'.\n" +
-          "Install or update package(s) by adding a @NpmPackage annotation or install it using 'npm/pnpm i'"
+          "Install or update package(s) by adding a @NpmPackage annotation or install it using 'npm/pnpm/bun i'"
       );
     }
     themeProperties.documentCss.forEach((cssImport) => {
@@ -181,7 +179,7 @@ function writeThemeFiles(themeFolder, themeName, themeProperties, options) {
         "Missing npm modules or files '" +
           missingModules.join("', '") +
           "' for importCss marked in 'theme.json'.\n" +
-          "Install or update package(s) by adding a @NpmPackage annotation or install it using 'npm/pnpm i'"
+          "Install or update package(s) by adding a @NpmPackage annotation or install it using 'npm/pnpm/bun i'"
       );
     }
     themeProperties.importCss.forEach((cssPath) => {

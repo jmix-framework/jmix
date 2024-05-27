@@ -16,6 +16,7 @@
 
 package io.jmix.eclipselink.impl.entitycache;
 
+import com.google.common.collect.Lists;
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
@@ -26,19 +27,27 @@ import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.eclipselink.EclipselinkProperties;
+import io.jmix.eclipselink.impl.JmixEclipseLinkQuery;
+import io.jmix.eclipselink.impl.JmixEntityManager;
+import jakarta.persistence.Cache;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.TypedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.TypedQuery;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component("eclipselink_QueryCacheManager")
 public class QueryCacheManager {
+    /**
+     * Oracle's "IN" clause parameter max count: 1000<p>
+     * It is also usually exceeds cache size
+     */
+    public static final int MAX_BATCH_SIZE = 1000;
 
     @Autowired
     protected EclipselinkProperties properties;
@@ -72,17 +81,93 @@ public class QueryCacheManager {
             MetaClass metaClass = metadata.getClass(queryResult.getType());
             String storeName = metaClass.getStore().getName();
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
-            resultList = new ArrayList<>(queryResult.getResult().size());
+
             if (!metadataTools.isCacheable(metaClass)) {
                 log.warn("Using cacheable query without entity cache for {}", queryResult.getType());
             }
-            for (Object id : queryResult.getResult()) {
-                resultList.add(em.find(metaClass.getJavaClass(), id, PersistenceHints.builder().withFetchPlans(fetchPlans).build()));
+
+            if (!queryResult.getResult().isEmpty()) {
+                Cache entityCache = em.getEntityManagerFactory().getCache();
+                List<Object> queryCacheResult = queryResult.getResult();
+
+                boolean allEntitiesCached = true;
+                for (Object id : queryCacheResult) {
+                    if (!entityCache.contains(metaClass.getJavaClass(), id)) {
+                        allEntitiesCached = false;
+                        break;
+                    }
+                }
+
+                if (allEntitiesCached) {
+                    log.trace("Results for query with id '{}' are found in Query and Entity Caches.", queryKey.getId());
+                    resultList = new ArrayList<>(queryResult.getResult().size());
+                    for (Object id : queryCacheResult) {
+                        resultList.add(em.find(metaClass.getJavaClass(), id, PersistenceHints.builder().withFetchPlans(fetchPlans).build()));
+                    }
+                } else {
+                    log.trace("Results for query with id '{}' are found in Query Cache but not fully present in Entity Cache. " +
+                            "Loading entities by ids.", queryKey.getId());
+                    resultList = loadAllByIds(queryCacheResult, metaClass, fetchPlans, (JmixEntityManager) em);
+                }
+            } else {
+                return Collections.emptyList();
             }
         } else {
             log.debug("Query results are not found in cache: {}", queryKey.printDescription());
         }
         return resultList;
+    }
+
+    protected <T> List<T> loadAllByIds(List<Object> queryCacheResult,
+                                       MetaClass metaClass,
+                                       List<FetchPlan> fetchPlans,
+                                       JmixEntityManager em) {
+        Map<Object, Object> batchLoadedById;
+
+        String pkName = metadataTools.getPrimaryKeyName(metaClass);
+        if (pkName == null)
+            throw new IllegalStateException("Cannot determine PK name for entity " + metaClass);
+
+        if (queryCacheResult.size() > MAX_BATCH_SIZE) {
+            log.warn("Cached query result size exceeds {}. " +
+                    "Such amount of entities may make cache ineffective", MAX_BATCH_SIZE);
+
+            batchLoadedById = new HashMap<>();
+            List<List<Object>> batches = Lists.partition(queryCacheResult, MAX_BATCH_SIZE);
+            for (List<Object> batch : batches) {
+                batchLoadedById.putAll(loadBatchByIds(batch, metaClass, pkName, fetchPlans, em));
+            }
+        } else {
+            batchLoadedById = loadBatchByIds(queryCacheResult, metaClass, pkName, fetchPlans, em);
+        }
+
+        List<T> resultList = new ArrayList<>(queryCacheResult.size());
+        for (Object id : queryCacheResult) {
+            //noinspection unchecked
+            T entity = (T) batchLoadedById.get(id);
+            if (entity != null) //entity may be null in case of concurrent deletion after id obtained from Query Cache but before loading from Entity Cache
+                resultList.add(entity);
+        }
+        return resultList;
+    }
+
+    protected Map<Object, Object> loadBatchByIds(List<?> queryCacheResult,
+                                                 MetaClass metaClass,
+                                                 String pkName,
+                                                 List<FetchPlan> fetchPlans,
+                                                 JmixEntityManager em) {
+        //noinspection unchecked
+        JmixEclipseLinkQuery<Entity> query = (JmixEclipseLinkQuery<Entity>) em.createQuery(
+                String.format("select e from %s e where e.%s in ?1", metaClass.getName(), pkName));
+        query.setParameter(1, queryCacheResult);
+        query.setHint(PersistenceHints.FETCH_PLAN, fetchPlans);
+
+        List<?> batchLoaded = query.getResultList();
+        Map<Object, Object> batchLoadedById = new HashMap<>();
+        for (Object e : batchLoaded) {
+            batchLoadedById.put(((Entity) e).__getEntityEntry().getEntityId(), e);
+        }
+        return batchLoadedById;
     }
 
     /**

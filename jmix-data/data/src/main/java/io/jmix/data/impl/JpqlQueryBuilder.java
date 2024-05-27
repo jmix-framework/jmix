@@ -24,7 +24,10 @@ import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.querycondition.*;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.data.JmixQuery;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
@@ -32,15 +35,15 @@ import io.jmix.data.impl.jpql.generator.ConditionGenerationContext;
 import io.jmix.data.impl.jpql.generator.ConditionJpqlGenerator;
 import io.jmix.data.impl.jpql.generator.ParameterJpqlGenerator;
 import io.jmix.data.impl.jpql.generator.SortJpqlGenerator;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import org.springframework.lang.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.Query;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,6 +75,8 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
     protected String resultQuery;
     protected Map<String, Object> resultParameters;
 
+    protected boolean distinct;
+
     @Autowired
     protected Metadata metadata;
 
@@ -95,6 +100,9 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
 
     @Autowired
     protected QueryParamValuesManager queryParamValuesManager;
+
+    @Autowired
+    protected CoreProperties coreProperties;
 
     public JpqlQueryBuilder setId(@Nullable Object id) {
         this.id = id;
@@ -150,6 +158,11 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
 
     public JpqlQueryBuilder setLockMode(@Nullable LockModeType lockMode) {
         this.lockMode = lockMode;
+        return this;
+    }
+
+    public JpqlQueryBuilder setDistinct(boolean distinct) {
+        this.distinct = distinct;
         return this;
     }
 
@@ -220,6 +233,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         applyFiltering();
         applySorting();
         applyCount();
+        applyDistinct();
         restrictByPreviousResults();
     }
 
@@ -245,8 +259,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                 }
             }
 
-            Condition actualized = condition.actualize(nonNullParamNames);
-
+            Condition actualized = condition.actualize(nonNullParamNames, coreProperties.isSkipNullOrEmptyConditionsByDefault());
             Set<String> excludedParameters = condition.getExcludedParameters(nonNullParamNames);
             resultParameters.entrySet().removeIf(e -> excludedParameters.contains(e.getKey()));
 
@@ -255,8 +268,45 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                         .processParameters(resultParameters, queryParameters, actualized, entityName);
             }
 
+            Condition jpaOnlyCondition = removeNonJpaPropertyConditions(actualized);
+
             resultQuery = conditionJpqlGenerator
-                    .processQuery(resultQuery, createConditionGenerationContext(actualized));
+                    .processQuery(resultQuery, createConditionGenerationContext(jpaOnlyCondition));
+        }
+    }
+
+    @Nullable
+    protected Condition removeNonJpaPropertyConditions(@Nullable Condition condition) {
+        if (condition == null)
+            return null;
+
+        if (condition instanceof LogicalCondition logicalCondition) {
+            LogicalCondition newLogicalCondition = new LogicalCondition(logicalCondition.getType());
+            for (Condition nestedCondition : logicalCondition.getConditions()) {
+                Condition newNestedCondition = removeNonJpaPropertyConditions(nestedCondition);
+                if (newNestedCondition != null) {
+                    newLogicalCondition.add(newNestedCondition);
+                }
+            }
+            return newLogicalCondition.getConditions().isEmpty() ? null : newLogicalCondition;
+
+        } else if (condition instanceof PropertyCondition propertyCondition && entityName != null) {
+            String property = propertyCondition.getProperty();
+            MetaClass metaClass = metadata.getClass(entityName);
+            MetaPropertyPath propertyPath = metaClass.getPropertyPath(property);
+            if (propertyPath == null) {
+                return null;
+            }
+            for (MetaProperty metaProperty : propertyPath.getMetaProperties()) {
+                if (!metadataTools.isJpa(metaProperty)) {
+                    resultParameters.remove(propertyCondition.getParameterName());
+                    return null;
+                }
+            }
+            return condition.copy();
+
+        } else {
+            return condition.copy();
         }
     }
 
@@ -271,6 +321,14 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         if (countQuery) {
             QueryTransformer transformer = queryTransformerFactory.transformer(resultQuery);
             transformer.replaceWithCount();
+            resultQuery = transformer.getResult();
+        }
+    }
+
+    protected void applyDistinct() {
+        if (distinct) {
+            QueryTransformer transformer = queryTransformerFactory.transformer(resultQuery);
+            transformer.addDistinct();
             resultQuery = transformer.getResult();
         }
     }

@@ -7,8 +7,10 @@ import org.springframework.lang.Nullable;
 
 public enum JobState implements EnumClass<String> {
 
+    RUNNING("running"),
     NORMAL("normal"),
-    PAUSED("paused");
+    PAUSED("paused"),
+    INVALID("invalid");
 
     private String id;
 

@@ -25,6 +25,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.UiEntityContext;
+import io.jmix.flowui.action.impl.ActionHandlerValidator;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -38,6 +39,7 @@ import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -149,6 +151,21 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
         viewInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
+    @Override
+    public <V extends View<?>> Consumer<DialogWindow.AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
+    }
+
     /**
      * Sets the handler to be invoked when the detail view saves the entity
      * (if "enable editing" action was executed).
@@ -165,6 +182,11 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
      */
     public void setAfterSaveHandler(@Nullable Consumer<E> afterSaveHandler) {
         this.afterSaveHandler = afterSaveHandler;
+    }
+
+    @Nullable
+    public Consumer<E> getAfterSaveHandler() {
+        return afterSaveHandler;
     }
 
     /**
@@ -185,6 +207,11 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
      */
     public void setTransformation(@Nullable Function<E, E> transformation) {
         this.transformation = transformation;
+    }
+
+    @Nullable
+    public Function<E, E> getTransformation() {
+        return transformation;
     }
 
     @Autowired
@@ -241,6 +268,11 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
         return super.isPermitted();
     }
 
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && target.getSelectedItems().size() == 1;
+    }
+
     /**
      * Executes the action.
      */
@@ -295,6 +327,8 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
             });
         }
 
+        ActionHandlerValidator.validate(this, OpenMode.DIALOG);
+
         dialogWindow.open();
     }
 
@@ -305,6 +339,8 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
                 .withReadOnly(true);
 
         navigator = viewInitializer.initNavigator(navigator);
+
+        ActionHandlerValidator.validate(this, OpenMode.NAVIGATION);
 
         navigator.navigate();
     }
@@ -354,6 +390,14 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
      */
     public <V extends View<?>> ReadAction<E> withAfterCloseHandler(Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
+        return this;
+    }
+
+    /**
+     * @see #setViewConfigurer(Consumer)
+     */
+    public <V extends View<?>> ReadAction<E> withViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        setViewConfigurer(viewConfigurer);
         return this;
     }
 

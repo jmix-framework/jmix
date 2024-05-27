@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component.menubar;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.function.SerializableRunnable;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 24.2.1]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarRootItem [last update Vaadin 24.3.1]
 public class JmixMenuBarRootItem extends JmixMenuBarItem {
 
     protected JmixMenuBar menuBar;
@@ -46,6 +46,67 @@ public class JmixMenuBarRootItem extends JmixMenuBarItem {
     @Override
     public void removeThemeNames(String... themeNames) {
         super.removeThemeNames(themeNames);
+        menuBar.updateButtons();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addClassName(String className) {
+        super.addClassName(className);
+        updateClassName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addClassNames(String... classNames) {
+        super.addClassNames(classNames);
+        updateClassName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setClassName(String className) {
+        super.setClassName(className);
+        updateClassName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setClassName(String className, boolean set) {
+        super.setClassName(className, set);
+        updateClassName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean removeClassName(String className) {
+        var result = super.removeClassName(className);
+        updateClassName();
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeClassNames(String... classNames) {
+        super.removeClassNames(classNames);
+        updateClassName();
+    }
+
+    protected void updateClassName() {
+        getElement().executeJs(
+                "window.Vaadin.Flow.menubarConnector.setClassName(this)");
         menuBar.updateButtons();
     }
 }

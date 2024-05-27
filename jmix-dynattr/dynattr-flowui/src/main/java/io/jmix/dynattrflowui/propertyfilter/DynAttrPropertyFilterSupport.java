@@ -27,6 +27,7 @@ import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
+import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalSupport;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 
@@ -43,22 +44,21 @@ public class DynAttrPropertyFilterSupport extends PropertyFilterSupport {
                                         MetadataTools metadataTools,
                                         DataManager dataManager,
                                         DatatypeRegistry datatypeRegistry,
-                                        DynAttrMetadata dynAttrMetadata) {
-        super(messages, messageTools, metadataTools, dataManager, datatypeRegistry);
+                                        DynAttrMetadata dynAttrMetadata,
+                                        DateIntervalSupport dateIntervalSupport) {
+        super(messages, messageTools, metadataTools, dataManager, datatypeRegistry, dateIntervalSupport);
         this.dynAttrMetadata = dynAttrMetadata;
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     protected boolean isStringDatatype(MetaPropertyPath mpp) {
         return super.isStringDatatype(mpp) && !isEnumerationAttribute(mpp);
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public EnumSet<PropertyFilter.Operation> getAvailableOperations(MetaPropertyPath mpp) {
         if (isEnumerationAttribute(mpp)) {
-            return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, CONTAINS, NOT_CONTAINS);
+            return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
         }
 
         return super.getAvailableOperations(mpp);

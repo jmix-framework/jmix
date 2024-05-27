@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Deprecated(since = "2.2", forRemoval = true)
 @org.springframework.stereotype.Component("flowui_ActionBinders")
 public class ActionBinders {
 

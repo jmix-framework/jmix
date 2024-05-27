@@ -31,6 +31,9 @@ public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
 
     Page<Employee> findEmployeesByNameNotNullOrderByNameDesc(Pageable pageable);
 
+    @Query("select e from repository$Employee e where(e.name is not null) order by e.name desc")
+    Page<Employee> queryEmployeesByNameNotNullOrderByNameDesc(Pageable pageable);
+
     List<Employee> findEmployeesByNameNotNullOrderByNameAsc(Sort sort);
 
     @Query("select e from repository$Employee e where(e.name like ?1 or e.secondName like ?1 or e.lastName like ?2)")

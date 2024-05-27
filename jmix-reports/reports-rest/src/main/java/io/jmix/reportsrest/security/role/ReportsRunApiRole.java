@@ -17,6 +17,7 @@
 package io.jmix.reportsrest.security.role;
 
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.security.model.EntityPolicyAction;
@@ -39,9 +40,14 @@ public interface ReportsRunApiRole {
     @EntityPolicy(entityClass = Report.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportGroup.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportTemplate.class, actions = {EntityPolicyAction.READ})
+    @EntityPolicy(entityClass = ReportExecution.class, actions = {EntityPolicyAction.CREATE, EntityPolicyAction.UPDATE})
+    void entityPolicy();
+
     @EntityAttributePolicy(entityClass = Report.class, attributes = {"localeNames", "description", "code", "updateTs", "group"}, action = VIEW)
     @EntityAttributePolicy(entityClass = ReportGroup.class, attributes = {"title", "localeNames"}, action = VIEW)
     @EntityAttributePolicy(entityClass = ReportTemplate.class, attributes = {"code", "name", "customDefinition", "custom", "alterable"}, action = VIEW)
+    void entityAttributePolicy();
+
     @SpecificPolicy(resources = "reports.rest.enabled")
-    void reportsRunApi();
+    void specificPolicy();
 }

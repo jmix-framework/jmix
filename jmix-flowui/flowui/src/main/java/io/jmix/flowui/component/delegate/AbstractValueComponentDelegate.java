@@ -59,13 +59,13 @@ public abstract class AbstractValueComponentDelegate<C extends Component & HasVa
             valueBinding = createValueBinding(valueSource);
             valueBinding.bind();
 
-            setupProperties((EntityValueSource<?, T>) valueSource);
+            setupProperties(valueSource);
         }
 
         valueBindingChanged(valueBinding);
     }
 
-    protected void setupProperties(EntityValueSource<?, T> valueSource) {
+    protected void setupProperties(ValueSource<T> valueSource) {
         // hook to be implemented
     }
 

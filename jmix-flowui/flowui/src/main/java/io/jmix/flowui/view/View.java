@@ -20,19 +20,27 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.annotation.Internal;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.event.view.ViewClosedEvent;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
-import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.WebBrowserTools;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
+import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
+import static io.jmix.flowui.monitoring.ViewLifeCycle.*;
+import static io.micrometer.core.instrument.Timer.Sample;
+import static io.micrometer.core.instrument.Timer.start;
 
 /**
  * Base class for UI views.
@@ -54,6 +62,7 @@ public class View<T extends Component> extends Composite<T>
         implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver, HasDynamicTitle {
 
     private ApplicationContext applicationContext;
+    private MeterRegistry meterRegistry;
 
     private ViewData viewData;
     private ViewActions viewActions;
@@ -85,6 +94,11 @@ public class View<T extends Component> extends Composite<T>
         this.applicationContext = applicationContext;
     }
 
+    @Autowired
+    protected void setMeterRegistry(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+    }
+
     @Override
     public void setId(String id) {
         super.setId(id);
@@ -97,7 +111,9 @@ public class View<T extends Component> extends Composite<T>
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
+        Sample sample = start(meterRegistry);
         fireEvent(new ReadyEvent(this));
+        stopViewTimerSample(sample, meterRegistry, READY, getId().orElse(null));
 
         ViewOpenedEvent viewOpenedEvent = new ViewOpenedEvent(this);
         applicationContext.publishEvent(viewOpenedEvent);
@@ -106,7 +122,10 @@ public class View<T extends Component> extends Composite<T>
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         fireEvent(new QueryParametersChangeEvent(this, event.getLocation().getQueryParameters()));
+
+        Sample sample = startTimerSample(meterRegistry);
         fireEvent(new BeforeShowEvent(this));
+        stopViewTimerSample(sample, meterRegistry, BEFORE_SHOW, getId().orElse(null));
     }
 
     @Override
@@ -115,17 +134,20 @@ public class View<T extends Component> extends Composite<T>
             if (!closeActionPerformed) {
                 CloseAction closeAction = new NavigateCloseAction(event);
                 BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
+
+                Sample beforeCloseSample = startTimerSample(meterRegistry);
                 fireEvent(beforeCloseEvent);
+                stopViewTimerSample(beforeCloseSample, meterRegistry, BEFORE_CLOSE, getId().orElse(null));
 
                 if (beforeCloseEvent.isClosePrevented()) {
                     closeActionPerformed = false;
                     return;
                 }
 
-                removeViewAttributes();
-
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
+                Sample afterCloseSample = startTimerSample(meterRegistry);
                 fireEvent(afterCloseEvent);
+                stopViewTimerSample(afterCloseSample, meterRegistry, AFTER_CLOSE, getId().orElse(null));
 
                 ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
                 applicationContext.publishEvent(viewClosedEvent);
@@ -139,7 +161,7 @@ public class View<T extends Component> extends Composite<T>
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        if (preventBrowserTabClosing) {
+        if (isPreventBrowserTabClosing()) {
             WebBrowserTools.preventBrowserTabClosing(this);
         }
     }
@@ -148,29 +170,32 @@ public class View<T extends Component> extends Composite<T>
     protected void onDetach(DetachEvent detachEvent) {
         super.onDetach(detachEvent);
 
-        removeApplicationListeners();
-        if (UiComponentUtils.isComponentAttachedToDialog(this)) {
-            removeViewAttributes();
-        }
-        unregisterBackNavigation();
+        onDetachInternal();
 
-        if (preventBrowserTabClosing) {
+        if (isPreventBrowserTabClosing()) {
             WebBrowserTools.allowBrowserTabClosing(this);
         }
     }
 
-    private void unregisterBackNavigation() {
+    @Internal
+    protected void onDetachInternal() {
+        removeApplicationListeners();
+        removeViewAttributes();
+        unregisterBackNavigation();
+    }
+
+    protected void unregisterBackNavigation() {
         getViewSupport().unregisterBackwardNavigation(this);
     }
 
-    private void removeApplicationListeners() {
+    protected void removeApplicationListeners() {
         VaadinSession session = VaadinSession.getCurrent();
         if (session != null) {
             session.getAttribute(UiEventsManager.class).removeApplicationListeners(this);
         }
     }
 
-    private void removeViewAttributes() {
+    protected void removeViewAttributes() {
         getViewAttributes().removeAllAttributes();
     }
 
@@ -209,13 +234,9 @@ public class View<T extends Component> extends Composite<T>
                     .orElse(OperationResult.fail());
         }
 
-
         closeActionPerformed = true;
 
         closeDelegate.accept(this);
-
-        removeApplicationListeners();
-        removeViewAttributes();
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
         fireEvent(afterCloseEvent);
@@ -230,7 +251,8 @@ public class View<T extends Component> extends Composite<T>
      * @return whether this view prevents browser tab from accidentally closing
      */
     public boolean isPreventBrowserTabClosing() {
-        return preventBrowserTabClosing;
+        UiViewProperties properties = applicationContext.getBean(UiViewProperties.class);
+        return properties.isPreventBrowserTabClosing() && preventBrowserTabClosing;
     }
 
     /**
@@ -407,6 +429,10 @@ public class View<T extends Component> extends Composite<T>
      *         getContent().add(label);
      *     }
      * </pre>
+     * <strong>Note</strong> that the event is triggered only once after {@link View} creation. It means if the
+     * navigation to {@link View} performed at first time, event triggered. Then if navigation performed to the same
+     * {@link View}, which currently opened, second and more times event is not triggered because the {@link View}
+     * instance has been already created.
      *
      * @see #addInitListener(ComponentEventListener)
      */
@@ -431,6 +457,15 @@ public class View<T extends Component> extends Composite<T>
      * </pre>
      * <p>
      * You can abort the process of opening the view by throwing an exception.
+     * <p>
+     * <strong>Note</strong> consequent navigation to the same {@link View}, which currently opened, leads to
+     * triggering {@link BeforeShowEvent} once more for the same {@link View} instance. For example, the user
+     * navigates to the {@link View} first time: {@link View} instance is created, {@link BeforeShowEvent} is
+     * triggered. Then the user navigates to the same {@link View}, which currently opened: we have the same
+     * {@link View} instance, but {@link BeforeShowEvent} is triggered again.
+     * <p>
+     * If {@link BeforeShowEvent} method listener contains logic of adding components or loading data, it will be
+     * performed again, which can lead to adding duplicated components or reloading data.
      *
      * @see #addBeforeShowListener(ComponentEventListener)
      */
@@ -452,6 +487,15 @@ public class View<T extends Component> extends Composite<T>
      *         notifications.show("Just opened");
      *     }
      * </pre>
+     * <p>
+     * <strong>Note</strong> consequent navigation to the same {@link View}, which currently opened, leads to
+     * triggering {@link ReadyEvent} once more for the same {@link View} instance. For example, the user
+     * navigates to the {@link View} first time: {@link View} instance is created, {@link ReadyEvent} is
+     * triggered. Then the user navigates to the same {@link View}, which currently opened: we have the same
+     * {@link View} instance, but {@link ReadyEvent} is triggered again.
+     * <p>
+     * If {@link ReadyEvent} method listener contains logic of adding components or loading data, it will be
+     * performed again, which can lead to adding duplicated components or reloading data.
      *
      * @see #addReadyListener(ComponentEventListener)
      */
@@ -477,6 +521,12 @@ public class View<T extends Component> extends Composite<T>
      *         }
      *     }
      * </pre>
+     * <p>
+     * <strong>Note</strong> the event can be triggered few times for one {@link View} instance. It may happen if
+     * the user tries to navigate to the same {@link View}, which is currently opened. In this case,
+     * {@link BeforeCloseEvent} is triggered, because we "close" the {@link View}, however due to navigation
+     * the same instance of {@link View} will be opened. It means {@link BeforeCloseEvent} will be triggered again
+     * for the same {@link View} instance, when user close the View or navigates to another one.
      *
      * @see #addBeforeCloseListener(ComponentEventListener)
      */
@@ -548,6 +598,12 @@ public class View<T extends Component> extends Composite<T>
      *         notifications.show("Just closed");
      *     }
      * </pre>
+     * <p>
+     * <strong>Note</strong> the event can be triggered few times for one {@link View} instance. It may happen if
+     * the user tries to navigate to the same {@link View}, which is currently opened. In this case,
+     * {@link AfterCloseEvent} is triggered, because we "close" the {@link View}, however due to navigation
+     * the same instance of {@link View} will be opened. It means {@link AfterCloseEvent} will be triggered again
+     * for the same {@link View} instance, when user close the View or navigates to another one.
      *
      * @see #addAfterCloseListener(ComponentEventListener)
      */

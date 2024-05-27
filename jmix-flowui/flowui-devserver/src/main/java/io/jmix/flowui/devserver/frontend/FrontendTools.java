@@ -54,7 +54,7 @@ import static com.vaadin.flow.server.InitParameters.NODE_DOWNLOAD_ROOT;
 import static com.vaadin.flow.server.InitParameters.NODE_VERSION;
 
 /**
- * Provides access to frontend tools (Node.js and npm, pnpm) and optionally
+ * Provides access to frontend tools (Node.js and npm, pnpm, bun) and optionally
  * installs the tools if needed.
  */
 public class FrontendTools {
@@ -64,13 +64,13 @@ public class FrontendTools {
      * the installed version is older than {@link #SUPPORTED_NODE_VERSION}, i.e.
      * {@value #SUPPORTED_NODE_MAJOR_VERSION}.{@value #SUPPORTED_NODE_MINOR_VERSION}.
      */
-    public static final String DEFAULT_NODE_VERSION = "v18.16.0";
+    public static final String DEFAULT_NODE_VERSION = "v20.10.0";
     /**
      * This is the version shipped with the default Node version.
      */
-    public static final String DEFAULT_NPM_VERSION = "9.5.1";
+    public static final String DEFAULT_NPM_VERSION = "10.2.3";
 
-    public static final String DEFAULT_PNPM_VERSION = "8.3.1";
+    public static final String DEFAULT_PNPM_VERSION = "8.6.11";
 
     public static final String INSTALL_NODE_LOCALLY = "%n  $ mvn com.github.eirslett:frontend-maven-plugin:1.10.0:install-node-and-npm "
             + "-DnodeVersion=\"" + DEFAULT_NODE_VERSION + "\" ";
@@ -88,6 +88,11 @@ public class FrontendTools {
             + "%nVaadin is configured to use a globally installed pnpm ('pnpm.global=true'), but pnpm was not found on your system."
             + "%nInstall pnpm by following the instruction at https://pnpm.io/installation "
             + "%nor exclude 'pnpm.global' from the configuration or set it to false."
+            + MSG_SUFFIX;
+
+    private static final String BUN_NOT_FOUND = MSG_PREFIX
+            + "%nVaadin is configured to use a globally installed bun, but bun was not found on your system."
+            + "%nInstall bun by following the instruction at https://bun.sh "
             + MSG_SUFFIX;
 
     private static final String LOCAL_NODE_NOT_FOUND = MSG_PREFIX
@@ -137,9 +142,12 @@ public class FrontendTools {
 
     private static final FrontendVersion SUPPORTED_PNPM_VERSION = new FrontendVersion(
             SUPPORTED_PNPM_MAJOR_VERSION, SUPPORTED_PNPM_MINOR_VERSION);
+    private static final FrontendVersion SUPPORTED_BUN_VERSION = new FrontendVersion(
+            1, 0, 6); // Bun 1.0.6 is the first version with "overrides" support
 
     private enum BuildTool {
-        NPM("npm", "npm-cli.js"), NPX("npx", "npx-cli.js"), PNPM("pnpm", null);
+        NPM("npm", "npm-cli.js"), NPX("npx", "npx-cli.js"), PNPM("pnpm",
+                null), BUN("bun", null);
 
         private final String name;
         private final String script;
@@ -246,21 +254,26 @@ public class FrontendTools {
      * <p>
      * If {@code alternativeDir} is {@code null} tools won't be installed.
      *
-     * @param baseDir              the base directory to locate the tools, not {@code null}
-     * @param alternativeDirGetter the getter for a directory where tools will be installed if
-     *                             they are not found globally or in the {@code baseDir}, may be
-     *                             {@code null}
-     * @param nodeVersion          The Node.js version to be used when Node.js is installed
-     *                             automatically by Vaadin, for example <code>"v16.0.0"</code>.
-     *                             Use {@value #DEFAULT_NODE_VERSION} by default.
-     * @param nodeDownloadRoot     Download Node.js from this URL. Handy in heavily firewalled
-     *                             corporate environments where the Node.js download can be
-     *                             provided from an intranet mirror. Use
-     *                             {@link NodeInstaller#DEFAULT_NODEJS_DOWNLOAD_ROOT} by default.
+     *
+     * @param baseDir
+     *            the base directory to locate the tools, not {@code null}
+     * @param alternativeDirGetter
+     *            the getter for a directory where tools will be installed if
+     *            they are not found globally or in the {@code baseDir}, may be
+     *            {@code null}
+     * @param nodeVersion
+     *            The Node.js version to be used when Node.js is installed
+     *            automatically by Vaadin, for example <code>"v16.0.0"</code>.
+     *            Use {@value #DEFAULT_NODE_VERSION} by default.
+     * @param nodeDownloadRoot
+     *            Download Node.js from this URL. Handy in heavily firewalled
+     *            corporate environments where the Node.js download can be
+     *            provided from an intranet mirror. Use
+     *            {@link NodeInstaller#DEFAULT_NODEJS_DOWNLOAD_ROOT} by default.
      * @deprecated use
-     * {@link FrontendTools#FrontendTools(FrontendToolsSettings)}
-     * instead, as it simplifies configuring the frontend tools and
-     * gives the default values to configuration parameters.
+     *             {@link FrontendTools#FrontendTools(FrontendToolsSettings)}
+     *             instead, as it simplifies configuring the frontend tools and
+     *             gives the default values to configuration parameters.
      */
     @Deprecated
     public FrontendTools(String baseDir, Supplier<String> alternativeDirGetter,
@@ -277,24 +290,31 @@ public class FrontendTools {
      * <p>
      * If {@code alternativeDir} is {@code null} tools won't be installed.
      *
-     * @param baseDir              the base directory to locate the tools, not {@code null}
-     * @param alternativeDirGetter the getter for a directory where tools will be installed if
-     *                             they are not found globally or in the {@code baseDir}, may be
-     *                             {@code null}
-     * @param nodeVersion          The Node.js version to be used when Node.js is installed
-     *                             automatically by Vaadin, for example <code>"v16.0.0"</code>.
-     *                             Use {@value #DEFAULT_NODE_VERSION} by default.
-     * @param nodeDownloadRoot     Download Node.js from this URL. Handy in heavily firewalled
-     *                             corporate environments where the Node.js download can be
-     *                             provided from an intranet mirror. Use
-     *                             {@link NodeInstaller#DEFAULT_NODEJS_DOWNLOAD_ROOT} by default.
-     * @param forceAlternativeNode force usage of node executable from alternative directory
-     * @param useGlobalPnpm        use globally installed pnpm instead of the default one (see
-     *                             {@link #DEFAULT_PNPM_VERSION})
+     *
+     * @param baseDir
+     *            the base directory to locate the tools, not {@code null}
+     * @param alternativeDirGetter
+     *            the getter for a directory where tools will be installed if
+     *            they are not found globally or in the {@code baseDir}, may be
+     *            {@code null}
+     * @param nodeVersion
+     *            The Node.js version to be used when Node.js is installed
+     *            automatically by Vaadin, for example <code>"v16.0.0"</code>.
+     *            Use {@value #DEFAULT_NODE_VERSION} by default.
+     * @param nodeDownloadRoot
+     *            Download Node.js from this URL. Handy in heavily firewalled
+     *            corporate environments where the Node.js download can be
+     *            provided from an intranet mirror. Use
+     *            {@link NodeInstaller#DEFAULT_NODEJS_DOWNLOAD_ROOT} by default.
+     * @param forceAlternativeNode
+     *            force usage of node executable from alternative directory
+     * @param useGlobalPnpm
+     *            use globally installed pnpm instead of the default one (see
+     *            {@link #DEFAULT_PNPM_VERSION})
      * @deprecated use
-     * {@link FrontendTools#FrontendTools(FrontendToolsSettings)}
-     * instead, as it simplifies configuring the frontend tools and
-     * gives the default values to configuration parameters.
+     *             {@link FrontendTools#FrontendTools(FrontendToolsSettings)}
+     *             instead, as it simplifies configuring the frontend tools and
+     *             gives the default values to configuration parameters.
      */
     @Deprecated
     public FrontendTools(String baseDir, Supplier<String> alternativeDirGetter,
@@ -312,27 +332,35 @@ public class FrontendTools {
      * <p>
      * If {@code alternativeDir} is {@code null} tools won't be installed.
      *
-     * @param baseDir              the base directory to locate the tools, not {@code null}
-     * @param alternativeDirGetter the getter for a directory where tools will be installed if
-     *                             they are not found globally or in the {@code baseDir}, may be
-     *                             {@code null}
-     * @param nodeVersion          The Node.js version to be used when Node.js is installed
-     *                             automatically by Vaadin, for example <code>"v16.0.0"</code>.
-     *                             Use {@value #DEFAULT_NODE_VERSION} by default.
-     * @param nodeDownloadRoot     Download Node.js from this URL. Handy in heavily firewalled
-     *                             corporate environments where the Node.js download can be
-     *                             provided from an intranet mirror. Use
-     *                             {@link NodeInstaller#DEFAULT_NODEJS_DOWNLOAD_ROOT} by default.
-     * @param forceAlternativeNode force usage of node executable from alternative directory
-     * @param useGlobalPnpm        use globally installed pnpm instead of the default one (see
-     *                             {@link #DEFAULT_PNPM_VERSION})
-     * @param autoUpdate           update node in {@link #alternativeDirGetter} if version older
-     *                             than the current default
-     *                             {@value FrontendTools#DEFAULT_NODE_VERSION}
+     *
+     * @param baseDir
+     *            the base directory to locate the tools, not {@code null}
+     * @param alternativeDirGetter
+     *            the getter for a directory where tools will be installed if
+     *            they are not found globally or in the {@code baseDir}, may be
+     *            {@code null}
+     * @param nodeVersion
+     *            The Node.js version to be used when Node.js is installed
+     *            automatically by Vaadin, for example <code>"v16.0.0"</code>.
+     *            Use {@value #DEFAULT_NODE_VERSION} by default.
+     * @param nodeDownloadRoot
+     *            Download Node.js from this URL. Handy in heavily firewalled
+     *            corporate environments where the Node.js download can be
+     *            provided from an intranet mirror. Use
+     *            {@link NodeInstaller#DEFAULT_NODEJS_DOWNLOAD_ROOT} by default.
+     * @param forceAlternativeNode
+     *            force usage of node executable from alternative directory
+     * @param useGlobalPnpm
+     *            use globally installed pnpm instead of the default one (see
+     *            {@link #DEFAULT_PNPM_VERSION})
+     * @param autoUpdate
+     *            update node in {@link #alternativeDirGetter} if version older
+     *            than the current default
+     *            {@value FrontendTools#DEFAULT_NODE_VERSION}
      * @deprecated use
-     * {@link FrontendTools#FrontendTools(FrontendToolsSettings)}
-     * instead, as it simplifies configuring the frontend tools and
-     * gives the default values to configuration parameters.
+     *             {@link FrontendTools#FrontendTools(FrontendToolsSettings)}
+     *             instead, as it simplifies configuring the frontend tools and
+     *             gives the default values to configuration parameters.
      */
     @Deprecated
     public FrontendTools(String baseDir, Supplier<String> alternativeDirGetter,
@@ -424,7 +452,8 @@ public class FrontendTools {
      * Also update is {@code auto.update} flag set and installed version is
      * older than the current default version.
      *
-     * @param file node executable
+     * @param file
+     *            node executable
      * @return node executable after possible installation of new version
      */
     private File updateAlternateIfNeeded(File file) {
@@ -575,6 +604,18 @@ public class FrontendTools {
         return pnpmCommand;
     }
 
+    /**
+     * Locate <code>bun</code> executable.
+     *
+     * @return the list of all commands in sequence that need to be executed to
+     *         have bun running
+     */
+    public List<String> getBunExecutable() {
+        List<String> bunCommand = getSuitableBun();
+        assert !bunCommand.isEmpty();
+        bunCommand = new ArrayList<>(bunCommand);
+        return bunCommand;
+    }
     /**
      * Validate that the found node and npm versions are new enough. Throws an
      * exception with a descriptive message if a version is too old.
@@ -731,8 +772,8 @@ public class FrontendTools {
             try {
                 FrontendVersion foundNpmVersion = getNpmVersion();
                 // npm < 7.0.0 doesn't accept whitespaces in path
-                return FrontendUtils.isVersionAtLeast(foundNpmVersion,
-                        WHITESPACE_ACCEPTING_NPM_VERSION);
+                return foundNpmVersion
+                        .isEqualOrNewer(WHITESPACE_ACCEPTING_NPM_VERSION);
             } catch (UnknownVersionException e) {
                 String message = String.format("Error checking if npm accepts path '%s'", folder);
                 getLogger().warn(message, e);
@@ -1064,6 +1105,21 @@ public class FrontendTools {
         return pnpmCommand;
     }
 
+    List<String> getSuitableBun() {
+        List<String> bunCommand;
+        bunCommand = frontendToolsLocator
+                .tryLocateTool(BuildTool.BUN.getCommand())
+                .map(File::getAbsolutePath).map(Collections::singletonList)
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format(BUN_NOT_FOUND)));
+        bunCommand = Stream.of(bunCommand).filter(this::validateBunVersion)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(
+                        "Found too old globally installed 'bun'. Please upgrade 'bun' to at least "
+                                + SUPPORTED_BUN_VERSION.getFullVersion()));
+        return bunCommand;
+    }
+
     private boolean validatePnpmVersion(List<String> pnpmCommand) {
         String commandLine = String.join(" ", pnpmCommand);
         try {
@@ -1071,8 +1127,8 @@ public class FrontendTools {
             versionCmd.add("--version"); // NOSONAR
             FrontendVersion pnpmVersion = FrontendUtils.getVersion("pnpm",
                     versionCmd);
-            boolean versionNewEnough = FrontendUtils
-                    .isVersionAtLeast(pnpmVersion, SUPPORTED_PNPM_VERSION);
+            boolean versionNewEnough = pnpmVersion
+                    .isEqualOrNewer(SUPPORTED_PNPM_VERSION);
             boolean versionAccepted = ignoreVersionChecks || versionNewEnough;
             if (!versionAccepted) {
                 String message = String.format(
@@ -1091,11 +1147,35 @@ public class FrontendTools {
         }
     }
 
+    private boolean validateBunVersion(List<String> bunCommand) {
+        String commandLine = String.join(" ", bunCommand);
+        try {
+            List<String> versionCmd = new ArrayList<>(bunCommand);
+            versionCmd.add("--version"); // NOSONAR
+            FrontendVersion bunVersion = FrontendUtils.getVersion("bun",
+                    versionCmd);
+            boolean versionNewEnough = bunVersion
+                    .isEqualOrNewer(SUPPORTED_BUN_VERSION);
+            boolean versionAccepted = ignoreVersionChecks || versionNewEnough;
+            if (!versionAccepted) {
+                getLogger().warn(
+                        "bun '{}' is version {} which is not supported (expected >={})",
+                        commandLine, bunVersion.getFullVersion(),
+                        SUPPORTED_BUN_VERSION.getFullVersion());
+            }
+            return versionAccepted;
+        } catch (FrontendUtils.UnknownVersionException e) {
+            getLogger().warn("version check '{}' failed", commandLine, e);
+            return false;
+        }
+    }
+
     private String buildBadVersionString(String tool, String version,
                                          String... extraUpdateInstructions) {
         StringBuilder extraInstructions = new StringBuilder();
         for (String instruction : extraUpdateInstructions) {
-            extraInstructions.append("%n  - or ").append(instruction);
+            extraInstructions.append(System.lineSeparator()).append("  - or ")
+                    .append(instruction);
         }
         return String.format(BAD_VERSION, tool, version,
                 extraInstructions.toString(),

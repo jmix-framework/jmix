@@ -16,90 +16,81 @@
 
 package io.jmix.flowui.kit.component.valuepicker;
 
-import com.google.common.base.Preconditions;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.dom.Element;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.delegate.AbstractActionsHolderSupport;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import static io.jmix.flowui.kit.component.ComponentUtils.*;
-
-public class ValuePickerActionSupport {
+public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Component> {
 
     protected static final String SLOT_ACTIONS = "actions";
     protected static final String ATTRIBUTE_HAS_ACTIONS = "has-actions";
 
-    protected final HasElement component;
     protected final String actionsSlot;
     protected final String hasActionsAttribute;
 
     protected Div actionsLayout;
 
-    protected List<Action> actions = new ArrayList<>();
     protected Map<Action, ValuePickerButton> actionBinding = new HashMap<>();
 
+    /**
+     * @deprecated use one of {@link ValuePickerActionSupport#ValuePickerActionSupport(Component)},
+     * {@link ValuePickerActionSupport#ValuePickerActionSupport(Component, String, String)}
+     */
+    @Deprecated(since = "2.2", forRemoval = true)
     public ValuePickerActionSupport(HasElement component) {
         this(component, SLOT_ACTIONS, ATTRIBUTE_HAS_ACTIONS);
     }
 
+    /**
+     * @deprecated use one of {@link ValuePickerActionSupport#ValuePickerActionSupport(Component)},
+     * {@link ValuePickerActionSupport#ValuePickerActionSupport(Component, String, String)}
+     */
+    @Deprecated(since = "2.2", forRemoval = true)
     public ValuePickerActionSupport(HasElement component,
                                     String actionsSlot,
                                     String hasActionsAttribute) {
-        this.component = component;
+        super((Component) component);
         this.actionsSlot = actionsSlot;
         this.hasActionsAttribute = hasActionsAttribute;
     }
 
-    public void addAction(Action action) {
-        addAction(action, actions.size());
+    public ValuePickerActionSupport(Component component) {
+        this(component, SLOT_ACTIONS, ATTRIBUTE_HAS_ACTIONS);
     }
 
-    public void addAction(Action action, int index) {
-        Preconditions.checkNotNull(action, "Action cannot be null");
-
-        addActionInternal(action, index);
+    public ValuePickerActionSupport(Component component,
+                                    String actionsSlot,
+                                    String hasActionsAttribute) {
+        super(component);
+        this.actionsSlot = actionsSlot;
+        this.hasActionsAttribute = hasActionsAttribute;
     }
 
+    @Override
     protected void addActionInternal(Action action, int index) {
-        int oldIndex = findActionIndexById(actions, action.getId());
-        if (oldIndex >= 0) {
-            removeActionInternal(actions.get(oldIndex));
-            if (index > oldIndex) {
-                index--;
-            }
-        }
+        super.addActionInternal(action, index);
 
-        actions.add(index, action);
         addButton(action, index);
-
         updateActionsSlot();
     }
 
-    public void removeAction(Action action) {
-        Preconditions.checkNotNull(action, "Action cannot be null");
-
-        removeActionInternal(action);
-    }
-
-    protected void removeActionInternal(Action action) {
-        if (actions.remove(action)) {
+    @Override
+    protected boolean removeActionInternal(Action action) {
+        if (super.removeActionInternal(action)) {
             removeButton(action);
             updateActionsSlot();
+
+            return true;
         }
-    }
 
-    public Optional<Action> getAction(String id) {
-        return getActions().stream()
-                .filter(action ->
-                        Objects.equals(action.getId(), id))
-                .findFirst();
-    }
-
-    public Collection<Action> getActions() {
-        return Collections.unmodifiableList(actions);
+        return false;
     }
 
     protected void addButton(Action action, int index) {

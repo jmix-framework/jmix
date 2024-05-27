@@ -36,7 +36,7 @@ public class BackwardNavigationStandardView extends StandardView {
 
     @Subscribe("navigateToViewBtn")
     protected void onNavigateToViewBtnClick(ClickEvent<Button> event) {
-        viewNavigators.view(BackwardNavigationListView.class)
+        viewNavigators.view(this, BackwardNavigationListView.class)
                 .withBackwardNavigation(true)
                 .navigate();
     }

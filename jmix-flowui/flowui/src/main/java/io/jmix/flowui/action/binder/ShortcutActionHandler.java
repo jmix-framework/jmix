@@ -21,6 +21,7 @@ import com.vaadin.flow.component.ShortcutEventListener;
 import com.vaadin.flow.component.ShortcutRegistration;
 import io.jmix.flowui.kit.component.KeyCombination;
 
+@Deprecated(since = "2.2", forRemoval = true)
 @FunctionalInterface
 public interface ShortcutActionHandler<C extends Component> {
 

@@ -19,6 +19,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.vaadin.flow.component.ComponentUtil;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
@@ -27,6 +28,7 @@ import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfigurat
 import io.jmix.flowui.component.genericfilter.inspector.FilterPropertiesInspector;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.ViewData;
@@ -72,6 +74,12 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
         loadConfigurations(resultComponent, element);
 
         loadActions(resultComponent, element);
+
+         //Before SingleFilterComponentBase#apply started to check for attachment to UI,
+         // GenericFilter loaded data during initialisation. Now if the DataLoadCoordinator facet is missed,
+         // the user will see an empty components on a view. So we apply filter manually if DataLoadCoordinator is missed
+         // and there is at least one filter condition with default value.
+        applyFilterIfNeeded();
     }
 
     protected void loadDataLoader(GenericFilter component, Element element) {
@@ -80,6 +88,11 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
                     ViewData screenData = ViewControllerUtils.getViewData(getComponentContext().getView());
                     DataLoader dataLoader = screenData.getLoader(dataLoaderId);
                     component.setDataLoader(dataLoader);
+
+                    getComponentContext().addInitTask((context, view) ->
+                            FilterUtils.updateDataLoaderInitialCondition(resultComponent,
+                                    dataLoader.getCondition())
+                    );
                 });
     }
 
@@ -233,5 +246,26 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
         }
 
         return actionLoaderSupport;
+    }
+
+    protected void applyFilterIfNeeded() {
+        getComponentContext().addInitTask((context, view) -> {
+            DataLoadCoordinator dataLoadCoordinator = ViewControllerUtils.getViewFacet(view, DataLoadCoordinator.class);
+            if (dataLoadCoordinator == null || dataLoadCoordinator.getTriggers().isEmpty()) {
+                List<FilterComponent> filterComponents =
+                        resultComponent.getCurrentConfiguration().getRootLogicalFilterComponent().getFilterComponents();
+                Optional<FilterComponent> filterWithValue = filterComponents.stream()
+                        .filter(filterComponent -> {
+                            if (!(filterComponent instanceof SingleFilterComponent<?> singleFilterComponent)) {
+                                return false;
+                            }
+                            return singleFilterComponent.getValueComponent().getOptionalValue().isPresent();
+                        })
+                        .findFirst();
+                if (filterWithValue.isPresent()) {
+                    resultComponent.apply();
+                }
+            }
+        });
     }
 }

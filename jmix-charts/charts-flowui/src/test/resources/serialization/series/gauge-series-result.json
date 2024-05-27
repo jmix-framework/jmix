@@ -1,0 +1,107 @@
+{
+  "series": [
+    {
+      "type": "gauge",
+      "id": "gaugeId",
+      "name": "gaugeName",
+      "colorBy": "series",
+      "zlevel": 1,
+      "z": 2,
+      "center": [
+        "50%",
+        "50%"
+      ],
+      "radius": "75%",
+      "legendHoverLink": false,
+      "startAngle": 240,
+      "endAngle": -45,
+      "clockwise": false,
+      "min": 0,
+      "max": 100,
+      "splitNumber": 11,
+      "axisLine": {
+        "show": false,
+        "roundCap": true,
+        "lineStyle": {
+          "color": [
+            [
+              0.1,
+              "#FF0000"
+            ],
+            [
+              0.2,
+              "#008000"
+            ],
+            [
+              0.3,
+              "#0000FF"
+            ],
+            [
+              1.0,
+              "#000000"
+            ]
+          ],
+          "width": 15,
+          "shadowBlur": 15,
+          "shadowColor": "#000000",
+          "shadowOffsetX": 1,
+          "shadowOffsetY": 2,
+          "opacity": 0.5
+        }
+      },
+      "progress": {
+        "show": true,
+        "overlap": true,
+        "width": 11,
+        "roundCap": true,
+        "clip": false
+      },
+      "splitLine": {
+        "show": false,
+        "length": 11,
+        "distance": 11
+      },
+      "axisTick": {
+        "show": false,
+        "splitNumber": 1,
+        "length": 1,
+        "distance": 11
+      },
+      "pointer": {
+        "show": false,
+        "showAbove": false,
+        "icon": "diamond",
+        "offsetCenter": [
+          "10%",
+          "10%"
+        ],
+        "length": "60%",
+        "width": 11,
+        "keepAspect": true
+      },
+      "anchor": {
+        "show": false,
+        "showAbove": false,
+        "size": 11,
+        "icon": "diamond",
+        "offsetCenter": [
+          "10%",
+          "10%"
+        ],
+        "keepAspect": false
+      },
+      "emphasis": {
+        "disabled": false
+      },
+      "silent": true,
+      "animation": true,
+      "animationThreshold": 1501,
+      "animationDuration": 1500,
+      "animationEasing": "backOut",
+      "animationDelay": 15,
+      "animationDurationUpdate": 150,
+      "animationEasingUpdate": "cubicOut",
+      "animationDelayUpdate": 15
+    }
+  ]
+}

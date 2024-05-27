@@ -25,6 +25,7 @@ public interface StudioPickerActions {
             classFqn = "io.jmix.flowui.kit.action.BaseAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             unsupportedTarget = {"io.jmix.flowui.view.View", "io.jmix.flowui.component.ListDataComponent"},
+            documentationLink = "%VERSION%/flow-ui/actions/declarative-actions.html",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -46,6 +47,7 @@ public interface StudioPickerActions {
             description = "Clears the value of picker component",
             classFqn = "io.jmix.flowui.action.valuepicker.ValueClearAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/value-picker-actions.html#value_clear",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -77,6 +79,7 @@ public interface StudioPickerActions {
             unsupportedTarget = {"io.jmix.flowui.component.valuepicker.JmixValuePicker",
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"},
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_clear",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -108,6 +111,7 @@ public interface StudioPickerActions {
             unsupportedTarget = {"io.jmix.flowui.component.valuepicker.JmixValuePicker",
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"},
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_lookup",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -141,6 +145,7 @@ public interface StudioPickerActions {
             unsupportedTarget = {"io.jmix.flowui.component.valuepicker.JmixValuePicker",
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"},
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_open",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -174,6 +179,7 @@ public interface StudioPickerActions {
             unsupportedTarget = {"io.jmix.flowui.component.valuepicker.JmixValuePicker",
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"},
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_openComposition",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -206,6 +212,7 @@ public interface StudioPickerActions {
             classFqn = "io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction",
             target = {"io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"},
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/value-picker-actions.html#multi_value_select",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

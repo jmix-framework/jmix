@@ -30,7 +30,7 @@ public class OutputFileNameValidator extends AbstractValidator<String> {
 
     @Override
     public void accept(String value) {
-        if (StringUtils.isNotEmpty(value) && !value.matches("^[^/:*<>?\\\\]*$"))
+        if (StringUtils.isEmpty(value) || !value.matches("^[^/:*<>?\\\\]*$"))
             throw new ValidationException(String.format(
                     messages.getMessage(getClass(), "fillCorrectOutputFileNameMsg"),
                     messages.getMessage("io.jmix.reportsflowui.view.report.wizard.step", "outputFileName")));

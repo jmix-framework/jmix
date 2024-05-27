@@ -17,8 +17,6 @@
 package io.jmix.securityflowui.view.rowlevelrole;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.flowui.DialogWindows;
@@ -60,12 +58,6 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     public static final String ROUTE_PARAM_NAME = "code";
 
     @ViewComponent
-    private Tabs tabs;
-    @ViewComponent
-    private VerticalLayout childRolesWrapper;
-    @ViewComponent
-    private VerticalLayout rowLevelPoliciesWrapper;
-    @ViewComponent
     private TypedTextField<String> codeField;
     @ViewComponent
     private DataGrid<RowLevelRoleModel> childRolesTable;
@@ -96,30 +88,6 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
 
     private boolean openedByCreateAction = false;
     private final Set<UUID> forRemove = new HashSet<>();
-
-    @Subscribe
-    public void onInit(InitEvent event) {
-        tabs.addSelectedChangeListener(this::onSelectedTabChange);
-    }
-
-    private void onSelectedTabChange(Tabs.SelectedChangeEvent event) {
-        String tabId = event.getSelectedTab().getId()
-                .orElse("<no_id>");
-
-        switch (tabId) {
-            case "rowLevelPoliciesTab":
-                rowLevelPoliciesWrapper.setVisible(true);
-                childRolesWrapper.setVisible(false);
-                break;
-            case "childRolesTab":
-                rowLevelPoliciesWrapper.setVisible(false);
-                childRolesWrapper.setVisible(true);
-                break;
-            default:
-                rowLevelPoliciesWrapper.setVisible(false);
-                childRolesWrapper.setVisible(false);
-        }
-    }
 
     @Subscribe
     public void onInitNewEntity(InitEntityEvent<RowLevelRoleModel> event) {

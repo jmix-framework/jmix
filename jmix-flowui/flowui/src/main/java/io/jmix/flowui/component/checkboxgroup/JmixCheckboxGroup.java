@@ -28,9 +28,9 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
+import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.delegate.CollectionFieldDelegate;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.validation.Validator;
@@ -42,7 +42,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
@@ -275,9 +274,6 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
             Collection<V> value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
             setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
         }
-
-        // update invalid state
-        validate();
     }
 
     protected void fireCheckboxGroupValueChangeEvent(@Nullable Collection<V> oldValue, boolean isFromClient) {

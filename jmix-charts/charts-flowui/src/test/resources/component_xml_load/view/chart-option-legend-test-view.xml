@@ -1,0 +1,163 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:charts="http://jmix.io/schema/charts/ui">
+    <layout>
+        <charts:chart id="legendChartId">
+            <charts:legend
+                    id="legend"
+                    show="true"
+                    zLevel="0"
+                    z="2"
+                    left="10"
+                    top="10"
+                    right="10"
+                    bottom="10"
+                    width="100"
+                    height="100"
+                    orientation="HORIZONTAL"
+                    align="AUTO"
+                    padding="5 5"
+                    itemGap="10"
+                    itemWidth="25"
+                    itemHeight="14"
+                    backgroundColor="BLUE"
+                    borderColor="BLACK"
+                    borderWidth="1"
+                    borderRadius="4"
+                    shadowBlur="10"
+                    shadowColor="BLACK"
+                    shadowOffsetX="0"
+                    shadowOffsetY="0"
+                    formatter="Legend {name}"
+                    selectedMode="SINGLE"
+                    symbolRotate="0"
+                    inactiveColor="GRAY"
+                    inactiveBorderColor="GRAY"
+                    inactiveBorderWidth="1"
+                    selector="true"
+                    selectorPosition="START"
+                    selectorItemGap="7"
+                    selectorButtonGap="10">
+                <charts:formatterFunction>
+                    <![CDATA[function (name) { return 'Legend ' + name; }]]>
+                </charts:formatterFunction>
+                <charts:itemStyle
+                        color="WHITE"
+                        borderColor="BLACK"
+                        borderWidth="1"
+                        shadowColor="BLACK"
+                        borderType="inherit"
+                        borderDashOffset="5"
+                        cap="ROUND"
+                        join="ROUND"
+                        miterLimit="10"
+                        shadowBlur="1"
+                        shadowOffsetX="0"
+                        shadowOffsetY="0"
+                        opacity="0.9"/>
+                <charts:lineStyle
+                        color="#000000"
+                        width="1"
+                        shadowBlur="0"
+                        miterLimit="0"
+                        shadowColor="BLACK"
+                        opacity="0.9"
+                        cap="ROUND"
+                        join="ROUND"
+                        shadowOffsetX="0"
+                        shadowOffsetY="0"/>
+                <charts:textStyle
+                        color="DARKSLATEGREY"
+                        ellipsis="...."
+                        fontFamily="monospace"
+                        fontSize="4"
+                        fontStyle="ITALIC"
+                        fontWeight="bolder"
+                        height="12"
+                        lineHeight="5"
+                        overflow="BREAK_ALL"
+                        textBorderColor="DARKSLATEGREY"
+                        textBorderDashOffset="3"
+                        textBorderType="dashed"
+                        textBorderWidth="1"
+                        textShadowBlur="3"
+                        textShadowColor="DARKSLATEGRAY"
+                        textShadowOffsetX="1"
+                        textShadowOffsetY="1"
+                        width="5"/>
+                <charts:tooltip padding="0"/>
+                <charts:emphasis>
+                    <charts:selectorLabel show="true"
+                                          distance="5"
+                                          rotate="5"
+                                          offset="5 2"
+                                          color="BLACK"
+                                          fontStyle="NORMAL"
+                                          fontWeight="NORMAL"
+                                          fontFamily="sans-serif"
+                                          fontSize="12"
+                                          align="CENTER"
+                                          verticalAlign="MIDDLE"
+                                          lineHeight="12"
+                                          backgroundColor="WHITE"
+                                          borderColor="BLACK"
+                                          borderWidth="1"
+                                          borderType="solid"
+                                          borderDashOffset="5"
+                                          borderRadius="5"
+                                          padding="5"
+                                          shadowColor="BLACK"
+                                          shadowBlur="1"
+                                          shadowOffsetX="5"
+                                          shadowOffsetY="5"
+                                          width="200"
+                                          height="100"
+                                          textBorderType="solid"
+                                          textBorderColor="BLACK"
+                                          textBorderWidth="200"
+                                          textBorderDashOffset="0"
+                                          textShadowColor="BLACK"
+                                          textShadowBlur="0"
+                                          textShadowOffsetX="0"
+                                          textShadowOffsetY="0"
+                                          overflow="BREAK">
+                        <charts:rich>
+                            <charts:richStyle name="legendTestStyle"
+                                              padding="1 4 5 6"
+                                              shadowBlur="12"
+                                              shadowColor="DIMGRAY"
+                                              shadowOffsetX="4"
+                                              shadowOffsetY="1"
+                                              textBorderColor="DEEPSKYBLUE"
+                                              textBorderDashOffset="3"
+                                              textBorderType="dashed"
+                                              textBorderWidth="2"
+                                              textShadowBlur="1"
+                                              textShadowColor="DARKTURQUOISE"
+                                              textShadowOffsetX="1"
+                                              textShadowOffsetY="1"
+                                              verticalAlign="BOTTOM"
+                                              width="4"/>
+                        </charts:rich>
+                    </charts:selectorLabel>
+                </charts:emphasis>
+            </charts:legend>
+        </charts:chart>
+
+    </layout>
+</view>

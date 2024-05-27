@@ -17,8 +17,9 @@
 package io.jmix.core.security.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.DevelopmentException;
 import io.jmix.core.HasTimeZone;
-import io.jmix.core.MessageTools;
 import io.jmix.core.security.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 @Component("core_CurrentAuthentication")
 public class CurrentAuthenticationImpl implements CurrentAuthentication {
@@ -35,10 +38,13 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     private List<AuthenticationResolver> authenticationResolvers;
 
     @Autowired(required = false)
+    private List<AuthenticationPrincipalResolver> authenticationPrincipalResolvers;
+
+    @Autowired(required = false)
     private List<AuthenticationLocaleResolver> localeResolvers;
 
     @Autowired
-    private MessageTools messagesTools;
+    private CoreProperties properties;
 
     @Override
     public Authentication getAuthentication() {
@@ -60,7 +66,17 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     @Override
     public UserDetails getUser() {
         Authentication authentication = getAuthentication();
-        Object principal = authentication.getPrincipal();
+        Object principal = null;
+        if (authenticationPrincipalResolvers != null) {
+            principal = authenticationPrincipalResolvers.stream()
+                    .filter(resolver -> resolver.supports(authentication))
+                    .findFirst()
+                    .map(resolver -> resolver.resolveAuthenticationPrincipal(authentication))
+                    .orElse(null);
+        }
+        if (principal == null) {
+            principal = authentication.getPrincipal();
+        }
         if (principal instanceof UserDetails) {
             return (UserDetails) principal;
         } else {
@@ -90,7 +106,7 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
             }
         }
 
-        return messagesTools.getDefaultLocale();
+        return getDefaultLocale();
     }
 
     @Override
@@ -113,5 +129,11 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     @Override
     public boolean isSet() {
         return SecurityContextHelper.getAuthentication() != null;
+    }
+
+    protected Locale getDefaultLocale() {
+        if (properties.getAvailableLocales().isEmpty())
+            throw new DevelopmentException("Invalid jmix.core.available-locales application property");
+        return properties.getAvailableLocales().get(0);
     }
 }

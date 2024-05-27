@@ -37,6 +37,7 @@ import io.jmix.data.impl.JpqlQueryBuilder;
 import io.jmix.data.impl.QueryResultsManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.lazyloading.LazyLoadingContext;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.exceptions.QueryException;
@@ -495,6 +496,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         if (contextQuery != null) {
             queryBuilder.setQueryString(contextQuery.getQueryString())
                     .setCondition(contextQuery.getCondition())
+                    .setDistinct(contextQuery.isDistinct())
                     .setQueryParameters(contextQuery.getParameters());
             if (!countQuery) {
                 queryBuilder.setSort(contextQuery.getSort());
@@ -548,6 +550,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         queryBuilder.setValueProperties(context.getProperties())
                 .setQueryString(contextQuery.getQueryString())
                 .setCondition(contextQuery.getCondition())
+                .setDistinct(contextQuery.isDistinct())
                 .setQueryParameters(contextQuery.getParameters())
                 .setLockMode(context.getLockMode());
 
@@ -690,7 +693,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         if (matcher.groupCount() == 1) {
             constraintName = matcher.group(1);
         } else {
-            for (int i = 1; i < matcher.groupCount(); i++) {
+            for (int i = 1; i <= matcher.groupCount(); i++) {
                 if (StringUtils.isNotBlank(matcher.group(i))) {
                     constraintName = matcher.group(i);
                     break;

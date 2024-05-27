@@ -71,14 +71,7 @@ dependencies {
     api 'xalan:xalan'
     api 'xalan:serializer'
 
-    api('com.itextpdf:itextpdf') {
-        exclude group: 'org.bouncycastle', module: 'bctsp-jdk14'
-        exclude group: 'org.bouncycastle', module: 'bcprov-jdk14'
-        exclude group: 'org.bouncycastle', module: 'bcmail-jdk14'
-        exclude group: 'bouncycastle', module: 'bcmail-jdk14'
-        exclude group: 'bouncycastle', module: 'bcprov-jdk14'
-        exclude group: 'bouncycastle', module: 'bctsp-jdk14'
-    }
+    api 'com.github.librepdf:openpdf'
 
     api 'org.apache.poi:poi'
     api 'org.apache.poi:poi-ooxml'
@@ -87,7 +80,7 @@ dependencies {
     }
 
     api 'org.xhtmlrenderer:flying-saucer-core'
-    api('org.xhtmlrenderer:flying-saucer-pdf-itext5') {
+    api('org.xhtmlrenderer:flying-saucer-pdf-openpdf') {
         exclude group: 'org.bouncycastle', module: 'bctsp-jdk14'
         exclude group: 'org.bouncycastle', module: 'bcprov-jdk14'
         exclude group: 'org.bouncycastle', module: 'bcmail-jdk14'

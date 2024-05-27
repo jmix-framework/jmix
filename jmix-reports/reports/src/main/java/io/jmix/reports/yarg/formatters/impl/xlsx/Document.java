@@ -32,6 +32,7 @@ import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
 import org.docx4j.relationships.Relationship;
 import org.xlsx4j.sml.*;
+import org.springframework.lang.Nullable;
 
 import java.util.*;
 
@@ -105,6 +106,7 @@ public class Document {
 
     public String getCellValue(Cell cell) {
         if (cell.getV() == null) return null;
+        if (cell.getV().isEmpty()) return cell.getV();
         if (cell.getT().equals(STCellType.S)) {
             CTSst jaxbElement;
             try {
@@ -184,6 +186,36 @@ public class Document {
         return null;
     }
 
+    public StyleSheet.CellXfs getCellStyle(Cell cell) {
+        return styleSheet.getCellStyle(cell.getS());
+    }
+
+    @Nullable
+    public StyleSheet.Font getCellFont(Cell cell) {
+        StyleSheet.CellXfs cellStyle = styleSheet.getCellStyle(cell.getS());
+        if (cellStyle == null || cellStyle.getFontId() == null) {
+            return null;
+        }
+        return styleSheet.getFont(cellStyle.getFontId());
+    }
+
+    @Nullable
+    public Double getColumnWidth(CellReference cellReference) {
+        Worksheet sheet = getSheetByName(cellReference.getSheet());
+        return sheet.getCols()
+                .stream()
+                .map(Cols::getCol)
+                .flatMap(Collection::stream)
+                .filter(col -> col.getMin() <= cellReference.getColumn() && cellReference.getColumn() <= col.getMax())
+                .findFirst()
+                .map(Col::getWidth)
+                .orElse(sheet.getSheetFormatPr() != null ? sheet.getSheetFormatPr().getDefaultColWidth() : null);
+    }
+
+    public StyleSheet.Font getDefaultFont() {
+        return styleSheet.getFont(0L);
+    }
+
     public StyleSheet getStyleSheet() {
         return styleSheet;
     }
@@ -228,7 +260,7 @@ public class Document {
                 }
 
                 if (o instanceof CTStylesheet) {
-                    styleSheet = new StyleSheet((CTStylesheet)o);
+                    styleSheet = new StyleSheet((CTStylesheet) o);
 
                 }
 

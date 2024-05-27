@@ -1,21 +1,47 @@
 <%
+def dcId = ''
+def nestedCollectionDatasourceProperties = []
+def is_inline_detailFetchPlan_ = false
+def inline_detailFetchPlan_ = ''
+def entityName = entity != null ? entity : entityObject
+if (processFormTemplate.name() == 'ENTITY') {
+    dcId = "${entityName.uncapitalizedClassName}Dc"
+    nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
+    is_inline_detailFetchPlan_ = is_inline_detailFetchPlan
+    inline_detailFetchPlan_ = inline_detailFetchPlan
+}
 def containerXml = api.processSnippet('bpm_container.xml',
-        ['variables': processFormVariables, 'api': api])
+        ['variables': processFormVariables,
+        'formTemplate': processFormTemplate,
+        'dcId': dcId,
+        'entity': entityName,
+        'detailFetchPlan': detailFetchPlan,
+        'is_inline_detailFetchPlan': is_inline_detailFetchPlan_,
+        'inline_detailFetchPlan': inline_detailFetchPlan_,
+        'nestedCollectionDatasourceProperties': nestedCollectionDatasourceProperties,
+        'api': api])
 def formXml = api.processSnippet('bpm_processform.xml',
         ['variables': processFormVariables,
+        'formTemplate': processFormTemplate,
+        'dcId': dcId,
+        'detailFetchPlan': detailFetchPlan,
+        'nestedCollectionDatasourceProperties': nestedCollectionDatasourceProperties,
+        'messageKeys': messageKeys,
         'api': api])
 def buttonsXml = api.processSnippet('bpm_buttons.xml',
         ['outputes': processFormOutcomes,
+        'formType': processFormType,
+        'formTemplate': processFormTemplate,
+        'messageKeys': messageKeys,
         'api': api])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="${messageKeys['title']}">
     ${containerXml}
-    <layout><%if (bpmTaskName != null && bpmTaskName.trim() != '') {%>
-        <h1 text="$bpmTaskName"/><%}%><%if (bpmTaskDetails != null && bpmTaskDetails.trim() != '') {%>
-        <details summaryText="Task details">
-            <p text="$bpmTaskDetails"/>
+    <layout><%if (bpmTaskDetails != null && bpmTaskDetails.trim() != '') {%>
+        <details opened="true">
+            <p text="${messageKeys['description']}"/>
         </details><%}%>
         ${formXml}
         <hbox id="actionsPanel">

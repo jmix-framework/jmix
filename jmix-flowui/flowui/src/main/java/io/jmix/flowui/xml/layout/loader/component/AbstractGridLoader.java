@@ -17,14 +17,18 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Splitter;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnRendering;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.NestedNullBehavior;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
+import com.vaadin.flow.component.grid.contextmenu.GridSubMenu;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.grid.editor.Editor;
+import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -37,14 +41,17 @@ import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
+import io.jmix.flowui.component.grid.GridContextMenuItemComponent;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.data.aggregation.AggregationStrategy;
 import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
+import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.component.datagrid.RendererProvider;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
@@ -58,6 +65,7 @@ import org.springframework.lang.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -94,14 +102,15 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
-        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         loadData();
         loadMultiSort();
 
-        getActionLoaderSupport().loadActions(resultComponent, element);
+        loadContextMenu();
+        loadActions();
     }
 
     protected void loadData() {
@@ -132,7 +141,12 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         setupDataProvider(holder);
 
         // filters must be initialized after the data provider
-        pendingToFilterableColumns.forEach(column -> column.setFilterable(true));
+        // check for parent was implemented for the case
+        // when a column was deleted due to security constraints
+        pendingToFilterableColumns.forEach(column ->
+                column.getParent()
+                        .ifPresent(__ -> column.setFilterable(true))
+        );
         pendingToFilterableColumns.clear();
     }
 
@@ -153,6 +167,11 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 .orElse(true);
         boolean resizable = loadBoolean(columnsElement, "resizable")
                 .orElse(false);
+
+        if (columnsElement.elements(EDITOR_ACTIONS_COLUMN_ELEMENT_NAME).size() > 1) {
+            throw new GuiDevelopmentException("DataGrid can contain only one editorActionsColumn",
+                    context, "Component ID", resultComponent.getId());
+        }
 
         if (includeAll) {
             loadColumnsByInclude(resultComponent, columnsElement, metaClass, fetchPlan, sortable, resizable);
@@ -224,7 +243,10 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         editColumn.setEditorComponent(actions);
 
-        loadString(columnElement, "key", editColumn::setKey);
+        //If the key is null then NPE will rise when the settings are applied
+        loadString(columnElement, "key").ifPresentOrElse(
+                editColumn::setKey,
+                () -> editColumn.setKey(EDITOR_ACTIONS_COLUMN_ELEMENT_NAME));
         loadString(columnElement, "width", editColumn::setWidth);
         loadBoolean(columnElement, "autoWidth", editColumn::setAutoWidth);
         loadBoolean(columnElement, "resizable", editColumn::setResizable);
@@ -632,4 +654,76 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected abstract void setupDataProvider(GridDataHolder holder);
+
+    protected void loadContextMenu() {
+        Element contextMenuElement = element.element("contextMenu");
+        if (contextMenuElement == null) {
+            return;
+        }
+        JmixGridContextMenu<?> contextMenu = resultComponent.getContextMenu();
+
+        loadId(contextMenu, contextMenuElement);
+        loadVisible(contextMenu, contextMenuElement);
+
+        componentLoader().loadCss(contextMenu, contextMenuElement);
+        componentLoader().loadClassNames(contextMenu, contextMenuElement);
+        componentLoader().loadEnabled(contextMenu, contextMenuElement);
+
+        for (Element childItemElement : contextMenuElement.elements()) {
+            addContextMenuItem(contextMenu::addItem, contextMenu::add, childItemElement);
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void addContextMenuItem(Function<Component, GridMenuItem<?>> menuItemGenerator,
+                                      Consumer<Component> separatorConsumer,
+                                      Element childElement) {
+        switch (childElement.getName()) {
+            case "item":
+                GridContextMenuItemComponent<?> component = new GridContextMenuItemComponent<>();
+                component.setApplicationContext(applicationContext);
+                GridMenuItem menuItem = menuItemGenerator.apply(component);
+                component.setMenuItem(menuItem);
+                loadContextMenuItem(component, menuItem, childElement);
+                break;
+            case "separator":
+                separatorConsumer.accept(new Hr());
+                break;
+            default:
+                throw new GuiDevelopmentException("Unknown context menu child element: " + childElement.getName(),
+                        context, "Component ID", resultComponent.getId());
+        }
+    }
+
+    protected void loadContextMenuItem(GridContextMenuItemComponent<?> component,
+                                       GridMenuItem<?> menuItem,
+                                       Element itemElement) {
+        loadId(menuItem, itemElement);
+        loadVisible(menuItem, itemElement);
+
+        componentLoader().loadCss(menuItem, itemElement);
+        componentLoader().loadEnabled(menuItem, itemElement);
+        componentLoader().loadClassNames(menuItem, itemElement);
+
+        componentLoader().loadText(component, itemElement);
+        componentLoader().loadWhiteSpace(component, itemElement);
+        componentLoader().loadIcon(itemElement, component::setPrefixComponent);
+
+        loadContextMenuItemAction(component, itemElement);
+
+        GridSubMenu<?> subMenu = menuItem.getSubMenu();
+        for (Element contextMenuChildItemElement : itemElement.elements()) {
+            addContextMenuItem(subMenu::addItem, subMenu::add, contextMenuChildItemElement);
+        }
+    }
+
+    protected void loadContextMenuItemAction(GridContextMenuItemComponent<?> component, Element element) {
+        loadString(element, "action")
+                .ifPresent(actionId -> getComponentContext().addInitTask(
+                        new AssignActionInitTask<>(component, actionId, getComponentContext().getView())));
+    }
+
+    protected void loadActions() {
+        getActionLoaderSupport().loadActions(resultComponent, element);
+    }
 }

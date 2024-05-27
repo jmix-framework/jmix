@@ -17,10 +17,9 @@
 package io.jmix.flowui.facet.impl;
 
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.kit.component.timer.JmixTimer;
 import io.jmix.flowui.facet.Timer;
+import io.jmix.flowui.kit.component.timer.JmixTimer;
 import io.jmix.flowui.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,20 +103,16 @@ public class TimerImpl extends AbstractFacet implements Timer {
     public void setOwner(@Nullable View<?> owner) {
         if (owner != null) {
             super.setOwner(owner);
-            if (owner.getContent() instanceof HasComponents) {
-                //noinspection unchecked
-                registerInView((View<? extends HasComponents>) owner);
-            }
+            registerInView(owner);
         } else {
-            if (this.owner != null && this.owner.getContent() instanceof HasComponents) {
-                //noinspection unchecked
-                unregisterInView((View<? extends HasComponents>) this.owner);
+            if (this.owner != null) {
+                unregisterInView(this.owner);
             }
             super.setOwner(null);
         }
     }
 
-    protected void registerInView(View<? extends HasComponents> owner) {
+    protected void registerInView(View<?> owner) {
         if (owner.isAttached()) {
             attachTimer(owner);
         } else {
@@ -126,23 +121,23 @@ public class TimerImpl extends AbstractFacet implements Timer {
         addDetachListener(owner);
     }
 
-    protected void attachTimer(View<? extends HasComponents> owner) {
-        owner.getContent().add(timerImpl);
+    protected void attachTimer(View<?> owner) {
+        owner.getContent().getElement().appendChild(timerImpl.getElement());
     }
 
-    protected void registerOnAttach(View<? extends HasComponents> owner) {
+    protected void registerOnAttach(View<?> owner) {
         owner.addAttachListener(e -> attachTimer(owner));
     }
 
-    protected void addDetachListener(View<? extends HasComponents> owner) {
+    protected void addDetachListener(View<?> owner) {
         owner.addDetachListener(e -> detachTimer(owner));
     }
 
-    protected void detachTimer(View<? extends HasComponents> owner) {
-        owner.getContent().remove(timerImpl);
+    protected void detachTimer(View<?> owner) {
+        owner.getContent().getElement().removeChild(timerImpl.getElement());
     }
 
-    protected void unregisterInView(View<? extends HasComponents> owner) {
+    protected void unregisterInView(View<?> owner) {
         detachTimer(owner);
     }
 

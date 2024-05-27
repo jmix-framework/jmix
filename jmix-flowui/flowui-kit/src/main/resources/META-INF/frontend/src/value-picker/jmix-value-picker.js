@@ -130,6 +130,7 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
 
         this._tooltipController = new TooltipController(this);
         this._tooltipController.setPosition('top');
+        this._tooltipController.setAriaTarget(this.inputElement);
         this.addController(this._tooltipController);
     }
 
@@ -140,6 +141,10 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
         }
 
         super._onInput(event);
+    }
+
+    checkValidity() {
+        return !this.invalid && super.checkValidity();
     }
 }
 

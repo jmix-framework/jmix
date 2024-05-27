@@ -26,10 +26,13 @@
         <xs:group ref="layout:singleLayoutOrComponent"/>
 
         <xs:attribute name="touchOptimized" type="xs:boolean"/>
+        <xs:attribute name="css" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="drawerLayoutContainer">
         <xs:group ref="layout:singleLayoutOrComponent"/>
+
+        <xs:attribute name="css" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="initialLayoutContainer">

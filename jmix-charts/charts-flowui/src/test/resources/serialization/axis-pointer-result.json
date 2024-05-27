@@ -1,0 +1,88 @@
+{
+  "axisPointer": {
+    "id": "axisPointerId",
+    "show": true,
+    "type": "shadow",
+    "snap": true,
+    "z": 15,
+    "label": {
+      "show": true,
+      "precision": 5,
+      "formatter": "{value} kg",
+      "margin": 5,
+      "color": "#FFFFF0",
+      "fontStyle": "italic",
+      "fontWeight": "bold",
+      "fontFamily": "monospace",
+      "fontSize": 40,
+      "lineHeight": 56,
+      "width": 50,
+      "height": 47,
+      "textBorderColor": "#FFFFF0",
+      "textBorderWidth": 2.5,
+      "textBorderType": "dashed",
+      "textBorderDashOffset": 3,
+      "textShadowColor": "#FFFFF0",
+      "textShadowBlur": 4,
+      "textShadowOffsetX": 4,
+      "textShadowOffsetY": 5,
+      "overflow": "breakAll",
+      "ellipsis": "........",
+      "padding": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "backgroundColor": "#FFFFF0",
+      "borderColor": "#FFFFF0",
+      "borderWidth": 4,
+      "shadowBlur": 15,
+      "shadowColor": "#FFFFF0",
+      "shadowOffsetX": 12,
+      "shadowOffsetY": 24
+    },
+    "lineStyle": {
+      "color": "#FFFFF0",
+      "width": 421,
+      "type": "dashed",
+      "dashOffset": 41,
+      "cap": "square",
+      "join": "miter",
+      "miterLimit": 41,
+      "shadowBlur": 59,
+      "shadowColor": "#FFFFF0",
+      "shadowOffsetX": 12,
+      "shadowOffsetY": 24,
+      "opacity": 0.41
+    },
+    "shadowStyle": {
+      "color": "#FFFFF0",
+      "shadowBlur": 15,
+      "shadowColor": "#FFFFF0",
+      "shadowOffsetX": 15,
+      "shadowOffsetY": 61,
+      "opacity": 0.14
+    },
+    "triggerEmphasis": true,
+    "triggerTooltip": false,
+    "value": 1,
+    "status": false,
+    "handle": {
+      "show": true,
+      "icon": "jmix",
+      "size": [
+        15,
+        51
+      ],
+      "margin": 15,
+      "color": "#FFFFF0",
+      "throttle": 50,
+      "shadowBlur": 16,
+      "shadowColor": "#FFFFF0",
+      "shadowOffsetX": 16,
+      "shadowOffsetY": 95
+    },
+    "triggerOn": "mousemove|click"
+  }
+}

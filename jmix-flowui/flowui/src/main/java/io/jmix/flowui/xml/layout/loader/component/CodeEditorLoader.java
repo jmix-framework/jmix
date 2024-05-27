@@ -54,7 +54,7 @@ public class CodeEditorLoader extends AbstractComponentLoader<CodeEditor> {
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
-        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadTooltip(resultComponent, element);
     }

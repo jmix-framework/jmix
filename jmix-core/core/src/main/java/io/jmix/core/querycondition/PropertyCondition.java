@@ -18,8 +18,8 @@ package io.jmix.core.querycondition;
 
 import com.google.common.base.Strings;
 import org.apache.commons.collections4.CollectionUtils;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -31,7 +31,7 @@ import java.util.TreeSet;
  * Use one of the static methods like {@link #equal(String, Object)}, {@link #greater(String, Object)} to create
  * property conditions.
  */
-public class PropertyCondition implements Condition {
+public class PropertyCondition extends SkippableCondition<PropertyCondition> {
 
     private String property;
 
@@ -173,6 +173,28 @@ public class PropertyCondition implements Condition {
         return createWithValue(property, Operation.NOT_IN_LIST, value);
     }
 
+    /**
+     * Creates a condition that is translated to "is empty" or "is not empty"
+     * depending on the parameter value.
+     */
+    public static PropertyCondition isCollectionEmpty(String property, Object value) {
+        return createWithValue(property, Operation.IS_COLLECTION_EMPTY, value);
+    }
+
+    /**
+     * Creates a condition that is translated to "member of".
+     */
+    public static PropertyCondition memberOfCollection(String property, Object value) {
+        return createWithValue(property, Operation.MEMBER_OF_COLLECTION, value);
+    }
+
+    /**
+     * Creates a condition that is translated to "not member of".
+     */
+    public static PropertyCondition notMemberOfCollection(String property, Object value) {
+        return createWithValue(property, Operation.NOT_MEMBER_OF_COLLECTION, value);
+    }
+
     public String getProperty() {
         return property;
     }
@@ -213,8 +235,9 @@ public class PropertyCondition implements Condition {
 
     @Nullable
     @Override
-    public Condition actualize(Set<String> actualParameters) {
-        if (actualParameters.containsAll(getParameters())) {
+    public Condition actualize(Set<String> actualParameters, boolean defaultSkipNullOrEmpty) {
+        applyDefaultSkipNullOrEmpty(defaultSkipNullOrEmpty);
+        if (!skipNullOrEmpty || actualParameters.containsAll(getParameters())) {
             return this;
         }
 
@@ -246,13 +269,14 @@ public class PropertyCondition implements Condition {
         pc.setOperation(this.operation);
         pc.setParameterName(this.parameterName);
         pc.setParameterValue(this.parameterValue);
+        pc.setSkipNullOrEmpty(this.skipNullOrEmpty);
         return pc;
     }
 
     @Override
     public Set<String> getExcludedParameters(Set<String> actualParameters) {
         Set<String> excludedParameters = new TreeSet<>();
-        if (actualParameters.containsAll(getParameters())) {
+        if (!skipNullOrEmpty || actualParameters.containsAll(getParameters())) {
             return excludedParameters;
         }
 
@@ -291,5 +315,8 @@ public class PropertyCondition implements Condition {
         public static final String IN_LIST = "in_list";
         public static final String NOT_IN_LIST = "not_in_list";
         public static final String IN_INTERVAL = "in_interval";
+        public static final String IS_COLLECTION_EMPTY = "is_collection_empty";
+        public static final String MEMBER_OF_COLLECTION = "member_of_collection";
+        public static final String NOT_MEMBER_OF_COLLECTION = "not_member_of_collection";
     }
 }

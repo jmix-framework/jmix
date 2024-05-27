@@ -29,13 +29,13 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -131,10 +131,18 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
     }
 
     @Override
+    public EntitySet saveAll(Collection<?> entities) {
+        return save(new SaveContext().saving(entities));
+    }
+
+    @Override
     public <E> E save(E entity) {
+        if (entity instanceof Collection) {
+            throw new IllegalArgumentException("Use saveAll() method to save collection of entities");
+        }
         return save(new SaveContext().saving(entity))
                 .optional(entity)
-                .orElseThrow(() -> new IllegalStateException("Data store didn't return a saved entity"));
+                .orElseThrow(() -> new NoResultException("Data store didn't return a saved entity"));
     }
 
     @Override

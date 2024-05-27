@@ -17,10 +17,7 @@
 package query_conditions
 
 import io.jmix.core.CoreConfiguration
-import io.jmix.core.querycondition.Condition
-import io.jmix.core.querycondition.ConditionXmlLoader
-import io.jmix.core.querycondition.JpqlCondition
-import io.jmix.core.querycondition.LogicalCondition
+import io.jmix.core.querycondition.*
 import io.jmix.data.DataConfiguration
 import io.jmix.data.impl.jpql.generator.ConditionGenerationContext
 import io.jmix.data.impl.jpql.generator.ConditionJpqlGenerator
@@ -136,7 +133,7 @@ class QueryConditionsTest extends Specification {
         when:
 
         Condition condition = xmlSerializer.fromXml(xml)
-        Condition actualized = condition.actualize(['login', 'roleName', 'foo', 'bar'].toSet())
+        Condition actualized = condition.actualize(['login', 'roleName', 'foo', 'bar'].toSet(), true)
         String query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
 
         then:
@@ -166,7 +163,7 @@ class QueryConditionsTest extends Specification {
 
         when:
 
-        actualized = condition.actualize(['login', 'roleName', 'foo'].toSet())
+        actualized = condition.actualize(['login', 'roleName', 'foo'].toSet(), true)
         query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
 
         then:
@@ -189,7 +186,7 @@ class QueryConditionsTest extends Specification {
 
         when:
 
-        actualized = condition.actualize(['login', 'roleName'].toSet())
+        actualized = condition.actualize(['login', 'roleName'].toSet(), true)
         query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
 
         then:
@@ -209,7 +206,7 @@ class QueryConditionsTest extends Specification {
 
         when:
 
-        actualized = condition.actualize(['roleName'].toSet())
+        actualized = condition.actualize(['roleName'].toSet(), true)
         query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
 
         then:
@@ -221,7 +218,7 @@ class QueryConditionsTest extends Specification {
 
         when:
 
-        actualized = condition.actualize(Collections.emptySet())
+        actualized = condition.actualize(Collections.emptySet(), true)
         query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
 
         then:
@@ -229,5 +226,55 @@ class QueryConditionsTest extends Specification {
         actualized == null
 
         query == 'select u from test$User u'
+    }
+
+
+    def "condition actualization without skipping"() {
+        when:
+        Condition condition = LogicalCondition.and(
+                JpqlCondition.create('u.login like :login', null),
+                JpqlCondition.create('ur.role.name = :roleName', 'join u.userRoles ur'),
+                LogicalCondition.or(
+                        JpqlCondition.create('f.foo = :foo', ', test$Foo f'),
+                        PropertyCondition.createWithParameterName('bar', PropertyCondition.Operation.EQUAL, 'bar')
+                )
+        )
+        Condition actualized = condition.actualize(actualProperties.toSet(), false)
+        String query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
+
+        then:
+
+        actualized instanceof LogicalCondition
+        ((LogicalCondition) actualized).type == LogicalCondition.Type.AND
+        ((LogicalCondition) actualized).conditions.size() == 3
+
+        JpqlCondition c1 = ((LogicalCondition) actualized).conditions[0]
+        c1.getWhere() == 'u.login like :login'
+
+        JpqlCondition c2 = ((LogicalCondition) actualized).conditions[1]
+        c2.getWhere() == 'ur.role.name = :roleName'
+
+        LogicalCondition or = ((LogicalCondition) actualized).conditions[2]
+        or.type == LogicalCondition.Type.OR
+        or.conditions.size() == 2
+
+        JpqlCondition c3 = or.conditions[0]
+        c3.getWhere() == 'f.foo = :foo'
+
+        PropertyCondition c4 = or.conditions[1]
+        c4.parameterName == 'bar'
+        c4.operation == PropertyCondition.Operation.EQUAL
+        c4.parameterName == 'bar'
+
+        query == 'select u from test$User u join u.userRoles ur, test$Foo f ' +
+                'where (u.login like :login and ur.role.name = :roleName and (f.foo = :foo or u.bar = :bar))'
+        where:
+        actualProperties                    | _
+        ['login', 'roleName', 'foo', 'bar'] | _
+        ['roleName', 'foo', 'bar']          | _
+        ['login', 'foo', 'bar']             | _
+        ['login', 'roleName', 'bar']        | _
+        ['login', 'roleName', 'foo']        | _
+        []                                  | _
     }
 }

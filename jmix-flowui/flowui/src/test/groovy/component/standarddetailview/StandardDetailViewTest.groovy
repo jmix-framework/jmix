@@ -17,6 +17,7 @@
 package component.standarddetailview
 
 import com.vaadin.flow.component.UI
+import com.vaadin.flow.router.RouteParameters
 import component.standarddetailview.view.BlankTestView
 import component.standarddetailview.view.OrderDetailTestView
 import component.standarddetailview.view.TestCopyingSystemStateDetailTestView
@@ -65,10 +66,14 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
         def entity = metadata.create(TestCopyingSystemStateEntity)
         entity.setName("test")
 
-        navigators.detailView(TestCopyingSystemStateEntity)
-                .editEntity(entity)
+        def origin = navigateToView(BlankTestView)
+        navigators.detailView(origin, TestCopyingSystemStateEntity)
                 .withViewClass(TestCopyingSystemStateDetailTestView)
                 .withBackwardNavigation(false)
+                .withRouteParameters(RouteParameters.empty())
+                .withAfterNavigationHandler {event ->
+                    event.view.setEntityToEdit(entity)
+                }
                 .navigate()
 
         then: """
@@ -101,7 +106,8 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
     def "Edit JPA entity in standard detail view"() {
         when: "Edit JPA entity in standard detail view"
 
-        navigators.detailView(Order)
+        def origin = navigateToView(BlankTestView)
+        navigators.detailView(origin, Order)
                 .editEntity(orderToEdit)
                 .withViewClass(OrderDetailTestView)
                 .withBackwardNavigation(false)

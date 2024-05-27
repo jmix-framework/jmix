@@ -18,18 +18,25 @@ package io.jmix.datatoolsflowui.view.entityinspector.assistant;
 
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.shared.Tooltip;
+import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.datatoolsflowui.DatatoolsUiProperties;
 import io.jmix.datatoolsflowui.view.entityinspector.EntityFormLayoutUtils;
+import io.jmix.datatoolsflowui.view.entityinspector.EntityInspectorListView;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.model.CollectionContainer;
 import jakarta.persistence.Convert;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -43,14 +50,11 @@ import java.util.List;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorDataGridBuilder {
 
-    @Autowired
     protected MetadataTools metadataTools;
-    @Autowired
     protected MessageTools messageTools;
-    @Autowired
     protected UiComponents uiComponents;
-    @Autowired
     protected DatatoolsUiProperties datatoolsUiProperties;
+    protected Messages messages;
 
     private final MetaClass metaClass;
     private final CollectionContainer<?> collectionContainer;
@@ -60,6 +64,31 @@ public class InspectorDataGridBuilder {
     protected InspectorDataGridBuilder(CollectionContainer<?> collectionContainer) {
         this.collectionContainer = collectionContainer;
         this.metaClass = collectionContainer.getEntityMetaClass();
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    public void setMessageTools(MessageTools messageTools) {
+        this.messageTools = messageTools;
+    }
+
+    @Autowired
+    public void setUiComponents(UiComponents uiComponents) {
+        this.uiComponents = uiComponents;
+    }
+
+    @Autowired
+    public void setDatatoolsUiProperties(DatatoolsUiProperties datatoolsUiProperties) {
+        this.datatoolsUiProperties = datatoolsUiProperties;
+    }
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
     }
 
     public static InspectorDataGridBuilder from(ApplicationContext applicationContext,
@@ -125,6 +154,11 @@ public class InspectorDataGridBuilder {
         }
 
         DataGrid.Column<?> column = dataGrid.addColumn(metaPropertyPath);
+        if (metaProperty.getRange().isDatatype()
+                && byte[].class.equals(metaProperty.getRange().asDatatype().getJavaClass())) {
+            //noinspection unchecked
+            column.setRenderer(createByteArrayRenderer(metaPropertyPath));
+        }
 
         column.setHeader(getPropertyHeader(metaClass, metaProperty));
 
@@ -138,5 +172,21 @@ public class InspectorDataGridBuilder {
         Span header = new Span(propertyCaption);
         Tooltip.forComponent(header).setText(propertyCaption);
         return header;
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected Renderer createByteArrayRenderer(MetaPropertyPath metaPropertyPath) {
+        return new TextRenderer<>(entity -> byteArrayLabelGenerator(entity, metaPropertyPath));
+    }
+
+    protected String byteArrayLabelGenerator(Object entity, MetaPropertyPath metaPropertyPath) {
+        byte[] value = EntityValues.getValueEx(entity, metaPropertyPath);
+
+        if (value != null) {
+            return messages.formatMessage(EntityInspectorListView.class, "entitiesDataGrid.byteArrayColumnText",
+                    FileUtils.byteCountToDisplaySize(value.length));
+        }
+
+        return Strings.EMPTY;
     }
 }

@@ -25,6 +25,7 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.LockStatus;
 import io.jmix.flowui.view.StandardDetailView;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ActionType(DetailSaveCloseAction.ID)
@@ -57,6 +58,15 @@ public class DetailSaveCloseAction<E>
     @Autowired
     protected void setUiViewProperties(UiViewProperties uiViewProperties) {
         this.shortcutCombination = KeyCombination.create(uiViewProperties.getSaveShortcut());
+    }
+
+    @Override
+    public void setShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+        if (shortcutCombination != null) {
+            shortcutCombination.setResetFocusOnActiveElement(true);
+        }
+
+        super.setShortcutCombination(shortcutCombination);
     }
 
     @Override

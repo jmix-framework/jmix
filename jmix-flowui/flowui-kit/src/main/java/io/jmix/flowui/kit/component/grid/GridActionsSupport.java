@@ -16,27 +16,54 @@
 
 package io.jmix.flowui.kit.component.grid;
 
-import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.delegate.AbstractActionsHolderSupport;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import static io.jmix.flowui.kit.component.ComponentUtils.findActionIndexById;
+public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHolderSupport<C> {
 
-public class GridActionsSupport<C extends Grid<T>, T> {
-
-    protected final C component;
-
-    protected List<Action> actions = new ArrayList<>();
     protected Map<Action, GridMenuItemActionWrapper<T>> actionBinding = new HashMap<>();
 
     protected JmixGridContextMenu<T> contextMenu;
+    protected boolean showActionsInContextMenuEnabled = true;
 
     public GridActionsSupport(C component) {
-        this.component = component;
-        initContextMenu();
+        super(component);
+    }
+
+    @Override
+    protected void addActionInternal(Action action, int index) {
+        super.addActionInternal(action, index);
+
+        if (showActionsInContextMenuEnabled) {
+            addContextMenuItem(action, index);
+            updateContextMenu();
+        }
+    }
+
+    protected void addContextMenuItem(Action action, int index) {
+        GridMenuItemActionWrapper<T> wrapper = createContextMenuItemComponent();
+        GridMenuItem<T> menuItem = getContextMenu().addItemAtIndex(index, wrapper);
+
+        wrapper.setMenuItem(menuItem);
+        wrapper.setAction(action);
+
+        actionBinding.put(action, wrapper);
+    }
+
+    protected GridMenuItemActionWrapper<T> createContextMenuItemComponent() {
+        return new GridMenuItemActionWrapper<>();
+    }
+
+    protected JmixGridContextMenu<T> getContextMenu() {
+        if (contextMenu == null) {
+            initContextMenu();
+        }
+        return contextMenu;
     }
 
     protected void initContextMenu() {
@@ -45,43 +72,8 @@ public class GridActionsSupport<C extends Grid<T>, T> {
         contextMenu.setVisible(false);
     }
 
-    public void addAction(Action action) {
-        addAction(action, actions.size());
-    }
-
-    public void addAction(Action action, int index) {
-        Preconditions.checkNotNull(action, "Action cannot be null");
-
-        addActionInternal(action, index);
-    }
-
-    protected void addActionInternal(Action action, int index) {
-        int oldIndex = findActionIndexById(actions, action.getId());
-        if (oldIndex >= 0) {
-            removeActionInternal(actions.get(oldIndex));
-            if (index > oldIndex) {
-                index--;
-            }
-        }
-
-        actions.add(index, action);
-
-        addContextMenuItem(action, index);
-        updateContextMenu();
-    }
-
-    protected void addContextMenuItem(Action action, int index) {
-        String text = action.getText();
-
-        GridMenuItem<T> menuItem = contextMenu.addItemAtIndex(index, text);
-
-        GridMenuItemActionWrapper<T> wrapper = new GridMenuItemActionWrapper<>(menuItem);
-        wrapper.setAction(action);
-
-        actionBinding.put(action, wrapper);
-    }
-
     protected void updateContextMenu() {
+        JmixGridContextMenu<T> contextMenu = getContextMenu();
         boolean empty = contextMenu.getItems().isEmpty();
         boolean visible = contextMenu.isVisible();
 
@@ -95,34 +87,40 @@ public class GridActionsSupport<C extends Grid<T>, T> {
         }
     }
 
-    public void removeAction(Action action) {
-        Preconditions.checkNotNull(action, "Action cannot be null");
+    @Override
+    protected boolean removeActionInternal(Action action) {
+        if (super.removeActionInternal(action)) {
+            if (showActionsInContextMenuEnabled) {
+                removeContextMenuItem(action);
+                updateContextMenu();
+            }
 
-        removeActionInternal(action);
-    }
-
-    protected void removeActionInternal(Action action) {
-        if (actions.remove(action)) {
-            removeContextMenuItem(action);
-            updateContextMenu();
+            return true;
         }
+
+        return false;
     }
 
     protected void removeContextMenuItem(Action action) {
         GridMenuItemActionWrapper<T> item = actionBinding.remove(action);
         item.setAction(null);
 
-        contextMenu.remove(item.getMenuItem());
+        getContextMenu().remove(item.getMenuItem());
     }
 
-    public Optional<Action> getAction(String id) {
-        return getActions().stream()
-                .filter(action ->
-                        Objects.equals(action.getId(), id))
-                .findFirst();
+    /**
+     * @return true if actions are showed in grid context menu, false otherwise
+     */
+    public boolean isShowActionsInContextMenuEnabled() {
+        return showActionsInContextMenuEnabled;
     }
 
-    public Collection<Action> getActions() {
-        return Collections.unmodifiableList(actions);
+    /**
+     * Sets whether to show actions in grid context menu.
+     *
+     * @param showActionsInContextMenuEnabled true if actions should be showed to context menu, false otherwise
+     */
+    public void setShowActionsInContextMenuEnabled(boolean showActionsInContextMenuEnabled) {
+        this.showActionsInContextMenuEnabled = showActionsInContextMenuEnabled;
     }
 }

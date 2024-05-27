@@ -640,6 +640,11 @@ public class DataContextImpl implements DataContextInternal {
 
     @Override
     public EntitySet save() {
+        return save(true);
+    }
+
+    @Override
+    public EntitySet save(boolean reloadSaved) {
         PreSaveEvent preSaveEvent = new PreSaveEvent(this, modifiedInstances, removedInstances);
         events.publish(PreSaveEvent.class, preSaveEvent);
         if (preSaveEvent.isSavePrevented())
@@ -647,13 +652,17 @@ public class DataContextImpl implements DataContextInternal {
 
         EntitySet savedAndMerged;
         try {
-            Set<Object> saved = performSave();
-            savedAndMerged = mergeSaved(saved);
+            Set<Object> saved = performSave(reloadSaved);
+            if (reloadSaved) {
+                savedAndMerged = mergeSaved(saved);
+            } else {
+                savedAndMerged = EntitySet.of(Collections.emptySet());
+            }
         } finally {
             nullIdEntitiesMap.clear();
         }
 
-        events.publish(PostSaveEvent.class, new PostSaveEvent(this, savedAndMerged));
+        events.publish(PostSaveEvent.class, new PostSaveEvent(this, savedAndMerged, reloadSaved));
 
         modifiedInstances.clear();
         removedInstances.clear();
@@ -681,21 +690,22 @@ public class DataContextImpl implements DataContextInternal {
         this.saveDelegate = delegate;
     }
 
-    protected Set<Object> performSave() {
+    protected Set<Object> performSave(boolean reloadSaved) {
         if (!hasChanges())
             return Collections.emptySet();
 
         if (parentContext == null) {
-            return saveToDataManager();
+            return saveToDataManager(reloadSaved);
         } else {
             return saveToParentContext();
         }
     }
 
-    protected Set<Object> saveToDataManager() {
+    protected Set<Object> saveToDataManager(boolean reloadSaved) {
         SaveContext saveContext = new SaveContext()
                 .saving(isolate(filterSavedInstances(modifiedInstances)))
-                .removing(isolate(filterSavedInstances(removedInstances)));
+                .removing(isolate(filterSavedInstances(removedInstances)))
+                .setDiscardSaved(!reloadSaved);
 
         entityReferencesNormalizer.updateReferences(saveContext.getEntitiesToSave());
         updateFetchPlans(saveContext);

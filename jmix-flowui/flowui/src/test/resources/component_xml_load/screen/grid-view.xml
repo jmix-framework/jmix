@@ -56,7 +56,7 @@
                   width="100px"
 
                   dataContainer="ordersDc">
-            <columns includeAll="true" exclude="number, amount, date">
+            <columns includeAll="true" exclude="number, amount, date, description">
             </columns>
         </dataGrid>
 
@@ -90,6 +90,38 @@
             </columns>
         </dataGrid>
 
+        <dataGrid id="dataGridWithCustomContextMenu" dataContainer="ordersDc">
+            <columns>
+                <column property="date"/>
+            </columns>
+            <actions showInContextMenuEnabled="false">
+                <action id="gridAction"/>
+            </actions>
+            <contextMenu id="contextMenu"
+                         classNames="cssClassName1, cssClassName2"
+                         css="color:red"
+                         enabled="true"
+                         visible="false">
+                <item id="menu1"
+                      visible="true"
+                      enabled="true"
+                      css="color:blue"
+                      classNames="cssClassName3, cssClassName4"
+                      text="Menu 1"
+                      icon="ABACUS"
+                      whiteSpace="NOWRAP">
+                    <item id="item1"
+                          text="Item 1"/>
+                    <separator/>
+                    <item id="item2"
+                          text="Item 2"/>
+                </item>
+                <separator/>
+                <item id="item3"
+                      text="Item 3"/>
+            </contextMenu>
+        </dataGrid>
+
         <treeDataGrid id="treeDataGrid"
                       aggregatable="true"
                       aggregationPosition="BOTTOM"
@@ -118,7 +150,7 @@
                       width="100px"
 
                       dataContainer="ordersDc" hierarchyProperty="number">
-            <columns includeAll="true" exclude="number, amount, date">
+            <columns includeAll="true" exclude="number, amount, date, description">
             </columns>
         </treeDataGrid>
 
@@ -150,6 +182,38 @@
                 <column property="number"/>
                 <column property="amount"/>
             </columns>
+        </treeDataGrid>
+
+        <treeDataGrid id="treeDataGridWithCustomContextMenu" dataContainer="ordersDc" hierarchyProperty="number">
+            <columns>
+                <column property="amount"/>
+            </columns>
+            <actions showInContextMenuEnabled="false">
+                <action id="gridAction"/>
+            </actions>
+            <contextMenu id="contextMenu"
+                         classNames="cssClassName1, cssClassName2"
+                         css="color:red"
+                         enabled="true"
+                         visible="false">
+                <item id="menu1"
+                      visible="true"
+                      enabled="true"
+                      css="color:blue"
+                      classNames="cssClassName3, cssClassName4"
+                      text="Menu 1"
+                      icon="ABACUS"
+                      whiteSpace="NOWRAP">
+                    <item id="item1"
+                          text="Item 1"/>
+                    <separator/>
+                    <item id="item2"
+                          text="Item 2"/>
+                </item>
+                <separator/>
+                <item id="item3"
+                      text="Item 3"/>
+            </contextMenu>
         </treeDataGrid>
     </layout>
 </view>

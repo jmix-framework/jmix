@@ -25,8 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
+import test_support.base.TestBaseConfiguration
 
-@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAddon1Configuration])
 class JmixModulesClasspathScannerMultiConfigTest extends Specification {
 
     @Autowired

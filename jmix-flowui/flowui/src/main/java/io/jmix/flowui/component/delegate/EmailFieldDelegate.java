@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 @Component("flowui_EmailFieldDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class EmailFieldDelegate<C extends EmailField> extends TextInputFieldDelegate<C, String> {
+public class EmailFieldDelegate<C extends EmailField> extends AbstractTextInputFieldDelegate<C, String> {
 
     public EmailFieldDelegate(C component) {
         super(component);

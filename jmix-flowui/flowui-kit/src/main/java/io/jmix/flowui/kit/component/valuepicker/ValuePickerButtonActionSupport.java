@@ -19,8 +19,8 @@ package io.jmix.flowui.kit.component.valuepicker;
 import com.google.common.base.Strings;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
-
 import jakarta.annotation.Nullable;
+
 import java.util.Objects;
 
 public class ValuePickerButtonActionSupport {
@@ -49,7 +49,6 @@ public class ValuePickerButtonActionSupport {
             button.setTitle(generateTitle(action));
             button.setEnabled(action.isEnabled());
             button.setVisible(action.isVisible());
-            button.setShortcutCombination(action.getShortcutCombination());
             button.setIcon(action.getIcon());
 
             registration = button.addClickListener(event -> action.actionPerform(event.getSource()));
@@ -80,7 +79,7 @@ public class ValuePickerButtonActionSupport {
         return action.addPropertyChangeListener(event -> {
             String propertyName = event.getPropertyName();
             switch (propertyName) {
-                case Action.PROP_TEXT:
+                case Action.PROP_TEXT, Action.PROP_SHORTCUT_COMBINATION:
                     button.setTitle(generateTitle(action));
                     break;
                 case Action.PROP_ENABLED:
@@ -91,10 +90,6 @@ public class ValuePickerButtonActionSupport {
                     break;
                 case Action.PROP_ICON:
                     button.setIcon(action.getIcon());
-                    break;
-                case Action.PROP_SHORTCUT_COMBINATION:
-                    button.setShortcutCombination(action.getShortcutCombination());
-                    button.setTitle(generateTitle(action));
                     break;
                 default:
             }

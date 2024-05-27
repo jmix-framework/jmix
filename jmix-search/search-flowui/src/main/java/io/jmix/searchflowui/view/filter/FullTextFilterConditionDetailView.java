@@ -55,23 +55,37 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        Collection<SearchStrategy> searchStrategies = searchStrategyManager.getAllSearchStrategies();
-        List<String> searchStrategyNames = searchStrategies.stream()
-                .map(SearchStrategy::getName)
-                .collect(Collectors.toList());
-        searchStrategyNameField.setItems(searchStrategyNames);
-        if (Strings.isNullOrEmpty(getEditedEntity().getLabel())) {
-            getEditedEntity().setLabel(messageBundle.getMessage("defaultLabel"));
-        }
+        initSearchStrategyNameItems();
+        initLabel();
+
+        generateRandomParameterName();
     }
 
     @Subscribe("parameterNameValuePicker.generateRandomParameterName")
     protected void onParameterNameValuePickerGenerateActionPerformed(ActionPerformedEvent event) {
-        getEditedEntity().setParameterName(FullTextFilterUtils.generateParameterName());
+        generateRandomParameterName();
     }
 
     @Subscribe
     protected void onBeforeSave(BeforeSaveEvent event) {
         getEditedEntity().setLocalizedLabel(getEditedEntity().getLabel());
+    }
+
+    private void initLabel() {
+        if (Strings.isNullOrEmpty(getEditedEntity().getLabel())) {
+            getEditedEntity().setLabel(messageBundle.getMessage("defaultLabel"));
+        }
+    }
+
+    private void initSearchStrategyNameItems() {
+        Collection<SearchStrategy> searchStrategies = searchStrategyManager.getAllSearchStrategies();
+        List<String> searchStrategyNames = searchStrategies.stream()
+                .map(SearchStrategy::getName)
+                .collect(Collectors.toList());
+        searchStrategyNameField.setItems(searchStrategyNames);
+    }
+
+    private void generateRandomParameterName() {
+        getEditedEntity().setParameterName(FullTextFilterUtils.generateParameterName());
     }
 }

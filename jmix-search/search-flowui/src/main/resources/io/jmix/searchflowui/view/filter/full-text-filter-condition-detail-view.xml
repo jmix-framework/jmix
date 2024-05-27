@@ -40,9 +40,9 @@
     <layout>
         <formLayout id="form" dataContainer="filterConditionDc">
             <textField id="captionField" property="label" required="true"/>
-            <comboBox id="searchStrategyNameField" property="searchStrategyName">
-                <tooltip text="msg://searchStrategyNameFieldContextHelp"/>
-            </comboBox>
+            <comboBox id="searchStrategyNameField"
+                      property="searchStrategyName"
+                      helperText="msg://searchStrategyNameFieldContextHelp"/>
             <valuePicker id="parameterNameValuePicker"
                          allowCustomValue="true"
                          required="true"

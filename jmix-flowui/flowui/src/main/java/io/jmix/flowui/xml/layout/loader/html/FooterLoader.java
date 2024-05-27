@@ -24,4 +24,11 @@ public class FooterLoader extends AbstractHtmlContainerLoader<Footer> {
     protected Footer createComponent() {
         return factory.create(Footer.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

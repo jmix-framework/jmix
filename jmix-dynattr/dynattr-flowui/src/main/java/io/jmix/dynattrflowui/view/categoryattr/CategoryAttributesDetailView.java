@@ -16,14 +16,12 @@
 
 package io.jmix.dynattrflowui.view.categoryattr;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -53,6 +51,7 @@ import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.utils.DataProviderUtils;
+import io.jmix.dynattr.utils.DynAttrStringUtils;
 import io.jmix.dynattrflowui.utils.DynAttrUiHelper;
 import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.*;
@@ -85,7 +84,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static io.jmix.dynattr.AttributeType.*;
 import static io.jmix.dynattr.OptionsLoaderType.*;
@@ -119,18 +120,15 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         FIELDS_VISIBLE_FOR_TYPES.put(STRING, "defaultStringField");
         FIELDS_VISIBLE_FOR_TYPES.put(STRING, "lookupField");
         FIELDS_VISIBLE_FOR_TYPES.put(STRING, "isCollectionField");
-        FIELDS_VISIBLE_FOR_TYPES.put(STRING, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(STRING, "rowsCountField");
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "defaultDoubleField");
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "minDoubleField");
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "maxDoubleField");
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "lookupField");
         FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "isCollectionField");
-        FIELDS_VISIBLE_FOR_TYPES.put(DOUBLE, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "defaultDecimalField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "minDecimalField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "maxDecimalField");
-        FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "numberFormatPatternField");
         FIELDS_VISIBLE_FOR_TYPES.put(DECIMAL, "lookupField");
@@ -139,27 +137,22 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "maxIntField");
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "lookupField");
         FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "isCollectionField");
-        FIELDS_VISIBLE_FOR_TYPES.put(INTEGER, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE, "defaultDateField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE, "defaultDateIsCurrentField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE, "isCollectionField");
-        FIELDS_VISIBLE_FOR_TYPES.put(DATE, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "defaultDateWithoutTimeField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "defaultDateIsCurrentField");
-        FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "enumerationBox");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "enumerationField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "editEnumerationBtn");
-        FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "defaultStringField");
-        FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "widthField");
+        FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "defaultEnumField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "entityClassField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "screenField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "lookupField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "defaultEntityIdField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "isCollectionField");
-        FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "widthField");
     }
 
     @Autowired
@@ -226,6 +219,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     @ViewComponent
     protected JmixComboBox<Boolean> defaultBooleanField;
     @ViewComponent
+    protected JmixComboBox<String> defaultEnumField;
+    @ViewComponent
     protected JmixComboBox<OptionsLoaderType> optionsLoaderTypeField;
     @ViewComponent
     protected JmixValuePicker<Object> defaultEntityIdField;
@@ -261,19 +256,17 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected CollectionLoader<TargetViewComponent> targetScreensDl;
     @ViewComponent
     protected InstanceContainer<CategoryAttribute> categoryAttributeDc;
-
+    protected AttributeLocalizationComponent localizationFragment;
+    protected List<TargetViewComponent> targetScreens = new ArrayList<>();
     @ViewComponent("dependsOnAttributesField.clear")
     private ValueClearAction<String> dependsOnAttributesFieldClear;
     @ViewComponent("dependsOnAttributesField.select")
     private MultiValueSelectAction<String> dependsOnAttributesFieldSelect;
     @ViewComponent
     private JmixButton editEnumerationBtn;
-
-    protected AttributeLocalizationComponent localizationFragment;
-
-    protected List<TargetViewComponent> targetScreens = new ArrayList<>();
-
     private boolean isRefreshing = false;
+
+    private final List<String> defaultEnumValues = new ArrayList<>();
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -282,12 +275,37 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         initViewGrid();
     }
 
+    private void initDefaultEnumField() {
+        defaultEnumValues.addAll(getEnumValues());
+        defaultEnumField.setItems(defaultEnumValues);
+        defaultEnumField.addValueChangeListener(e -> getEditedEntity().setDefaultString(e.getValue()));
+        if (StringUtils.isNotBlank(getEditedEntity().getDefaultString())) {
+            defaultEnumField.setValue(getEditedEntity().getDefaultString());
+        }
+
+        if (!StringUtils.isBlank(categoryAttributeDc.getItem().getDefaultString())) {
+            defaultEnumField.getDataProvider().refreshAll();
+            defaultEnumField.setValue(categoryAttributeDc.getItem().getDefaultString());
+        }
+    }
+
+    protected List<String> getEnumValues() {
+        if (StringUtils.isBlank(categoryAttributeDc.getItem().getEnumeration())) {
+            return List.of();
+        }
+        Spliterator<String> enumSpliterator = Splitter.on(",")
+                .omitEmptyStrings()
+                .split(categoryAttributeDc.getItem().getEnumeration())
+                .spliterator();
+        return StreamSupport.stream(enumSpliterator, false).toList();
+    }
+
     @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
+        initDefaultEnumField();
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
         initDependsOnAttributesField();
-
 
         setupNumberFormat();
         if (!isRefreshing) {
@@ -310,6 +328,34 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         tabSheet.addSelectedChangeListener(e -> refreshOnce());
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
+    }
+
+    @Install(to = "nameField", subject = "validator")
+    protected void nameFieldUniqueNameValidator(String value) {
+        validateUniqueStringOnAttribute(value, CategoryAttribute::getName, "notUniqueAttributeName");
+    }
+
+    @Install(to = "codeField", subject = "validator")
+    protected void codeFieldUniqueNameValidator(String value) {
+        validateUniqueStringOnAttribute(value, CategoryAttribute::getCode, "notUniqueAttributeCode");
+    }
+
+    protected void validateUniqueStringOnAttribute(String value,
+                                                   Function<CategoryAttribute, String> mapper,
+                                                   String messageKey) {
+        if(categoryAttributeDc.getItem().getCategory() == null ||
+                categoryAttributeDc.getItem().getCategory().getCategoryAttrs() == null) {
+            return;
+        }
+        List<CategoryAttribute> attributes = categoryAttributeDc.getItem()
+                .getCategory()
+                .getCategoryAttrs();
+        if (attributes.stream()
+                .filter(item -> !Objects.equals(categoryAttributeDc.getItem(), item))
+                .map(mapper)
+                .anyMatch(attrName -> Objects.equals(attrName, value))) {
+            throw new ValidationException(messages.getMessage(getClass(), messageKey));
+        }
     }
 
     @Subscribe("defaultEntityIdField")
@@ -350,7 +396,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         }
     }
 
-    private void refreshOnce() {
+    protected void refreshOnce() {
         if (!isRefreshing) {
             isRefreshing = true;
             refreshAttributesUI();
@@ -368,6 +414,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                         AttributeEnumerationDetailView screen = afterCloseEvent.getSource().getView();
                         getEditedEntity().setEnumeration(screen.getEnumeration());
                         getEditedEntity().setEnumerationLocales(screen.getEnumerationLocales());
+
+                        defaultEnumValues.clear();
+                        defaultEnumValues.addAll(getEnumValues());
+                        clearEnumValueIfCurrentItemAbsentOnEnum();
+                        defaultEnumField.getDataProvider().refreshAll();
                     }
                 })
                 .build();
@@ -375,6 +426,12 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         enumerationScreen.getView().setEnumeration(getEditedEntity().getEnumeration());
         enumerationScreen.getView().setEnumerationLocales(getEditedEntity().getEnumerationLocales());
         enumerationScreen.open();
+    }
+
+    private void clearEnumValueIfCurrentItemAbsentOnEnum() {
+        if (!defaultEnumValues.contains(defaultEnumField.getValue())) {
+            defaultEnumField.clear();
+        }
     }
 
     @Install(to = "targetScreensDl", target = Target.DATA_LOADER)
@@ -494,6 +551,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
                 recalculationScriptField,
                 dynAttrUiHelper.createHelperButton(
                         messages.getMessage(CategoryAttributesDetailView.class, "recalculationScriptHelp")));
+        String joinHelperMessage = messages.getMessage(CategoryAttributesDetailView.class, "joinHelperText");
+        joinClauseField.setHelperComponent(new Html(joinHelperMessage));
     }
 
     protected void loadTargetViews() {
@@ -852,7 +911,16 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             if (attribute.getCategory() != null) {
                 categoryName = StringUtils.defaultString(attribute.getCategory().getName());
             }
-            codeField.setValue(StringUtils.deleteWhitespace(categoryName + attribute.getName()));
+            char[] delimiters = {' ', '.', '_', '-', '\t'};
+
+            String categoryNameInCamelCaseUncapitalized = DynAttrStringUtils.toCamelCase(categoryName, delimiters);
+            String attributeNameInCamelCaseUncapitalized = DynAttrStringUtils.toCamelCase(attribute.getName(), delimiters);
+
+            String resultCodeName = !Strings.isNullOrEmpty(categoryNameInCamelCaseUncapitalized) ?
+                    categoryNameInCamelCaseUncapitalized + StringUtils.capitalize(attributeNameInCamelCaseUncapitalized) :
+                    attributeNameInCamelCaseUncapitalized;
+
+            codeField.setValue(resultCodeName);
         }
     }
 
@@ -878,6 +946,9 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
             if (!metadataTools.isSystemLevel(metaClass)) {
                 if (metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
+                    continue;
+                }
+                if(!Stores.isMain(metaClass.getStore().getName())) {
                     continue;
                 }
                 optionsMap.put(metaClass.getJavaClass().getName(), messageTools.getDetailedEntityCaption(metaClass));

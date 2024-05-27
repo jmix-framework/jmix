@@ -19,6 +19,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.data.grid.EmptyDataGridItems;
+import org.dom4j.Element;
 
 public class DataGridLoader extends AbstractGridLoader<DataGrid<?>> {
 
@@ -35,5 +36,21 @@ public class DataGridLoader extends AbstractGridLoader<DataGrid<?>> {
         } else if (holder.getMetaClass() != null) {
             resultComponent.setItems(new EmptyDataGridItems(holder.getMetaClass()));
         }
+    }
+
+    @Override
+    protected void loadActions() {
+        loadActionsAttributes();
+        super.loadActions();
+    }
+
+    protected void loadActionsAttributes() {
+        Element actions = element.element("actions");
+        if (actions == null) {
+            return;
+        }
+
+        loaderSupport.loadBoolean(actions, "showInContextMenuEnabled",
+                resultComponent.getActionsSupport()::setShowActionsInContextMenuEnabled);
     }
 }

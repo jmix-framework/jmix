@@ -34,90 +34,93 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout>
-        <formLayout id="form" dataContainer="roleModelDc">
-            <textField id="nameField" property="name"/>
-            <textField id="codeField" property="code" readOnly="true"/>
-            <textArea id="descriptionField" property="description" height="9.5em"/>
-            <textField id="sourceField" property="source" readOnly="true"/>
-        </formLayout>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="contentBox">
+        <vbox id="contentBox" classNames="overflow-auto" expand="tabSheet">
+            <formLayout id="form" dataContainer="roleModelDc">
+                <textField id="nameField" property="name"/>
+                <textField id="codeField" property="code" readOnly="true"/>
+                <textArea id="descriptionField" property="description" height="9.5em"/>
+                <textField id="sourceField" property="source" readOnly="true"/>
+            </formLayout>
 
-        <tabs id="tabs" width="100%">
-            <tab id="rowLevelPoliciesTab"
-                 label="msg://io.jmix.securityflowui.model/RowLevelRoleModel.rowLevelPolicies"/>
-            <tab id="childRolesTab"
-                 label="msg://io.jmix.securityflowui.model/RowLevelRoleModel.childRoles"/>
-        </tabs>
-
-        <vbox id="rowLevelPoliciesWrapper" width="100%" padding="false">
-            <hbox id="rowLevelPoliciesButtonsPanel" classNames="buttons-panel">
-                <button action="rowLevelPoliciesTable.create"/>
-                <button action="rowLevelPoliciesTable.edit"/>
-                <button action="rowLevelPoliciesTable.read"/>
-                <button action="rowLevelPoliciesTable.remove"/>
-            </hbox>
-            <dataGrid id="rowLevelPoliciesTable"
-                      dataContainer="rowLevelPoliciesDc"
-                      selectionMode="MULTI"
-                      columnReorderingAllowed="true"
-                      minHeight="20em"
-                      width="100%">
-                <actions>
-                    <action id="create" type="list_create">
-                        <properties>
-                            <property name="openMode" value="DIALOG"/>
-                        </properties>
-                    </action>
-                    <action id="edit" type="list_edit">
-                        <properties>
-                            <property name="openMode" value="DIALOG"/>
-                        </properties>
-                    </action>
-                    <action id="read" type="list_read">
-                        <properties>
-                            <property name="openMode" value="DIALOG"/>
-                        </properties>
-                    </action>
-                    <action id="remove" type="list_remove"/>
-                </actions>
-                <columns resizable="true">
-                    <column property="type"/>
-                    <column property="action"/>
-                    <column property="entityName"/>
-                    <column property="whereClause"/>
-                    <column property="joinClause"/>
-                </columns>
-            </dataGrid>
+            <tabSheet id="tabSheet" width="100%" minHeight="30em">
+                <tab id="rowLevelPoliciesTab"
+                     label="msg://io.jmix.securityflowui.model/RowLevelRoleModel.rowLevelPolicies">
+                    <vbox id="rowLevelPoliciesWrapper" padding="false" height="100%">
+                        <hbox id="rowLevelPoliciesButtonsPanel" classNames="buttons-panel">
+                            <button action="rowLevelPoliciesTable.create"/>
+                            <button action="rowLevelPoliciesTable.edit"/>
+                            <button action="rowLevelPoliciesTable.read"/>
+                            <button action="rowLevelPoliciesTable.remove"/>
+                        </hbox>
+                        <dataGrid id="rowLevelPoliciesTable"
+                                  dataContainer="rowLevelPoliciesDc"
+                                  selectionMode="MULTI"
+                                  columnReorderingAllowed="true"
+                                  width="100%">
+                            <actions>
+                                <action id="create" type="list_create">
+                                    <properties>
+                                        <property name="openMode" value="DIALOG"/>
+                                    </properties>
+                                </action>
+                                <action id="edit" type="list_edit">
+                                    <properties>
+                                        <property name="openMode" value="DIALOG"/>
+                                    </properties>
+                                </action>
+                                <action id="read" type="list_read">
+                                    <properties>
+                                        <property name="openMode" value="DIALOG"/>
+                                    </properties>
+                                </action>
+                                <action id="remove" type="list_remove"/>
+                            </actions>
+                            <columns resizable="true">
+                                <column property="type"/>
+                                <column property="action"/>
+                                <column property="entityName"/>
+                                <column property="whereClause" flexGrow="2"/>
+                                <column property="joinClause" flexGrow="2"/>
+                            </columns>
+                        </dataGrid>
+                    </vbox>
+                </tab>
+                <tab id="childRolesTab"
+                     label="msg://io.jmix.securityflowui.model/RowLevelRoleModel.childRoles">
+                    <vbox id="childRolesWrapper" padding="false" height="100%">
+                        <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
+                            <button action="childRolesTable.add"/>
+                            <button action="childRolesTable.remove"/>
+                        </hbox>
+                        <dataGrid id="childRolesTable"
+                                  dataContainer="childRolesDc"
+                                  selectionMode="MULTI"
+                                  columnReorderingAllowed="true"
+                                  width="100%">
+                            <actions>
+                                <action id="add" type="list_add"/>
+                                <action id="remove" type="list_remove">
+                                    <properties>
+                                        <property name="confirmation" value="false"/>
+                                    </properties>
+                                </action>
+                            </actions>
+                            <columns resizable="true">
+                                <column property="name" flexGrow="2"/>
+                                <column property="code"/>
+                                <column property="source"/>
+                            </columns>
+                        </dataGrid>
+                    </vbox>
+                </tab>
+            </tabSheet>
         </vbox>
 
-        <vbox id="childRolesWrapper" width="100%" padding="false" visible="false">
-            <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
-                <button action="childRolesTable.add"/>
-                <button action="childRolesTable.remove"/>
-            </hbox>
-            <dataGrid id="childRolesTable"
-                      dataContainer="childRolesDc"
-                      selectionMode="MULTI"
-                      minHeight="20em"
-                      columnReorderingAllowed="true"
-                      width="100%">
-                <actions>
-                    <action id="add" type="list_add"/>
-                    <action id="remove" type="list_remove">
-                        <properties>
-                            <property name="confirmation" value="false"/>
-                        </properties>
-                    </action>
-                </actions>
-                <columns resizable="true">
-                    <column property="name"/>
-                    <column property="code"/>
-                    <column property="source"/>
-                </columns>
-            </dataGrid>
-        </vbox>
-
-        <hbox id="detailActions">
+        <hbox id="detailActions"
+              classNames="px-m py-s bg-contrast-5">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>

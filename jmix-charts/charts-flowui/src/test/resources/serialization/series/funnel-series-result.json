@@ -1,0 +1,52 @@
+{
+  "series": [
+    {
+      "type": "funnel",
+      "id": "funnelId",
+      "name": "funnelName",
+      "colorBy": "series",
+      "min": 5,
+      "max": 105,
+      "minSize": "1%",
+      "maxSize": "150%",
+      "orient": "horizontal",
+      "sort": "descending",
+      "gap": 12,
+      "legendHoverLink": false,
+      "funnelAlign": "right",
+      "labelLine": {
+        "show": false,
+        "length": 12
+      },
+      "emphasis": {
+        "disabled": true,
+        "focus": "none",
+        "blurScope": "coordinateSystem"
+      },
+      "select": {
+        "disabled": false
+      },
+      "selectedMode": false,
+      "zlevel": 1,
+      "z": 2,
+      "left": "20%",
+      "top": "15%",
+      "right": "20%",
+      "bottom": "24%",
+      "width": "100%",
+      "height": "100%",
+      "seriesLayoutBy": "row",
+      "datasetIndex": 1,
+      "dataGroupId": "group",
+      "silent": false,
+      "animation": true,
+      "animationThreshold": 1501,
+      "animationDuration": 1500,
+      "animationEasing": "backOut",
+      "animationDelay": 15,
+      "animationDurationUpdate": 150,
+      "animationEasingUpdate": "cubicOut",
+      "animationDelayUpdate": 15
+    }
+  ]
+}

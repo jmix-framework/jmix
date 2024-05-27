@@ -266,14 +266,27 @@ class MiscDataRepositoriesTest extends DataSpec {
                 PageRequest.of(1, 3, Sort.by(Sort.Direction.DESC, "secondName"))
         )
 
+        Page<Employee> queryPage1 = employeeRepository.queryEmployeesByNameNotNullOrderByNameDesc(
+                PageRequest.of(1, 3, Sort.by(Sort.Direction.DESC, "secondName"))
+        )
+
         then:
         page1.numberOfElements == 3
         page1.toList()[0] == e3
         page1.toList()[1] == e2
         page1.toList()[2] == e1
 
+        /*queryPage1.numberOfElements == 3 // known issue: Explicitly specified sort overrides sort from query
+        queryPage1.toList()[0] == e3
+        queryPage1.toList()[1] == e2
+        queryPage1.toList()[2] == e1*/
+
         when: "mixed sort by Pageable 2"
         Page<Employee> page0 = employeeRepository.findEmployeesByNameNotNullOrderByNameDesc(
+                PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "lastName"))
+        )
+
+        Page<Employee> queryPage0 = employeeRepository.queryEmployeesByNameNotNullOrderByNameDesc(
                 PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "lastName"))
         )
 
@@ -282,6 +295,11 @@ class MiscDataRepositoriesTest extends DataSpec {
         page0.toList()[0] == e5
         page0.toList()[1] == e6
         page0.toList()[2] == e3
+
+        /*queryPage0.numberOfElements == 3 // known issue: Explicitly specified sort overrides sort from query
+        queryPage0.toList()[0] == e5
+        queryPage0.toList()[1] == e6
+        queryPage0.toList()[2] == e3*/
 
         cleanup:
         dataManager.remove(e1, e2, e3, e4, e5, e6)

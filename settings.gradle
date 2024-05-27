@@ -29,6 +29,10 @@ includeProject('awsfs-starter', 'jmix-awsfs/awsfs-starter')
 includeProject('bulkeditor', 'jmix-bulkeditor/bulkeditor')
 includeProject('bulkeditor-starter', 'jmix-bulkeditor/bulkeditor-starter')
 
+includeProject('charts-flowui', 'jmix-charts/charts-flowui')
+includeProject('charts-flowui-kit', 'jmix-charts/charts-flowui-kit')
+includeProject('charts-flowui-starter', 'jmix-charts/charts-flowui-starter')
+
 includeProject('core', 'jmix-core/core')
 includeProject('core-starter', 'jmix-core/core-starter')
 

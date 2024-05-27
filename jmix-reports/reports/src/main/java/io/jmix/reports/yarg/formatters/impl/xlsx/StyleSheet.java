@@ -16,16 +16,21 @@
 
 package io.jmix.reports.yarg.formatters.impl.xlsx;
 
+import jakarta.xml.bind.JAXBElement;
+import org.apache.commons.lang3.StringUtils;
 import org.xlsx4j.sml.*;
 
 import java.util.*;
 
 public class StyleSheet {
+    protected static final String BOLD_FONT_TAG_NAME = "b";
+    protected static final String ITALIC_FONT_TAG_NAME = "i";
 
     protected CTStylesheet ctStylesheet;
     protected Map<String, CellStyle> namedStyles = new HashMap<String, CellStyle>();
     protected List<CellXfs> cellXfsIndex = new ArrayList<CellXfs>();
     protected List<CellXfs> newCellXfs = new ArrayList<CellXfs>();
+    protected List<Font> fonts = new ArrayList<>();
 
     public StyleSheet(CTStylesheet ctStylesheet) {
         this.ctStylesheet = ctStylesheet;
@@ -55,8 +60,17 @@ public class StyleSheet {
                         xf.getFontId(),
                         xf.getFillId(),
                         xf.getBorderId());
+                if (xf.getAlignment() != null) {
+                    cellXfs.setIndent(xf.getAlignment().getIndent());
+                }
                 cellXfsIndex.add(cellXfs);
             }
+        }
+        CTFonts fonts = ctStylesheet.getFonts();
+        if (fonts != null && fonts.getFont() != null) {
+            this.fonts = fonts.getFont().stream()
+                    .map(this::createFont)
+                    .toList();
         }
     }
 
@@ -75,6 +89,10 @@ public class StyleSheet {
     public void addCellXfs(CellXfs cellXfs) {
         cellXfsIndex.add(cellXfs);
         newCellXfs.add(cellXfs);
+    }
+
+    public Font getFont(long fontId) {
+        return fonts.get((int) fontId);
     }
 
     public void saveStyle() {
@@ -104,6 +122,7 @@ public class StyleSheet {
         protected final Long fontId;
         protected final Long fillId;
         protected final Long borderId;
+        protected Long indent;
 
         public CellStyleXfs(Long numFmtId, Long fontId, Long fillId, Long borderId) {
             this.numFmtId = numFmtId;
@@ -126,6 +145,14 @@ public class StyleSheet {
 
         public Long getBorderId() {
             return borderId;
+        }
+
+        public Long getIndent() {
+            return indent;
+        }
+
+        public void setIndent(Long indent) {
+            this.indent = indent;
         }
 
         @Override
@@ -213,5 +240,89 @@ public class StyleSheet {
             result = 31 * result + (xfId != null ? xfId.hashCode() : 0);
             return result;
         }
+    }
+
+    public static class Font {
+        protected String name;
+        protected int family;
+        protected Double size;
+        protected boolean bold;
+        protected boolean italic;
+        protected boolean underline;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getFamily() {
+            return family;
+        }
+
+        public void setFamily(int family) {
+            this.family = family;
+        }
+
+        public Double getSize() {
+            return size;
+        }
+
+        public void setSize(Double size) {
+            this.size = size;
+        }
+
+        public boolean isBold() {
+            return bold;
+        }
+
+        public void setBold(boolean bold) {
+            this.bold = bold;
+        }
+
+        public boolean isItalic() {
+            return italic;
+        }
+
+        public void setItalic(boolean italic) {
+            this.italic = italic;
+        }
+
+        public boolean isUnderline() {
+            return underline;
+        }
+
+        public void setUnderline(boolean underline) {
+            this.underline = underline;
+        }
+    }
+
+    protected Font createFont(CTFont ctFont) {
+        Font font = new Font();
+        for (JAXBElement<?> jaxbElement : ctFont.getNameOrCharsetOrFamily()) {
+            Object jaxbElementValue = jaxbElement.getValue();
+            if (jaxbElementValue instanceof CTFontName fontName) {
+                font.setName(fontName.getVal());
+            } else if (jaxbElementValue instanceof CTFontFamily family) {
+                font.setFamily(family.getVal());
+            } else if (jaxbElementValue instanceof CTFontSize fontSize) {
+                font.setSize(fontSize.getVal());
+            } else if (jaxbElementValue instanceof CTBooleanProperty booleanProp) {
+                String localPart = jaxbElement.getName().getLocalPart();
+                boolean booleanValue = booleanProp.isVal();
+                if (StringUtils.equals(localPart, BOLD_FONT_TAG_NAME)) {
+                    font.setBold(booleanValue);
+                }
+                if (StringUtils.equals(localPart, ITALIC_FONT_TAG_NAME)) {
+                    font.setItalic(booleanValue);
+                }
+            } else if (jaxbElementValue instanceof CTUnderlineProperty ctUnderlineProp) {
+                STUnderlineValues underlineValue = ctUnderlineProp.getVal();
+                font.setUnderline(underlineValue != null && underlineValue != STUnderlineValues.NONE);
+            }
+        }
+        return font;
     }
 }

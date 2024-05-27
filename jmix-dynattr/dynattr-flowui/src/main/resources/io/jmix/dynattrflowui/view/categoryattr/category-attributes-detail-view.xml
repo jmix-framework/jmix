@@ -57,9 +57,11 @@
                                        requiredMessage="msg://nameField.required"/>
                             <textField id="codeField" property="code" required="true"
                                        requiredMessage="msg://codeField.required"/>
+
                             <comboBox id="dataTypeField" property="dataType" required="true"
                                       requiredMessage="msg://dataTypeField.required"/>
                             <textArea id="descriptionField" property="description" minHeight="7em"/>
+                            <checkbox id="isRequiredField" property="required" />
                         </formLayout>
                         <formLayout id="optionalAttributeForm" dataContainer="categoryAttributeDc"
                                     width="100%"
@@ -72,13 +74,7 @@
                                       requiredMessage="msg://entityClassField.required"/>
                             <comboBox id="screenField" label="msg://io.jmix.dynattr.model/CategoryAttribute.screen"
                                       required="true"
-                                      requiredMessage="msg://screenField.required"/>
-                            <textField id="widthField" property="width">
-                                <validators>
-                                    <regexp regexp="^(-?\d+(?:\.\d+)?)(%|px)?$"
-                                            message="msg://widthField.validationMessage"/>
-                                </validators>
-                            </textField>
+                                      requiredMessage="msg://viewField.required"/>
                             <textField id="rowsCountField" property="rowsCount">
                                 <validators>
                                     <min value="1" message="msg://rowsCountField.validationMessage"/>
@@ -107,6 +103,7 @@
                             <textField id="defaultDoubleField" property="defaultDouble"/>
                             <textField id="defaultDecimalField" property="defaultDecimal"/>
                             <comboBox id="defaultBooleanField" property="defaultBoolean"/>
+                            <comboBox id="defaultEnumField" label="msg://io.jmix.dynattr.model/CategoryAttribute.defaultString"/>
                             <dateTimePicker id="defaultDateField" property="defaultDate"/>
                             <datePicker id="defaultDateWithoutTimeField" property="defaultDateWithoutTime"/>
                             <textField id="numberFormatPatternField" property="configuration.numberFormatPattern"/>

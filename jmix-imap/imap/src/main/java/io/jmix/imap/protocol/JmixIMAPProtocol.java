@@ -16,13 +16,13 @@
 
 package io.jmix.imap.protocol;
 
-import com.sun.mail.iap.ProtocolException;
-import com.sun.mail.iap.Response;
-import com.sun.mail.imap.protocol.FetchItem;
-import com.sun.mail.imap.protocol.FetchResponse;
-import com.sun.mail.imap.protocol.IMAPProtocol;
-import com.sun.mail.imap.protocol.IMAPResponse;
-import com.sun.mail.util.MailLogger;
+import org.eclipse.angus.mail.iap.ProtocolException;
+import org.eclipse.angus.mail.iap.Response;
+import org.eclipse.angus.mail.imap.protocol.FetchItem;
+import org.eclipse.angus.mail.imap.protocol.FetchResponse;
+import org.eclipse.angus.mail.imap.protocol.IMAPProtocol;
+import org.eclipse.angus.mail.imap.protocol.IMAPResponse;
+import org.eclipse.angus.mail.util.MailLogger;
 
 import java.io.IOException;
 import java.util.Properties;

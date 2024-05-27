@@ -23,38 +23,12 @@ import io.jmix.flowui.kit.meta.*;
 public interface StudioHTMLComponents {
 
     @StudioComponent(
-            name = "Html",
-            classFqn = "com.vaadin.flow.component.Html",
-            category = "HTML",
-            xmlElement = "html",
-            availableChildren = @StudioAvailableChildrenInfo(
-                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
-                            qualifiedName = "content",
-                            maxCount = 1
-                    )
-            ),
-            properties = {
-                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "content", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "file", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER)
-            }
-    )
-    Div html();
-
-    @StudioComponent(
             name = "Anchor",
             classFqn = "com.vaadin.flow.component.html.Anchor",
             category = "HTML",
             xmlElement = "anchor",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -75,6 +49,7 @@ public interface StudioHTMLComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "target", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.html.AnchorTarget", defaultValue = "DEFAULT",
                             options = {"DEFAULT", "SELF", "BLANK", "PARENT", "TOP"}),
@@ -98,12 +73,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Article",
             category = "HTML",
             xmlElement = "article",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -134,12 +112,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Aside",
             category = "HTML",
             xmlElement = "aside",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -170,12 +151,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.DescriptionList",
             category = "HTML",
             xmlElement = "descriptionList",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -206,12 +190,22 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Div",
             category = "HTML",
             xmlElement = "div",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/div.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "hbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "vbox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "flexLayout"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "details"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -242,12 +236,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Emphasis",
             category = "HTML",
             xmlElement = "emphasis",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -278,12 +275,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Footer",
             category = "HTML",
             xmlElement = "footer",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -314,12 +314,24 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.H1",
             category = "HTML",
             xmlElement = "h1",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h6"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -341,7 +353,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H1 h1();
 
@@ -350,12 +368,24 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.H2",
             category = "HTML",
             xmlElement = "h2",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h6"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -377,7 +407,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H2 h2();
 
@@ -386,12 +422,24 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.H3",
             category = "HTML",
             xmlElement = "h3",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h6"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -413,7 +461,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H3 h3();
 
@@ -422,12 +476,24 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.H4",
             category = "HTML",
             xmlElement = "h4",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h6"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -449,7 +515,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H4 h4();
 
@@ -458,12 +530,24 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.H5",
             category = "HTML",
             xmlElement = "h5",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h6"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -485,7 +569,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H5 h5();
 
@@ -494,12 +584,24 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.H6",
             category = "HTML",
             xmlElement = "h6",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/h1-h6.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -521,7 +623,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     H6 h6();
 
@@ -530,12 +638,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Header",
             category = "HTML",
             xmlElement = "header",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -566,6 +677,8 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Hr",
             category = "HTML",
             xmlElement = "hr",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -593,12 +706,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.HtmlObject",
             category = "HTML",
             xmlElement = "htmlObject",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "data", type = StudioPropertyType.STRING),
@@ -611,6 +727,7 @@ public interface StudioHTMLComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
                             options = {"normal", "success", "error", "contrast", "primary", "small", "pill", "badge"}),
@@ -633,6 +750,7 @@ public interface StudioHTMLComponents {
             category = "HTML",
             icon = "io/jmix/flowui/kit/meta/icon/html/iFrame.svg",
             xmlElement = "iframe",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -676,6 +794,7 @@ public interface StudioHTMLComponents {
             category = "HTML",
             xmlElement = "image",
             icon = "io/jmix/flowui/kit/meta/icon/html/image.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/image.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -686,6 +805,7 @@ public interface StudioHTMLComponents {
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
@@ -727,6 +847,8 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Input",
             category = "HTML",
             xmlElement = "input",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -747,6 +869,7 @@ public interface StudioHTMLComponents {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.STRING,
                             options = {"button", "checkbox", "color", "date", "datetime-local", "file", "hidden",
                                     "image", "month", "number", "password", "radio", "range", "reset", "search",
@@ -768,12 +891,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.ListItem",
             category = "HTML",
             xmlElement = "listItem",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -804,6 +930,8 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Main",
             category = "HTML",
             xmlElement = "main",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -812,6 +940,7 @@ public interface StudioHTMLComponents {
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -842,6 +971,8 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Nav",
             category = "HTML",
             xmlElement = "nav",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -850,6 +981,7 @@ public interface StudioHTMLComponents {
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -880,12 +1012,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.OrderedList",
             category = "HTML",
             xmlElement = "orderedList",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -920,12 +1055,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Paragraph",
             category = "HTML",
             xmlElement = "p",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -956,6 +1094,8 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Param",
             category = "HTML",
             xmlElement = "param",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -985,12 +1125,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Pre",
             category = "HTML",
             xmlElement = "pre",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -1017,16 +1160,63 @@ public interface StudioHTMLComponents {
     Pre pre();
 
     @StudioComponent(
+            name = "RangeInput",
+            classFqn = "com.vaadin.flow.component.html.RangeInput",
+            category = "HTML",
+            xmlElement = "rangeInput",
+            icon = "io/jmix/flowui/kit/meta/icon/html/rangeInput.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.html.RangeInput$Orientation",
+                            defaultValue = "HORIZONTAL",
+                            options = {"HORIZONTAL", "VERTICAL"}),
+                    @StudioProperty(xmlAttribute = "step", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "valueChangeMode", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.data.value.ValueChangeMode",
+                            options = {"EAGER", "LAZY", "TIMEOUT", "ON_BLUR", "ON_CHANGE"}),
+                    @StudioProperty(xmlAttribute = "valueChangeTimeout", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    RangeInput rangeInput();
+
+    @StudioComponent(
             name = "Section",
             classFqn = "com.vaadin.flow.component.html.Section",
             category = "HTML",
             xmlElement = "section",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -1057,12 +1247,23 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.Span",
             category = "HTML",
             xmlElement = "span",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/span.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -1084,7 +1285,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     Span span();
 
@@ -1093,12 +1300,15 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.UnorderedList",
             category = "HTML",
             xmlElement = "unorderedList",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -1125,47 +1335,20 @@ public interface StudioHTMLComponents {
     UnorderedList unorderedList();
 
     @StudioComponent(
-            name = "Label",
-            classFqn = "com.vaadin.flow.component.html.Label",
-            category = "HTML",
-            xmlElement = "label",
-            properties = {
-                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "setFor", type = StudioPropertyType.COMPONENT_REF),
-                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
-                            options = {"normal", "success", "error", "contrast", "primary", "small", "pill", "badge"}),
-                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "whiteSpace", type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
-                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
-                                    "INITIAL"}),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
-    )
-    Label label();
-
-    @StudioComponent(
             name = "NativeLabel",
             classFqn = "com.vaadin.flow.component.html.NativeLabel",
             category = "HTML",
             xmlElement = "nativeLabel",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html-components/nativeLabel.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h1"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h2"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h3"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h4"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
+            }),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1194,7 +1377,13 @@ public interface StudioHTMLComponents {
                             options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
                                     "INITIAL"}),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
+            },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            )
     )
     NativeLabel nativeLabel();
 
@@ -1203,6 +1392,8 @@ public interface StudioHTMLComponents {
             classFqn = "com.vaadin.flow.component.html.NativeButton",
             category = "HTML",
             xmlElement = "nativeButton",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1211,6 +1402,7 @@ public interface StudioHTMLComponents {
                     @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -1222,6 +1414,7 @@ public interface StudioHTMLComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
                             options = {"normal", "success", "error", "contrast", "primary", "small", "pill"}),
@@ -1236,4 +1429,75 @@ public interface StudioHTMLComponents {
             }
     )
     NativeButton nativeButton();
+
+    @StudioComponent(
+            name = "Term",
+            classFqn = "com.vaadin.flow.component.html.DescriptionList.Term",
+            category = "HTML",
+            xmlElement = "term",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"normal", "success", "error", "contrast", "primary", "small", "pill", "badge"}),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "whiteSpace", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
+                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
+                                    "INITIAL"}),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    DescriptionList.Term term();
+
+    @StudioComponent(
+            name = "NativeDetails",
+            classFqn = "com.vaadin.flow.component.html.NativeDetails",
+            category = "HTML",
+            xmlElement = "nativeDetails",
+            icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "open", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "summaryText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    NativeDetails nativeDetails();
 }

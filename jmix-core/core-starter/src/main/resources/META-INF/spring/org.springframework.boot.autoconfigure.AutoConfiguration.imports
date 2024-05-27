@@ -1,1 +1,3 @@
 io.jmix.autoconfigure.core.CoreAutoConfiguration
+io.jmix.autoconfigure.core.cluster.ClusterApplicationEventChannelAutoConfiguration
+io.jmix.autoconfigure.core.cluster.LocalApplicationEventChannelAutoConfiguration

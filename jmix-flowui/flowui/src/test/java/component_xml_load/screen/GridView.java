@@ -39,6 +39,9 @@ public class GridView extends StandardView {
     public DataGrid<?> metaClassDataGrid;
 
     @ViewComponent
+    public DataGrid<?> dataGridWithCustomContextMenu;
+
+    @ViewComponent
     public TreeDataGrid<?> treeDataGrid;
 
     @ViewComponent
@@ -46,6 +49,9 @@ public class GridView extends StandardView {
 
     @ViewComponent
     public TreeDataGrid<?> metaClassTreeDataGrid;
+
+    @ViewComponent
+    public TreeDataGrid<?> treeDataGridWithCustomContextMenu;
 
     public void loadData() {
         getViewData().loadAll();

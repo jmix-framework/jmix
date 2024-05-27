@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.HasPlaceholder;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
@@ -61,7 +62,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @Component("flowui_ComponentLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -232,8 +237,31 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadInteger(element, "valueChangeTimeout", component::setValueChangeTimeout);
     }
 
+    /**
+     * Deprecated, use {@link ComponentLoaderSupport#loadFocusableAttributes(Focusable, Element)} instead
+     */
+    @Deprecated(since = "2.2", forRemoval = true)
     public void loadTabIndex(Focusable<?> component, Element element) {
         loaderSupport.loadInteger(element, "tabIndex", component::setTabIndex);
+    }
+
+    public void loadClickNotifierAttributes(ClickNotifier<?> component, Element element) {
+        loadShortcut(element, "clickShortcut")
+                .map(KeyCombination::create)
+                .ifPresent(keyCombination ->
+                        component.addClickShortcut(keyCombination.getKey(), keyCombination.getKeyModifiers()));
+    }
+
+    public void loadFocusableAttributes(Focusable<?> component, Element element) {
+        loaderSupport.loadInteger(element, "tabIndex", component::setTabIndex);
+        loadShortcut(element, "focusShortcut")
+                .map(KeyCombination::create)
+                .ifPresent(keyCombination ->
+                        component.addFocusShortcut(keyCombination.getKey(), keyCombination.getKeyModifiers()));
+    }
+
+    public void loadCss(com.vaadin.flow.component.Component component, Element element) {
+        loaderSupport.loadString(element, "css", css -> applyCss(css, component.getStyle()::set));
     }
 
     public void loadThemeNames(HasTheme component, Element element) {
@@ -458,6 +486,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                         component.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
     }
 
+    /**
+     * @deprecated {@link #loadDatePickerI18n(Element, Supplier<DatePicker.DatePickerI18n>)} instead
+     */
+    @Deprecated(since = "2.1.2", forRemoval = true)
     public void loadDatePickerI18n(Element element, Consumer<DatePicker.DatePickerI18n> setter) {
         DatePicker.DatePickerI18n datePickerI18n = new DatePicker.DatePickerI18n();
 
@@ -465,6 +497,13 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loadDateFormat(datePickerI18n, element);
 
         setter.accept(datePickerI18n);
+    }
+
+    public void loadDatePickerI18n(Element element, Supplier<DatePicker.DatePickerI18n> getter) {
+        DatePicker.DatePickerI18n datePickerI18n = getter.get();
+
+        loadFirstDayOfWeek(datePickerI18n, element);
+        loadDateFormat(datePickerI18n, element);
     }
 
     protected void loadDateFormat(DatePicker.DatePickerI18n datePickerI18n, Element element) {
@@ -626,5 +665,25 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                 }
             }
         }
+    }
+
+    protected void applyCss(String css, BiConsumer<String, String> setter) {
+        Arrays.stream(StringUtils.split(css, ';'))
+                .filter(StringUtils::isNotBlank)
+                .forEach(propertyStatement -> {
+                    int separatorIndex = propertyStatement.indexOf(':');
+                    if (separatorIndex < 0) {
+                        throw new GuiDevelopmentException("Incorrect CSS string: " + css, context);
+                    }
+
+                    String propertyName = trimToEmpty(propertyStatement.substring(0, separatorIndex));
+                    String propertyValue = trimToEmpty(propertyStatement.substring(separatorIndex + 1));
+
+                    if (StringUtils.isBlank(propertyName)) {
+                        throw new GuiDevelopmentException("Incorrect CSS string, empty property name: " + css, context);
+                    }
+
+                    setter.accept(propertyName, propertyValue);
+                });
     }
 }

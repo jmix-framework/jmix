@@ -1,8 +1,8 @@
 package query_conditions;
 
 import io.jmix.core.querycondition.Condition;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +40,7 @@ public class SampleRestCondition implements Condition {
 
     @Nullable
     @Override
-    public Condition actualize(Set<String> actualParameters) {
+    public Condition actualize(Set<String> actualParameters, boolean defaultSkipNullOrEmpty) {
         return actualParameters.containsAll(getParameters()) ? this : null;
     }
 

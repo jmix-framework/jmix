@@ -24,4 +24,11 @@ public class H3Loader extends AbstractHtmlContainerLoader<H3> {
     protected H3 createComponent() {
         return factory.create(H3.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

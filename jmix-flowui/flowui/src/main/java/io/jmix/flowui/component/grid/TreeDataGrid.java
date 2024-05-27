@@ -17,8 +17,11 @@
 package io.jmix.flowui.component.grid;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSelectionModel;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.selection.SelectionListener;
@@ -30,12 +33,16 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
+import io.jmix.flowui.component.SupportsEnterPress;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
 import io.jmix.flowui.data.grid.TreeDataGridItems;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
+import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -47,13 +54,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
-        EnhancedTreeDataGrid<E>, ApplicationContextAware, InitializingBean {
+        EnhancedTreeDataGrid<E>, SupportsEnterPress<TreeDataGrid<E>>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
     protected TreeGridDelegate<E, TreeDataGridItems<E>> gridDelegate;
+    protected JmixGridContextMenu<E> contextMenu;
 
     protected boolean editorCreated = false;
 
@@ -132,6 +141,36 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     @Override
     public Registration addSelectionListener(SelectionListener<Grid<E>, E> listener) {
         return gridDelegate.addSelectionListener(listener);
+    }
+
+    @Override
+    public Registration addItemDoubleClickListener(ComponentEventListener<ItemDoubleClickEvent<E>> listener) {
+        return gridDelegate.addItemDoubleClickListener(listener);
+    }
+
+    /**
+     * Sets code to execute when Enter key is pressed.
+     * <p>
+     * If such code is not set, this component responds to Enter press
+     * by attempting to find and execute the following actions:
+     * <ul>
+     *     <li>Action assigned to Enter key by setting its {@link KeyCombination}</li>
+     *     <li>{@link io.jmix.flowui.action.list.EditAction}</li>
+     *     <li>{@link io.jmix.flowui.action.list.ReadAction}</li>
+     * </ul>
+     * <p>
+     * If one of these actions is found and enabled, it is executed.
+     * <p>
+     * Note: if no explicit double click listeners are added, then the
+     * above rule is used to handle double clicks on this component.
+     *
+     * @param handler code to execute when Enter key is pressed
+     *                or {@code null} to remove previously set.
+     * @see com.vaadin.flow.component.treegrid.TreeGrid#addItemDoubleClickListener(ComponentEventListener)
+     */
+    @Override
+    public void setEnterPressHandler(@Nullable Consumer<SupportsEnterPress.EnterPressEvent<TreeDataGrid<E>>> handler) {
+        gridDelegate.setEnterPressHandler(handler);
     }
 
     @Override
@@ -374,10 +413,10 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         return new DataGridEditorImpl<>(this, applicationContext);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     @Override
     protected GridActionsSupport<JmixTreeGrid<E>, E> createActionsSupport() {
-        return new DataGridActionsSupport(this);
+        return applicationContext.getBean(DataGridActionsSupport.class, this);
     }
 
     protected void onAfterApplyColumnSecurity(AbstractGridDelegate.ColumnSecurityContext<E> context) {
@@ -385,5 +424,37 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
             // Remove column from component while GridDelegate stores this column
             super.removeColumn(context.getColumn());
         }
+    }
+
+    @Override
+    public JmixGridContextMenu<E> getContextMenu() {
+        if (contextMenu == null) {
+            contextMenu = new JmixGridContextMenu<>();
+            contextMenu.setTarget(this);
+        }
+        return contextMenu;
+    }
+
+    @Override
+    public GridContextMenu<E> addContextMenu() {
+        throw new UnsupportedOperationException(getClass().getSimpleName() +
+                " can have only one context menu attached, use getContextMenu() to retrieve it");
+    }
+
+    @Nullable
+    @Override
+    public Object getSubPart(String name) {
+        Object column = super.getSubPart(name);
+        if (column != null) {
+            return column;
+        }
+        if (contextMenu != null) {
+            if (UiComponentUtils.sameId(contextMenu, name)) {
+                return contextMenu;
+            } else {
+                return contextMenu.getSubPart(name);
+            }
+        }
+        return null;
     }
 }

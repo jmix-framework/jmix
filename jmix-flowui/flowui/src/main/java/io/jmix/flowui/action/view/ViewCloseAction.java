@@ -25,6 +25,7 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.StandardOutcome;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ActionType(ViewCloseAction.ID)
@@ -57,6 +58,15 @@ public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, 
     @Autowired
     protected void setUiViewProperties(UiViewProperties viewProperties) {
         this.shortcutCombination = KeyCombination.create(viewProperties.getCloseShortcut());
+    }
+
+    @Override
+    public void setShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+        if (shortcutCombination != null) {
+            shortcutCombination.setResetFocusOnActiveElement(true);
+        }
+
+        super.setShortcutCombination(shortcutCombination);
     }
 
     public void setOutcome(StandardOutcome outcome) {

@@ -23,8 +23,8 @@ class Field {
 def createTag(variable) {
     def field = new Field()
     field.tag = api.getTagByBpmField(variable)
-    def fieldAttrs = [id: variable.id,
-        label: variable.caption]
+    def fieldAttrs = [id: variable.id.concat('Field'),
+        label: messageKeys['variable.'.concat(variable.id)]]
 
     def datatype = variable.type.datatype
     if (datatype != null) {
@@ -60,6 +60,11 @@ def createTag(variable) {
                 def entity = api.findEntity(fqn)
                 if (entity != null) {
                     entityName = entity.getName()
+                } else if (fqn.lastIndexOf(".") > 0) {
+                    entity = api.findEntityByName(fqn.substring(fqn.lastIndexOf(".") + 1))
+                    entityName = entity.getName()
+                } else {
+                    entityName = fqn
                 }
             }
         }
@@ -80,12 +85,36 @@ def createTag(variable) {
     return field
 }
 
+def collectionAttributesTable = []
+def entityFormXml = ''
+if (formTemplate.name() == 'ENTITY') {
+    nestedCollectionDatasourceProperties.each { prop ->
+        def binding = [
+            'nestedDcProperty': prop,
+            'fetchPlan': detailFetchPlan]
+        def tableXml = api.processSnippet('collectionAttributeTable.xml', binding)
+        if (!binding['isError']) {
+            collectionAttributesTable << tableXml
+        }
+    }
+    entityFormXml = api.processSnippet('form.xml',
+        ['fetchPlan': detailFetchPlan,
+         'api': api,
+         'dcId': dcId,
+         'formId': 'form',
+         'asideLabelsPosition': false])
+}
 %>
-<formLayout>
+<%if (formTemplate.name() == 'ENTITY') {%>${entityFormXml}
+    <%collectionAttributesTable.each{table ->%>
+        ${table}
+    <%}%>
+<%}%>
+<%if (!variables.isEmpty()) {%><formLayout>
     <%variables.each { v ->
         def field = createTag(v)%>
         <${field.tag} ${field.printAttrs()}<%if(field.text == null) {%>/><% } else {%>>
         ${field.text}
     </${field.tag}><%}%>
     <%}%>
-</formLayout>
+</formLayout><%}%>

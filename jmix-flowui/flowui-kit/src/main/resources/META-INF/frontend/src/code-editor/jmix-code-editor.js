@@ -158,12 +158,21 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
 
         this._tooltipController = new TooltipController(this);
         this._tooltipController.setPosition('top');
+        this._tooltipController.setAriaTarget(this._editor);
         this.addController(this._tooltipController);
 
         this._editor.on('blur', () => {
             const customEvent = new CustomEvent('value-changed', {detail: {value: this._editor.getValue()}});
             this.dispatchEvent(customEvent);
+
+            this._setFocused(false);
         });
+
+        this.addEventListener('focus', (e) => {
+            this._setFocused(true);
+        });
+
+        this._setFocusElement(this._editor.textInput.getElement());
     }
 
     initApplicationThemeObserver() {

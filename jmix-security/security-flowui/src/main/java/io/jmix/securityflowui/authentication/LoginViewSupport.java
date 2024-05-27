@@ -26,7 +26,7 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
-import com.vaadin.flow.server.auth.ViewAccessChecker;
+import com.vaadin.flow.server.auth.NavigationAccessControl;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import io.jmix.core.AccessManager;
@@ -39,6 +39,7 @@ import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.app.main.StandardMainView;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.sys.AppCookies;
 import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import io.jmix.flowui.view.DetailView;
@@ -60,8 +61,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
@@ -109,6 +112,13 @@ public class LoginViewSupport {
     protected AppCookies cookies;
 
     private SessionAuthenticationStrategy authenticationStrategy;
+
+    private SecurityContextRepository securityContextRepository;
+
+    @Autowired
+    public void setSecurityContextRepository(SecurityContextRepository securityContextRepository) {
+        this.securityContextRepository = securityContextRepository;
+    }
 
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
@@ -220,6 +230,8 @@ public class LoginViewSupport {
         checkLoginToUi(authDetails, authentication);
 
         SecurityContextHelper.setAuthentication(authentication);
+        //since Spring Security 6 SecurityContext must be explicitly saved
+        securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
         rememberMeServices.loginSuccess(request, response, authentication);
 
         saveCookies(authDetails);
@@ -274,7 +286,7 @@ public class LoginViewSupport {
             return null;
         }
 
-        String redirectTarget = (String) session.getAttribute(ViewAccessChecker.SESSION_STORED_REDIRECT);
+        String redirectTarget = (String) session.getAttribute(NavigationAccessControl.SESSION_STORED_REDIRECT);
         if (redirectTarget != null) {
             return new Location(redirectTarget);
         }
@@ -317,18 +329,18 @@ public class LoginViewSupport {
 
     protected void navigateToMainView() {
         String mainViewId = uiProperties.getMainViewId();
-        viewNavigators.view(mainViewId)
+        viewNavigators.view(UiComponentUtils.getCurrentView(), mainViewId)
                 .navigate();
     }
 
     protected void navigateToDefaultView(String defaultViewId) {
         ViewInfo viewInfo = viewRegistry.getViewInfo(defaultViewId);
         if (DetailView.class.isAssignableFrom(viewInfo.getControllerClass())) {
-            viewNavigators.detailView(getEntityClass(viewInfo))
+            viewNavigators.detailView(UiComponentUtils.getCurrentView(), getEntityClass(viewInfo))
                     .withBackwardNavigation(false)
                     .navigate();
         } else {
-            viewNavigators.view(defaultViewId)
+            viewNavigators.view(UiComponentUtils.getCurrentView(), defaultViewId)
                     .navigate();
         }
     }

@@ -56,17 +56,17 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
         loadResourceString(element, "name", context.getMessageGroup(), resultComponent::setName);
         loadBoolean(element, "opened", resultComponent::setOpened);
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
-        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadDate(element, "max", resultComponent::setMax);
         loadDate(element, "min", resultComponent::setMin);
 
-        componentLoader().loadDatePickerI18n(element, resultComponent::setI18n);
+        componentLoader().loadPlaceholder(resultComponent, element);
+        componentLoader().loadDatePickerI18n(element, resultComponent::getI18n);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
-        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadOverlayClass(resultComponent, element);

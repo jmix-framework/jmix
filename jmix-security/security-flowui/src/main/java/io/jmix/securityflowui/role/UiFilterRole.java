@@ -34,20 +34,28 @@ public interface UiFilterRole {
 
     String CODE = "flowui-filter";
 
-    @ViewPolicy(viewIds = "flowui_AddConditionView")
-    @SpecificPolicy(resources = "ui.genericfilter.modifyConfiguration")
+    @ViewPolicy(viewIds = {"flowui_AddConditionView", "flowui_DateIntervalDialog"})
+    @EntityPolicy(entityName = "flowui_FilterConfiguration", actions = EntityPolicyAction.ALL)
+    @EntityAttributePolicy(entityName = "flowui_FilterConfiguration", attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @SpecificPolicy(resources = {
+            "ui.genericfilter.modifyConfiguration",
+            "ui.genericfilter.modifyGlobalConfiguration"
+    })
     void configuration();
 
+    @ViewPolicy(viewIds = "flowui_GroupFilterCondition.detail")
     @EntityPolicy(entityClass = GroupFilterCondition.class, actions = EntityPolicyAction.ALL)
     @EntityAttributePolicy(entityClass = GroupFilterCondition.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityPolicy(entityClass = FilterCondition.class, actions = EntityPolicyAction.ALL)
     @EntityAttributePolicy(entityClass = FilterCondition.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     void groupFilter();
 
+    @ViewPolicy(viewIds = "flowui_PropertyFilterCondition.detail")
     @EntityPolicy(entityClass = PropertyFilterCondition.class, actions = EntityPolicyAction.ALL)
     @EntityAttributePolicy(entityClass = PropertyFilterCondition.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     void propertyFilter();
 
+    @ViewPolicy(viewIds = "flowui_JpqlFilterCondition.detail")
     @EntityPolicy(entityClass = JpqlFilterCondition.class, actions = EntityPolicyAction.ALL)
     @EntityAttributePolicy(entityClass = JpqlFilterCondition.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @SpecificPolicy(resources = "ui.genericfilter.modifyJpqlCondition")

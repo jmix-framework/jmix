@@ -1,0 +1,21 @@
+vaadin-date-time-picker[readonly][invalid]::part(error-message),
+vaadin-date-time-picker[disabled][invalid]::part(error-message) {
+    display: none;
+}
+
+vaadin-date-time-picker[readonly],
+vaadin-date-time-picker[disabled] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+}
+
+vaadin-date-time-picker[readonly] ::part(input-field) {
+    --vaadin-input-field-invalid-background: transparent;
+}
+
+vaadin-date-time-picker[readonly] ::part(input-field)::after {
+    --vaadin-input-field-invalid-hover-highlight: transparent;
+}
+
+vaadin-date-time-picker[disabled] ::part(input-field) {
+    --vaadin-input-field-invalid-background: var(--lumo-contrast-5pct);
+}

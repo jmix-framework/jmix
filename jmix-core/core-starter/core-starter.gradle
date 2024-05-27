@@ -21,4 +21,7 @@ dependencies {
     api project(':core')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.springframework:spring-messaging'
+
+    compileOnly 'com.hazelcast:hazelcast'
 }

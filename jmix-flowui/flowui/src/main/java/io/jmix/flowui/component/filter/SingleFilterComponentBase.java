@@ -201,7 +201,10 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     @Override
     public void apply() {
-        if (dataLoader != null) {
+        //If a filter condition has a default value then DataLoader loads data when GenericFilter is initialised.
+        // So if we have several such conditions we get redundant data loading.
+        // To avoid this problem FilterComponent skips data loading if it's not attached to the UI.
+        if (isAttached() && dataLoader != null) {
             setupLoaderFirstResult();
             if (autoApply) {
                 dataLoader.load();
@@ -236,6 +239,7 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
             super.setLabel(labelVisible ? labelText : null);
         } else {
             this.label.setText(labelVisible ? labelText : null);
+            this.label.setTitle(labelVisible && labelText != null ? labelText : "");
             this.label.setVisible(labelVisible);
         }
     }

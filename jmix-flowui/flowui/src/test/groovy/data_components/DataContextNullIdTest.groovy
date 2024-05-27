@@ -18,6 +18,7 @@ package data_components
 
 import io.jmix.flowui.model.DataComponents
 import org.springframework.beans.factory.annotation.Autowired
+import test_support.entity.TestNullableIdDto
 import test_support.entity.TestNullableIdEntity
 import test_support.entity.TestNullableIdItemEntity
 import test_support.entity.TestStringIdEntity
@@ -112,6 +113,44 @@ class DataContextNullIdTest extends DataContextSpec {
 
         and:
         Map<Object, Object> entityMap = dataContext.content.get(TestNullableIdEntity)
+        entityMap.size() == 1
+    }
+
+    def "save DTO"() {
+        def dataContext = factory.createDataContext()
+
+        def entity = new TestNullableIdDto(name: "aaa")
+
+        when:
+        def merged = dataContext.merge(entity)
+
+        then:
+        dataContext.hasChanges()
+        dataContext.isModified(merged)
+        dataContext.getModified().contains(merged)
+
+        when:
+        dataContext.setSaveDelegate {
+            // Assign ID to original instance to match the saved instance with the original one
+            merged.setId(1L)
+            def copy = metadataTools.deepCopy(merged)
+            copy.setName(merged.name + "-mod")
+            return Set.of(copy)
+        }
+        dataContext.save()
+
+        then:
+        !dataContext.hasChanges()
+        merged.id == 1L
+        merged.name == "aaa-mod"
+        dataContext.contains(merged)
+
+        and:
+        def found = dataContext.find(TestNullableIdDto, 1L)
+        found.is(merged)
+
+        and:
+        Map<Object, Object> entityMap = dataContext.content.get(TestNullableIdDto)
         entityMap.size() == 1
     }
 

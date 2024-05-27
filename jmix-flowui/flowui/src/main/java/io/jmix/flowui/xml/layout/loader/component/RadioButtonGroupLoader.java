@@ -45,6 +45,7 @@ public class RadioButtonGroupLoader extends AbstractComponentLoader<JmixRadioBut
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAriaLabel(resultComponent, element);
+        componentLoader().loadDatatype(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

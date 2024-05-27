@@ -30,6 +30,7 @@ public interface StudioElementsGroups {
             xmlElement = "columns",
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/columns.svg",
             target = {"com.vaadin.flow.component.grid.Grid"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#columns",
             properties = {
                     @StudioProperty(xmlAttribute = "exclude", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "sortable", type = StudioPropertyType.BOOLEAN,
@@ -46,7 +47,8 @@ public interface StudioElementsGroups {
             elementClassFqn = "io.jmix.flowui.kit.component.formatter.Formatter",
             xmlElement = "formatter",
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/formatters.svg",
-            target = {"io.jmix.flowui.kit.component.SupportsFormatter"}
+            target = {"io.jmix.flowui.kit.component.SupportsFormatter"},
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html"
     )
     void formatter();
 
@@ -55,7 +57,8 @@ public interface StudioElementsGroups {
             elementClassFqn = "io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem",
             xmlElement = "items",
             target = {"io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
-                    "io.jmix.flowui.kit.component.combobutton.ComboButton"}
+                    "io.jmix.flowui.kit.component.combobutton.ComboButton"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
     )
     void items();
 
@@ -63,7 +66,8 @@ public interface StudioElementsGroups {
             name = "ResponsiveSteps",
             elementClassFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveSteps",
-            target = {"com.vaadin.flow.component.formlayout.FormLayout"}
+            target = {"com.vaadin.flow.component.formlayout.FormLayout"},
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/formLayout.html#columns"
     )
     void formLayoutResponsiveSteps();
 
@@ -81,6 +85,7 @@ public interface StudioElementsGroups {
             xmlElement = "validators",
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/validators.svg",
             target = {"io.jmix.flowui.component.SupportsValidation"},
+            documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html",
             unsupportedTarget = {
                     "io.jmix.flowui.kit.component.upload.AbstractSingleUploadField",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",

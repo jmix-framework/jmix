@@ -8,4 +8,9 @@ import io.jmix.securityflowui.model.ResourcePolicyModel;
 @EditedEntityContainer("resourcePolicyModelDc")
 @DialogMode(width = "32em")
 public class GraphQLResourcePolicyModelDetailView extends StandardDetailView<ResourcePolicyModel> {
+
+    @Subscribe
+    public void onInit(InitEvent event) {
+        setReloadEdited(false);
+    }
 }

@@ -83,9 +83,22 @@
               advanced="true"
               dynamic="true"
               required="true"
-              valueTemplate="${entity.uncapitalizedClassName}/detail">
+              valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
         <dependency code="entity"/>
     </property>
+
+    <property caption="View route parameter"
+              code="detailRouteParam"
+              propertyType="STRING"
+              advanced="true"
+              required="true"
+              defaultValue="id"/>
+
+    <property caption="View route layout"
+              code="routeLayout"
+              propertyType="FLOW_VIEW_ROUTE_LAYOUT"
+              visible="false"
+              advanced="true"/>
 
     <source fileExt="xml"
             name="descriptor"/>

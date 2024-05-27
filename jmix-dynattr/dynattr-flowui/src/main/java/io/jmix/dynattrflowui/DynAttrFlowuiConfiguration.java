@@ -29,6 +29,7 @@ import io.jmix.dynattrflowui.panel.DynamicAttributesPanel;
 import io.jmix.dynattrflowui.panel.DynamicAttributesPanelLoader;
 import io.jmix.dynattrflowui.propertyfilter.DynAttrPropertyFilterSupport;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalSupport;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowui.sys.registration.ComponentRegistration;
@@ -53,9 +54,10 @@ public class DynAttrFlowuiConfiguration {
                                                        MetadataTools metadataTools,
                                                        DataManager dataManager,
                                                        DatatypeRegistry datatypeRegistry,
-                                                       DynAttrMetadata dynAttrMetadata) {
+                                                       DynAttrMetadata dynAttrMetadata,
+                                                       DateIntervalSupport dateIntervalSupport) {
         return new DynAttrPropertyFilterSupport(messages, messageTools, metadataTools, dataManager, datatypeRegistry,
-                dynAttrMetadata);
+                dynAttrMetadata, dateIntervalSupport);
     }
 
     @Bean("dynat_ViewControllersConfiguration")

@@ -23,6 +23,7 @@ import io.jmix.core.entity.HasInstanceMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -36,11 +37,9 @@ public class MetadataImpl implements Metadata {
     protected volatile Session session;
 
     @Autowired
-    protected MetadataTools tools;
-
-    @Autowired
     protected Resources resources;
 
+    @Lazy //Break circular dependencies
     @Autowired(required = false)
     protected List<EntityInitializer> entityInitializers;
 

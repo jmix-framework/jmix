@@ -17,17 +17,15 @@
 package io.jmix.flowui.view;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View.QueryParametersChangeEvent;
-
 import org.springframework.lang.Nullable;
+
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
@@ -87,6 +85,7 @@ public final class ViewControllerUtils {
 
     public static void setViewData(View<?> view, ViewData viewData) {
         view.setViewData(viewData);
+        viewData.setViewId(view.getId().orElse(null));
     }
 
     public static ViewActions getViewActions(View<?> view) {
@@ -99,6 +98,16 @@ public final class ViewControllerUtils {
 
     public static ViewFacets getViewFacets(View<?> view) {
         return view.getViewFacets();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <T extends Facet> T getViewFacet(View<?> view, Class<T> facetClass) {
+        return (T) view.getViewFacets()
+                .getFacets()
+                .filter(facet -> facetClass.isAssignableFrom(facet.getClass()))
+                .findAny()
+                .orElse(null);
     }
 
     public static void setViewFacets(View<?> view, ViewFacets viewFacets) {
@@ -118,11 +127,40 @@ public final class ViewControllerUtils {
         return view.addQueryParametersChangeListener(listener);
     }
 
+    public static <T> Registration addInitEntityEventListener(StandardDetailView<T> view, ComponentEventListener<StandardDetailView.InitEntityEvent<T>> listener) {
+        return view.addInitEntityListener(listener);
+    }
+
+    public static Registration addBeforeShowEventListener(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
+        return view.addBeforeShowListener(listener);
+    }
+
+    public static Registration addDetachListener(View<?> view, ComponentEventListener<DetachEvent> listener) {
+        return view.addDetachListener(listener);
+    }
+
+    public static Registration addAfterCloseListener(View<?> view, ComponentEventListener<View.AfterCloseEvent> listener) {
+        return view.addAfterCloseListener(listener);
+    }
+
+    public static Registration addValidationEventListener(StandardDetailView<?> view, ComponentEventListener<StandardDetailView.ValidationEvent> listener) {
+        return view.addValidationEventListener(listener);
+    }
+
+    /**
+     * @deprecated use {@link ViewControllerUtils#addInitEntityEventListener(StandardDetailView, ComponentEventListener)} instead
+     * */
+    @Deprecated(since = "2.2", forRemoval = true)
     public static <T> Registration addInitEntityEvent(StandardDetailView<T> view, ComponentEventListener<StandardDetailView.InitEntityEvent<T>> listener) {
         return view.addInitEntityListener(listener);
     }
 
+    /**
+    * @deprecated use {@link ViewControllerUtils#addBeforeShowEventListener(View, ComponentEventListener)} instead
+    * */
+    @Deprecated(since = "2.2", forRemoval = true)
     public static Registration addBeforeShowEvent(View<?> view, ComponentEventListener<View.BeforeShowEvent> listener) {
         return view.addBeforeShowListener(listener);
     }
+
 }

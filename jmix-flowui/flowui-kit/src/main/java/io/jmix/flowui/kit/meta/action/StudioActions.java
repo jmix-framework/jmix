@@ -28,6 +28,7 @@ public interface StudioActions {
             classFqn = "io.jmix.flowui.kit.action.BaseAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             unsupportedTarget = {"io.jmix.flowui.kit.component.valuepicker.ValuePickerBase"},
+            documentationLink = "%VERSION%/flow-ui/actions/declarative-actions.html",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

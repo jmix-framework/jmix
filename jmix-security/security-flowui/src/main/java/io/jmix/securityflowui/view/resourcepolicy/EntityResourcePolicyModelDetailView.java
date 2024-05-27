@@ -23,6 +23,7 @@ public class EntityResourcePolicyModelDetailView extends StandardDetailView<Reso
 
     @Subscribe
     public void onInit(InitEvent event) {
+        setReloadEdited(false);
         ComponentUtils.setItemsMap(entityField, resourcePolicyEditorUtils.getEntityOptionsMap());
         resourcePolicyEditorUtils.setEnumItemsAsString(actionField, EntityPolicyAction.class);
     }

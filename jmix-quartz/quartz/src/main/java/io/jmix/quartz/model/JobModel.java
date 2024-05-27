@@ -6,6 +6,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.apache.commons.collections4.CollectionUtils;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.lang.Nullable;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @JmixEntity(name = "quartz_JobModel")
 public class JobModel {
@@ -23,8 +23,9 @@ public class JobModel {
     private UUID id;
 
     @NotNull
+    @Length(max = 200)
     private String jobName;
-
+    @Length(max = 200)
     private String jobGroup;
 
     @NotNull
@@ -34,6 +35,7 @@ public class JobModel {
 
     private JobSource jobSource;
 
+    @Length(max = 250)
     private String description;
 
     private List<TriggerModel> triggers = new ArrayList<>();
@@ -111,19 +113,6 @@ public class JobModel {
 
     public void setJobDataParameters(List<JobDataParameterModel> jobDataParameters) {
         this.jobDataParameters = jobDataParameters;
-    }
-
-    @Transient
-    @JmixProperty
-    @Nullable
-    public String getTriggerDescription() {
-        if (CollectionUtils.isEmpty(triggers)) {
-            return null;
-        }
-
-        return triggers.stream()
-                .map(TriggerModel::getScheduleDescription)
-                .collect(Collectors.joining(", "));
     }
 
     @Transient

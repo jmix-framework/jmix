@@ -48,7 +48,7 @@ public class DynAttrFacetImpl extends AbstractFacet implements DynAttrFacet {
         }
 
         if (view instanceof StandardDetailView<?>) {
-            ViewControllerUtils.addInitEntityEvent((StandardDetailView<?>) view, e -> attributeDefaultValues.initDefaultAttributeValues(e.getEntity()));
+            ViewControllerUtils.addInitEntityEventListener((StandardDetailView<?>) view, e -> attributeDefaultValues.initDefaultAttributeValues(e.getEntity()));
         }
     }
 }

@@ -31,6 +31,8 @@ import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 
@@ -41,6 +43,8 @@ import java.util.Objects;
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 
 public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+
+    private static final Logger log = LoggerFactory.getLogger(DataGridFilterUrlQueryParametersBinder.class);
 
     public static final String NAME = "dataGridFilter";
 
@@ -169,10 +173,15 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
 
             String valueString = parameterString.substring(separatorIndex + 1);
             if (!Strings.isNullOrEmpty(valueString)) {
-                Object parsedValue = filterUrlQueryParametersSupport
-                        .parseValue(((ContainerDataGridItems<?>) grid.getDataProvider()).getEntityMetaClass(),
-                                property, operation.getType(), valueString);
-                propertyFilter.setValue(parsedValue);
+                try {
+                    Object parsedValue = filterUrlQueryParametersSupport
+                            .parseValue(((ContainerDataGridItems<?>) grid.getDataProvider()).getEntityMetaClass(),
+                                    property, operation.getType(), valueString);
+                    propertyFilter.setValue(parsedValue);
+                } catch (Exception e) {
+                    log.info("Cannot parse URL parameter. {}", e.toString());
+                    propertyFilter.setValue(null);
+                }
             }
 
             headerFilter.apply();

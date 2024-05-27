@@ -20,10 +20,12 @@ import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinServletService;
+import jakarta.servlet.annotation.WebServlet;
 
 /**
  * Used in Studio.
  */
+@WebServlet(urlPatterns = "/*")
 public class JmixVaadinServlet extends VaadinServlet {
     @Override
     public VaadinServletService createServletService(

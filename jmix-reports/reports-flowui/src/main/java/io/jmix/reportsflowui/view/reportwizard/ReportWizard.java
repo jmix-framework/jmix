@@ -484,18 +484,8 @@ public class ReportWizard {
         return !propertiesNamesList.isEmpty();
     }
 
-
     public boolean isPropertyAllowedForReportWizard(MetaClass metaClass, MetaProperty metaProperty) {
-        //here we can`t just to determine metaclass using property argument cause it can be an ancestor of it
-        List<String> propertiesBlackList = reportsProperties.getWizardPropertiesBlackList();
-        List<String> wizardPropertiesExcludedBlackList = reportsProperties.getWizardPropertiesExcludedBlackList();
-
-        MetaClass originalMetaClass = getOriginalMetaClass(metaClass);
-        MetaClass originalDomainMetaClass = getOriginalMetaClass(metaProperty.getDomain());
-        String classAndPropertyName = originalMetaClass.getName() + "." + metaProperty.getName();
-        return !(propertiesBlackList.contains(classAndPropertyName)
-                || (propertiesBlackList.contains(originalDomainMetaClass.getName() + "." + metaProperty.getName())
-                && !wizardPropertiesExcludedBlackList.contains(classAndPropertyName)));
+        return entityTreeModelBuilderApiProvider.isPropertyAllowedForReportWizard(metaClass, metaProperty);
     }
 
     public byte[] generateTemplate(ReportData reportData, TemplateFileType templateFileType) throws TemplateGenerationException {
@@ -532,14 +522,4 @@ public class ReportWizard {
     protected List<String> getWizardPropertiesExcludedBlackList() {
         return reportsProperties.getWizardPropertiesExcludedBlackList();
     }
-
-    protected MetaClass getOriginalMetaClass(MetaClass metaClass) {
-        MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
-        if (originalMetaClass == null) {
-            originalMetaClass = metaClass;
-        }
-        return originalMetaClass;
-    }
-
-
 }

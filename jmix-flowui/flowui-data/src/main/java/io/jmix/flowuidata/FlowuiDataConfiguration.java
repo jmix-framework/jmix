@@ -33,6 +33,7 @@ import io.jmix.flowui.component.genericfilter.FilterMetadataTools;
 import io.jmix.flowui.component.genericfilter.GenericFilterSupport;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.sys.ActionsConfiguration;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowuidata.genericfilter.GenericFilterConfigurationConverter;
 import io.jmix.flowuidata.genericfilter.UiDataFilterMetadataTools;
 import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
@@ -57,6 +58,15 @@ public class FlowuiDataConfiguration {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
         actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.flowuidata.action"));
         return actionsConfiguration;
+    }
+
+    @Bean("flowui_UiDataViewControllers")
+    public ViewControllersConfiguration screens(ApplicationContext applicationContext,
+                                                AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ViewControllersConfiguration viewControllers
+                = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+        viewControllers.setBasePackages(Collections.singletonList("io.jmix.flowuidata.view"));
+        return viewControllers;
     }
 
     @Bean("flowui_UiDataGenericFilterSupport")

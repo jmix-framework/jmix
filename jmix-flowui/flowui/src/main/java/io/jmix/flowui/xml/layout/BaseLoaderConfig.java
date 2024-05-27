@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.RangeInput;
 import io.jmix.flowui.xml.layout.loader.component.*;
 import io.jmix.flowui.xml.layout.loader.container.*;
 import io.jmix.flowui.xml.layout.loader.html.*;
@@ -74,6 +75,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("datePicker", DatePickerLoader.class);
         loaders.put("avatar", AvatarLoader.class);
         loaders.put("icon", IconLoader.class);
+        loaders.put("svgIcon", SvgIconLoader.class);
+        loaders.put("fontIcon", FontIconLoader.class);
         loaders.put("select", SelectLoader.class);
         loaders.put("valuePicker", ValuePickerLoader.class);
         loaders.put("multiValuePicker", MultiValuePickerLoader.class);
@@ -97,6 +100,10 @@ public abstract class BaseLoaderConfig {
         loaders.put("genericFilter", GenericFilterLoader.class);
         loaders.put("codeEditor", CodeEditorLoader.class);
         loaders.put("virtualList", VirtualListLoader.class);
+        loaders.put("gridColumnVisibility", GridColumnVisibilityLoader.class);
+        loaders.put("menuFilterField", MenuFilterFieldLoader.class);
+        loaders.put("horizontalMenu", HorizontalMenuLoader.class);
+        loaders.put("richTextEditor", RichTextEditorLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);
@@ -105,6 +112,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("image", ImageLoader.class);
         loaders.put("iframe", IFrameLoader.class);
         loaders.put("html", HtmlLoader.class);
+        loaders.put("rangeInput", RangeInputLoader.class);
 
         /* Containers */
         loaders.put("h1", H1Loader.class);
@@ -139,5 +147,6 @@ public abstract class BaseLoaderConfig {
         loaders.put("label", LabelLoader.class);
         loaders.put("nativeLabel", NativeLabelLoader.class);
         loaders.put("nativeButton", NativeButtonLoader.class);
+        loaders.put("nativeDetails", NativeDetailsLoader.class);
     }
 }

@@ -22,6 +22,7 @@ archivesBaseName = 'jmix-oidc'
 dependencies {
     api project(':core')
     api project(':security')
+    api project(':security-flowui')
 
     api 'org.springframework.security:spring-security-oauth2-client'
     api 'org.springframework.security:spring-security-oauth2-jose'

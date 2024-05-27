@@ -17,6 +17,7 @@
 package io.jmix.securityflowui.action;
 
 import com.google.common.base.Preconditions;
+import com.vaadin.flow.component.Component;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.ViewNavigators;
@@ -24,7 +25,10 @@ import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.EntityDataUnit;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.securitydata.entity.UserSubstitutionEntity;
 import io.jmix.securityflowui.view.usersubstitution.UserSubstitutionView;
@@ -108,8 +112,14 @@ public class ShowUserSubstitutionsAction<E extends UserDetails>
         navigate(selectedItem);
     }
 
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && target.getSelectedItems().size() == 1;
+    }
+
     protected void navigate(E selectedItem) {
-        viewNavigators.view(UserSubstitutionView.class)
+        View<?> origin = UiComponentUtils.getView(((Component) target));
+        viewNavigators.view(origin, UserSubstitutionView.class)
                 .withRouteParameters(routeSupport.createRouteParameters("username", selectedItem.getUsername()))
                 .withBackwardNavigation(true)
                 .navigate();

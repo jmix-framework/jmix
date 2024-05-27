@@ -40,6 +40,7 @@ dependencies {
     api 'org.springframework.security:spring-security-web'
     api 'org.springframework.data:spring-data-commons'
     api 'org.springframework:spring-tx'
+    api 'org.springframework:spring-messaging'
     api 'org.aspectj:aspectjweaver'
 
     api 'org.apache.commons:commons-collections4'

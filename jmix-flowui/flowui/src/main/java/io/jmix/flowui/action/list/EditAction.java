@@ -26,21 +26,22 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.UiEntityContext;
+import io.jmix.flowui.action.impl.ActionHandlerValidator;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ViewOpeningAction;
-import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
-import io.jmix.flowui.sys.ActionViewInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -152,6 +153,21 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         viewInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
+    @Override
+    public <V extends View<?>> Consumer<AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
+    }
+
     /**
      * Sets the handler to be invoked when the detail view saves the entity.
      * <p>
@@ -167,6 +183,11 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
      */
     public void setAfterSaveHandler(@Nullable Consumer<E> afterSaveHandler) {
         this.afterSaveHandler = afterSaveHandler;
+    }
+
+    @Nullable
+    public Consumer<E> getAfterSaveHandler() {
+        return afterSaveHandler;
     }
 
     /**
@@ -187,6 +208,11 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
      */
     public void setTransformation(@Nullable Function<E, E> transformation) {
         this.transformation = transformation;
+    }
+
+    @Nullable
+    public Function<E, E> getTransformation() {
+        return transformation;
     }
 
     @Autowired
@@ -293,6 +319,11 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         return true;
     }
 
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && target.getSelectedItems().size() == 1;
+    }
+
     /**
      * Executes the action.
      */
@@ -322,6 +353,8 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
         navigator = viewInitializer.initNavigator(navigator);
 
+        ActionHandlerValidator.validate(this, OpenMode.NAVIGATION);
+
         navigator.navigate();
     }
 
@@ -347,6 +380,8 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
                 }
             });
         }
+
+        ActionHandlerValidator.validate(this, OpenMode.DIALOG);
 
         dialogWindow.open();
     }
@@ -396,6 +431,14 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
      */
     public <V extends View<?>> EditAction<E> withAfterCloseHandler(Consumer<AfterCloseEvent<V>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
+        return this;
+    }
+
+    /**
+     * @see #setViewConfigurer(Consumer)
+     */
+    public <V extends View<?>> EditAction<E> withViewConfigurer(Consumer<V> viewConfigurer) {
+        setViewConfigurer(viewConfigurer);
         return this;
     }
 

@@ -25,18 +25,23 @@ public class SupersetProperties {
     String password;
 
     /**
-     * The schedule delay that is used for monitoring whether access token is expired.
+     * The schedule delay that is used for monitoring whether access token is expired. The default value is 1 minute.
      */
     Duration accessTokenRefreshSchedule;
 
     /**
-     * The schedule delay that is used for getting new CSRF token. Unlike access token, CSRF token does not contain
-     * information about expiration time, so the schedule delay should almost equal to CSRF token lifespan. By default,
-     * Superset configures 1 week for CSRF, so the default value of {@code csrfTokenRefreshSchedule} property is 6d and 23h.
+     * The schedule delay that is used for monitoring whether CSRF is expired. The default value is 1 minute.
+     */
+    Duration csrfTokenRefreshSchedule;
+
+    /**
+     * Specifies a lifespan of CSRF token. Unlike access token, CSRF token does not contain
+     * information about expiration time, so the start time point is timestamp of successfully finished request.
+     * By default, Superset configures 1 week for CSRF, so the default value 7 days.
      * <p>
      * If the value of CSRF token expiration time is changed in Superset, this property should be changed accordingly.
      */
-    Duration csrfTokenRefreshSchedule;
+    Duration csrfTokenExpiration;
 
     /**
      * Enables CSRF protection. CSRF token will be taken on Spring context refresh and will be sent in a guest token
@@ -49,13 +54,15 @@ public class SupersetProperties {
                               String password,
                               @DefaultValue("1m") Duration accessTokenRefreshSchedule,
                               @DefaultValue("true") boolean csrfProtectionEnabled,
-                              @DefaultValue("167h") Duration csrfTokenRefreshSchedule) {
+                              @DefaultValue("1m") Duration csrfTokenRefreshSchedule,
+                              @DefaultValue("7d") Duration csrfTokenExpiration) {
         this.url = url;
         this.username = username;
         this.password = password;
         this.accessTokenRefreshSchedule = accessTokenRefreshSchedule;
         this.csrfProtectionEnabled = csrfProtectionEnabled;
         this.csrfTokenRefreshSchedule = csrfTokenRefreshSchedule;
+        this.csrfTokenExpiration = csrfTokenExpiration;
     }
 
     /**
@@ -107,5 +114,13 @@ public class SupersetProperties {
      */
     public Duration getCsrfTokenRefreshSchedule() {
         return csrfTokenRefreshSchedule;
+    }
+
+    /**
+     * @return a lifespan of CSRF token
+     * @see #csrfTokenExpiration
+     */
+    public Duration getCsrfTokenExpiration() {
+        return csrfTokenExpiration;
     }
 }

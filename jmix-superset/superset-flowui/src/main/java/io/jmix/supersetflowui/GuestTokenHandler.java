@@ -73,7 +73,7 @@ public class GuestTokenHandler {
                         || CollectionUtils.isNotEmpty(response.getErrors())) {
                     if (isAccessTokenExpired(response.getSystemMessage())) {
                         // If access token is expired it means refresh access token request
-                        // is failed in AccessTokenManager. We do nothing.
+                        // is failed in SupersetTokenManager. We do nothing.
                         log.error("Guest token request failed. Access token expired.");
                     } else if (!Strings.isNullOrEmpty(response.getMessage())) {
                         log.error("Guest token request failed. Message from Superset: {}", response.getMessage());

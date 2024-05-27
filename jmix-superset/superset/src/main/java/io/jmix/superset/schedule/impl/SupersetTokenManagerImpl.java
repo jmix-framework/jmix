@@ -47,7 +47,8 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
 
     protected final ObjectMapper objectMapper;
     private String accessToken;
-    private Long accessTokenExpiresIn; // seconds
+    private Long accessTokenExpiresIn; // ms
+    private Long csrfTokenExpiresIn; // ms
     private String refreshToken;
     private String csrfToken;
 
@@ -70,7 +71,12 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
 
     @Override
     public synchronized void refreshCsrfToken() {
-        if (supersetProperties.isCsrfProtectionEnabled()) {
+        if (!supersetProperties.isCsrfProtectionEnabled()) {
+            return;
+        }
+        if (csrfToken == null) {
+            performCsrfTokenRequest();
+        } else if (isCsrfTokenAboutToExpire()) {
             performCsrfTokenRequest();
         }
     }
@@ -170,6 +176,7 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
                     " {}", response.getSystemMessage());
         } else {
             csrfToken = response.getResult();
+            csrfTokenExpiresIn = new Date().getTime() + supersetProperties.getCsrfTokenExpiration().toMillis();
         }
     }
 
@@ -184,6 +191,10 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * @param accessToken access token to parse
+     * @return expiration time in milliseconds or {@code null} if an error occurs while parsing token
+     */
     @Nullable
     protected Long parseExpiresIn(String accessToken) {
         Base64.Decoder decoder = Base64.getUrlDecoder();
@@ -202,22 +213,30 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
                 log.error("There is no 'exp' field in decoded JWT");
                 return null;
             }
-            return exp;
+            // Superset returns expiration time in seconds
+            return exp * 1000;
         }
         log.error("JWT does not contain payload part");
         return null;
     }
 
     protected boolean isAccessTokenAboutToExpire() {
-        long currentTimePoint = new Date().getTime();
         if (accessTokenExpiresIn == null) {
             accessTokenExpiresIn = getFallbackExpirationTime();
         }
-        return (accessTokenExpiresIn * 1000) - currentTimePoint <= Duration.ofMinutes(1).toMillis();
+        long currentTimePoint = new Date().getTime();
+        return accessTokenExpiresIn - currentTimePoint <= Duration.ofMinutes(1).toMillis();
     }
 
     protected Long getFallbackExpirationTime() {
-        // todo rp discuss
-        return Duration.ofMinutes(3).getSeconds();
+        return Duration.ofMinutes(3).toMillis();
+    }
+
+    protected boolean isCsrfTokenAboutToExpire() {
+        if (supersetProperties.getCsrfTokenExpiration().toMillis() <= 0) {
+            return false;
+        }
+        long currentTimePoint = new Date().getTime();
+        return csrfTokenExpiresIn - currentTimePoint <= Duration.ofMinutes(1).toMillis();
     }
 }

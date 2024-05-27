@@ -48,16 +48,16 @@ import static io.jmix.flowui.sys.ValuePathHelper.pathPrefix;
  * An injector that autowires a fields and setters methods that are annotated by the {@link ViewComponent} annotation.
  */
 @Order(JmixOrder.LOWEST_PRECEDENCE - 40)
-@org.springframework.stereotype.Component("flowui_ElementsDependencyInjector")
-public class ElementsDependencyInjector implements DependencyInjector {
+@org.springframework.stereotype.Component("flowui_ViewElementsDependencyInjector")
+public class ViewElementsDependencyInjector implements DependencyInjector {
 
-    private static final Logger log = LoggerFactory.getLogger(ElementsDependencyInjector.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewElementsDependencyInjector.class);
 
     protected ApplicationContext applicationContext;
     protected ReflectionCacheManager reflectionCacheManager;
 
-    public ElementsDependencyInjector(ApplicationContext applicationContext,
-                                      ReflectionCacheManager reflectionCacheManager) {
+    public ViewElementsDependencyInjector(ApplicationContext applicationContext,
+                                          ReflectionCacheManager reflectionCacheManager) {
         this.applicationContext = applicationContext;
         this.reflectionCacheManager = reflectionCacheManager;
     }

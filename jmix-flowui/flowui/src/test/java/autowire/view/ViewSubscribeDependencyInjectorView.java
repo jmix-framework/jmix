@@ -44,10 +44,10 @@ import java.util.Map;
 import java.util.Objects;
 
 
-@Route("subscribe-dependency-injector-view")
-@ViewController("SubscribeDependencyInjectorView")
-@ViewDescriptor("subscribe-dependency-injector-view.xml")
-public class SubscribeDependencyInjectorView extends StandardView {
+@Route("view-subscribe-dependency-injector-view")
+@ViewController("ViewSubscribeDependencyInjectorView")
+@ViewDescriptor("view-subscribe-dependency-injector-view.xml")
+public class ViewSubscribeDependencyInjectorView extends StandardView {
 
     @Autowired
     protected Metadata metadata;

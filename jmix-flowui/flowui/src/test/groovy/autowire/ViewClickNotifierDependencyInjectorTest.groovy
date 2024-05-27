@@ -16,33 +16,30 @@
 
 package autowire
 
-import autowire.view.InstallDependencyInjectorView
+import autowire.view.ViewClickNotifierDependencyInjectorView
+import io.jmix.flowui.kit.component.button.JmixButton
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class InstallDependencyInjectorTest extends FlowuiTestSpecification {
+class ViewClickNotifierDependencyInjectorTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
         registerViewBasePackages("autowire.view")
     }
 
-    def "Autowire #dataElement install points"() {
-        when: "InstallDependencyInjectorView is opened"
-        def view = navigateToView InstallDependencyInjectorView
+    def "Autowire #clickEvent"() {
+        when: "ElementDependencyInjectorView is opened"
+        def elementDependencyInjectorView = navigateToView ViewClickNotifierDependencyInjectorView
 
-        then: "The install point will be set"
-        view."${dataElement}"."get${installName}"() != null
+        then: "#clickEvent listener should be assigned to the corresponding button"
+        def currentButton = elementDependencyInjectorView."${clickEvent}Id" as JmixButton
+        currentButton != null
+        currentButton.click()
+        currentButton.text == "${clickEvent} performed"
 
         where:
-        dataElement << [
-                "dataContext", "collectionDl",
-                "facet", "component"
-        ]
-        installName << [
-                "SaveDelegate", "LoadDelegate",
-                "SaveSettingsDelegate", "ItemLabelGenerator"
-        ]
+        clickEvent << ["clickListener", "singleClickListener", "doubleClickListener", "defaultClickListener"]
     }
 }

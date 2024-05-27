@@ -34,10 +34,10 @@ public interface DependencyInjector {
     void autowire(AutowireContext autowireContext);
 
     /**
-     * Checks the applicability of the injection context.
+     * Checks whether this injector can wire the passed injection context.
      *
      * @param autowireContext injection content that need to be checked
-     * @return {@code true} if the passed injection context is applicable, {@code false} otherwise
+     * @return {@code true} if the passed injection context can be wired, {@code false} otherwise
      */
     boolean isApplicable(AutowireContext autowireContext);
 
@@ -46,6 +46,9 @@ public interface DependencyInjector {
      */
     interface AutowireContext {
 
+        /**
+         * @return collection of objects that have already been autowired
+         */
         Collection<Object> getAutowired();
     }
 }

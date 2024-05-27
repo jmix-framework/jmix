@@ -17,12 +17,12 @@
 package autowire
 
 
-import autowire.view.ElementDependencyInjectorView
+import autowire.view.ViewElementDependencyInjectorView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class ElementDependencyInjectorTest extends FlowuiTestSpecification {
+class ViewElementDependencyInjectorTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
@@ -31,7 +31,7 @@ class ElementDependencyInjectorTest extends FlowuiTestSpecification {
 
     def "Autowire #element annotated with ViewComponent"() {
         when: "ElementDependencyInjectorView is opened"
-        def elementDependencyInjectorView = navigateToView ElementDependencyInjectorView
+        def elementDependencyInjectorView = navigateToView ViewElementDependencyInjectorView
 
         then: "#element should be autowired"
         elementDependencyInjectorView."$element" != null
@@ -50,7 +50,7 @@ class ElementDependencyInjectorTest extends FlowuiTestSpecification {
 
     def "Tab autowiring when TabSheet is placed in component container"() {
         when: "ElementDependencyInjectorView is opened"
-        def elementDependencyInjectorView = navigateToView ElementDependencyInjectorView
+        def elementDependencyInjectorView = navigateToView ViewElementDependencyInjectorView
 
         then: "Tab fields should not be null"
         verifyAll(elementDependencyInjectorView) {

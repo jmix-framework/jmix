@@ -16,12 +16,12 @@
 
 package autowire
 
-import autowire.view.SubscribeDependencyInjectorView
+import autowire.view.ViewSubscribeDependencyInjectorView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class SubscribeDependencyInjectorTest extends FlowuiTestSpecification {
+class ViewSubscribeDependencyInjectorTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
@@ -30,7 +30,7 @@ class SubscribeDependencyInjectorTest extends FlowuiTestSpecification {
 
     def "Autowire #dataElement subscription"() {
         when: "SubscribeDependencyInjectorView is opened"
-        def view = navigateToView SubscribeDependencyInjectorView
+        def view = navigateToView ViewSubscribeDependencyInjectorView
 
         then: "Markers are false"
         !(view.checkExecutedEvent "${dataElement}")
@@ -51,7 +51,7 @@ class SubscribeDependencyInjectorTest extends FlowuiTestSpecification {
 
     def "Autowire #component subscriptions"() {
         when: "SubscribeDependencyInjectorView is opened"
-        def view = navigateToView SubscribeDependencyInjectorView
+        def view = navigateToView ViewSubscribeDependencyInjectorView
 
         then: "Markers are false"
         !(view.checkExecutedEvent "${component}")

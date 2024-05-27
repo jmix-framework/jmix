@@ -21,10 +21,10 @@ import com.vaadin.flow.router.Route;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 
-@Route("click-notifier-dependency-injector-view")
-@ViewController("ClickNotifierDependencyInjectorView")
-@ViewDescriptor("click-notifier-dependency-injector-view.xml")
-public class ClickNotifierDependencyInjectorView extends StandardView {
+@Route("view-click-notifier-dependency-injector-view")
+@ViewController("ViewClickNotifierDependencyInjectorView")
+@ViewDescriptor("view-click-notifier-dependency-injector-view.xml")
+public class ViewClickNotifierDependencyInjectorView extends StandardView {
 
     @ViewComponent
     public JmixButton clickListenerId;

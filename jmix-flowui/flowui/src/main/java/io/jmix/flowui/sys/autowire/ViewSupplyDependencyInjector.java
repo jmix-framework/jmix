@@ -41,14 +41,14 @@ import java.util.function.Supplier;
  * These can be suppliers for the view or for the components on the view.
  */
 @Order(JmixOrder.LOWEST_PRECEDENCE - 10)
-@Component("flowui_SupplyDependencyInjector")
-public class SupplyDependencyInjector implements DependencyInjector {
+@Component("flowui_ViewSupplyDependencyInjector")
+public class ViewSupplyDependencyInjector implements DependencyInjector {
 
-    private static final Logger log = LoggerFactory.getLogger(SupplyDependencyInjector.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewSupplyDependencyInjector.class);
 
     protected ReflectionCacheManager reflectionCacheManager;
 
-    public SupplyDependencyInjector(ReflectionCacheManager reflectionCacheManager) {
+    public ViewSupplyDependencyInjector(ReflectionCacheManager reflectionCacheManager) {
         this.reflectionCacheManager = reflectionCacheManager;
     }
 

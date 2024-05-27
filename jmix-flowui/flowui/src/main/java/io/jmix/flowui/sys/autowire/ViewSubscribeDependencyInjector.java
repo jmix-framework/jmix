@@ -42,14 +42,14 @@ import java.util.List;
  * These can be subscriptions to view events or to components events on the view.
  */
 @Order(JmixOrder.LOWEST_PRECEDENCE - 30)
-@org.springframework.stereotype.Component("flowui_SubscribeDependencyInjector")
-public class SubscribeDependencyInjector implements DependencyInjector {
+@org.springframework.stereotype.Component("flowui_ViewSubscribeDependencyInjector")
+public class ViewSubscribeDependencyInjector implements DependencyInjector {
 
-    private static final Logger log = LoggerFactory.getLogger(SubscribeDependencyInjector.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewSubscribeDependencyInjector.class);
 
     protected ReflectionCacheManager reflectionCacheManager;
 
-    public SubscribeDependencyInjector(ReflectionCacheManager reflectionCacheManager) {
+    public ViewSubscribeDependencyInjector(ReflectionCacheManager reflectionCacheManager) {
         this.reflectionCacheManager = reflectionCacheManager;
     }
 

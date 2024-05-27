@@ -50,14 +50,14 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
  * These can be installations to the view or to the components in the view.
  */
 @Order(JmixOrder.LOWEST_PRECEDENCE - 20)
-@Component("flowui_InstallDependencyInjector")
-public class InstallDependencyInjector implements DependencyInjector {
+@Component("flowui_ViewInstallDependencyInjector")
+public class ViewInstallDependencyInjector implements DependencyInjector {
 
-    private static final Logger log = LoggerFactory.getLogger(InstallDependencyInjector.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewInstallDependencyInjector.class);
 
     protected ReflectionCacheManager reflectionCacheManager;
 
-    public InstallDependencyInjector(ReflectionCacheManager reflectionCacheManager) {
+    public ViewInstallDependencyInjector(ReflectionCacheManager reflectionCacheManager) {
         this.reflectionCacheManager = reflectionCacheManager;
     }
 

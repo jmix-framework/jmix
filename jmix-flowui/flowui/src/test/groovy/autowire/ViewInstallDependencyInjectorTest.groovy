@@ -16,26 +16,33 @@
 
 package autowire
 
-
-import autowire.view.SupplyDependencyInjectorView
-import com.vaadin.flow.data.renderer.ComponentRenderer
+import autowire.view.ViewInstallDependencyInjectorView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class SupplyDependencyInjectorTest extends FlowuiTestSpecification {
+class ViewInstallDependencyInjectorTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
         registerViewBasePackages("autowire.view")
     }
 
-    def "Autowire renderers"() {
-        when: "SupplyDependencyInjectorView is opened"
-        def view = navigateToView SupplyDependencyInjectorView
+    def "Autowire #dataElement install points"() {
+        when: "InstallDependencyInjectorView is opened"
+        def view = navigateToView ViewInstallDependencyInjectorView
 
-        then: "The renderers will be set"
-        view.dataGrid.getColumnByKey("name").getRenderer() instanceof ComponentRenderer
-        view.component.getItemRenderer() instanceof ComponentRenderer
+        then: "The install point will be set"
+        view."${dataElement}"."get${installName}"() != null
+
+        where:
+        dataElement << [
+                "dataContext", "collectionDl",
+                "facet", "component"
+        ]
+        installName << [
+                "SaveDelegate", "LoadDelegate",
+                "SaveSettingsDelegate", "ItemLabelGenerator"
+        ]
     }
 }

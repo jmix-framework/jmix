@@ -43,16 +43,16 @@ import static io.jmix.flowui.view.Target.COMPONENT;
  * A special injector that autowired click listeners method that are annotated by the {@link Subscribe} annotation.
  */
 @Order(JmixOrder.LOWEST_PRECEDENCE - 50)
-@Component("flowui_ClickNotifierDependencyInjector")
-public class ClickNotifierDependencyInjector implements DependencyInjector {
+@Component("flowui_ViewClickNotifierDependencyInjector")
+public class ViewClickNotifierDependencyInjector implements DependencyInjector {
 
     protected static final String DEFAULT_CLICK_LISTENER_METHOD_NAME = "addClickListener";
 
-    private static final Logger log = LoggerFactory.getLogger(ClickNotifierDependencyInjector.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewClickNotifierDependencyInjector.class);
 
     protected ReflectionCacheManager reflectionCacheManager;
 
-    public ClickNotifierDependencyInjector(ReflectionCacheManager reflectionCacheManager) {
+    public ViewClickNotifierDependencyInjector(ReflectionCacheManager reflectionCacheManager) {
         this.reflectionCacheManager = reflectionCacheManager;
     }
 

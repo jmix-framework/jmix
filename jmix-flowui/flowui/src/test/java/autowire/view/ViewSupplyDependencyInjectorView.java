@@ -25,10 +25,10 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.view.*;
 import test_support.entity.sales.Customer;
 
-@Route("supply-dependency-injector-view")
-@ViewController("SupplyDependencyInjectorView")
-@ViewDescriptor("supply-dependency-injector-view.xml")
-public class SupplyDependencyInjectorView extends StandardView {
+@Route("view-supply-dependency-injector-view")
+@ViewController("ViewSupplyDependencyInjectorView")
+@ViewDescriptor("view-supply-dependency-injector-view.xml")
+public class ViewSupplyDependencyInjectorView extends StandardView {
 
     @ViewComponent
     public DataGrid<Customer> dataGrid;

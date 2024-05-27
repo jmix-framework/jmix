@@ -16,30 +16,26 @@
 
 package autowire
 
-import autowire.view.ClickNotifierDependencyInjectorView
-import io.jmix.flowui.kit.component.button.JmixButton
+
+import autowire.view.ViewSupplyDependencyInjectorView
+import com.vaadin.flow.data.renderer.ComponentRenderer
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class ClickNotifierDependencyInjectorTest extends FlowuiTestSpecification {
+class ViewSupplyDependencyInjectorTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
         registerViewBasePackages("autowire.view")
     }
 
-    def "Autowire #clickEvent"() {
-        when: "ElementDependencyInjectorView is opened"
-        def elementDependencyInjectorView = navigateToView ClickNotifierDependencyInjectorView
+    def "Autowire renderers"() {
+        when: "SupplyDependencyInjectorView is opened"
+        def view = navigateToView ViewSupplyDependencyInjectorView
 
-        then: "#clickEvent listener should be assigned to the corresponding button"
-        def currentButton = elementDependencyInjectorView."${clickEvent}Id" as JmixButton
-        currentButton != null
-        currentButton.click()
-        currentButton.text == "${clickEvent} performed"
-
-        where:
-        clickEvent << ["clickListener", "singleClickListener", "doubleClickListener", "defaultClickListener"]
+        then: "The renderers will be set"
+        view.dataGrid.getColumnByKey("name").getRenderer() instanceof ComponentRenderer
+        view.component.getItemRenderer() instanceof ComponentRenderer
     }
 }

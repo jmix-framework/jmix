@@ -28,10 +28,10 @@ import io.jmix.flowui.view.*;
 import test_support.entity.sales.Customer;
 
 
-@Route("element-dependency-injector-view")
-@ViewController("ElementDependencyInjectorView")
-@ViewDescriptor("element-dependency-injector-view.xml")
-public class ElementDependencyInjectorView extends StandardView {
+@Route("view-element-dependency-injector-view")
+@ViewController("ViewElementDependencyInjectorView")
+@ViewDescriptor("view-element-dependency-injector-view.xml")
+public class ViewElementDependencyInjectorView extends StandardView {
 
     @ViewComponent
     public JmixButton component;

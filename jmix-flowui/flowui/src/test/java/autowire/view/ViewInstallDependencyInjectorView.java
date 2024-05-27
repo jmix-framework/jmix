@@ -30,10 +30,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-@Route("install-dependency-injector-view")
-@ViewController("InstallDependencyInjectorView")
-@ViewDescriptor("install-dependency-injector-view.xml")
-public class InstallDependencyInjectorView extends StandardView {
+@Route("view-install-dependency-injector-view")
+@ViewController("ViewInstallDependencyInjectorView")
+@ViewDescriptor("view-install-dependency-injector-view.xml")
+public class ViewInstallDependencyInjectorView extends StandardView {
 
     @ViewComponent
     public DataContext dataContext;

@@ -19,16 +19,56 @@ package io.jmix.search.index.impl;
 import org.elasticsearch.common.settings.Settings;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+import static java.util.Arrays.asList;
+
 @Component("zndfl_SearchSettingsComparator")
 public class SearchSettingsComparator {
+
+    private static final List<String> DYNAMIC_ATTRIBUTES = asList(
+            "index.number_of_replicas",
+            "index.search.idle.after",
+            "index.refresh_interval",
+            "index.max_result_window",
+            "index.max_inner_result_window",
+            "index.max_rescore_window",
+            "index.max_docvalue_fields_search",
+            "index.max_script_fields",
+            "index.max_ngram_diff",
+            "index.max_shingle_diff",
+            "index.max_refresh_listeners",
+            "index.analyze.max_token_count",
+            "index.highlight.max_analyzed_offset",
+            "index.max_terms_count",
+            "index.max_regex_length",
+            "index.query.default_field",
+            "index.routing.allocation.enable",
+            "index.gc_deletes",
+            "index.final_pipeline",
+            "index.hidden"
+    );
+
     public ComparingState compare(Settings searchServerSettings, Settings applicationSettings) {
 
-        long unmatchedSettings = applicationSettings.keySet().stream().filter(key -> {
-            String actualValue = applicationSettings.get(key);
-            String currentValue = searchServerSettings.get(key);
-            return !actualValue.equals(currentValue);
-        }).count();
+        boolean settingsAreCompatible = true;
+        boolean settingsAreChanged = false;
 
-        return unmatchedSettings == 0 ? ComparingState.EQUAL : ComparingState.NOT_COMPATIBLE;
+        for (String key: applicationSettings.keySet()){
+            String applicationValue = applicationSettings.get(key);
+            String searchServerValue = searchServerSettings.get(key);
+            boolean valueIsChanged = !applicationValue.equals(searchServerValue);
+            settingsAreChanged = settingsAreChanged || valueIsChanged;
+            boolean valueIsCompatible = valueIsChanged && isDinamic(key);
+            settingsAreCompatible = settingsAreCompatible && valueIsCompatible;
+        }
+
+        if(!settingsAreChanged) return ComparingState.EQUAL;
+
+        return settingsAreCompatible ? ComparingState.COMPATIBLE : ComparingState.NOT_COMPATIBLE;
+    }
+
+    private boolean isDinamic(String key) {
+        return DYNAMIC_ATTRIBUTES.contains(key);
     }
 }

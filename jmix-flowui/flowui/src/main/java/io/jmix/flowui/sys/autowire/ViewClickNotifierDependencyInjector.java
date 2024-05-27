@@ -18,6 +18,7 @@ package io.jmix.flowui.sys.autowire;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ClickNotifier;
 import com.vaadin.flow.component.ComponentEventListener;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.JmixOrder;
@@ -40,7 +41,11 @@ import java.util.List;
 import static io.jmix.flowui.view.Target.COMPONENT;
 
 /**
- * A special injector that autowired click listeners method that are annotated by the {@link Subscribe} annotation.
+ * A special injector that autowired click listener methods that are annotated by the {@link Subscribe} annotation.
+ * That clicks can be default, double or single. Methods for adding listeners have the same signature, which in
+ * the injection mechanism is perceived as the same method.
+ *
+ * @see ClickNotifier
  */
 @Order(JmixOrder.LOWEST_PRECEDENCE - 50)
 @Component("flowui_ViewClickNotifierDependencyInjector")

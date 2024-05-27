@@ -29,7 +29,7 @@ import java.net.http.HttpClient;
  * while getting guest token. The {@link CookieManager} by default uses
  * {@link java.net.CookiePolicy#ACCEPT_ORIGINAL_SERVER} for requests and sends cookie when it is necessary.
  * <p>
- * This class can be extended for configuring more advanced cookie policy of cookie store.
+ * This class can be extended for configuring more advanced cookie policy or cookie store.
  */
 public abstract class SupersetCookieManager extends CookieManager {
 }

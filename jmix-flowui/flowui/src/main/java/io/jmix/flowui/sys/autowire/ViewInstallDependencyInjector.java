@@ -72,6 +72,7 @@ public class ViewInstallDependencyInjector implements DependencyInjector {
         Collection<Object> autowired = viewAutowireContext.getAutowired();
 
         for (AnnotatedMethod<Install> annotatedMethod : installMethods) {
+            // skip already autowired elements
             if (!autowired.contains(annotatedMethod)) {
                 doAutowiring(annotatedMethod, view, autowired);
             }

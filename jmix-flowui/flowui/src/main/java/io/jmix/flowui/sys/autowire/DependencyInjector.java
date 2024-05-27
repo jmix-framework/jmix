@@ -47,6 +47,11 @@ public interface DependencyInjector {
     interface AutowireContext {
 
         /**
+         * Returns a collection of objects that have already been autowired and that should not be used in
+         * the subsequent injection. Implementations of injectors use this collection to avoid
+         * overwriting already injected objects. Before injection, the injector checks the
+         * element to see if it exists in this collection.
+         *
          * @return collection of objects that have already been autowired
          */
         Collection<Object> getAutowired();

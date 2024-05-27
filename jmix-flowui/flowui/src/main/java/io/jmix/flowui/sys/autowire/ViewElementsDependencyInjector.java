@@ -72,6 +72,7 @@ public class ViewElementsDependencyInjector implements DependencyInjector {
         Collection<Object> autowired = viewAutowireContext.getAutowired();
 
         for (AutowireElement element : autowireElements) {
+            // skip already autowired elements
             if (!autowired.contains(element)) {
                 doAutowiring(element, view, autowired);
             }

@@ -72,6 +72,7 @@ public class ViewClickNotifierDependencyInjector implements DependencyInjector {
         Collection<Object> autowired = viewAutowireContext.getAutowired();
 
         for (AnnotatedMethod<Subscribe> annotatedMethod : subscribeMethods) {
+            // skip already autowired elements
             if (!autowired.contains(annotatedMethod)) {
                 doAutowiring(annotatedMethod, view, viewClass, autowired);
             }

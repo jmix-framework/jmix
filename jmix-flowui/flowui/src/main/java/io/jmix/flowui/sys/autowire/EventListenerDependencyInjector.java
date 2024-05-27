@@ -61,6 +61,7 @@ public class EventListenerDependencyInjector implements DependencyInjector {
             Collection<Object> autowired = viewAutowireContext.getAutowired();
 
             List<ApplicationListener<?>> listeners = eventListenerMethods.stream()
+                    // skip already autowired elements
                     .filter(m -> !autowired.contains(m))
                     .peek(autowired::add)
                     .map(m -> new UiEventListenerMethodAdapter(view, viewClass, m, applicationContext))

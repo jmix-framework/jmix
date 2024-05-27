@@ -63,6 +63,7 @@ public class ViewSupplyDependencyInjector implements DependencyInjector {
         Collection<Object> autowired = viewAutowireContext.getAutowired();
 
         for (AnnotatedMethod<Supply> annotatedMethod : supplyMethods) {
+            // skip already autowired elements
             if (!autowired.contains(annotatedMethod)) {
                 doAutowiring(annotatedMethod, view, autowired);
             }

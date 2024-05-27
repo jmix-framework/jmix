@@ -26,7 +26,6 @@ import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.details.Details;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.SvgIcon;
@@ -2971,6 +2970,8 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "showPrintMargin", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "textWrap", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "theme", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.kit.component.codeeditor.CodeEditorTheme",

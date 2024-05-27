@@ -82,6 +82,7 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             !showLineNumbers
             !showPrintMargin
             tabIndex == 3
+            textWrap
             theme == CodeEditorTheme.TERMINAL
             title == "titleString"
             !visible

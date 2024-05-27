@@ -121,6 +121,12 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 observer: '_onFontSizeChange'
             },
 
+            textWrap: {
+                type: Boolean,
+                value: false,
+                observer: '_onTextWrapChange'
+            },
+
             /** @private */
             _editor: {
                 type: Object
@@ -153,6 +159,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             printMarginColumn: this.printMarginColumn,
             value: this.value,
             fontSize: this.fontSize,
+            wrap: this.textWrap,
             useWorker: false
         });
 
@@ -338,6 +345,17 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.setFontSize(fontSize);
+    }
+
+    /**
+     * @private
+     */
+    _onTextWrapChange(textWrap) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.session.setUseWrapMode(textWrap);
     }
 
     /**

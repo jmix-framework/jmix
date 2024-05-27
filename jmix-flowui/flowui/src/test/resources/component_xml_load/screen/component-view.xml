@@ -947,6 +947,7 @@
                     showLineNumbers="false"
                     showPrintMargin="false"
                     tabIndex="3"
+                    textWrap="true"
                     theme="TERMINAL"
                     title="titleString"
                     visible="false"

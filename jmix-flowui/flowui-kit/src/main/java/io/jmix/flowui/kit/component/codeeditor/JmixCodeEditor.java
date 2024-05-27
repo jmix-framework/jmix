@@ -50,6 +50,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     protected static final String PROPERTY_SHOW_PRINT_MARGIN = "showPrintMargin";
     protected static final String PROPERTY_PRINT_MARGIN_COLUMN = "printMarginColumn";
     protected static final String PROPERTY_FONT_SIZE = "fontSize";
+    protected static final String PROPERTY_TEXT_WRAP = "textWrap";
 
     protected static final int PRINT_MARGIN_COLUMN_DEFAULT_VALUE = 80;
     protected static final String FONT_SIZE_DEFAULT_VALUE = "1rem";
@@ -243,6 +244,23 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     public void setFontSize(String fontSize) {
         getElement().setProperty(PROPERTY_FONT_SIZE, fontSize);
+    }
+
+    /**
+     * @return {@code true} is the text content inside editor should be wrapped, {@code false} otherwise
+     */
+    @Synchronize(PROPERTY_TEXT_WRAP)
+    public boolean getTextWrap() {
+        return getElement().getProperty(PROPERTY_TEXT_WRAP, false);
+    }
+
+    /**
+     * Sets the text content wrapping mode. The text wrap is {@code false} by default.
+     *
+     * @param textWrap whether to wrap text content
+     */
+    public void setTextWrap(boolean textWrap) {
+        getElement().setProperty(PROPERTY_TEXT_WRAP, textWrap);
     }
 
     /**

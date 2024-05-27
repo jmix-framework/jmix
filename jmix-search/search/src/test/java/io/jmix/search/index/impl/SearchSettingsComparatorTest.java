@@ -60,6 +60,42 @@ class SearchSettingsComparatorTest {
         Settings indexSettings = mockSettings(Map.of("setting1", "value1", "setting2", "value2"));
         Settings applicationSetting = mockSettings(Map.of("setting1", "value1", "setting2", "value2", "index.number_of_replicas", "value3"));
         ComparingState result = searchSettingsComparator.compare(indexSettings, applicationSetting);
+        assertEquals(ComparingState.COMPATIBLE, result);
+    }
+
+    @Test
+    void compare_additional_setting_in_application_dynamic_attribute_but_static_changed() {
+        SearchSettingsComparator searchSettingsComparator = new SearchSettingsComparator();
+        Settings indexSettings = mockSettings(Map.of("setting1", "value1", "setting2", "value2"));
+        Settings applicationSetting = mockSettings(Map.of("setting1", "value2", "setting2", "value2", "index.number_of_replicas", "value3"));
+        ComparingState result = searchSettingsComparator.compare(indexSettings, applicationSetting);
+        assertEquals(ComparingState.NOT_COMPATIBLE, result);
+    }
+
+    @Test
+    void compare_additional_setting_in_application_dynamic_attribute_but_static_deleted() {
+        SearchSettingsComparator searchSettingsComparator = new SearchSettingsComparator();
+        Settings indexSettings = mockSettings(Map.of("setting1", "value1", "setting2", "value2"));
+        Settings applicationSetting = mockSettings(Map.of("setting2", "value2", "index.number_of_replicas", "value3"));
+        ComparingState result = searchSettingsComparator.compare(indexSettings, applicationSetting);
+        assertEquals(ComparingState.COMPATIBLE, result);
+    }
+
+    @Test
+    void compare_additional_setting_in_application_dynamic_attribute_one_changed_one_deleted_one_new() {
+        SearchSettingsComparator searchSettingsComparator = new SearchSettingsComparator();
+        Settings indexSettings = mockSettings(Map.of("setting1", "value1", "setting2", "value2", "index.number_of_replicas", "value3", "index.max_shingle_diff", "someValue"));
+        Settings applicationSetting = mockSettings(Map.of("setting1", "value1", "setting2", "value2", "index.number_of_replicas", "value3+", "index.max_refresh_listeners", "someValue2"));
+        ComparingState result = searchSettingsComparator.compare(indexSettings, applicationSetting);
+        assertEquals(ComparingState.COMPATIBLE, result);
+    }
+
+    @Test
+    void compare_additional_setting_in_application_dynamic_attribute_one_changed_one_deleted_one_new_but_static_changed() {
+        SearchSettingsComparator searchSettingsComparator = new SearchSettingsComparator();
+        Settings indexSettings = mockSettings(Map.of("setting1", "value1", "setting2", "value2", "index.number_of_replicas", "value3", "index.max_shingle_diff", "someValue"));
+        Settings applicationSetting = mockSettings(Map.of("setting1", "value1+", "setting2", "value2", "index.number_of_replicas", "value3+", "index.max_refresh_listeners", "someValue2"));
+        ComparingState result = searchSettingsComparator.compare(indexSettings, applicationSetting);
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
     }
 

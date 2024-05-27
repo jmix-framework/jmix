@@ -59,8 +59,9 @@ public class SearchSettingsComparator {
             String searchServerValue = searchServerSettings.get(key);
             boolean valueIsChanged = !applicationValue.equals(searchServerValue);
             settingsAreChanged = settingsAreChanged || valueIsChanged;
-            boolean valueIsCompatible = valueIsChanged && isDinamic(key);
-            settingsAreCompatible = settingsAreCompatible && valueIsCompatible;
+            if(valueIsChanged){
+                settingsAreCompatible = settingsAreCompatible && isDynamic(key);
+            }
         }
 
         if(!settingsAreChanged) return ComparingState.EQUAL;
@@ -68,7 +69,7 @@ public class SearchSettingsComparator {
         return settingsAreCompatible ? ComparingState.COMPATIBLE : ComparingState.NOT_COMPATIBLE;
     }
 
-    private boolean isDinamic(String key) {
+    private boolean isDynamic(String key) {
         return DYNAMIC_ATTRIBUTES.contains(key);
     }
 }

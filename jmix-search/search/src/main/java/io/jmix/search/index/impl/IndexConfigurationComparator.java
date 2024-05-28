@@ -43,11 +43,11 @@ public class IndexConfigurationComparator {
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
-    public ConfiguarionComparingResult compareConfigurations(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+    public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
         ComparingState mappingState = isIndexMappingActual(indexConfiguration, indexResponse);
         ComparingState settingsState = isIndexSettingsActual(indexConfiguration, indexResponse);
 
-        return new ConfiguarionComparingResult(
+        return new ConfigurationComparingResult(
                 mappingState.isReindexingNotRequired() && settingsState.isReindexingNotRequired(),
                 mappingState.isConfigurationUpdateRequired(),
                 settingsState.isConfigurationUpdateRequired()
@@ -76,12 +76,12 @@ public class IndexConfigurationComparator {
         return settingsComparator.compare(currentSettings, actualSettings);
     }
 
-    public class ConfiguarionComparingResult {
+    public static class ConfigurationComparingResult {
         private final boolean compatible;
         private final boolean mappingMustBeActualized;
         private final boolean settingsMustBeActualized;
 
-        ConfiguarionComparingResult(boolean compatible, boolean mappingMustBeActualized, boolean settingsMustBeActualized) {
+        ConfigurationComparingResult(boolean compatible, boolean mappingMustBeActualized, boolean settingsMustBeActualized) {
             this.compatible = compatible;
             this.mappingMustBeActualized = mappingMustBeActualized;
             this.settingsMustBeActualized = settingsMustBeActualized;

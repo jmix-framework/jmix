@@ -168,7 +168,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            IndexConfigurationComparator.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
+            IndexConfigurationComparator.ConfigurationComparingResult result = isIndexActual(indexConfiguration);
             if (result.isCompatible()) {
                 status = IndexValidationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
@@ -252,7 +252,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            IndexConfigurationComparator.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
+            IndexConfigurationComparator.ConfigurationComparingResult result = isIndexActual(indexConfiguration);
             if (result.isCompatible()) {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
@@ -319,7 +319,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    protected IndexConfigurationComparator.ConfiguarionComparingResult isIndexActual(IndexConfiguration indexConfiguration) {
+    protected IndexConfigurationComparator.ConfigurationComparingResult isIndexActual(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());

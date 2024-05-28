@@ -16,17 +16,13 @@
 
 package io.jmix.flowui.sys.autowire;
 
-import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.JmixOrder;
-import io.jmix.flowui.model.InstallSubject;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager.AnnotatedMethod;
-import io.jmix.flowui.sys.delegate.*;
 import io.jmix.flowui.view.Install;
 import io.jmix.flowui.view.InstallTargetHandler;
 import io.jmix.flowui.view.View;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
@@ -37,13 +33,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import static java.lang.reflect.Proxy.newProxyInstance;
-import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
 /**
  * An injection that autowired methods that are annotated by the {@link Install} annotation.
@@ -100,8 +89,8 @@ public class ViewInstallDependencyInjector implements DependencyInjector {
         Class<?> instanceClass = targetInstance.getClass();
         Method installMethod = annotatedMethod.getMethod();
 
-        MethodHandle targetSetterMethod =
-                getInstallTargetSetterMethod(annotation, view, instanceClass, installMethod);
+        MethodHandle targetSetterMethod = AutowireUtils.getInstallTargetSetterMethod(annotation, view,
+                instanceClass, installMethod, reflectionCacheManager);
         Class<?> targetParameterType = targetSetterMethod.type().parameterList().get(1);
 
         Object handler = null;
@@ -110,7 +99,7 @@ public class ViewInstallDependencyInjector implements DependencyInjector {
         }
 
         if (handler == null) {
-            handler = createInstallHandler(targetParameterType, view, installMethod);
+            handler = AutowireUtils.createInstallHandler(getClass(), targetParameterType, view, installMethod);
         }
 
         try {
@@ -129,64 +118,6 @@ public class ViewInstallDependencyInjector implements DependencyInjector {
     protected Object getInstallTargetInstance(View<?> controller, Install annotation) {
         return AutowireUtils.getTargetInstance(annotation, controller,
                 ViewDescriptorUtils.getInferredProvideId(annotation), annotation.target());
-    }
-
-    protected MethodHandle getInstallTargetSetterMethod(Install annotation, View<?> controller,
-                                                        Class<?> instanceClass, Method provideMethod) {
-        String subjectProperty;
-
-        if (Strings.isNullOrEmpty(annotation.subject()) && annotation.type() == Object.class) {
-            InstallSubject installSubjectAnnotation = findMergedAnnotation(instanceClass, InstallSubject.class);
-            if (installSubjectAnnotation != null) {
-                subjectProperty = installSubjectAnnotation.value();
-            } else {
-                throw new DevelopmentException(
-                        String.format("Unable to determine @%s subject of %s in %s", Install.class.getSimpleName(),
-                                provideMethod, controller.getId().orElse(""))
-                );
-            }
-        } else if (annotation.type() != Object.class) {
-            subjectProperty = StringUtils.uncapitalize(annotation.type().getSimpleName());
-        } else {
-            subjectProperty = annotation.subject();
-        }
-
-        String subjectSetterName = "set" + StringUtils.capitalize(subjectProperty);
-        // Check if addSubject is supported
-        String subjectAddName = "add" + StringUtils.capitalize(subjectProperty);
-
-        MethodHandle targetSetterMethod = reflectionCacheManager.getTargetInstallMethod(instanceClass, subjectAddName);
-        if (targetSetterMethod == null) {
-            targetSetterMethod = reflectionCacheManager.getTargetInstallMethod(instanceClass, subjectSetterName);
-        }
-
-        if (targetSetterMethod == null) {
-            throw new DevelopmentException(
-                    String.format("Unable to find @%s target method %s in %s", Install.class.getSimpleName(),
-                            subjectProperty, instanceClass)
-            );
-        }
-
-        return targetSetterMethod;
-    }
-
-    protected Object createInstallHandler(Class<?> targetObjectType, View<?> controller, Method method) {
-        if (targetObjectType == Function.class) {
-            return new InstalledFunction(controller, method);
-        } else if (targetObjectType == Consumer.class) {
-            return new InstalledConsumer(controller, method);
-        } else if (targetObjectType == Supplier.class) {
-            return new InstalledSupplier(controller, method);
-        } else if (targetObjectType == BiFunction.class) {
-            return new InstalledBiFunction(controller, method);
-        } else if (targetObjectType == Runnable.class) {
-            return new InstalledRunnable(controller, method);
-        }
-
-        ClassLoader classLoader = getClass().getClassLoader();
-        return newProxyInstance(classLoader, new Class[]{targetObjectType},
-                new InstalledProxyHandler(controller, method)
-        );
     }
 
     @Override

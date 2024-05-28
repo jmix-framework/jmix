@@ -22,6 +22,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.HasValue;
+import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
@@ -29,8 +30,10 @@ import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.dropdownbutton.ActionItem;
 import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem;
+import io.jmix.flowui.model.InstallSubject;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager.AnnotatedMethod;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager.AutowireElement;
+import io.jmix.flowui.sys.delegate.*;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,9 +48,13 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static io.jmix.flowui.sys.ValuePathHelper.*;
+import static java.lang.reflect.Proxy.newProxyInstance;
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
 /**
@@ -568,6 +575,85 @@ public final class AutowireUtils {
 
 
         return listener;
+    }
+
+    /**
+     * Finds a corresponding setter method for install annotation.
+     *
+     * @param annotation             annotation for search
+     * @param component              origin component
+     * @param instanceClass          class to search annotation
+     * @param provideMethod          provideMethod
+     * @param reflectionCacheManager reflection cache manager to get target install method
+     * @return setter method handle
+     */
+    public static MethodHandle getInstallTargetSetterMethod(Install annotation, Component component,
+                                                            Class<?> instanceClass, Method provideMethod,
+                                                            ReflectionCacheManager reflectionCacheManager) {
+        String subjectProperty;
+
+        if (Strings.isNullOrEmpty(annotation.subject()) && annotation.type() == Object.class) {
+            InstallSubject installSubjectAnnotation = findMergedAnnotation(instanceClass, InstallSubject.class);
+            if (installSubjectAnnotation != null) {
+                subjectProperty = installSubjectAnnotation.value();
+            } else {
+                throw new DevelopmentException(
+                        String.format("Unable to determine @%s subject of %s in %s", Install.class.getSimpleName(),
+                                provideMethod, component.getId().orElse(""))
+                );
+            }
+        } else if (annotation.type() != Object.class) {
+            subjectProperty = StringUtils.uncapitalize(annotation.type().getSimpleName());
+        } else {
+            subjectProperty = annotation.subject();
+        }
+
+        String subjectSetterName = "set" + StringUtils.capitalize(subjectProperty);
+        // Check if addSubject is supported
+        String subjectAddName = "add" + StringUtils.capitalize(subjectProperty);
+
+        MethodHandle targetSetterMethod = reflectionCacheManager.getTargetInstallMethod(instanceClass, subjectAddName);
+        if (targetSetterMethod == null) {
+            targetSetterMethod = reflectionCacheManager.getTargetInstallMethod(instanceClass, subjectSetterName);
+        }
+
+        if (targetSetterMethod == null) {
+            throw new DevelopmentException(
+                    String.format("Unable to find @%s target method %s in %s", Install.class.getSimpleName(),
+                            subjectProperty, instanceClass)
+            );
+        }
+
+        return targetSetterMethod;
+    }
+
+    /**
+     * Created proxy instance for install method handler.
+     *
+     * @param callerClass      caller class
+     * @param targetObjectType target object type
+     * @param component        component to be passed
+     * @param method           method to be invoked
+     * @return proxy instance for install handler
+     */
+    public static Object createInstallHandler(Class<?> callerClass, Class<?> targetObjectType,
+                                              Component component, Method method) {
+        if (targetObjectType == Function.class) {
+            return new InstalledFunction(component, method);
+        } else if (targetObjectType == Consumer.class) {
+            return new InstalledConsumer(component, method);
+        } else if (targetObjectType == Supplier.class) {
+            return new InstalledSupplier(component, method);
+        } else if (targetObjectType == BiFunction.class) {
+            return new InstalledBiFunction(component, method);
+        } else if (targetObjectType == Runnable.class) {
+            return new InstalledRunnable(component, method);
+        }
+
+        ClassLoader classLoader = callerClass.getClassLoader();
+        return newProxyInstance(classLoader, new Class[]{targetObjectType},
+                new InstalledProxyHandler(component, method)
+        );
     }
 
     @Nullable

@@ -169,7 +169,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
             IndexConfigurationsChecker.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
-            if (result.isCompartible()) {
+            if (result.isCompatible()) {
                 status = IndexValidationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             } else {
@@ -253,7 +253,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
             IndexConfigurationsChecker.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
-            if (result.isCompartible()) {
+            if (result.isCompatible()) {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
                 if(result.isMappingMustBeActualized()){

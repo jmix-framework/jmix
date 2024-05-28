@@ -77,18 +77,18 @@ public class IndexConfigurationsChecker {
     }
 
     public class ConfiguarionComparingResult {
-        private final boolean compartible;
+        private final boolean compatible;
         private final boolean mappingMustBeActualized;
         private final boolean settingsMustBeActualized;
 
-        ConfiguarionComparingResult(boolean compartible, boolean mappingMustBeActualized, boolean settingsMustBeActualized) {
-            this.compartible = compartible;
+        ConfiguarionComparingResult(boolean compatible, boolean mappingMustBeActualized, boolean settingsMustBeActualized) {
+            this.compatible = compatible;
             this.mappingMustBeActualized = mappingMustBeActualized;
             this.settingsMustBeActualized = settingsMustBeActualized;
         }
 
-        public boolean isCompartible() {
-            return compartible;
+        public boolean isCompatible() {
+            return compatible;
         }
 
         public boolean isMappingMustBeActualized() {

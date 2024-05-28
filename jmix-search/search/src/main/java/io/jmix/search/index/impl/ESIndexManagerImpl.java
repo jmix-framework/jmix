@@ -52,7 +52,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
     @Autowired
     protected IndexStateRegistry indexStateRegistry;
     @Autowired
-    private IndexConfigurationsChecker indexConfigurationsChecker;
+    private IndexConfigurationComparator indexConfigurationComparator;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -168,7 +168,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            IndexConfigurationsChecker.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
+            IndexConfigurationComparator.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
             if (result.isCompatible()) {
                 status = IndexValidationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
@@ -252,7 +252,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            IndexConfigurationsChecker.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
+            IndexConfigurationComparator.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
             if (result.isCompatible()) {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
@@ -319,11 +319,11 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    protected IndexConfigurationsChecker.ConfiguarionComparingResult isIndexActual(IndexConfiguration indexConfiguration) {
+    protected IndexConfigurationComparator.ConfiguarionComparingResult isIndexActual(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());
 
-        return indexConfigurationsChecker.compareConfigurations(indexConfiguration, indexResponse);
+        return indexConfigurationComparator.compareConfigurations(indexConfiguration, indexResponse);
     }
 }

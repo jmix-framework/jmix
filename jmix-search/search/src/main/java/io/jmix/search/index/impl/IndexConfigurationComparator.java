@@ -29,16 +29,16 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class IndexConfigurationsChecker {
+public class IndexConfigurationComparator {
     private final SearchMappingComparator mappingComparator;
     private final SearchSettingsComparator settingsComparator;
 
-    public IndexConfigurationsChecker(SearchMappingComparator searchMappingChecker, SearchSettingsComparator settingsComparator) {
+    public IndexConfigurationComparator(SearchMappingComparator searchMappingChecker, SearchSettingsComparator settingsComparator) {
         this.mappingComparator = searchMappingChecker;
         this.settingsComparator = settingsComparator;
     }
 
-    private static final Logger log = LoggerFactory.getLogger(IndexConfigurationsChecker.class);
+    private static final Logger log = LoggerFactory.getLogger(IndexConfigurationComparator.class);
 
 
     protected ObjectMapper objectMapper = new ObjectMapper();

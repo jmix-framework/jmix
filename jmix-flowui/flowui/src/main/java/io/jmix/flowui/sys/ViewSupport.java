@@ -26,6 +26,8 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.monitoring.ViewLifeCycle;
+import io.jmix.flowui.sys.autowire.AutowireManager;
+import io.jmix.flowui.sys.autowire.ViewAutowireContext;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.View.InitEvent;
 import io.jmix.flowui.view.navigation.RouteSupport;
@@ -39,16 +41,16 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import static io.jmix.flowui.monitoring.UiMonitoring.*;
+import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
+import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
 import static io.jmix.flowui.view.ViewControllerUtils.getPackage;
 
 
@@ -62,7 +64,7 @@ public class ViewSupport {
     protected ViewRegistry viewRegistry;
     protected ViewNavigationSupport navigationSupport;
     protected CurrentAuthentication currentAuthentication;
-    protected ViewControllerDependencyManager dependencyManager;
+    protected AutowireManager autowireManager;
     protected RouteSupport routeSupport;
     protected MeterRegistry meterRegistry;
 
@@ -73,7 +75,7 @@ public class ViewSupport {
                        ViewRegistry viewRegistry,
                        ViewNavigationSupport navigationSupport,
                        CurrentAuthentication currentAuthentication,
-                       ViewControllerDependencyManager dependencyManager,
+                       AutowireManager autowireManager,
                        RouteSupport routeSupport,
                        MeterRegistry meterRegistry) {
         this.applicationContext = applicationContext;
@@ -81,7 +83,7 @@ public class ViewSupport {
         this.viewRegistry = viewRegistry;
         this.navigationSupport = navigationSupport;
         this.currentAuthentication = currentAuthentication;
-        this.dependencyManager = dependencyManager;
+        this.autowireManager = autowireManager;
         this.routeSupport = routeSupport;
         this.meterRegistry = meterRegistry;
     }
@@ -130,9 +132,8 @@ public class ViewSupport {
 
         Timer.Sample injectSample = startTimerSample(meterRegistry);
 
-        ViewControllerDependencyManager dependencyManager =
-                applicationContext.getBean(ViewControllerDependencyManager.class);
-        dependencyManager.inject(view);
+        ViewAutowireContext viewAutowireContext = new ViewAutowireContext(view);
+        autowireManager.autowire(viewAutowireContext);
 
         stopViewTimerSample(injectSample, meterRegistry, ViewLifeCycle.INJECT, viewId);
 

@@ -14,30 +14,35 @@
  * limitations under the License.
  */
 
-package dependency_injector
+package autowire
 
-
-import dependency_injector.view.DependencyInjectorView
+import autowire.view.ViewInstallDependencyInjectorView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
-class ViewControllerDependencyInjectorTest extends FlowuiTestSpecification {
+class ViewInstallDependencyInjectorTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerViewBasePackages("dependency_injector.view")
+        registerViewBasePackages("autowire.view")
     }
 
-    def "Tab injection when TabSheet is placed in component container"() {
-        when: "Open the DependencyInjectorView"
-        def dependencyInjectorView = navigateToView(DependencyInjectorView.class)
+    def "Autowire #dataElement install points"() {
+        when: "InstallDependencyInjectorView is opened"
+        def view = navigateToView ViewInstallDependencyInjectorView
 
-        then: "Tab fields should be injected correctly"
-        dependencyInjectorView.tabSheet != null
-        dependencyInjectorView.tabSheetTab1 != null
-        dependencyInjectorView.tabSheetTab1.id.get() == "tab1"
-        dependencyInjectorView.tabSheetTab2 != null
-        dependencyInjectorView.tabSheetTab2.id.get() == "tab2"
+        then: "The install point will be set"
+        view."${dataElement}"."get${installName}"() != null
+
+        where:
+        dataElement << [
+                "dataContext", "collectionDl",
+                "facet", "component"
+        ]
+        installName << [
+                "SaveDelegate", "LoadDelegate",
+                "SaveSettingsDelegate", "ItemLabelGenerator"
+        ]
     }
 }

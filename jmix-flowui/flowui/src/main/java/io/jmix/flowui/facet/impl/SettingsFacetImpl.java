@@ -27,10 +27,10 @@ import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.settings.SettingsFacetUrlQueryParametersHelper;
 import io.jmix.flowui.facet.settings.ViewSettings;
-import io.jmix.flowui.facet.settings.ViewSettingsJson;
 import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
+import io.jmix.flowui.facet.settings.ViewSettingsJson;
 import io.jmix.flowui.settings.UserSettingsCache;
-import io.jmix.flowui.sys.ViewControllerReflectionInspector;
+import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.ViewFacets;
@@ -50,7 +50,7 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     private static final Logger log = LoggerFactory.getLogger(SettingsFacetImpl.class);
 
     protected SettingsFacetUrlQueryParametersHelper settingsHelper;
-    protected ViewControllerReflectionInspector reflectionInspector;
+    protected ReflectionCacheManager reflectionCacheManager;
     protected ViewSettingsComponentManager settingsManager;
     protected UserSettingsCache userSettingsCache;
 
@@ -72,11 +72,11 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
     protected QueryParameters viewQueryParameters;
 
     public SettingsFacetImpl(SettingsFacetUrlQueryParametersHelper settingsHelper,
-                             ViewControllerReflectionInspector reflectionInspector,
+                             ReflectionCacheManager reflectionCacheManager,
                              @Autowired(required = false) UserSettingsCache userSettingsCache,
                              @Autowired(required = false) ViewSettingsComponentManager settingsManager) {
         this.settingsHelper = settingsHelper;
-        this.reflectionInspector = reflectionInspector;
+        this.reflectionCacheManager = reflectionCacheManager;
         this.settingsManager = settingsManager;
         this.userSettingsCache = userSettingsCache;
     }
@@ -397,7 +397,9 @@ public class SettingsFacetImpl extends AbstractFacet implements SettingsFacet {
         }
 
         protected void subscribe() {
-            MethodHandle addListenerMethod = reflectionInspector.getAddListenerMethod(view.getClass(), eventClass);
+            MethodHandle addListenerMethod = reflectionCacheManager.getTargetAddListenerMethod(
+                    view.getClass(), eventClass, null
+            );
             if (addListenerMethod == null) {
                 throw new IllegalStateException("Cannot find addListener method for " + eventClass);
             }

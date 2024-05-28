@@ -15,16 +15,20 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view">
+    <data>
+        <collection id="collectionDc"
+                    class="test_support.entity.sales.Customer">
+            <loader id="collectionDl">
+                <query>
+                    <![CDATA[select e from test_Customer e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <settings id="facet"/>
+    </facets>
     <layout>
-        <vbox>
-            <tabSheet id="tabSheet">
-                <tab id="tab1">
-                    <span id="span"/>
-                </tab>
-                <tab id="tab2">
-                    <button id="button"/>
-                </tab>
-            </tabSheet>
-        </vbox>
+        <comboBox id="component"/>
     </layout>
 </view>

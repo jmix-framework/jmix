@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
+@Component("search_SearchMappingComparator")
 public class SearchMappingComparator {
 
     public static final String TYPE_KEY = "type";

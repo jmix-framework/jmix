@@ -19,7 +19,7 @@ package io.jmix.search.index.impl;
 import org.elasticsearch.common.settings.Settings;
 import org.springframework.stereotype.Component;
 
-@Component("zndfl_SearchSettingsComparator")
+@Component("search_SearchSettingsComparator")
 public class SearchSettingsComparator {
     public ComparingState compare(Settings searchServerSettings, Settings applicationSettings) {
 

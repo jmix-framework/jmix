@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
+@Component("search_IndexConfigurationComparator")
 public class IndexConfigurationComparator {
     private final SearchMappingComparator mappingComparator;
     private final SearchSettingsComparator settingsComparator;

@@ -123,33 +123,8 @@ public class ViewClickNotifierDependencyInjector implements DependencyInjector {
                     eventTarget.getClass().getName(), eventType));
         }
 
-        ComponentEventListener<?> listener;
-        // If view controller class was hot-deployed, then it will be loaded
-        // by different class loader. This will make impossible to create lambda
-        // using LambdaMetaFactory for producing the listener method in Java 17+
-        if (getClass().getClassLoader() == view.getClass().getClassLoader()) {
-            MethodHandle consumerMethodFactory =
-                    reflectionCacheManager.getComponentEventListenerMethodFactory(
-                            view.getClass(), annotatedMethod, eventType
-                    );
-            try {
-                listener = (ComponentEventListener<?>) consumerMethodFactory.invoke(view);
-            } catch (Error e) {
-                throw e;
-            } catch (Throwable e) {
-                throw new RuntimeException(String.format("Unable to bind %s handler",
-                        ComponentEventListener.class.getSimpleName()), e);
-            }
-        } else {
-            listener = event -> {
-                try {
-                    annotatedMethod.getMethodHandle().invoke(view, event);
-                } catch (Throwable e) {
-                    throw new RuntimeException(String.format("Error subscribe %s listener method invocation",
-                            ComponentEventListener.class.getSimpleName()), e);
-                }
-            };
-        }
+        ComponentEventListener<?> listener = AutowireUtils.getComponentEventListener(getClass(), view,
+                annotatedMethod, eventType, reflectionCacheManager);
 
         try {
             addListenerMethod.invoke(eventTarget, listener);

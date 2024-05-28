@@ -48,8 +48,8 @@
     <layout alignItems="STRETCH"
             padding="false" spacing="false"
             expand="contentBox"
-            classNames="jmix-role-assigment-layout">
-        <flexLayout id="contentBox" classNames="jmix-role-assigment-content-wrapper">
+            classNames="jmix-role-assignment-layout">
+        <flexLayout id="contentBox" classNames="jmix-role-assignment-content-wrapper">
             <vbox id="resourceRolesWrapper" padding="false">
                 <h4 text="msg://resourceRoles.text"/>
                 <hbox id="resourceRoleButtonsPanel" classNames="buttons-panel">

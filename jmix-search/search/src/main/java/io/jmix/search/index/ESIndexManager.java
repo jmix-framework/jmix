@@ -139,5 +139,5 @@ public interface ESIndexManager {
      * @param indexConfiguration
      * @return
      */
-    boolean saveIndexMapping(IndexConfiguration indexConfiguration);
+    boolean putMapping(IndexConfiguration indexConfiguration);
 }

@@ -225,7 +225,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     @Override
-    public boolean saveIndexMapping(IndexConfiguration indexConfiguration) {
+    public boolean putMapping(IndexConfiguration indexConfiguration) {
         PutMappingRequest request = new PutMappingRequest(indexConfiguration.getIndexName());
 
         String mappingBody;
@@ -257,7 +257,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
                 if(result.isMappingMustBeActualized()){
-                    boolean mappingSavingResult = saveIndexMapping(indexConfiguration);
+                    boolean mappingSavingResult = putMapping(indexConfiguration);
                     if (!mappingSavingResult) {
                         //TODO enhance message
                         log.error("Problem with index mapping saving.");

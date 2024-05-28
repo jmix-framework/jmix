@@ -1901,6 +1901,12 @@ public interface StudioComponents {
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "multiSelectListBox")
             }),
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1948,6 +1954,12 @@ public interface StudioComponents {
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "listBox")
             }),
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 0
+                    )
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

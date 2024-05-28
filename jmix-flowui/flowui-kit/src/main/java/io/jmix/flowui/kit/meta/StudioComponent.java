@@ -77,7 +77,7 @@ public @interface StudioComponent {
      *  <li>The full link (starting with https).</li>
      *  <li>Or part of the jmix documentation link (part after /jmix/).</li>
      * </ol>
-     *  Studio also can resolve {@code %VERSION%}} placeholder.
+     *  Studio also can resolve {@code %VERSION%} placeholder.
      */
     String documentationLink() default "";
 }

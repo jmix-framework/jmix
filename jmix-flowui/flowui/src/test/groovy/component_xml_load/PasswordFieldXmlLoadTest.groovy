@@ -90,6 +90,7 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             required
             requiredMessage == "requiredMessageString"
+            !revealButtonVisible
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"

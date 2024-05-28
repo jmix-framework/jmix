@@ -3040,6 +3040,7 @@
                 </xs:sequence>
                 <xs:attribute name="pattern" type="xs:string"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
+                <xs:attribute name="revealButtonVisible" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>

@@ -438,6 +438,7 @@
                        readOnly="true"
                        required="true"
                        requiredMessage="requiredMessageString"
+                       revealButtonVisible="false"
                        tabIndex="3"
                        themeNames="small, align-right"
                        title="titleString"

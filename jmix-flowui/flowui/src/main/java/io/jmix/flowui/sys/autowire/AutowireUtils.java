@@ -83,7 +83,7 @@ public final class AutowireUtils {
                 return action;
             }
 
-            Optional<Component> component = UiComponentUtils.findComponent(composite, targetId);
+            Optional<Component> component = UiComponentUtils.findComponent(((View<?>) composite), targetId);
             if (component.isPresent()) {
                 return component.get();
             }
@@ -96,7 +96,7 @@ public final class AutowireUtils {
 
             String id = elements[elements.length - 1];
 
-            Optional<Component> componentOpt = UiComponentUtils.findComponent(composite, pathPrefix(elements));
+            Optional<Component> componentOpt = UiComponentUtils.findComponent(((View<?>) composite), pathPrefix(elements));
 
             if (componentOpt.isPresent()) {
                 Component component = componentOpt.get();
@@ -116,7 +116,7 @@ public final class AutowireUtils {
                 }
 
                 if (UiComponentUtils.isContainer(component)) {
-                    Optional<Component> childComponent = UiComponentUtils.findComponent(component, id);
+                    Optional<Component> childComponent = UiComponentUtils.findComponent(((View<?>) composite), id);
                     if (childComponent.isPresent()) {
                         return childComponent.get();
                     }
@@ -575,7 +575,7 @@ public final class AutowireUtils {
         String parentComponentId = pathPrefix(elements, elements.length - 1);
         String[] subTargets = parse(pathSuffix(elements));
 
-        Optional<Component> component = UiComponentUtils.findComponent(layout, parentComponentId);
+        Optional<Component> component = UiComponentUtils.findComponent(((View<?>) layout), parentComponentId);
 
         if (component.isPresent()) {
             Object subTarget = component.get();

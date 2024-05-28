@@ -161,7 +161,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                 .show();
     }
 
-    private String getSaveNotificationText() {
+    protected String getSaveNotificationText() {
         Messages messages = getMessages();
         Metadata metadata = getMetadata();
         MessageTools messageTools = getApplicationContext().getBean(MessageTools.class);

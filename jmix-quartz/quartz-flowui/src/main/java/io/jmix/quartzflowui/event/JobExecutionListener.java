@@ -16,7 +16,6 @@
 
 package io.jmix.quartzflowui.event;
 
-import io.jmix.flowui.UiEventPublisher;
 import io.jmix.quartz.service.RunningJobsCache;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -42,9 +41,6 @@ public class JobExecutionListener extends JobListenerSupport {
     private Scheduler scheduler;
 
     @Autowired
-    protected UiEventPublisher uiEventPublisher;
-
-    @Autowired
     protected RunningJobsCache runningJobCache;
 
     @Override
@@ -64,7 +60,6 @@ public class JobExecutionListener extends JobListenerSupport {
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
         log.debug("jobToBeExecuted: {}", context);
-        uiEventPublisher.publishEventForUsers(new QuartzJobStartExecutionEvent(context), null);
         runningJobCache.put(context.getJobDetail().getKey(), context.getJobDetail());
     }
 
@@ -72,7 +67,6 @@ public class JobExecutionListener extends JobListenerSupport {
     public void jobWasExecuted(JobExecutionContext context,
                                JobExecutionException jobException) {
         log.debug("jobWasExecuted: {}", context);
-        uiEventPublisher.publishEventForUsers(new QuartzJobEndExecutionEvent(context, jobException), null);
         runningJobCache.invalidate(context.getJobDetail().getKey());
     }
 }

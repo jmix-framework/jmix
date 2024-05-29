@@ -40,6 +40,7 @@
         </details>
 
         <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
+            <button id="refreshBtn" action="jobModelsTable.refresh"/>
             <button id="createBtn" action="jobModelsTable.create"/>
             <button id="editBtn" action="jobModelsTable.edit"/>
             <button id="removeBtn" action="jobModelsTable.remove"/>

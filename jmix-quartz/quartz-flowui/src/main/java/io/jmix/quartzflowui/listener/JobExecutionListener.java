@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.quartzflowui.event;
+package io.jmix.quartzflowui.listener;
 
 import io.jmix.quartz.service.RunningJobsCache;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 import org.quartz.listeners.JobListenerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,14 +56,18 @@ public class JobExecutionListener extends JobListenerSupport {
 
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
-        log.debug("jobToBeExecuted: {}", context);
-        runningJobCache.put(context.getJobDetail().getKey(), context.getJobDetail());
+        log.debug("Execute job: {}", context);
+        JobKey jobKey = context.getJobDetail().getKey();
+        TriggerKey triggerKey = context.getTrigger().getKey();
+        runningJobCache.put(jobKey, triggerKey);
     }
 
     @Override
     public void jobWasExecuted(JobExecutionContext context,
                                JobExecutionException jobException) {
-        log.debug("jobWasExecuted: {}", context);
-        runningJobCache.invalidate(context.getJobDetail().getKey());
+        log.debug("Complete job: {}", context);
+        JobKey jobKey = context.getJobDetail().getKey();
+        TriggerKey triggerKey = context.getTrigger().getKey();
+        runningJobCache.invalidate(jobKey, triggerKey);
     }
 }

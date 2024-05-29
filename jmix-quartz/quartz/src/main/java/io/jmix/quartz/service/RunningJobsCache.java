@@ -17,14 +17,19 @@
 package io.jmix.quartz.service;
 
 import io.jmix.core.CacheOperations;
-import jakarta.annotation.Nullable;
+import io.jmix.core.common.util.Preconditions;
 import jakarta.annotation.PostConstruct;
-import org.quartz.JobDetail;
 import org.quartz.JobKey;
+import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Currently running jobs store
@@ -50,16 +55,54 @@ public class RunningJobsCache {
         }
     }
 
-    @Nullable
-    public JobDetail get(JobKey key) {
-        return jobDetails.get(key, JobDetail.class);
+    public boolean isJobRunning(JobKey jobKey) {
+        return !getRunningTriggers(jobKey).isEmpty();
     }
 
-    public void put(JobKey key, JobDetail job) {
-        jobDetails.put(key, job);
+    public Set<TriggerKey> getRunningTriggers(JobKey key) {
+        RunningTriggersWrapper triggersWrapper = jobDetails.get(key, RunningTriggersWrapper.class);
+        if(triggersWrapper == null) {
+            return Collections.emptySet();
+        } else {
+            return triggersWrapper.getTriggerKeys();
+        }
     }
 
-    public void invalidate(JobKey key) {
-        jobDetails.evictIfPresent(key);
+    public void put(JobKey jobKey, TriggerKey triggerKey) {
+        RunningTriggersWrapper triggersWrapper = jobDetails.get(jobKey, RunningTriggersWrapper.class);
+        if (triggersWrapper == null) {
+            triggersWrapper = new RunningTriggersWrapper();
+            jobDetails.put(jobKey, triggersWrapper);
+        }
+        triggersWrapper.addTrigger(triggerKey);
+    }
+
+    public void invalidate(JobKey jobKey, TriggerKey triggerKey) {
+        RunningTriggersWrapper triggersWrapper = jobDetails.get(jobKey, RunningTriggersWrapper.class);
+        if(triggersWrapper != null) {
+            triggersWrapper.removeTrigger(triggerKey);
+        }
+    }
+
+    private static class RunningTriggersWrapper {
+        private final Set<TriggerKey> triggersKeys;
+
+        public RunningTriggersWrapper() {
+            triggersKeys = ConcurrentHashMap.newKeySet();
+        }
+
+        public Set<TriggerKey> getTriggerKeys() {
+            return new HashSet<>(triggersKeys);
+        }
+
+        public void addTrigger(TriggerKey key) {
+            Preconditions.checkNotNullArgument(key);
+            triggersKeys.add(key);
+        }
+
+        public boolean removeTrigger(TriggerKey key) {
+            Preconditions.checkNotNullArgument(key);
+            return triggersKeys.remove(key);
+        }
     }
 }

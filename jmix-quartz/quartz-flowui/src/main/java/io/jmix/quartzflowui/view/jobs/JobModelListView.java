@@ -53,10 +53,8 @@ import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.service.RunningJobsCache;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import org.apache.commons.collections4.CollectionUtils;
-import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -373,7 +371,8 @@ public class JobModelListView extends StandardListView<JobModel> {
         if (jobModel == null) {
             return false;
         }
-        return getJobDetailFromRunningCache(jobModel) != null;
+        JobKey jobKey = JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup());
+        return runningJobsCache.isJobRunning(jobKey);
     }
 
     /**
@@ -394,14 +393,6 @@ public class JobModelListView extends StandardListView<JobModel> {
         JobState jobState = jobModel.getJobState();
         return JobState.NORMAL.equals(jobState)
                 || JobState.RUNNING.equals(jobState);
-    }
-
-    @Nullable
-    protected JobDetail getJobDetailFromRunningCache(JobModel jobModel) {
-        String jobName = jobModel.getJobName();
-        String jobGroup = jobModel.getJobGroup();
-        JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
-        return runningJobsCache.get(jobKey);
     }
 
     protected void onFilterFieldValueChange(ComponentEvent<?> event) {

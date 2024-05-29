@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -122,7 +121,7 @@ public class QuartzService {
                     if (jobDetail instanceof InvalidJobDetail) {
                         jobModel.setJobState(JobState.INVALID);
                     } else {
-                        if (runningJobsCache.get(jobKey) != null) {
+                        if (runningJobsCache.isJobRunning(jobKey)) {
                             jobModel.setJobState(JobState.RUNNING);
                         } else {
                             jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);

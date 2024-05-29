@@ -18,12 +18,12 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.component.formlayout.JmixFormLayout;
 import io.jmix.flowui.component.scroller.JmixScroller;
 import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
@@ -65,7 +65,7 @@ public class ContainerView extends StandardView {
     public AccordionPanel anotherAccordionPanelId;
 
     @ViewComponent
-    public FormLayout formLayoutId;
+    public JmixFormLayout formLayoutId;
 
     @ViewComponent
     public JmixScroller scrollerId;

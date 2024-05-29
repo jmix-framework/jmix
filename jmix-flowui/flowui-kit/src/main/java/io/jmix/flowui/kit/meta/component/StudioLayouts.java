@@ -376,7 +376,7 @@ public interface StudioLayouts {
 
     @StudioComponent(
             name = "FormLayout",
-            classFqn = "com.vaadin.flow.component.formlayout.FormLayout",
+            classFqn = "io.jmix.flowui.component.formlayout.JmixFormLayout",
             category = "Layouts",
             xmlElement = "formLayout",
             icon = "io/jmix/flowui/kit/meta/icon/layout/formLayout.svg",

@@ -44,7 +44,7 @@ import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
+public class FormLayoutLoader extends AbstractComponentLoader<JmixFormLayout> {
 
     protected MetadataTools metaDataTools;
     protected MessageTools messageTools;
@@ -68,13 +68,11 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         loadSubComponents();
     }
 
-    protected void loadData(FormLayout resultComponent, Element element) {
+    protected void loadData(JmixFormLayout resultComponent, Element element) {
         String containerId = element.attributeValue("dataContainer");
         if (!Strings.isNullOrEmpty(containerId)) {
-
             InstanceContainer<?> container = getComponentContext().getViewData().getContainer(containerId);
-            //noinspection unchecked
-            ((JmixFormLayout)resultComponent).setValueSourceProvider(new ContainerValueSourceProvider(container));
+            resultComponent.setValueSourceProvider(new ContainerValueSourceProvider<>(container));
         }
     }
 

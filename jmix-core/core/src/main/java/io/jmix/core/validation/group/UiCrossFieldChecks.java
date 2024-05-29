@@ -18,12 +18,9 @@ package io.jmix.core.validation.group;
 
 /**
  * Bean validation constraint group used by UI for cross-field validation. <br>
- * You can assign this group for constraints that must be checked only when instance is validated in UI editor. <br>
+ * You can assign this group for constraints that must be checked only when instance is validated in UI detail view. <br>
  * Cross field validation passes this group to {@link jakarta.validation.Validator#validate(Object, Class[])}
  * without {@link jakarta.validation.groups.Default} group.
- *
- * @deprecated use {@code io.jmix.flowui.component.validation.group.UiCrossFieldChecks} instead
  */
-@Deprecated(forRemoval = true, since = "2.3")
 public interface UiCrossFieldChecks {
 }

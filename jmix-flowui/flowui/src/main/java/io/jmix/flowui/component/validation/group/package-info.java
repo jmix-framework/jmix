@@ -15,6 +15,7 @@
  */
 
 @NonNullApi
+@Deprecated(forRemoval = true, since = "2.3")
 package io.jmix.flowui.component.validation.group;
 
 import org.springframework.lang.NonNullApi;

@@ -52,9 +52,9 @@ public class ExceptionDialog implements InitializingBean {
     protected static final String STACKTRACE_TEXTAREA_CLASS_NAME = BASE_CLASS_NAME + "-stacktrace-textarea";
     protected static final String MESSAGE_TEXTAREA_CLASS_NAME = BASE_CLASS_NAME + "-message-textarea";
 
-    protected static final String WIDTH = "40em";
-    protected static final String EXPANDED_WIDTH = "45em";
-    protected static final String EXPANDED_HEIGHT = "37.5em";
+    protected static final String WIDTH = "var(--jmix-exception-dialog-width, 40em)";
+    protected static final String EXPANDED_WIDTH = "var(--jmix-exception-dialog-expanded-width, 45em)";
+    protected static final String EXPANDED_HEIGHT = "var(--jmix-exception-dialog-expanded-height, 37.5em)";
 
     protected Messages messages;
     protected ViewRegistry viewRegistry;

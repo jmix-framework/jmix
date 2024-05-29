@@ -2,8 +2,8 @@ package ${packageName}
 
 import ${entity.fqn}<%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%>
 import io.jmix.flowui.view.DefaultMainViewParent<%} else {%>
-import ${routeLayout.getControllerFqn()}
-<%}%>import com.vaadin.flow.router.Route
+import ${routeLayout.getControllerFqn()}<%}%>
+import com.vaadin.flow.router.Route
 import io.jmix.core.LoadContext
 import io.jmix.core.SaveContext
 import io.jmix.flowui.view.*
@@ -11,8 +11,8 @@ import io.jmix.flowui.view.Target
 
 <%if (classComment) {%>
 ${classComment}
-<%}%>@Route(value = "${detailRoute}/:id", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent::class <%} else {%>${routeLayout.getControllerClassName()}::class<%}%>)
-@ViewController("${detailId}")
+<%}%>@Route(value = "${detailRoute}/:${detailRouteParam}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent::class <%} else {%>${routeLayout.getControllerClassName()}::class<%}%>)
+@ViewController("${api.escapeKotlinDollar(detailId)}")
 @ViewDescriptor("${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")
 class ${detailControllerName} : StandardDetailView<${entity.className}>() {

@@ -78,7 +78,6 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
 
             ariaLabel.get() == "ariaLabelString"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
-            clearListBoxesSelectionButtonVisible == true
             style.get("color") == "blue"
             enabled
             helperText == "helperTextString"
@@ -220,12 +219,12 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
 
         //test clear listBoxes selection button visible
         when:
-        twinColumnWithItemsContainer.setClearListBoxesSelectionButtonVisible(true)
+        twinColumnWithItemsContainer.setClearColumnsSelectionButtonVisible(true)
         then:
-        twinColumnWithItemsContainer.isClearListBoxesSelectionButtonVisible()
+        twinColumnWithItemsContainer.isClearColumnsSelectionButtonVisible()
         clearListBoxesSelection.isVisible()
         when:
-        twinColumnWithItemsContainer.setClearListBoxesSelectionButtonVisible(false)
+        twinColumnWithItemsContainer.setClearColumnsSelectionButtonVisible(false)
         then:
         !clearListBoxesSelection.isVisible()
 

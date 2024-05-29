@@ -18,14 +18,30 @@ package io.jmix.flowui.component.twincolumn;
 
 import com.vaadin.flow.component.shared.ThemeVariant;
 
+/**
+ * Set of theme variants applicable for {@link TwinColumn} component.
+ */
 public enum TwinColumnVariant implements ThemeVariant {
-    GRID("grid"),
 
-    ROUNDED("rounded"),
+    /**
+     * Theme variant with hidden border of component columns.
+     */
+    NO_BORDER("no-border"),
 
-    LISTBOX("listbox"),
+    /**
+     * Theme variant with hidden row borders between column items.
+     */
+    NO_ROW_BORDER("no-row-border"),
 
-    TOOLBAR("toolbar");
+    /**
+     * Theme variant with checkboxes to select items in columns.
+     */
+    CHECKBOXES("checkboxes"),
+
+    /**
+     * Theme variant with no space between buttons and rounded top and bottom borders.
+     */
+    NO_SPACE_BETWEEN_ACTIONS("no-space-between-actions");
 
     private final String name;
 

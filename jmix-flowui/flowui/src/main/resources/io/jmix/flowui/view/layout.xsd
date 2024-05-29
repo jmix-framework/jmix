@@ -2160,8 +2160,8 @@
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="grid"/>
                     <xs:enumeration value="rounded"/>
-                    <xs:enumeration value="listbox"/>
-                    <xs:enumeration value="toolbar"/>
+                    <xs:enumeration value="checkboxes"/>
+                    <xs:enumeration value="no-spaces"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -3143,7 +3143,6 @@
             <xs:extension base="validatableBaseFieldComponent">
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="selectAllButtonsVisible" type="xs:boolean"/>
-                <xs:attribute name="clearListBoxesSelectionButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="reorderable" type="xs:boolean"/>
                 <xs:attribute name="optionsColumnLabel" type="resourceString"/>
                 <xs:attribute name="selectedItemsColumnLabel" type="resourceString"/>

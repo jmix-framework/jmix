@@ -1,143 +1,73 @@
-/* Grid and Rounded themes */
-:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"], jmix-twin-column[theme~="listbox"]) vaadin-list-box  {
-    border: 1px solid var(--lumo-contrast-20pct);
+jmix-twin-column::part(required-indicator) {
+    position:absolute;
+    width: 1em;
 }
 
-:is(jmix-twin-column[theme~="rounded"], jmix-twin-column[theme~="listbox"]) vaadin-list-box  {
-    border-radius: var(--lumo-border-radius-m);
-    padding: calc(var(--lumo-border-radius-m) / 2);
-}
-
-jmix-twin-column[theme~="grid"] vaadin-list-box  {
-    border-radius: 0;
-    padding: 0;
-}
-
-:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"])  vaadin-item {
-    padding: var(--lumo-space-xs) var(--lumo-space-m);
-}
-
-:is(jmix-twin-column[theme~="grid"], jmix-twin-column[theme~="rounded"]) vaadin-item::part(checkmark) {
-    display: none;
-}
-
-jmix-twin-column[theme~="grid"] vaadin-item[selected] {
-    background-color: var(--lumo-primary-color-10pct);
-}
-
-jmix-twin-column[theme~="rounded"] vaadin-item[selected] {
-    background-color: var(--lumo-primary-color-50pct);
-}
-
-jmix-twin-column[theme~="grid"] vaadin-item:hover < vaadin-item[selected] {
-    background-color: transparent;
-}
-
-jmix-twin-column[theme~="rounded"] .twin-column-list-box-border {
-    border: 1px solid var(--lumo-contrast-20pct);
-    border-radius: var(--lumo-border-radius-m);
-}
-
-:is(jmix-twin-column[theme~="rounded"], jmix-twin-column[theme~="grid"]) vaadin-item:not([selected]):hover {
-    background-color: transparent;
-}
-
-:is(jmix-twin-column[theme~="rounded"], jmix-twin-column[theme~="grid"]) vaadin-item[selected]:hover::part(content) {
-    background-color: transparent;
-}
-
-jmix-twin-column[theme~="rounded"] vaadin-item[selected]::part(content) {
-    background-color: transparent;
-    color: var(--lumo-primary-contrast-color);
-}
-
-jmix-twin-column[theme~="rounded"] .first {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-jmix-twin-column[theme~="rounded"] .middle {
-    border-radius: 0;
-}
-
-jmix-twin-column[theme~="rounded"] .last {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-
-jmix-twin-column[theme~="grid"] vaadin-item {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    border-bottom: 1px solid var(--lumo-contrast-10pct);
-}
-
-jmix-twin-column[theme~="grid"] vaadin-item:nth-last-of-type(1) {
-    border-bottom: 0px;
-}
-
-jmix-twin-column[theme~="grid"] :is(.first, .middle, .last, .single) {
-    border-radius: 0;
-}
-
-jmix-twin-column :is(span[class~='label'], div[class~='label']) {
+.jmix-twin-column-options-column-label, .jmix-twin-column-selected-column-label  {
     color: var(--lumo-secondary-text-color);
     font-weight: 500;
     line-height: 1;
-}
-
-jmix-twin-column span[class~='label'] {
-    font-size: var(--lumo-font-size-m);
-    padding-bottom: var(--lumo-space-s);
-}
-
-jmix-twin-column div[class~='label'] {
     font-size: var(--lumo-font-size-s);
-    padding-bottom: var(--lumo-space-s);
-    margin-top: auto;
+    padding-bottom: var(--lumo-space-xs);
 }
 
-jmix-twin-column span[class~='label'][class~='required']::after {
-    content: var(--lumo-required-field-indicator, '\2022');
-    transition: opacity 0.2s;
-    color: var(--lumo-primary-text-color);
-    width: 1em;
-    text-align: center;
-    display: inline-block;
+jmix-twin-column vaadin-list-box {
+    border: 1px solid var(--lumo-contrast-20pct);
+    border-radius: 0;
 }
 
-jmix-twin-column span[class~='label'][class~='invalid'][class~='required']::after {
-    color: var(--lumo-error-text-color);
+jmix-twin-column vaadin-item {
+    border-bottom: 1px solid var(--lumo-contrast-10pct);
+    border-radius: 0;
+    padding: var(--lumo-space-xs) var(--lumo-space-m);
 }
 
-jmix-twin-column .helper {
-    font-size: var(--lumo-font-size-xs);
-    font-weight: 400;
-    color: (--lumo-secondary-text-color);
-    margin-top: 0.4em;
+jmix-twin-column vaadin-item::part(checkmark) {
+    display: none;
 }
 
-jmix-twin-column .stub {
-    height: 1px;
-    align-self: end;
-    visibility: hidden;
+jmix-twin-column vaadin-item[selected] {
+    background-color: var(--lumo-primary-color-10pct);
 }
 
-jmix-twin-column .error-label {
-    font-size: var(--lumo-font-size-xs);
-    line-height: var(--lumo-line-height-xs);
-    font-weight: 400;
-    color: var(--lumo-error-text-color);
+jmix-twin-column vaadin-item:not([selected]):hover {
+    background-color: transparent;
 }
 
-/* Toolbar theme for buttons */
-jmix-twin-column[theme~="toolbar"] .button-first {
-    margin-top: 0;
-    margin-bottom: 0;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+jmix-twin-column[theme~="no-border"] vaadin-list-box  {
+    border-width: 0;
 }
 
-jmix-twin-column[theme~="toolbar"] .button-middle {
+jmix-twin-column[theme~="no-row-border"] vaadin-item  {
+    border-width: 0;
+}
+
+jmix-twin-column[theme~="checkboxes"] vaadin-item::part(checkmark)  {
+    display: block;
+}
+
+jmix-twin-column[theme~="checkboxes"] vaadin-item {
+    padding: var(--lumo-space-xs) var(--lumo-space-m) var(--lumo-space-xs) var(--lumo-space-xs);
+}
+
+jmix-twin-column[theme~="checkboxes"] vaadin-item[selected] {
+    background-color: transparent;
+}
+
+jmix-twin-column[theme~="checkboxes"] vaadin-item:hover {
+    background-color: var(--lumo-primary-color-10pct);
+}
+
+jmix-twin-column vaadin-item:nth-last-of-type(1) {
+    border-bottom: 0px;
+}
+
+jmix-twin-column[theme~="no-space-between-actions"] vaadin-button:first-child {
+    border-top-left-radius: var(--lumo-border-radius-m);
+    border-top-right-radius: var(--lumo-border-radius-m);
+}
+
+jmix-twin-column[theme~="no-space-between-actions"] vaadin-button {
     margin-top: 0;
     margin-bottom: 0;
     border-top-left-radius: 0;
@@ -146,10 +76,9 @@ jmix-twin-column[theme~="toolbar"] .button-middle {
     border-bottom-right-radius: 0;
 }
 
-jmix-twin-column[theme~="toolbar"] .button-last {
-    margin-top: 0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+jmix-twin-column[theme~="no-space-between-actions"] vaadin-button:last-child {
+    border-bottom-left-radius: var(--lumo-border-radius-m);
+    border-bottom-right-radius: var(--lumo-border-radius-m);
 }
 
 jmix-twin-column vaadin-button vaadin-icon[dir="rtl"] {

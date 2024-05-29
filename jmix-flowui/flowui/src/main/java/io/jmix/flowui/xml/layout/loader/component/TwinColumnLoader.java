@@ -33,8 +33,6 @@ public class TwinColumnLoader extends AbstractComponentLoader<TwinColumn> {
     public void loadComponent() {
         loadBoolean(element, "selectAllButtonsVisible",
                 resultComponent::setSelectAllButtonsVisible);
-        loadBoolean(element, "clearListBoxesSelectionButtonVisible",
-                resultComponent::setClearListBoxesSelectionButtonVisible);
         loadBoolean(element, "reorderable", resultComponent::setReorderable);
         loadResourceString(element, "optionsColumnLabel",
                 context.getMessageGroup(), resultComponent::setOptionsColumnLabel);

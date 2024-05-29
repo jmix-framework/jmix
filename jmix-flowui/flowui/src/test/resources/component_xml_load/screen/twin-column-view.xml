@@ -41,7 +41,6 @@
     <layout>
         <twinColumn ariaLabel="ariaLabelString"
                     classNames="cssClassName1, cssClassName2"
-                    clearListBoxesSelectionButtonVisible="true"
                     css="color: blue;"
                     dataContainer="zooDc"
                     enabled="true"

@@ -21,6 +21,9 @@ package io.jmix.flowui.component.validation.group;
  * You can assign this group for constraints that must be checked only when instance is validated in UI detail view. <br>
  * Cross field validation passes this group to {@link jakarta.validation.Validator#validate(Object, Class[])}
  * without {@link jakarta.validation.groups.Default} group.
+ *
+ * @deprecated use {@link io.jmix.core.validation.group.UiCrossFieldChecks} instead
  */
+@Deprecated(forRemoval = true, since = "2.3")
 public interface UiCrossFieldChecks {
 }

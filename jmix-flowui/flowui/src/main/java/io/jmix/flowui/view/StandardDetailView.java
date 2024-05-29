@@ -33,12 +33,12 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
@@ -265,6 +265,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         ValidationErrors errors = new ValidationErrors();
         if (isCrossFieldValidationEnabled()) {
             ViewValidation viewValidation = getViewValidation();
+
+            // io.jmix.flowui.component.validation.group.UiCrossFieldChecks is deprecated
+            // must be removed for 2.4 release
+            errors.addAll(viewValidation.validateBeanGroup(
+                    io.jmix.flowui.component.validation.group.UiCrossFieldChecks.class, getEditedEntity()));
+
             errors.addAll(viewValidation.validateBeanGroup(UiCrossFieldChecks.class, getEditedEntity()));
         }
 

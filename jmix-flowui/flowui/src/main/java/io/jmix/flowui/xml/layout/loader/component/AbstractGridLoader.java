@@ -19,9 +19,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.google.common.base.Splitter;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.ColumnRendering;
-import com.vaadin.flow.component.grid.ColumnTextAlign;
-import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.Grid.NestedNullBehavior;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
@@ -90,7 +88,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(element, "allRowsVisible", resultComponent::setAllRowsVisible);
         loadEnum(element, GridDropMode.class, "dropMode", resultComponent::setDropMode);
         loadBoolean(element, "detailsVisibleOnClick", resultComponent::setDetailsVisibleOnClick);
-        loadEnum(element, SelectionMode.class, "selectionMode", resultComponent::setSelectionMode);
+        loadEnum(element, SelectionMode.class, "selectionMode", this::setSelectionMode);
         loadBoolean(element, "columnReorderingAllowed", resultComponent::setColumnReorderingAllowed);
         loadEnum(element, NestedNullBehavior.class, "nestedNullBehavior", resultComponent::setNestedNullBehavior);
         loadBoolean(element, "editorBuffered", editorBuffered ->
@@ -428,6 +426,14 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 setDefaultEditComponent(column, property);
             }
         });
+    }
+
+    protected void setSelectionMode(SelectionMode selectionMode) {
+        GridSelectionModel<?> gridSelectionModel = resultComponent.setSelectionMode(selectionMode);
+
+        if (gridSelectionModel instanceof GridMultiSelectionModel<?> multiSelectionModel) {
+            multiSelectionModel.setSelectionColumnFrozen(true);
+        }
     }
 
     @SuppressWarnings("unchecked")

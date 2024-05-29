@@ -275,6 +275,7 @@ dependencies {
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"
+        api "org.eclipse.persistence:org.eclipse.persistence.oracle:$eclipselinkOriginalVersion"
 
         api 'org.liquibase:liquibase-core:4.25.0'
 

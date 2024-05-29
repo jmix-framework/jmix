@@ -68,10 +68,14 @@ def initDefaultFieldAttrs(attr) {
 
 	if (attr.isDeepInheritor('byte[]')) {
 		field.tag = 'fileUploadField'
+		fieldAttrs['clearButtonVisible'] = "true"
+		fieldAttrs['fileNameVisible'] = "true"
 	}
 
 	if (attr.isDeepInheritor('io.jmix.core.FileRef')) {
 		field.tag = 'fileStorageUploadField'
+		fieldAttrs['clearButtonVisible'] = "true"
+		fieldAttrs['fileNameVisible'] = "true"
 	}
 
 	if(lookupActions) {

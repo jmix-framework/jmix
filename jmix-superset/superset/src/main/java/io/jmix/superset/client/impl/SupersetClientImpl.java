@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.service.impl;
+package io.jmix.superset.client.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -22,9 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.superset.SupersetProperties;
-import io.jmix.superset.service.SupersetService;
-import io.jmix.superset.service.cookie.SupersetCookieManager;
-import io.jmix.superset.service.model.*;
+import io.jmix.superset.client.SupersetClient;
+import io.jmix.superset.client.cookie.SupersetCookieManager;
+import io.jmix.superset.client.model.*;
 import jakarta.annotation.Nullable;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -41,8 +41,8 @@ import java.net.http.HttpResponse;
 import java.util.List;
 
 @Service("sprset_SupersetService")
-public class SupersetServiceImpl implements SupersetService {
-    private static final Logger log = LoggerFactory.getLogger(SupersetServiceImpl.class);
+public class SupersetClientImpl implements SupersetClient {
+    private static final Logger log = LoggerFactory.getLogger(SupersetClientImpl.class);
 
     protected final SupersetProperties properties;
 
@@ -50,8 +50,8 @@ public class SupersetServiceImpl implements SupersetService {
     protected ObjectMapper objectMapper;
     protected SupersetCookieManager cookieManager;
 
-    public SupersetServiceImpl(SupersetProperties properties,
-                               SupersetCookieManager cookieManager) {
+    public SupersetClientImpl(SupersetProperties properties,
+                              SupersetCookieManager cookieManager) {
         this.properties = properties;
         this.cookieManager = cookieManager;
 

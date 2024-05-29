@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.schedule.impl;
+package io.jmix.superset.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import io.jmix.superset.SupersetProperties;
-import io.jmix.superset.schedule.SupersetTokenManager;
-import io.jmix.superset.service.model.CsrfTokenResponse;
-import io.jmix.superset.service.model.LoginResponse;
-import io.jmix.superset.service.model.RefreshResponse;
-import io.jmix.superset.service.SupersetService;
+import io.jmix.superset.SupersetTokenManager;
+import io.jmix.superset.client.model.CsrfTokenResponse;
+import io.jmix.superset.client.model.LoginResponse;
+import io.jmix.superset.client.model.RefreshResponse;
+import io.jmix.superset.client.SupersetClient;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
 
     private static final Logger log = LoggerFactory.getLogger(SupersetTokenManagerImpl.class);
 
-    private final SupersetService supersetService;
+    private final SupersetClient supersetClient;
     private final SupersetProperties supersetProperties;
 
     protected final ObjectMapper objectMapper;
@@ -52,9 +52,9 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
     private String refreshToken;
     private String csrfToken;
 
-    public SupersetTokenManagerImpl(SupersetService supersetService,
+    public SupersetTokenManagerImpl(SupersetClient supersetClient,
                                     SupersetProperties supersetProperties) {
-        this.supersetService = supersetService;
+        this.supersetClient = supersetClient;
         this.supersetProperties = supersetProperties;
 
         objectMapper = buildObjectMapper();
@@ -74,9 +74,7 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
         if (!supersetProperties.isCsrfProtectionEnabled()) {
             return;
         }
-        if (csrfToken == null) {
-            performCsrfTokenRequest();
-        } else if (isCsrfTokenAboutToExpire()) {
+        if (csrfToken == null || isCsrfTokenAboutToExpire()) {
             performCsrfTokenRequest();
         }
     }
@@ -102,18 +100,19 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
     protected void performLogin() {
         LoginResponse response;
         try {
-            response = supersetService.login();
+            response = supersetClient.login();
         } catch (Exception e) {
             log.error("Cannot log in to superset. Dashboard functionality may work incorrectly", e);
             return;
         }
 
-        if (response.getMessage() == null) {
-            updateAccessToken(Objects.requireNonNull(response.getAccessToken()));
-            refreshToken = response.getRefreshToken();
+        if (response.getMessage() != null
+                || Strings.isNullOrEmpty(response.getAccessToken())) {
+            log.error("Cannot log in to superset. Dashboard functionality may work incorrectly. Message from " +
+                    "Superset: {}", response.getMessage());
         } else {
-            log.error("Cannot log in to superset. Dashboard functionality may work incorrectly. Message from Superset:" +
-                    " {}", response.getMessage());
+            updateAccessToken(response.getAccessToken());
+            refreshToken = response.getRefreshToken();
         }
     }
 
@@ -126,7 +125,7 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
         boolean retry = false;
         RefreshResponse response = null;
         try {
-            response = supersetService.refresh(refreshToken);
+            response = supersetClient.refresh(refreshToken);
         } catch (Exception e) {
             Throwable cause = e.getCause();
             if (!Strings.isNullOrEmpty(cause.getMessage()) && cause.getMessage().contains("GOAWAY received")) {
@@ -140,19 +139,19 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
 
         if (retry) {
             try {
-                response = supersetService.refresh(refreshToken);
+                response = supersetClient.refresh(refreshToken);
             } catch (Exception e) {
                 log.error("Failed to refresh access token. Dashboard functionality may work incorrectly", e);
                 return;
             }
         }
 
-        // Response cannot be null here
-        if (response.getSystemMessage() == null) {
-            updateAccessToken(response.getAccessToken());
+        if (response.getSystemMessage() != null
+                || Strings.isNullOrEmpty(response.getAccessToken())) {
+            log.error("Failed to update access token. Dashboard functionality may work incorrectly. Message from " +
+                    "Superset: {}", response.getSystemMessage());
         } else {
-            log.error("Failed to update access token. Dashboard functionality may work incorrectly. Message from Superset:" +
-                    " {}", response.getSystemMessage());
+            updateAccessToken(response.getAccessToken());
         }
     }
 
@@ -164,16 +163,17 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
 
         CsrfTokenResponse response;
         try {
-            response = supersetService.fetchCsrfToken(accessToken);
+            response = supersetClient.fetchCsrfToken(accessToken);
         } catch (Exception e) {
             log.error("Cannot get CSRF token from Superset. Dashboard functionality may work incorrectly", e);
             return;
         }
 
-        if (!Strings.isNullOrEmpty(response.getMessage())
-                || !Strings.isNullOrEmpty(response.getSystemMessage())) {
-            log.error("Failed to update CSRF token. Dashboard functionality may work incorrectly. Message from Superset:" +
-                    " {}", response.getSystemMessage());
+        if (response.getMessage() != null
+                || response.getSystemMessage() != null
+                || Strings.isNullOrEmpty(response.getResult())) {
+            log.error("Failed to update CSRF token. Dashboard functionality may work incorrectly. Message from " +
+                    "Superset: {}", response.getMessage() != null ? response.getMessage() : response.getSystemMessage());
         } else {
             csrfToken = response.getResult();
             csrfTokenExpiresIn = new Date().getTime() + supersetProperties.getCsrfTokenExpiration().toMillis();

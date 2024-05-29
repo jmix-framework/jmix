@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.schedule;
+package io.jmix.superset;
 
-import io.jmix.superset.SupersetProperties;
+import io.jmix.core.annotation.Internal;
+import io.jmix.superset.schedule.SupersetTokenScheduleConfigurer;
 import jakarta.annotation.Nullable;
 
 /**
  * Provides Superset tokens management: access token, CSRF token (if is enabled). It stores tokens and cares about
  * refreshing tokens if it is needed.
  */
+@Internal
 public interface SupersetTokenManager {
 
     /**

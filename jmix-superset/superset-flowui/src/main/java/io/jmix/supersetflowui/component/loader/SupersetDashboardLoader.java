@@ -17,6 +17,7 @@
 package io.jmix.supersetflowui.component.loader;
 
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.supersetflowui.SupersetGuestTokenProvider;
 import io.jmix.supersetflowui.component.SupersetDashboard;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
@@ -46,6 +47,7 @@ public class SupersetDashboardLoader extends AbstractComponentLoader<SupersetDas
         loadBoolean(element, "filtersExpanded", resultComponent::setFiltersExpanded);
 
         loadDatasetConstraints();
+        loadGuestTokenProvider();
     }
 
     protected void loadDatasetConstraints() {
@@ -61,6 +63,13 @@ public class SupersetDashboardLoader extends AbstractComponentLoader<SupersetDas
                             resultComponent.setDatasetConstrainsProvider(
                                     (DatasetConstrainsProvider) applicationContext.getBean(beanName)));
         }
+    }
+
+    protected void loadGuestTokenProvider() {
+        loadString(element, "guestTokenProviderBean", beanName -> {
+            SupersetGuestTokenProvider bean = applicationContext.getBean(beanName, SupersetGuestTokenProvider.class);
+            resultComponent.setGuestTokenProvider(bean);
+        });
     }
 
     protected List<DatasetConstraint> loadDatasetConstraintsList(Element datasetConstraintsElement) {

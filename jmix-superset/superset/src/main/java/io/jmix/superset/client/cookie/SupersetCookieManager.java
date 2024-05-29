@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.service.cookie;
+package io.jmix.superset.client.cookie;
 
-import io.jmix.superset.service.SupersetService;
+import io.jmix.superset.client.SupersetClient;
 
 import java.net.CookieManager;
 import java.net.http.HttpClient;
 
 /**
- * The class for configuring cookie management for {@link HttpClient}. In {@link SupersetService} it is injected as a
+ * The class for configuring cookie management for {@link HttpClient}. In {@link SupersetClient} it is injected as a
  * Spring bean and can be replaced by custom implementation.
  * <p>
  * When CSRF token request is sent, it returns Set-Cookie header alongside the token. This cookie should also be sent
@@ -31,5 +31,5 @@ import java.net.http.HttpClient;
  * <p>
  * This class can be extended for configuring more advanced cookie policy or cookie store.
  */
-public abstract class SupersetCookieManager extends CookieManager {
+public class SupersetCookieManager extends CookieManager {
 }

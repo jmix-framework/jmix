@@ -17,35 +17,31 @@
 package io.jmix.superset.schedule;
 
 import io.jmix.superset.SupersetProperties;
+import io.jmix.superset.SupersetTokenManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.stereotype.Component;
 
-@Component("sprset_SupersetTokenScheduleConfigurer")
+/**
+ * The class starts schedule tasks for getting/refreshing access token and CSRF token. The availability of this class
+ * is managed by {@link SupersetProperties#isTokensRefreshEnabled()} property in autoconfiguration.
+ */
 public class SupersetTokenScheduleConfigurer {
     private static final Logger log = LoggerFactory.getLogger(SupersetTokenScheduleConfigurer.class);
 
-    private final TaskScheduler taskScheduler;
-    private final TaskScheduler csrfTaskScheduler;
+    private final TaskScheduler accessTokenTaskScheduler;
+    private final TaskScheduler csrfTokenTaskScheduler;
     private final SupersetProperties supersetProperties;
     private final SupersetTokenManager accessTokenManager;
 
-    private boolean csrfTokenSchedulerStarted = false;
-
-    public SupersetTokenScheduleConfigurer(@Qualifier("sprset_ThreadPoolAccessTokenTaskScheduler")
-                                           TaskScheduler taskScheduler,
-                                           @Autowired(required = false)
-                                           @Qualifier("sprset_ThreadPoolCsrfTokenTaskScheduler")
-                                           TaskScheduler csrfTaskScheduler,
+    public SupersetTokenScheduleConfigurer(TaskScheduler accessTokenTaskScheduler,
+                                           TaskScheduler csrfTokenTaskScheduler,
                                            SupersetProperties supersetProperties,
                                            SupersetTokenManager accessTokenManager) {
-        this.taskScheduler = taskScheduler;
-        this.csrfTaskScheduler = csrfTaskScheduler;
+        this.accessTokenTaskScheduler = accessTokenTaskScheduler;
+        this.csrfTokenTaskScheduler = csrfTokenTaskScheduler;
         this.supersetProperties = supersetProperties;
         this.accessTokenManager = accessTokenManager;
     }
@@ -53,30 +49,28 @@ public class SupersetTokenScheduleConfigurer {
     @EventListener
     public void onContextRefreshedEvent(ContextRefreshedEvent event) {
         startAccessTokenScheduler();
+        startCsrfTokenScheduler();
     }
 
     protected void startAccessTokenScheduler() {
         // Schedule refreshing an access token
-        taskScheduler.scheduleWithFixedDelay(() -> {
-                    accessTokenManager.refreshAccessToken();
-                    startCsrfTokenScheduler();
-                },
+        accessTokenTaskScheduler.scheduleWithFixedDelay(
+                accessTokenManager::refreshAccessToken,
                 supersetProperties.getAccessTokenRefreshSchedule());
 
         log.debug("AccessToken scheduler started");
     }
 
     protected void startCsrfTokenScheduler() {
-        if (!csrfTokenSchedulerStarted) {
-            // Schedule refreshing a CSRF token
-            if (supersetProperties.isCsrfProtectionEnabled()) {
-                csrfTaskScheduler.scheduleWithFixedDelay(
-                        accessTokenManager::refreshCsrfToken,
-                        supersetProperties.getCsrfTokenRefreshSchedule());
-
-                log.debug("CSRF token scheduler started");
-            }
-            csrfTokenSchedulerStarted = true;
+        if (!supersetProperties.isCsrfProtectionEnabled()) {
+            return;
         }
+
+        // Schedule refreshing a CSRF token
+        csrfTokenTaskScheduler.scheduleWithFixedDelay(
+                accessTokenManager::refreshCsrfToken,
+                supersetProperties.getCsrfTokenRefreshSchedule());
+
+        log.debug("CSRF token scheduler started");
     }
 }

@@ -41,6 +41,7 @@ public interface StudioSupersetComponents {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "guestTokenProviderBean", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "datasetConstraintsProviderBean", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "embeddedId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "filtersExpanded", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),

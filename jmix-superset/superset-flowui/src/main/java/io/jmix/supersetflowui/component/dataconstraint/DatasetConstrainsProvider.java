@@ -29,7 +29,7 @@ import java.util.List;
  * public class DashboardDatasetConstraintsProvider implements DatasetConstrainsProvider {
  *
  *     &#64;Override
- *     public List<DatasetConstraint> getConstraints() {
+ *     public List&lt;DatasetConstraint&gt; getConstraints() {
  *         return List.of(new DatasetConstraint(13, "country_name = 'United States'"));
  *     }
  * }

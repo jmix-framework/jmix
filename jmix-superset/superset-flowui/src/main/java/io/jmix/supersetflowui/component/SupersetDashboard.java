@@ -16,38 +16,49 @@
 
 package io.jmix.supersetflowui.component;
 
-import com.google.common.base.Strings;
-import com.vaadin.flow.component.AttachEvent;
-import io.jmix.core.usersubstitution.CurrentUserSubstitution;
-import io.jmix.flowui.backgroundtask.BackgroundWorker;
-import io.jmix.superset.schedule.SupersetTokenManager;
 import io.jmix.superset.SupersetProperties;
-import io.jmix.superset.service.SupersetService;
-import io.jmix.superset.service.model.GuestTokenBody;
-import io.jmix.supersetflowui.GuestTokenHandler;
+import io.jmix.supersetflowui.DefaultGuestTokenProvider;
+import io.jmix.supersetflowui.SupersetGuestTokenProvider;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
-import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 import jakarta.annotation.Nullable;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
 
-import java.util.Collections;
-import java.util.List;
-
-import static io.jmix.superset.service.model.GuestTokenBody.Resource.DASHBOARD_TYPE;
-
+/**
+ * The component for showing embedded dashboards from Superset. It uses the embedded-sdk library on the client-side to
+ * embed a dashboard into an IFrame.
+ * <p>
+ * To work with the component correctly, you should provide the embedded ID from a configured dashboard in Superset
+ * and set it to the component.
+ * <p>
+ * By default, the component manages guest token getting and refreshing requests. It configures the request according
+ * to the Superset API and contains the following information: dataset constraints, the embedded ID and the current
+ * username.
+ * <p>
+ * The client-side of the component handles token expiration and the component requests fetching a new token. The
+ * component enables setting a custom guest token provider that will replace the default one and will be invoked when
+ * the token is about to expire.
+ * <p>
+ * The example of component in a view descriptor:
+ * <pre>
+ * xmlns:superset="http://jmix.io/schema/superset/ui"
+ *
+ * &lt;superset:dashboard id="dashboard"
+ *                     height="100%"
+ *                     width="100%"
+ *                     embeddedId="d8bb6f86-dfef-4049-a39a-fd73da1a601d"/&gt;
+ * </pre>
+ */
 public class SupersetDashboard extends JmixSupersetDashboard implements ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
-    protected CurrentUserSubstitution currentUserSubstitution;
-    protected SupersetProperties supersetProperties;
-    protected GuestTokenHandler guestTokenHandler;
+    protected DefaultGuestTokenProvider defaultGuestTokenProvider;
 
     protected DatasetConstrainsProvider datasetConstrainsProvider;
+    protected SupersetGuestTokenProvider guestTokenProvider;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -56,14 +67,9 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
 
     @Override
     public void afterPropertiesSet() {
-        currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
-        supersetProperties = applicationContext.getBean(SupersetProperties.class);
-        guestTokenHandler = applicationContext.getBean(GuestTokenHandler.class,
-                applicationContext.getBean(SupersetService.class),
-                applicationContext.getBean(SupersetTokenManager.class),
-                applicationContext.getBean(BackgroundWorker.class));
+        defaultGuestTokenProvider = applicationContext.getBean(DefaultGuestTokenProvider.class);
 
-        setUrlInternal(supersetProperties.getUrl());
+        setUrlInternal(applicationContext.getBean(SupersetProperties.class).getUrl());
     }
 
     /**
@@ -84,55 +90,39 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         this.datasetConstrainsProvider = datasetConstrainsProvider;
     }
 
+    /**
+     * @return guest token provider or {@code null} if not set
+     */
+    @Nullable
+    public SupersetGuestTokenProvider getGuestTokenProvider() {
+        return guestTokenProvider;
+    }
+
+    /**
+     * Sets a guest token provider. This provider will be used instead of default one.
+     * <p>
+     * The usage example you can find in {@link SupersetGuestTokenProvider}.
+     *
+     * @param guestTokenProvider provider to set
+     */
+    public void setGuestTokenProvider(@Nullable SupersetGuestTokenProvider guestTokenProvider) {
+        this.guestTokenProvider = guestTokenProvider;
+    }
+
     @Override
-    protected void refreshGuestToken() {
-        super.refreshGuestToken();
+    protected void fetchGuestToken() {
+        super.fetchGuestToken();
 
         startGuestTokenRefreshing();
     }
 
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-
-        // Do not start internal guest token if custom is defined
-        if (Strings.isNullOrEmpty(getGuestToken())) {
-            startGuestTokenRefreshing();
-        }
-    }
-
     protected void startGuestTokenRefreshing() {
-        guestTokenHandler.requestGuestToken(buildGuestTokenBody(),
-                response -> setGuestTokenInternal(response.getToken()));
-    }
-
-    protected GuestTokenBody buildGuestTokenBody() {
-        if (Strings.isNullOrEmpty(getEmbeddedId())) {
-            throw new IllegalStateException("Embedded id is required");
+        if (guestTokenProvider != null) {
+            guestTokenProvider.fetchGuestToken(
+                    new SupersetGuestTokenProvider.FetchGuestTokenContext(this),
+                    this::setGuestTokenInternal);
+        } else {
+            defaultGuestTokenProvider.fetchGuestToken(this, this::setGuestTokenInternal);
         }
-
-        List<GuestTokenBody.RowLevelRole> rls = Collections.emptyList();
-        if (datasetConstrainsProvider != null) {
-            rls = convertToSupersetRls(datasetConstrainsProvider.getConstraints());
-        }
-
-        return GuestTokenBody.builder()
-                .withResource(new GuestTokenBody.Resource()
-                        .withId(getEmbeddedId())
-                        .withType(DASHBOARD_TYPE))
-                .withRowLevelRoles(rls)
-                .withUser(new GuestTokenBody.User()
-                        .withUsername(currentUserSubstitution.getEffectiveUser().getUsername()))
-                .build();
-    }
-
-    protected List<GuestTokenBody.RowLevelRole> convertToSupersetRls(List<DatasetConstraint> datasetConstraints) {
-        return CollectionUtils.isNotEmpty(datasetConstraints)
-                ? datasetConstraints.stream()
-                .map(dc -> new GuestTokenBody.RowLevelRole()
-                        .withClause(dc.clause())
-                        .withDataset(dc.dataset()))
-                .toList()
-                : Collections.emptyList();
     }
 }

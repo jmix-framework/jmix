@@ -17,7 +17,12 @@
 package io.jmix.autoconfigure.superset;
 
 import io.jmix.superset.SupersetConfiguration;
-import io.jmix.superset.service.cookie.SupersetCookieManager;
+import io.jmix.superset.SupersetProperties;
+import io.jmix.superset.SupersetTokenManager;
+import io.jmix.superset.client.cookie.SupersetCookieManager;
+import io.jmix.superset.schedule.SupersetTokenScheduleConfigurer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -30,8 +35,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @Import(SupersetConfiguration.class)
 public class SupersetAutoConfiguration {
 
-    @ConditionalOnProperty(value = "jmix.superset.csrf-protection-enabled", matchIfMissing = true)
     @Bean("sprset_ThreadPoolCsrfTokenTaskScheduler")
+    @ConditionalOnProperty(value = "jmix.superset.csrf-protection-enabled", matchIfMissing = true)
     public TaskScheduler threadPoolTaskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
         threadPoolTaskScheduler.setThreadNamePrefix("sprset_CsrfTokenScheduler-");
@@ -40,10 +45,23 @@ public class SupersetAutoConfiguration {
         return threadPoolTaskScheduler;
     }
 
+    @Bean("sprset_SupersetTokenScheduleConfigurer")
+    @ConditionalOnProperty(value = "jmix.superset.tokens-refresh-enabled", matchIfMissing = true)
+    public SupersetTokenScheduleConfigurer supersetTokenScheduleConfigurer(
+            @Qualifier("sprset_ThreadPoolAccessTokenTaskScheduler")
+            TaskScheduler taskScheduler,
+            @Autowired(required = false)
+            @Qualifier("sprset_ThreadPoolCsrfTokenTaskScheduler")
+            TaskScheduler csrfTaskScheduler,
+            SupersetProperties supersetProperties,
+            SupersetTokenManager accessTokenManager) {
+        return new SupersetTokenScheduleConfigurer(taskScheduler, csrfTaskScheduler, supersetProperties,
+                accessTokenManager);
+    }
+
     @Bean
     @ConditionalOnMissingBean
     public SupersetCookieManager supersetCookieManager() {
-        return new SupersetCookieManager() {
-        };
+        return new SupersetCookieManager();
     }
 }

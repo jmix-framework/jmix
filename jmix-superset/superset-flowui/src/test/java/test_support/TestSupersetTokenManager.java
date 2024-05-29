@@ -16,7 +16,7 @@
 
 package test_support;
 
-import io.jmix.superset.schedule.SupersetTokenManager;
+import io.jmix.superset.SupersetTokenManager;
 import jakarta.annotation.Nullable;
 
 public class TestSupersetTokenManager implements SupersetTokenManager {

@@ -23,12 +23,14 @@ import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
 import io.jmix.superset.SupersetConfiguration;
 import io.jmix.supersetflowui.component.SupersetDashboard;
 import io.jmix.supersetflowui.component.loader.SupersetDashboardLoader;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan
+@ConfigurationPropertiesScan
 @JmixModule(dependsOn = {FlowuiConfiguration.class, SupersetConfiguration.class})
 public class SupersetFlowuiConfiguration {
 

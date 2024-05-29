@@ -14,27 +14,33 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.service.model;
+package io.jmix.superset.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nullable;
 
-public class CsrfTokenResponse {
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
-    private String result;
+public class GuestTokenResponse implements Serializable {
+
+    private String token;
 
     private String message;
 
     @JsonProperty("msg")
-    private String systemMessage;
+    private String systemMessage; // e.g. token is expired
+
+    private List<Error> errors;
 
     @Nullable
-    public String getResult() {
-        return result;
+    public String getToken() {
+        return token;
     }
 
-    public void setResult(@Nullable String result) {
-        this.result = result;
+    public void setToken(@Nullable String token) {
+        this.token = token;
     }
 
     @Nullable
@@ -53,5 +59,31 @@ public class CsrfTokenResponse {
 
     public void setSystemMessage(@Nullable String systemMessage) {
         this.systemMessage = systemMessage;
+    }
+
+    public List<Error> getErrors() {
+        return errors == null ? Collections.emptyList() : errors;
+    }
+
+    public void setErrors(@Nullable List<Error> errors) {
+        this.errors = errors;
+    }
+
+    public static class Error {
+        private String message;
+
+        @Nullable
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(@Nullable String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return "{\"message\":\"" + message + "\"}";
+        }
     }
 }

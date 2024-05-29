@@ -3,7 +3,9 @@
  * Use is subject to license terms.
  */
 
+@Internal
 @NonNullApi
-package io.jmix.superset.service.impl;
+package io.jmix.superset.client.model;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

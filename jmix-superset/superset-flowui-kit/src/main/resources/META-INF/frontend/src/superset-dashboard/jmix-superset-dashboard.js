@@ -4,8 +4,6 @@ import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin
 import {embedDashboard} from "@superset-ui/embedded-sdk";
 import {getGuestTokenRefreshTiming} from "@superset-ui/embedded-sdk/lib/guestTokenRefresh";
 
-const GUEST_TOKEN_REFRESH_BUFFER = 5000;
-
 class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) {
 
     static get template() {
@@ -30,7 +28,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                     justify-content: center;
                     height: 100%;
                 }
-                
+
                 #stub-image-container img {
                     width: 50px;
                 }
@@ -49,22 +47,8 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
     static get properties() {
         return {
-            /**
-             * @protected
-             */
-            _url: {
-                type: String,
-                value: '',
-            },
             url: {
                 type: String,
-                value: '',
-                observer: '_onPropertyChanged'
-            },
-            embeddedId: {
-                type: String,
-                value: '',
-                observer: '_onPropertyChanged'
             },
             titleVisible: {
                 type: Boolean,
@@ -81,32 +65,26 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                 value: false,
                 observer: '_onPropertyChanged'
             },
+            embeddedId: {
+                type: String,
+                observer: '_onEmbeddedIdChanged'
+            },
             guestToken: {
                 type: String,
-                value: '',
                 observer: '_onGuestTokenChanged'
-            },
-            /**
-             * @protected
-             */
-            _guestToken: {
-                type: String,
-                value: '',
-                observer: '_onInternalGuestTokenChanged',
             },
         }
     }
 
-    updateDashboard() {
+    _embedDashboard() {
         if (!this._isReadyToEmbed()) {
-            this.$.dashboard.replaceChildren() // removes all children
-            this.$.dashboard.appendChild(this._createStubImageContainer());
+            this._replaceDashboardByStub();
             return;
         }
-        const embedDashboardInternal = async () => {
+        const embedDashboardAsync = async () => {
             await embedDashboard({
                 id: this.embeddedId, // the embedded ID specified in component
-                supersetDomain: this.getBaseUrl(),
+                supersetDomain: this.url,
                 mountPoint: this.$.dashboard, // html element in which iframe render
                 fetchGuestToken: () => this.getGuestToken(),
                 dashboardUiConfig: {
@@ -117,59 +95,43 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                     }
                 },
             })
-            this.dashboardInitialized = true;
+            this.isDashboardEmbedded = true;
         };
-        embedDashboardInternal();
+        embedDashboardAsync();
     }
 
     getGuestToken = async () => {
-        if (this.guestToken) {
-            return this.guestToken;
-        }
-
-        if (this._guestToken) {
-            return this._guestToken;
-        }
-    }
-
-    getBaseUrl() {
-        return this.url ? this.url : this._url;
+        return this.guestToken;
     }
 
     _isReadyToEmbed() {
-        return (this.guestToken || this._guestToken)
-            && this.embeddedId
-            && (this.getBaseUrl() && this.getBaseUrl().length > 0);
+        return this.guestToken && this.embeddedId && this.url;
     }
 
     _onPropertyChanged() {
-        if (this.dashboardInitialized) {
-            // If property changed after dashboard embedding, update it
-            this.updateDashboard();
+        if (this.isDashboardEmbedded) {
+            // If property changed after dashboard embedding, update dashboard
+            this._embedDashboard();
         }
     }
 
     _onGuestTokenChanged(token) {
-        if (!token) {
-            return;
-        }
-
         this._stopGuestTokenRefreshTimer(this._guestTokenTimerId);
 
-        if (!this.dashboardInitialized) {
-            this.updateDashboard();
-        }
-    }
-
-    _onInternalGuestTokenChanged(token) {
         if (!token) {
             return;
         }
 
         this._guestTokenTimerId = this._startGuestTokenRefreshTimer(token);
 
-        if (!this.dashboardInitialized) {
-            this.updateDashboard();
+        this._embedDashboard();
+    }
+
+    _onEmbeddedIdChanged(embeddedId) {
+        if (!embeddedId) {
+            this._replaceDashboardByStub();
+        } else {
+            this._callFetchGuestToken();
         }
     }
 
@@ -179,8 +141,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
     _startGuestTokenRefreshTimer(_guestToken) {
         let supersetTiming = getGuestTokenRefreshTiming(_guestToken);
-        return setTimeout(() => this.$server.refreshGuestToken(),
-            supersetTiming - GUEST_TOKEN_REFRESH_BUFFER);
+        return setTimeout(() => this._callFetchGuestToken(), supersetTiming);
     }
 
     _createStubImageContainer() {
@@ -192,6 +153,16 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
         container.appendChild(img);
 
         return container;
+    }
+
+    _replaceDashboardByStub() {
+        this.$.dashboard.replaceChildren() // removes all children
+        this.$.dashboard.appendChild(this._createStubImageContainer());
+        this.isDashboardEmbedded = false;
+    }
+
+    _callFetchGuestToken() {
+        this.$server.fetchGuestToken()
     }
 }
 

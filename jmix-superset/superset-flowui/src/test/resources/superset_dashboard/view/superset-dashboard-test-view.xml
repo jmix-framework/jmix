@@ -34,7 +34,7 @@
                             url="http://localhost:8088"
                             visible="false"
                             width="30px"/>
-        <superset:dashboard id="dashboard2">
+        <superset:dashboard id="dashboard2" embeddedId="172f1241-f8c8-4203-88a6-0771753da7b3">
             <superset:datasetConstraints>
                 <superset:datasetConstraint datasetId="1">
                     <![CDATA[countryName = 'Integration test']]>

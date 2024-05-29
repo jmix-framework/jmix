@@ -5,7 +5,7 @@
 
 @Internal
 @NonNullApi
-package io.jmix.superset.service;
+package io.jmix.superset.client;
 
 import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

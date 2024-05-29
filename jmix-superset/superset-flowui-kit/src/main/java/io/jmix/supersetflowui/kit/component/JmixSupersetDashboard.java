@@ -32,28 +32,7 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     private static final String PROPERTY_CHART_CONTROLS_VISIBLE = "chartControlsVisible";
     private static final String PROPERTY_FILTERS_EXPANDED = "filtersExpanded";
 
-    private static final String PROPERTY_GUEST_TOKEN_INTERNAL = "_guestToken";
-    private static final String PROPERTY_URL_INTERNAL = "_url";
-
-    /**
-     * @return guest token or {@code null} if not set
-     */
-    public String getGuestToken() {
-        return getElement().getProperty(PROPERTY_GUEST_TOKEN);
-    }
-
-    /**
-     * Sets a guest token to perform a dashboard request. It is not required to set custom
-     * guest token since component gets the token internally using Superset access token.
-     * <p>
-     * Note, if custom guest token is set, you should manually handle the expiration time and
-     * set new guest token to the component.
-     *
-     * @param guestToken guest token
-     */
-    public void setGuestToken(String guestToken) {
-        getElement().setProperty(PROPERTY_GUEST_TOKEN, guestToken);
-    }
+    protected String url;
 
     /**
      * @return dashboard embedded ID or {@code null} if not set
@@ -64,7 +43,11 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
 
     /**
      * Sets an embedded dashboard ID. This ID can be taken from dashboard if Superset has {@code EMBEDDED_SUPERSET}
-     * feature flag.
+     * feature flag. Without an embedded ID, the component won't start the request for fetching guest token. An
+     * embedded ID can be set in any time of a View lifecycle.
+     * <p>
+     * Note that every time the embedded ID set to the component it will start a process of fetching guest token and
+     * handling its expiration.
      *
      * @param embeddedId a dashboard embedded ID
      */
@@ -76,7 +59,7 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
      * @return Superset URL or {@code null} if not set
      */
     public String getUrl() {
-        return getElement().getProperty(PROPERTY_URL);
+        return url;
     }
 
     /**
@@ -85,6 +68,11 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
      * @param url URL to set
      */
     public void setUrl(String url) {
+        this.url = url;
+        setUrlInternal(url);
+    }
+
+    protected void setUrlInternal(String url) {
         getElement().setProperty(PROPERTY_URL, url);
     }
 
@@ -133,16 +121,12 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
         return getElement().getProperty(PROPERTY_FILTERS_EXPANDED, Boolean.FALSE);
     }
 
-    protected void setUrlInternal(String url) {
-        getElement().setProperty(PROPERTY_URL_INTERNAL, url);
-    }
-
     protected void setGuestTokenInternal(String guestToken) {
-        getElement().setProperty(PROPERTY_GUEST_TOKEN_INTERNAL, guestToken);
+        getElement().setProperty(PROPERTY_GUEST_TOKEN, guestToken);
     }
 
     @ClientCallable
-    protected void refreshGuestToken() {
+    protected void fetchGuestToken() {
         // implemented by inheritors
     }
 }

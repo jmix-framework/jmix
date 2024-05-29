@@ -1,5 +1,6 @@
 package io.jmix.superset;
 
+import io.jmix.superset.schedule.SupersetTokenScheduleConfigurer;
 import jakarta.annotation.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -49,13 +50,20 @@ public class SupersetProperties {
      */
     boolean csrfProtectionEnabled;
 
+    /**
+     * Enables beans configuration for automatically getting and refreshing Superset tokens (access, refresh, CSRF).
+     * See {@link SupersetTokenScheduleConfigurer}.
+     */
+    boolean tokensRefreshEnabled;
+
     public SupersetProperties(String url,
                               String username,
                               String password,
                               @DefaultValue("1m") Duration accessTokenRefreshSchedule,
                               @DefaultValue("true") boolean csrfProtectionEnabled,
                               @DefaultValue("1m") Duration csrfTokenRefreshSchedule,
-                              @DefaultValue("7d") Duration csrfTokenExpiration) {
+                              @DefaultValue("7d") Duration csrfTokenExpiration,
+                              @DefaultValue("true") boolean tokensRefreshEnabled) {
         this.url = url;
         this.username = username;
         this.password = password;
@@ -63,6 +71,7 @@ public class SupersetProperties {
         this.csrfProtectionEnabled = csrfProtectionEnabled;
         this.csrfTokenRefreshSchedule = csrfTokenRefreshSchedule;
         this.csrfTokenExpiration = csrfTokenExpiration;
+        this.tokensRefreshEnabled = tokensRefreshEnabled;
     }
 
     /**
@@ -122,5 +131,13 @@ public class SupersetProperties {
      */
     public Duration getCsrfTokenExpiration() {
         return csrfTokenExpiration;
+    }
+
+    /**
+     * @return is automatic tokens refresh enabled
+     * @see #tokensRefreshEnabled
+     */
+    public boolean isTokensRefreshEnabled() {
+        return tokensRefreshEnabled;
     }
 }

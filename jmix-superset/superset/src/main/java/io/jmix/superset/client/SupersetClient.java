@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.service;
+package io.jmix.superset.client;
 
 import io.jmix.superset.SupersetProperties;
-import io.jmix.superset.schedule.SupersetTokenManager;
+import io.jmix.superset.SupersetTokenManager;
 import io.jmix.superset.schedule.SupersetTokenScheduleConfigurer;
-import io.jmix.superset.service.model.*;
+import io.jmix.superset.client.model.*;
 import jakarta.annotation.Nullable;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.io.IOException;
  * <p>
  * See <a href="https://superset.apache.org/docs/api/">Apache Superset API</a>
  */
-public interface SupersetService {
+public interface SupersetClient {
 
     /**
      * Performs POST login request {@code /api/v1/security/login} with default body configuration.

@@ -22,7 +22,8 @@ package io.jmix.supersetflowui.component.dataconstraint;
  * new DatasetConstraint(1, "country_name = 'United States'")
  * </pre>
  *
- * @param dataset an integer ID of Superset dataset
+ * @param dataset an integer ID of Superset dataset. The dataset ID can be found through the URL address of dataset
+ *                in datasets list. Other way is to get all datasets from API, it will return datasets with ids.
  * @param clause  native SQL condition that will be appended to "WHERE" clause
  */
 public record DatasetConstraint(Integer dataset, String clause) {

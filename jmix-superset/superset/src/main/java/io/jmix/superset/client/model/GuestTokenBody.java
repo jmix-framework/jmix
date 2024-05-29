@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.service.model;
+package io.jmix.superset.client.model;
 
 import io.jmix.core.common.util.Preconditions;
 import jakarta.annotation.Nullable;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.superset.service.model;
+package io.jmix.superset.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nullable;

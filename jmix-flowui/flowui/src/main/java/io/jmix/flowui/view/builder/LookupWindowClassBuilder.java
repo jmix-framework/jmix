@@ -16,16 +16,16 @@
 
 package io.jmix.flowui.view.builder;
 
+import com.vaadin.flow.component.HasValue;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.LookupView;
 import io.jmix.flowui.view.View;
-import com.vaadin.flow.component.HasValue;
-import io.jmix.flowui.model.CollectionContainer;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -97,6 +97,12 @@ public class LookupWindowClassBuilder<E, V extends View<?> & LookupView<E>> exte
     @Override
     public <T extends HasValue<?, E>> LookupWindowClassBuilder<E, V> withField(@Nullable T field) {
         super.withField(field);
+        return this;
+    }
+
+    @Override
+    public LookupWindowClassBuilder<E, V> withLookupComponentMultiSelect(boolean lookupComponentMultiSelect) {
+        super.withLookupComponentMultiSelect(lookupComponentMultiSelect);
         return this;
     }
 

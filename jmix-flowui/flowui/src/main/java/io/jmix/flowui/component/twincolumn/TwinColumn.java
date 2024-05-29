@@ -67,10 +67,6 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
                        SupportsDataProvider<V>, SupportsValidation<Collection<V>>,
                        ApplicationContextAware, InitializingBean {
 
-    private static final String COMPONENT_DEFAULT_WIDTH = "var(--jmix-twin-column-default-width, 32em)";
-    private static final String COLUMN_DEFAULT_HEIGHT = "var(--jmix-twin-column-column-default-height, 16em)";
-    private static final String COLUMN_MIN_WIDTH = "var(--jmix-twin-column-column-min-width, 12em)";
-    private static final String COLUMN_MIN_HEIGHT = "var(--jmix-twin-column-column-min-height, 14.6em)";
     private static final String JS_SCROLL_TOP_VARIABLE = "this._scrollerElement.scrollTop";
 
     protected ApplicationContext applicationContext;
@@ -191,23 +187,6 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
      */
     public String getSelectedItemsColumnLabel() {
         return selectedItemsColumnLabel.getText();
-    }
-
-    @Override
-    public void setHeight(String height) {
-        HasSize.super.setHeight(height);
-
-        if (options == null) {
-            return;
-        }
-
-        if (height == null) {
-            options.setHeight(COLUMN_DEFAULT_HEIGHT);
-            selected.setHeight(COLUMN_DEFAULT_HEIGHT);
-        } else if ("100%".equals(height)){
-            options.setHeight("100%");
-            selected.setHeight("100%");
-        }
     }
 
     @Override

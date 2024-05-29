@@ -45,6 +45,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.services.s3.model.CompletedPart;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -144,21 +145,17 @@ public class AwsFileStorage implements FileStorage {
 
     public void refreshS3Client() {
         refreshProperties();
-        Preconditions.checkNotEmptyString(region, "region must not be empty");
         Preconditions.checkNotEmptyString(bucket, "bucket must not be empty");
         AwsCredentialsProvider awsCredentialsProvider = getAwsCredentialsProvider();
-        if (Strings.isNullOrEmpty(endpointUrl)) {
-            s3ClientReference.set(S3Client.builder()
-                    .credentialsProvider(awsCredentialsProvider)
-                    .region(Region.of(region))
-                    .build());
-        } else {
-            s3ClientReference.set(S3Client.builder()
-                    .credentialsProvider(awsCredentialsProvider)
-                    .endpointOverride(URI.create(endpointUrl))
-                    .region(Region.of(region))
-                    .build());
+        S3ClientBuilder s3ClientBuilder = S3Client.builder();
+        s3ClientBuilder.credentialsProvider(awsCredentialsProvider);
+        if (!Strings.isNullOrEmpty(region)) {
+            s3ClientBuilder.region(Region.of(region));
         }
+        if (!Strings.isNullOrEmpty(endpointUrl)) {
+            s3ClientBuilder.endpointOverride(URI.create(endpointUrl));
+        }
+        s3ClientReference.set(s3ClientBuilder.build());
     }
 
     @Override

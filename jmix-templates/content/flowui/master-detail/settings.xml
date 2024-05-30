@@ -43,6 +43,27 @@
               code="entity"
               propertyType="ENTITY"
               required="true"/>
+
+    <property caption="Use Data Repositories"
+              code="useDataRepositories"
+              propertyType="BOOLEAN"
+              defaultValue="false"
+              advanced="true"/>
+    <property caption="Repository"
+              code="repository"
+              propertyType="DATA_REPOSITORY"
+              advanced="true">
+         <dynamicAttribute name="enabled" source="${useDataRepositories}">
+            <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="visible" source="${useDataRepositories}">
+            <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="required" source="${useDataRepositories}">
+            <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+    </property>
+
     <property caption="List fetch plan"
               code="listFetchPlan"
               step="1"

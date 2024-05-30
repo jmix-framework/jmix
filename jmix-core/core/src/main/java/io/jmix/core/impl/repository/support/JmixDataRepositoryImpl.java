@@ -74,7 +74,7 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
 
 
     @Override
-    public Optional<T> findById(ID id, FetchPlan fetchPlan) {
+    public Optional<T> findById(ID id, @Nullable FetchPlan fetchPlan) {
         return idLoader(id).fetchPlan(fetchPlan).optional();
     }
 
@@ -268,7 +268,7 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID>,
     }
 
     @Override
-    public DataManager getDataManager(){
+    public DataManager getDataManager() {
         return dataManager;
     }
 

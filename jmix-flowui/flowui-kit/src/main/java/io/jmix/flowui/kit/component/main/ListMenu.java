@@ -908,6 +908,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
             if (isAttachedToMenu()) {
                 menuComponent.addChildren(this, menuItem);
+                menuItem.setMenuComponent(menuComponent);
             }
 
             children.add(menuItem);
@@ -943,6 +944,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             children.add(index, menuItem);
             if (isAttachedToMenu()) {
                 menuComponent.addChildren(this, menuItem, index);
+                menuItem.setMenuComponent(menuComponent);
             }
         }
 

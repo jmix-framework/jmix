@@ -118,7 +118,8 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
         PropertyCondition lastPkCondition = PropertyCondition.createWithParameterName(primaryKeyName,
                 PropertyCondition.Operation.GREATER, LAST_LOADED_PK_CONDITION_PARAMETER_NAME);
         wrappingCondition.add(lastPkCondition);
-        loadContext.getQuery().setCondition(wrappingCondition);
+        query.setCondition(wrappingCondition);
+        query.setFirstResult(0);
 
         return loadContext;
     }

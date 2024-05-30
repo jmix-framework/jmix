@@ -216,6 +216,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         ListItem menuItemComponent = createMenuRecursively(childItem);
 
         content.add(menuItemComponent);
+
+        childItem.setMenuComponent(this);
     }
 
     protected void addChildren(MenuItem parent, MenuItem childItem, int index) {
@@ -224,6 +226,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         ListItem menuItemComponent = createMenuRecursively(childItem);
 
         content.addComponentAtIndex(index, menuItemComponent);
+
+        childItem.setMenuComponent(this);
     }
 
     protected ListItem createMenuRecursively(MenuItem menuItem) {
@@ -908,7 +912,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
             if (isAttachedToMenu()) {
                 menuComponent.addChildren(this, menuItem);
-                menuItem.setMenuComponent(menuComponent);
             }
 
             children.add(menuItem);
@@ -944,7 +947,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             children.add(index, menuItem);
             if (isAttachedToMenu()) {
                 menuComponent.addChildren(this, menuItem, index);
-                menuItem.setMenuComponent(menuComponent);
             }
         }
 

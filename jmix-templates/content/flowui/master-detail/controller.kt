@@ -33,7 +33,7 @@ ${classComment}
 @ViewDescriptor("${viewDescriptorName}.xml")
 @LookupComponent("${tableId}")
 @DialogMode(width = "64em")
-class ${viewControllerName}(private val repository: ${repository.getName()}) : StandardListView<${entity.className}>() {
+class ${viewControllerName}<%if (useDataRepositories){%>(private val repository: ${repository.getName()})<%}%> : StandardListView<${entity.className}>() {
 
     @ViewComponent
     private lateinit var dataContext: DataContext

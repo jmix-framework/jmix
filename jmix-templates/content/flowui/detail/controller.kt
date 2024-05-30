@@ -20,7 +20,7 @@ ${classComment}
 @ViewController("${api.escapeKotlinDollar(detailId)}")
 @ViewDescriptor("${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")
-class ${detailControllerName}(private val repository: ${repository.getName()}) : StandardDetailView<${entity.className}>() {<%if (useDataRepositories){%>
+class ${detailControllerName}<%if (useDataRepositories){(private val repository: ${repository.getName()})<%}%> : StandardDetailView<${entity.className}>() {<%if (useDataRepositories){%>
 
     @Install(target = Target.DATA_CONTEXT)
     private fun saveDelegate(saveContext: SaveContext): Set<Any> {

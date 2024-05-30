@@ -27,13 +27,6 @@ import org.springframework.lang.Nullable;
 public interface Downloader {
 
     /**
-     * Sets a file storage where the files will be downloaded from.
-     *
-     * @param fileStorage file storage
-     */
-    void setFileStorage(FileStorage fileStorage);
-
-    /**
      * @return {@code true} if downloader should open a new window with the file content
      */
     boolean isShowNewWindow();

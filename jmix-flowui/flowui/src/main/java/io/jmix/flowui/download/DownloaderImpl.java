@@ -61,7 +61,6 @@ public class DownloaderImpl implements Downloader {
     protected Messages messages;
 
     protected FileStorageLocator fileStorageLocator;
-    protected FileStorage fileStorage;
 
     protected boolean newWindow;
 
@@ -106,11 +105,6 @@ public class DownloaderImpl implements Downloader {
     }
 
     @Override
-    public void setFileStorage(FileStorage fileStorage) {
-        this.fileStorage = fileStorage;
-    }
-
-    @Override
     public boolean isShowNewWindow() {
         return newWindow;
     }
@@ -136,7 +130,6 @@ public class DownloaderImpl implements Downloader {
                          String resourceName,
                          @Nullable DownloadFormat downloadFormat) {
         checkUIAccess();
-        checkFileExists(dataProvider);
 
         boolean showNewWindow = this.newWindow;
 
@@ -214,11 +207,9 @@ public class DownloaderImpl implements Downloader {
 
     @Override
     public void download(FileRef fileReference, @Nullable DownloadFormat format) {
-        if (fileStorage == null) {
-            fileStorage = fileStorageLocator.getDefault();
-        }
+        FileStorage fileReferenceStorage = fileStorageLocator.getByName(fileReference.getStorageName());
         String fileName = fileReference.getFileName();
-        download(new FileRefDownloadDataProvider(fileReference, fileStorage), fileName, format);
+        download(new FileRefDownloadDataProvider(fileReference, fileReferenceStorage), fileName, format);
     }
 
     @Override
@@ -245,26 +236,14 @@ public class DownloaderImpl implements Downloader {
         }
     }
 
-    protected void checkFileExists(DownloadDataProvider dataProvider) {
-        if (!(dataProvider instanceof FileRefDownloadDataProvider)) {
-            return;
-        }
-
-        FileRef fileRef = ((FileRefDownloadDataProvider) dataProvider).fileReference;
-        if (!fileStorage.fileExists(fileRef)) {
-            throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND, fileRef.toString());
-        }
-    }
-
     protected boolean handleFileNotFoundException(JmixFileDownloader.FileNotFoundContext fileNotFoundEvent) {
         Exception exception = fileNotFoundEvent.getException();
         VaadinResponse response = fileNotFoundEvent.getResponse();
 
-        if (!(exception instanceof FileStorageException)) {
+        if (!(exception instanceof FileStorageException storageException)) {
             return false;
         }
 
-        FileStorageException storageException = (FileStorageException) exception;
         if (storageException.getType() == FileStorageException.Type.FILE_NOT_FOUND) {
             try {
                 String message = messages.getMessage("fileNotFound.message");

@@ -326,6 +326,10 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
         options.setReadOnly(readOnly);
         selected.setReadOnly(readOnly);
 
+        actionsPanel.getChildren()
+                .filter(component -> component instanceof HasEnabled)
+                .forEach(component -> ((HasEnabled) component).setEnabled(!readOnly));
+
         updateInvalidState();
     }
 
@@ -340,7 +344,7 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     public void setValue(Collection<V> value) {
         super.setValue(value);
 
-//        updateValueInternal(value);
+        updateValueInternal(value);
     }
 
     protected void autowireDependencies() {
@@ -440,17 +444,11 @@ public class TwinColumn<V> extends AbstractField<TwinColumn<V>, Collection<V>>
     }
 
     protected NativeLabel createColumnLabel() {
-        NativeLabel label = uiComponents.create(NativeLabel.class);
-//        label.setWidth("100%");
-        return label;
+        return uiComponents.create(NativeLabel.class);
     }
 
     protected JmixMultiSelectListBox<V> createColumn() {
-        JmixMultiSelectListBox<V> column = uiComponents.create(JmixMultiSelectListBox.class);
-//        column.setMinWidth(COLUMN_MIN_WIDTH);
-//        column.setMinHeight(COLUMN_MIN_HEIGHT);
-//        column.setHeight("100%");
-        return column;
+        return uiComponents.create(JmixMultiSelectListBox.class);
     }
 
     protected JmixButton createButton(String className, Icon icon, String tooltipKey,

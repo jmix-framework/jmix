@@ -11,6 +11,10 @@ jmix-twin-column::part(required-indicator) {
     padding-bottom: var(--lumo-space-xs);
 }
 
+jmix-twin-column[disabled] :is(.jmix-twin-column-options-column-label, .jmix-twin-column-selected-column-label) {
+    color: var(--lumo-disabled-text-color);
+}
+
 jmix-twin-column vaadin-list-box {
     border: 1px solid var(--lumo-contrast-20pct);
     border-radius: 0;
@@ -83,4 +87,31 @@ jmix-twin-column[theme~="no-space-between-actions"] vaadin-button:last-child {
 
 jmix-twin-column vaadin-button vaadin-icon[dir="rtl"] {
     rotate: 180deg;
+}
+
+jmix-twin-column[invalid] .jmix-twin-column-options-column {
+    border-top: 1px solid var(--lumo-error-color);
+    border-left: 1px solid var(--lumo-error-color);
+    border-bottom: 1px solid var(--lumo-error-color);
+}
+
+jmix-twin-column[invalid][dir="rtl"] .jmix-twin-column-options-column {
+    border-left-width: 0;
+    border-right: 1px solid var(--lumo-error-color);
+}
+
+jmix-twin-column[invalid] .jmix-twin-column-selected-column {
+    border-top: 1px solid var(--lumo-error-color);
+    border-right: 1px solid var(--lumo-error-color);
+    border-bottom: 1px solid var(--lumo-error-color);
+}
+
+jmix-twin-column[invalid][dir="rtl"] .jmix-twin-column-selected-column {
+    border-left: 1px solid var(--lumo-error-color);
+    border-right-width: 0;
+}
+
+jmix-twin-column[invalid] .jmix-twin-column-actions-panel {
+    border-top: 1px solid var(--lumo-error-color);
+    border-bottom: 1px solid var(--lumo-error-color);
 }

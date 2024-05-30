@@ -88,7 +88,8 @@ public abstract class AbstractDropdownButtonLoader<T extends AbstractDropdownBut
         Element actionElement = element.element("action");
 
         if (actionElement != null) {
-            Action action = getActionLoaderSupport().loadDeclarativeAction(actionElement);
+            Action action = getActionLoaderSupport().loadDeclarativeActionByType(actionElement)
+                    .orElseGet(() -> getActionLoaderSupport().loadDeclarativeAction(actionElement));
             resultComponent.addItem(id, action);
         } else if (ref != null) {
             int index = element.getParent().elements().indexOf(element);

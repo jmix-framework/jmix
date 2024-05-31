@@ -50,6 +50,7 @@ import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
+import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.multiselectcomboboxpicker.MultiSelectComboBoxPicker;
 import io.jmix.flowui.kit.component.pagination.JmixSimplePagination;
@@ -3234,6 +3235,33 @@ public interface StudioComponents {
             }
     )
     JmixMenuBar horizontalMenu();
+
+    @StudioComponent(
+            name = "ListMenu",
+            classFqn = "io.jmix.flowui.component.main.JmixListMenu",
+            category = "Components",
+            xmlElement = "listMenu",
+            icon = "io/jmix/flowui/kit/meta/icon/mainview/listMenu.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "loadMenuConfig", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "metaClass", type = StudioPropertyType.ENTITY_NAME),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
+                            options = {"toggle-reverse"}),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    ListMenu listMenu();
 
     @StudioComponent(
             name = "Html",

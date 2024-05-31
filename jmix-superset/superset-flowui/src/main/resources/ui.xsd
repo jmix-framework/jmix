@@ -33,9 +33,6 @@
                     <xs:attribute name="chartControlsVisible" type="xs:boolean"/>
                     <xs:attribute name="filtersExpanded" type="xs:boolean"/>
 
-                    <xs:attribute name="datasetConstraintsProviderBean" type="xs:string"/>
-                    <xs:attribute name="guestTokenProviderBean" type="xs:string"/>
-
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
                 </xs:extension>

@@ -47,7 +47,6 @@ public class SupersetDashboardLoader extends AbstractComponentLoader<SupersetDas
         loadBoolean(element, "filtersExpanded", resultComponent::setFiltersExpanded);
 
         loadDatasetConstraints();
-        loadGuestTokenProvider();
     }
 
     protected void loadDatasetConstraints() {
@@ -57,19 +56,7 @@ public class SupersetDashboardLoader extends AbstractComponentLoader<SupersetDas
             if (CollectionUtils.isNotEmpty(datasetConstraints)) {
                 resultComponent.setDatasetConstrainsProvider(() -> datasetConstraints);
             }
-        } else {
-            loadString(element, "datasetConstraintsProviderBean")
-                    .ifPresent(beanName ->
-                            resultComponent.setDatasetConstrainsProvider(
-                                    (DatasetConstrainsProvider) applicationContext.getBean(beanName)));
         }
-    }
-
-    protected void loadGuestTokenProvider() {
-        loadString(element, "guestTokenProviderBean", beanName -> {
-            SupersetGuestTokenProvider bean = applicationContext.getBean(beanName, SupersetGuestTokenProvider.class);
-            resultComponent.setGuestTokenProvider(bean);
-        });
     }
 
     protected List<DatasetConstraint> loadDatasetConstraintsList(Element datasetConstraintsElement) {

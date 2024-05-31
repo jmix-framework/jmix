@@ -17,11 +17,15 @@
 package superset_dashboard.view;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
+import io.jmix.flowui.view.*;
+import io.jmix.supersetflowui.SupersetGuestTokenProvider;
 import io.jmix.supersetflowui.component.SupersetDashboard;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
+import org.springframework.beans.factory.annotation.Autowired;
+import test_support.TestDatasetConstraintsProvider;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 @Route("SupersetDashboardTestView")
 @ViewController("SupersetDashboardTestView")
@@ -32,4 +36,17 @@ public class SupersetDashboardTestView extends StandardView {
     public SupersetDashboard dashboard1;
     @ViewComponent
     public SupersetDashboard dashboard2;
+
+    @Autowired
+    public TestDatasetConstraintsProvider datasetConstraintsProvider;
+
+    @Install(to = "dashboard1", subject = "datasetConstrainsProvider")
+    public List<DatasetConstraint> datasetConstrainsProviderInstall() {
+        return datasetConstraintsProvider.getConstraints();
+    }
+
+    @Install(to = "dashboard1", subject = "guestTokenProvider")
+    public void guestTokenProvider(SupersetGuestTokenProvider.FetchGuestTokenContext context, Consumer<String> callback) {
+        callback.accept("token");
+    }
 }

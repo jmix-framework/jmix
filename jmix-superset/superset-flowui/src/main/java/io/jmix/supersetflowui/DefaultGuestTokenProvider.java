@@ -51,8 +51,8 @@ import static io.jmix.superset.client.model.GuestTokenBody.Resource.DASHBOARD_TY
  * @see SupersetClient
  */
 @Internal
-@Component("sprset_GuestTokenHandler")
-public class DefaultGuestTokenProvider {
+@Component("sprset_DefaultGuestTokenProvider")
+public class DefaultGuestTokenProvider implements SupersetGuestTokenProvider {
     private static final Logger log = LoggerFactory.getLogger(DefaultGuestTokenProvider.class);
 
     protected final SupersetClient supersetClient;
@@ -76,20 +76,21 @@ public class DefaultGuestTokenProvider {
     /**
      * Fetches a guest token from Superset. It does not block the UI thread.
      *
-     * @param source   a component that requests a guest token
+     * @param context  a context with component that requests a guest token
      * @param callback guest token callback, this callback should be invoked when a guest token is fetched
      */
-    public void fetchGuestToken(SupersetDashboard source, Consumer<String> callback) {
+    @Override
+    public void fetchGuestToken(FetchGuestTokenContext context, Consumer<String> callback) {
         if (Strings.isNullOrEmpty(tokenManager.getAccessToken())) {
             log.error("Cannot request guest token, no access token provided");
             return;
         }
-        if (Strings.isNullOrEmpty(source.getEmbeddedId())) {
+        if (Strings.isNullOrEmpty(context.getEmbeddedId())) {
             log.error("Cannot request guest token, embedded ID is not set");
             return;
         }
 
-        GuestTokenBody body = buildGuestTokenBody(source.getEmbeddedId(), source.getDatasetConstrainsProvider());
+        GuestTokenBody body = buildGuestTokenBody(context.getEmbeddedId(), context.getDatasetConstrainsProvider());
         long timeout = supersetFlowuiProperties.getBackgroundFetchingGuestTokenTimeout().toMillis();
 
         GuestTokenTask guestTokenTask = createSupersetGuestTokenTask(timeout, body, tokenManager.getAccessToken(),

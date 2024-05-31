@@ -16,6 +16,7 @@
 
 package io.jmix.supersetflowui.component;
 
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.supersetflowui.DefaultGuestTokenProvider;
 import io.jmix.supersetflowui.SupersetGuestTokenProvider;
@@ -55,7 +56,6 @@ import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
 public class SupersetDashboard extends JmixSupersetDashboard implements ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
-    protected DefaultGuestTokenProvider defaultGuestTokenProvider;
 
     protected DatasetConstrainsProvider datasetConstrainsProvider;
     protected SupersetGuestTokenProvider guestTokenProvider;
@@ -67,7 +67,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
 
     @Override
     public void afterPropertiesSet() {
-        defaultGuestTokenProvider = applicationContext.getBean(DefaultGuestTokenProvider.class);
+        guestTokenProvider = applicationContext.getBean(DefaultGuestTokenProvider.class);
 
         setUrlInternal(applicationContext.getBean(SupersetProperties.class).getUrl());
     }
@@ -91,9 +91,8 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     }
 
     /**
-     * @return guest token provider or {@code null} if not set
+     * @return guest token provider
      */
-    @Nullable
     public SupersetGuestTokenProvider getGuestTokenProvider() {
         return guestTokenProvider;
     }
@@ -106,6 +105,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
      * @param guestTokenProvider provider to set
      */
     public void setGuestTokenProvider(@Nullable SupersetGuestTokenProvider guestTokenProvider) {
+        Preconditions.checkNotNullArgument(guestTokenProvider);
         this.guestTokenProvider = guestTokenProvider;
     }
 
@@ -113,16 +113,12 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     protected void fetchGuestToken() {
         super.fetchGuestToken();
 
-        startGuestTokenRefreshing();
+        startGuestTokenFetching();
     }
 
-    protected void startGuestTokenRefreshing() {
-        if (guestTokenProvider != null) {
-            guestTokenProvider.fetchGuestToken(
-                    new SupersetGuestTokenProvider.FetchGuestTokenContext(this),
-                    this::setGuestTokenInternal);
-        } else {
-            defaultGuestTokenProvider.fetchGuestToken(this, this::setGuestTokenInternal);
-        }
+    protected void startGuestTokenFetching() {
+        guestTokenProvider.fetchGuestToken(
+                new SupersetGuestTokenProvider.FetchGuestTokenContext(this),
+                this::setGuestTokenInternal);
     }
 }

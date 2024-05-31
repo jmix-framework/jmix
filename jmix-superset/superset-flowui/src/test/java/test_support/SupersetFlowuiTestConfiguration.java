@@ -67,8 +67,7 @@ public class SupersetFlowuiTestConfiguration {
 
     @Bean
     public SupersetCookieManager supersetCookieManager() {
-        return new SupersetCookieManager() {
-        };
+        return new SupersetCookieManager();
     }
 
     @Bean

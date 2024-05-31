@@ -22,7 +22,6 @@
                             chartControlsVisible="true"
                             classNames="classNames"
                             css="color:green;"
-                            datasetConstraintsProviderBean="test_TestDatasetConstraintsProvider"
                             embeddedId="172f1241-f8c8-4203-88a6-0771753da7b3"
                             filtersExpanded="true"
                             height="30px"

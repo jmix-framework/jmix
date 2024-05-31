@@ -25,7 +25,7 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 public interface StudioDataComponents {
 
     @StudioDataComponent(
-            name = "Collection",
+            name = "Collection Container",
             classFqn = "io.jmix.flowui.model.CollectionContainer",
             category = "Data Components",
             xmlElement = "collection",
@@ -40,7 +40,7 @@ public interface StudioDataComponents {
     void collection();
 
     @StudioDataComponent(
-            name = "Instance",
+            name = "Instance Container",
             classFqn = "io.jmix.flowui.model.InstanceContainer",
             category = "Data Components",
             xmlElement = "instance",
@@ -55,7 +55,7 @@ public interface StudioDataComponents {
     void instance();
 
     @StudioDataComponent(
-            name = "KeyValueInstance",
+            name = "KeyValueInstance Container",
             classFqn = "io.jmix.flowui.model.KeyValueContainer",
             category = "Data Components",
             xmlElement = "keyValueInstance",
@@ -68,7 +68,7 @@ public interface StudioDataComponents {
     void keyValueInstance();
 
     @StudioDataComponent(
-            name = "KeyValueCollection",
+            name = "KeyValueCollection Container",
             classFqn = "io.jmix.flowui.model.KeyValueCollectionContainer",
             category = "Data Components",
             xmlElement = "keyValueCollection",

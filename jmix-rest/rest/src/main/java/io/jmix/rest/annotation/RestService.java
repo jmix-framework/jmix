@@ -25,7 +25,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Service
-public @interface OpenService {
+public @interface RestService {
     @AliasFor(annotation = Service.class)
     String value();
 }

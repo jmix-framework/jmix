@@ -20,8 +20,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.jmix.core.Resources;
 import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
-import io.jmix.rest.annotation.OpenMethod;
-import io.jmix.rest.annotation.OpenService;
+import io.jmix.rest.annotation.RestHttpMethod;
+import io.jmix.rest.annotation.RestMethod;
+import io.jmix.rest.annotation.RestService;
 import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.scanning.OpenServicesDetector;
 import org.apache.commons.lang3.StringUtils;
@@ -201,22 +202,22 @@ public class RestServicesConfiguration {
         for (String className : classNames) {
             try {
                 Class<?> aClass = Class.forName(className);
-                OpenService openService = AnnotatedElementUtils.findMergedAnnotation(aClass, OpenService.class);
-                if (openService == null) {
+                RestService restService = AnnotatedElementUtils.findMergedAnnotation(aClass, RestService.class);
+                if (restService == null) {
                     continue;
                 }
-                String serviceName = openService.value();
+                String serviceName = restService.value();
                 boolean existServiceName = serviceInfosMap.containsKey(serviceName);
                 List<RestMethodInfo> methods = new ArrayList<>();
                 for (Method method : aClass.getMethods()) {
-                    OpenMethod openMethod = AnnotatedElementUtils.findMergedAnnotation(method, OpenMethod.class);
-                    if (openMethod == null) {
+                    RestMethod restMethod = AnnotatedElementUtils.findMergedAnnotation(method, RestMethod.class);
+                    if (restMethod == null) {
                         continue;
                     }
                     if (existServiceName) {
                         RestServiceInfo restServiceInfo = serviceInfosMap.get(serviceName);
                         boolean existMethod = restServiceInfo.getMethods().stream().anyMatch(restMethodInfo ->
-                                Objects.equals(restMethodInfo.getName(), openMethod.value())
+                                Objects.equals(restMethodInfo.getName(), restMethod.value())
                         );
                         if (existMethod) {
                             continue;
@@ -227,7 +228,7 @@ public class RestServicesConfiguration {
                         RestMethodParamInfo restMethodParamInfo = new RestMethodParamInfo(parameter.getName(), parameter.getType().getName(), true);
                         params.add(restMethodParamInfo);
                     }
-                    String methodName = openMethod.value();
+                    String methodName = restMethod.value();
                     if (StringUtils.isEmpty(methodName)) {
                         methodName = method.getName();
                     }
@@ -238,11 +239,13 @@ public class RestServicesConfiguration {
                         }
                     }
                     String returnType = method.getReturnType().getTypeName();
-                    RestMethodInfo restMethodInfo = new RestMethodInfo(methodName, HttpMethod.POST.name(), params, method);
-                    restMethodInfo.setReturnType(returnType);
-                    methods.add(restMethodInfo);
+                    RestHttpMethod[] restHttpMethods = restMethod.httpMethods();
+                    for (RestHttpMethod restHttpMethod : restHttpMethods) {
+                        RestMethodInfo restMethodInfo = new RestMethodInfo(methodName, restHttpMethod.name(), params, method);
+                        restMethodInfo.setReturnType(returnType);
+                        methods.add(restMethodInfo);
+                    }
                 }
-
                 if (methods.isEmpty()) {
                     continue;
                 }

@@ -24,6 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired
 class ${controllerName} : ${superClass}() {
 
     @Autowired
-    private ProcessFormContext processFormContext
+    private lateinit var processFormContext: ProcessFormContext
 
 }

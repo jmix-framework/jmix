@@ -85,7 +85,8 @@ public class IntegerDatatype extends NumberDatatype implements Datatype<Integer>
 
         Number result = super.parse(value, format);
         if (!hasValidIntegerRange(result)) {
-            throw new ParseException(String.format("Integer range exceeded: \"%s\"", value), 0);
+            throw new ParseException(String.format(
+                    messages.getMessage("integerOutOfRangeMessage"), value), 0);
         }
         return result;
     }

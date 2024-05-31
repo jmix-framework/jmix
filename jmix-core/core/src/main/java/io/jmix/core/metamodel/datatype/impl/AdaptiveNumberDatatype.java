@@ -144,13 +144,13 @@ public class AdaptiveNumberDatatype extends NumberDatatype implements Datatype<N
     protected void checkIntegerRange(String value, Number result) throws ParseException {
         if ((result instanceof Long || result instanceof Double)
                 && (result.longValue() > Integer.MAX_VALUE || result.longValue() < Integer.MIN_VALUE))
-            throw new ParseException(String.format("Integer range exceeded: \"%s\"", value), 0);
+            throw new ParseException(String.format(messages.getMessage("integerOutOfRangeMessage"), value), 0);
     }
 
     protected void checkLongRange(String value, Number result) throws ParseException {
         if (result instanceof Double
                 && (result.doubleValue() > Long.MAX_VALUE || result.doubleValue() < Long.MIN_VALUE))
-        throw new ParseException(String.format("Long range exceeded: \"%s\"", value), 0);
+        throw new ParseException(String.format(messages.getMessage("longOutOfRangeMessage"), value), 0);
     }
 
     @Override

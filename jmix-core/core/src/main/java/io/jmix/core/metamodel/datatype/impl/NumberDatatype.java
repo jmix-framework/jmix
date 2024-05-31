@@ -16,14 +16,19 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.datatype.ParameterizedDatatype;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.*;
 import java.util.Map;
 
 public abstract class NumberDatatype implements ParameterizedDatatype {
+
+    @Autowired
+    protected Messages messages;
 
     protected String formatPattern;
     protected String decimalSeparator;
@@ -77,7 +82,7 @@ public abstract class NumberDatatype implements ParameterizedDatatype {
         Number res = format.parse(value.trim(), pos);
         if (pos.getIndex() != value.length()) {
             throw new ParseException(
-                    String.format("Unparseable number: \"%s\"", value),
+                    String.format(messages.getMessage("numberParseErrorMessage"), value),
                     pos.getErrorIndex()
             );
         }

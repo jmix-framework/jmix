@@ -60,7 +60,7 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '24.3.9'
+def vaadinFlowVersion = '24.3.12'
 
 javaPlatform {
     allowDependencies()
@@ -68,7 +68,7 @@ javaPlatform {
 
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:3.2.6")
-    api platform('software.amazon.awssdk:bom:2.16.69')
+    api platform('software.amazon.awssdk:bom:2.25.60')
 
     def freeVersion = version
     def premiumVersion = version
@@ -248,6 +248,7 @@ dependencies {
         api "io.jmix.translations:jmix-translations-ar:$freeVersion"
         api "io.jmix.translations:jmix-translations-tr:$freeVersion"
         api "io.jmix.translations:jmix-translations-es:$freeVersion"
+        api "io.jmix.translations:jmix-translations-pt-br:$freeVersion"
 
         api "io.jmix.webdav:jmix-webdav:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"
@@ -274,6 +275,7 @@ dependencies {
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"
+        api "org.eclipse.persistence:org.eclipse.persistence.oracle:$eclipselinkOriginalVersion"
 
         api 'org.liquibase:liquibase-core:4.25.0'
 

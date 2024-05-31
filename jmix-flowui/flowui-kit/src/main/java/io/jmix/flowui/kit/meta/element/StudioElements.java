@@ -61,6 +61,20 @@ public interface StudioElements {
     AccordionPanel accordionPanel();
 
     @StudioElement(
+            name = "ShortcutCombination",
+            xmlElement = "shortcutCombination",
+            icon = "io/jmix/flowui/kit/meta/icon/element/shortcutCombination.svg",
+            target = {"io.jmix.flowui.kit.action.Action"},
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "keyCombination", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "resetFocusOnActiveElement", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false")
+            }
+    )
+    void shortcutCombination();
+
+    @StudioElement(
             name = "ActionItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ActionItem",
             xmlElement = "actionItem",

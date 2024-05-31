@@ -66,7 +66,7 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * @return the entity with the given id
      * @throws io.jmix.core.NoResultException if nothing was loaded
      */
-    T getById(ID id, FetchPlan fetchPlan);
+    T getById(ID id, @Nullable FetchPlan fetchPlan);
 
     /**
      * Loads an entity by its {@code id}

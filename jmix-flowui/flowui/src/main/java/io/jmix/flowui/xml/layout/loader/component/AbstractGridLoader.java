@@ -17,11 +17,10 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.ColumnRendering;
-import com.vaadin.flow.component.grid.ColumnTextAlign;
-import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.Grid.NestedNullBehavior;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
@@ -30,6 +29,8 @@ import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.*;
@@ -77,6 +78,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     protected ActionLoaderSupport actionLoaderSupport;
     protected MetadataTools metaDataTools;
+    protected Messages messages;
     protected Subscription masterDataLoaderPostLoadListener; // used for CollectionPropertyContainer
     protected FetchPlanRepositoryImpl fetchPlanRepository;
     protected ClassManager classManager;
@@ -90,7 +92,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(element, "allRowsVisible", resultComponent::setAllRowsVisible);
         loadEnum(element, GridDropMode.class, "dropMode", resultComponent::setDropMode);
         loadBoolean(element, "detailsVisibleOnClick", resultComponent::setDetailsVisibleOnClick);
-        loadEnum(element, SelectionMode.class, "selectionMode", resultComponent::setSelectionMode);
+        loadEnum(element, SelectionMode.class, "selectionMode", this::setSelectionMode);
         loadBoolean(element, "columnReorderingAllowed", resultComponent::setColumnReorderingAllowed);
         loadEnum(element, NestedNullBehavior.class, "nestedNullBehavior", resultComponent::setNestedNullBehavior);
         loadBoolean(element, "editorBuffered", editorBuffered ->
@@ -212,30 +214,33 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     protected void loadEditorActionsColumn(T resultComponent, Element columnElement) {
-        if (columnElement.elements().size() == 0) {
+        if (columnElement.elements().isEmpty()) {
             throw new GuiDevelopmentException("'editorActionsColumn' cannot be empty",
                     context, "Component ID", resultComponent.getId());
         }
 
-        Editor editor = resultComponent.getEditor();
+        Editor<?> editor = resultComponent.getEditor();
         Grid.Column<?> editColumn = createEditColumn(resultComponent, columnElement, editor);
 
         HorizontalLayout actions = new HorizontalLayout();
         actions.setPadding(false);
 
-        Button saveButton = loadEditorButton(columnElement, "saveButton");
+        Button saveButton = loadEditorButton(columnElement, "saveButton",
+                null, VaadinIcon.CHECK.create());
         if (saveButton != null) {
             saveButton.addClickListener(__ -> editor.save());
             actions.add(saveButton);
         }
 
-        Button cancelButton = loadEditorButton(columnElement, "cancelButton");
+        Button cancelButton = loadEditorButton(columnElement, "cancelButton",
+                "actions.Cancel", VaadinIcon.BAN.create());
         if (cancelButton != null) {
             cancelButton.addClickListener(__ -> editor.cancel());
             actions.add(cancelButton);
         }
 
-        Button closeButton = loadEditorButton(columnElement, "closeButton");
+        Button closeButton = loadEditorButton(columnElement, "closeButton",
+                null, VaadinIcon.BAN.create());
         if (closeButton != null) {
             closeButton.addClickListener(__ -> editor.closeEditor());
             actions.add(closeButton);
@@ -259,7 +264,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected Grid.Column<?> createEditColumn(T resultComponent, Element columnElement, Editor editor) {
         return resultComponent.addComponentColumn(item -> {
-            Button editButton = loadEditorButton(columnElement, "editButton");
+            Button editButton = loadEditorButton(columnElement, "editButton",
+                    "actions.Edit", VaadinIcon.PENCIL.create());
             if (editButton != null) {
                 editButton.addClickListener(__ -> {
                     if (editor.isOpen()) {
@@ -276,13 +282,16 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     @Nullable
-    protected Button loadEditorButton(Element columnElement, String buttonElementName) {
+    protected Button loadEditorButton(Element columnElement, String buttonElementName,
+                                      @Nullable String defaultMessage, Icon defaultIcon) {
         Element buttonElement = columnElement.element(buttonElementName);
         if (buttonElement != null) {
             JmixButton button = factory.create(JmixButton.class);
 
-            componentLoader().loadText(button, buttonElement);
-            componentLoader().loadIcon(buttonElement, button::setIcon);
+            loadResourceString(buttonElement, "text", context.getMessageGroup())
+                    .ifPresentOrElse(button::setText, () -> button.setText(loadMessage(defaultMessage)));
+            componentLoader().loadIcon(buttonElement)
+                    .ifPresentOrElse(button::setIcon, () -> button.setIcon(defaultIcon));
             componentLoader().loadTitle(button, buttonElement, context);
             componentLoader().loadClassNames(button, buttonElement);
             componentLoader().loadThemeNames(button, buttonElement);
@@ -428,6 +437,14 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                 setDefaultEditComponent(column, property);
             }
         });
+    }
+
+    protected void setSelectionMode(SelectionMode selectionMode) {
+        GridSelectionModel<?> gridSelectionModel = resultComponent.setSelectionMode(selectionMode);
+
+        if (gridSelectionModel instanceof GridMultiSelectionModel<?> multiSelectionModel) {
+            multiSelectionModel.setSelectionColumnFrozen(true);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -646,11 +663,27 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         return metaDataTools;
     }
 
+    protected Messages getMessages() {
+        if (messages == null) {
+            messages = applicationContext.getBean(Messages.class);
+        }
+        return messages;
+    }
+
     protected ClassManager getClassManager() {
         if (classManager == null) {
             classManager = applicationContext.getBean(ClassManager.class);
         }
         return classManager;
+    }
+
+    @Nullable
+    protected String loadMessage(@Nullable String message) {
+        if (Strings.isNullOrEmpty(message)) {
+            return message;
+        }
+
+        return getMessages().getMessage(message);
     }
 
     protected abstract void setupDataProvider(GridDataHolder holder);

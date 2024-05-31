@@ -23,9 +23,11 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.MergeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -36,6 +38,8 @@ import java.util.function.Function;
  * Dummy implementation of {@link DataContext} used for read-only views like entity list views.
  */
 public class NoopDataContext implements DataContext {
+
+    private static final Logger log = LoggerFactory.getLogger(NoopDataContext.class);
 
     protected ApplicationContext applicationContext;
 
@@ -131,6 +135,7 @@ public class NoopDataContext implements DataContext {
 
     @Override
     public EntitySet save() {
+        log.warn("No entities were saved because the DataContext is read-only");
         return EntitySet.of(Collections.emptySet());
     }
 

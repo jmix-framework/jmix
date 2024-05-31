@@ -1,5 +1,6 @@
 <%
 dcId = "${entity.uncapitalizedClassName}Dc"
+dlId = "${entity.uncapitalizedClassName}Dl"
 def nestedDatasourceProperties = api.evaluateScript('nestedDatasourceProperties.groovy', ['view': detailFetchPlan, 'embeddable': false])
 def nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
 def collectionAttributesTable = []
@@ -30,7 +31,7 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
                     class="${entity.fqn}"<%if (!entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')) {%> <%if (!is_inline_detailFetchPlan) {%>
                     fetchPlan="${detailFetchPlan.name}"<%}%><%}%>> <%if (is_inline_detailFetchPlan) {%>
             ${inline_detailFetchPlan}
-            <%}%><loader/>
+                    <%}%><loader id="${dlId}"/>
         <%
         nestedDatasourceProperties.each {%>
         <instance id="${it}Dc" property="${it}"/>

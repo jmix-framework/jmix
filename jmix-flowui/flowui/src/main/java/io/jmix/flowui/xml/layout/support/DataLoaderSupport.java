@@ -39,6 +39,8 @@ import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.LoaderResolver;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -53,6 +55,8 @@ import static com.google.common.base.Preconditions.checkState;
 @org.springframework.stereotype.Component("flowui_DataLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DataLoaderSupport implements ApplicationContextAware {
+
+    private static final Logger log = LoggerFactory.getLogger(DataLoaderSupport.class);
 
     protected static final String ITEMS_QUERY_ELEMENT = "itemsQuery";
     protected static final String VALUE_PARAMETER = "value";
@@ -371,6 +375,9 @@ public class DataLoaderSupport implements ApplicationContextAware {
             }
             parent = parent.getParent();
         }
+
+        log.warn("Unable to load container for component with '{}' ID", element.attributeValue("id"));
+
         return null;
     }
 

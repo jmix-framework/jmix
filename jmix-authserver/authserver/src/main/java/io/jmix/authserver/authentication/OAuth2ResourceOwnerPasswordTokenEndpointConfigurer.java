@@ -23,7 +23,7 @@ public class OAuth2ResourceOwnerPasswordTokenEndpointConfigurer extends Abstract
 
     @Override
     public void init(HttpSecurity http) throws Exception {
-        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
         http.with(authorizationServerConfigurer, configurer -> {
             OAuth2TokenGenerator<?> tokenGenerator = http.getSharedObject(OAuth2TokenGenerator.class);
             ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);

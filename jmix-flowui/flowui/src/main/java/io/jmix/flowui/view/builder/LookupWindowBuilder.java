@@ -28,7 +28,6 @@ import io.jmix.flowui.view.LookupView;
 import io.jmix.flowui.view.LookupView.ValidationContext;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -56,6 +55,8 @@ public class LookupWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
     protected ListDataComponent<E> listDataComponent;
     protected HasValue field;
 
+    protected boolean lookupComponentMultiSelect;
+
     protected boolean fieldCollectionValue = false;
 
     protected LookupWindowBuilder(LookupWindowBuilder<E, V> builder) {
@@ -73,6 +74,8 @@ public class LookupWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
 
         this.listDataComponent = builder.listDataComponent;
         this.field = builder.field;
+
+        this.lookupComponentMultiSelect = builder.lookupComponentMultiSelect;
 
         this.fieldCollectionValue = builder.fieldCollectionValue;
 
@@ -193,6 +196,17 @@ public class LookupWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
     }
 
     /**
+     * Sets multi selection mode for the lookup component in the lookup view.
+     *
+     * @param lookupComponentMultiSelect whether to use multi selection for the lookup component
+     * @return this instance for chaining
+     */
+    public LookupWindowBuilder<E, V> withLookupComponentMultiSelect(boolean lookupComponentMultiSelect) {
+        this.lookupComponentMultiSelect = lookupComponentMultiSelect;
+        return this;
+    }
+
+    /**
      * Sets the field in which the framework sets the selected entities after successful lookup.
      *
      * @param field the field to set
@@ -267,6 +281,13 @@ public class LookupWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
      */
     public Optional<HasValue> getField() {
         return Optional.ofNullable(field);
+    }
+
+    /**
+     * @return whether to use multi selection for the lookup component
+     */
+    public boolean isLookupComponentMultiSelect() {
+        return lookupComponentMultiSelect;
     }
 
     /**

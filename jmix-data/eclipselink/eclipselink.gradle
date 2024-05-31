@@ -25,6 +25,7 @@ dependencies {
 
     api 'org.eclipse.persistence:org.eclipse.persistence.jpa'
     implementation 'org.eclipse.persistence:org.eclipse.persistence.extension'
+    compileOnly 'org.eclipse.persistence:org.eclipse.persistence.oracle'
     implementation 'org.springframework:spring-messaging'
     compileOnly 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'

@@ -2293,8 +2293,9 @@
     </xs:complexType>
 
     <xs:complexType name="baseAction">
-        <xs:sequence>
-            <xs:element name="properties" type="actionProperties" minOccurs="0"/>
+        <xs:sequence minOccurs="0">
+            <xs:element name="properties" type="actionProperties"/>
+            <xs:element name="shortcutCombination" type="actionShortcutCombination"/>
         </xs:sequence>
 
         <xs:attribute name="type" type="actionTypeEnum"/>
@@ -2638,6 +2639,11 @@
         <xs:sequence>
             <xs:element name="property" type="actionProperty" minOccurs="0"/>
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="actionShortcutCombination">
+        <xs:attribute name="keyCombination" type="xs:string" use="required"/>
+        <xs:attribute name="resetFocusOnActiveElement" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="actionProperty">

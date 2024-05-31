@@ -16,6 +16,9 @@
 
 package io.jmix.rest.annotation;
 
+/**
+ * Possible HTTP methods for invoking services through the Generic REST API.
+ */
 public enum RestHttpMethod {
     GET,
     POST,

@@ -21,6 +21,16 @@ import org.springframework.stereotype.Service;
 
 import java.lang.annotation.*;
 
+/**
+ * Exposes a service through the Generic REST API.
+ * <p>
+ * This annotation should be used instead of {@link Service}, for example:
+ * <pre>{@code
+ *     @RestService("EmployeeService")
+ *     public class EmployeeService {
+ *     }
+ * }</pre>
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

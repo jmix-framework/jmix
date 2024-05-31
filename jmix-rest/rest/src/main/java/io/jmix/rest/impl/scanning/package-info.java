@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.scanning;
+@Internal
+@NonNullApi
+package io.jmix.rest.impl.scanning;
 
-import io.jmix.core.impl.scanning.ClasspathScanCandidateDetector;
-import io.jmix.rest.annotation.RestService;
-import org.springframework.core.type.classreading.MetadataReader;
-import org.springframework.stereotype.Component;
-
-@Component
-public class OpenServicesDetector implements ClasspathScanCandidateDetector {
-    @Override
-    public boolean isCandidate(MetadataReader metadataReader) {
-        return metadataReader.getAnnotationMetadata().hasAnnotation(RestService.class.getName());
-    }
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

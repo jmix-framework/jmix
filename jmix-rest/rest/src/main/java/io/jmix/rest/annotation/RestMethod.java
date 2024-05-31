@@ -18,6 +18,9 @@ package io.jmix.rest.annotation;
 
 import java.lang.annotation.*;
 
+/**
+ * Exposes a service method through the Generic REST API.
+ */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

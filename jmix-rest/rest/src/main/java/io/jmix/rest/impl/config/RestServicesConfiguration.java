@@ -24,7 +24,7 @@ import io.jmix.rest.annotation.RestHttpMethod;
 import io.jmix.rest.annotation.RestMethod;
 import io.jmix.rest.annotation.RestService;
 import io.jmix.rest.exception.RestAPIException;
-import io.jmix.rest.scanning.OpenServicesDetector;
+import io.jmix.rest.impl.scanning.RestServicesDetector;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Element;
@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
@@ -198,7 +197,7 @@ public class RestServicesConfiguration {
 
 
     protected void loadAnnotations() {
-        Set<String> classNames = jmixModulesClasspathScanner.getClassNames(OpenServicesDetector.class);
+        Set<String> classNames = jmixModulesClasspathScanner.getClassNames(RestServicesDetector.class);
         for (String className : classNames) {
             try {
                 Class<?> aClass = Class.forName(className);

@@ -19,7 +19,12 @@ package io.jmix.rest.impl.config;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.jmix.core.Resources;
 import io.jmix.core.common.util.Dom4j;
+import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
+import io.jmix.rest.annotation.RestHttpMethod;
+import io.jmix.rest.annotation.RestMethod;
+import io.jmix.rest.annotation.RestService;
 import io.jmix.rest.exception.RestAPIException;
+import io.jmix.rest.scanning.OpenServicesDetector;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Element;
@@ -28,20 +33,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import org.springframework.lang.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Parameter;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -78,6 +84,9 @@ public class RestServicesConfiguration {
 
     @Autowired
     protected BeanFactory beanFactory;
+
+    @Autowired
+    protected JmixModulesClasspathScanner jmixModulesClasspathScanner;
 
     @Nullable
     public RestMethodInfo getRestMethodInfo(String serviceName, String methodName, String httpMethod, List<String> methodParamNames) {
@@ -135,6 +144,11 @@ public class RestServicesConfiguration {
     }
 
     protected void init() {
+        loadConfig();
+        loadAnnotations();
+    }
+
+    protected void loadConfig() {
         String configName = environment.getProperty(JMIX_REST_SERVICES_CONFIG_PROP_NAME);
         StringTokenizer tokenizer = new StringTokenizer(configName);
         for (String location : tokenizer.getTokenArray()) {
@@ -172,11 +186,74 @@ public class RestServicesConfiguration {
                 }
                 Method method = _findMethod(serviceName, methodName, params);
                 if (method != null) {
-                    methodInfos.add(new RestMethodInfo(methodName, httpMethod, params, method));
+                    RestMethodInfo restMethodInfo = new RestMethodInfo(methodName, httpMethod, params, method);
+                    restMethodInfo.setReturnType(method.getReturnType().getTypeName());
+                    methodInfos.add(restMethodInfo);
                 }
             }
 
             serviceInfosMap.put(serviceName, new RestServiceInfo(serviceName, methodInfos));
+        }
+    }
+
+
+    protected void loadAnnotations() {
+        Set<String> classNames = jmixModulesClasspathScanner.getClassNames(OpenServicesDetector.class);
+        for (String className : classNames) {
+            try {
+                Class<?> aClass = Class.forName(className);
+                RestService restService = AnnotatedElementUtils.findMergedAnnotation(aClass, RestService.class);
+                if (restService == null) {
+                    continue;
+                }
+                String serviceName = restService.value();
+                boolean existServiceName = serviceInfosMap.containsKey(serviceName);
+                List<RestMethodInfo> methods = new ArrayList<>();
+                for (Method method : aClass.getMethods()) {
+                    RestMethod restMethod = AnnotatedElementUtils.findMergedAnnotation(method, RestMethod.class);
+                    if (restMethod == null) {
+                        continue;
+                    }
+                    if (existServiceName) {
+                        RestServiceInfo restServiceInfo = serviceInfosMap.get(serviceName);
+                        boolean existMethod = restServiceInfo.getMethods().stream().anyMatch(restMethodInfo ->
+                                Objects.equals(restMethodInfo.getName(), restMethod.value())
+                        );
+                        if (existMethod) {
+                            continue;
+                        }
+                    }
+                    List<RestMethodParamInfo> params = new LinkedList<>();
+                    for (Parameter parameter : method.getParameters()) {
+                        RestMethodParamInfo restMethodParamInfo = new RestMethodParamInfo(parameter.getName(), parameter.getType().getName(), true);
+                        params.add(restMethodParamInfo);
+                    }
+                    String methodName = restMethod.value();
+                    if (StringUtils.isEmpty(methodName)) {
+                        methodName = method.getName();
+                    }
+                    for (RestMethodInfo restMethodInfo : methods) {
+                        if (Objects.equals(restMethodInfo.getName(), methodName)) {
+                            log.error("multiple identical service names exist {} {}", serviceName, methodName);
+                            break;
+                        }
+                    }
+                    String returnType = method.getReturnType().getTypeName();
+                    RestHttpMethod[] restHttpMethods = restMethod.httpMethods();
+                    for (RestHttpMethod restHttpMethod : restHttpMethods) {
+                        RestMethodInfo restMethodInfo = new RestMethodInfo(methodName, restHttpMethod.name(), params, method);
+                        restMethodInfo.setReturnType(returnType);
+                        methods.add(restMethodInfo);
+                    }
+                }
+                if (methods.isEmpty()) {
+                    continue;
+                }
+                RestServiceInfo restServiceInfo = new RestServiceInfo(serviceName, methods);
+                serviceInfosMap.put(serviceName, restServiceInfo);
+            } catch (Exception e) {
+                log.error("Cannot instantiate an instance of {}", className, e);
+            }
         }
     }
 
@@ -295,6 +372,8 @@ public class RestServicesConfiguration {
         protected List<RestMethodParamInfo> params;
         @JsonIgnore
         protected Method method;
+        @JsonIgnore
+        protected String returnType;
 
         public RestMethodInfo(String name, String httpMethod, List<RestMethodParamInfo> params, Method method) {
             this.name = name;
@@ -333,6 +412,14 @@ public class RestServicesConfiguration {
 
         public void setMethod(Method method) {
             this.method = method;
+        }
+
+        public String getReturnType() {
+            return returnType;
+        }
+
+        public void setReturnType(String returnType) {
+            this.returnType = returnType;
         }
     }
 

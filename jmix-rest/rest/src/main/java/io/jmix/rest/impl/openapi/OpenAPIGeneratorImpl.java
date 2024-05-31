@@ -91,6 +91,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     protected RestServicesConfiguration servicesConfiguration;
 
     protected OpenAPI openAPI = null;
+    protected Collection<MetaClass> entityMetaClass = null;
 
     private volatile boolean initialized = false;
 
@@ -114,6 +115,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
 
     protected void init() {
         openAPI = new OpenAPI();
+        entityMetaClass = new HashSet<>();
 
         buildServer(openAPI);
         buildInfo(openAPI);
@@ -124,6 +126,17 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         buildEntitiesPaths(openAPI);
         buildQueriesPaths(openAPI);
         buildServicesPaths(openAPI);
+
+        buildEntitySchema(openAPI);
+    }
+
+    protected void buildEntitySchema(OpenAPI openAPI) {
+        for (MetaClass metaClass : entityMetaClass) {
+            if (metadataTools.isSystemLevel(metaClass) || metadataTools.isJpaEntity(metaClass)) {
+                continue;
+            }
+            buildEntitySchema(openAPI, metaClass);
+        }
     }
 
     protected void buildServer(OpenAPI openAPI) {
@@ -473,6 +486,12 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                         .addApiResponse("200", new ApiResponse()
                                         .description("Returns the result of the method execution. It can be of simple datatype " +
                                                 "as well as JSON that represents an entity or entities collection.")
+                                        .content(
+                                                new Content()
+                                                        .addMediaType(APPLICATION_JSON_VALUE, new MediaType()
+                                                                .schema(getPropertyFromJavaType(methodInfo.getReturnType()))
+                                                        )
+                                        )
                                 //.schema(new StringSchema())
                         )
                         .addApiResponse("204", new ApiResponse().description("No content. This status is returned when the service " +
@@ -683,6 +702,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
 
         MetaClass metaClass = metadata.findClass(clazz);
         if (metaClass != null) {
+            entityMetaClass.add(metaClass);
             return new ObjectSchema()
                     .$ref(getEntitySchemaRef(metaClass.getName()))
                     .description(metaClass.getName());

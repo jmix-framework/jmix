@@ -44,7 +44,6 @@ public class AutowireManager {
      *     <li>Iterates over factories according to the {@link Ordered} interface.</li>
      *     <li>Injects using all applicable injector.</li>
      * </ol>
-     * </p>
      *
      * @param context the {@link DependencyInjector.AutowireContext} instance
      */

@@ -16,12 +16,12 @@
 
 package test_support;
 
-import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraintsProvider;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 
 import java.util.List;
 
-public class TestDatasetConstraintsProvider implements DatasetConstrainsProvider {
+public class TestDatasetConstraintsProvider implements DatasetConstraintsProvider {
 
     @Override
     public List<DatasetConstraint> getConstraints() {

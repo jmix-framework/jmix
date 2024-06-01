@@ -17,9 +17,7 @@
 package io.jmix.supersetflowui.component.loader;
 
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
-import io.jmix.supersetflowui.SupersetGuestTokenProvider;
 import io.jmix.supersetflowui.component.SupersetDashboard;
-import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dom4j.Element;
@@ -54,7 +52,7 @@ public class SupersetDashboardLoader extends AbstractComponentLoader<SupersetDas
         if (datasetConstraintsElement != null) {
             List<DatasetConstraint> datasetConstraints = loadDatasetConstraintsList(datasetConstraintsElement);
             if (CollectionUtils.isNotEmpty(datasetConstraints)) {
-                resultComponent.setDatasetConstrainsProvider(() -> datasetConstraints);
+                resultComponent.setDatasetConstraintsProvider(() -> datasetConstraints);
             }
         }
     }

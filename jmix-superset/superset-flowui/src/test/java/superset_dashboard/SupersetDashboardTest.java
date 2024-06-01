@@ -52,7 +52,7 @@ public class SupersetDashboardTest {
                 () -> assertTrue(dashboard1.isChartControlsVisible()),
                 () -> assertEquals(dashboard1.getClassName(), "classNames"),
                 () -> assertEquals("green", dashboard1.getStyle().get("color")),
-                () -> assertNotNull(dashboard1.getDatasetConstrainsProvider()),
+                () -> assertNotNull(dashboard1.getDatasetConstraintsProvider()),
                 () -> assertEquals("172f1241-f8c8-4203-88a6-0771753da7b3", dashboard1.getEmbeddedId()),
                 () -> assertTrue(dashboard1.isFiltersExpanded()),
                 () -> assertEquals("30px", dashboard1.getHeight()),
@@ -73,7 +73,7 @@ public class SupersetDashboardTest {
                         (token) -> assertEquals("token", token));
 
         // Check dataset constraints are loaded from XML
-        var constraintsProvider = view.dashboard2.getDatasetConstrainsProvider();
+        var constraintsProvider = view.dashboard2.getDatasetConstraintsProvider();
         assertNotNull(constraintsProvider);
         assertEquals(1, constraintsProvider.getConstraints().size());
     }

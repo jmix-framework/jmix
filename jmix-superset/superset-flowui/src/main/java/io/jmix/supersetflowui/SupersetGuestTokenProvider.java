@@ -19,7 +19,7 @@ package io.jmix.supersetflowui;
 import io.jmix.superset.client.SupersetClient;
 import io.jmix.superset.client.cookie.SupersetCookieManager;
 import io.jmix.supersetflowui.component.SupersetDashboard;
-import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraintsProvider;
 import jakarta.annotation.Nullable;
 
 import java.net.http.HttpClient;
@@ -134,8 +134,8 @@ public interface SupersetGuestTokenProvider {
          * @return the dataset constraints provider or {@code null} if not set
          */
         @Nullable
-        public DatasetConstrainsProvider getDatasetConstrainsProvider() {
-            return source.getDatasetConstrainsProvider();
+        public DatasetConstraintsProvider getDatasetConstraintsProvider() {
+            return source.getDatasetConstraintsProvider();
         }
     }
 }

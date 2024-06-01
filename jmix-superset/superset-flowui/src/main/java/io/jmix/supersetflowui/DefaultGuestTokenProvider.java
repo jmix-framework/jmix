@@ -27,7 +27,7 @@ import io.jmix.superset.client.model.GuestTokenBody;
 import io.jmix.superset.client.model.GuestTokenResponse;
 import io.jmix.superset.client.SupersetClient;
 import io.jmix.supersetflowui.component.SupersetDashboard;
-import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraintsProvider;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 import jakarta.annotation.Nullable;
 import org.apache.commons.collections4.CollectionUtils;
@@ -90,7 +90,7 @@ public class DefaultGuestTokenProvider implements SupersetGuestTokenProvider {
             return;
         }
 
-        GuestTokenBody body = buildGuestTokenBody(context.getEmbeddedId(), context.getDatasetConstrainsProvider());
+        GuestTokenBody body = buildGuestTokenBody(context.getEmbeddedId(), context.getDatasetConstraintsProvider());
         long timeout = supersetFlowuiProperties.getBackgroundFetchingGuestTokenTimeout().toMillis();
 
         GuestTokenTask guestTokenTask = createSupersetGuestTokenTask(timeout, body, tokenManager.getAccessToken(),
@@ -123,10 +123,10 @@ public class DefaultGuestTokenProvider implements SupersetGuestTokenProvider {
     }
 
     protected GuestTokenBody buildGuestTokenBody(String embeddedID,
-                                                 @Nullable DatasetConstrainsProvider constrainsProvider) {
+                                                 @Nullable DatasetConstraintsProvider constraintsProvider) {
         List<GuestTokenBody.RowLevelRole> rls = Collections.emptyList();
-        if (constrainsProvider != null) {
-            rls = convertToSupersetRls(constrainsProvider.getConstraints());
+        if (constraintsProvider != null) {
+            rls = convertToSupersetRls(constraintsProvider.getConstraints());
         }
 
         return GuestTokenBody.builder()

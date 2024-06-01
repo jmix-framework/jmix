@@ -40,8 +40,8 @@ public class SupersetDashboardTestView extends StandardView {
     @Autowired
     public TestDatasetConstraintsProvider datasetConstraintsProvider;
 
-    @Install(to = "dashboard1", subject = "datasetConstrainsProvider")
-    public List<DatasetConstraint> datasetConstrainsProviderInstall() {
+    @Install(to = "dashboard1", subject = "datasetConstraintsProvider")
+    public List<DatasetConstraint> datasetConstraintsProviderInstall() {
         return datasetConstraintsProvider.getConstraints();
     }
 

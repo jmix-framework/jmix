@@ -20,7 +20,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.supersetflowui.DefaultGuestTokenProvider;
 import io.jmix.supersetflowui.SupersetGuestTokenProvider;
-import io.jmix.supersetflowui.component.dataconstraint.DatasetConstrainsProvider;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraintsProvider;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -57,7 +57,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
 
     protected ApplicationContext applicationContext;
 
-    protected DatasetConstrainsProvider datasetConstrainsProvider;
+    protected DatasetConstraintsProvider datasetConstraintsProvider;
     protected SupersetGuestTokenProvider guestTokenProvider;
 
     @Override
@@ -76,18 +76,18 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
      * @return dataset constraints provider or {@code null} if not set
      */
     @Nullable
-    public DatasetConstrainsProvider getDatasetConstrainsProvider() {
-        return datasetConstrainsProvider;
+    public DatasetConstraintsProvider getDatasetConstraintsProvider() {
+        return datasetConstraintsProvider;
     }
 
     /**
      * Sets dataset constraints provider. These constraints are applied to datasets that are used in an embedded
      * dashboard {@link #getEmbeddedId()}.
      *
-     * @param datasetConstrainsProvider dataset constraints providers
+     * @param datasetConstraintsProvider dataset constraints providers
      */
-    public void setDatasetConstrainsProvider(@Nullable DatasetConstrainsProvider datasetConstrainsProvider) {
-        this.datasetConstrainsProvider = datasetConstrainsProvider;
+    public void setDatasetConstraintsProvider(@Nullable DatasetConstraintsProvider datasetConstraintsProvider) {
+        this.datasetConstraintsProvider = datasetConstraintsProvider;
     }
 
     /**

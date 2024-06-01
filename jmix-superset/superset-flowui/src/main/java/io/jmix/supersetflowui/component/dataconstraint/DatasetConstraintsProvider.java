@@ -26,7 +26,7 @@ import java.util.List;
  * For instance:
  * <pre>
  * &#64;Component("app_CovidDatasetConstraint")
- * public class DashboardDatasetConstraintsProvider implements DatasetConstrainsProvider {
+ * public class DashboardDatasetConstraintsProvider implements DatasetConstraintsProvider {
  *
  *     &#64;Override
  *     public List&lt;DatasetConstraint&gt; getConstraints() {
@@ -43,7 +43,7 @@ import java.util.List;
  *                     embeddedId="d0ec568a-04cb-4408-a072-f2ba4e011f20"/&gt;
  * </pre>
  */
-public interface DatasetConstrainsProvider {
+public interface DatasetConstraintsProvider {
 
     /**
      * @return list of dataset constraints

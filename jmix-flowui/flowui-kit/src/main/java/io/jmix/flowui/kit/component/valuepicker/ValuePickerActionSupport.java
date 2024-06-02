@@ -77,7 +77,7 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
     protected void addActionInternal(Action action, int index) {
         super.addActionInternal(action, index);
 
-        addButton(action, index);
+        addButton(action);
         updateActionsSlot();
     }
 
@@ -93,7 +93,8 @@ public class ValuePickerActionSupport extends AbstractActionsHolderSupport<Compo
         return false;
     }
 
-    protected void addButton(Action action, int index) {
+    protected void addButton(Action action) {
+        int index = actions.indexOf(action);
         ValuePickerButton button = new ValuePickerButton();
         button.setAction(action);
         getActionsLayout().addComponentAtIndex(index, button);

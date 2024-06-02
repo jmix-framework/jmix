@@ -35,10 +35,11 @@ public class GenericFilterActionsSupport extends AbstractActionsHolderSupport<Ge
     protected void addActionInternal(Action action, int index) {
         super.addActionInternal(action, index);
 
-        addSettingsButtonItem(action, index);
+        addSettingsButtonItem(action);
     }
 
-    protected void addSettingsButtonItem(Action action, int index) {
+    protected void addSettingsButtonItem(Action action) {
+        int index = actions.indexOf(action);
         settingsButton.addItem(action.getId(), action, index);
     }
 

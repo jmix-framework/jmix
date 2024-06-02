@@ -40,12 +40,13 @@ public class GridActionsSupport<C extends Grid<T>, T> extends AbstractActionsHol
         super.addActionInternal(action, index);
 
         if (showActionsInContextMenuEnabled) {
-            addContextMenuItem(action, index);
+            addContextMenuItem(action);
             updateContextMenu();
         }
     }
 
-    protected void addContextMenuItem(Action action, int index) {
+    protected void addContextMenuItem(Action action) {
+        int index = actions.indexOf(action);
         GridMenuItemActionWrapper<T> wrapper = createContextMenuItemComponent();
         GridMenuItem<T> menuItem = getContextMenu().addItemAtIndex(index, wrapper);
 

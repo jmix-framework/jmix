@@ -12,36 +12,33 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
+ */
 
 
 package test_support;
 
-import io.jmix.core.*;
+/*import io.jmix.core.*;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.impl.ElasticSearchEntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import jakarta.annotation.Nonnull;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.client.RestHighLevelClient;*/
 
-import jakarta.annotation.Nonnull;
-import org.elasticsearch.client.RestHighLevelClient;
-
-*/
 /**
  * Track incoming bulk requests via provided tracker instead of execution via ES client
- *//*
-
-public class TestElasticSearchEntityIndexer extends ElasticSearchEntityIndexer { //todo
+ */
+/*public class TestElasticSearchEntityIndexer extends ElasticSearchEntityIndexer { //todo
 
     protected final TestBulkRequestsTracker bulkRequestsTracker;
 
-    */
-/*public TestElasticSearchEntityIndexer(TestBulkRequestsTracker bulkRequestsTracker) {
+
+    public TestElasticSearchEntityIndexer(TestBulkRequestsTracker bulkRequestsTracker) {
         this.bulkRequestsTracker = bulkRequestsTracker;
-    }*//*
+    }
 
 
     public TestElasticSearchEntityIndexer(UnconstrainedDataManager dataManager,
@@ -64,5 +61,4 @@ public class TestElasticSearchEntityIndexer extends ElasticSearchEntityIndexer {
         bulkRequestsTracker.accept(request);
         return new BulkResponse(new BulkItemResponse[]{}, 0);
     }
-}
-*/
+}*/

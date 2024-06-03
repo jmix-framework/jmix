@@ -22,16 +22,17 @@ archivesBaseName = 'jmix-search'
 
 dependencies {
     api project(':data')
-    implementation project(':security')
+    api project(':security')
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    api 'org.elasticsearch.client:elasticsearch-rest-high-level-client'
-    api 'co.elastic.clients:elasticsearch-java:7.17.21'
-    api 'org.opensearch.client:opensearch-java:2.9.1'
-    api 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+    //api 'org.elasticsearch.client:elasticsearch-rest-high-level-client' todo
+    //api 'co.elastic.clients:elasticsearch-java'
+    //api 'org.opensearch.client:opensearch-java:2.9.1'
+    //api 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+
     //api 'org.apache.httpcomponents.client5:httpclient5-fluent:5.3.1'
 
     implementation 'org.apache.poi:poi'

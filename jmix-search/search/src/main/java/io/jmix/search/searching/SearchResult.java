@@ -106,7 +106,7 @@ public interface SearchResult {
      *
      * @return {@link SearchStrategy}
      */
-    SearchStrategy getSearchStrategy();
+    String getSearchStrategy();
 
     /**
      * Creates new {@link SearchContext} based on current one and describes next-page search

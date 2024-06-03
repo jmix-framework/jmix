@@ -28,7 +28,6 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.*;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.common.Strings;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -46,7 +45,6 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
     protected EntitySearcher entitySearcher;
     protected String parameterName;
     protected String searchStrategy;
-    //protected SearchStrategyManager searchStrategyManager; //todo
     protected SearchProperties searchProperties;
     protected String correctWhere;
 
@@ -56,7 +54,6 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
         jpqlFilterSupport = applicationContext.getBean(JpqlFilterSupport.class);
         idSerialization = applicationContext.getBean(IdSerialization.class);
         entitySearcher = applicationContext.getBean(EntitySearcher.class);
-        //searchStrategyManager = applicationContext.getBean(SearchStrategyManager.class);
         searchProperties = applicationContext.getBean(SearchProperties.class);
     }
 
@@ -100,7 +97,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
 
     @Override
     protected void updateQueryCondition(@Nullable String newValue) {
-        if (Strings.isNullOrEmpty(newValue)) {
+        if (StringUtils.isEmpty(newValue)) {
             setQueryConditionParameterValue(Collections.emptyList());
         }
     }
@@ -138,8 +135,6 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
         SearchContext searchContext = new SearchContext(searchTerm);
         searchContext.setEntities(getDataLoader().getContainer().getEntityMetaClass().getName());
         searchContext.setSize(searchProperties.getSearchResultPageSize());
-        /*SearchResult searchResult = entitySearcher.search(searchContext,
-                searchStrategy != null ? searchStrategy : searchStrategyManager.getDefaultSearchStrategy());*/
         SearchResult searchResult = entitySearcher.search(searchContext, searchStrategy);
         return searchResult.getAllEntries().stream()
                 .map(searchResultEntry -> {

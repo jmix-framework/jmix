@@ -79,14 +79,12 @@ public class SearchResultsView extends StandardView {
     @Autowired
     protected EntitySearcher entitySearcher;
     @Autowired
-    protected SearchStrategyManager searchStrategyManager;
-    @Autowired
     protected DialogWindows dialogWindows;
     @Autowired
     protected Notifications notifications;
 
     protected SearchResult searchResult;
-    protected SearchStrategy searchStrategy;
+    protected String searchStrategy;
     protected List<String> entities = Collections.emptyList();
     protected int searchSize;
     protected String value;
@@ -128,7 +126,7 @@ public class SearchResultsView extends StandardView {
         if (parameters.containsKey(QUERY_PARAM_STRATEGY)) {
             parameters.get(QUERY_PARAM_STRATEGY).stream()
                     .findAny()
-                    .ifPresent(parameter -> searchStrategy = searchStrategyManager.getSearchStrategyByName(parameter));
+                    .ifPresent(parameter -> searchStrategy = parameter);
         }
         if (parameters.containsKey(QUERY_PARAM_VALUE)) {
             parameters.get(QUERY_PARAM_VALUE).stream()

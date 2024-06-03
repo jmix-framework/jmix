@@ -14,84 +14,62 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.search;
+package io.jmix.autoconfigure.searchopensearch;
 
-import io.jmix.core.CoreConfiguration;
+import com.google.common.base.Strings;
+import io.jmix.core.*;
 import io.jmix.data.DataConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
+import io.jmix.search.index.ESIndexManager;
+import io.jmix.search.index.EntityIndexer;
+import io.jmix.search.index.impl.IndexStateRegistry;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.utils.ElasticsearchSslConfigurer;
+import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurerProcessor;
+import io.jmix.searchopensearch.index.impl.OpenSearchEntityIndexer;
+import io.jmix.searchopensearch.index.impl.OpenSearchIndexManager;
+import io.jmix.searchopensearch.searching.impl.OpenSearchEntitySearcher;
+import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyManager;
+import io.jmix.security.constraint.PolicyStore;
+import io.jmix.security.constraint.SecureOperations;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.RestClientBuilder;
+import org.opensearch.client.json.jackson.JacksonJsonpMapper;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.transport.OpenSearchTransport;
+import org.opensearch.client.transport.rest_client.RestClientTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+
+import javax.annotation.Nullable;
+import javax.net.ssl.SSLContext;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class})
-public class SearchAutoConfiguration {
+public class SearchOpenSearchAutoConfiguration {
 
-    private static final Logger log = LoggerFactory.getLogger(SearchAutoConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchOpenSearchAutoConfiguration.class);
 
     @Autowired
     protected SearchProperties searchProperties;
     @Autowired
     protected ElasticsearchSslConfigurer elasticsearchSslConfigurer;
 
-    /*@Bean("search_RestHighLevelClient")
-    @ConditionalOnMissingBean(RestHighLevelClient.class)
-    public RestHighLevelClient elasticSearchClient() {
-        log.debug("Create simple ES Client");
 
-        String esUrl = searchProperties.getElasticsearchUrl();
-        HttpHost esHttpHost = HttpHost.create(esUrl);
-        RestClientBuilder restClientBuilder = RestClient.builder(esHttpHost);
-
-        CredentialsProvider credentialsProvider = createCredentialsProvider();
-        SSLContext sslContext = elasticsearchSslConfigurer.createSslContext();
-
-        restClientBuilder.setHttpClientConfigCallback(httpClientBuilder -> {
-            if (credentialsProvider != null) {
-                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-            }
-            if (sslContext != null) {
-                httpClientBuilder.setSSLContext(sslContext);
-            }
-            return httpClientBuilder;
-        });
-
-        return new RestHighLevelClientBuilder(restClientBuilder.build())
-                .setApiCompatibilityMode(searchProperties.isRestHighLevelClientApiCompatibilityModeEnabled())
-                .build();
-    }*/
-
-    /*@Bean("search_ElasticsearchClient") //todo
-    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "es") //todo
-    public ElasticsearchClient elasticsearchClient() {
-        CredentialsProvider credentialsProvider = createCredentialsProvider();
-        SSLContext sslContext = elasticsearchSslConfigurer.createSslContext();
-
-        String esUrl = searchProperties.getElasticsearchUrl();
-        RestClient restClient = RestClient
-                .builder(HttpHost.create(esUrl))
-                .setHttpClientConfigCallback(httpClientBuilder -> {
-                    if (credentialsProvider != null) {
-                        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                    }
-                    if (sslContext != null) {
-                        httpClientBuilder.setSSLContext(sslContext);
-                    }
-                    return httpClientBuilder;
-                })
-                .build();
-
-
-        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
-        return new ElasticsearchClient(transport);
-    }*/
-
-    /*@Bean("search_OpenSearchClient") //todo
-    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "os") //todo
+    /*@Bean("search_OpenSearchClient")
+    //@ConditionalOnProperty(name = "jmix.search.platform", havingValue = "os") //todo
     public OpenSearchClient openSearchClient() {
         *//*System.setProperty("javax.net.ssl.trustStore", "com/company/sandbox/keystore/localhost.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "123qwe");*//*
@@ -133,18 +111,28 @@ public class SearchAutoConfiguration {
         return new OpenSearchClient(transport);
     }*/
 
-    /*@Bean("search_ElasticsearchIndexManager")
-    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "es") //todo
-    protected ESIndexManager elasticsearchIndexManager(ElasticsearchClient client,
-                                                       IndexConfigurationManager indexConfigurationManager,
-                                                       SearchProperties searchProperties,
-                                                       IndexStateRegistry indexStateRegistry,
-                                                       ElasticsearchIndexSettingsConfigurerProcessor indexSettingsProcessor) {
-        return new ElasticsearchIndexManager(client, indexStateRegistry, indexConfigurationManager, searchProperties, indexSettingsProcessor);
+    @Bean("search_OpenSearchClient")
+    public OpenSearchClient openSearchClient() {
+        HttpHost host = HttpHost.create(searchProperties.getElasticsearchUrl());
+        CredentialsProvider credentialsProvider = createCredentialsProvider();
+        SSLContext sslContext = elasticsearchSslConfigurer.createSslContext();
+
+        RestClient restClient = RestClient.builder(host).
+                setHttpClientConfigCallback(httpClientBuilder -> {
+                    if (credentialsProvider != null) {
+                        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+                    }
+                    if (sslContext != null) {
+                        httpClientBuilder.setSSLContext(sslContext);
+                    }
+                    return httpClientBuilder;
+                }).build();
+
+        final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        return new OpenSearchClient(transport);
     }
 
     @Bean("search_OpenSearchIndexManager")
-    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "os") //todo
     protected ESIndexManager openSearchIndexManager(OpenSearchClient client,
                                                     IndexStateRegistry indexStateRegistry,
                                                     IndexConfigurationManager indexConfigurationManager,
@@ -153,30 +141,7 @@ public class SearchAutoConfiguration {
         return new OpenSearchIndexManager(client, indexStateRegistry, indexConfigurationManager, searchProperties, indexSettingsProcessor);
     }
 
-    @Bean("search_ElasticsearchEntityIndexer")
-    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "es") //todo
-    protected EntityIndexer elasticsearchEntityIndexer(UnconstrainedDataManager dataManager,
-                                                       FetchPlans fetchPlans,
-                                                       IndexConfigurationManager indexConfigurationManager,
-                                                       Metadata metadata,
-                                                       IdSerialization idSerialization,
-                                                       IndexStateRegistry indexStateRegistry,
-                                                       MetadataTools metadataTools,
-                                                       SearchProperties searchProperties,
-                                                       ElasticsearchClient client) {
-        return new ElasticsearchEntityIndexer(dataManager,
-                fetchPlans,
-                indexConfigurationManager,
-                metadata,
-                idSerialization,
-                indexStateRegistry,
-                metadataTools,
-                searchProperties,
-                client);
-    }
-
     @Bean("search_OpenSearchEntityIndexer")
-    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "os") //todo
     protected EntityIndexer openSearchEntityIndexer(UnconstrainedDataManager dataManager,
                                                     FetchPlans fetchPlans,
                                                     IndexConfigurationManager indexConfigurationManager,
@@ -198,7 +163,6 @@ public class SearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchEntitySearcher")
-    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "os") //todo
     protected EntitySearcher openSearchEntitySearcher(OpenSearchClient client,
                                                       IndexConfigurationManager indexConfigurationManager,
                                                       Metadata metadata,
@@ -211,34 +175,6 @@ public class SearchAutoConfiguration {
                                                       PolicyStore policyStore,
                                                       OpenSearchSearchStrategyManager searchStrategyManager) {
         return new OpenSearchEntitySearcher(
-                client,
-                indexConfigurationManager,
-                metadata,
-                metadataTools,
-                secureDataManager,
-                instanceNameProvider,
-                searchProperties,
-                idSerialization,
-                secureOperations,
-                policyStore,
-                searchStrategyManager
-        );
-    }
-
-    @Bean("search_ElasticsearchEntitySearcher")
-    @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "es") //todo
-    protected EntitySearcher elasticsearchEntitySearcher(ElasticsearchClient client,
-                                                         IndexConfigurationManager indexConfigurationManager,
-                                                         Metadata metadata,
-                                                         MetadataTools metadataTools,
-                                                         DataManager secureDataManager,
-                                                         InstanceNameProvider instanceNameProvider,
-                                                         SearchProperties searchProperties,
-                                                         IdSerialization idSerialization,
-                                                         SecureOperations secureOperations,
-                                                         PolicyStore policyStore,
-                                                         ElasticsearchSearchStrategyManager searchStrategyManager) {
-        return new ElasticsearchEntitySearcher(
                 client,
                 indexConfigurationManager,
                 metadata,
@@ -266,5 +202,5 @@ public class SearchAutoConfiguration {
             );
         }
         return credentialsProvider;
-    }*/
+    }
 }

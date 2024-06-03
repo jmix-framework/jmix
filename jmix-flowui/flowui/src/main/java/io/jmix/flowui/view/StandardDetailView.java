@@ -25,6 +25,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.Location;
+import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
@@ -48,10 +49,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.lang.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
@@ -313,7 +311,17 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     @Override
     public OperationResult save() {
         return saveChanges(true)
-                .then(() -> saveActionPerformed = true);
+                .then(() -> saveActionPerformed = true)
+                .then(this::updateUrl);
+    }
+
+    private void updateUrl() {
+        getUI().ifPresent(ui -> {
+            RouteSupport routeSupport = getRouteSupport();
+            Object id = requireNonNull(EntityValues.getId(getEditedEntity()));
+            RouteParameters routeParameters = routeSupport.createRouteParameters(getRouteParamName(), id);
+            routeSupport.replaceUrl(ui, this.getClass(), routeParameters);
+        });
     }
 
     @Override
@@ -826,6 +834,10 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private UrlParamSerializer getUrlParamSerializer() {
         return getApplicationContext().getBean(UrlParamSerializer.class);
+    }
+
+    private RouteSupport getRouteSupport() {
+        return getApplicationContext().getBean(RouteSupport.class);
     }
 
     /**

@@ -15,7 +15,7 @@
  */
 
 
-package test_support;
+//package test_support;
 
 /*import io.jmix.core.*;
 import io.jmix.search.SearchProperties;
@@ -28,9 +28,6 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.RestHighLevelClient;*/
 
-/**
- * Track incoming bulk requests via provided tracker instead of execution via ES client
- */
 /*public class TestElasticSearchEntityIndexer extends ElasticSearchEntityIndexer { //todo
 
     protected final TestBulkRequestsTracker bulkRequestsTracker;

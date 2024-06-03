@@ -16,13 +16,11 @@
 
 package io.jmix.search.index.impl;
 
-import org.elasticsearch.common.settings.Settings;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class IndexSettingsComparatorTest {
 

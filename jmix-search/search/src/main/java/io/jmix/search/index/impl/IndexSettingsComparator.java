@@ -16,12 +16,13 @@
 
 package io.jmix.search.index.impl;
 
-import org.elasticsearch.common.settings.Settings;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component("search_SearchSettingsComparator")
-public class SearchSettingsComparator {
-    public ComparingState compare(Settings searchServerSettings, Settings applicationSettings) {
+public class IndexSettingsComparator {
+    public SettingsComparingResult compare(Map<String, String> searchServerSettings, Map<String, String> applicationSettings) {
 
         long unmatchedSettings = applicationSettings.keySet().stream().filter(key -> {
             String actualValue = applicationSettings.get(key);
@@ -29,6 +30,21 @@ public class SearchSettingsComparator {
             return !actualValue.equals(currentValue);
         }).count();
 
-        return unmatchedSettings == 0 ? ComparingState.EQUAL : ComparingState.NOT_COMPATIBLE;
+        return unmatchedSettings == 0 ? SettingsComparingResult.SETTINGS_ARE_EQUAL : SettingsComparingResult.SETTINGS_ARE_NOT_COMPATIBLE;
+    }
+
+    public enum SettingsComparingResult implements ConfigurationPartComparingResult{
+        SETTINGS_ARE_EQUAL,
+        SETTINGS_ARE_NOT_COMPATIBLE;
+
+        @Override
+        public boolean recreatingIndexIsRequired() {
+            return this == SETTINGS_ARE_NOT_COMPATIBLE;
+        }
+
+        @Override
+        public boolean configurationUpdateIsRequired() {
+            return false;
+        }
     }
 }

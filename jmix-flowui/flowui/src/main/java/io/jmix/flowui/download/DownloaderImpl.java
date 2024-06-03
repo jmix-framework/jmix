@@ -61,6 +61,7 @@ public class DownloaderImpl implements Downloader {
     protected Messages messages;
 
     protected FileStorageLocator fileStorageLocator;
+    protected FileStorage fileStorage;
 
     protected boolean newWindow;
 
@@ -102,6 +103,11 @@ public class DownloaderImpl implements Downloader {
     @Autowired
     public void setFileStorageLocator(FileStorageLocator fileStorageLocator) {
         this.fileStorageLocator = fileStorageLocator;
+    }
+
+    @Override
+    public void setFileStorage(FileStorage fileStorage) {
+        this.fileStorage = fileStorage;
     }
 
     @Override

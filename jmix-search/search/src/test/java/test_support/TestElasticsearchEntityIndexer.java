@@ -34,7 +34,7 @@ import org.elasticsearch.client.RestHighLevelClient;
  * Track incoming bulk requests via provided tracker instead of execution via ES client
  *//*
 
-public class TestElasticSearchEntityIndexer extends ElasticSearchEntityIndexer {
+public class TestElasticSearchEntityIndexer extends ElasticSearchEntityIndexer { //todo
 
     protected final TestBulkRequestsTracker bulkRequestsTracker;
 

@@ -48,7 +48,6 @@ public class IndexConfigurationComparator {
     public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
         IndexMappingComparator.MappingComparingResult mappingState = compareMappings(indexConfiguration, indexResponse);
         IndexSettingsComparator.SettingsComparingResult settingsState = compareSettings(indexConfiguration, indexResponse);
-
         return new ConfigurationComparingResult(mappingState, settingsState);
     }
 

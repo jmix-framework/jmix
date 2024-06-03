@@ -168,8 +168,8 @@ public class ESIndexManagerImpl implements ESIndexManager {
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            IndexConfigurationComparator.ConfigurationComparingResult result = isIndexActual(indexConfiguration);
-            if (result.isCompatible()) {
+            IndexConfigurationComparator.ConfigurationComparingResult result = compareWithIndexConfiguration(indexConfiguration);
+            if (result.isRecreationOfIndexRequired()) {
                 status = IndexValidationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             } else {
@@ -252,18 +252,18 @@ public class ESIndexManagerImpl implements ESIndexManager {
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            IndexConfigurationComparator.ConfigurationComparingResult result = isIndexActual(indexConfiguration);
-            if (result.isCompatible()) {
+            IndexConfigurationComparator.ConfigurationComparingResult result = compareWithIndexConfiguration(indexConfiguration);
+            if (result.isRecreationOfIndexRequired()) {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-                if(result.isMappingMustBeActualized()){
+                if(result.isMappingMustBeUpdated()){
                     boolean mappingSavingResult = putMapping(indexConfiguration);
                     if (!mappingSavingResult) {
                         //TODO enhance message
                         log.error("Problem with index mapping saving.");
                     }
                 }
-                if(result.isSettingsMustBeActualized()){
+                if(result.isSettingsMustBeUpdated()){
                     actualizeSettings(indexConfiguration);
                 }
 
@@ -319,11 +319,13 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    protected IndexConfigurationComparator.ConfigurationComparingResult isIndexActual(IndexConfiguration indexConfiguration) {
+    protected IndexConfigurationComparator.ConfigurationComparingResult compareWithIndexConfiguration(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());
 
         return indexConfigurationComparator.compareConfigurations(indexConfiguration, indexResponse);
     }
+
+
 }

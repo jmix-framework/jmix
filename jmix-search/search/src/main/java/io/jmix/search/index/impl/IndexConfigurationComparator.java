@@ -28,33 +28,31 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+import static java.util.function.UnaryOperator.identity;
+import static java.util.stream.Collectors.toMap;
+
 @Component("search_IndexConfigurationComparator")
 public class IndexConfigurationComparator {
-    private final SearchMappingComparator mappingComparator;
-    private final SearchSettingsComparator settingsComparator;
+    private final IndexMappingComparator mappingComparator;
+    private final IndexSettingsComparator settingsComparator;
 
-    public IndexConfigurationComparator(SearchMappingComparator searchMappingChecker, SearchSettingsComparator settingsComparator) {
+    public IndexConfigurationComparator(IndexMappingComparator searchMappingChecker, IndexSettingsComparator settingsComparator) {
         this.mappingComparator = searchMappingChecker;
         this.settingsComparator = settingsComparator;
     }
 
     private static final Logger log = LoggerFactory.getLogger(IndexConfigurationComparator.class);
 
-
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
-        ComparingState mappingState = isIndexMappingActual(indexConfiguration, indexResponse);
-        ComparingState settingsState = isIndexSettingsActual(indexConfiguration, indexResponse);
+        IndexMappingComparator.MappingComparingResult mappingState = isIndexMappingActual(indexConfiguration, indexResponse);
+        IndexSettingsComparator.SettingsComparingResult settingsState = isIndexSettingsActual(indexConfiguration, indexResponse);
 
-        return new ConfigurationComparingResult(
-                mappingState.isReindexingNotRequired() && settingsState.isReindexingNotRequired(),
-                mappingState.isConfigurationUpdateRequired(),
-                settingsState.isConfigurationUpdateRequired()
-        );
+        return new ConfigurationComparingResult(mappingState, settingsState);
     }
 
-    protected ComparingState isIndexMappingActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+    protected IndexMappingComparator.MappingComparingResult isIndexMappingActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
         Map<String, MappingMetadata> mappings = indexResponse.getMappings();
         MappingMetadata indexMappingMetadata = mappings.get(indexConfiguration.getIndexName());
         Map<String, Object> searchIndexMapping = indexMappingMetadata.getSourceAsMap();
@@ -69,34 +67,36 @@ public class IndexConfigurationComparator {
 
     }
 
-    protected ComparingState isIndexSettingsActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+    protected IndexSettingsComparator.SettingsComparingResult isIndexSettingsActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
         Map<String, Settings> settings = indexResponse.getSettings();
-        Settings currentSettings = settings.get(indexConfiguration.getIndexName());
-        Settings actualSettings = indexConfiguration.getSettings();
+        Map<String, String> currentSettings = convertToMap(settings.get(indexConfiguration.getIndexName()));
+        Map<String, String> actualSettings = convertToMap(indexConfiguration.getSettings());
         return settingsComparator.compare(currentSettings, actualSettings);
     }
 
+    private Map<String, String> convertToMap(Settings settings){
+        return settings.keySet().stream().collect(toMap(identity(), settings::get));
+    }
+
     public static class ConfigurationComparingResult {
-        private final boolean compatible;
-        private final boolean mappingMustBeActualized;
-        private final boolean settingsMustBeActualized;
+        private final IndexMappingComparator.MappingComparingResult mappingComparingResult;
+        private final IndexSettingsComparator.SettingsComparingResult settingsComparingResult;
 
-        ConfigurationComparingResult(boolean compatible, boolean mappingMustBeActualized, boolean settingsMustBeActualized) {
-            this.compatible = compatible;
-            this.mappingMustBeActualized = mappingMustBeActualized;
-            this.settingsMustBeActualized = settingsMustBeActualized;
+        ConfigurationComparingResult(IndexMappingComparator.MappingComparingResult mappingComparingResult, IndexSettingsComparator.SettingsComparingResult settingsComparingResult) {
+            this.mappingComparingResult = mappingComparingResult;
+            this.settingsComparingResult = settingsComparingResult;
         }
 
-        public boolean isCompatible() {
-            return compatible;
+        public boolean isRecreationOfIndexRequired(){
+            return mappingComparingResult.recreatingIndexIsRequired() || settingsComparingResult.recreatingIndexIsRequired();
         }
 
-        public boolean isMappingMustBeActualized() {
-            return mappingMustBeActualized;
+        public boolean isMappingMustBeUpdated() {
+            return mappingComparingResult.configurationUpdateIsRequired();
         }
 
-        public boolean isSettingsMustBeActualized() {
-            return settingsMustBeActualized;
+        public boolean isSettingsMustBeUpdated() {
+            return settingsComparingResult.configurationUpdateIsRequired();
         }
     }
 }

@@ -29,8 +29,12 @@ import java.util.Locale;
 @DatatypeDef(id = "char", javaClass = Character.class, defaultForClass = true, value = "core_CharacterDatatype")
 public class CharacterDatatype implements Datatype<Character> {
 
-    @Autowired
     protected Messages messages;
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
+    }
 
     @Override
     public String format(@Nullable Object value) {
@@ -49,8 +53,8 @@ public class CharacterDatatype implements Datatype<Character> {
             return null;
 
         if (value.length() > 1)
-            throw new ParseException(String.format(
-                    messages.getMessage("characterParseErrorMessage"), value), 0);
+            throw new ParseException(messages.formatMessage(
+                    "","datatype.unparseableCharacter.message", value), 0);
 
         return value.charAt(0);
     }

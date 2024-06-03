@@ -104,7 +104,8 @@ public class DoubleDatatype extends NumberDatatype implements Datatype<Double> {
         }
 
         if (!isInDoubleRange(result)) {
-            throw new ParseException(String.format(messages.getMessage("doubleOutOfRangeMessage"), value), 0);
+            throw new ParseException(messages.formatMessage(
+                    "","datatype.doubleOutOfRange.message", value), 0);
         }
 
         return result;

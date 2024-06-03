@@ -27,12 +27,16 @@ import java.util.Map;
 
 public abstract class NumberDatatype implements ParameterizedDatatype {
 
-    @Autowired
     protected Messages messages;
 
     protected String formatPattern;
     protected String decimalSeparator;
     protected String groupingSeparator;
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
+    }
 
     protected NumberDatatype(String formatPattern, String decimalSeparator, String groupingSeparator) {
         this.formatPattern = formatPattern;
@@ -81,10 +85,8 @@ public abstract class NumberDatatype implements ParameterizedDatatype {
         ParsePosition pos = new ParsePosition(0);
         Number res = format.parse(value.trim(), pos);
         if (pos.getIndex() != value.length()) {
-            throw new ParseException(
-                    String.format(messages.getMessage("numberParseErrorMessage"), value),
-                    pos.getErrorIndex()
-            );
+            throw new ParseException(messages.formatMessage(
+                    "","datatype.unparseableNumber.message", value), pos.getErrorIndex());
         }
         return res;
     }

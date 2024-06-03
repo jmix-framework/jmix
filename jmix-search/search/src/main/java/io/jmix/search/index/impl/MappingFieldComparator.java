@@ -20,10 +20,8 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.Objects;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Component("search_MappingFieldComparator")
 public class MappingFieldComparator {
@@ -33,8 +31,8 @@ public class MappingFieldComparator {
         return mapping.get(TYPE_KEY) != null && mapping.get(TYPE_KEY) instanceof String;
     }
 
-    public ComparingState compareLeafFields(@NotNull Map<String, Object> searchIndexMapping, @NotNull Map<String, Object> applicationMapping) {
+    public IndexMappingComparator.MappingComparingResult compareLeafFields(@NotNull Map<String, Object> searchIndexMapping, @NotNull Map<String, Object> applicationMapping) {
         if (isNull(searchIndexMapping) || isNull(applicationMapping)) throw new NullPointerException();
-        return searchIndexMapping.equals(applicationMapping) ? ComparingState.EQUAL : ComparingState.NOT_COMPATIBLE;
+        return searchIndexMapping.equals(applicationMapping) ? IndexMappingComparator.MappingComparingResult.MAPPINGS_ARE_EQUAL : IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE;
     }
 }

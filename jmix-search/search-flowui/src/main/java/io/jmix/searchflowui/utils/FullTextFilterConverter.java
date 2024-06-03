@@ -27,11 +27,8 @@ import io.jmix.flowui.component.genericfilter.converter.AbstractFilterComponentC
 import io.jmix.flowui.component.propertyfilter.SingleFilterSupport;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.entity.filter.FilterValueComponent;
-import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchflowui.component.FullTextFilter;
 import io.jmix.searchflowui.entity.FullTextFilterCondition;
-import org.elasticsearch.common.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -46,7 +43,6 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
 
     protected UiComponents uiComponents;
     protected Metadata metadata;
-    protected SearchStrategyManager searchStrategyManager;
     protected SingleFilterSupport singleFilterSupport;
 
     public FullTextFilterConverter(GenericFilter filter) {
@@ -61,11 +57,6 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
     @Autowired
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
-    }
-
-    @Autowired
-    public void setSearchStrategyManager(SearchStrategyManager searchStrategyManager) {
-        this.searchStrategyManager = searchStrategyManager;
     }
 
     @Autowired
@@ -96,10 +87,7 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
         fullTextFilter.setParameterName(model.getParameterName());
 
         String searchStrategyName = model.getSearchStrategyName();
-        SearchStrategy searchStrategy = !Strings.isNullOrEmpty(searchStrategyName) ?
-                searchStrategyManager.findSearchStrategyByName(searchStrategyName) :
-                null;
-        fullTextFilter.setSearchStrategy(searchStrategy);
+        fullTextFilter.setSearchStrategy(searchStrategyName);
 
         fullTextFilter.setValueComponent(convertValueComponentToComponent(model));
         if (model.getValueComponent() != null) {
@@ -118,7 +106,7 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
         condition.setParameterName(fullTextFilter.getParameterName());
 
         if (fullTextFilter.getSearchStrategy() != null) {
-            condition.setSearchStrategyName(fullTextFilter.getSearchStrategy().getName());
+            condition.setSearchStrategyName(fullTextFilter.getSearchStrategy());
         }
 
         condition.setValueComponent(convertValueComponentToModel(fullTextFilter));

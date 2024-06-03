@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl;
+@Internal
+@NonNullApi
+package io.jmix.searchelasticsearch.index.impl;
 
-import io.jmix.search.searching.SearchStrategy;
-
-/**
- * Base class for all search strategies.
- */
-public abstract class AbstractSearchStrategy implements SearchStrategy { //todo
-
-    @Override
-    public String toString() {
-        return "SearchStrategy{" +
-                "Name=" + getName() +
-                ", Class=" + getClass() +
-                '}';
-    }
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

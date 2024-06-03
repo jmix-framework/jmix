@@ -42,7 +42,7 @@ public interface EntitySearcher {
      * @param searchStrategy the way incoming search text should be processed
      * @return {@link SearchResult} with found objects
      */
-    SearchResult search(SearchContext searchContext, SearchStrategy searchStrategy);
+    SearchResult search(SearchContext searchContext, String searchStrategy);
 
     /**
      * Performs search of next page according to {@link SearchContext} and {@link SearchResult} contained

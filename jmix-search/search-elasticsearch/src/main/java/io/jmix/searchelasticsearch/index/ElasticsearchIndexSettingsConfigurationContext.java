@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl;
+package io.jmix.searchelasticsearch.index;
 
-import io.jmix.search.searching.SearchStrategy;
+import co.elastic.clients.elasticsearch.indices.IndexSettings;
+import io.jmix.search.index.BaseIndexSettingsConfigurationContext;
 
-/**
- * Base class for all search strategies.
- */
-public abstract class AbstractSearchStrategy implements SearchStrategy { //todo
+public class ElasticsearchIndexSettingsConfigurationContext extends BaseIndexSettingsConfigurationContext<IndexSettings.Builder> {
 
-    @Override
-    public String toString() {
-        return "SearchStrategy{" +
-                "Name=" + getName() +
-                ", Class=" + getClass() +
-                '}';
+    public ElasticsearchIndexSettingsConfigurationContext() {
+        super(IndexSettings.Builder::new);
     }
 }

@@ -12,11 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package test_support;
 
-import org.elasticsearch.action.bulk.BulkRequest;
+import co.elastic.clients.elasticsearch.core.BulkRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public class TestBulkRequestsTracker implements Consumer<BulkRequest> {
 
     @Override
     public void accept(BulkRequest request) {
-        log.info("Accept bulk request with '{}' actions within indexes: {}", request.numberOfActions(), request.getIndices());
+        log.info("Accept bulk request with '{}' operations", request.operations().size());
         registry.add(request);
     }
 
@@ -46,3 +47,4 @@ public class TestBulkRequestsTracker implements Consumer<BulkRequest> {
         registry = ConcurrentHashMap.newKeySet();
     }
 }
+*/

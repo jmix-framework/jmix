@@ -64,7 +64,7 @@ public class BaseIndexSettingsConfigurationContext<T> {
         return specificSettingsBuilders.computeIfAbsent(entityClass, key -> builderGenerator.get());
     }
 
-    protected Map<Class<?>, T> getAllSpecificSettingsBuilders() {
+    public Map<Class<?>, T> getAllSpecificSettingsBuilders() {
         return new ConcurrentHashMap<>(specificSettingsBuilders);
     }
 }

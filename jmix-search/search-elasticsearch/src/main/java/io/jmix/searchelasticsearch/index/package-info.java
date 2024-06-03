@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl;
+@NonNullApi
+package io.jmix.searchelasticsearch.index;
 
-import io.jmix.search.searching.SearchStrategy;
-
-/**
- * Base class for all search strategies.
- */
-public abstract class AbstractSearchStrategy implements SearchStrategy { //todo
-
-    @Override
-    public String toString() {
-        return "SearchStrategy{" +
-                "Name=" + getName() +
-                ", Class=" + getClass() +
-                '}';
-    }
-}
+import org.springframework.lang.NonNullApi;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl;
+package io.jmix.searchopensearch.index;
 
-import io.jmix.search.searching.SearchStrategy;
+import io.jmix.search.index.BaseIndexSettingsConfigurationContext;
+import org.opensearch.client.opensearch.indices.IndexSettings;
 
-/**
- * Base class for all search strategies.
- */
-public abstract class AbstractSearchStrategy implements SearchStrategy { //todo
+import java.util.Map;
 
-    @Override
-    public String toString() {
-        return "SearchStrategy{" +
-                "Name=" + getName() +
-                ", Class=" + getClass() +
-                '}';
+public class OpenSearchIndexSettingsConfigurationContext extends BaseIndexSettingsConfigurationContext<IndexSettings.Builder> {
+
+    public OpenSearchIndexSettingsConfigurationContext() {
+        super(IndexSettings.Builder::new);
     }
 }

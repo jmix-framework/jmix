@@ -39,6 +39,7 @@ public class JmixFileDownloader extends Composite<Anchor> {
 
     private static final Logger log = LoggerFactory.getLogger(JmixFileDownloader.class);
 
+    protected static final String DOWNLOAD_RESOURCE_PREFIX = "download/";
     protected static final String CLICK_EXPRESSION = "this.click()";
     protected static final String SELF_REMOVE_EXPRESSION =
             "setTimeout((element) => {" +
@@ -134,7 +135,7 @@ public class JmixFileDownloader extends Composite<Anchor> {
     }
 
     protected void beforeClientResponseDownloadHandler(UI ui) {
-        String identifier = UUID.randomUUID().toString();
+        String identifier = DOWNLOAD_RESOURCE_PREFIX + UUID.randomUUID();
 
         requestHandler = (session, request, response) -> {
             if (request.getPathInfo().endsWith(identifier)) {

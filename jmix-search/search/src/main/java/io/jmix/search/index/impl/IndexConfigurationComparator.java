@@ -46,13 +46,13 @@ public class IndexConfigurationComparator {
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
-        IndexMappingComparator.MappingComparingResult mappingState = isIndexMappingActual(indexConfiguration, indexResponse);
-        IndexSettingsComparator.SettingsComparingResult settingsState = isIndexSettingsActual(indexConfiguration, indexResponse);
+        IndexMappingComparator.MappingComparingResult mappingState = compareMappings(indexConfiguration, indexResponse);
+        IndexSettingsComparator.SettingsComparingResult settingsState = compareSettings(indexConfiguration, indexResponse);
 
         return new ConfigurationComparingResult(mappingState, settingsState);
     }
 
-    protected IndexMappingComparator.MappingComparingResult isIndexMappingActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+    protected IndexMappingComparator.MappingComparingResult compareMappings(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
         Map<String, MappingMetadata> mappings = indexResponse.getMappings();
         MappingMetadata indexMappingMetadata = mappings.get(indexConfiguration.getIndexName());
         Map<String, Object> searchIndexMapping = indexMappingMetadata.getSourceAsMap();
@@ -67,7 +67,7 @@ public class IndexConfigurationComparator {
 
     }
 
-    protected IndexSettingsComparator.SettingsComparingResult isIndexSettingsActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+    protected IndexSettingsComparator.SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
         Map<String, Settings> settings = indexResponse.getSettings();
         Map<String, String> currentSettings = convertToMap(settings.get(indexConfiguration.getIndexName()));
         Map<String, String> actualSettings = convertToMap(indexConfiguration.getSettings());

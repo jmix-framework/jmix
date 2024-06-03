@@ -97,7 +97,7 @@ class MappingFieldComparatorTest {
         Map<String, Object> fieldSettings1 = Map.of("key1", "value1", "key2", "value2", "key3", "value3");
         Map<String, Object> fieldSettings2 = Map.of("key1", "value1", "key2", "value2", "key3", "value3+");
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_ARE_EQUAL, comparator.compareLeafFields(fieldSettings1, fieldSettings2));
+        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, comparator.compareLeafFields(fieldSettings1, fieldSettings2));
     }
 
 }

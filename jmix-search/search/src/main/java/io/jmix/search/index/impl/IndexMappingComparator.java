@@ -63,7 +63,7 @@ public class IndexMappingComparator {
         return result;
     }
 
-    public enum MappingComparingResult implements ConfigurationPartComparingResult{
+    enum MappingComparingResult implements ConfigurationPartComparingResult{
         MAPPINGS_ARE_EQUAL,
         INDEX_MAPPING_CAN_BE_UPDATED,
         MAPPINGS_NOT_COMPATIBLE;

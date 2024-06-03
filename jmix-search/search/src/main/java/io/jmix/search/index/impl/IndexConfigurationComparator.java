@@ -78,7 +78,7 @@ public class IndexConfigurationComparator {
         return settings.keySet().stream().collect(toMap(identity(), settings::get));
     }
 
-    public static class ConfigurationComparingResult {
+    static class ConfigurationComparingResult {
         private final IndexMappingComparator.MappingComparingResult mappingComparingResult;
         private final IndexSettingsComparator.SettingsComparingResult settingsComparingResult;
 

@@ -64,27 +64,18 @@ public class IndexMappingComparator {
     }
 
     public enum MappingComparingResult implements ConfigurationPartComparingResult{
-        MAPPINGS_ARE_EQUAL(true, false),
-        INDEX_MAPPING_CAN_BE_UPDATED(true, true),
-        MAPPINGS_NOT_COMPATIBLE(false, false);
-
-
-        private final boolean indexStateCompatible;
-        private final boolean configurationUpdateRequired;
-
-        MappingComparingResult(boolean indexStateCompatible, boolean configurationUpdateRequired) {
-            this.indexStateCompatible = indexStateCompatible;
-            this.configurationUpdateRequired = configurationUpdateRequired;
-        }
+        MAPPINGS_ARE_EQUAL,
+        INDEX_MAPPING_CAN_BE_UPDATED,
+        MAPPINGS_NOT_COMPATIBLE;
 
         @Override
         public boolean recreatingIndexIsRequired() {
-            return !indexStateCompatible;
+            return this == MAPPINGS_NOT_COMPATIBLE;
         }
 
         @Override
         public boolean configurationUpdateIsRequired() {
-            return configurationUpdateRequired;
+            return this == INDEX_MAPPING_CAN_BE_UPDATED;
         }
     }
 }

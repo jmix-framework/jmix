@@ -1,4 +1,4 @@
-                                    /*
+/*
  * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,9 +21,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component("search_SearchMappingComparator")
-public class SearchMappingComparator {
+public class IndexMappingComparator {
 
-    public static final String TYPE_KEY = "type";
+    private final MappingFieldComparator mappingFieldComparator;
+
+    public IndexMappingComparator(MappingFieldComparator mappingFieldComparator) {
+        this.mappingFieldComparator = mappingFieldComparator;
+    }
 
     public ComparingState compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
 
@@ -31,39 +35,32 @@ public class SearchMappingComparator {
             return ComparingState.NOT_COMPATIBLE;
         }
 
-        if (isCorrectLeafElement(searchIndexMapping)) {
-            if(isCorrectLeafElement(applicationMapping)){
-                return compareDataTypes((String) searchIndexMapping.get(TYPE_KEY), (String) applicationMapping.get(TYPE_KEY));
-            }else {
+        if (mappingFieldComparator.isLeafField(searchIndexMapping)) {
+            if (mappingFieldComparator.isLeafField(applicationMapping)) {
+                return mappingFieldComparator.compareLeafFields(searchIndexMapping, applicationMapping);
+            } else {
                 return ComparingState.NOT_COMPATIBLE;
             }
         }
 
         ComparingState result = ComparingState.EQUAL;
-        for (Map.Entry<String, Object> mapEntry: searchIndexMapping.entrySet()){
-            if (!(mapEntry.getValue() instanceof Map)){
+        for (Map.Entry<String, Object> mapEntry : searchIndexMapping.entrySet()) {
+            if (!(mapEntry.getValue() instanceof Map)) {
                 return ComparingState.NOT_COMPATIBLE;
             }
 
             ComparingState currentResult = compare((Map<String, Object>) mapEntry.getValue(), (Map<String, Object>) applicationMapping.get(mapEntry.getKey()));
-            if(currentResult == ComparingState.NOT_COMPATIBLE) return ComparingState.NOT_COMPATIBLE;
-            if(currentResult == ComparingState.COMPATIBLE && result != ComparingState.COMPATIBLE){
+            if (currentResult == ComparingState.NOT_COMPATIBLE) return ComparingState.NOT_COMPATIBLE;
+            if (currentResult == ComparingState.COMPATIBLE && result != ComparingState.COMPATIBLE) {
                 result = ComparingState.COMPATIBLE;
             }
         }
 
-        if(result == ComparingState.EQUAL && applicationMapping.size()>searchIndexMapping.size())
+        if (result == ComparingState.EQUAL && applicationMapping.size() > searchIndexMapping.size()) {
             return ComparingState.COMPATIBLE;
+        }
 
         return result;
-    }
-
-    private ComparingState compareDataTypes(String type, String type1) {
-        return type.equals(type1) ? ComparingState.EQUAL: ComparingState.NOT_COMPATIBLE;
-    }
-
-    private boolean isCorrectLeafElement(Map<String, Object> mapping) {
-        return mapping.size() == 1 && mapping.get(TYPE_KEY) != null && mapping.get(TYPE_KEY) instanceof String;
     }
 
 }

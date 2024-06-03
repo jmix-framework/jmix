@@ -24,7 +24,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SearchMappingComparatorTest {
+class IndexMappingComparatorTest {
 
     @Test
     void compare_equal_one_level() {
@@ -49,7 +49,7 @@ class SearchMappingComparatorTest {
                         Map.of("type", "text")
                 ));
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.EQUAL, result);
@@ -78,7 +78,7 @@ class SearchMappingComparatorTest {
                         Map.of("type", "text")
                 ));
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.EQUAL, result);
@@ -110,7 +110,7 @@ class SearchMappingComparatorTest {
                         Map.of("type", "text")
                 ));
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.COMPATIBLE, result);
@@ -137,7 +137,7 @@ class SearchMappingComparatorTest {
                         Map.of("type", "text")
                 ));
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -182,7 +182,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.EQUAL, result);
@@ -225,7 +225,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -247,7 +247,7 @@ class SearchMappingComparatorTest {
 
         Map<String, Object> applicationMapping = Collections.emptyMap();
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -268,7 +268,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.COMPATIBLE, result);
@@ -311,7 +311,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -354,7 +354,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -399,7 +399,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -444,7 +444,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -489,7 +489,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -534,7 +534,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -581,7 +581,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -626,7 +626,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);
@@ -666,7 +666,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.COMPATIBLE, result);
@@ -703,7 +703,7 @@ class SearchMappingComparatorTest {
                         )
                 );
 
-        SearchMappingComparator comparator = new SearchMappingComparator();
+        IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         ComparingState result = comparator.compare(searchIndexMapping, applicationMapping);
 
         assertEquals(ComparingState.NOT_COMPATIBLE, result);

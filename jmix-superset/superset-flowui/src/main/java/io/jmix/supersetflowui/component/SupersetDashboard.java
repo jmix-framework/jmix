@@ -104,7 +104,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
      *
      * @param guestTokenProvider provider to set
      */
-    public void setGuestTokenProvider(@Nullable SupersetGuestTokenProvider guestTokenProvider) {
+    public void setGuestTokenProvider(SupersetGuestTokenProvider guestTokenProvider) {
         Preconditions.checkNotNullArgument(guestTokenProvider);
         this.guestTokenProvider = guestTokenProvider;
     }
@@ -113,10 +113,6 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     protected void fetchGuestToken() {
         super.fetchGuestToken();
 
-        startGuestTokenFetching();
-    }
-
-    protected void startGuestTokenFetching() {
         guestTokenProvider.fetchGuestToken(
                 new SupersetGuestTokenProvider.FetchGuestTokenContext(this),
                 this::setGuestTokenInternal);

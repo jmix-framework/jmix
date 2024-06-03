@@ -36,7 +36,7 @@ public class SupersetProperties {
     Duration csrfTokenRefreshSchedule;
 
     /**
-     * Specifies a lifespan of CSRF token. Unlike access token, CSRF token does not contain
+     * Lifespan of CSRF token. Unlike access token, CSRF token does not contain
      * information about expiration time, so the start time point is timestamp of successfully finished request.
      * By default, Superset configures 1 week for CSRF, so the default value 7 days.
      * <p>

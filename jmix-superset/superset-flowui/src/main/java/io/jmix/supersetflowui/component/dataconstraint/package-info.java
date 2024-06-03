@@ -5,7 +5,7 @@
 
 @Experimental
 @NonNullApi
-package io.jmix.supersetflowui.component;
+package io.jmix.supersetflowui.component.dataconstraint;
 
 import io.jmix.core.annotation.Experimental;
 import org.springframework.lang.NonNullApi;

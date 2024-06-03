@@ -16,17 +16,19 @@
 
 package io.jmix.supersetflowui;
 
+import io.jmix.core.annotation.Experimental;
 import io.jmix.supersetflowui.component.SupersetDashboard;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.Duration;
 
+@Experimental
 @ConfigurationProperties("jmix.supersetflowui")
 public class SupersetFlowuiProperties {
 
     /**
-     * Defines a timeout of background task that fetches guest token for {@link SupersetDashboard} component
+     * Timeout of background task that fetches guest token for {@link SupersetDashboard} component
      * in {@link DefaultGuestTokenProvider}.
      */
     Duration backgroundFetchingGuestTokenTimeout;

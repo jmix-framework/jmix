@@ -35,9 +35,19 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @Import(SupersetConfiguration.class)
 public class SupersetAutoConfiguration {
 
+    @Bean("sprset_ThreadPoolAccessTokenTaskScheduler")
+    public TaskScheduler threadPoolAccessTokenTaskScheduler() {
+        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setThreadNamePrefix("sprset_AccessTokenScheduler-");
+        threadPoolTaskScheduler.setPoolSize(1);
+        threadPoolTaskScheduler.setDaemon(true);
+        return threadPoolTaskScheduler;
+    }
+
     @Bean("sprset_ThreadPoolCsrfTokenTaskScheduler")
-    @ConditionalOnProperty(value = "jmix.superset.csrf-protection-enabled", matchIfMissing = true)
-    public TaskScheduler threadPoolTaskScheduler() {
+    @ConditionalOnProperty(value = {"jmix.superset.csrf-protection-enabled",
+                                    "jmix.superset.tokens-refresh-enabled"}, matchIfMissing = true)
+    public TaskScheduler threadPoolTasCsrfTokenkScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
         threadPoolTaskScheduler.setThreadNamePrefix("sprset_CsrfTokenScheduler-");
         threadPoolTaskScheduler.setPoolSize(1);
@@ -59,7 +69,7 @@ public class SupersetAutoConfiguration {
                 accessTokenManager);
     }
 
-    @Bean
+    @Bean("sprset_SupersetCookieManager")
     @ConditionalOnMissingBean
     public SupersetCookieManager supersetCookieManager() {
         return new SupersetCookieManager();

@@ -16,6 +16,7 @@
 
 package io.jmix.supersetflowui;
 
+import io.jmix.core.annotation.Experimental;
 import io.jmix.superset.client.SupersetClient;
 import io.jmix.superset.client.cookie.SupersetCookieManager;
 import io.jmix.supersetflowui.component.SupersetDashboard;
@@ -93,6 +94,7 @@ import java.util.function.Consumer;
  * kind of cookie manager. For instance, the default implementation of{@link SupersetClient} uses {@link HttpClient}
  * and {@link SupersetCookieManager} for managing cookies.
  */
+@Experimental
 public interface SupersetGuestTokenProvider {
 
     /**

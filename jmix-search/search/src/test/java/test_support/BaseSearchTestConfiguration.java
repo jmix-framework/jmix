@@ -42,9 +42,9 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.elasticsearch.client.RestClient;
+/*import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestHighLevelClient;*/
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -89,7 +89,7 @@ public class BaseSearchTestConfiguration {
         return new TestIndexDefinitionDetector(testAutoDetectableIndexDefinitionScope);
     }
 
-    @Bean
+    /*@Bean
     public RestHighLevelClient baseElasticSearchClient() {
         String esUrl = searchProperties.getConnectionUrl();
         HttpHost esHttpHost = HttpHost.create(esUrl);
@@ -104,7 +104,7 @@ public class BaseSearchTestConfiguration {
         }
 
         return new RestHighLevelClient(restClientBuilder);
-    }
+    }*/
 
 
     // Test Common beans

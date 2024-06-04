@@ -25,7 +25,7 @@ import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchflowui.entity.FullTextFilterCondition;
 import io.jmix.searchflowui.utils.FullTextFilterUtils;
-import org.elasticsearch.common.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -72,7 +72,7 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
     }
 
     private void initLabel() {
-        if (Strings.isNullOrEmpty(getEditedEntity().getLabel())) {
+        if (StringUtils.isEmpty(getEditedEntity().getLabel())) {
             getEditedEntity().setLabel(messageBundle.getMessage("defaultLabel"));
         }
     }

@@ -79,7 +79,7 @@ public abstract class AbstractClickNotifierDependencyInjector implements Depende
 
         if (Strings.isNullOrEmpty(target)
                 || !COMPONENT.equals(annotation.target())
-                || !ClickEvent.class.isAssignableFrom(eventType)) {
+                || !(ClickEvent.class == eventType)) {
             return;
         }
 

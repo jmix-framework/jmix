@@ -110,7 +110,7 @@ public class OidcAutoConfiguration {
                         });
                     })
                     .cors(Customizer.withDefaults());
-            http.apply(SecurityConfigurers.apiSecurity());
+            http.with(SecurityConfigurers.apiSecurity(), Customizer.withDefaults());
 
             OidcResourceServerEventSecurityFilter resourceServerEventSecurityFilter =
                     new OidcResourceServerEventSecurityFilter(applicationEventPublisher);

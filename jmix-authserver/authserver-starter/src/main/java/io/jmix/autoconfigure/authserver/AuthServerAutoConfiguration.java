@@ -174,7 +174,7 @@ public class AuthServerAutoConfiguration {
         public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http,
                                                                      OpaqueTokenIntrospector opaqueTokenIntrospector,
                                                                      ApplicationEventPublisher applicationEventPublisher) throws Exception {
-            http.apply(SecurityConfigurers.apiSecurity());
+            http.with(SecurityConfigurers.apiSecurity(), Customizer.withDefaults());
             http
                     .oauth2ResourceServer(oauth2 -> oauth2
                             .opaqueToken(opaqueToken -> opaqueToken

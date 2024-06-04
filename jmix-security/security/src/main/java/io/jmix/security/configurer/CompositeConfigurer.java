@@ -16,6 +16,7 @@
 
 package io.jmix.security.configurer;
 
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
@@ -30,7 +31,7 @@ public class CompositeConfigurer extends AbstractHttpConfigurer<CompositeConfigu
         configurers.add(configurer);
         if (attached) {
             try {
-                getBuilder().apply(configurer);
+                getBuilder().with(configurer, Customizer.withDefaults());
             } catch (Exception e) {
                 throw new RuntimeException("Error while init security", e);
             }
@@ -42,7 +43,7 @@ public class CompositeConfigurer extends AbstractHttpConfigurer<CompositeConfigu
         if (!attached) {
             try {
                 for (AbstractHttpConfigurer<?, HttpSecurity> configurer : configurers) {
-                    http.apply(configurer);
+                    http.with(configurer, Customizer.withDefaults());
                 }
             } catch (Exception e) {
                 throw new RuntimeException("Error while init security", e);

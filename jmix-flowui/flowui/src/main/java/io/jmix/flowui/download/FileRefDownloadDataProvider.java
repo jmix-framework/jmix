@@ -18,6 +18,7 @@ package io.jmix.flowui.download;
 
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
+import io.jmix.core.FileStorageException;
 
 import java.io.InputStream;
 
@@ -33,12 +34,17 @@ public class FileRefDownloadDataProvider implements DownloadDataProvider {
 
     public FileRefDownloadDataProvider(FileRef fileReference, FileStorage fileStorage) {
         checkNotNullArgument(fileReference, "Null file reference");
+        checkNotNullArgument(fileStorage, "Null file storage");
+
         this.fileReference = fileReference;
         this.fileStorage = fileStorage;
     }
 
     @Override
     public InputStream getStream() {
+        if (!fileStorage.fileExists(fileReference)) {
+            throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND, fileReference.toString());
+        }
         return fileStorage.openStream(fileReference);
     }
 }

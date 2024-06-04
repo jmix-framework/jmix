@@ -31,6 +31,7 @@ public interface Downloader {
      *
      * @param fileStorage file storage
      */
+    @Deprecated(since = "2.3", forRemoval = true)
     void setFileStorage(FileStorage fileStorage);
 
     /**
@@ -63,20 +64,16 @@ public interface Downloader {
     void download(DownloadDataProvider dataProvider, String resourceName);
 
     /**
-     * Downloads a file from file storage.
-     * <p>
-     * The default file storage of the system is used by default.
-     * Different file storage can be set in {@link #setFileStorage(FileStorage)}.
+     * Downloads a file from the {@link io.jmix.core.FileStorage} retrieved by {@link io.jmix.core.FileStorageLocator}
+     * using storage name from FileRef.
      *
      * @param fileReference file reference
      */
     void download(FileRef fileReference);
 
     /**
-     * Downloads a file from file storage.
-     * <p>
-     * The default file storage of the system is used by default.
-     * Different file storage can be set in {@link #setFileStorage(FileStorage)}.
+     * Downloads a file from the {@link io.jmix.core.FileStorage} retrieved by {@link io.jmix.core.FileStorageLocator}
+     * using storage name from FileRef.
      *
      * @param fileReference file reference
      * @param format        download format, can be null

@@ -84,9 +84,16 @@ public class DataComponentsLoaderSupport {
         Preconditions.checkNotNullArgument(dataHolder, HasDataComponents.class.getSimpleName() + " is null");
         Preconditions.checkNotNullArgument(element, "Element is null");
 
-        boolean readOnly = loadReadOnly(element);
-        DataContext dataContext = readOnly ? new NoopDataContext(applicationContext) : factory.createDataContext();
-        dataHolder.setDataContext(dataContext);
+        DataContext hostDataContext = hostDataHolder != null
+                ? hostDataHolder.getDataContextOrNull()
+                : null;
+        if (hostDataContext != null) {
+            dataHolder.setDataContext(hostDataContext);
+        } else {
+            boolean readOnly = loadReadOnly(element);
+            DataContext dataContext = readOnly ? new NoopDataContext(applicationContext) : factory.createDataContext();
+            dataHolder.setDataContext(dataContext);
+        }
 
         for (Element el : element.elements()) {
             switch (el.getName()) {

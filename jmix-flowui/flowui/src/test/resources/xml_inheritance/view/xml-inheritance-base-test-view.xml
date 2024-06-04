@@ -42,5 +42,10 @@
             <div id="down2" text="down2"/>
             <div id="down3" text="down3"/>
         </hbox>
+        <dataGrid id="customersDataGrid" metaClass="test_Customer">
+            <columns resizable="true">
+                <column property="name"/>
+            </columns>
+        </dataGrid>
     </layout>
 </view>

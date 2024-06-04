@@ -17,12 +17,14 @@
 package xml_inheritance.view;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.pagination.SimplePagination;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
+import test_support.entity.sales.Customer;
 import test_support.entity.sales.OrderLine;
 
 @ViewController
@@ -41,4 +43,6 @@ public class XmlInheritanceBaseTestView extends StandardView {
     @ViewComponent
     public InstanceContainer<OrderLine> lineDc;
 
+    @ViewComponent
+    public DataGrid<Customer> customersDataGrid;
 }

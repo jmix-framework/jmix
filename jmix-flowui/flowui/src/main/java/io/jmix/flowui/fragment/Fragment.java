@@ -69,11 +69,11 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
         fragmentData.setFragmentId(getId().orElse(getClass().getSimpleName()));
     }
 
-    protected FragmentActions getActions() {
+    protected FragmentActions getFragmentActions() {
         return fragmentActions;
     }
 
-    protected void setActions(FragmentActions fragmentActions) {
+    protected void setFragmentActions(FragmentActions fragmentActions) {
         this.fragmentActions = fragmentActions;
     }
 

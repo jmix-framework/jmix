@@ -40,7 +40,7 @@ public class TestDataGridFragment extends Fragment<VerticalLayout> {
     }
 
     private void onReady(ReadyEvent readyEvent) {
-        BaseAction testAction = ((BaseAction) getActions().getAction("testAction"));
+        BaseAction testAction = ((BaseAction) getFragmentActions().getAction("testAction"));
         testAction.addActionPerformedListener(actionPerformedEvent -> counter++);
 
         testBtn = getInnerComponent("testBtn");

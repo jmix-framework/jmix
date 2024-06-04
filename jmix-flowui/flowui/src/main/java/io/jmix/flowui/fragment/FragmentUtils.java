@@ -101,7 +101,7 @@ public final class FragmentUtils {
      * @return {@link FragmentActions} object from passed {@link Fragment}
      */
     public static FragmentActions getFragmentActions(Fragment<?> fragment) {
-        return fragment.getActions();
+        return fragment.getFragmentActions();
     }
 
     /**
@@ -112,7 +112,7 @@ public final class FragmentUtils {
      */
     public static void setFragmentActions(Fragment<?> fragment,
                                           FragmentActions actions) {
-        fragment.setActions(actions);
+        fragment.setFragmentActions(actions);
     }
 
     /**

@@ -123,7 +123,8 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
         this._guestTokenTimerId = this._startGuestTokenRefreshTimer(token);
 
-        if (!this.isDashboardEmbedded) {
+        if (!this.isDashboardEmbedded || this.embaddedIdForceChange) {
+            this.embaddedIdForceChange = false;
             this._embedDashboard();
         }
     }
@@ -131,7 +132,9 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
     _onEmbeddedIdChanged(embeddedId) {
         if (!embeddedId) {
             this._replaceDashboardByStub();
+            this._stopGuestTokenRefreshTimer(this._guestTokenTimerId);
         } else {
+            this.embaddedIdForceChange = true;
             this._callFetchGuestToken();
         }
     }

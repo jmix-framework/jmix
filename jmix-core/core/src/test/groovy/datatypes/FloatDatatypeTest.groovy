@@ -17,13 +17,17 @@
 package datatypes
 
 import format_strings.TestFormatStringsRegistry
+import io.jmix.core.Messages
 import io.jmix.core.metamodel.datatype.impl.FloatDatatype
+import io.jmix.core.security.SystemAuthenticator
+import io.jmix.core.security.UserRepository
+import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
 import test_support.TestCoreProperties
 
 import java.text.ParseException
 
-class FloatDatatypeTest extends Specification {
+class FloatDatatypeTest extends TestAuthenticator {
 
     def "format/parse without locale, without rounding"() {
         def datatype = new FloatDatatype()
@@ -83,8 +87,11 @@ class FloatDatatypeTest extends Specification {
     }
 
     def "parse error due to unknown separators"() {
+        createTestUser()
+
         def datatype = new FloatDatatype()
         datatype.formatStringsRegistry = new TestFormatStringsRegistry()
+        datatype.setMessages(messages)
 
         when:
 
@@ -92,6 +99,7 @@ class FloatDatatypeTest extends Specification {
 
         then:
 
+        removeTestUser()
         thrown(ParseException)
     }
 }

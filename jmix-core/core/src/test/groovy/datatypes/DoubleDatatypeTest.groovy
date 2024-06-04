@@ -17,13 +17,15 @@
 package datatypes
 
 import format_strings.TestFormatStringsRegistry
+import io.jmix.core.Messages
 import io.jmix.core.metamodel.datatype.impl.DoubleDatatype
+import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
 import test_support.TestCoreProperties
 
 import java.text.ParseException
 
-class DoubleDatatypeTest extends Specification {
+class DoubleDatatypeTest extends TestAuthenticator {
 
     def "format/parse without locale, without rounding"() {
         def datatype = new DoubleDatatype()
@@ -83,8 +85,11 @@ class DoubleDatatypeTest extends Specification {
     }
 
     def "parse error due to unknown separators"() {
+        createTestUser()
+
         def datatype = new DoubleDatatype()
         datatype.formatStringsRegistry = new TestFormatStringsRegistry()
+        datatype.setMessages(messages)
 
         when:
 
@@ -92,6 +97,7 @@ class DoubleDatatypeTest extends Specification {
 
         then:
 
+        removeTestUser()
         thrown(ParseException)
     }
 }

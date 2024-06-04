@@ -17,13 +17,25 @@
 package datatypes
 
 import format_strings.TestFormatStringsRegistry
+import io.jmix.core.CoreConfiguration
+import io.jmix.core.Messages
 import io.jmix.core.metamodel.datatype.impl.BigDecimalDatatype
+import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.core.security.SystemAuthenticator
+import io.jmix.core.security.UserRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.userdetails.User
+import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
+import test_support.TestContextInititalizer
 import test_support.TestCoreProperties
+import test_support.addon1.TestAddon1Configuration
+import test_support.app.TestAppConfiguration
+import test_support.base.TestBaseConfiguration
 
 import java.text.ParseException
 
-class BigDecimalDatatypeTest extends Specification {
+class BigDecimalDatatypeTest extends TestAuthenticator  {
 
     def "format/parse without locale, without rounding"() {
         def datatype = new BigDecimalDatatype()
@@ -83,8 +95,11 @@ class BigDecimalDatatypeTest extends Specification {
     }
 
     def "parse error due to unknown separators"() {
+        createTestUser()
+
         def datatype = new BigDecimalDatatype()
         datatype.formatStringsRegistry = new TestFormatStringsRegistry()
+        datatype.setMessages(messages)
 
         when:
 
@@ -92,6 +107,7 @@ class BigDecimalDatatypeTest extends Specification {
 
         then:
 
+        removeTestUser()
         thrown(ParseException)
     }
 }

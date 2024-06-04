@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.kit.meta.component;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -61,6 +60,7 @@ import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.component.preview.StudioFragmentPreview;
 import io.jmix.flowui.kit.meta.component.preview.StudioGenericComponentPreview;
 
 @StudioUiKit
@@ -85,6 +85,27 @@ public interface StudioComponents {
             }
     )
     StudioGenericComponentPreview genericComponent();
+
+    @StudioComponent(
+            name = "Fragment",
+            classFqn = "com.vaadin.flow.component.Component",
+            category = "Components",
+            xmlElement = "fragment",
+            icon = "io/jmix/flowui/kit/meta/icon/component/fragment.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "fragmentClass", type = StudioPropertyType.FRAGMENT_CLASS),
+            }
+    )
+    StudioFragmentPreview fragment();
 
     @StudioComponent(
             name = "Avatar",

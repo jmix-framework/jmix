@@ -96,6 +96,11 @@ public enum StudioPropertyType {
     COMPONENT_CLASS,
 
     /**
+     * FQN of Fragment class.
+     */
+    FRAGMENT_CLASS,
+
+    /**
      * Value from a strict list of property options.
      */
     ENUMERATION,

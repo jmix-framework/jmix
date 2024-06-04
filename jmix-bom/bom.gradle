@@ -234,6 +234,12 @@ dependencies {
         api "io.jmix.sessions:jmix-sessions:$freeVersion"
         api "io.jmix.sessions:jmix-sessions-starter:$freeVersion"
 
+        api "io.jmix.superset:jmix-superset:$freeVersion"
+        api "io.jmix.superset:jmix-superset-starter:$freeVersion"
+        api "io.jmix.superset:jmix-superset-flowui:$freeVersion"
+        api "io.jmix.superset:jmix-superset-flowui-kit:$freeVersion"
+        api "io.jmix.superset:jmix-superset-flowui-starter:$freeVersion"
+
         api "io.jmix.templates.studio:jmix-studio-templates:$freeVersion"
 
         api "io.jmix.translations:jmix-translations-fr:$freeVersion"

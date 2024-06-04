@@ -116,6 +116,26 @@ public final class FragmentUtils {
     }
 
     /**
+     * Gets the owner of the passed {@link Fragment}.
+     *
+     * @param fragment fragment to get the owner
+     * @return the owner of the passed fragment
+     */
+    public static FragmentOwner getParentController(Fragment<?> fragment) {
+        return fragment.getParentController();
+    }
+
+    /**
+     * Sets the owner to the passed {@link Fragment}.
+     *
+     * @param fragment         fragment to set the owner
+     * @param parentController the owner
+     */
+    public static void setParentController(Fragment<?> fragment, FragmentOwner parentController) {
+        fragment.setParentController(parentController);
+    }
+
+    /**
      * Returns whether the component has the same fragment id as passed.
      *
      * @param component component to compare id

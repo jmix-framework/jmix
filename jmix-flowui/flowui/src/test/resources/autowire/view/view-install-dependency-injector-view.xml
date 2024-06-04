@@ -30,5 +30,10 @@
     </facets>
     <layout>
         <comboBox id="component"/>
+        <dataGrid id="dataGrid" metaClass="test_Customer">
+            <columns>
+                <column property="name"/>
+            </columns>
+        </dataGrid>
     </layout>
 </view>

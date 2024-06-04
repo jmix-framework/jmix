@@ -40,6 +40,7 @@ public class ComponentLoaderContext extends AbstractLoaderContext implements Com
     protected String currentFrameId;
 
     protected List<ComponentLoader.InitTask> preInitTasks;
+    protected List<ComponentLoader.AutowireTask> autowireTasks;
 
     public ComponentLoaderContext() {
     }
@@ -122,6 +123,15 @@ public class ComponentLoaderContext extends AbstractLoaderContext implements Com
     }
 
     @Override
+    public void addAutowireTask(ComponentLoader.AutowireTask task) {
+        if (autowireTasks == null) {
+            autowireTasks = new ArrayList<>();
+        }
+
+        autowireTasks.add(task);
+    }
+
+    @Override
     public Optional<ComponentContext> getParent() {
         if (parentContext == null) {
             return Optional.empty();
@@ -160,6 +170,16 @@ public class ComponentLoaderContext extends AbstractLoaderContext implements Com
                 initTask.execute(this);
             }
             preInitTasks.clear();
+        }
+    }
+
+    @Override
+    public void executeAutowireTasks() {
+        if (CollectionUtils.isNotEmpty(autowireTasks)) {
+            for (ComponentLoader.AutowireTask autowireTask : autowireTasks) {
+                autowireTask.execute(this);
+            }
+            autowireTasks.clear();
         }
     }
 }

@@ -53,6 +53,8 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
     protected FragmentData fragmentData;
     protected FragmentActions fragmentActions;
 
+    protected FragmentOwner parentController;
+
     @Autowired
     public void setUiComponents(UiComponents uiComponents) {
         this.uiComponents = uiComponents;
@@ -73,6 +75,14 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
 
     protected void setActions(FragmentActions fragmentActions) {
         this.fragmentActions = fragmentActions;
+    }
+
+    protected FragmentOwner getParentController() {
+        return parentController;
+    }
+
+    protected void setParentController(FragmentOwner parentController) {
+        this.parentController = parentController;
     }
 
     @SuppressWarnings("unchecked")

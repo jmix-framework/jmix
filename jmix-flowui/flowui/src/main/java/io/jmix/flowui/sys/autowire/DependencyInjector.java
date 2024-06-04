@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.sys.autowire;
 
+import com.vaadin.flow.component.Composite;
+
 import java.util.Collection;
 
 /**
@@ -31,7 +33,7 @@ public interface DependencyInjector {
      *
      * @param autowireContext injection context
      */
-    void autowire(AutowireContext autowireContext);
+    void autowire(AutowireContext<?> autowireContext);
 
     /**
      * Checks whether this injector can wire the passed injection context.
@@ -39,12 +41,12 @@ public interface DependencyInjector {
      * @param autowireContext injection content that need to be checked
      * @return {@code true} if the passed injection context can be wired, {@code false} otherwise
      */
-    boolean isApplicable(AutowireContext autowireContext);
+    boolean isApplicable(AutowireContext<?> autowireContext);
 
     /**
      * Base injection context interface.
      */
-    interface AutowireContext {
+    interface AutowireContext<T extends Composite<?>> {
 
         /**
          * Returns a collection of objects that have already been autowired and that should not be used in
@@ -55,5 +57,10 @@ public interface DependencyInjector {
          * @return collection of objects that have already been autowired
          */
         Collection<Object> getAutowired();
+
+        /**
+         * @return the autowiring target
+         */
+        T getTarget();
     }
 }

@@ -70,6 +70,21 @@ public class ViewSubscribeDependencyInjectorView extends StandardView {
 
     private final Map<String, Boolean> executedMap = new HashMap<>();
 
+    @Subscribe
+    protected void onInit(InitEvent event) {
+        markAsExecuted(event);
+    }
+
+    @Subscribe
+    protected void onBeforeShow(BeforeShowEvent event) {
+        markAsExecuted(event);
+    }
+
+    @Subscribe
+    protected void onReady(ReadyEvent event) {
+        markAsExecuted(event);
+    }
+
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onDataContextPreSave(DataContext.PreSaveEvent event) {
         markAsExecuted(event);

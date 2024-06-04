@@ -16,13 +16,7 @@
 
 package io.jmix.flowui.view;
 
-import io.jmix.flowui.kit.action.Action;
-
 import io.jmix.flowui.kit.component.HasActions;
-import org.springframework.lang.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public interface ViewActions extends HasActions {
 }

@@ -24,7 +24,7 @@ import java.util.HashSet;
 /**
  * Class describes autowire context that is used to autowire dependencies in view.
  */
-public class ViewAutowireContext implements DependencyInjector.AutowireContext {
+public class ViewAutowireContext implements DependencyInjector.AutowireContext<View<?>> {
 
     protected final View<?> view;
 
@@ -34,7 +34,8 @@ public class ViewAutowireContext implements DependencyInjector.AutowireContext {
         this.view = view;
     }
 
-    public View<?> getView() {
+    @Override
+    public View<?> getTarget() {
         return view;
     }
 

@@ -16,11 +16,11 @@
 
 package io.jmix.flowui.sys.autowire;
 
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.JmixOrder;
 import io.jmix.flowui.sys.event.UiEventListenerMethodAdapter;
 import io.jmix.flowui.sys.event.UiEventsManager;
-import io.jmix.flowui.view.View;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListener;
@@ -49,34 +49,33 @@ public class EventListenerDependencyInjector implements DependencyInjector {
     }
 
     @Override
-    public void autowire(AutowireContext autowireContext) {
-        ViewAutowireContext viewAutowireContext = (ViewAutowireContext) autowireContext;
-        View<?> view = viewAutowireContext.getView();
+    public void autowire(AutowireContext<?> autowireContext) {
+        Composite<?> composite = autowireContext.getTarget();
         //noinspection rawtypes
-        Class<? extends View> viewClass = view.getClass();
+        Class<? extends Composite> compositeClass = composite.getClass();
 
-        List<Method> eventListenerMethods = reflectionCacheManager.getViewEventListenerMethods(viewClass);
+        List<Method> eventListenerMethods = reflectionCacheManager.getEventListenerMethods(compositeClass);
 
         if (!eventListenerMethods.isEmpty()) {
-            Collection<Object> autowired = viewAutowireContext.getAutowired();
+            Collection<Object> autowired = autowireContext.getAutowired();
 
             List<ApplicationListener<?>> listeners = eventListenerMethods.stream()
-                    // skip already autowired elements
                     .filter(m -> !autowired.contains(m))
                     .peek(autowired::add)
-                    .map(m -> new UiEventListenerMethodAdapter(view, viewClass, m, applicationContext))
+                    .map(m -> new UiEventListenerMethodAdapter(composite, compositeClass, m, applicationContext))
                     .collect(Collectors.toList());
 
 
             UiEventsManager eventsMulticaster = VaadinSession.getCurrent().getAttribute(UiEventsManager.class);
             for (ApplicationListener<?> listener : listeners) {
-                eventsMulticaster.addApplicationListener(view, listener);
+                eventsMulticaster.addApplicationListener(composite, listener);
             }
         }
     }
 
     @Override
-    public boolean isApplicable(AutowireContext autowireContext) {
-        return autowireContext instanceof ViewAutowireContext;
+    public boolean isApplicable(AutowireContext<?> autowireContext) {
+        return autowireContext instanceof ViewAutowireContext
+                || autowireContext instanceof FragmentAutowireContext;
     }
 }

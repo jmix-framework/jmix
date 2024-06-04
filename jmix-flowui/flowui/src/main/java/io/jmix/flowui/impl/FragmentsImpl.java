@@ -22,6 +22,8 @@ import io.jmix.flowui.Fragments;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.fragment.*;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
+import io.jmix.flowui.sys.autowire.AutowireManager;
+import io.jmix.flowui.sys.autowire.FragmentAutowireContext;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.ViewInfo;
@@ -35,6 +37,7 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -48,15 +51,18 @@ public class FragmentsImpl implements Fragments {
     protected final FragmentDescriptorLoader fragmentDescriptorLoader;
     protected final UiComponents uiComponents;
     protected final ViewRegistry viewRegistry;
+    protected final AutowireManager autowireManager;
 
     public FragmentsImpl(ApplicationContext applicationContext,
                          FragmentDescriptorLoader fragmentDescriptorLoader,
                          UiComponents uiComponents,
-                         ViewRegistry viewRegistry) {
+                         ViewRegistry viewRegistry,
+                         AutowireManager autowireManager) {
         this.applicationContext = applicationContext;
         this.fragmentDescriptorLoader = fragmentDescriptorLoader;
         this.uiComponents = uiComponents;
         this.viewRegistry = viewRegistry;
+        this.autowireManager = autowireManager;
     }
 
     @Override
@@ -72,6 +78,11 @@ public class FragmentsImpl implements Fragments {
         F fragment = uiComponents.create(fragmentClass);
         init(hostContext, fragment);
 
+        // perform automatic autowiring when the fragment is created programmatically
+        if (hostContext instanceof ComponentLoader.ComponentContext componentContext) {
+            componentContext.executeAutowireTasks();
+        }
+
         return fragment;
     }
 
@@ -81,6 +92,9 @@ public class FragmentsImpl implements Fragments {
         Preconditions.checkNotNullArgument(fragment, Fragment.class.getSimpleName() + " must not be null");
 
         log.trace("Initializing {} fragment", fragment.getClass().getName());
+
+        FragmentOwner origin = ((FragmentOwner) hostContext.getOrigin());
+        FragmentUtils.setParentController(fragment, origin);
 
         FragmentData fragmentData = applicationContext.getBean(FragmentData.class);
         FragmentUtils.setFragmentData(fragment, fragmentData);
@@ -102,7 +116,12 @@ public class FragmentsImpl implements Fragments {
             context.executeInitTasks();
         }
 
-        ComponentUtil.fireEvent(fragment, new Fragment.ReadyEvent(fragment));
+        ComponentLoader.Context hostLoaderContext = findHostLoaderContext(hostContext);
+        if (hostLoaderContext instanceof ComponentLoader.ComponentContext componentContext) {
+            componentContext.addAutowireTask(context -> autowireFragment(fragment));
+        } else {
+            autowireFragment(fragment);
+        }
     }
 
     protected String getFullOriginId(ComponentLoader.Context hostContext, Fragment<?> fragment) {
@@ -113,6 +132,23 @@ public class FragmentsImpl implements Fragments {
         return hostContext.getFullOriginId() +
                 "." +
                 fragmentId.orElse(fragment.getClass().getSimpleName());
+    }
+
+    protected void autowireFragment(Fragment<?> fragment) {
+        FragmentAutowireContext fragmentAutowireContext = new FragmentAutowireContext(fragment);
+        autowireManager.autowire(fragmentAutowireContext);
+
+        ComponentUtil.fireEvent(fragment, new Fragment.ReadyEvent(fragment));
+    }
+
+    @Nullable
+    protected ComponentLoader.Context findHostLoaderContext(ComponentLoader.Context hostContext) {
+        ComponentLoader.Context targetContext = hostContext;
+        while (targetContext.getParentContext() != null) {
+            targetContext = targetContext.getParentContext();
+        }
+
+        return targetContext;
     }
 
     protected void processFragmentDescriptor(FragmentLoaderContext context, String descriptorPath) {

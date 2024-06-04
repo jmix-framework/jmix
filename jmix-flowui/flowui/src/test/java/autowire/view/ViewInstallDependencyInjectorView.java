@@ -20,6 +20,7 @@ import com.vaadin.flow.router.Route;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
 import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataContext;
@@ -43,6 +44,8 @@ public class ViewInstallDependencyInjectorView extends StandardView {
     public SettingsFacet facet;
     @ViewComponent
     public JmixComboBox<Customer> component;
+    @ViewComponent
+    public DataGrid<Customer> dataGrid;
 
     @Install(target = Target.DATA_CONTEXT)
     protected Set<Customer> saveDelegate(SaveContext saveContext) {
@@ -61,5 +64,20 @@ public class ViewInstallDependencyInjectorView extends StandardView {
     @Install(to = "component", subject = "itemLabelGenerator")
     protected String componentItemLabelGenerator(Customer customer) {
         return "";
+    }
+
+    @Install(to = "dataGrid", subject = "partNameGenerator")
+    protected String dataGridPartNameGenerator(Customer customer) {
+        return "";
+    }
+
+    @Install(to = "dataGrid", subject = "partNameGenerator")
+    protected boolean dataGridDropFilter(Customer customer) {
+        return true;
+    }
+
+    @Install(to = "dataGrid", subject = "partNameGenerator")
+    protected boolean dataGridDragFilter(Customer customer) {
+        return true;
     }
 }

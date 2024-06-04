@@ -25,6 +25,9 @@ import com.vaadin.flow.component.HasValue;
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentOwner;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
@@ -70,13 +73,15 @@ public final class AutowireUtils {
     /**
      * Finds the target of the annotated method in passed composite by ID.
      *
-     * @param composite composite for search
-     * @param targetId  target ID
+     * @param composite       composite for search
+     * @param targetId        target ID
+     * @param componentFinder hook to find components in the composite
      * @return found target object or {@code null} if target no found
      * @throws IllegalStateException if the view content is not a container
      */
     @Nullable
-    public static Object findMethodTarget(Composite<?> composite, String targetId) {
+    public static Object findMethodTarget(Composite<?> composite, String targetId,
+                                          BiFunction<Component, String, Optional<Component>> componentFinder) {
         Component componentLayout = composite.getContent();
         if (!UiComponentUtils.isContainer(componentLayout)) {
             throw new IllegalStateException(composite.getClass().getSimpleName() + "'s layout composite " +
@@ -90,7 +95,7 @@ public final class AutowireUtils {
                 return action;
             }
 
-            Optional<Component> component = UiComponentUtils.findComponent(((View<?>) composite), targetId);
+            Optional<Component> component = UiComponentUtils.findComponent(composite, targetId);
             if (component.isPresent()) {
                 return component.get();
             }
@@ -103,7 +108,7 @@ public final class AutowireUtils {
 
             String id = elements[elements.length - 1];
 
-            Optional<Component> componentOpt = UiComponentUtils.findComponent(((View<?>) composite), pathPrefix(elements));
+            Optional<Component> componentOpt = UiComponentUtils.findComponent(composite, pathPrefix(elements));
 
             if (componentOpt.isPresent()) {
                 Component component = componentOpt.get();
@@ -123,10 +128,8 @@ public final class AutowireUtils {
                 }
 
                 if (UiComponentUtils.isContainer(component)) {
-                    Optional<Component> childComponent = UiComponentUtils.findComponent(((View<?>) composite), id);
-                    if (childComponent.isPresent()) {
-                        return childComponent.get();
-                    }
+                    return componentFinder.apply(component, id)
+                            .orElse(null);
                 }
             }
 
@@ -135,21 +138,19 @@ public final class AutowireUtils {
                 return hasSubParts.getSubPart(id);
             }
 
-            Object dropdownItemCandidate = findMethodTarget(composite, pathPrefix(elements));
+            Object dropdownItemCandidate = findMethodTarget(composite, pathPrefix(elements), componentFinder);
             if (dropdownItemCandidate instanceof ComponentItem componentItem) {
                 Component content = componentItem.getContent();
                 if (content == null) {
                     return null;
                 }
 
-                if (content.getId().isPresent() && content.getId().get().equals(id)) {
+                if (UiComponentUtils.sameId(content, id) || FragmentUtils.sameId(content, id)) {
                     return content;
                 }
 
-                Optional<Component> childComponent = UiComponentUtils.findComponent(content, id);
-                if (childComponent.isPresent()) {
-                    return childComponent.get();
-                }
+                return componentFinder.apply(content, id)
+                        .orElse(null);
             } else if (dropdownItemCandidate instanceof ActionItem actionItem) {
                 Action action = actionItem.getAction();
                 if (action == null) {
@@ -161,10 +162,8 @@ public final class AutowireUtils {
                 }
             } else if (dropdownItemCandidate instanceof Component dropdownContent) {
                 // For case where the method's targetId is deeper than the first level of children for the componentItem
-                Optional<Component> childComponent = UiComponentUtils.findComponent(dropdownContent, id);
-                if (childComponent.isPresent()) {
-                    return childComponent.get();
-                }
+                return componentFinder.apply(dropdownContent, id)
+                        .orElse(null);
             }
         }
 
@@ -185,8 +184,8 @@ public final class AutowireUtils {
      *                                       or {@link Target#DATA_CONTEXT}
      */
     @Nullable
-    public static <A extends Annotation> Object getTargetInstance(A annotation, View<?> view,
-                                                                  @Nullable String targetId, Target targetType) {
+    public static <A extends Annotation> Object getViewTargetInstance(A annotation, View<?> view,
+                                                                      @Nullable String targetId, Target targetType) {
         return Strings.isNullOrEmpty(targetId) ? switch (targetType) {
             case COMPONENT, CONTROLLER -> view;
             case DATA_CONTEXT -> ViewControllerUtils.getViewData(view).getDataContext();
@@ -195,7 +194,37 @@ public final class AutowireUtils {
         } : switch (targetType) {
             case DATA_LOADER -> ViewControllerUtils.getViewData(view).getLoader(targetId);
             case DATA_CONTAINER -> ViewControllerUtils.getViewData(view).getContainer(targetId);
-            default -> findMethodTarget(view, targetId);
+            default -> findMethodTarget(view, targetId, UiComponentUtils::findComponent);
+        };
+    }
+
+    /**
+     * Find the target for the annotated method is passed fragment component by targetType and targetId.
+     *
+     * @param annotation annotation of the method for which target will be found
+     * @param fragment   fragment for search
+     * @param targetId   target ID
+     * @param targetType type of the target
+     * @param <A>        type of the annotation
+     * @return found target object or null if target not found
+     * @throws UnsupportedOperationException if the target is not supported
+     */
+    @Nullable
+    public static <A extends Annotation> Object getFragmentTargetInstance(A annotation,
+                                                                          Fragment<?> fragment,
+                                                                          @Nullable String targetId,
+                                                                          Target targetType) {
+        return Strings.isNullOrEmpty(targetId) ? switch (targetType) {
+            case COMPONENT, CONTROLLER -> fragment;
+            case HOST_CONTROLLER -> findHostView(fragment);
+            case DATA_CONTEXT -> FragmentUtils.getFragmentData(fragment).getDataContext();
+            default -> throw new UnsupportedOperationException(String.format("Unsupported @%s target '%s'",
+                    annotation.getClass().getSimpleName(), targetType));
+        } : switch (targetType) {
+            case DATA_LOADER -> FragmentUtils.getFragmentData(fragment).getLoader(targetId);
+            case DATA_CONTAINER -> FragmentUtils.getFragmentData(fragment).getContainer(targetId);
+            default -> findMethodTarget(fragment, targetId,
+                    (component, id) -> UiComponentUtils.findComponent(component, id, FragmentUtils::sameId));
         };
     }
 
@@ -661,7 +690,7 @@ public final class AutowireUtils {
         String parentComponentId = pathPrefix(elements, elements.length - 1);
         String[] subTargets = parse(pathSuffix(elements));
 
-        Optional<Component> component = UiComponentUtils.findComponent(((View<?>) layout), parentComponentId);
+        Optional<Component> component = UiComponentUtils.findComponent(layout, parentComponentId);
 
         if (component.isPresent()) {
             Object subTarget = component.get();
@@ -699,10 +728,23 @@ public final class AutowireUtils {
     }
 
     @Nullable
+    private static View<?> findHostView(FragmentOwner fragmentOwner) {
+        if (fragmentOwner instanceof View<?> view) {
+            return view;
+        } else if (fragmentOwner instanceof Fragment<?> fragment) {
+            return findHostView(FragmentUtils.getParentController(fragment));
+        }
+
+        throw new IllegalStateException("Unknown parent type: " + fragmentOwner.getClass().getName());
+    }
+
+    @Nullable
     private static Action findActionCandidate(Composite<?> component, String targetId) {
-        ViewActions hasActions = null;
+        HasActions hasActions = null;
         if (component instanceof View<?> view) {
             hasActions = ViewControllerUtils.getViewActions(view);
+        } else if (component instanceof Fragment<?> fragment) {
+            hasActions = FragmentUtils.getFragmentActions(fragment);
         }
 
         return hasActions == null

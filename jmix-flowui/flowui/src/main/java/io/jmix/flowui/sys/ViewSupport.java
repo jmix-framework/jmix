@@ -136,6 +136,9 @@ public class ViewSupport {
 
         stopViewTimerSample(injectSample, meterRegistry, ViewLifeCycle.INJECT, viewId);
 
+        // perform injection for the nested fragments
+        componentLoaderContext.executeAutowireTasks();
+
         Timer.Sample initSample = startTimerSample(meterRegistry);
 
         fireViewInitEvent(view);

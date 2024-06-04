@@ -17,8 +17,13 @@
 package io.jmix.flowui.view;
 
 import org.springframework.lang.Nullable;
+
 import java.lang.reflect.Method;
 
+/**
+ * @deprecated unused for FlowUI, legacy from the ClassicUI
+ */
+@Deprecated(forRemoval = true, since = "2.3")
 public interface InstallTargetHandler {
 
     @Nullable

@@ -18,6 +18,7 @@ package io.jmix.flowui.sys.autowire;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Composite;
 import io.jmix.core.JmixOrder;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.Facet;
@@ -28,17 +29,12 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.ViewXmlLoader;
-import io.jmix.flowui.sys.autowire.ReflectionCacheManager.AutowireElement;
 import io.jmix.flowui.view.*;
 import org.dom4j.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import static io.jmix.flowui.sys.ValuePathHelper.parse;
@@ -49,61 +45,23 @@ import static io.jmix.flowui.sys.ValuePathHelper.pathPrefix;
  */
 @Order(JmixOrder.LOWEST_PRECEDENCE - 40)
 @org.springframework.stereotype.Component("flowui_ViewElementsDependencyInjector")
-public class ViewElementsDependencyInjector implements DependencyInjector {
-
-    private static final Logger log = LoggerFactory.getLogger(ViewElementsDependencyInjector.class);
+public class ViewElementsDependencyInjector extends AbstractElementsDependencyInjector {
 
     protected ApplicationContext applicationContext;
-    protected ReflectionCacheManager reflectionCacheManager;
 
     public ViewElementsDependencyInjector(ApplicationContext applicationContext,
                                           ReflectionCacheManager reflectionCacheManager) {
+        super(reflectionCacheManager);
         this.applicationContext = applicationContext;
-        this.reflectionCacheManager = reflectionCacheManager;
     }
 
     @Override
-    public void autowire(AutowireContext autowireContext) {
-        ViewAutowireContext viewAutowireContext = (ViewAutowireContext) autowireContext;
-        View<?> view = viewAutowireContext.getView();
-
-        List<AutowireElement> autowireElements =
-                reflectionCacheManager.getViewAutowireElements(view.getClass());
-        Collection<Object> autowired = viewAutowireContext.getAutowired();
-
-        for (AutowireElement element : autowireElements) {
-            // skip already autowired elements
-            if (!autowired.contains(element)) {
-                doAutowiring(element, view, autowired);
-            }
-        }
-    }
-
-    protected void doAutowiring(AutowireElement autowireElement, View<?> view, Collection<Object> autowired) {
-        String name = AutowireUtils.getAutowiringName(autowireElement);
-        Class<?> type = AutowireUtils.getAutowiringType(autowireElement);
-
-        Object instance = getAutowiredInstance(type, name, view);
-
-        if (instance != null) {
-            AutowireUtils.assignValue(autowireElement.getElement(), instance, view);
-            autowired.add(autowireElement);
-        } else {
-            log.trace("Skip autowiring {} of {} because instance not found",
-                    name, view.getClass());
-        }
-    }
-
     @Nullable
-    protected Object getAutowiredInstance(Class<?> type, String name, View<?> view) {
-        Component layout = view.getContent();
-        if (!UiComponentUtils.isContainer(layout)) {
-            throw new IllegalStateException(view.getClass().getSimpleName() + "'s layout component " +
-                    "doesn't support child components");
-        }
+    protected Object getAutowiredInstance(Class<?> type, String name, Composite<?> composite) {
+        View<?> view = (View<?>) composite;
 
         if (Component.class.isAssignableFrom(type)) {
-            Optional<Component> childComponent = UiComponentUtils.findComponent(layout, name);
+            Optional<Component> childComponent = UiComponentUtils.findComponent(view, name);
             // Autowiring a UI component
             return childComponent.orElse(null);
         } else if (InstanceContainer.class.isAssignableFrom(type)) {
@@ -115,9 +73,9 @@ public class ViewElementsDependencyInjector implements DependencyInjector {
             ViewData data = ViewControllerUtils.getViewData(view);
             return data.getLoader(name);
         } else if (DataContext.class.isAssignableFrom(type)) {
+            // Autowiring a dataContext
             ViewData data = ViewControllerUtils.getViewData(view);
             return data.getDataContext();
-
         } else if (Action.class.isAssignableFrom(type)) {
             // Autowiring an action
             String[] elements = parse(name);
@@ -127,7 +85,7 @@ public class ViewElementsDependencyInjector implements DependencyInjector {
             }
 
             String prefix = pathPrefix(elements);
-            return UiComponentUtils.findComponent(layout, prefix)
+            return UiComponentUtils.findComponent(view, prefix)
                     .filter(c -> c instanceof HasActions)
                     .map(c -> ((HasActions) c))
                     .map(component -> component.getAction(elements[elements.length - 1]))
@@ -173,7 +131,7 @@ public class ViewElementsDependencyInjector implements DependencyInjector {
     }
 
     @Override
-    public boolean isApplicable(AutowireContext autowireContext) {
+    public boolean isApplicable(AutowireContext<?> autowireContext) {
         return autowireContext instanceof ViewAutowireContext;
     }
 }

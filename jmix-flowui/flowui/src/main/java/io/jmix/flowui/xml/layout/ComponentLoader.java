@@ -136,6 +136,18 @@ public interface ComponentLoader<T extends Component> {
          * Executes all added {@link InitTask}s
          */
         void executePreInitTasks();
+
+        /**
+         * Add {@link ComponentLoader.AutowireTask} that will be executed according to the origin component lifecycle.
+         *
+         * @param task a task to add
+         */
+        void addAutowireTask(AutowireTask task);
+
+        /**
+         * Executed all added {@link AutowireTask}s
+         */
+        void executeAutowireTasks();
     }
 
     interface FragmentContext extends Context {
@@ -172,6 +184,19 @@ public interface ComponentLoader<T extends Component> {
                 throw new IllegalArgumentException("'context' must implement " + ComponentContext.class.getName());
             }
         }
+    }
+
+    /**
+     * AutowireTasks are used to perform autowiring of nested fragments in a view.
+     */
+    interface AutowireTask {
+
+        /**
+         * This method will be invoked after origin view autowiring.
+         *
+         * @param componentContext loader context
+         */
+        void execute(ComponentContext componentContext);
     }
 
     Context getContext();

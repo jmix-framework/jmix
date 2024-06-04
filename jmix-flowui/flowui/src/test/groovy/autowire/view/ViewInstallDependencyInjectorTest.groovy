@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package autowire
+package autowire.view
 
-import autowire.view.ViewInstallDependencyInjectorView
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
@@ -28,7 +27,7 @@ class ViewInstallDependencyInjectorTest extends FlowuiTestSpecification {
         registerViewBasePackages("autowire.view")
     }
 
-    def "Autowire #dataElement install points"() {
+    def "Autowire #dataElement install points into the view"() {
         when: "InstallDependencyInjectorView is opened"
         def view = navigateToView ViewInstallDependencyInjectorView
 
@@ -38,11 +37,13 @@ class ViewInstallDependencyInjectorTest extends FlowuiTestSpecification {
         where:
         dataElement << [
                 "dataContext", "collectionDl",
-                "facet", "component"
+                "facet", "component",
+                "dataGrid", "dataGrid", "dataGrid"
         ]
         installName << [
                 "SaveDelegate", "LoadDelegate",
-                "SaveSettingsDelegate", "ItemLabelGenerator"
+                "SaveSettingsDelegate", "ItemLabelGenerator",
+                "PartNameGenerator", "DropFilter", "DragFilter"
         ]
     }
 }

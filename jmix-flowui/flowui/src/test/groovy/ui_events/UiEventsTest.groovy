@@ -16,10 +16,12 @@
 
 package ui_events
 
+import io.jmix.flowui.Fragments
 import io.jmix.flowui.UiEventPublisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
+import ui_events.fragment.UiEventTestFragment
 import ui_events.screen.UiEventsTestScreen
 
 @SpringBootTest
@@ -27,6 +29,8 @@ class UiEventsTest extends FlowuiTestSpecification {
 
     @Autowired
     UiEventPublisher uiEventPublisher
+    @Autowired
+    Fragments fragments
 
     void setup() {
         registerViewBasePackages("ui_events.screen")
@@ -42,5 +46,20 @@ class UiEventsTest extends FlowuiTestSpecification {
         then: "Screen's application listener receives the event"
 
         screen.eventMessage == event.getMessage()
+    }
+
+    def "fragment receives an event"() {
+        def view = navigateToView UiEventsTestScreen
+        def fragment = fragments.create view, UiEventTestFragment
+
+        // to attach a fragment to UI
+        view.getContent().add(fragment)
+
+        when: "Application event is fired"
+        def event = new TestUiEvent(this, "eventMessage")
+        uiEventPublisher.publishEventForCurrentUI(event)
+
+        then: "Fragment's application event listener receives the event"
+        fragment.eventMessage == event.getMessage()
     }
 }

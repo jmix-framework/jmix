@@ -46,7 +46,7 @@ public class UserSettingsItem implements Serializable {
     private Date createTs;
 
     @CreatedBy
-    @Column(name = "CREATED_BY", length = 50)
+    @Column(name = "CREATED_BY")
     private String createdBy;
 
     @Column(name = "USERNAME")

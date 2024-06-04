@@ -97,5 +97,9 @@ public class IndexConfigurationComparator {
         public boolean settingsUpdateIsRequired() {
             return settingsComparingResult.configurationUpdateIsRequired();
         }
+
+        public boolean configurationUpdate(){
+            return mappingUpdateIsRequired() || settingsUpdateIsRequired();
+        }
     }
 }

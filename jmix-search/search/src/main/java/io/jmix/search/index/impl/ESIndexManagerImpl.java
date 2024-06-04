@@ -232,7 +232,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         try {
             mappingBody = objectMapper.writeValueAsString(indexConfiguration.getMapping());
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to create index '" + indexConfiguration.getIndexName() + "': Failed to parse index definition", e);
+            throw new RuntimeException("Unable to update index mapping'" + indexConfiguration.getIndexName() + "': Failed to parse index mapping.", e);
         }
 
         request.source(mappingBody, XContentType.JSON);
@@ -240,8 +240,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         try {
             response = esClient.indices().putMapping(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
-            //TODO handle
-            throw new RuntimeException(e);
+            throw new RuntimeException("Problem with sending request to elastic search server.", e);
         }
         return response.isAcknowledged();
     }
@@ -254,17 +253,11 @@ public class ESIndexManagerImpl implements ESIndexManager {
         if (indexExist) {
             IndexConfigurationComparator.ConfigurationComparingResult result = compareWithIndexConfiguration(indexConfiguration);
             if (!result.indexRecreatingIsRequired()) {
-                status = IndexSynchronizationStatus.ACTUAL;
-                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-                if(result.mappingUpdateIsRequired()){
-                    boolean mappingSavingResult = putMapping(indexConfiguration);
-                    if (!mappingSavingResult) {
-                        //TODO enhance message
-                        log.error("Problem with index mapping saving.");
-                    }
-                }
-                if(result.settingsUpdateIsRequired()){
-                    actualizeSettings(indexConfiguration);
+                if (result.configurationUpdate()){
+                    status = updateIndexConfiguration(indexConfiguration, strategy, result);
+                }else {
+                    status = IndexSynchronizationStatus.ACTUAL;
+                    indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
                 }
 
             } else {
@@ -278,9 +271,26 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    private void actualizeSettings(IndexConfiguration indexConfiguration) {
-        // TODO is not used currently
-        throw new UnsupportedOperationException();
+    private IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
+        if(result.mappingUpdateIsRequired()){
+            if(strategy == IndexSchemaManagementStrategy.CREATE_OR_RECREATE){
+                boolean mappingSavingResult = putMapping(indexConfiguration);
+                if (mappingSavingResult) {
+                    indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
+                    return IndexSynchronizationStatus.INDEX_MAPPING_UPDATED;
+                }else{
+                    log.error("Problem with index mapping saving.");
+                    indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+                    return IndexSynchronizationStatus.IRRELEVANT;
+                }
+            }
+            else {
+                indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+                return IndexSynchronizationStatus.IRRELEVANT;
+            }
+        }
+
+        throw new IllegalStateException("Only index mapping update is supported currently");
     }
 
     protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {

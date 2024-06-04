@@ -21,5 +21,7 @@ public enum IndexSynchronizationStatus {
     IRRELEVANT,
     CREATED,
     RECREATED,
+    INDEX_MAPPING_UPDATED,
+    INDEX_SETTINGS_UPDATED,
     ACTUAL
 }

@@ -65,6 +65,7 @@ public class StartupIndexSynchronizer {
                         status);
                 switch (status) {
                     case CREATED:
+                    case INDEX_MAPPING_UPDATED:
                     case RECREATED:
                         enqueueAllCandidates.add(config);
                         available.add(config);

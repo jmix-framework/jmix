@@ -60,4 +60,16 @@ class XmlInheritanceTest extends FlowuiTestSpecification {
         then: "FetchPlan from extended view is used"
         view.lineDc.fetchPlan.getProperty("params").fetchPlan.name == "_instance_name"
     }
+
+    def "dataGrid columns"() {
+        when: "Create view that extends the base and adds columns"
+        def view = (XmlInheritanceExtBaseTestView) navigateToView(XmlInheritanceExtBaseTestView)
+
+        then: "DataGrid has columns from the base and extended views"
+        view.customersDataGrid.columns.size() == 4
+        view.customersDataGrid.columns.findIndexOf { it.key == 'name'} == 0
+        view.customersDataGrid.columns.findIndexOf { it.key == 'email'} == 1
+        view.customersDataGrid.columns.findIndexOf { it.key == 'status'} == 2
+        view.customersDataGrid.columns.findIndexOf { it.key == 'test'} == 3
+    }
 }

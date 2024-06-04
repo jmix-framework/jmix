@@ -63,6 +63,7 @@ public class XmlInheritanceProcessor {
                 new FetchPlanPropertyElementTargetLocator(),
                 new FetchPlanElementTargetLocator(),
                 new ButtonElementTargetLocator(),
+                new DataGridColumnElementTargetLocator(),
                 new CommonElementTargetLocator()
         );
     }
@@ -310,6 +311,31 @@ public class XmlInheritanceProcessor {
             String action = extElem.attributeValue("action");
             for (Element e : resultParentElem.elements()) {
                 if (action.equals(e.attributeValue("action"))) {
+                    return e;
+                }
+            }
+            return null;
+        }
+    }
+
+    protected static class DataGridColumnElementTargetLocator implements ElementTargetLocator {
+
+        @Override
+        public boolean suitableFor(Element extElem) {
+            return "column".equals(extElem.getName())
+                    && extElem.attributeValue("id") == null
+                    && (extElem.attributeValue("property") != null || extElem.attributeValue("key") != null);
+        }
+
+        @Nullable
+        @Override
+        public Element locate(Element resultParentElem, Element extElem) {
+            String attrName = extElem.attributeValue("property") != null ?
+                    "property" : "key";
+
+            String action = extElem.attributeValue(attrName);
+            for (Element e : resultParentElem.elements()) {
+                if (action.equals(e.attributeValue(attrName))) {
                     return e;
                 }
             }

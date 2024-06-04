@@ -24,15 +24,15 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import java.time.Duration;
 
 @Experimental
-@ConfigurationProperties("jmix.supersetflowui")
-public class SupersetFlowuiProperties {
+@ConfigurationProperties("jmix.superset.ui")
+public class SupersetUiProperties {
 
     /**
      * Timeout of background task that fetches guest token for {@link SupersetDashboard} component.
      */
     Duration backgroundFetchingGuestTokenTimeout;
 
-    public SupersetFlowuiProperties(@DefaultValue("1m") Duration backgroundFetchingGuestTokenTimeout) {
+    public SupersetUiProperties(@DefaultValue("1m") Duration backgroundFetchingGuestTokenTimeout) {
         this.backgroundFetchingGuestTokenTimeout = backgroundFetchingGuestTokenTimeout;
     }
 

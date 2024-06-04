@@ -26,7 +26,7 @@ import io.jmix.superset.SupersetTokenManager;
 import io.jmix.superset.client.SupersetClient;
 import io.jmix.superset.client.model.GuestTokenBody;
 import io.jmix.superset.client.model.GuestTokenResponse;
-import io.jmix.supersetflowui.SupersetFlowuiProperties;
+import io.jmix.supersetflowui.SupersetUiProperties;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraintsProvider;
 import jakarta.annotation.Nullable;
@@ -77,7 +77,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     protected SupersetTokenManager tokenManager;
     protected BackgroundWorker backgroundWorker;
     protected CurrentUserSubstitution currentUserSubstitution;
-    protected SupersetFlowuiProperties supersetFlowuiProperties;
+    protected SupersetUiProperties supersetUiProperties;
 
     protected DatasetConstraintsProvider datasetConstraintsProvider;
 
@@ -92,7 +92,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         tokenManager = applicationContext.getBean(SupersetTokenManager.class);
         backgroundWorker = applicationContext.getBean(BackgroundWorker.class);
         currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
-        supersetFlowuiProperties = applicationContext.getBean(SupersetFlowuiProperties.class);
+        supersetUiProperties = applicationContext.getBean(SupersetUiProperties.class);
 
         setUrlInternal(applicationContext.getBean(SupersetProperties.class).getUrl());
     }
@@ -129,7 +129,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         }
 
         FetchGuestTokenTask guestTokenTask = createFetchGuestTokenTask(
-                supersetFlowuiProperties.getBackgroundFetchingGuestTokenTimeout().toMillis(),
+                supersetUiProperties.getBackgroundFetchingGuestTokenTimeout().toMillis(),
                 buildGuestTokenBody(getEmbeddedId(), datasetConstraintsProvider),
                 tokenManager.getAccessToken(),
                 tokenManager.getCsrfToken());

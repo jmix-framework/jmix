@@ -1650,7 +1650,7 @@ public class ChartLoader extends AbstractComponentLoader<Chart> {
     protected void loadDataContainer(DataSet.Source<?> source, Element element) {
         loadString(element, "dataContainer")
                 .ifPresent(dataContainerId -> {
-                    InstanceContainer container = getComponentContext().getViewData().getContainer(dataContainerId);
+                    InstanceContainer container = context.getDataHolder().getContainer(dataContainerId);
 
                     CollectionContainer collectionContainer;
                     if (container instanceof CollectionContainer cc) {

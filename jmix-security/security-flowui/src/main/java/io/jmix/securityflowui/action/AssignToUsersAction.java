@@ -32,8 +32,8 @@ import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.ViewData;
-import io.jmix.flowui.model.impl.ViewDataXmlLoader;
 import io.jmix.flowui.view.*;
+import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import io.jmix.securityflowui.model.BaseRoleModel;
@@ -176,7 +176,7 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         List<Object> loaders = viewData
                 .getLoaderIds()
                 .stream()
-                .filter(loaderId -> !loaderId.startsWith(ViewDataXmlLoader.GENERATED_PREFIX))
+                .filter(loaderId -> !loaderId.startsWith(DataComponentsLoaderSupport.GENERATED_PREFIX))
                 .map(viewData::getLoader)
                 .filter(loader -> ((DataLoader) loader).getContainer()
                         .getEntityMetaClass()

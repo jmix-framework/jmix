@@ -82,6 +82,7 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.lang.Nullable;
 
@@ -93,11 +94,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @org.springframework.stereotype.Component("flowui_UiComponents")
 public class UiComponentsImpl implements UiComponents {
+
     private static final Logger log = LoggerFactory.getLogger(UiComponentsImpl.class);
 
-    protected DatatypeRegistry datatypeRegistry;
+    protected final ApplicationContext applicationContext;
+    protected final DatatypeRegistry datatypeRegistry;
 
-    public UiComponentsImpl(DatatypeRegistry datatypeRegistry) {
+    public UiComponentsImpl(ApplicationContext applicationContext,
+                            DatatypeRegistry datatypeRegistry) {
+        this.applicationContext = applicationContext;
         this.datatypeRegistry = datatypeRegistry;
     }
 
@@ -133,6 +138,7 @@ public class UiComponentsImpl implements UiComponents {
         register(JmixMenuBar.class, MenuBar.class);
         register(JmixVirtualList.class, VirtualList.class);
         register(RichTextEditor.class, JmixRichTextEditor.class);
+        register(JmixFormLayout.class, FormLayout.class);
     }
 
     @SuppressWarnings("unchecked")

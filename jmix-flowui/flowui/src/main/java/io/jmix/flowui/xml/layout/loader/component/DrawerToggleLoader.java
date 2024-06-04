@@ -19,7 +19,7 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 
-import static com.vaadin.flow.dom.ElementConstants.ARIA_LABEL_PROPERTY_NAME;
+import static com.vaadin.flow.dom.ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME;
 
 public class DrawerToggleLoader extends AbstractComponentLoader<DrawerToggle> {
 
@@ -31,8 +31,8 @@ public class DrawerToggleLoader extends AbstractComponentLoader<DrawerToggle> {
     @Override
     public void loadComponent() {
         getLoaderSupport().loadResourceString(element, "ariaLabel",
-                getComponentContext().getMessageGroup(), ariaLabel ->
-                        resultComponent.getElement().setAttribute(ARIA_LABEL_PROPERTY_NAME, ariaLabel));
+                getContext().getMessageGroup(), ariaLabel ->
+                        resultComponent.getElement().setAttribute(ARIA_LABEL_ATTRIBUTE_NAME, ariaLabel));
 
         componentLoader().loadIcon(element, resultComponent::setIcon);
         componentLoader().loadClassNames(resultComponent, element);

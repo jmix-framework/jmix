@@ -52,12 +52,13 @@ public class GroupFilterLoader extends AbstractComponentLoader<GroupFilter> {
     protected void loadDataLoader(GroupFilter resultComponent, Element element) {
         loadString(element, "dataLoader")
                 .ifPresent(dataLoaderId -> {
-                    DataLoader dataLoader = getComponentContext().getViewData().getLoader(dataLoaderId);
+                    DataLoader dataLoader = context.getDataHolder().getLoader(dataLoaderId);
                     resultComponent.setDataLoader(dataLoader);
 
-                    getComponentContext().addInitTask((context, view) ->
+                    getContext().addInitTask((context, view) ->
                             GroupFilterUtils.updateDataLoaderInitialCondition(resultComponent,
                                     dataLoader.getCondition())
+
                     );
                 });
     }

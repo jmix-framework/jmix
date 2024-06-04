@@ -111,11 +111,10 @@ public class ViewSupport {
 
         ComponentLoaderContext componentLoaderContext = createComponentLoaderContext();
 
-        componentLoaderContext.setFullFrameId(viewInfo.getId());
-        componentLoaderContext.setCurrentFrameId(viewInfo.getId());
+        componentLoaderContext.setFullOriginId(viewInfo.getId());
         componentLoaderContext.setMessageGroup(getPackage(viewInfo.getControllerClass()));
         componentLoaderContext.setView(view);
-        componentLoaderContext.setViewActions(actions);
+        componentLoaderContext.setActionsHolder(actions);
 
         Element element = loadViewXml(viewInfo);
         if (element != null) {

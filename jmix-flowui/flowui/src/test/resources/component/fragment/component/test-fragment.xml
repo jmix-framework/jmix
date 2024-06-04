@@ -1,0 +1,63 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fragment xmlns="http://jmix.io/schema/flowui/fragment">
+    <content>
+        <vbox id="wrapper">
+            <tabSheet id="tabSheet">
+                <tab id="tab1" label="Tab 1">
+                    <span text="Tab 1 content"/>
+                </tab>
+                <tab id="tab2" label="Tab 2">
+                    <span text="Tab 2 content"/>
+                </tab>
+            </tabSheet>
+
+            <tabs id="tabs">
+                <tab id="tab1" label="Tab 1"/>
+                <tab id="tab2" label="Tab 2"/>
+            </tabs>
+
+            <accordion id="accordion">
+                <accordionPanel id="accordionPanel1" summaryText="Panel 1">
+                    <span text="Span 1"/>
+                </accordionPanel>
+                <accordionPanel id="accordionPanel2"  summaryText="Panel 2">
+                    <span text="Span 2"/>
+                </accordionPanel>
+            </accordion>
+
+            <dropdownButton id="dropdownButton">
+                <items>
+                    <componentItem id="componentItem">
+                        <button id="button" text="Button 1"/>
+                    </componentItem>
+
+                    <textItem id="textItem"/>
+                </items>
+            </dropdownButton>
+
+            <textField id="textField">
+                <prefix>
+                    <icon icon="QUESTION_CIRCLE"/>
+                </prefix>
+                <suffix>
+                    <icon icon="PLUS"/>
+                </suffix>
+            </textField>
+        </vbox>
+    </content>
+</fragment>

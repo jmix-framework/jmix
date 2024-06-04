@@ -98,11 +98,10 @@ public abstract class AbstractDropdownButtonLoader<T extends AbstractDropdownBut
                     resultComponent,
                     ref,
                     id,
-                    index,
-                    getComponentContext().getView()
+                    index
             );
 
-            getComponentContext().addInitTask(initTask);
+            getContext().addInitTask(initTask);
         } else {
             throw new GuiDevelopmentException(String.format("No action defined for '%s' actionItem", id), context);
         }

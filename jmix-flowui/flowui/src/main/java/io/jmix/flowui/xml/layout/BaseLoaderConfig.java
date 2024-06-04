@@ -17,7 +17,7 @@
 package io.jmix.flowui.xml.layout;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.html.RangeInput;
+import io.jmix.flowui.xml.layout.loader.component.GenericComponentLoader;
 import io.jmix.flowui.xml.layout.loader.component.*;
 import io.jmix.flowui.xml.layout.loader.container.*;
 import io.jmix.flowui.xml.layout.loader.html.*;
@@ -34,6 +34,9 @@ public abstract class BaseLoaderConfig {
     }
 
     protected void initStandardLoaders() {
+        loaders.put("component", GenericComponentLoader.class);
+        loaders.put("fragment", FragmentElementLoader.class);
+
         /* Abstract layouts */
         loaders.put("hbox", HorizontalLayoutLoader.class);
         loaders.put("vbox", VerticalLayoutLoader.class);

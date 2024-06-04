@@ -16,73 +16,17 @@
 
 package io.jmix.flowui.model;
 
+import io.jmix.flowui.component.HasDataComponents;
+import io.jmix.flowui.view.View;
 import org.springframework.lang.Nullable;
-import java.util.Set;
 
 /**
- * Interface defining methods for interacting with data API elements of a view.
+ * Interface defining methods for interacting with data API elements of a {@link View}.
  */
-public interface ViewData {
+public interface ViewData extends HasDataComponents {
 
     @Nullable
     String getViewId();
 
     void setViewId(@Nullable String viewId);
-
-    /**
-     * Returns view's {@code DataContext}.
-     *
-     * @throws IllegalStateException if the DataContext is not defined
-     */
-    DataContext getDataContext();
-
-    /**
-     * Returns view's {@code DataContext} or null if it is not defined.
-     */
-    @Nullable
-    DataContext getDataContextOrNull();
-
-    /**
-     * Sets {@code DataContext} instance for the view.
-     */
-    void setDataContext(DataContext dataContext);
-
-    /**
-     * Performs {@link DataLoader#load()} for all loaders registered in the view.
-     */
-    void loadAll();
-
-    /**
-     * Returns a container by its id.
-     *
-     * @throws IllegalArgumentException if there is no such container in the view
-     */
-    <T extends InstanceContainer<?>> T getContainer(String id);
-
-    /**
-     * Returns a loader by its id.
-     *
-     * @throws IllegalArgumentException if there is no such loader in the view
-     */
-    <T extends DataLoader> T getLoader(String id);
-
-    /**
-     * Returns ids of all registered containers.
-     */
-    Set<String> getContainerIds();
-
-    /**
-     * Returns ids of all registered loaders.
-     */
-    Set<String> getLoaderIds();
-
-    /**
-     * Registers the given container in the view.
-     */
-    void registerContainer(String id, InstanceContainer<?> container);
-
-    /**
-     * Registers the given loader in the view.
-     */
-    void registerLoader(String id, DataLoader loader);
 }

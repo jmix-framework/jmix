@@ -43,8 +43,7 @@ public class FocusComponentInitTask implements ComponentLoader.InitTask {
     public void execute(ComponentContext context, View<?> view) {
         if (!(UiComponentUtils.isContainer(view.getContent())
                 || view.getContent() instanceof AppLayout)) {
-            throw new GuiDevelopmentException(View.class.getSimpleName() + " cannot contain components",
-                    context.getFullFrameId());
+            throw new GuiDevelopmentException(View.class.getSimpleName() + " cannot contain components", context);
         }
 
         getFocusComponent().ifPresent(focusable ->

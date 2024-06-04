@@ -22,6 +22,8 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
@@ -31,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -59,7 +62,7 @@ public final class UiComponentUtils {
     public static Optional<Component> findComponent(View<?> view, String id) {
         Component content = view.getContent();
         if (isContainer(content)) {
-            return findComponent(content, id);
+            return findComponent(content, id, UiComponentUtils::sameId);
         }
 
         throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
@@ -84,15 +87,37 @@ public final class UiComponentUtils {
      * Returns an {@link Optional} describing the component with given id,
      * or an empty {@link Optional}.
      *
-     * @param container container to find component
+     * @param component component to find inner component
      * @param id        component id to find
      * @return an {@link Optional} describing the found component,
      * or an empty {@link Optional}
      */
-    public static Optional<Component> findComponent(Component container, String id) {
+    public static Optional<Component> findComponent(Component component, String id) {
+        if (component instanceof View<?> view) {
+            return UiComponentUtils.findComponent(view, id);
+        } else if (component instanceof Fragment<?> fragment) {
+            return FragmentUtils.findComponent(fragment, id);
+        } else if (UiComponentUtils.isContainer(component)) {
+            return UiComponentUtils.findComponent(component, id, UiComponentUtils::sameId);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Returns an {@link Optional} describing the component with given id,
+     * or an empty {@link Optional}.
+     *
+     * @param container    container to find component
+     * @param id           component id to find
+     * @param idComparator function that checks if a child component has the same id as passed
+     * @return an {@link Optional} describing the found component,
+     * or an empty {@link Optional}
+     */
+    public static Optional<Component> findComponent(Component container, String id,
+                                                    BiPredicate<Component, String> idComparator) {
         String[] elements = ValuePathHelper.parse(id);
         if (elements.length == 1) {
-            Optional<Component> component = findOwnComponent(container, id);
+            Optional<Component> component = findOwnComponent(container, id, idComparator);
             if (component.isPresent()) {
                 return component;
             } else {
@@ -104,13 +129,12 @@ public final class UiComponentUtils {
                     }
                 }
 
-                return getComponentRecursively(getOwnComponents(container), id);
+                return getComponentRecursively(getOwnComponents(container), id, idComparator);
             }
         } else {
-            Optional<Component> innerComponentOpt = findOwnComponent(container, elements[0]);
+            Optional<Component> innerComponentOpt = findOwnComponent(container, elements[0], idComparator);
             if (innerComponentOpt.isEmpty()) {
-                // FIXME: gg, is id correct?
-                return getComponentRecursively(getOwnComponents(container), id);
+                return getComponentRecursively(getOwnComponents(container), id, idComparator);
             } else {
                 Component innerComponent = innerComponentOpt.get();
                 if (isContainer(innerComponent)) {
@@ -123,13 +147,14 @@ public final class UiComponentUtils {
         }
     }
 
-    private static Optional<Component> getComponentRecursively(Collection<Component> components, String id) {
+    private static Optional<Component> getComponentRecursively(Collection<Component> components, String id,
+                                                               BiPredicate<Component, String> idComparator) {
         for (Component component : components) {
-            if (sameId(component, id)) {
+            if (idComparator.test(component, id)) {
                 return Optional.of(component);
             } else if (isContainer(component)) {
                 Optional<Component> innerComponent =
-                        getComponentRecursively(getOwnComponents(component), id);
+                        getComponentRecursively(getOwnComponents(component), id, idComparator);
                 if (innerComponent.isPresent()) {
                     return innerComponent;
                 }
@@ -143,7 +168,7 @@ public final class UiComponentUtils {
                 }
 
                 String[] elements = ValuePathHelper.parse(id);
-                if (sameId(component, elements[0])) {
+                if (idComparator.test(component, elements[0])) {
                     innerComponent = findSubPart(hasSubPartsComponent, ValuePathHelper.pathSuffix(elements));
 
                     if (innerComponent.isPresent()) {
@@ -155,7 +180,8 @@ public final class UiComponentUtils {
             if (component instanceof HasPrefix hasPrefixComponent
                     && hasPrefixComponent.getPrefixComponent() != null) {
                 Optional<Component> innerComponent =
-                        getComponentRecursively(Collections.singleton(hasPrefixComponent.getPrefixComponent()), id);
+                        getComponentRecursively(Collections.singleton(hasPrefixComponent.getPrefixComponent()),
+                                id, idComparator);
 
                 if (innerComponent.isPresent()) {
                     return innerComponent;
@@ -165,7 +191,8 @@ public final class UiComponentUtils {
             if (component instanceof HasSuffix hasSuffixComponent
                     && hasSuffixComponent.getSuffixComponent() != null) {
                 Optional<Component> innerComponent =
-                        getComponentRecursively(Collections.singleton(hasSuffixComponent.getSuffixComponent()), id);
+                        getComponentRecursively(Collections.singleton(hasSuffixComponent.getSuffixComponent()),
+                                id, idComparator);
 
                 if (innerComponent.isPresent()) {
                     return innerComponent;
@@ -225,11 +252,31 @@ public final class UiComponentUtils {
      * or an empty {@link Optional}
      */
     public static Optional<Component> findOwnComponent(Component container, String id) {
+        return findOwnComponent(container, id, UiComponentUtils::sameId);
+    }
+
+    /**
+     * Returns an {@link Optional} describing the direct component with given id,
+     * or an empty {@link Optional}.
+     *
+     * @param container    the container to find own component
+     * @param id           component id to find
+     * @param idComparator function that checks if a child component has the same id as passed
+     * @return an {@link Optional} describing the found own component,
+     * or an empty {@link Optional}
+     */
+    public static Optional<Component> findOwnComponent(Component container, String id,
+                                                       BiPredicate<Component, String> idComparator) {
         if (container instanceof ComponentContainer) {
-            return ((ComponentContainer) container).findOwnComponent(id);
+            // Don't use 'ComponentContainer.findOwnComponent' because it compares ids
+            // using 'UiComponentUtils.sameId' only
+            return ((ComponentContainer) container).getOwnComponents()
+                    .stream()
+                    .filter(component -> idComparator.test(component, id))
+                    .findFirst();
         } else if (container instanceof HasComponents) {
             return container.getChildren()
-                    .filter(component -> sameId(component, id))
+                    .filter(component -> idComparator.test(component, id))
                     .findFirst();
         } else {
             throw new IllegalArgumentException(container.getClass().getSimpleName() +

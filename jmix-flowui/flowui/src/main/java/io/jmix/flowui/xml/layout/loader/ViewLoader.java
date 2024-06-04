@@ -98,7 +98,7 @@ public class ViewLoader extends AbstractViewLoader<View<?>> implements Component
         String focusMode = element.attributeValue("focusMode");
         if (!"NO_FOCUS".equals(focusMode)) {
             String focusComponentId = element.attributeValue("focusComponent");
-            getComponentContext().addInitTask(new FocusComponentInitTask(focusComponentId, view));
+            getContext().addInitTask(new FocusComponentInitTask(focusComponentId, view));
         }
     }
 }

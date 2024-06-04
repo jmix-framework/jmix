@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 
 import java.util.ArrayList;
@@ -28,8 +29,13 @@ import java.util.Objects;
 
 public class AssignActionsInitTask<C extends Component & HasActions> extends AbstractAssignActionInitTask<C> {
 
+    @Deprecated(since = "2.3", forRemoval = true)
     public AssignActionsInitTask(C component, String actionId, View view) {
-        super(component, actionId, view);
+        this(component, actionId);
+    }
+
+    public AssignActionsInitTask(C component, String actionId) {
+        super(component, actionId);
     }
 
     @Override
@@ -38,7 +44,7 @@ public class AssignActionsInitTask<C extends Component & HasActions> extends Abs
     }
 
     @Override
-    protected void addAction(ComponentContext context, Action action) {
+    protected void addAction(ComponentLoader.Context context, Action action) {
         List<Action> existingActions = new ArrayList<>(component.getActions());
         for (Action existingAction : existingActions) {
             // Comparing the id of an existing action with the full ID (including path) of the action to be added

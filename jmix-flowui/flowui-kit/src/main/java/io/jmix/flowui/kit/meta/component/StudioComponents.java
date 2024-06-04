@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.meta.component;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -60,9 +61,30 @@ import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.component.preview.StudioGenericComponentPreview;
 
 @StudioUiKit
 public interface StudioComponents {
+
+    @StudioComponent(
+            name = "GenericComponent",
+            classFqn = "com.vaadin.flow.component.Component",
+            category = "Components",
+            xmlElement = "component",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "componentClass", type = StudioPropertyType.COMPONENT_CLASS),
+            }
+    )
+    StudioGenericComponentPreview genericComponent();
 
     @StudioComponent(
             name = "Avatar",

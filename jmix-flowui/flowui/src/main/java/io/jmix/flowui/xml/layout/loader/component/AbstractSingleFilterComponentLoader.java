@@ -65,7 +65,7 @@ public abstract class AbstractSingleFilterComponentLoader<C extends SingleFilter
     protected void loadDataLoader(C resultComponent, Element element) {
         loadString(element, "dataLoader")
                 .ifPresent(dataLoaderId -> {
-                    DataLoader dataLoader = getComponentContext().getViewData().getLoader(dataLoaderId);
+                    DataLoader dataLoader = context.getDataHolder().getLoader(dataLoaderId);
                     resultComponent.setDataLoader(dataLoader);
                 });
     }

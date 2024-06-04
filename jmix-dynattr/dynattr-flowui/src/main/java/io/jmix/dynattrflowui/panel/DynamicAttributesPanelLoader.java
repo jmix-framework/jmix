@@ -45,7 +45,7 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
             throw new GuiDevelopmentException("DynamicAttributesPanel element doesn't have 'dataContainer' attribute",
                     context, "DynamicAttributesPanel ID", element.attributeValue("id"));
         }
-        InstanceContainer<Object> container = getComponentContext().getViewData().getContainer(containerId);
+        InstanceContainer<Object> container = context.getDataHolder().getContainer(containerId);
         resultComponent.setInstanceContainer(container);
     }
 

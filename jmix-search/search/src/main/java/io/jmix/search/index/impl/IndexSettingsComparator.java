@@ -38,7 +38,7 @@ public class IndexSettingsComparator {
         SETTINGS_ARE_NOT_COMPATIBLE;
 
         @Override
-        public boolean recreatingIndexIsRequired() {
+        public boolean indexRecreatingIsRequired() {
             return this == SETTINGS_ARE_NOT_COMPATIBLE;
         }
 

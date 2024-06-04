@@ -86,15 +86,15 @@ public class IndexConfigurationComparator {
             this.settingsComparingResult = settingsComparingResult;
         }
 
-        public boolean isRecreationOfIndexRequired(){
-            return mappingComparingResult.recreatingIndexIsRequired() || settingsComparingResult.recreatingIndexIsRequired();
+        public boolean indexRecreatingIsRequired(){
+            return mappingComparingResult.indexRecreatingIsRequired() || settingsComparingResult.indexRecreatingIsRequired();
         }
 
-        public boolean isMappingMustBeUpdated() {
+        public boolean mappingUpdateIsRequired() {
             return mappingComparingResult.configurationUpdateIsRequired();
         }
 
-        public boolean isSettingsMustBeUpdated() {
+        public boolean settingsUpdateIsRequired() {
             return settingsComparingResult.configurationUpdateIsRequired();
         }
     }

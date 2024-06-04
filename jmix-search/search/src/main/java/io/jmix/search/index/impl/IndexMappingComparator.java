@@ -69,7 +69,7 @@ public class IndexMappingComparator {
         MAPPINGS_NOT_COMPATIBLE;
 
         @Override
-        public boolean recreatingIndexIsRequired() {
+        public boolean indexRecreatingIsRequired() {
             return this == MAPPINGS_NOT_COMPATIBLE;
         }
 

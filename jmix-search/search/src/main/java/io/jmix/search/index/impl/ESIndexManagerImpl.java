@@ -169,7 +169,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
             IndexConfigurationComparator.ConfigurationComparingResult result = compareWithIndexConfiguration(indexConfiguration);
-            if (!result.isRecreationOfIndexRequired()) {
+            if (!result.indexRecreatingIsRequired()) {
                 status = IndexValidationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             } else {
@@ -253,17 +253,17 @@ public class ESIndexManagerImpl implements ESIndexManager {
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
             IndexConfigurationComparator.ConfigurationComparingResult result = compareWithIndexConfiguration(indexConfiguration);
-            if (!result.isRecreationOfIndexRequired()) {
+            if (!result.indexRecreatingIsRequired()) {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-                if(result.isMappingMustBeUpdated()){
+                if(result.mappingUpdateIsRequired()){
                     boolean mappingSavingResult = putMapping(indexConfiguration);
                     if (!mappingSavingResult) {
                         //TODO enhance message
                         log.error("Problem with index mapping saving.");
                     }
                 }
-                if(result.isSettingsMustBeUpdated()){
+                if(result.settingsUpdateIsRequired()){
                     actualizeSettings(indexConfiguration);
                 }
 

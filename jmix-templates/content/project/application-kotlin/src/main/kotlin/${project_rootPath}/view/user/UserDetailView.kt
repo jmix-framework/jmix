@@ -31,11 +31,11 @@ open class UserDetailView : StandardDetailView<User>() {
     @ViewComponent
     private lateinit var timeZoneField: ComboBox<String>
 
-    @Autowired
-    private lateinit var entityStates: EntityStates
+    @ViewComponent
+    private lateinit var messageBundle: MessageBundle
 
     @Autowired
-    private lateinit var messageBundle: MessageBundle
+    private lateinit var entityStates: EntityStates
 
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder

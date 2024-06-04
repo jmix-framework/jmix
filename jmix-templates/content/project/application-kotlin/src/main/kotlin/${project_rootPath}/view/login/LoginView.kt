@@ -33,13 +33,13 @@ open class LoginView : StandardView(), LocaleChangeObserver {
     private lateinit var loginViewSupport: LoginViewSupport
 
     @Autowired
-    private lateinit var messageBundle: MessageBundle
-
-    @Autowired
     private lateinit var messageTools: MessageTools
 
     @ViewComponent
     private lateinit var login: JmixLoginForm
+
+    @ViewComponent
+    private lateinit var messageBundle: MessageBundle
 
     @Value("\\\${ui.login.defaultUsername:}")
     private lateinit var defaultUsername: String

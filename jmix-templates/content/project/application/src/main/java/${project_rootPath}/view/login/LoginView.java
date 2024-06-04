@@ -44,13 +44,13 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     private LoginViewSupport loginViewSupport;
 
     @Autowired
-    private MessageBundle messageBundle;
-
-    @Autowired
     private MessageTools messageTools;
 
     @ViewComponent
     private JmixLoginForm login;
+
+    @ViewComponent
+    private MessageBundle messageBundle;
 
     @Value("\${ui.login.defaultUsername:}")
     private String defaultUsername;

@@ -29,11 +29,11 @@ public class UserDetailView extends StandardDetailView<User> {
     private PasswordField confirmPasswordField;
     @ViewComponent
     private ComboBox<String> timeZoneField;
+    @ViewComponent
+    private MessageBundle messageBundle;
 
     @Autowired
     private EntityStates entityStates;
-    @Autowired
-    private MessageBundle messageBundle;
     @Autowired
     private PasswordEncoder passwordEncoder;
 

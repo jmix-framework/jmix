@@ -30,7 +30,6 @@
                             minHeight="20px"
                             minWidth="20px"
                             titleVisible="true"
-                            url="http://localhost:8088"
                             visible="false"
                             width="30px"/>
         <superset:dashboard id="dashboard2" embeddedId="172f1241-f8c8-4203-88a6-0771753da7b3">

@@ -28,7 +28,6 @@
                     </xs:sequence>
 
                     <xs:attribute name="embeddedId" type="xs:string"/>
-                    <xs:attribute name="url" type="xs:string"/>
                     <xs:attribute name="titleVisible" type="xs:boolean"/>
                     <xs:attribute name="chartControlsVisible" type="xs:boolean"/>
                     <xs:attribute name="filtersExpanded" type="xs:boolean"/>

@@ -50,7 +50,6 @@ public interface StudioSupersetComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "titleVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "url", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)

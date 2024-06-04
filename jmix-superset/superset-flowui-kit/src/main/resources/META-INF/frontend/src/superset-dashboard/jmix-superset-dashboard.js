@@ -16,10 +16,9 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
                 }
 
                 #dashboard iframe {
+                    border: none;
                     width: 100%;
                     height: 100%;
-
-                    border: none;
                 }
 
                 #stub-image-container {
@@ -124,7 +123,9 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
         this._guestTokenTimerId = this._startGuestTokenRefreshTimer(token);
 
-        this._embedDashboard();
+        if (!this.isDashboardEmbedded) {
+            this._embedDashboard();
+        }
     }
 
     _onEmbeddedIdChanged(embeddedId) {

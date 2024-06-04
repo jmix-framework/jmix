@@ -20,7 +20,6 @@ import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.supersetflowui.SupersetGuestTokenProvider.FetchGuestTokenContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,16 +60,9 @@ public class SupersetDashboardTest {
                 () -> assertEquals("20px", dashboard1.getMinHeight()),
                 () -> assertEquals("20px", dashboard1.getMinWidth()),
                 () -> assertTrue(dashboard1.isTitleVisible()),
-                () -> assertEquals("http://localhost:8088", dashboard1.getUrl()),
                 () -> assertFalse(dashboard1.isVisible()),
-                () -> assertEquals("30px", dashboard1.getWidth()),
-                () -> assertNotNull(view.dashboard1.getGuestTokenProvider())
+                () -> assertEquals("30px", dashboard1.getWidth())
         );
-
-        view.dashboard1.getGuestTokenProvider()
-                .fetchGuestToken(
-                        new FetchGuestTokenContext(view.dashboard1),
-                        (token) -> assertEquals("token", token));
 
         // Check dataset constraints are loaded from XML
         var constraintsProvider = view.dashboard2.getDatasetConstraintsProvider();

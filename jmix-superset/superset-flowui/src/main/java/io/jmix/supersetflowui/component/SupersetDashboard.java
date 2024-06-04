@@ -16,17 +16,36 @@
 
 package io.jmix.supersetflowui.component;
 
-import io.jmix.core.common.util.Preconditions;
+import com.google.common.base.Strings;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.backgroundtask.BackgroundWorker;
+import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.superset.SupersetProperties;
-import io.jmix.supersetflowui.DefaultGuestTokenProvider;
-import io.jmix.supersetflowui.SupersetGuestTokenProvider;
+import io.jmix.superset.SupersetTokenManager;
+import io.jmix.superset.client.SupersetClient;
+import io.jmix.superset.client.model.GuestTokenBody;
+import io.jmix.superset.client.model.GuestTokenResponse;
+import io.jmix.supersetflowui.SupersetFlowuiProperties;
+import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraintsProvider;
 import jakarta.annotation.Nullable;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static io.jmix.superset.client.model.GuestTokenBody.Resource.DASHBOARD_TYPE;
 
 /**
  * The component for showing embedded dashboards from Superset. It uses the embedded-sdk library on the client-side to
@@ -54,11 +73,16 @@ import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
  * </pre>
  */
 public class SupersetDashboard extends JmixSupersetDashboard implements ApplicationContextAware, InitializingBean {
+    private static final Logger log = LoggerFactory.getLogger(SupersetDashboard.class);
 
     protected ApplicationContext applicationContext;
+    protected SupersetClient supersetClient;
+    protected SupersetTokenManager tokenManager;
+    protected BackgroundWorker backgroundWorker;
+    protected CurrentUserSubstitution currentUserSubstitution;
+    protected SupersetFlowuiProperties supersetFlowuiProperties;
 
     protected DatasetConstraintsProvider datasetConstraintsProvider;
-    protected SupersetGuestTokenProvider guestTokenProvider;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -67,8 +91,11 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
 
     @Override
     public void afterPropertiesSet() {
-        guestTokenProvider = applicationContext.getBean(DefaultGuestTokenProvider.class);
-
+        supersetClient = applicationContext.getBean(SupersetClient.class);
+        tokenManager = applicationContext.getBean(SupersetTokenManager.class);
+        backgroundWorker = applicationContext.getBean(BackgroundWorker.class);
+        currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
+        supersetFlowuiProperties = applicationContext.getBean(SupersetFlowuiProperties.class);
         setUrlInternal(applicationContext.getBean(SupersetProperties.class).getUrl());
     }
 
@@ -90,31 +117,102 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         this.datasetConstraintsProvider = datasetConstraintsProvider;
     }
 
-    /**
-     * @return guest token provider
-     */
-    public SupersetGuestTokenProvider getGuestTokenProvider() {
-        return guestTokenProvider;
-    }
-
-    /**
-     * Sets a guest token provider. This provider will be used instead of default one.
-     * <p>
-     * The usage example you can find in {@link SupersetGuestTokenProvider}.
-     *
-     * @param guestTokenProvider provider to set
-     */
-    public void setGuestTokenProvider(SupersetGuestTokenProvider guestTokenProvider) {
-        Preconditions.checkNotNullArgument(guestTokenProvider);
-        this.guestTokenProvider = guestTokenProvider;
-    }
-
     @Override
     protected void fetchGuestToken() {
         super.fetchGuestToken();
 
-        guestTokenProvider.fetchGuestToken(
-                new SupersetGuestTokenProvider.FetchGuestTokenContext(this),
-                this::setGuestTokenInternal);
+        if (Strings.isNullOrEmpty(tokenManager.getAccessToken())) {
+            log.error("Cannot request guest token, no access token provided");
+            return;
+        }
+        if (Strings.isNullOrEmpty(getEmbeddedId())) {
+            log.error("Cannot request guest token, embedded ID is not set");
+            return;
+        }
+
+        FetchGuestTokenTask guestTokenTask = createFetchGuestTokenTask(
+                supersetFlowuiProperties.getBackgroundFetchingGuestTokenTimeout().toMillis(),
+                buildGuestTokenBody(getEmbeddedId(), datasetConstraintsProvider),
+                tokenManager.getAccessToken(),
+                tokenManager.getCsrfToken());
+
+        backgroundWorker.handle(guestTokenTask).execute();
+    }
+
+    protected GuestTokenBody buildGuestTokenBody(String embeddedID,
+                                                 @Nullable DatasetConstraintsProvider constraintsProvider) {
+        List<GuestTokenBody.RowLevelRole> rls = Collections.emptyList();
+        if (constraintsProvider != null) {
+            rls = convertToSupersetRls(constraintsProvider.getConstraints());
+        }
+
+        return GuestTokenBody.builder()
+                .withResource(new GuestTokenBody.Resource()
+                        .withId(embeddedID)
+                        .withType(DASHBOARD_TYPE))
+                .withRowLevelRoles(rls)
+                .withUser(new GuestTokenBody.User()
+                        .withUsername(currentUserSubstitution.getEffectiveUser().getUsername()))
+                .build();
+    }
+
+    protected List<GuestTokenBody.RowLevelRole> convertToSupersetRls(List<DatasetConstraint> datasetConstraints) {
+        return CollectionUtils.isNotEmpty(datasetConstraints)
+                ? datasetConstraints.stream()
+                .map(dc -> new GuestTokenBody.RowLevelRole()
+                        .withClause(dc.clause())
+                        .withDataset(dc.dataset()))
+                .toList()
+                : Collections.emptyList();
+    }
+
+    protected FetchGuestTokenTask createFetchGuestTokenTask(long timeout, GuestTokenBody body, String accessToken,
+                                                            @Nullable String csrfToken) {
+        return new FetchGuestTokenTask(timeout, body, accessToken, csrfToken);
+    }
+
+    protected class FetchGuestTokenTask extends BackgroundTask<Void, GuestTokenResponse> {
+        protected GuestTokenBody body;
+        protected String accessToken;
+        protected String csrfToken;
+
+        public FetchGuestTokenTask(long timeout, GuestTokenBody body, String accessToken, @Nullable String csrfToken) {
+            super(timeout, TimeUnit.MILLISECONDS);
+
+            this.body = body;
+            this.accessToken = accessToken;
+            this.csrfToken = csrfToken;
+        }
+
+        @Override
+        public GuestTokenResponse run(TaskLifeCycle<Void> taskLifeCycle) throws IOException, InterruptedException {
+            return supersetClient.fetchGuestToken(body, accessToken, csrfToken);
+        }
+
+        @Override
+        public void done(GuestTokenResponse response) {
+            if (!Strings.isNullOrEmpty(response.getMessage())
+                    || !Strings.isNullOrEmpty(response.getSystemMessage())
+                    || CollectionUtils.isNotEmpty(response.getErrors())) {
+                if (isAccessTokenExpired(response.getSystemMessage())) {
+                    // If access token is expired it means refresh access token request
+                    // is failed in SupersetTokenManager. We do nothing.
+                    log.error("Guest token request failed. Access token expired.");
+                } else if (!Strings.isNullOrEmpty(response.getMessage())) {
+                    log.error("Guest token request failed. Message from Superset: {}", response.getMessage());
+                } else if (CollectionUtils.isNotEmpty(response.getErrors())) {
+                    log.error("Guest token request failed. Errors from Superset: {}",
+                            ArrayUtils.toString(response.getErrors()));
+                } else {
+                    log.error("Guest token request failed. Unexpected exception while getting guest token.");
+                }
+            } else {
+                setGuestTokenInternal(response.getToken());
+            }
+        }
+
+        protected boolean isAccessTokenExpired(@Nullable String message) {
+            return "Token has expired".equals(message);
+        }
     }
 }

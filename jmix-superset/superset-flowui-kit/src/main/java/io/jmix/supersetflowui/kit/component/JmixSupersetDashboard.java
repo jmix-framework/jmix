@@ -32,8 +32,6 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     private static final String PROPERTY_CHART_CONTROLS_VISIBLE = "chartControlsVisible";
     private static final String PROPERTY_FILTERS_EXPANDED = "filtersExpanded";
 
-    protected String url;
-
     /**
      * @return dashboard embedded ID or {@code null} if not set
      */
@@ -53,27 +51,6 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
      */
     public void setEmbeddedId(String embeddedId) {
         getElement().setProperty(PROPERTY_EMBEDDED_ID, embeddedId);
-    }
-
-    /**
-     * @return Superset URL or {@code null} if not set
-     */
-    public String getUrl() {
-        return url;
-    }
-
-    /**
-     * Sets a Superset URL. If not set, will be used URL from application property.
-     *
-     * @param url URL to set
-     */
-    public void setUrl(String url) {
-        this.url = url;
-        setUrlInternal(url);
-    }
-
-    protected void setUrlInternal(String url) {
-        getElement().setProperty(PROPERTY_URL, url);
     }
 
     /**
@@ -123,6 +100,10 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
 
     protected void setGuestTokenInternal(String guestToken) {
         getElement().setProperty(PROPERTY_GUEST_TOKEN, guestToken);
+    }
+
+    protected void setUrlInternal(String url) {
+        getElement().setProperty(PROPERTY_URL, url);
     }
 
     @ClientCallable

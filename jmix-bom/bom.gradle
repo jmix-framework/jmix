@@ -60,15 +60,15 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '24.1.1'
+def vaadinFlowVersion = '24.3.12'
 
 javaPlatform {
     allowDependencies()
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.1.0")
-    api platform('software.amazon.awssdk:bom:2.16.69')
+    api platform("org.springframework.boot:spring-boot-dependencies:3.2.6")
+    api platform('software.amazon.awssdk:bom:2.25.60')
 
     def freeVersion = version
     def premiumVersion = version
@@ -118,6 +118,10 @@ dependencies {
         api "io.jmix.core:jmix-core:$freeVersion"
         api "io.jmix.core:jmix-core-starter:$freeVersion"
 
+        api "io.jmix.charts:jmix-charts-flowui:$freeVersion"
+        api "io.jmix.charts:jmix-charts-flowui-kit:$freeVersion"
+        api "io.jmix.charts:jmix-charts-flowui-starter:$freeVersion"
+
         api "io.jmix.dashboards:jmix-dashboards:$freeVersion"
         api "io.jmix.dashboards:jmix-dashboards-starter:$freeVersion"
         api "io.jmix.dashboards:jmix-dashboards-chart:$freeVersion"
@@ -138,6 +142,9 @@ dependencies {
 
         api "io.jmix.dynattr:jmix-dynattr:$freeVersion"
         api "io.jmix.dynattr:jmix-dynattr-starter:$freeVersion"
+        api "io.jmix.dynattr:jmix-dynattr-flowui:$freeVersion"
+        api "io.jmix.dynattr:jmix-dynattr-flowui-kit:$freeVersion"
+        api "io.jmix.dynattr:jmix-dynattr-flowui-starter:$freeVersion"
 
         api "io.jmix.email:jmix-email:$freeVersion"
         api "io.jmix.email:jmix-email-flowui:$freeVersion"
@@ -169,6 +176,9 @@ dependencies {
 
         api "io.jmix.maps:jmix-maps:$premiumVersion"
         api "io.jmix.maps:jmix-maps-starter:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-flowui:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-flowui-kit:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-flowui-starter:$premiumVersion"
 
         api "io.jmix.multitenancy:jmix-multitenancy:$freeVersion"
         api "io.jmix.multitenancy:jmix-multitenancy-flowui:$freeVersion"
@@ -178,10 +188,16 @@ dependencies {
         api "io.jmix.notifications:jmix-notifications:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-starter:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-flowui:$premiumVersion"
+        api "io.jmix.notifications:jmix-notifications-flowui-kit:$premiumVersion"
         api "io.jmix.notifications:jmix-notifications-flowui-starter:$premiumVersion"
 
         api "io.jmix.oidc:jmix-oidc:$freeVersion"
         api "io.jmix.oidc:jmix-oidc-starter:$freeVersion"
+
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock:$freeVersion"
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock-starter:$freeVersion"
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock-flowui:$freeVersion"
+        api "io.jmix.pessimisticlock:jmix-pessimisticlock-flowui-starter:$freeVersion"
 
         api "io.jmix.quartz:jmix-quartz:$freeVersion"
         api "io.jmix.quartz:jmix-quartz-starter:$freeVersion"
@@ -195,12 +211,18 @@ dependencies {
         api "io.jmix.reports:jmix-reports-flowui:$freeVersion"
         api "io.jmix.reports:jmix-reports-flowui-starter:$freeVersion"
 
+        api "io.jmix.jmxconsole:jmix-jmxconsole:$freeVersion"
+        api "io.jmix.jmxconsole:jmix-jmxconsole-starter:$freeVersion"
+
         api "io.jmix.rest:jmix-rest:$freeVersion"
         api "io.jmix.rest:jmix-rest-starter:$freeVersion"
 
         api "io.jmix.search:jmix-search:$freeVersion"
         api "io.jmix.search:jmix-search-starter:$freeVersion"
         api "io.jmix.search:jmix-search-aws-starter:$freeVersion"
+        api "io.jmix.search:jmix-search-flowui:$freeVersion"
+        api "io.jmix.search:jmix-search-flowui-kit:$freeVersion"
+        api "io.jmix.search:jmix-search-flowui-starter:$freeVersion"
 
         api "io.jmix.security:jmix-security:$freeVersion"
         api "io.jmix.security:jmix-security-flowui:$freeVersion"
@@ -225,13 +247,18 @@ dependencies {
         api "io.jmix.translations:jmix-translations-it:$freeVersion"
         api "io.jmix.translations:jmix-translations-ar:$freeVersion"
         api "io.jmix.translations:jmix-translations-tr:$freeVersion"
+        api "io.jmix.translations:jmix-translations-es:$freeVersion"
+        api "io.jmix.translations:jmix-translations-pt-br:$freeVersion"
 
         api "io.jmix.webdav:jmix-webdav:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-starter:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest-starter:$premiumVersion"
+        api "io.jmix.webdav:jmix-webdav-flowui:$premiumVersion"
+        api "io.jmix.webdav:jmix-webdav-flowui-kit:$premiumVersion"
+        api "io.jmix.webdav:jmix-webdav-flowui-starter:$premiumVersion"
 
-        api 'com.google.guava:guava:31.1-jre'
+        api 'com.google.guava:guava:32.1.2-jre'
         api 'commons-io:commons-io:2.11.0'
 //        api 'javax.annotation:javax.annotation-api:1.3.2'
 //        api 'javax.inject:javax.inject:1'
@@ -243,11 +270,14 @@ dependencies {
 
 //        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
 
-        def eclipselinkOriginalVersion = '4.0.1'
-        def eclipselinkVersion = '4.0.1-15-jmix'
+        def eclipselinkOriginalVersion = '4.0.2'
+        def eclipselinkVersion = '4.0.2-3-jmix'
         api "org.eclipse.persistence:org.eclipse.persistence.core:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipselinkVersion"
         api "org.eclipse.persistence:org.eclipse.persistence.extension:$eclipselinkOriginalVersion"
+        api "org.eclipse.persistence:org.eclipse.persistence.oracle:$eclipselinkOriginalVersion"
+
+        api 'org.liquibase:liquibase-core:4.25.0'
 
         api 'org.glassfish:jakarta.el:4.0.2'
 
@@ -263,18 +293,11 @@ dependencies {
         api 'org.spockframework:spock-core:2.3-groovy-4.0'
         api 'org.spockframework:spock-spring:2.3-groovy-4.0'
 
-        api 'io.swagger.core.v3:swagger-models:2.1.11'
-        api 'io.swagger.core.v3:swagger-core:2.1.11'
+        api 'io.swagger.core.v3:swagger-models-jakarta:2.2.17'
+        api 'io.swagger.core.v3:swagger-core-jakarta:2.2.17'
 
         api 'com.icegreen:greenmail:2.0.0'
 
-        def geoToolsVersion = '24.6'
-        api "org.geotools:gt-main:$geoToolsVersion"
-        api "org.geotools:gt-geojson:$geoToolsVersion"
-        api "org.geotools:gt-referencing:$geoToolsVersion"
-        api "org.geotools:gt-epsg-hsql:$geoToolsVersion"
-        api "org.geotools:gt-epsg-extension:$geoToolsVersion"
-        api "org.geotools:gt-shapefile:$geoToolsVersion"
         api 'javax.media.jai:com.springsource.javax.media.jai.core:1.1.3'
 
         api 'com.thoughtworks.xstream:xstream:1.4.20'
@@ -314,16 +337,16 @@ dependencies {
         api "xalan:xalan:$xalanVersion"
         api "xalan:serializer:$xalanVersion"
 
-        api 'com.itextpdf:itextpdf:5.5.13.3'
+        api 'com.github.librepdf:openpdf:1.3.39'
 
         def poiVersion = '5.2.3'
         api "org.apache.poi:poi:$poiVersion"
         api "org.apache.poi:poi-ooxml:$poiVersion"
         api "org.apache.poi:poi-scratchpad:$poiVersion"
 
-        def xhtmlrendererVersion = '9.1.22'
+        def xhtmlrendererVersion = '9.4.0'
         api "org.xhtmlrenderer:flying-saucer-core:$xhtmlrendererVersion"
-        api "org.xhtmlrenderer:flying-saucer-pdf-itext5:$xhtmlrendererVersion"
+        api "org.xhtmlrenderer:flying-saucer-pdf-openpdf:$xhtmlrendererVersion"
 
         def openhtmltopdfVersion = '1.0.10'
         api "com.openhtmltopdf:openhtmltopdf-core:$openhtmltopdfVersion"
@@ -344,8 +367,7 @@ dependencies {
 
         api 'org.apache.tika:tika-parsers:1.27'
 
-        //todo SB3 Update flowable 7.0 to production version
-        def flowableVersion = '7.0.0.M1'
+        def flowableVersion = '7.0.1'
         api "org.flowable:flowable-spring-configurator:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-process:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn:$flowableVersion"
@@ -364,19 +386,12 @@ dependencies {
             }
         }
 
-        api 'com.opencsv:opencsv:5.5.2'
-
         api 'io.vavr:vavr:0.9.3'
         api 'org.jetbrains:annotations:22.0.0'
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
 
-        api('com.hazelcast:hazelcast') {
-            version {
-                strictly '5.2.2'
-                because 'https://github.com/hazelcast/hazelcast/issues/24705, till https://github.com/hazelcast/hazelcast/pull/24841 will be released (5.2.5?)'
-            }
-        }
+        api 'com.hazelcast:hazelcast:5.3.2'
     }
 }
 

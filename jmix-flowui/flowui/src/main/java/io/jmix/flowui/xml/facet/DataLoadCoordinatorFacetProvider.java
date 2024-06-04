@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.facet;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
@@ -26,26 +27,28 @@ import io.jmix.flowui.facet.impl.DataLoadCoordinatorImpl;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowui.sys.ViewControllerReflectionInspector;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
-
 import org.springframework.lang.Nullable;
 
 @org.springframework.stereotype.Component("flowui_DataLoadCoordinatorFacetProvider")
 public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadCoordinator> {
 
     protected LoaderSupport loaderSupport;
-    protected ViewControllerReflectionInspector reflectionInspector;
+    protected ReflectionCacheManager reflectionCacheManager;
+    protected QueryParamValuesManager queryParamValuesManager;
 
     public DataLoadCoordinatorFacetProvider(LoaderSupport loaderSupport,
-                                            ViewControllerReflectionInspector reflectionInspector) {
+                                            ReflectionCacheManager reflectionCacheManager,
+                                            QueryParamValuesManager queryParamValuesManager) {
         this.loaderSupport = loaderSupport;
-        this.reflectionInspector = reflectionInspector;
+        this.reflectionCacheManager = reflectionCacheManager;
+        this.queryParamValuesManager = queryParamValuesManager;
     }
 
     @Override
@@ -55,7 +58,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
     @Override
     public DataLoadCoordinator create() {
-        return new DataLoadCoordinatorImpl(reflectionInspector);
+        return new DataLoadCoordinatorImpl(reflectionCacheManager, queryParamValuesManager);
     }
 
     @Override

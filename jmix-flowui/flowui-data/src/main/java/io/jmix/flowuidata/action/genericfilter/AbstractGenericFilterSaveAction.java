@@ -46,12 +46,14 @@ import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.View;
+import io.jmix.flowuidata.component.genericfilter.configuration.UiDataFilterConfigurationDetail;
 import io.jmix.flowuidata.entity.FilterConfiguration;
 import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static io.jmix.flowui.app.inputdialog.InputParameter.booleanParameter;
@@ -278,6 +280,16 @@ public abstract class AbstractGenericFilterSaveAction<A extends AbstractGenericF
         if (target.getConfiguration(id) != null) {
             return ValidationErrors.of(messages.getMessage(LogicalFilterConditionDetailView.class,
                     "logicalFilterConditionDetailView.uniqueConfigurationId"));
+        }
+
+        if (uiComponentProperties.isFilterConfigurationUniqueNamesEnabled()) {
+            String name = validationContext.getValue("nameField");
+            boolean configurationWithSameNameExists = target.getConfigurations().stream()
+                    .anyMatch(conf -> Objects.equals(name, conf.getName()) && !conf.isAvailableForAllUsers());
+            if (configurationWithSameNameExists) {
+                return ValidationErrors.of(messages.getMessage(UiDataFilterConfigurationDetail.class,
+                        "nameField.nonUniqueUserName"));
+            }
         }
 
         return ValidationErrors.none();

@@ -16,15 +16,21 @@
 
 package io.jmix.flowui.sys.vaadin;
 
+import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.router.NavigationEvent;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.spring.SpringInstantiator;
-import io.jmix.flowui.view.View;
+import io.jmix.flowui.sys.BeforeNavigationInitializer;
 import io.jmix.flowui.sys.ViewSupport;
+import io.jmix.flowui.view.View;
 import org.springframework.context.ApplicationContext;
+
+import java.util.Collection;
 
 public class JmixSpringInstantiator extends SpringInstantiator {
 
     protected ApplicationContext applicationContext;
+    protected Collection<BeforeNavigationInitializer> beforeNavigationInitializers;
 
     /**
      * Creates a new spring instantiator instance.
@@ -35,6 +41,15 @@ public class JmixSpringInstantiator extends SpringInstantiator {
     public JmixSpringInstantiator(VaadinService service, ApplicationContext context) {
         super(service, context);
         this.applicationContext = context;
+        this.beforeNavigationInitializers = applicationContext.getBeansOfType(BeforeNavigationInitializer.class).values();//todo like for view support, get on demand?
+    }
+
+    @Override
+    public <T extends HasElement> T createRouteTarget(Class<T> routeTargetType, NavigationEvent event) {
+        final T instance = super.createRouteTarget(routeTargetType, event);
+        initBeforeNavigation(routeTargetType, event, instance);
+
+        return instance;
     }
 
     @Override
@@ -48,6 +63,14 @@ public class JmixSpringInstantiator extends SpringInstantiator {
     protected <T> void init(Class<T> type, T instance) {
         if (View.class.isAssignableFrom(type)) {
             getViewSupport().initView(((View) instance));
+        }
+    }
+
+    protected <T> void initBeforeNavigation(Class<T> routeTargetType, NavigationEvent event, T instance) {
+        if (View.class.isAssignableFrom(routeTargetType)) {
+            for (BeforeNavigationInitializer initializer : beforeNavigationInitializers) {
+                initializer.initialize((View<?>) instance, event);
+            }
         }
     }
 

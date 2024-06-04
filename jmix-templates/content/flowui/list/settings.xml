@@ -40,6 +40,27 @@
               code="entity"
               propertyType="ENTITY"
               required="true"/>
+
+    <property caption="Use Data Repositories"
+              code="useDataRepositories"
+              propertyType="BOOLEAN"
+              defaultValue="false"
+              advanced="true"/>
+    <property caption="Repository"
+              code="repository"
+              propertyType="DATA_REPOSITORY"
+              advanced="true">
+         <dynamicAttribute name="enabled" source="${useDataRepositories}">
+            <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="visible" source="${useDataRepositories}">
+            <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="required" source="${useDataRepositories}">
+            <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+    </property>
+
     <property caption="Entity fetch plan"
               code="listFetchPlan"
               step="1"
@@ -61,7 +82,7 @@
               defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
               preferences="true"
-              optionsString="${actionSearch.getWizardTableActions()}"/>
+              optionsString="${actionSearch.getWizardTableActions(api.jmixProjectModule)}"/>
     <property caption="Create generic filter"
               code="createGenericFilter"
               defaultValue="true"
@@ -71,6 +92,16 @@
               code="multiselect"
               propertyType="BOOLEAN"
               preferences="true"/>
+    <property caption="Column reordering"
+              code="columnReorderingAllowed"
+              propertyType="BOOLEAN"
+              preferences="true"
+              defaultValue="true"/>
+    <property caption="Resizable columns"
+              code="resizableColumns"
+              propertyType="BOOLEAN"
+              preferences="true"
+              defaultValue="true"/>
 
     <property caption="Descriptor name"
               code="viewDescriptorName"
@@ -113,6 +144,12 @@
               valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
         <dependency code="entity"/>
     </property>
+
+    <property caption="View route layout"
+              code="routeLayout"
+              propertyType="FLOW_VIEW_ROUTE_LAYOUT"
+              visible="false"
+              advanced="true"/>
 
     <property caption="Parent menu item"
               code="menuItem"

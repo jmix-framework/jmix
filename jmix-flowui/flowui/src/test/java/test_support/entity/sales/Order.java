@@ -69,6 +69,10 @@ public class Order extends TestBaseEntity {
     @OneToMany(mappedBy = "order")
     protected List<OrderLine> orderLines;
 
+    @Column(name = "DESCRIPTION")
+    @Lob
+    private String description;
+
     public Double getTotal() {
         return total;
     }
@@ -139,6 +143,15 @@ public class Order extends TestBaseEntity {
 
     public void setOrderLines(List<OrderLine> orderLines) {
         this.orderLines = orderLines;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Order setDescription(String description) {
+        this.description = description;
+        return this;
     }
 
     @InstanceName

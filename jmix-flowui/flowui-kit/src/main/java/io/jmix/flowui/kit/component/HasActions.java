@@ -19,6 +19,8 @@ package io.jmix.flowui.kit.component;
 import io.jmix.flowui.kit.action.Action;
 
 import jakarta.annotation.Nullable;
+
+import java.util.ArrayList;
 import java.util.Collection;
 
 public interface HasActions {
@@ -39,7 +41,7 @@ public interface HasActions {
     }
 
     default void removeAllActions() {
-        getActions().forEach(this::removeAction);
+        new ArrayList<>(getActions()).forEach(this::removeAction);
     }
 
     Collection<Action> getActions();

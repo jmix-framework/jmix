@@ -38,6 +38,11 @@ public class UiProperties {
     String mainViewId;
 
     /**
+     * View that should be opened after login. This setting will be applied to all users.
+     */
+    String defaultViewId;
+
+    /**
      * Defines whether menu should be built with menu items from add-ons. {@code true} means using menu items from
      * add-ons, {@code false} - using only menu configuration from the application. The default value is {@code true}.
      */
@@ -65,8 +70,14 @@ public class UiProperties {
      */
     boolean useSessionFixationProtection;
 
+    /**
+     * Whether to set security context to request thread when websocket request from client side is processed.
+     */
+    boolean websocketRequestSecurityContextProvided;
+
     public UiProperties(@DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
+                        @Nullable String defaultViewId,
                         @DefaultValue("true") boolean compositeMenu,
                         @DefaultValue("10000") Integer defaultMaxFetchSize,
                         @Nullable Map<String, Integer> entityMaxFetchSize,
@@ -74,10 +85,12 @@ public class UiProperties {
                         @Nullable Map<String, Integer> entityPageSize,
                         @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
                         @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
-                        @DefaultValue("true") boolean useSessionFixationProtection
+                        @DefaultValue("true") boolean useSessionFixationProtection,
+                        @DefaultValue("false") boolean websocketRequestSecurityContextProvided
     ) {
         this.loginViewId = loginViewId;
         this.mainViewId = mainViewId;
+        this.defaultViewId = defaultViewId;
         this.compositeMenu = compositeMenu;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
@@ -86,6 +99,7 @@ public class UiProperties {
         this.viewFileExtensions = viewFileExtensions;
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.useSessionFixationProtection = useSessionFixationProtection;
+        this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
     }
 
     /**
@@ -100,6 +114,14 @@ public class UiProperties {
      */
     public String getMainViewId() {
         return mainViewId;
+    }
+
+    /**
+     * @see #defaultViewId
+     */
+    @Nullable
+    public String getDefaultViewId() {
+        return defaultViewId;
     }
 
     /**
@@ -150,5 +172,12 @@ public class UiProperties {
      */
     public boolean isUseSessionFixationProtection() {
         return useSessionFixationProtection;
+    }
+
+    /**
+     * @see #websocketRequestSecurityContextProvided
+     */
+    public boolean isWebsocketRequestSecurityContextProvided() {
+        return websocketRequestSecurityContextProvided;
     }
 }

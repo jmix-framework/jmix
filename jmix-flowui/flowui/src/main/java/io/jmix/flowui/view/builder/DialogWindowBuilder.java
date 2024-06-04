@@ -50,4 +50,9 @@ public interface DialogWindowBuilder<V extends View<?>> {
      * @return after close dialog listener
      */
     Optional<Consumer<AfterCloseEvent<V>>> getAfterCloseListener();
+
+    /**
+     * @return dialog view configurer
+     */
+    Optional<Consumer<V>> getViewConfigurer();
 }

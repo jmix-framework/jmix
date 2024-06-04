@@ -24,4 +24,11 @@ public class ArticleLoader extends AbstractHtmlContainerLoader<Article> {
     protected Article createComponent() {
         return factory.create(Article.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

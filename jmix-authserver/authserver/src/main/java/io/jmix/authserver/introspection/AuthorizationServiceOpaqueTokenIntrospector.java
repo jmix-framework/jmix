@@ -37,6 +37,7 @@ import java.util.Collection;
  * <ul>
  *     <li>For AUTHORIZATION_CODE grant type, roles of authenticated user are used</li>
  *     <li>For CLIENT_CREDENTIALS grant type, roles specified for the client in the properties file are used</li>
+ *     <li>For PASSWORD grant type, roles of authenticated user are used</li>
  * </ul>
  *
  *
@@ -64,18 +65,24 @@ public class AuthorizationServiceOpaqueTokenIntrospector implements OpaqueTokenI
         }
         String principalName = authorization.getPrincipalName();
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        if  (authorization.getAuthorizationGrantType() == AuthorizationGrantType.AUTHORIZATION_CODE) {
+        if  (AuthorizationGrantType.AUTHORIZATION_CODE.equals(authorization.getAuthorizationGrantType())) {
             Object principal = authorization.getAttribute(Principal.class.getCanonicalName());
             if  (principal instanceof Authentication) {
                 principalName = ((Authentication) principal).getName();
                 authorities.addAll(((Authentication) principal).getAuthorities());
             }
-        } else if  (authorization.getAuthorizationGrantType() == AuthorizationGrantType.CLIENT_CREDENTIALS) {
+        } else if (AuthorizationGrantType.CLIENT_CREDENTIALS.equals(authorization.getAuthorizationGrantType())) {
             principalName = authorization.getPrincipalName();
             try {
                 authorities.addAll(introspectorRolesHelper.getClientGrantedAuthorities(principalName));
             } catch (UsernameNotFoundException e) {
                 throw new BadOpaqueTokenException("User " + principalName + " not found");
+            }
+        } else if (AuthorizationGrantType.PASSWORD.equals(authorization.getAuthorizationGrantType())) {
+            Object principal = authorization.getAttribute(Principal.class.getCanonicalName());
+            if (principal instanceof Authentication) {
+                principalName = ((Authentication) principal).getName();
+                authorities.addAll(((Authentication) principal).getAuthorities());
             }
         }
         return new UserDetailsOAuth2AuthenticatedPrincipal(principalName, authorization.getAttributes(), authorities);

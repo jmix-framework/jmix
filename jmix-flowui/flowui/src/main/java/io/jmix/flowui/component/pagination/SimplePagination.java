@@ -22,8 +22,9 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.LoadContext;
+import io.jmix.core.DataLoadContext;
 import io.jmix.core.Messages;
+import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -49,6 +50,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -84,7 +86,7 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     protected Registration totalCountLabelClickRegistration;
     protected Registration itemsPerPageValueChangeRegistration;
 
-    protected Function<LoadContext, Integer> totalCountDelegate;
+    protected Function<DataLoadContext, Integer> totalCountDelegate;
 
     protected boolean samePage;
     protected boolean lastPage = false;
@@ -231,12 +233,12 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
 
     @Nullable
     @Override
-    public Function<LoadContext, Integer> getTotalCountDelegate() {
+    public Function<DataLoadContext, Integer> getTotalCountDelegate() {
         return totalCountDelegate;
     }
 
     @Override
-    public void setTotalCountDelegate(@Nullable Function<LoadContext, Integer> totalCountDelegate) {
+    public void setTotalCountDelegate(@Nullable Function<DataLoadContext, Integer> totalCountDelegate) {
         this.totalCountDelegate = totalCountDelegate;
 
         if (loader != null) {
@@ -486,6 +488,10 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     }
 
     protected void updateNavigationButtonsAvailability() {
+        // QueryTransformer can't create count query for KeyValueEntity,
+        // so we hide count and last buttons if DataBinder is bound to KeyValueEntity.
+        boolean canBeVisible = !isKeyValueEntity();
+
         switch (state) {
             case FIRST_COMPLETE:
                 firstButton.setEnabled(false);
@@ -497,16 +503,16 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
             case FIRST_INCOMPLETE:
                 firstButton.setEnabled(false);
                 previousButton.setEnabled(false);
-                getTotalCountLabel().setVisible(true);
+                getTotalCountLabel().setVisible(canBeVisible);
                 nextButton.setEnabled(true);
-                lastButton.setEnabled(true);
+                lastButton.setEnabled(canBeVisible);
                 break;
             case MIDDLE:
                 firstButton.setEnabled(true);
                 previousButton.setEnabled(true);
-                getTotalCountLabel().setVisible(true);
+                getTotalCountLabel().setVisible(canBeVisible);
                 nextButton.setEnabled(true);
-                lastButton.setEnabled(true);
+                lastButton.setEnabled(canBeVisible);
                 break;
             case LAST:
                 firstButton.setEnabled(true);
@@ -545,7 +551,10 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
                 break;
             case FIRST_INCOMPLETE:
             case MIDDLE:
-                msgKey = "pagination.msg1";
+                // QueryTransformer can't create count query for KeyValueEntity,
+                // so we return message without 'of' regardless the state,
+                // because we don't display the count button.
+                msgKey = isKeyValueEntity() ? "pagination.msg2Plural1" : "pagination.msg1";
                 break;
             case LAST:
                 msgKey = "pagination.msg2Plural2";
@@ -670,5 +679,31 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
         AfterRefreshEvent<SimplePagination> event = new AfterRefreshEvent<>(this);
 
         fireEvent(event);
+    }
+
+    @Nullable
+    protected Integer getItemsPerPageValue() {
+        return isItemsPerPageVisible() ? itemsPerPage.getItemsPerPageValue() : null;
+    }
+
+    protected void setItemsPerPageValue(@Nullable Integer value) {
+        if (!isItemsPerPageVisible()) {
+            return;
+        }
+
+        if (value != null && itemsPerPage.containsItem(value)) {
+            setSilentlyItemsPerPageValue(value);
+            loader.setMaxResults(value);
+        } else if (canSetUnlimitedValue(value)) {
+            setSilentlyItemsPerPageValue(null);
+            loader.setMaxResults(getEntityMaxFetchSize(loader.getEntityMetaClass()));
+        } else {
+            log.debug("Options for items-per-page dropdown list do not contain '{}' value."
+                    + " The value is not set.", value);
+        }
+    }
+
+    protected boolean isKeyValueEntity() {
+        return loader.getEntityMetaClass() instanceof KeyValueMetaClass;
     }
 }

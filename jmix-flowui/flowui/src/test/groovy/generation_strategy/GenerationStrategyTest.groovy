@@ -18,6 +18,7 @@ package generation_strategy
 
 import io.jmix.core.Metadata
 import io.jmix.core.metamodel.model.MetaClass
+import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction
 import io.jmix.flowui.component.ComponentGenerationContext
 import io.jmix.flowui.component.UiComponentsGenerator
 import io.jmix.flowui.component.checkbox.JmixCheckbox
@@ -36,7 +37,6 @@ import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.InstanceContainer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import spock.lang.Ignore
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
@@ -107,7 +107,6 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
         userInstanceContainer.setItem(user)
     }
 
-    @Ignore
     def "Generate component for collection attribute"() {
         when: "MetaProperty is collection"
 
@@ -120,6 +119,9 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
 
         then: "JmixMultiValuePicker component will be generated"
         component instanceof JmixMultiValuePicker
+        (component as JmixMultiValuePicker).getAction(MultiValueSelectAction.ID) != null
+        ((component as JmixMultiValuePicker).getAction(MultiValueSelectAction.ID) as MultiValueSelectAction)
+                .getEntityName() == "test_OrderLine"
     }
 
     def "Generate component for association attribute without items"() {

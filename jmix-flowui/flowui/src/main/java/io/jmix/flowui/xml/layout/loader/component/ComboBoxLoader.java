@@ -44,6 +44,7 @@ public class ComboBoxLoader extends AbstractComboBoxLoader<JmixComboBox<?>> {
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadRequired(resultComponent, element, context);
+        componentLoader().loadDatatype(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

@@ -22,16 +22,16 @@ import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.TemporalType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.LockModeType;
-import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
@@ -270,7 +270,7 @@ public class FluentLoader<E> {
         /**
          * Loads a single instance.
          *
-         * @throws IllegalStateException if nothing was loaded
+         * @throws NoResultException if nothing was loaded
          */
         public E one() {
             if (id != null) {
@@ -280,7 +280,7 @@ public class FluentLoader<E> {
                     return entity;
                 }
             }
-            throw new IllegalStateException("No results");
+            throw new NoResultException();
         }
 
         /**
@@ -580,7 +580,7 @@ public class FluentLoader<E> {
         /**
          * Loads a single instance.
          *
-         * @throws IllegalStateException if nothing was loaded
+         * @throws NoResultException if nothing was loaded
          */
         public E one() {
             LoadContext<E> loadContext = createLoadContext();
@@ -588,7 +588,7 @@ public class FluentLoader<E> {
             if (entity != null)
                 return entity;
             else
-                throw new IllegalStateException("No results");
+                throw new NoResultException();
         }
 
         /**
@@ -829,7 +829,7 @@ public class FluentLoader<E> {
         /**
          * Loads a single instance.
          *
-         * @throws IllegalStateException if nothing was loaded
+         * @throws NoResultException if nothing was loaded
          */
         public E one() {
             LoadContext<E> loadContext = createLoadContext();
@@ -837,7 +837,7 @@ public class FluentLoader<E> {
             if (entity != null)
                 return entity;
             else
-                throw new IllegalStateException("No results");
+                throw new NoResultException();
         }
 
         /**

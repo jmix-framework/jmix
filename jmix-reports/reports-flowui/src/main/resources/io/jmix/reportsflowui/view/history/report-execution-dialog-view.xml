@@ -71,9 +71,10 @@
                   dataContainer="reportsDc"
                   selectionMode="MULTI"
                   enabled="false"
+                  columnReorderingAllowed="true"
                   minHeight="20em"
                   width="100%">
-            <columns>
+            <columns resizable="true">
                 <column property="group"/>
                 <column property="description"/>
                 <column property="code"/>

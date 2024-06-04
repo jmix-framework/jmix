@@ -16,6 +16,7 @@
 
 import '@vaadin/input-container/src/vaadin-input-container.js';
 import { html, PolymerElement } from '@polymer/polymer';
+import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
 import { TooltipController } from '@vaadin/component-base/src/tooltip-controller.js';
 import { InputController } from '@vaadin/field-base/src/input-controller.js';
@@ -129,6 +130,7 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
 
         this._tooltipController = new TooltipController(this);
         this._tooltipController.setPosition('top');
+        this._tooltipController.setAriaTarget(this.inputElement);
         this.addController(this._tooltipController);
     }
 
@@ -140,6 +142,10 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
 
         super._onInput(event);
     }
+
+    checkValidity() {
+        return !this.invalid && super.checkValidity();
+    }
 }
 
-customElements.define(JmixValuePicker.is, JmixValuePicker);
+defineCustomElement(JmixValuePicker);

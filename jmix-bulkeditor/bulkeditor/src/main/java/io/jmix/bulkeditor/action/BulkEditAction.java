@@ -25,7 +25,6 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.list.SecuredListDataComponentAction;
@@ -56,9 +55,7 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
 
     public static final String ID = "bulked_edit";
 
-    protected Messages messages;
     protected BulkEditors bulkEditors;
-    protected DialogWindows dialogWindows;
 
     protected String exclude;
     protected Function<List<MetaProperty>, Map<MetaProperty, Integer>> fieldSorter;
@@ -140,7 +137,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
 
     @Autowired
     protected void setMessages(Messages messages) {
-        this.messages = messages;
         this.text = messages.getMessage("actions.BulkEdit");
     }
 
@@ -153,11 +149,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
         accessManager.applyRegisteredConstraints(context);
 
         visibleBySpecificUiPermission = context.isPermitted();
-    }
-
-    @Autowired
-    public void setDialogWindows(DialogWindows dialogWindows) {
-        this.dialogWindows = dialogWindows;
     }
 
     @Override

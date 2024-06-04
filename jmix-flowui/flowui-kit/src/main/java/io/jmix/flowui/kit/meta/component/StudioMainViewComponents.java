@@ -17,8 +17,9 @@
 package io.jmix.flowui.kit.meta.component;
 
 import com.vaadin.flow.component.applayout.AppLayout;
-import io.jmix.flowui.kit.component.main.ListMenu;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.kit.component.main.UserIndicator;
+import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
@@ -26,33 +27,6 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
 public interface StudioMainViewComponents {
-
-    @StudioComponent(
-            name = "ListMenu",
-            classFqn = "io.jmix.flowui.component.main.JmixListMenu",
-            category = "Main View",
-            xmlElement = "listMenu",
-            icon = "io/jmix/flowui/kit/meta/icon/mainview/listMenu.svg",
-            availablePlaceRegExp = "(^(mainView/appLayout)?((/drawerLayout)|(/navigationBar))$)" +
-                    "|(^((mainView/appLayout)?((/drawerLayout)|(/navigationBar)))?(/hasComponents)*$)",
-            properties = {
-                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "loadMenuConfig", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "metaClass", type = StudioPropertyType.ENTITY_NAME),
-                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
-            }
-    )
-    ListMenu listMenu();
-
     @StudioComponent(
             name = "AppLayout",
             classFqn = "com.vaadin.flow.component.applayout.AppLayout",
@@ -62,6 +36,7 @@ public interface StudioMainViewComponents {
             availablePlaceRegExp = "^mainView$",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "drawerOpened", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "primarySection", type = StudioPropertyType.ENUMERATION,
@@ -82,6 +57,7 @@ public interface StudioMainViewComponents {
                     "|(^((mainView/appLayout)?((/drawerLayout)|(/navigationBar)))?(/hasComponents)*$)",
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -97,4 +73,25 @@ public interface StudioMainViewComponents {
             }
     )
     UserIndicator userIndicator();
+
+    @StudioComponent(
+            name = "MainView",
+            xmlElement = "mainView",
+            classFqn = "io.jmix.flowui.app.main.StandardMainView",
+            icon = "io/jmix/flowui/kit/meta/icon/mainview/mainView.svg",
+            availablePlaceRegExp = "",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "data", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "facets", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "actions", maxCount = 1),
+                            @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "appLayout", maxCount = 1)
+                    }
+            ),
+            properties = {
+                    @StudioProperty(xmlAttribute = "messagesGroup", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    VerticalLayout mainView();
 }

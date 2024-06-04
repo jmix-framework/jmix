@@ -24,4 +24,11 @@ public class SpanLoader extends AbstractHtmlContainerLoader<Span> {
     protected Span createComponent() {
         return factory.create(Span.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

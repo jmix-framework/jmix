@@ -17,12 +17,12 @@
 package io.jmix.core;
 
 import io.jmix.core.entity.KeyValueEntity;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.TemporalType;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.LockModeType;
-import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.*;
 
@@ -63,7 +63,7 @@ public class FluentValuesLoader extends AbstractFluentValueLoader {
     /**
      * Loads a single instance.
      *
-     * @throws IllegalStateException if nothing was loaded
+     * @throws NoResultException if nothing was loaded
      */
     public KeyValueEntity one() {
         ValueLoadContext loadContext = createLoadContext();
@@ -72,7 +72,7 @@ public class FluentValuesLoader extends AbstractFluentValueLoader {
         if (!list.isEmpty())
             return list.get(0);
         else
-            throw new IllegalStateException("No results");
+            throw new NoResultException("No results");
     }
 
     /**

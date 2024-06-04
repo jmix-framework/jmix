@@ -20,6 +20,7 @@ import io.jmix.reports.yarg.structure.BandData;
 import org.docx4j.dml.chart.CTChartSpace;
 import org.docx4j.dml.spreadsheetdrawing.CTDrawing;
 import org.docx4j.dml.spreadsheetdrawing.CTMarker;
+import org.docx4j.dml.spreadsheetdrawing.CTOneCellAnchor;
 import org.docx4j.dml.spreadsheetdrawing.CTTwoCellAnchor;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
@@ -31,9 +32,32 @@ import org.docx4j.openpackaging.parts.SpreadsheetML.SharedStrings;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
 import org.docx4j.relationships.Relationship;
-import org.xlsx4j.sml.*;
+import org.jvnet.jaxb2_commons.ppp.Child;
+import org.springframework.lang.Nullable;
+import org.xlsx4j.sml.CTDefinedName;
+import org.xlsx4j.sml.CTMergeCells;
+import org.xlsx4j.sml.CTPageBreak;
+import org.xlsx4j.sml.CTRElt;
+import org.xlsx4j.sml.CTRst;
+import org.xlsx4j.sml.CTSst;
+import org.xlsx4j.sml.CTStylesheet;
+import org.xlsx4j.sml.Cell;
+import org.xlsx4j.sml.Col;
+import org.xlsx4j.sml.Cols;
+import org.xlsx4j.sml.Row;
+import org.xlsx4j.sml.STCellType;
+import org.xlsx4j.sml.Sheet;
+import org.xlsx4j.sml.SheetData;
+import org.xlsx4j.sml.Workbook;
+import org.xlsx4j.sml.Worksheet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Document {
     protected SpreadsheetMLPackage thePackage;
@@ -105,6 +129,7 @@ public class Document {
 
     public String getCellValue(Cell cell) {
         if (cell.getV() == null) return null;
+        if (cell.getV().isEmpty()) return cell.getV();
         if (cell.getT().equals(STCellType.S)) {
             CTSst jaxbElement;
             try {
@@ -184,6 +209,36 @@ public class Document {
         return null;
     }
 
+    public StyleSheet.CellXfs getCellStyle(Cell cell) {
+        return styleSheet.getCellStyle(cell.getS());
+    }
+
+    @Nullable
+    public StyleSheet.Font getCellFont(Cell cell) {
+        StyleSheet.CellXfs cellStyle = styleSheet.getCellStyle(cell.getS());
+        if (cellStyle == null || cellStyle.getFontId() == null) {
+            return null;
+        }
+        return styleSheet.getFont(cellStyle.getFontId());
+    }
+
+    @Nullable
+    public Double getColumnWidth(CellReference cellReference) {
+        Worksheet sheet = getSheetByName(cellReference.getSheet());
+        return sheet.getCols()
+                .stream()
+                .map(Cols::getCol)
+                .flatMap(Collection::stream)
+                .filter(col -> col.getMin() <= cellReference.getColumn() && cellReference.getColumn() <= col.getMax())
+                .findFirst()
+                .map(Col::getWidth)
+                .orElse(sheet.getSheetFormatPr() != null ? sheet.getSheetFormatPr().getDefaultColWidth() : null);
+    }
+
+    public StyleSheet.Font getDefaultFont() {
+        return styleSheet.getFont(0L);
+    }
+
     public StyleSheet getStyleSheet() {
         return styleSheet;
     }
@@ -215,20 +270,32 @@ public class Document {
                     Object anchorObj = ctDrawing.getEGAnchor().get(chartNum++);
 
                     Range range = null;
-                    CTTwoCellAnchor ctTwoCellAnchor = null;
-                    if (anchorObj instanceof CTTwoCellAnchor) {
-                        ctTwoCellAnchor = (CTTwoCellAnchor) anchorObj;
-                        CTMarker from = ctTwoCellAnchor.getFrom();
-                        CTMarker to = ctTwoCellAnchor.getTo();
-                        String sheetName = worksheets.get(worksheets.size() - 1).name;
-                        range = new Range(sheetName, from.getCol() + 1, from.getRow() + 1, to.getCol() + 1, to.getRow() + 1);
-                    }
+                    if (anchorObj != null) {
+                        CTMarker from = null;
+                        CTMarker to = null;
+                        Child specificAnchor = null;
+                        if (anchorObj instanceof CTOneCellAnchor ctOneCellAnchor) {
+                            from = ctOneCellAnchor.getFrom();
+                            to = ctOneCellAnchor.getFrom();
+                            specificAnchor = ctOneCellAnchor;
+                        } else if (anchorObj instanceof CTTwoCellAnchor ctTwoCellAnchor) {
+                            from = ctTwoCellAnchor.getFrom();
+                            to = ctTwoCellAnchor.getTo();
+                            specificAnchor = ctTwoCellAnchor;
+                        }
 
-                    chartSpaces.put(range, new ChartWrapper((CTChartSpace) o, drawing, ctTwoCellAnchor));
+                        if (from != null && to != null) {
+                            String sheetName = worksheets.get(worksheets.size() - 1).name;
+                            range = new Range(sheetName, from.getCol() + 1, from.getRow() + 1, to.getCol() + 1, to.getRow() + 1);
+                            chartSpaces.put(range, new ChartWrapper((CTChartSpace) o, drawing, specificAnchor));
+                        }
+                    } else {
+                        chartSpaces.put(range, new ChartWrapper((CTChartSpace) o, drawing, null));
+                    }
                 }
 
                 if (o instanceof CTStylesheet) {
-                    styleSheet = new StyleSheet((CTStylesheet)o);
+                    styleSheet = new StyleSheet((CTStylesheet) o);
 
                 }
 
@@ -311,9 +378,9 @@ public class Document {
     public static class ChartWrapper {
         private final CTChartSpace chartSpace;
         private final Drawing drawing;
-        private final CTTwoCellAnchor anchor;
+        private final Child anchor;
 
-        public ChartWrapper(CTChartSpace chartSpace, Drawing drawing, CTTwoCellAnchor anchor) {
+        public ChartWrapper(CTChartSpace chartSpace, Drawing drawing, Child anchor) {
             this.chartSpace = chartSpace;
             this.drawing = drawing;
             this.anchor = anchor;
@@ -327,7 +394,7 @@ public class Document {
             return drawing;
         }
 
-        public CTTwoCellAnchor getAnchor() {
+        public Child getAnchor() {
             return anchor;
         }
     }

@@ -16,11 +16,12 @@
 
 package io.jmix.flowui.data.pagination;
 
-import io.jmix.core.LoadContext;
+import io.jmix.core.DataLoadContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.model.CollectionChangeType;
 
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -80,13 +81,13 @@ public interface PaginationDataLoader {
      * @return total count delegate or {@code null} otherwise
      */
     @Nullable
-    Function<LoadContext, Integer> getTotalCountDelegate();
+    Function<DataLoadContext, Integer> getTotalCountDelegate();
 
     /**
      * Sets delegate which is used to get the total count of items.
      *
-     * @param totalCountDelegate function that takes current {@link LoadContext} of loader and return calculated
-     *                          total count
+     * @param totalCountDelegate function that takes current {@link DataLoadContext} of loader and return calculated
+     *                           total count
      */
-    void setTotalCountDelegate(@Nullable Function<LoadContext, Integer> totalCountDelegate);
+    void setTotalCountDelegate(@Nullable Function<DataLoadContext, Integer> totalCountDelegate);
 }

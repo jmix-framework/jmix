@@ -1,0 +1,48 @@
+{
+  "series": [
+    {
+      "type": "radar",
+      "id": "radarId",
+      "name": "radarName",
+      "colorBy": "series",
+      "radarIndex": 5,
+      "symbol": "diamond",
+      "symbolSize": 21,
+      "symbolRotate": 12,
+      "symbolKeepAspect": false,
+      "symbolOffset": [
+        "0",
+        "50%"
+      ],
+      "areaStyle": {
+        "color": "#FFFFF0",
+        "shadowBlur": 21,
+        "shadowColor": "#FFFFF0",
+        "shadowOffsetX": 3,
+        "shadowOffsetY": 12,
+        "opacity": 0.5
+      },
+      "emphasis": {
+        "disabled": false,
+        "focus": "none",
+        "blurScope": "coordinateSystem"
+      },
+      "select": {
+        "disabled": false
+      },
+      "selectedMode": "single",
+      "dataGroupId": "group",
+      "zlevel": 1,
+      "z": 2,
+      "silent": false,
+      "animation": true,
+      "animationThreshold": 1501,
+      "animationDuration": 1500,
+      "animationEasing": "backOut",
+      "animationDelay": 15,
+      "animationDurationUpdate": 150,
+      "animationEasingUpdate": "cubicOut",
+      "animationDelayUpdate": 15
+    }
+  ]
+}

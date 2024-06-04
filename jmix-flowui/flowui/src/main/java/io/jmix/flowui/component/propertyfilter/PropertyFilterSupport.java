@@ -28,13 +28,16 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.impl.DatatypeRange;
 import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.flowui.app.propertyfilter.dateinterval.DateIntervalSupport;
+import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.net.URI;
+import java.sql.Time;
 import java.text.ParseException;
 import java.time.*;
 import java.util.*;
@@ -42,7 +45,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation.*;
-
 
 @Internal
 @Component("flowui_PropertyFilterSupport")
@@ -54,27 +56,27 @@ public class PropertyFilterSupport {
             Date.class, java.sql.Date.class, LocalDate.class, LocalDateTime.class, OffsetDateTime.class);
 
     protected static final List<Class<?>> timeClasses = ImmutableList.of(
-            java.sql.Time.class, LocalTime.class, OffsetTime.class);
+            Time.class, LocalTime.class, OffsetTime.class);
 
     protected Messages messages;
     protected MessageTools messageTools;
     protected MetadataTools metadataTools;
     protected DataManager dataManager;
     protected DatatypeRegistry datatypeRegistry;
-//    protected DateIntervalUtils dateIntervalUtils;
+    protected DateIntervalSupport dateIntervalSupport;
 
     public PropertyFilterSupport(Messages messages,
                                  MessageTools messageTools,
                                  MetadataTools metadataTools,
                                  DataManager dataManager,
-                                 DatatypeRegistry datatypeRegistry/*,
-            DateIntervalUtils dateIntervalUtils*/) {
+                                 DatatypeRegistry datatypeRegistry,
+                                 DateIntervalSupport dateIntervalSupport) {
         this.messages = messages;
         this.messageTools = messageTools;
         this.metadataTools = metadataTools;
         this.dataManager = dataManager;
         this.datatypeRegistry = datatypeRegistry;
-//        this.dateIntervalUtils = dateIntervalUtils;
+        this.dateIntervalSupport = dateIntervalSupport;
     }
 
     public String getOperationText(Operation operation) {
@@ -155,27 +157,33 @@ public class PropertyFilterSupport {
     public EnumSet<Operation> getAvailableOperations(MetaPropertyPath mpp) {
         Range mppRange = mpp.getRange();
 
-        if (mppRange.isClass() || mppRange.isEnum()) {
-            return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET/*, IN_LIST, NOT_IN_LIST*/);
+        if (mppRange.isEnum()) {
+            return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
+        } else if (mppRange.isClass()) {
+            if (mppRange.getCardinality().isMany()) {
+                return EnumSet.of(IS_COLLECTION_EMPTY, MEMBER_OF_COLLECTION, NOT_MEMBER_OF_COLLECTION);
+            } else {
+                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
+            }
         } else if (mppRange.isDatatype()) {
             Class<?> type = mppRange.asDatatype().getJavaClass();
 
             if (String.class.equals(type)) {
-                return EnumSet.of(CONTAINS, NOT_CONTAINS, EQUAL, NOT_EQUAL, IS_SET, STARTS_WITH, ENDS_WITH/*, IN_LIST,
-                        NOT_IN_LIST*/);
+                return EnumSet.of(CONTAINS, NOT_CONTAINS, EQUAL, NOT_EQUAL, IS_SET, STARTS_WITH, ENDS_WITH, IN_LIST,
+                        NOT_IN_LIST);
             } else if (dateTimeClasses.contains(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET/*, IN_LIST,
-                        NOT_IN_LIST, DATE_INTERVAL*/);
+                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
+                        NOT_IN_LIST, IN_INTERVAL);
             } else if (timeClasses.contains(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET/*,
-                        DATE_INTERVAL*/);
+                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET,
+                        IN_INTERVAL);
             } else if (Number.class.isAssignableFrom(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET/*, IN_LIST,
-                        NOT_IN_LIST*/);
+                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
+                        NOT_IN_LIST);
             } else if (Boolean.class.equals(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET);
             } else if (UUID.class.equals(type) || URI.class.equals(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET/*, IN_LIST, NOT_IN_LIST*/);
+                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
             } else {
                 log.warn("Cannot find predefined PropertyFilter operations for {} datatype. " +
                         "The default set of operations (EQUAL, NOT_EQUAL, IS_SET) will be used", type);
@@ -203,9 +211,13 @@ public class PropertyFilterSupport {
             throw new UnsupportedOperationException("Unsupported attribute name: " + property);
         }
 
-        return isStringDatatype(mpp)
-                ? CONTAINS
-                : EQUAL;
+        if (isStringDatatype(mpp)) {
+            return CONTAINS;
+        } else if (isCollectionDatatype(mpp)) {
+            return IS_COLLECTION_EMPTY;
+        } else {
+            return EQUAL;
+        }
     }
 
     protected boolean isStringDatatype(MetaPropertyPath mpp) {
@@ -213,39 +225,31 @@ public class PropertyFilterSupport {
         return range.isDatatype() && String.class.equals(range.asDatatype().getJavaClass());
     }
 
+    protected boolean isCollectionDatatype(MetaPropertyPath mpp) {
+        Range range = mpp.getMetaProperty().getRange();
+        return range.isClass() && range.getCardinality().isMany();
+    }
+
     public String toPropertyConditionOperation(Operation operation) {
-        switch (operation) {
-            case EQUAL:
-                return PropertyCondition.Operation.EQUAL;
-            case NOT_EQUAL:
-                return PropertyCondition.Operation.NOT_EQUAL;
-            case GREATER:
-                return PropertyCondition.Operation.GREATER;
-            case GREATER_OR_EQUAL:
-                return PropertyCondition.Operation.GREATER_OR_EQUAL;
-            case LESS:
-                return PropertyCondition.Operation.LESS;
-            case LESS_OR_EQUAL:
-                return PropertyCondition.Operation.LESS_OR_EQUAL;
-            case CONTAINS:
-                return PropertyCondition.Operation.CONTAINS;
-            case NOT_CONTAINS:
-                return PropertyCondition.Operation.NOT_CONTAINS;
-            case STARTS_WITH:
-                return PropertyCondition.Operation.STARTS_WITH;
-            case ENDS_WITH:
-                return PropertyCondition.Operation.ENDS_WITH;
-            case IS_SET:
-                return PropertyCondition.Operation.IS_SET;
-            /*case IN_LIST:
-                return PropertyCondition.Operation.IN_LIST;
-            case NOT_IN_LIST:
-                return PropertyCondition.Operation.NOT_IN_LIST;
-            case DATE_INTERVAL:
-                return PropertyCondition.Operation.IN_INTERVAL;*/
-            default:
-                throw new IllegalArgumentException("Unknown operation: " + operation);
-        }
+        return switch (operation) {
+            case EQUAL -> PropertyCondition.Operation.EQUAL;
+            case NOT_EQUAL -> PropertyCondition.Operation.NOT_EQUAL;
+            case GREATER -> PropertyCondition.Operation.GREATER;
+            case GREATER_OR_EQUAL -> PropertyCondition.Operation.GREATER_OR_EQUAL;
+            case LESS -> PropertyCondition.Operation.LESS;
+            case LESS_OR_EQUAL -> PropertyCondition.Operation.LESS_OR_EQUAL;
+            case CONTAINS -> PropertyCondition.Operation.CONTAINS;
+            case NOT_CONTAINS -> PropertyCondition.Operation.NOT_CONTAINS;
+            case STARTS_WITH -> PropertyCondition.Operation.STARTS_WITH;
+            case ENDS_WITH -> PropertyCondition.Operation.ENDS_WITH;
+            case IS_SET -> PropertyCondition.Operation.IS_SET;
+            case IN_LIST -> PropertyCondition.Operation.IN_LIST;
+            case NOT_IN_LIST -> PropertyCondition.Operation.NOT_IN_LIST;
+            case IN_INTERVAL -> PropertyCondition.Operation.IN_INTERVAL;
+            case IS_COLLECTION_EMPTY -> PropertyCondition.Operation.IS_COLLECTION_EMPTY;
+            case MEMBER_OF_COLLECTION -> PropertyCondition.Operation.MEMBER_OF_COLLECTION;
+            case NOT_MEMBER_OF_COLLECTION -> PropertyCondition.Operation.NOT_MEMBER_OF_COLLECTION;
+        };
     }
 
     /**
@@ -277,9 +281,7 @@ public class PropertyFilterSupport {
             DatatypeRange booleanRange = new DatatypeRange(datatypeRegistry.get(Boolean.class));
             return formatSingleDefaultValue(booleanRange, value);
         } else if (operationType == Type.INTERVAL) {
-            // TODO: gg, implement
-            throw new IllegalStateException("Not implemented yet");
-//            return dateIntervalUtils.formatDateInterval((BaseDateInterval) value);
+            return dateIntervalSupport.formatDateInterval((BaseDateInterval) value);
         } else {
             return formatSingleDefaultValue(range, value);
         }
@@ -322,9 +324,7 @@ public class PropertyFilterSupport {
             DatatypeRange booleanRange = new DatatypeRange(datatypeRegistry.get(Boolean.class));
             return parseSingleDefaultValue(booleanRange, value);
         } else if (operationType == Type.INTERVAL) {
-            // TODO: gg, implement
-            throw new IllegalStateException("Not implemented yet");
-//            return dateIntervalUtils.parseDateInterval(value);
+            return dateIntervalSupport.parseDateInterval(value);
         } else {
             return parseSingleDefaultValue(range, value);
         }

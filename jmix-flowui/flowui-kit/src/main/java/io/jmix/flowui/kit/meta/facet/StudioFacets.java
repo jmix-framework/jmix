@@ -30,6 +30,7 @@ public interface StudioFacets {
             category = "Facets",
             xmlElement = "dataLoadCoordinator",
             icon = "io/jmix/flowui/kit/meta/icon/facet/dataLoadCoordinator.svg",
+            documentationLink = "%VERSION%/flow-ui/facets/dataLoadCoordinator.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
@@ -47,6 +48,8 @@ public interface StudioFacets {
             classFqn = "io.jmix.flowui.facet.UrlQueryParametersFacet",
             category = "Facets",
             xmlElement = "urlQueryParameters",
+            icon = "io/jmix/flowui/kit/meta/icon/facet/urlQueryParameters.svg",
+            documentationLink = "%VERSION%/flow-ui/facets/urlQueryParameters.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
             }
@@ -59,12 +62,27 @@ public interface StudioFacets {
             category = "Facets",
             xmlElement = "timer",
             icon = "io/jmix/flowui/kit/meta/icon/facet/timer.svg",
+            documentationLink = "%VERSION%/flow-ui/facets/timer.html",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "delay", type = StudioPropertyType.INTEGER, required = true),
                     @StudioProperty(xmlAttribute = "repeating", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "autostart", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
             }
     )
     void timer();
+
+    @StudioFacet(
+            name = "Settings",
+            classFqn = "io.jmix.flowui.facet.SettingsFacet",
+            category = "Facets",
+            xmlElement = "settings",
+            icon = "io/jmix/flowui/kit/meta/icon/facet/settings.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false", initialValue = "true"),
+            }
+    )
+    void settings();
 }

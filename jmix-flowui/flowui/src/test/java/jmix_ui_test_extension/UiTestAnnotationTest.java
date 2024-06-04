@@ -17,10 +17,10 @@
 package jmix_ui_test_extension;
 
 import component.image.view.JmixImageTestView;
-import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
-import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.testassist.UiTest;
+import io.jmix.flowui.testassist.UiTestUtils;
+import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -34,13 +34,12 @@ import test_support.FlowuiTestConfiguration;
 public class UiTestAnnotationTest {
 
     @Autowired
-    private ViewNavigators viewNavigators;
+    private ViewNavigationSupport navigationSupport;
 
     @DisplayName("Load JmixImage with dataContainer")
     @Test
     public void loadJmixImageWithDataContainer() {
-        viewNavigators.view(JmixImageTestView.class)
-                .navigate();
+        navigationSupport.navigate(JmixImageTestView.class);
 
         JmixImageTestView view = UiTestUtils.getCurrentView();
 

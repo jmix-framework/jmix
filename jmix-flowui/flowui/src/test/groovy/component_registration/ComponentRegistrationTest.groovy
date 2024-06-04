@@ -18,9 +18,9 @@ package component_registration
 
 import com.vaadin.flow.component.UI
 import component_registration.screen.ComponentRegistrationTestScreen
-import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.kit.component.button.JmixButton
+import io.jmix.flowui.view.navigation.ViewNavigationSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
@@ -32,7 +32,7 @@ class ComponentRegistrationTest extends FlowuiTestSpecification {
     UiComponents uiComponents
 
     @Autowired
-    ViewNavigators screenNavigators
+    ViewNavigationSupport navigationSupport
 
     void setup() {
         registerViewBasePackages("component_registration.screen")
@@ -62,8 +62,7 @@ class ComponentRegistrationTest extends FlowuiTestSpecification {
     def "Override button loader"() {
         when: "Open screen with declarative button"
 
-        screenNavigators.view(ComponentRegistrationTestScreen)
-                .navigate()
+        navigationSupport.navigate(ComponentRegistrationTestScreen)
 
         then: "Loaded button should have default text that is defined in the extended loader"
 

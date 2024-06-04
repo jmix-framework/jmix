@@ -59,11 +59,23 @@ def initDefaultFieldAttrs(attr) {
 	}
 
 	if(attr.isEnumType()) {
-		field.tag = 'comboBox'
+		field.tag = 'select'
 	}
 
     if (attr.isDeepInheritor('java.lang.Boolean')) {
 		field.tag = 'checkbox'
+	}
+
+	if (attr.isDeepInheritor('byte[]')) {
+		field.tag = 'fileUploadField'
+		fieldAttrs['clearButtonVisible'] = "true"
+		fieldAttrs['fileNameVisible'] = "true"
+	}
+
+	if (attr.isDeepInheritor('io.jmix.core.FileRef')) {
+		field.tag = 'fileStorageUploadField'
+		fieldAttrs['clearButtonVisible'] = "true"
+		fieldAttrs['fileNameVisible'] = "true"
 	}
 
 	if(lookupActions) {

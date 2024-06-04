@@ -66,7 +66,17 @@
               code="tableActions"
               defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
-              optionsString="${actionSearch.getWizardTableActions()}"/>
+              optionsString="${actionSearch.getWizardTableActions(api.jmixProjectModule)}"/>
+    <property caption="Column reordering"
+              step="1"
+              code="columnReorderingAllowed"
+              propertyType="BOOLEAN"
+              defaultValue="true"/>
+    <property caption="Resizable columns"
+              step="1"
+              code="resizableColumns"
+              propertyType="BOOLEAN"
+              defaultValue="true"/>
 
     <property caption="List view descriptor name"
               code="viewDescriptorName"
@@ -150,9 +160,22 @@
               advanced="true"
               dynamic="true"
               required="true"
-              valueTemplate="${entity.uncapitalizedClassName}/detail">
+              valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
         <dependency code="entity"/>
     </property>
+
+    <property caption="Detail view route parameter"
+              code="detailRouteParam"
+              propertyType="STRING"
+              advanced="true"
+              required="true"
+              defaultValue="id"/>
+
+    <property caption="View route layout"
+              code="routeLayout"
+              propertyType="FLOW_VIEW_ROUTE_LAYOUT"
+              visible="false"
+              advanced="true"/>
 
     <property caption="Parent menu item"
               code="menuItem"

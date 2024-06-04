@@ -27,7 +27,18 @@
                                required="true" requiredMessage="msg://codeField.requiredMessage"/>
                     <fileUploadField id="templateUploadField" fileNameVisible="true"
                                      label="msg://templateUploadField.label" width="100%"/>
-                    <textArea id="templateFileEditor" width="100%" height="20em"/>
+                    <vbox id="templateFileEditorBox" spacing="false" padding="true" width="100%" classNames="report-bordered report-codeeditor-box">
+                        <div width="100%" classNames="flex, justify-end">
+                            <button id="templateFileEditorFullScreenBtn"
+                                    text="msg:///fullScreenBtn.title"
+                                    themeNames="tertiary-inline"/>
+                        </div>
+                        <div width="100%" classNames="flex, items-start">
+                            <codeEditor id="templateFileEditor"
+                                    width="100%"
+                                    height="20em"/>
+                        </div>
+                    </vbox>
                     <comboBox id="outputTypeField" property="reportOutputType" label="msg://outputTypeField.label"
                               width="100%"
                               required="true" requiredMessage="msg://outputTypeField.requiredMessage"/>
@@ -45,11 +56,21 @@
                     <select id="customDefinedByField" property="customDefinedBy"
                               label="msg://customDefinedByField.label"
                               requiredMessage="msg://customDefinedByField.requiredMessage" width="100%"/>
-                    <vbox id="customDefinitionBox" spacing="false" padding="false" width="100%" alignItems="END">
-                        <textArea id="customDefinitionField" property="customDefinition"
-                                  label="msg://customDefinitionField.label"
-                                  height="6em"
-                                  requiredMessage="msg://customDefinitionField.requiredMessage" width="100%"/>
+                    <vbox id="customDefinitionBox" spacing="false" padding="true" width="100%" alignItems="END"
+                          classNames="report-bordered report-codeeditor-box">
+                        <div width="100%" classNames="flex, justify-end">
+                            <button id="customDefinitionFullScreenBtn"
+                                    text="msg:///fullScreenBtn.title"
+                                    themeNames="tertiary-inline"/>
+                        </div>
+                        <vbox width="100%" padding="false">
+                            <div width="100%" classNames="flex, items-start">
+                                <codeEditor id="customDefinitionField" property="customDefinition"
+                                      label="msg://customDefinitionField.label"
+                                      height="6em"
+                                      requiredMessage="msg://customDefinitionField.requiredMessage" width="100%"/>
+                            </div>
+                        </vbox>
                     </vbox>
                     <responsiveSteps>
                         <responsiveStep minWidth="0" columns="1"/>

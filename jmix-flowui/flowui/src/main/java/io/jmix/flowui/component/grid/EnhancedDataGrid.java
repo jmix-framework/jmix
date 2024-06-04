@@ -18,11 +18,10 @@ package io.jmix.flowui.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import org.springframework.lang.Nullable;
 
-import java.util.List;
 import java.util.Map;
 
 public interface EnhancedDataGrid<T> {
@@ -30,19 +29,11 @@ public interface EnhancedDataGrid<T> {
     @Nullable
     MetaPropertyPath getColumnMetaPropertyPath(Grid.Column<T> column);
 
-    Grid.Column<T> addColumn(MetaPropertyPath metaPropertyPath);
+    DataGridColumn<T> addColumn(MetaPropertyPath metaPropertyPath);
 
-    Grid.Column<T> addColumn(String key, MetaPropertyPath metaPropertyPath);
+    DataGridColumn<T> addColumn(String key, MetaPropertyPath metaPropertyPath);
 
     boolean isEditorCreated();
-
-    /**
-     * @return a copy of columns that are visible and not hidden by security
-     * @deprecated use {@link Grid#getColumns()} and filter returned list by visibility property
-     */
-    @Deprecated
-    List<Grid.Column<T>> getVisibleColumns();
-
 
     /**
      * @return true if DataGrid is aggregatable
@@ -72,7 +63,7 @@ public interface EnhancedDataGrid<T> {
      * Add an aggregation info in order to perform aggregation for column.
      *
      * @param column column for aggregation
-     * @param info aggregation info
+     * @param info   aggregation info
      * @see DataGrid#setAggregatable(boolean)
      */
     void addAggregation(Grid.Column<T> column, AggregationInfo info);
@@ -81,6 +72,11 @@ public interface EnhancedDataGrid<T> {
      * @return aggregated values for columns
      */
     Map<Grid.Column<T>, Object> getAggregationResults();
+
+    /**
+     * @return context menu instance attached to the grid
+     */
+    JmixGridContextMenu<T> getContextMenu();
 
     /**
      * Defines the position of aggregation row.

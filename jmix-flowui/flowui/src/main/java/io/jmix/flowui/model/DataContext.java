@@ -21,9 +21,9 @@ import io.jmix.core.EntitySet;
 import io.jmix.core.SaveContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.view.Subscribe;
+import org.springframework.lang.Nullable;
 
 import javax.annotation.CheckReturnValue;
-import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.Set;
@@ -196,6 +196,18 @@ public interface DataContext {
     EntitySet save();
 
     /**
+     * Saves changed and removed instances using DataManager, custom save delegate
+     * or merges them to parent data context if it is set.
+     * If reloadSaved is set, merge and reload of saved instances is performed so the context will contain updated
+     * instances after successful save.
+     *
+     * @param reloadSaved flag indicating whether to reload and merge entities after save using DataManager
+     * @return set of saved and merged back to the context instances if reloadSaved is true. Empty set otherwise.
+     * @see #setParent(DataContext)
+     */
+    EntitySet save(boolean reloadSaved);
+
+    /**
      * Returns a parent context, if any. If the parent context is set, {@link #save()}
      * method merges the changed instances to it instead of sending them to DataManager
      * or a custom save delegate.
@@ -204,8 +216,8 @@ public interface DataContext {
     DataContext getParent();
 
     /**
-     * Sets the parent context. If the parent context is set, {@link #save()} method
-     * merges the changed instances to it instead of sending them to DataManager or
+     * Sets the parent context. If the parent context is set, {@link #save()} and {@link #save(boolean)} methods
+     * merge the changed instances to it instead of sending them to DataManager or
      * a custom save delegate.
      */
     void setParent(DataContext parentContext);
@@ -361,14 +373,16 @@ public interface DataContext {
     class PostSaveEvent extends EventObject {
 
         private final Collection savedInstances;
+        private final boolean entitiesReloaded;
 
-        public PostSaveEvent(DataContext dataContext, Collection savedInstances) {
+        public PostSaveEvent(DataContext dataContext, Collection savedInstances, boolean entitiesReloaded) {
             super(dataContext);
             this.savedInstances = savedInstances;
+            this.entitiesReloaded = entitiesReloaded;
         }
 
         /**
-         * The data context which sent the event.
+         * @return the data context which sent the event.
          */
         @Override
         public DataContext getSource() {
@@ -376,10 +390,18 @@ public interface DataContext {
         }
 
         /**
-         * Returns the collection of saved entities.
+         * @return the collection of saved entities or empty collection if saved entities were not reloaded
+         * (entitiesReloaded == false).
          */
         public EntitySet getSavedInstances() {
             return EntitySet.of(savedInstances);
+        }
+
+        /**
+         * @return true if entities have been reloaded and merged after save, false otherwise
+         */
+        public boolean isEntitiesReloaded() {
+            return entitiesReloaded;
         }
     }
 

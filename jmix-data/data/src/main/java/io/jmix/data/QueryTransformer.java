@@ -38,12 +38,6 @@ public interface QueryTransformer {
     /** Adds 'join' and 'where' clauses. Replaces alias in 'join' but doesn't replace it in 'where'*/
     void addJoinAndWhere(String join, String where);
 
-    /**
-     * DEPRECATED. Use {@link #replaceOrderByExpressions(Map)}
-     */
-    @Deprecated
-    void replaceOrderByExpressions(boolean directionDesc, String... sortExpressions);
-
     /** Adds or replaces 'order by' clause */
     void replaceOrderByExpressions(Map<String, Sort.Direction> sortExpressions);
 

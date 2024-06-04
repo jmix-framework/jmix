@@ -19,6 +19,7 @@ package io.jmix.flowui.action.binder.component;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.action.Action;
 
+@Deprecated(since = "2.2", forRemoval = true)
 public interface ComponentActionsHolderUnbinder<C extends Component> {
 
     boolean supports(Component component);

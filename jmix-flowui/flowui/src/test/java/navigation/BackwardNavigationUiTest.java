@@ -17,11 +17,14 @@
 package navigation;
 
 import com.vaadin.flow.router.QueryParameters;
+import component.standarddetailview.view.BlankTestView;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.StandardOutcome;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import navigation.view.BackwardNavigationDetailView;
 import navigation.view.BackwardNavigationListView;
 import navigation.view.BackwardNavigationStandardView;
@@ -33,18 +36,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import test_support.FlowuiTestConfiguration;
 import test_support.entity.sales.Customer;
 
-@UiTest(viewBasePackages = "navigation.view")
+@UiTest(viewBasePackages = {"component.standarddetailview.view", "navigation.view"})
 @SpringBootTest(classes = {FlowuiTestAssistConfiguration.class, FlowuiTestConfiguration.class})
 public class BackwardNavigationUiTest {
 
     @Autowired
     ViewNavigators viewNavigators;
+    @Autowired
+    ViewNavigationSupport navigationSupport;
 
     @Test
     @DisplayName("Back to detail-view")
     public void backToDetailViewTest() {
         // Navigate to detail-view
-        viewNavigators.detailView(Customer.class)
+        var origin = navigateTo(BlankTestView.class);
+        viewNavigators.detailView(origin, Customer.class)
                 .newEntity()
                 .navigate();
 
@@ -70,7 +76,8 @@ public class BackwardNavigationUiTest {
     @DisplayName("Back to standard-view")
     public void backToStandardViewTest() {
         // Navigate to standard-view
-        viewNavigators.view(BackwardNavigationStandardView.class)
+        var origin = navigateTo(BlankTestView.class);
+        viewNavigators.view(origin, BackwardNavigationStandardView.class)
                 .navigate();
 
         BackwardNavigationStandardView currentView = UiTestUtils.getCurrentView();
@@ -95,7 +102,8 @@ public class BackwardNavigationUiTest {
     @DisplayName("Create new entity instance using CreateAction and back to list-view")
     public void createNewEntityInstanceUsingCreateActionAndBackToListViewTest() {
         // Navigate to list-view
-        viewNavigators.view(BackwardNavigationListView.class)
+        var origin = navigateTo(BlankTestView.class);
+        viewNavigators.view(origin, BackwardNavigationListView.class)
                 .navigate();
 
         BackwardNavigationListView currentView = UiTestUtils.getCurrentView();
@@ -120,7 +128,8 @@ public class BackwardNavigationUiTest {
     @DisplayName("Backward navigation with URL query parameters")
     public void backwardNavigationWithUrlQueryParametersTest() {
         // Navigate to view with some query parameters
-        viewNavigators.view(BackwardNavigationListView.class)
+        var origin = navigateTo(BlankTestView.class);
+        viewNavigators.view(origin, BackwardNavigationListView.class)
                 .withQueryParameters(QueryParameters.of("param", "value"))
                 .navigate();
 
@@ -145,5 +154,10 @@ public class BackwardNavigationUiTest {
 
         Assertions.assertEquals(BackwardNavigationListView.class, currentView.getClass());
         Assertions.assertEquals("value", currentView.paramValue);
+    }
+
+    protected <T extends View<?>> T navigateTo(Class<T> view) {
+        navigationSupport.navigate(view);
+        return UiTestUtils.getCurrentView();
     }
 }

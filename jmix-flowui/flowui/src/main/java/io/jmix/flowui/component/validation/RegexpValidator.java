@@ -19,12 +19,13 @@ package io.jmix.flowui.component.validation;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.exception.ValidationException;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.regex.Pattern;
 
 /**
@@ -91,8 +92,8 @@ public class RegexpValidator extends AbstractValidator<String> implements Initia
 
     @Override
     public void accept(@Nullable String value) throws ValidationException {
-        // consider null value is valid
-        if (value == null) {
+        // consider empty value is valid
+        if (Strings.isEmpty(value)) {
             return;
         }
 

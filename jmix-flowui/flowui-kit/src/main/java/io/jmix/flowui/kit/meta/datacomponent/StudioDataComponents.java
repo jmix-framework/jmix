@@ -25,11 +25,12 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 public interface StudioDataComponents {
 
     @StudioDataComponent(
-            name = "Collection",
+            name = "Collection Container",
             classFqn = "io.jmix.flowui.model.CollectionContainer",
             category = "Data Components",
             xmlElement = "collection",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/collection.svg",
+            documentationLink = "%VERSION%/flow-ui/data/collection-container.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS, required = true),
@@ -39,11 +40,12 @@ public interface StudioDataComponents {
     void collection();
 
     @StudioDataComponent(
-            name = "Instance",
+            name = "Instance Container",
             classFqn = "io.jmix.flowui.model.InstanceContainer",
             category = "Data Components",
             xmlElement = "instance",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/instance.svg",
+            documentationLink = "%VERSION%/flow-ui/data/instance-container.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS, required = true),
@@ -53,11 +55,12 @@ public interface StudioDataComponents {
     void instance();
 
     @StudioDataComponent(
-            name = "KeyValueInstance",
+            name = "KeyValueInstance Container",
             classFqn = "io.jmix.flowui.model.KeyValueContainer",
             category = "Data Components",
             xmlElement = "keyValueInstance",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueInstance.svg",
+            documentationLink = "%VERSION%/flow-ui/data/key-value-containers.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }
@@ -65,11 +68,12 @@ public interface StudioDataComponents {
     void keyValueInstance();
 
     @StudioDataComponent(
-            name = "KeyValueCollection",
+            name = "KeyValueCollection Container",
             classFqn = "io.jmix.flowui.model.KeyValueCollectionContainer",
             category = "Data Components",
             xmlElement = "keyValueCollection",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueCollection.svg",
+            documentationLink = "%VERSION%/flow-ui/data/key-value-containers.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
             }

@@ -157,8 +157,16 @@ public class ActionLoaderSupport implements ApplicationContextAware {
                 .ifPresent(iconString ->
                         targetAction.setIcon(parseIcon(iconString)));
 
-        componentLoader().loadShortcutCombination(element).ifPresent(shortcutCombination ->
-                targetAction.setShortcutCombination(KeyCombination.create(shortcutCombination)));
+        Element shortcutCombinationElement = element.element("shortcutCombination");
+        // shortcutCombination element takes precedence over the attribute
+        if (shortcutCombinationElement != null) {
+            loadShortcutCombination(shortcutCombinationElement, targetAction);
+        } else {
+            componentLoader().loadShortcutCombination(element)
+                    .ifPresent(shortcutCombination ->
+                            targetAction.setShortcutCombination(KeyCombination.create(shortcutCombination))
+                    );
+        }
 
         Element propertiesEl = element.element("properties");
         if (propertiesEl != null) {
@@ -167,6 +175,27 @@ public class ActionLoaderSupport implements ApplicationContextAware {
                         name -> propertyLoader.load(targetAction, name, propertyEl.attributeValue("value")));
             }
         }
+    }
+
+    protected void loadShortcutCombination(Element element, Action targetAction) {
+        String keyCombinationString = componentLoader().loadShortcut(element, "keyCombination")
+                .orElseThrow(() -> {
+                            String message = String.format("keyCombination attribute is required for " +
+                                    "shortcutCombination element for action with '%s' ID", targetAction.getId()
+                            );
+
+                            return new GuiDevelopmentException(message, context);
+                        }
+                );
+
+        KeyCombination keyCombination = KeyCombination.create(keyCombinationString);
+
+        if (keyCombination != null) {
+            loaderSupport.loadBoolean(element, "resetFocusOnActiveElement",
+                    keyCombination::setResetFocusOnActiveElement);
+        }
+
+        targetAction.setShortcutCombination(keyCombination);
     }
 
     protected ComponentLoaderSupport componentLoader() {

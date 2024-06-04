@@ -20,11 +20,13 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.RouterLayout;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.applayout.JmixAppLayout;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.View;
+import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
@@ -33,10 +35,23 @@ import java.util.Optional;
  */
 public class StandardMainView extends View<JmixAppLayout> implements RouterLayout {
 
-    @Override
-    public void showRouterLayoutContent(HasElement content) {
-        getContent().showRouterLayoutContent(content);
+    private Component initialLayout;
 
+    @Override
+    public void showRouterLayoutContent(@Nullable HasElement content) {
+        getContent().showRouterLayoutContent(content != null ? content : initialLayout);
+
+        updateTitle();
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        super.afterNavigation(event);
+
+        // The same view can be opened via different menu items,
+        // e.g. with different url query parameters, as a result
+        // no 'showRouterLayoutContent' method is called, hence
+        // we need to update title on 'afterNavigation' too
         updateTitle();
     }
 
@@ -50,7 +65,30 @@ public class StandardMainView extends View<JmixAppLayout> implements RouterLayou
         return UiComponentUtils.findComponent(getContent(), "viewTitle");
     }
 
-    private String getTitleFromOpenedView() {
+    protected String getTitleFromOpenedView() {
         return ViewControllerUtils.getPageTitle(getContent().getContent());
+    }
+
+    /**
+     * @return a component that is displayed if no view is opened.
+     */
+    @Nullable
+    public Component getInitialLayout() {
+        return initialLayout;
+    }
+
+    /**
+     * Sets a component that is displayed if no view is opened.
+     *
+     * @param initialLayout a component to display
+     * @see #showRouterLayoutContent(HasElement)
+     */
+    public void setInitialLayout(@Nullable Component initialLayout) {
+        this.initialLayout = initialLayout;
+
+        if (getContent().getContent() == null
+                && initialLayout != null) {
+            getContent().setContent(initialLayout);
+        }
     }
 }

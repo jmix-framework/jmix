@@ -39,7 +39,7 @@ public class BackwardNavigationDetailView extends StandardDetailView<Customer> {
 
     @Subscribe("navigateToViewBtn")
     protected void onNavigateToViewBtnClick(ClickEvent<Button> event) {
-        viewNavigators.view(BackwardNavigationStandardView.class)
+        viewNavigators.view(this, BackwardNavigationStandardView.class)
                 .withBackwardNavigation(true)
                 .navigate();
     }

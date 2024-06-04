@@ -20,17 +20,20 @@ import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.RememberMeConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.securityflowui.access.UiViewAccessChecker;
-import org.springframework.lang.Nullable;
+import io.jmix.securityflowui.security.FlowuiVaadinWebSecurity;
+import io.jmix.securityflowui.util.PrevVaadinRequestUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -46,11 +49,13 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -61,8 +66,12 @@ import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+/**
+ * @deprecated {@link FlowuiVaadinWebSecurity} is used instead.
+ */
 //@EnableWebSecurity
 //@Configuration
+@Deprecated(since = "2.3", forRemoval = true)
 public class FlowuiSecurityConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(FlowuiSecurityConfiguration.class);
@@ -80,6 +89,14 @@ public class FlowuiSecurityConfiguration {
     protected UiViewAccessChecker viewAccessChecker;
     protected UiProperties uiProperties;
     protected ViewRegistry viewRegistry;
+    protected ServerProperties serverProperties;
+
+    protected PrevVaadinRequestUtil prevVaadinRequestUtil;
+
+    @Autowired
+    public void setPrevVaadinRequestUtil(PrevVaadinRequestUtil prevVaadinRequestUtil) {
+        this.prevVaadinRequestUtil = prevVaadinRequestUtil;
+    }
 
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -114,6 +131,11 @@ public class FlowuiSecurityConfiguration {
     @Autowired
     public void setViewRegistry(ViewRegistry viewRegistry) {
         this.viewRegistry = viewRegistry;
+    }
+
+    @Autowired
+    public void setServerProperties(ServerProperties serverProperties) {
+        this.serverProperties = serverProperties;
     }
 
     /**
@@ -178,9 +200,23 @@ public class FlowuiSecurityConfiguration {
         // Public endpoints are OK to access
         urlRegistry.requestMatchers(requestUtil::isAnonymousEndpoint).permitAll();
         // Public routes are OK to access
-        urlRegistry.requestMatchers(requestUtil::isAnonymousRoute).permitAll();
+        //use RequestUtil::isAnonymousRoute from Vaadin 24.1. See https://github.com/jmix-framework/jmix/issues/2985
+        urlRegistry.requestMatchers(prevVaadinRequestUtil::isAnonymousRoute).permitAll();
+//        urlRegistry.requestMatchers(requestUtil::isAnonymousRoute).permitAll();
         urlRegistry.requestMatchers(
                 getDefaultHttpSecurityPermitMatcher(getUrlMapping())).permitAll();
+
+        //We need such request matcher here in order to permit access to login page when a query parameter is passed.
+        //For example, in case of using the multi-tenancy add-on we need to pass the query parameter: /login?tenantId=mytenant
+        //By default, only access to /login is allowed and access to /login?someParam=someVal is blocked. The request
+        //matcher below allows access to login view with any query parameter.
+        String loginPath = getLoginPath();
+        urlRegistry.requestMatchers(request -> loginPath.equals(request.getRequestURI())).permitAll();
+
+        // Permit default Spring framework error page (/error)
+        MvcRequestMatcher.Builder mvcRequestMatcherBuilder = new MvcRequestMatcher.Builder(applicationContext.getBean(HandlerMappingIntrospector.class));
+        MvcRequestMatcher errorPageRequestMatcher = mvcRequestMatcherBuilder.pattern(serverProperties.getError().getPath());
+        urlRegistry.requestMatchers(errorPageRequestMatcher).permitAll();
 
         // all other requests require authentication
         urlRegistry.anyRequest().authenticated();
@@ -287,7 +323,10 @@ public class FlowuiSecurityConfiguration {
         formLogin.loginPage(loginPath).permitAll();
         formLogin.successHandler(createSuccessHandler(http));
 
-        http.csrf().ignoringRequestMatchers(loginPath);
+        HandlerMappingIntrospector handlerMappingIntrospector = applicationContext.getBean(HandlerMappingIntrospector.class);
+        MvcRequestMatcher.Builder mvcRequestMatcherBuilder = new MvcRequestMatcher.Builder(handlerMappingIntrospector);
+        MvcRequestMatcher loginPathPattern = mvcRequestMatcherBuilder.pattern(loginPath);
+        http.csrf(csrf -> csrf.ignoringRequestMatchers(loginPathPattern));
         // TODO: gg, replace with VaadinWebSecurity.configureLogout?
         http.logout()
                 .logoutUrl(LOGOUT_URL)
@@ -393,5 +432,34 @@ public class FlowuiSecurityConfiguration {
             path = path.substring(1);
         }
         return urlMapping + "/" + path;
+    }
+
+    protected String getLoginPath() {
+        String loginViewId = uiProperties.getLoginViewId();
+        Class<? extends View<?>> loginViewClass =
+                viewRegistry.getViewInfo(loginViewId).getControllerClass();
+
+        Optional<Route> route = AnnotationReader.getAnnotationFor(loginViewClass, Route.class);
+
+        if (route.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Unable find a @Route annotation on the login view "
+                            + loginViewClass.getName());
+        }
+
+        if (!(applicationContext instanceof WebApplicationContext)) {
+            throw new RuntimeException(
+                    "VaadinWebSecurity cannot be used without WebApplicationContext.");
+        }
+
+        VaadinServletContext vaadinServletContext = new VaadinServletContext(
+                ((WebApplicationContext) applicationContext).getServletContext());
+        String loginPath = RouteUtil.getRoutePath(vaadinServletContext, loginViewClass);
+        if (!loginPath.startsWith("/")) {
+            loginPath = "/" + loginPath;
+        }
+        loginPath = applyUrlMapping(loginPath);
+
+        return loginPath;
     }
 }

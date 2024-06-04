@@ -17,6 +17,7 @@
 package test_support.repository;
 
 
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.repository.FetchPlan;
 import io.jmix.core.repository.JmixDataRepository;
 import io.jmix.core.repository.Query;
@@ -86,5 +87,12 @@ public interface OrderRepository extends JmixDataRepository<SalesOrder, UUID> {
 
     @FetchPlan("SalesOrder.full")
     List<SalesOrder> findByCustomerNotNullOrderByCustomerAddressCityDescDateDesc();
+
+    default SalesOrder getByExtractedNumber(String searchSource){
+        String conditionString  = searchSource.replaceAll("[A-Za-z ]","");
+        return getDataManager().load(SalesOrder.class)
+                .condition(PropertyCondition.equal("number",conditionString))
+                .one();
+    }
 
 }

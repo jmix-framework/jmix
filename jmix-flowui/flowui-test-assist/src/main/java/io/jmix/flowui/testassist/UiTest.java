@@ -60,9 +60,9 @@ public @interface UiTest {
     /**
      * Views under these packages will be available in test.
      * <p>
-     * Note that depending on the test's configuration all application views may be available.
+     * If not specified, all views registered in the application and in used add-ons are available.
      *
-     * @return array of view packages should be registered
+     * @return array of view packages
      */
     String[] viewBasePackages() default {};
 

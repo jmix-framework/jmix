@@ -17,27 +17,32 @@
 package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.FetchPlan;
-import org.springframework.core.MethodParameter;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import org.springframework.data.repository.query.Parameters;
+import org.springframework.data.repository.query.ParametersSource;
 
 import java.lang.reflect.Method;
 import java.util.List;
+
 /**
- * {@link Parameters} extension required to support {@link io.jmix.core.FetchPlan} special parameter.
+ * {@link Parameters} extension required to support {@link io.jmix.core.FetchPlan} and {@link JmixDataRepositoryContext}
+ * special parameters.
  */
 public class JmixParameters extends Parameters<JmixParameters, JmixParameter> {
 
     private final int fetchPlanIndex;
+    private final int jmixContextIndex;
 
-    public JmixParameters(Method method) {
-        super(method);
-        fetchPlanIndex = findFetchPlanParameterIndex();
+    public JmixParameters(ParametersSource parametersSource) {
+        super(parametersSource, JmixParameter::new);
+        fetchPlanIndex = findParameterIndexByType(FetchPlan.class);
+        jmixContextIndex = findParameterIndexByType(JmixDataRepositoryContext.class);
     }
 
-    protected int findFetchPlanParameterIndex() {
+    protected int findParameterIndexByType(Class<?> clazz) {
         int fpIndex = -1;
         for (JmixParameter candidate : this) {
-            if (FetchPlan.class.isAssignableFrom(candidate.getType())) {
+            if (clazz.isAssignableFrom(candidate.getType())) {
                 fpIndex = candidate.getIndex();
                 break;
             }
@@ -47,12 +52,8 @@ public class JmixParameters extends Parameters<JmixParameters, JmixParameter> {
 
     private JmixParameters(List<JmixParameter> parameters) {
         super(parameters);
-        fetchPlanIndex = findFetchPlanParameterIndex();
-    }
-
-    @Override
-    protected JmixParameter createParameter(MethodParameter parameter) {
-        return new JmixParameter(parameter);
+        fetchPlanIndex = findParameterIndexByType(FetchPlan.class);
+        jmixContextIndex = findParameterIndexByType(JmixDataRepositoryContext.class);
     }
 
     @Override
@@ -73,5 +74,20 @@ public class JmixParameters extends Parameters<JmixParameters, JmixParameter> {
      */
     public int getFetchPlanIndex() {
         return fetchPlanIndex;
+    }
+
+    /**
+     * @return whether {@link JmixDataRepositoryContext} argument is present in the {@link Method}'s parameter list
+     */
+    public boolean hasJmixContextIndex() {
+        return jmixContextIndex != -1;
+    }
+
+    /**
+     * @return the index of the {@link JmixDataRepositoryContext} {@link Method} parameter if available. Will return {@literal -1} if there is
+     * no {@link JmixDataRepositoryContext} argument in the {@link Method}'s parameter list.
+     */
+    public int getJmixContextIndex() {
+        return jmixContextIndex;
     }
 }

@@ -71,4 +71,11 @@ public class ReportOutputType implements Serializable {
     public String getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "ReportOutputType{" +
+                "id='" + id + '\'' +
+                '}';
+    }
 }

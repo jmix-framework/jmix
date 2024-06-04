@@ -192,6 +192,21 @@ public class MultiValueSelectAction<E>
         viewInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
+    @Override
+    public <V extends View<?>> Consumer<DialogWindow.AfterCloseEvent<V>> getAfterCloseHandler() {
+        return viewInitializer.getAfterCloseHandler();
+    }
+
+    @Override
+    public <V extends View<?>> void setViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        viewInitializer.setViewConfigurer(viewConfigurer);
+    }
+
+    @Override
+    public <V extends View<?>> Consumer<V> getViewConfigurer() {
+        return viewInitializer.getViewConfigurer();
+    }
+
     @Nullable
     public String getLookupViewId() {
         return multiValueSelectContext.getLookupViewId();
@@ -329,6 +344,14 @@ public class MultiValueSelectAction<E>
     public <V extends View<?>> MultiValueSelectAction<E> withAfterCloseHandler(
             @Nullable Consumer<DialogWindow.AfterCloseEvent<V>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
+        return this;
+    }
+
+    /**
+     * @see #setViewConfigurer(Consumer)
+     */
+    public <V extends View<?>> MultiValueSelectAction<E> withViewConfigurer(@Nullable Consumer<V> viewConfigurer) {
+        setViewConfigurer(viewConfigurer);
         return this;
     }
 

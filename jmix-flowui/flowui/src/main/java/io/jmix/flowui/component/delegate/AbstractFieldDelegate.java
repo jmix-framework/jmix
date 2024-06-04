@@ -25,6 +25,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsStatusChangeHandler.StatusContext;
 import io.jmix.flowui.component.validation.Validator;
@@ -40,6 +41,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -63,6 +65,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     protected ApplicationContext applicationContext;
     protected Messages messages;
     protected MetadataTools metadataTools;
+    protected UiComponentProperties uiComponentProperties;
 
     protected List<Validator<? super T>> validators;
     protected Datatype<T> datatype;
@@ -93,6 +96,11 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    public void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
+        this.uiComponentProperties = uiComponentProperties;
     }
 
     public void setToModelConverter(@Nullable Function<V, T> toModelConverter) {
@@ -144,7 +152,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
             }
         }
 
-        if (component.isEmpty() && component.isRequiredIndicatorVisible()) {
+        if (isEmptyAndRequired()) {
             setComponentRequiredErrorState();
             throw new ComponentValidationException(getRequiredErrorMessage(), component);
         }
@@ -199,7 +207,8 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
         if (statusChangeHandler != null) {
             statusChangeHandler.accept(new StatusContext<>(component, errorMessage));
-        } else if (component instanceof HasValidation) {
+        } else if (component instanceof HasValidation
+                && uiComponentProperties.isShowErrorMessageBelowField()) {
             component.getElement().setProperty(PROPERTY_ERROR_MESSAGE, Strings.nullToEmpty(errorMessage));
         }
     }
@@ -226,7 +235,11 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     public void setConversionInvalid(boolean conversionInvalid) {
         this.conversionInvalid = conversionInvalid;
 
-        updateInvalidState();
+        if (explicitlyInvalid || conversionInvalid || isEmptyAndRequired()) {
+            updateInvalidState();
+        } else {
+            setInvalidInternal(false);
+        }
     }
 
     public void updateInvalidState() {
@@ -288,5 +301,9 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
     protected String formatMessage(String key, Object... params) {
         return messages.formatMessage("", key, params);
+    }
+
+    protected boolean isEmptyAndRequired() {
+        return component.isEmpty() && component.isRequiredIndicatorVisible();
     }
 }

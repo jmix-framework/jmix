@@ -19,12 +19,15 @@ package io.jmix.flowui.facet.urlqueryparameters;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.QueryParameters;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import org.springframework.lang.Nullable;
@@ -35,6 +38,8 @@ import java.util.Objects;
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 
 public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+
+    private static final Logger log = LoggerFactory.getLogger(PropertyFilterUrlQueryParametersBinder.class);
 
     public static final String NAME = "propertyFilter";
 
@@ -114,10 +119,15 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
             String valueString = serializedSettings.substring(separatorIndex + 1);
             if (!Strings.isNullOrEmpty(valueString)) {
                 MetaClass entityMetaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
-                Object parsedValue = filterUrlQueryParametersSupport.parseValue(entityMetaClass,
-                        Objects.requireNonNull(filter.getProperty()), operation.getType(), valueString);
-                //noinspection unchecked,rawtypes
-                ((PropertyFilter) filter).setValue(parsedValue);
+                try {
+                    Object parsedValue = filterUrlQueryParametersSupport.parseValue(entityMetaClass,
+                            Objects.requireNonNull(filter.getProperty()), operation.getType(), valueString);
+                    //noinspection unchecked,rawtypes
+                    ((PropertyFilter) filter).setValue(parsedValue);
+                } catch (Exception e) {
+                    log.info("Cannot parse URL parameter. {}", e.toString());
+                    filter.setValue(null);
+                }
             }
         }
     }
@@ -131,5 +141,11 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
 
     public void setParameter(@Nullable String parameter) {
         this.parameter = parameter;
+    }
+
+    @Nullable
+    @Override
+    public Component getComponent() {
+        return filter;
     }
 }

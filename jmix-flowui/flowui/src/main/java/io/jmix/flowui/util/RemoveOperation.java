@@ -56,6 +56,9 @@ public class RemoveOperation {
     protected Metadata metadata;
     protected MetadataTools metadataTools;
 
+    @SuppressWarnings("rawtypes")
+    protected Consumer removeDelegate;
+
     @Autowired
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
@@ -159,6 +162,7 @@ public class RemoveOperation {
         }
 
         if (!selectedItems.isEmpty()) {
+            removeDelegate = builder.removeDelegate;
             if (builder.isConfirmationRequired()) {
                 performActionWithConfirmation(builder, selectedItems);
             } else {
@@ -221,7 +225,7 @@ public class RemoveOperation {
                                 CollectionContainer<?> container, ViewData viewData) {
 
         List<?> entitiesToSave = entitiesToRemove.stream()
-                .filter(entity -> !entityStates.isNew(entity) || !metadataTools.isJpaEntity(entity.getClass()))
+                .filter(entity -> !entityStates.isNew(entity))
                 .collect(Collectors.toList());
 
         boolean needSave = !entitiesToSave.isEmpty();
@@ -237,11 +241,16 @@ public class RemoveOperation {
 
         DataContext dataContext = viewData.getDataContextOrNull();
         if (needSave) {
-            SaveContext saveContext = new SaveContext();
-            for (Object entity : entitiesToSave) {
-                saveContext.removing(entity);
+            if (removeDelegate == null) {
+                SaveContext saveContext = new SaveContext();
+                for (Object entity : entitiesToSave) {
+                    saveContext.removing(entity);
+                }
+                dataManager.save(saveContext);
+            } else {
+                //noinspection unchecked
+                removeDelegate.accept(entitiesToSave);
             }
-            dataManager.save(saveContext);
             for (Object entity : entitiesToRemove) {
                 if (dataContext != null) {
                     dataContext.evict(entity);
@@ -361,6 +370,7 @@ public class RemoveOperation {
         protected Consumer<BeforeActionPerformedEvent<E>> beforeActionPerformedHandler;
         protected Consumer<AfterActionPerformedEvent<E>> afterActionPerformedHandler;
         protected Consumer<ActionCancelledEvent<E>> actionCancelledHandler;
+        protected Consumer<Collection<E>> removeDelegate;
 
         public RemoveBuilder(View<?> origin, Class<E> entityClass, Consumer<RemoveBuilder<E>> actionHandler) {
             this.origin = origin;
@@ -419,6 +429,14 @@ public class RemoveOperation {
 
         public RemoveBuilder<E> onCancel(Consumer<ActionCancelledEvent<E>> handler) {
             this.actionCancelledHandler = handler;
+            return this;
+        }
+
+        /**
+         * Sets the delegate to be invoked instead of DataManager to remove the entities from a storage.
+         */
+        public RemoveBuilder<E> withRemoveDelegate(Consumer<Collection<E>> removeDelegate) {
+            this.removeDelegate = removeDelegate;
             return this;
         }
 

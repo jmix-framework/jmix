@@ -25,6 +25,7 @@ import io.jmix.dataimport.extractor.data.RawValuesSource;
 import io.jmix.dataimport.property.populator.EntityInfo;
 import io.jmix.dataimport.property.populator.EntityPropertiesPopulator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
@@ -37,6 +38,7 @@ import java.util.Map;
 public class EntityPropertiesPopulatorImpl implements EntityPropertiesPopulator {
     @Autowired
     protected EntityStates entityStates;
+    @Lazy
     @Autowired
     protected PropertyValueProvider propertyValueProvider;
 

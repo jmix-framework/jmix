@@ -15,8 +15,8 @@
  */
 package io.jmix.reports.yarg.formatters.impl.pdf;
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.BaseFont;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.BaseFont;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.File;

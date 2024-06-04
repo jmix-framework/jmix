@@ -47,17 +47,17 @@ public class TextAreaLoader extends AbstractComponentLoader<JmixTextArea> {
         loadString(element, "pattern", resultComponent::setPattern);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
-        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadInteger(element, "maxLength", resultComponent::setMaxLength);
         loadInteger(element, "minLength", resultComponent::setMinLength);
 
+        componentLoader().loadPlaceholder(resultComponent, element);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadClassNames(resultComponent, element);
-        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadAutocomplete(resultComponent, element);

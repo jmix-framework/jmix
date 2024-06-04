@@ -17,6 +17,7 @@
 import 'ace-builds/src-noconflict/ace.js';
 import 'ace-builds/esm-resolver.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ResizeMixin} from '@vaadin/component-base/src/resize-mixin.js';
 import {InputFieldMixin} from '@vaadin/field-base/src/input-field-mixin.js';
 import {TooltipController} from '@vaadin/component-base/src/tooltip-controller.js';
@@ -79,6 +80,12 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 observer: '_onHighlightActiveLineChange'
             },
 
+            highlightGutterLine: {
+                type: Boolean,
+                value: true,
+                observer: '_onHighlightGutterLineChange'
+            },
+
             showGutter: {
                 type: Boolean,
                 value: true,
@@ -114,6 +121,12 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 observer: '_onFontSizeChange'
             },
 
+            textWrap: {
+                type: Boolean,
+                value: false,
+                observer: '_onTextWrapChange'
+            },
+
             /** @private */
             _editor: {
                 type: Object
@@ -139,23 +152,34 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             theme: "ace/theme/" + this.theme,
             mode: "ace/mode/" + this.mode,
             highlightActiveLine: this.highlightActiveLine,
+            highlightGutterLine: this.highlightGutterLine,
             showGutter: this.showGutter,
             showLineNumbers: this.showLineNumbers,
             showPrintMargin: this.showPrintMargin,
             printMarginColumn: this.printMarginColumn,
             value: this.value,
             fontSize: this.fontSize,
+            wrap: this.textWrap,
             useWorker: false
         });
 
         this._tooltipController = new TooltipController(this);
         this._tooltipController.setPosition('top');
+        this._tooltipController.setAriaTarget(this._editor);
         this.addController(this._tooltipController);
 
         this._editor.on('blur', () => {
             const customEvent = new CustomEvent('value-changed', {detail: {value: this._editor.getValue()}});
             this.dispatchEvent(customEvent);
+
+            this._setFocused(false);
         });
+
+        this.addEventListener('focus', (e) => {
+            this._setFocused(true);
+        });
+
+        this._setFocusElement(this._editor.textInput.getElement());
     }
 
     initApplicationThemeObserver() {
@@ -209,8 +233,8 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.setReadOnly(readonly);
-        this._editor.setHighlightActiveLine(!readonly);
-        this._editor.setHighlightGutterLine(!readonly);
+        this._editor.setHighlightActiveLine(this.highlightActiveLine && !readonly);
+        this._editor.setHighlightGutterLine(this.highlightGutterLine && !readonly);
         this._editor.renderer.$cursorLayer.element.style.opacity = readonly
             ? 0
             : 1;
@@ -260,6 +284,17 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     /**
      * @protected
      */
+    _onHighlightGutterLineChange(showGutterLine) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.setHighlightGutterLine(showGutterLine);
+    }
+
+    /**
+     * @protected
+     */
     _onShowGutterChange(showGutter) {
         if (this._editor === undefined) {
             return;
@@ -298,7 +333,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             return;
         }
 
-        this._editor.setValue(value);
+        this._editor.session.setValue(value);
     }
 
     /**
@@ -310,6 +345,17 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.setFontSize(fontSize);
+    }
+
+    /**
+     * @private
+     */
+    _onTextWrapChange(textWrap) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.session.setUseWrapMode(textWrap);
     }
 
     /**
@@ -328,6 +374,6 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     }
 }
 
-customElements.define(JmixCodeEditor.is, JmixCodeEditor);
+defineCustomElement(JmixCodeEditor);
 
 export {JmixCodeEditor};

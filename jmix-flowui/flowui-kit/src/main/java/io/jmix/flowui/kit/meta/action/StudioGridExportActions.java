@@ -31,6 +31,8 @@ public interface StudioGridExportActions {
             classFqn = "io.jmix.gridexportflowui.action.ExcelExportAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             target = {"io.jmix.flowui.component.ListDataComponent"},
+            documentationLink = "%VERSION%/grid-export/index.html",
+            availableInViewWizard = true,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -60,6 +62,8 @@ public interface StudioGridExportActions {
             classFqn = "io.jmix.gridexportflowui.action.JsonExportAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
             target = {"io.jmix.flowui.component.ListDataComponent"},
+            documentationLink = "%VERSION%/grid-export/index.html",
+            availableInViewWizard = true,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

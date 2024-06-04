@@ -21,22 +21,26 @@ import com.vaadin.flow.component.Component;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
+import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
+import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.jpqlfilter.JpqlFilter;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
-
 import org.springframework.lang.Nullable;
+
 import java.sql.Time;
 import java.time.*;
 import java.util.Date;
@@ -130,15 +134,15 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         return uiComponents.create(TypedTextField.class);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Component createCollectionField(ComponentGenerationContext context) {
-        // TODO: gg, implement
-        /*JpqlFilterComponentGenerationContext cfContext = (JpqlFilterComponentGenerationContext) context;
-        Class parameterClass = cfContext.getParameterClass();
+        JpqlFilterComponentGenerationContext cfContext = (JpqlFilterComponentGenerationContext) context;
+        Class<?> parameterClass = cfContext.getParameterClass();
 
-        ValuesPicker valuesPicker = uiComponents.create(ValuesPicker.class);
-        setValueSource(valuesPicker, cfContext);
+        JmixMultiValuePicker<?> multiValuePicker = uiComponents.create(JmixMultiValuePicker.class);
+        setValueSource(multiValuePicker, cfContext);
 
-        ValuesSelectAction selectAction = actions.create(ValuesSelectAction.class);
+        MultiValueSelectAction selectAction = actions.create(MultiValueSelectAction.ID);
 
         if (Entity.class.isAssignableFrom(parameterClass)) {
             MetaClass metaClass = metadata.getClass(cfContext.getParameterClass());
@@ -149,13 +153,12 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
             Datatype datatype = datatypeRegistry.get(parameterClass);
             selectAction.setJavaClass(datatype.getJavaClass());
         }
-        valuesPicker.addAction(selectAction);
+        multiValuePicker.addAction(selectAction);
 
-        ValueClearAction valueClearAction = actions.create(ValueClearAction.class);
-        valuesPicker.addAction(valueClearAction);
+        ValueClearAction valueClearAction = actions.create(ValueClearAction.ID);
+        multiValuePicker.addAction(valueClearAction);
 
-        return valuesPicker;*/
-        return null;
+        return multiValuePicker;
     }
 
     protected Component createEntityField(ComponentGenerationContext context) {

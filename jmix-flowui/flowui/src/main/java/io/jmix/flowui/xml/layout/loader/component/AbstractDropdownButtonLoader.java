@@ -40,7 +40,7 @@ public abstract class AbstractDropdownButtonLoader<T extends AbstractDropdownBut
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadOverlayClass(resultComponent, element);
-        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadText(resultComponent, element);
@@ -88,7 +88,8 @@ public abstract class AbstractDropdownButtonLoader<T extends AbstractDropdownBut
         Element actionElement = element.element("action");
 
         if (actionElement != null) {
-            Action action = getActionLoaderSupport().loadDeclarativeAction(actionElement);
+            Action action = getActionLoaderSupport().loadDeclarativeActionByType(actionElement)
+                    .orElseGet(() -> getActionLoaderSupport().loadDeclarativeAction(actionElement));
             resultComponent.addItem(id, action);
         } else if (ref != null) {
             int index = element.getParent().elements().indexOf(element);

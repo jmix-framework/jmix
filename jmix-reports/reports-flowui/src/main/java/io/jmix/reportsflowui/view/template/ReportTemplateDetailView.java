@@ -21,6 +21,7 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -38,7 +39,9 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.upload.FileUploadField;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
+import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.upload.event.FileUploadFailedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadStartedEvent;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
@@ -84,7 +87,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     @ViewComponent
     protected JmixSelect<CustomTemplateDefinedBy> customDefinedByField;
     @ViewComponent
-    protected JmixTextArea customDefinitionField;
+    protected JmixCodeEditor customDefinitionField;
     @ViewComponent
     protected JmixCheckbox alterableField;
     @ViewComponent
@@ -92,7 +95,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     @ViewComponent
     protected TypedTextField<String> outputNamePatternField;
     @ViewComponent
-    protected JmixTextArea templateFileEditor;
+    protected JmixCodeEditor templateFileEditor;
     @ViewComponent
     protected JmixComboBox<ReportOutputType> outputTypeField;
     @ViewComponent
@@ -121,8 +124,11 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     protected ReportScriptEditor reportScriptEditor;
 
     protected Icon customDefinitionHelpIcon;
-    protected Icon customDefinitionExpandIcon;
     protected TableEditFragment tableEditComposite;
+    @ViewComponent
+    private VerticalLayout customDefinitionBox;
+    @ViewComponent
+    private VerticalLayout templateFileEditorBox;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -133,7 +139,6 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         initOutputTypeList();
         initOutputNamePatternField();
         initCustomDefinitionHelpIcon();
-        initCustomDefinitionExpandIcon();
     }
 
     @Subscribe
@@ -250,15 +255,6 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         customDefinitionHelpIcon.addClickListener(this::onCustomDefinitionHelpIconClick);
     }
 
-    protected void initCustomDefinitionExpandIcon() {
-        customDefinitionExpandIcon = VaadinIcon.EXPAND_SQUARE.create();
-        customDefinitionExpandIcon.addClassNames(
-                ReportStyleConstants.FIELD_ICON_SIZE_CLASS_NAME,
-                ReportStyleConstants.FIELD_ICON_CLASS_NAME
-        );
-        customDefinitionExpandIcon.addClickListener(this::onExpandCustomDefinitionExpandIconClick);
-    }
-
     protected void initDescriptionComposites() {
         tableEditComposite = uiComponents.create(TableEditFragment.class);
         tableEditComposite.setVisible(false);
@@ -268,13 +264,19 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     }
 
     protected void onCustomDefinitionHelpIconClick(ClickEvent<Icon> event) {
-        dialogs.createMessageDialog()
+        openCustomDefinitionHelpDialog();
+    }
+
+    protected void openCustomDefinitionHelpDialog() {
+        if ( hasScriptCustomDefinedBy(getEditedEntity().getCustomDefinedBy())) {
+            dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage("customDefinitionField.helpIcon.dialog.header"))
                 .withContent(new Html(messageBundle.getMessage("customDefinitionField.helpIcon.dialog.content")))
                 .withResizable(true)
                 .withModal(false)
                 .withWidth("50em")
                 .open();
+        }
     }
 
     protected void initOutputNamePatternField() {
@@ -294,12 +296,14 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 .open();
     }
 
-    protected void onExpandCustomDefinitionExpandIconClick(ClickEvent<Icon> event) {
+    @Subscribe("customDefinitionFullScreenBtn")
+    public void onCustomDefinitionFullScreenBtnClick(final ClickEvent<Button> event) {
         reportScriptEditor.create(this)
                 .withTitle(messageBundle.getMessage("customDefinitionField.label"))
                 .withValue(getEditedEntity().getCustomDefinition())
                 .withEditorMode(CodeEditorMode.GROOVY)
                 .withCloseOnClick(value -> getEditedEntity().setCustomDefinition(value))
+                .withHelpOnClick(this::openCustomDefinitionHelpDialog)
                 .open();
     }
 
@@ -333,22 +337,11 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 setupVisibility(Boolean.TRUE.equals(event.getValue()), reportTemplate.getReportOutputType());
                 break;
             }
-            case CUSTOM_DEFINE_BY_PROPERTY: {
-                boolean isGroovyScript = hasScriptCustomDefinedBy(reportTemplate.getCustomDefinedBy());
-                setCustomDefinitionIconsVisible(isGroovyScript);
-                break;
-            }
         }
     }
 
     protected Collection<AbstractDescriptionEditFragment<?>> getDescriptionEditors() {
         return List.of(tableEditComposite);
-    }
-
-    protected void setCustomDefinitionIconsVisible(boolean visible) {
-        customDefinitionField.setSuffixComponent(visible
-                ? new Div(customDefinitionExpandIcon, customDefinitionHelpIcon)
-                : null);
     }
 
     protected void initOutputTypeList() {
@@ -379,11 +372,24 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
 
     protected void visibleTemplateEditor(@Nullable ReportOutputType outputType) {
         String extension = FilenameUtils.getExtension(templateUploadField.getFileName());
-        if (extension == null) {
-            templateFileEditor.setVisible(false);
-            return;
+        boolean codeEditorVisible = false;
+        if (extension != null && !extension.isEmpty()) {
+            codeEditorVisible = hasHtmlCsvTemplateOutput(outputType);
         }
-        templateFileEditor.setVisible(hasHtmlCsvTemplateOutput(outputType));
+        templateFileEditorBox.setVisible(codeEditorVisible);
+    }
+
+    @Subscribe("templateFileEditorFullScreenBtn")
+    public void onTemplateFileEditorFullScreenBtnClick(final ClickEvent<Button> event) {
+        String extension = FilenameUtils.getExtension(templateUploadField.getFileName());
+        ReportOutputType outputType = ReportOutputType.getTypeFromExtension(extension.toUpperCase());
+        reportScriptEditor.create(this)
+                .withTitle( messageBundle.getMessage("templateFileEditorFullScreen.title"))
+                .withValue(new String(reportTemplateDc.getItem().getContent(), StandardCharsets.UTF_8))
+                .withEditorMode(outputType == ReportOutputType.HTML ? CodeEditorMode.HTML : CodeEditorMode.TEXT)
+                .withCloseOnClick(value -> reportTemplateDc.getItem().setContent(value.getBytes(StandardCharsets.UTF_8)))
+                .withHelpOnClick(() -> {})
+                .open();
     }
 
     protected void setupVisibility(boolean customEnabled, ReportOutputType reportOutputType) {
@@ -393,9 +399,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
 
         customField.setVisible(templateOutputVisibility);
         customDefinedByField.setVisible(enabled);
-        customDefinitionField.setVisible(enabled);
-
-        setCustomDefinitionIconsVisible(groovyScriptVisibility);
+        customDefinitionBox.setVisible(enabled);
 
         customDefinedByField.setRequired(enabled);
         customDefinitionField.setRequired(enabled);

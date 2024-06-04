@@ -37,13 +37,13 @@ public class ViewOverridingTestView extends StandardView {
 
     @Subscribe("navigateToViewByIdBtn")
     protected void onNavigateToViewByIdBtnClick(final ClickEvent<JmixButton> event) {
-        viewNavigators.view("ViewOverridingOrigin")
+        viewNavigators.view(this, "ViewOverridingOrigin")
                 .navigate();
     }
 
     @Subscribe("navigateToViewByClassBtn")
     protected void onNavigateToViewByClassBtnClick(final ClickEvent<JmixButton> event) {
-        viewNavigators.view(ViewOverridingOrigin.class)
+        viewNavigators.view(this, ViewOverridingOrigin.class)
                 .navigate();
     }
 }

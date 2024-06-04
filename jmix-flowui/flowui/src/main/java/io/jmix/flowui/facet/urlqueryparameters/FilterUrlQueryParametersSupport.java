@@ -24,11 +24,13 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Component("flowui_FilterUrlQueryParametersSupport")
@@ -52,17 +54,12 @@ public class FilterUrlQueryParametersSupport {
                              Operation.Type operationType, String valueString) {
         MetaPropertyPath mpp = metadataTools.resolveMetaPropertyPath(metaClass, property);
 
-        switch (operationType) {
-            case UNARY:
-                return urlParamSerializer.deserialize(Boolean.class, valueString);
-            case VALUE:
-                return parseSingleValue(property, valueString, mpp);
-            case LIST:
-            case INTERVAL:
-                throw new UnsupportedOperationException("Not implemented yet");
-            default:
-                throw new IllegalArgumentException("Unknown operation type: " + operationType);
-        }
+        return switch (operationType) {
+            case UNARY -> urlParamSerializer.deserialize(Boolean.class, valueString);
+            case VALUE -> parseSingleValue(property, valueString, mpp);
+            case LIST -> parseCollectionValue(property, valueString, mpp);
+            case INTERVAL -> urlParamSerializer.deserialize(BaseDateInterval.class, valueString);
+        };
     }
 
     public Object parseSingleValue(String property, String valueString, MetaPropertyPath mpp) {
@@ -89,6 +86,12 @@ public class FilterUrlQueryParametersSupport {
         } else {
             throw new IllegalStateException("Unsupported property: " + property);
         }
+    }
+
+    public Object parseCollectionValue(String property, String collectionValueString, MetaPropertyPath mpp) {
+        return Arrays.stream(collectionValueString.split(","))
+                .map(valueString -> parseSingleValue(property, valueString, mpp))
+                .toList();
     }
 
     public Object getSerializableValue(@Nullable Object value) {

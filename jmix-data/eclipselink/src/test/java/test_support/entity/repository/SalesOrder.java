@@ -29,6 +29,9 @@ import java.util.Date;
 public class SalesOrder extends BaseEntity {
     private static final long serialVersionUID = -2862329198474356617L;
 
+    @Column(name = "COUNT")
+    protected Integer count;
+
     @Column(name = "NUMBER_")
     protected String number;
 
@@ -39,6 +42,10 @@ public class SalesOrder extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRODUCT_ID")
+    protected Product product;
 
     public void setNumber(String number) {
         this.number = number;
@@ -64,5 +71,21 @@ public class SalesOrder extends BaseEntity {
         return customer;
     }
 
+    public Integer getCount() {
+        return count;
+    }
 
+    public SalesOrder setCount(Integer count) {
+        this.count = count;
+        return this;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public SalesOrder setProduct(Product product) {
+        this.product = product;
+        return this;
+    }
 }

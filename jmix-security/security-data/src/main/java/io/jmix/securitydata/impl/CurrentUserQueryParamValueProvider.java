@@ -18,7 +18,7 @@ package io.jmix.securitydata.impl;
 
 import io.jmix.core.JmixOrder;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
-import io.jmix.data.QueryParamValueProvider;
+import io.jmix.core.QueryParamValueProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -22,6 +22,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
@@ -29,6 +30,8 @@ import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.gridexportflowui.action.ExportAction;
 import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
+import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoader;
+import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoaderFactory;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -48,14 +51,14 @@ import java.util.stream.Collectors;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
 
+    private final AllEntitiesLoaderFactory allEntitiesLoaderFactory;
     protected Metadata metadata;
-    protected JsonAllRecordsExporter jsonAllRecordsExporter;
 
     protected Function<GsonBuilder, GsonBuilder> gsonConfigurer;
 
-    public JsonExporter(Metadata metadata, JsonAllRecordsExporter jsonAllRecordsExporter) {
+    public JsonExporter(Metadata metadata, AllEntitiesLoaderFactory allEntitiesLoaderFactory) {
         this.metadata = metadata;
-        this.jsonAllRecordsExporter = jsonAllRecordsExporter;
+        this.allEntitiesLoaderFactory = allEntitiesLoaderFactory;
     }
 
     /**
@@ -75,10 +78,12 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
         JsonArray jsonElements = new JsonArray();
 
         if (exportMode == ExportMode.ALL_ROWS) {
-            jsonAllRecordsExporter.exportAll(((ListDataComponent<?>) dataGrid).getItems(),
-                    entity -> {
-                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+            AllEntitiesLoader entitiesLoader = allEntitiesLoaderFactory.getEntitiesLoader();
+            entitiesLoader.loadAll(((ListDataComponent<?>) dataGrid).getItems(),
+                    context -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, context.getEntity());
                         jsonElements.add(jsonObject);
+                        return true;
                     });
         } else {
             Collection<Object> items = getItems(dataGrid, exportMode);
@@ -103,7 +108,8 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
 
         for (Grid.Column<Object> column : dataGrid.getColumns()) {
             Object columnValue = getColumnValue(dataGrid, column, entity);
-            MetaPropertyPath metaPropertyPath = metadata.getClass(entity).getPropertyPath(column.getKey());
+            //noinspection unchecked,rawtypes
+            MetaPropertyPath metaPropertyPath = ((EnhancedDataGrid) dataGrid).getColumnMetaPropertyPath(column);
 
             if (columnValue != null) {
                 jsonObject.add(column.getKey(),

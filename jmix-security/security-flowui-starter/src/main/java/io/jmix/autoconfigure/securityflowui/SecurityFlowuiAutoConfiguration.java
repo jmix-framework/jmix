@@ -16,31 +16,39 @@
 
 package io.jmix.autoconfigure.securityflowui;
 
+import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
-import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.security.SecurityConfiguration;
-import io.jmix.securityflowui.FlowuiSecurityConfiguration;
 import io.jmix.securityflowui.SecurityFlowuiConfiguration;
-import io.jmix.securityflowui.access.UiViewAccessChecker;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
+import io.jmix.securityflowui.security.FlowuiVaadinWebSecurity;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class, DataConfiguration.class, SecurityConfiguration.class, SecurityFlowuiConfiguration.class})
 public class SecurityFlowuiAutoConfiguration {
 
-    @Bean("flowui_ScreenAccessChecker")
-    public UiViewAccessChecker viewAccessChecker(UiAccessChecker uiAccessChecker) {
-        return new UiViewAccessChecker(false, uiAccessChecker);
-    }
-
     @EnableWebSecurity
-    @ConditionalOnMissingBean(FlowuiSecurityConfiguration.class)
-    public static class DefaultFlowuiSecurityConfiguration extends FlowuiSecurityConfiguration {
+    @Configuration
+    @ConditionalOnProperty(name = "jmix.flowui.use-default-security-configuration", matchIfMissing = true)
+    @ConditionalOnMissingBean(VaadinWebSecurity.class)
+    public static class DefaultFlowuiVaadinWebSecurity extends FlowuiVaadinWebSecurity {}
 
+    @Bean("flowui_SecurityContextRepository")
+    SecurityContextRepository securityContextRepository() {
+        return new DelegatingSecurityContextRepository(
+                new RequestAttributeSecurityContextRepository(),
+                new HttpSessionSecurityContextRepository()
+        );
     }
 }

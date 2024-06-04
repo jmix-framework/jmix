@@ -54,13 +54,14 @@
         <dataGrid id="sessionsTable"
                   minHeight="20em"
                   width="100%"
+                  columnReorderingAllowed="true"
                   dataContainer="userSessionsDc"
                   selectionMode="MULTI">
             <actions>
                 <action id="refresh" type="list_refresh"/>
                 <action id="expire" text="msg://expire" icon="BAN"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="sessionId"/>
                 <column property="principalName"/>
                 <column property="lastRequest"/>

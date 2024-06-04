@@ -24,4 +24,11 @@ public class DivLoader extends AbstractHtmlContainerLoader<Div> {
     protected Div createComponent() {
         return factory.create(Div.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

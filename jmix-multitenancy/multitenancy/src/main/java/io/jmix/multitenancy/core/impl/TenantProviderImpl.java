@@ -46,6 +46,9 @@ public class TenantProviderImpl implements TenantProvider {
         if (!currentAuthentication.isSet()) {
             return TenantProvider.NO_TENANT;
         }
+        if (!(currentAuthentication.getAuthentication().getPrincipal() instanceof UserDetails)) {
+            return TenantProvider.NO_TENANT;
+        }
         UserDetails userDetails = currentAuthentication.getUser();
         if (!(userDetails instanceof AcceptsTenant)) {
             return TenantProvider.NO_TENANT;

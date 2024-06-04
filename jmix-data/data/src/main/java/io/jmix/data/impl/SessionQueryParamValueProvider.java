@@ -18,7 +18,7 @@ package io.jmix.data.impl;
 
 import io.jmix.core.JmixOrder;
 import io.jmix.core.session.SessionData;
-import io.jmix.data.QueryParamValueProvider;
+import io.jmix.core.QueryParamValueProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;

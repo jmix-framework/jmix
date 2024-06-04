@@ -19,7 +19,7 @@ package test_support.entity.sales;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.pessimisticlocking.PessimisticLock;
+import io.jmix.pessimisticlock.annotation.PessimisticLock;
 import test_support.entity.TestBaseEntity;
 
 import jakarta.persistence.*;

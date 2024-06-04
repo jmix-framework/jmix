@@ -16,11 +16,11 @@
 
 package io.jmix.flowui.component.delegate;
 
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.provider.hierarchy.TreeData;
 import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import com.vaadin.flow.function.ValueProvider;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.data.grid.DataGridItems;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -36,8 +36,8 @@ public class TreeGridDelegate<E, ITEMS extends DataGridItems<E>>
         super(component);
     }
 
-    public Grid.Column<E> addHierarchyColumn(String key, MetaPropertyPath metaPropertyPath) {
-        Grid.Column<E> column = addHierarchyColumnInternal(key, metaPropertyPath);
+    public DataGridColumn<E> addHierarchyColumn(String key, MetaPropertyPath metaPropertyPath) {
+        DataGridColumn<E> column = addHierarchyColumnInternal(key, metaPropertyPath);
         propertyColumns.put(column, metaPropertyPath);
         return column;
     }
@@ -47,11 +47,11 @@ public class TreeGridDelegate<E, ITEMS extends DataGridItems<E>>
         component.setDataProvider(new TreeDataProvider<>(new TreeData<>()));
     }
 
-    protected Grid.Column<E> addHierarchyColumnInternal(String key, MetaPropertyPath metaPropertyPath) {
+    protected DataGridColumn<E> addHierarchyColumnInternal(String key, MetaPropertyPath metaPropertyPath) {
         ValueProvider<E, ?> valueProvider = getValueProvider(metaPropertyPath);
 
         // Also it leads to adding column to {@link #columns} list
-        Grid.Column<E> column = component.addHierarchyColumn(valueProvider);
+        DataGridColumn<E> column = component.addHierarchyColumn(valueProvider);
         column.setKey(key);
 
         initColumn(column, metaPropertyPath);

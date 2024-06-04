@@ -20,7 +20,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.component.ComponentUtils;
-import io.jmix.flowui.view.PessimisticLockStatus;
+import io.jmix.flowui.view.LockStatus;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -63,6 +63,6 @@ public class DetailEnableEditingAction<E>
     protected boolean isApplicable() {
         return super.isApplicable()
                 && target.isReadOnly()
-                && target.getPessimisticLockStatus() != PessimisticLockStatus.FAILED;
+                && target.getLockStatus() != LockStatus.FAILED;
     }
 }

@@ -20,11 +20,13 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.LookupComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
-import io.jmix.flowui.kit.component.SelectionChangeNotifier;
+import io.jmix.flowui.component.SupportsEnterPress;
+import io.jmix.flowui.component.SupportsEnterPress.EnterPressEvent;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.jmix.flowui.util.OperationResult;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -46,17 +48,28 @@ public class StandardListView<E> extends StandardView implements LookupView<E>, 
 
     public StandardListView() {
         addBeforeShowListener(this::onBeforeShow);
+        addReadyListener(this::onReady);
     }
 
     private void onBeforeShow(BeforeShowEvent event) {
-        setupLookupComponent();
         setupSaveShortcut();
     }
 
+    private void onReady(ReadyEvent event) {
+        setupLookupComponent();
+    }
+
     protected void setupLookupComponent() {
-        if (selectionHandler != null) {
-            // TODO: gg, implement
-//            getLookupComponent().setLookupSelectHandler(this::select);
+        if (selectionHandler != null
+                && getLookupComponent() instanceof SupportsEnterPress<?> lookupComponent) {
+            lookupComponent.setEnterPressHandler(this::lookupEnterPress);
+        }
+    }
+
+    protected void lookupEnterPress(EnterPressEvent<?> enterPressEvent) {
+        Collection<E> selectedItems = getLookupComponent().getSelectedItems();
+        if (!selectedItems.isEmpty()) {
+            handleSelection();
         }
     }
 
@@ -81,9 +94,7 @@ public class StandardListView<E> extends StandardView implements LookupView<E>, 
             lookupActionsLayout.setVisible(true);
 
             LookupComponent<E> lookupComponent = getLookupComponent();
-            if (lookupComponent instanceof SelectionChangeNotifier) {
-                SelectionChangeNotifier<?, ?> selectionNotifier = (SelectionChangeNotifier<?, ?>) lookupComponent;
-
+            if (lookupComponent instanceof SelectionChangeNotifier<?, ?> selectionNotifier) {
                 getSelectAction()
                         .ifPresent(selectAction -> {
                             selectionNotifier.addSelectionListener(selectionEvent ->

@@ -177,6 +177,7 @@ import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.security.UserRepository;
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
 import io.jmix.oidc.usermapper.SynchronizingOidcUserMapper;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 
@@ -185,8 +186,9 @@ public class MySynchronizingOidcUserMapper extends SynchronizingOidcUserMapper<U
 
     public MySynchronizingOidcUserMapper(UnconstrainedDataManager dataManager,
                                          UserRepository userRepository,
-                                         ClaimsRolesMapper claimsRolesMapper) {
-        super(dataManager, userRepository, claimsRolesMapper);
+                                         ClaimsRolesMapper claimsRolesMapper,
+                                         RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
+        super(dataManager, userRepository, claimsRolesMapper, roleGrantedAuthorityUtils);
 
         //store role assignments in the database (false by default)
         setSynchronizeRoleAssignments(true);

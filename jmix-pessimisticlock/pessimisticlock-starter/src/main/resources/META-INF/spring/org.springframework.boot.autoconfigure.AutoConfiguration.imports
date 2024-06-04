@@ -1,0 +1,2 @@
+io.jmix.autoconfigure.pessimisticlock.PessimisticLockAutoConfiguration
+io.jmix.autoconfigure.pessimisticlock.PessimisticLockScheduleAutoConfiguration

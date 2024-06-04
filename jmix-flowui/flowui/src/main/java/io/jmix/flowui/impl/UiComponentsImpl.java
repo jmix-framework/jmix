@@ -28,20 +28,24 @@ import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.details.Details;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
-import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.component.tabs.TabSheet;
-import com.vaadin.flow.component.textfield.*;
+import com.vaadin.flow.component.textfield.BigDecimalField;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.treegrid.TreeGrid;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.virtuallist.VirtualList;
 import com.vaadin.flow.di.Instantiator;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.flowui.UiComponents;
@@ -54,6 +58,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.details.JmixDetails;
+import io.jmix.flowui.component.formlayout.JmixFormLayout;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.image.JmixImage;
@@ -62,25 +67,28 @@ import io.jmix.flowui.component.listbox.JmixMultiSelectListBox;
 import io.jmix.flowui.component.loginform.JmixLoginForm;
 import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
+import io.jmix.flowui.component.richtexteditor.RichTextEditor;
 import io.jmix.flowui.component.scroller.JmixScroller;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.splitlayout.JmixSplitLayout;
-import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.component.upload.JmixUpload;
+import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
+import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-
 import org.springframework.lang.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @org.springframework.stereotype.Component("flowui_UiComponents")
@@ -106,6 +114,7 @@ public class UiComponentsImpl implements UiComponents {
         register(JmixImage.class, Image.class);
         register(JmixListBox.class, ListBox.class);
         register(JmixMultiSelectListBox.class, MultiSelectListBox.class);
+        register(JmixFormLayout.class, FormLayout.class);
         register(JmixDetails.class, Details.class);
         register(JmixScroller.class, Scroller.class);
         register(JmixSplitLayout.class, SplitLayout.class);
@@ -120,7 +129,10 @@ public class UiComponentsImpl implements UiComponents {
         register(TypedDatePicker.class, DatePicker.class);
         register(JmixBigDecimalField.class, BigDecimalField.class);
         register(JmixLoginForm.class, LoginForm.class);
+        register(JmixUpload.class, Upload.class);
         register(JmixMenuBar.class, MenuBar.class);
+        register(JmixVirtualList.class, VirtualList.class);
+        register(RichTextEditor.class, JmixRichTextEditor.class);
     }
 
     @SuppressWarnings("unchecked")

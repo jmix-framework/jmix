@@ -3,8 +3,15 @@
       title="msg://jobModelListView.title"
       focusComponent="jobModelsTable">
     <data readOnly="true">
-        <collection id="jobModelsDc" class="io.jmix.quartz.model.JobModel"/>
+        <collection id="jobModelsDc" class="io.jmix.quartz.model.JobModel">
+            <loader id="jobModelsDl"/>
+        </collection>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <settings id="settings" auto="true"/>
+        <urlQueryParameters id="urlQueryParameters"/>
+    </facets>
     <actions>
         <action id="lookupSelectAction"
                 type="lookup_select"/>
@@ -33,6 +40,7 @@
         </details>
 
         <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
+            <button id="refreshBtn" action="jobModelsTable.refresh"/>
             <button id="createBtn" action="jobModelsTable.create"/>
             <button id="editBtn" action="jobModelsTable.edit"/>
             <button id="removeBtn" action="jobModelsTable.remove"/>
@@ -42,6 +50,7 @@
         </hbox>
         <dataGrid id="jobModelsTable"
                   dataContainer="jobModelsDc"
+                  columnReorderingAllowed="true"
                   width="100%"
                   minHeight="20em">
             <actions>
@@ -61,14 +70,13 @@
                 <action id="activate" type="list_itemTracking" text="msg://resumeJob" icon="PLAY"/>
                 <action id="deactivate" type="list_itemTracking" text="msg://pauseJob" icon="PAUSE"/>
             </actions>
-            <columns>
-                <column property="jobName" resizable="true"/>
-                <column property="jobGroup" resizable="true"/>
-                <column property="jobClass" resizable="true"/>
-                <column property="jobState" resizable="true"/>
-                <column property="jobSource" resizable="true"/>
-                <column property="triggerDescription" resizable="true"/>
-                <column property="description" resizable="true"/>
+            <columns resizable="true">
+                <column property="jobName" resizable="true" autoWidth="true"/>
+                <column property="jobGroup" resizable="true" autoWidth="true"/>
+                <column property="jobClass" resizable="true" width="15em"/>
+                <column property="jobState" resizable="true" autoWidth="true"/>
+                <column property="jobSource" resizable="true" autoWidth="true"/>
+                <column property="description" resizable="true" width="20%"/>
             </columns>
         </dataGrid>
 

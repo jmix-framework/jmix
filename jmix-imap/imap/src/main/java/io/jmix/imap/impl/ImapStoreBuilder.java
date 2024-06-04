@@ -16,8 +16,6 @@
 
 package io.jmix.imap.impl;
 
-import com.sun.mail.imap.IMAPStore;
-import com.sun.mail.util.MailSSLSocketFactory;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
@@ -26,6 +24,8 @@ import io.jmix.imap.crypto.Encryptor;
 import io.jmix.imap.entity.ImapMailBox;
 import io.jmix.imap.entity.ImapProxy;
 import io.jmix.imap.entity.ImapSecureMode;
+import org.eclipse.angus.mail.imap.IMAPStore;
+import org.eclipse.angus.mail.util.MailSSLSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

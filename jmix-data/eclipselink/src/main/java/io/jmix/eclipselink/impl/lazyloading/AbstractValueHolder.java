@@ -325,7 +325,8 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
 
             if (valueHolder instanceof SingleValueMappedByPropertyHolder) {
                 SingleValueMappedByPropertyHolder casted = (SingleValueMappedByPropertyHolder) valueHolder;
-                if (Objects.equals(casted.getOwner(), value)) {
+                if (Objects.equals(casted.getOwner(), value)
+                        && property.getName().equals(getPropertyInfo().getInversePropertyName())) {
                     casted.setValue(owner);
                 }
             } else if (valueHolder instanceof SingleValueOwningPropertyHolder) {

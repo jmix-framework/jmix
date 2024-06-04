@@ -30,6 +30,7 @@ public interface StudioViewActions {
             description = "Closes the view",
             classFqn = "io.jmix.flowui.action.view.ViewCloseAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/view-actions.html#view_close",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -62,6 +63,7 @@ public interface StudioViewActions {
             description = "Selects item in lookup view",
             classFqn = "io.jmix.flowui.action.view.LookupSelectAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/view-actions.html#lookup_select",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -91,6 +93,7 @@ public interface StudioViewActions {
             description = "Discards selection in lookup view",
             classFqn = "io.jmix.flowui.action.view.LookupDiscardAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/view-actions.html#lookup_discard",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -120,6 +123,7 @@ public interface StudioViewActions {
             description = "Closes the detail view",
             classFqn = "io.jmix.flowui.action.view.DetailCloseAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/view-actions.html#detail_close",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -149,6 +153,7 @@ public interface StudioViewActions {
             description = "Saves changes in the detail view",
             classFqn = "io.jmix.flowui.action.view.DetailSaveAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/view-actions.html#detail_save",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -178,6 +183,7 @@ public interface StudioViewActions {
             description = "Saves changes and closes the detail view",
             classFqn = "io.jmix.flowui.action.view.DetailSaveCloseAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/view-actions.html#detail_saveClose",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -207,6 +213,7 @@ public interface StudioViewActions {
             description = "Discards changes in the detail view",
             classFqn = "io.jmix.flowui.action.view.DetailDiscardAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/view-actions.html#detail_discard",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -236,6 +243,7 @@ public interface StudioViewActions {
             description = "Enables editing in the detail view",
             classFqn = "io.jmix.flowui.action.view.DetailEnableEditingAction",
             icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            documentationLink = "%VERSION%/flow-ui/actions/view-actions.html#detail_enableEditing",
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

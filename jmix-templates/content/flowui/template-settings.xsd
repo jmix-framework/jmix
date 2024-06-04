@@ -45,6 +45,7 @@
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
             <xs:element name="option" type="optionType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="dependency" type="dependencyType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="dynamicAttribute" type="dynamicAttributeType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="caption" type="xs:string" use="required"/>
         <xs:attribute name="step" type="xs:string"/>
@@ -65,6 +66,7 @@
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="optionsString" type="xs:string"/>
         <xs:attribute name="focused" type="xs:boolean"/>
+        <xs:attribute name="enabled" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="stepsType">
@@ -77,13 +79,25 @@
     </xs:complexType>
 
     <xs:complexType name="stepType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="dependency" type="dependencyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
         <xs:attribute name="description" type="xs:string"/>
         <xs:attribute name="order" type="xs:int"/>
+        <xs:attribute name="condition" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="dependencyType">
         <xs:attribute name="code" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="dynamicAttributeType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="dependency" type="dependencyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="source" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="sourceType">

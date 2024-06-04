@@ -47,19 +47,18 @@ public class ViewNavigationSupport {
         return navigate(navigationTarget, routeParameters, QueryParameters.empty());
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends Component> Optional<T> navigate(Class<? extends T> navigationTarget,
                                                       RouteParameters routeParameters,
                                                       QueryParameters queryParameters) {
 
         String url = getRouteConfiguration().getUrl(navigationTarget, routeParameters);
         UI.getCurrent().navigate(url, queryParameters);
-        return ((Optional<T>) findCurrentNavigationTarget(navigationTarget));
+        return findCurrentNavigationTarget(navigationTarget);
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends Component> Optional<T> findCurrentNavigationTarget(Class<T> navigationTarget) {
-        // CAUTION: copied from com.vaadin.flow.component.UI.findCurrentNavigationTarget
+    public <T extends Component> Optional<T> findCurrentNavigationTarget(Class<? extends T> navigationTarget) {
+        // CAUTION: copied from com.vaadin.flow.component.UI.findCurrentNavigationTarget [last update Vaadin 24.3.1]
         List<HasElement> activeRouterTargetsChain = UI.getCurrent().getInternals()
                 .getActiveRouterTargetsChain();
         for (HasElement element : activeRouterTargetsChain) {

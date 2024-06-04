@@ -18,12 +18,15 @@ package jmix_ui_test_extension;
 
 import component.image.view.JmixImageTestView;
 import component.listmenu.view.ListMenuTestView;
+import component.standarddetailview.view.BlankTestView;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.exception.NoSuchViewException;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import jmix_ui_test_extension.test_support.CustomUiTestAuthenticator;
 import jmix_ui_test_extension.test_support.ExtCustomUiTestAuthenticator;
 import org.junit.jupiter.api.Assertions;
@@ -35,12 +38,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import test_support.FlowuiTestConfiguration;
 
-@UiTest(viewBasePackages = "component.image", authenticator = CustomUiTestAuthenticator.class)
+@UiTest(viewBasePackages = {"component.standarddetailview.view", "component.image"},
+        authenticator = CustomUiTestAuthenticator.class)
 @SpringBootTest(classes = {FlowuiTestConfiguration.class, FlowuiTestAssistConfiguration.class})
 public class UiTestNestedClassesTest {
 
     @Autowired
     private ViewNavigators viewNavigators;
+    @Autowired
+    ViewNavigationSupport navigationSupport;
 
     @Autowired
     private CurrentAuthentication currentAuthentication;
@@ -48,7 +54,8 @@ public class UiTestNestedClassesTest {
     @Test
     @DisplayName("Use view base packages")
     public void loadJmixImageWithDataContainer() {
-        viewNavigators.view(JmixImageTestView.class)
+        var origin = navigateTo(BlankTestView.class);
+        viewNavigators.view(origin, JmixImageTestView.class)
                 .navigate();
 
         JmixImageTestView view = UiTestUtils.getCurrentView();
@@ -62,7 +69,8 @@ public class UiTestNestedClassesTest {
         @Test
         @DisplayName("Use view base packages from outer class")
         public void loadJmixImageWithDataContainer() {
-            viewNavigators.view(JmixImageTestView.class)
+            var origin = navigateTo(BlankTestView.class);
+            viewNavigators.view(origin, JmixImageTestView.class)
                     .navigate();
 
             JmixImageTestView view = UiTestUtils.getCurrentView();
@@ -86,10 +94,11 @@ public class UiTestNestedClassesTest {
         @Test
         @DisplayName("Checks that view base packages are not changed")
         public void checkViewBasePackages() {
+            var origin = navigateTo(BlankTestView.class);
             Assertions.assertThrows(NoSuchViewException.class, () ->
-                    viewNavigators.view(ListMenuTestView.class).navigate());
+                    viewNavigators.view(origin, ListMenuTestView.class).navigate());
 
-            viewNavigators.view(JmixImageTestView.class)
+            viewNavigators.view(origin, JmixImageTestView.class)
                     .navigate();
 
             JmixImageTestView view = UiTestUtils.getCurrentView();
@@ -104,5 +113,10 @@ public class UiTestNestedClassesTest {
 
             Assertions.assertEquals(CustomUiTestAuthenticator.username, user.getUsername());
         }
+    }
+
+    protected <T extends View<?>> T navigateTo(Class<T> view) {
+        navigationSupport.navigate(view);
+        return UiTestUtils.getCurrentView();
     }
 }

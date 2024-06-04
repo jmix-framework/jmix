@@ -16,8 +16,8 @@
 
 package io.jmix.flowui.sys.delegate;
 
+import com.vaadin.flow.component.Component;
 import io.jmix.flowui.view.Install;
-import io.jmix.flowui.view.View;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,18 +25,18 @@ import java.util.function.Consumer;
 
 public class InstalledConsumer implements Consumer<Object> {
 
-    private final View<?> controller;
+    private final Component component;
     private final Method method;
 
-    public InstalledConsumer(View<?> controller, Method method) {
-        this.controller = controller;
+    public InstalledConsumer(Component component, Method method) {
+        this.component = component;
         this.method = method;
     }
 
     @Override
     public void accept(Object o) {
         try {
-            method.invoke(controller, o);
+            method.invoke(component, o);
         } catch (IllegalAccessException | InvocationTargetException e) {
             if (e instanceof InvocationTargetException
                     && ((InvocationTargetException) e).getTargetException() instanceof RuntimeException) {
@@ -50,7 +50,7 @@ public class InstalledConsumer implements Consumer<Object> {
     @Override
     public String toString() {
         return "InstalledConsumer{" +
-                "frameOwner=" + controller.getClass() +
+                "origin=" + component.getClass() +
                 ", method=" + method +
                 '}';
     }

@@ -1,0 +1,70 @@
+{
+  "series": [
+    {
+      "type": "scatter",
+      "id": "scatterId",
+      "name": "scatterName",
+      "colorBy": "data",
+      "coordinateSystem": "cartesian2d",
+      "xAxisIndex": 1,
+      "yAxisIndex": 2,
+      "polarIndex": 3,
+      "geoIndex": 4,
+      "calendarIndex": 5,
+      "legendHoverLink": false,
+      "symbol": "diamond",
+      "symbolSize": 3,
+      "symbolRotate": 2,
+      "symbolKeepAspect": true,
+      "symbolOffset": [
+        "0",
+        "50%"
+      ],
+      "large": true,
+      "largeThreshold": 3000,
+      "cursor": "pointer",
+      "labelLine": {
+        "show": true,
+        "showAbove": false,
+        "length2": 32,
+        "smooth": true,
+        "minTurnAngle": 15
+      },
+      "emphasis": {
+        "disabled": false,
+        "scale": 1.4,
+        "focus": "self",
+        "blurScope": "global"
+      },
+      "select": {
+        "disabled": false
+      },
+      "selectedMode": "single",
+      "progressive": 500,
+      "progressiveThreshold": 1500,
+      "encode": {
+        "x": [
+          "1"
+        ],
+        "y": [
+          "2"
+        ]
+      },
+      "seriesLayoutBy": "row",
+      "datasetIndex": 1,
+      "dataGroupId": "group",
+      "clip": true,
+      "zlevel": 1,
+      "z": 2,
+      "silent": false,
+      "animation": true,
+      "animationThreshold": 1501,
+      "animationDuration": 1500,
+      "animationEasing": "backOut",
+      "animationDelay": 15,
+      "animationDurationUpdate": 150,
+      "animationEasingUpdate": "cubicOut",
+      "animationDelayUpdate": 15
+    }
+  ]
+}

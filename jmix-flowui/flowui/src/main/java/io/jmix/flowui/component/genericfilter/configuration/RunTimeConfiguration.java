@@ -36,6 +36,7 @@ public class RunTimeConfiguration implements Configuration {
     protected final GenericFilter owner;
 
     protected String name;
+    protected boolean availableForAllUsers;
     protected LogicalFilterComponent<?> rootLogicalFilterComponent;
     protected Set<FilterComponent> modifiedFilterComponents = new HashSet<>();
     protected Map<String, Object> defaultValuesMap = new HashMap<>();
@@ -152,6 +153,16 @@ public class RunTimeConfiguration implements Configuration {
         return rootLogicalFilterComponent.getFilterComponents().stream()
                 .anyMatch(filterComponent -> filterComponent instanceof SingleFilterComponentBase
                         && parameterName.equals(((SingleFilterComponentBase<?>) filterComponent).getParameterName()));
+    }
+
+    @Override
+    public boolean isAvailableForAllUsers() {
+        return availableForAllUsers;
+    }
+
+    @Override
+    public void setAvailableForAllUsers(boolean availableForAllUsers) {
+        this.availableForAllUsers = availableForAllUsers;
     }
 
     @Override

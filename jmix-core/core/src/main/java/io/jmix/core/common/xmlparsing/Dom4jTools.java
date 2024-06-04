@@ -103,19 +103,19 @@ public class Dom4jTools {
     }
 
     public Document readDocument(File file) {
-        return withSAXParserFromPool(saxParser -> Dom4j.readDocument(file));
+        return withSAXParserFromPool(saxParser -> Dom4j.readDocument(file, getSaxReader(saxParser)));
     }
 
     public Document readDocument(InputStream stream) {
-        return withSAXParserFromPool(saxParser -> Dom4j.readDocument(stream));
+        return withSAXParserFromPool(saxParser -> Dom4j.readDocument(stream, getSaxReader(saxParser)));
     }
 
     public Document readDocument(Reader reader) {
-        return withSAXParserFromPool(saxParser -> Dom4j.readDocument(reader));
+        return withSAXParserFromPool(saxParser -> Dom4j.readDocument(reader, getSaxReader(saxParser)));
     }
 
     public Document readDocument(String xmlString) {
-        return withSAXParserFromPool(saxParser -> Dom4j.readDocument(xmlString));
+        return withSAXParserFromPool(saxParser -> Dom4j.readDocument(xmlString, getSaxReader(saxParser)));
     }
 
     public void storeMap(Element parentElement, Map<String, String> map) {

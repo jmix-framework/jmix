@@ -1,1 +1,2 @@
 io.jmix.autoconfigure.securityflowui.SecurityFlowuiAutoConfiguration
+io.jmix.autoconfigure.securityflowui.NavigationAccessControlAutoConfiguration

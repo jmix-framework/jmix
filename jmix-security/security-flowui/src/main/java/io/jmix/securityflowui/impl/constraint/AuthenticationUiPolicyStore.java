@@ -30,6 +30,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -47,18 +49,16 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
 
     @Override
     public Stream<ResourcePolicy> getViewResourcePolicies(String viewId) {
-        return extractFromAuthenticationByScope(role ->
-                role.getResourcePolicies().stream()
-                                .filter(resourcePolicy -> ResourcePolicyType.SCREEN.equals(resourcePolicy.getType()) &&
-                                        resourcePolicy.getResource().equals(viewId)));
+        return extractFromAuthenticationByScope(resourceRole ->
+                getPoliciesStreamByTypeAndResources(resourceRole, ResourcePolicyType.SCREEN, Set.of(viewId))
+        );
     }
 
     @Override
     public Stream<ResourcePolicy> getMenuResourcePolicies(String menuId) {
-        return extractFromAuthenticationByScope(role ->
-                role.getResourcePolicies().stream()
-                        .filter(resourcePolicy -> ResourcePolicyType.MENU.equals(resourcePolicy.getType()) &&
-                                resourcePolicy.getResource().equals(menuId)));
+        return extractFromAuthenticationByScope(resourceRole ->
+                        getPoliciesStreamByTypeAndResources(resourceRole, ResourcePolicyType.MENU, Set.of(menuId))
+        );
     }
 
     protected <T> Stream<T> extractFromAuthenticationByScope(Function<ResourceRole, Stream<T>> extractor) {
@@ -99,5 +99,12 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
 
     protected boolean isAppliedForScope(ResourceRole resourceRole, @Nullable String scope) {
         return scope == null || resourceRole.getScopes().contains(scope);
+    }
+
+    protected Stream<ResourcePolicy> getPoliciesStreamByTypeAndResources(ResourceRole resourceRole,
+                                                                         String policyType,
+                                                                         Collection<String> resources) {
+        return resources.stream()
+                .flatMap(r -> resourceRole.getAllResourcePoliciesIndex().getPoliciesByTypeAndResource(policyType, r).stream());
     }
 }

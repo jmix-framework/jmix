@@ -24,6 +24,7 @@ import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
 import org.springframework.core.env.Environment;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class TestMenuConfig extends MenuConfig {
@@ -37,7 +38,7 @@ public class TestMenuConfig extends MenuConfig {
 
     public void loadTestMenu(String menuConfig) {
         rootItems.clear();
-        loadMenuItems(Dom4j.readDocument(menuConfig).getRootElement(), null);
+        loadMenuItems(Dom4j.readDocument(menuConfig).getRootElement(), null, new HashMap<>());
         initialized = true;
     }
 

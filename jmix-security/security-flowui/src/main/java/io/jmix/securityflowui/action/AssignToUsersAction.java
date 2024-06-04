@@ -124,6 +124,11 @@ public class AssignToUsersAction<E extends BaseRoleModel>
         openDialog();
     }
 
+    @Override
+    protected boolean isApplicable() {
+        return super.isApplicable() && target.getSelectedItems().size() == 1;
+    }
+
     protected void openDialog() {
         Class<?> userClass = userRepository.getSystemUser().getClass();
 
@@ -156,13 +161,13 @@ public class AssignToUsersAction<E extends BaseRoleModel>
 
     protected void configureViewLoader(DataLoader loader) {
         List<String> excludedUsernames = dataManager.load(RoleAssignmentEntity.class)
-                .condition(PropertyCondition.equal(ROLE_CODE_PROPERTY, selectedItem.getCode()))
+                .condition(PropertyCondition.equal(ROLE_CODE_PROPERTY, selectedItem.getCode()).skipNullOrEmpty())
                 .list()
                 .stream()
                 .map(RoleAssignmentEntity::getUsername)
                 .collect(Collectors.toUnmodifiableList());
 
-        loader.setCondition(PropertyCondition.notInList(USERNAME_PROPERTY, excludedUsernames));
+        loader.setCondition(PropertyCondition.notInList(USERNAME_PROPERTY, excludedUsernames).skipNullOrEmpty());
     }
 
     protected DataLoader findViewLoader(View<?> view, Class<?> userClass) {

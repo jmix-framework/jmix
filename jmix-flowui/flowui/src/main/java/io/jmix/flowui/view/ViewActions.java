@@ -19,6 +19,8 @@ package io.jmix.flowui.view;
 import io.jmix.flowui.kit.action.Action;
 
 import org.springframework.lang.Nullable;
+
+import java.util.ArrayList;
 import java.util.Collection;
 
 public interface ViewActions {
@@ -39,7 +41,7 @@ public interface ViewActions {
     }
 
     default void removeAllActions() {
-        getActions().forEach(this::removeAction);
+        new ArrayList<>(getActions()).forEach(this::removeAction);
     }
 
     Collection<Action> getActions();

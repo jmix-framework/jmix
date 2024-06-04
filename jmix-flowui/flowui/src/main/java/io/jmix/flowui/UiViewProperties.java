@@ -51,6 +51,11 @@ public class UiViewProperties {
      */
     boolean reloadUnfetchedAttributesFromLookupViews;
 
+    /**
+     * Show the confirmation dialog if a user tries to close the browser tab
+     */
+    boolean preventBrowserTabClosing;
+
     public UiViewProperties(
             String closeShortcut,
             String saveShortcut,
@@ -59,7 +64,8 @@ public class UiViewProperties {
             @DefaultValue("DEFAULT") String validationNotificationType,
             @DefaultValue("BOTTOM_END") String validationNotificationPosition,
             @DefaultValue("3000") Integer validationNotificationDuration,
-            @DefaultValue("true") boolean reloadUnfetchedAttributesFromLookupViews
+            @DefaultValue("true") boolean reloadUnfetchedAttributesFromLookupViews,
+            @DefaultValue("false") boolean preventBrowserTabClosing
     ) {
         this.closeShortcut = closeShortcut;
         this.saveShortcut = saveShortcut;
@@ -69,6 +75,7 @@ public class UiViewProperties {
         this.validationNotificationPosition = validationNotificationPosition;
         this.validationNotificationDuration = validationNotificationDuration;
         this.reloadUnfetchedAttributesFromLookupViews = reloadUnfetchedAttributesFromLookupViews;
+        this.preventBrowserTabClosing = preventBrowserTabClosing;
     }
 
     public String getCloseShortcut() {
@@ -113,5 +120,12 @@ public class UiViewProperties {
      */
     public boolean isReloadUnfetchedAttributesFromLookupViews() {
         return reloadUnfetchedAttributesFromLookupViews;
+    }
+
+    /**
+     * @see #preventBrowserTabClosing
+     */
+    public boolean isPreventBrowserTabClosing()  {
+        return preventBrowserTabClosing;
     }
 }

@@ -19,10 +19,11 @@ package io.jmix.flowui.component.textarea;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.component.HasLengthLimited;
 import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
-import io.jmix.flowui.component.delegate.FieldDelegate;
+import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.delegate.TextAreaFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -31,16 +32,17 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 public class JmixTextArea extends TextArea implements SupportsValueSource<String>, SupportsValidation<String>,
-        SupportsStatusChangeHandler<JmixTextArea>, HasRequired, ApplicationContextAware, InitializingBean {
+        SupportsStatusChangeHandler<JmixTextArea>, HasLengthLimited, HasRequired, ApplicationContextAware,
+        InitializingBean {
 
     protected ApplicationContext applicationContext;
 
-    protected FieldDelegate<JmixTextArea, String, String> fieldDelegate;
+    protected TextAreaFieldDelegate<JmixTextArea, String> fieldDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -57,8 +59,8 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
     }
 
     @SuppressWarnings("unchecked")
-    protected FieldDelegate<JmixTextArea, String, String> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
+    protected TextAreaFieldDelegate<JmixTextArea, String> createFieldDelegate() {
+        return applicationContext.getBean(TextAreaFieldDelegate.class, this);
     }
 
     @Override

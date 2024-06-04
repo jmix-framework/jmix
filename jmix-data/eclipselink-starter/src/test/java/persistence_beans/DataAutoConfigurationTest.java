@@ -18,6 +18,8 @@ package persistence_beans;
 
 import io.jmix.autoconfigure.eclipselink.EclipselinkAutoConfiguration;
 import io.jmix.core.Stores;
+import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
+import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -61,6 +63,11 @@ public class DataAutoConfigurationTest {
         @Primary
         PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
             return new TestTransactionManager(Stores.MAIN, entityManagerFactory);
+        }
+
+        @Bean
+        public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
+            return new LocalApplicationEventChannelSupplier();
         }
     }
 }

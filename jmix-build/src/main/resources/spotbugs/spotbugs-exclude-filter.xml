@@ -140,6 +140,12 @@
     </Match>
 
     <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+        <Class name="io.jmix.auditflowui.view.entitylog.EntityLogView"/>
+        <Method name="onUserFieldFetchCallback"/>
+    </Match>
+
+    <Match>
         <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
         <Class name="io.jmix.data.impl.jpql.EntityPath"/>
     </Match>
@@ -405,6 +411,12 @@
     <Match>
         <Bug pattern="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
         <Class name="name.fraser.neil.plaintext.diff_match_patch"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="SF_SWITCH_NO_DEFAULT"/>
+        <Class name="io.jmix.reportsflowui.view.template.ReportTemplateDetailView"/>
+        <Method name="onReportTemplateDcItemPropertyChange"/>
     </Match>
 
 </FindBugsFilter>

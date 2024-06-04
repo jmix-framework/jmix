@@ -24,8 +24,10 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.flowui.action.binder.ActionBinders;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.monitoring.ViewLifeCycle;
+import io.jmix.flowui.sys.autowire.AutowireManager;
+import io.jmix.flowui.sys.autowire.ViewAutowireContext;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.View.InitEvent;
 import io.jmix.flowui.view.navigation.RouteSupport;
@@ -33,18 +35,22 @@ import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.ComponentLoaderContext;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
+import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
 import static io.jmix.flowui.view.ViewControllerUtils.getPackage;
 
 
@@ -58,8 +64,9 @@ public class ViewSupport {
     protected ViewRegistry viewRegistry;
     protected ViewNavigationSupport navigationSupport;
     protected CurrentAuthentication currentAuthentication;
-    protected ViewControllerDependencyManager dependencyManager;
+    protected AutowireManager autowireManager;
     protected RouteSupport routeSupport;
+    protected MeterRegistry meterRegistry;
 
     protected Map<String, String> titleCache = new ConcurrentHashMap<>();
 
@@ -68,32 +75,39 @@ public class ViewSupport {
                        ViewRegistry viewRegistry,
                        ViewNavigationSupport navigationSupport,
                        CurrentAuthentication currentAuthentication,
-                       ViewControllerDependencyManager dependencyManager,
-                       RouteSupport routeSupport) {
+                       AutowireManager autowireManager,
+                       RouteSupport routeSupport,
+                       MeterRegistry meterRegistry) {
         this.applicationContext = applicationContext;
         this.viewXmlLoader = viewXmlLoader;
         this.viewRegistry = viewRegistry;
         this.navigationSupport = navigationSupport;
         this.currentAuthentication = currentAuthentication;
-        this.dependencyManager = dependencyManager;
+        this.autowireManager = autowireManager;
         this.routeSupport = routeSupport;
+        this.meterRegistry = meterRegistry;
     }
 
     public void initView(View<?> view) {
         log.debug("Init view: " + view);
 
-        ViewControllerUtils.setViewData(view, applicationContext.getBean(ViewData.class));
-
-        ActionBinders actionBinders = applicationContext.getBean(ActionBinders.class);
-        ViewActions actions = applicationContext.getBean(ViewActions.class, actionBinders.binder(view));
-        ViewControllerUtils.setViewActions(view, actions);
-
-        ViewControllerUtils.setViewFacets(view, applicationContext.getBean(ViewFacets.class, view));
+        Timer.Sample createSample = startTimerSample(meterRegistry);
 
         String viewId = getInferredViewId(view);
         view.setId(viewId);
 
+        ViewControllerUtils.setViewData(view, applicationContext.getBean(ViewData.class));
+
+        ViewActions actions = applicationContext.getBean(ViewActions.class, view);
+        ViewControllerUtils.setViewActions(view, actions);
+
+        ViewControllerUtils.setViewFacets(view, applicationContext.getBean(ViewFacets.class, view));
+
+        stopViewTimerSample(createSample, meterRegistry, ViewLifeCycle.CREATE, viewId);
+
         ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
+
+        Timer.Sample loadSample = startTimerSample(meterRegistry);
 
         ComponentLoaderContext componentLoaderContext = createComponentLoaderContext();
 
@@ -110,15 +124,24 @@ public class ViewSupport {
             loadWindowFromXml(element, view, componentLoaderContext);
         }
 
+        stopViewTimerSample(loadSample, meterRegistry, ViewLifeCycle.LOAD, viewId);
+
         // Pre InitTasks must be executed before DependencyManager
         // invocation to have precedence over @Subscribe methods
         componentLoaderContext.executePreInitTasks();
 
-        ViewControllerDependencyManager dependencyManager =
-                applicationContext.getBean(ViewControllerDependencyManager.class);
-        dependencyManager.inject(view);
+        Timer.Sample injectSample = startTimerSample(meterRegistry);
+
+        ViewAutowireContext viewAutowireContext = new ViewAutowireContext(view);
+        autowireManager.autowire(viewAutowireContext);
+
+        stopViewTimerSample(injectSample, meterRegistry, ViewLifeCycle.INJECT, viewId);
+
+        Timer.Sample initSample = startTimerSample(meterRegistry);
 
         fireViewInitEvent(view);
+
+        stopViewTimerSample(initSample, meterRegistry, ViewLifeCycle.INIT, viewId);
 
         // InitTasks must be executed after View.InitEvent
         // in case something was replaced, e.g. actions

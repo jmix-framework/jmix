@@ -40,6 +40,7 @@ public class XlsxGenerator extends AbstractOfficeGenerator {
 
     public static final String CELL_MASK = "$%s$%s";
     protected static final String SHEET = "Sheet1"; //PartName can`t contain non-utf symbols cause it used URI encoding
+    protected static final String ROW_AUTO_HEIGHT_HINT = "hint_rowAutoHeight_";
 
     @Override
     protected OpcPackage generatePackage(ReportData reportData) throws Docx4JException, JAXBException {
@@ -132,11 +133,25 @@ public class XlsxGenerator extends AbstractOfficeGenerator {
                     String.valueOf(endedRowForRegion - 1));
             ctDefinedName.setValue(sheetInternalName + "!" + regionHeaderCellFrom + ":" + regionHeaderCellTo);
             definedNames.getDefinedName().add(ctDefinedName);
+
+            CTDefinedName headerRowAutoHeightHint = createRowAutoHeightHint(ctDefinedName, factory);
+            definedNames.getDefinedName().add(headerRowAutoHeightHint);
         }
         CTDefinedName ctDefinedName = factory.createCTDefinedName();
         ctDefinedName.setName(reportRegion.getNameForBand());
         ctDefinedName.setValue(sheetInternalName + "!" + regionCellFrom + ":" + regionCellTo);
         definedNames.getDefinedName().add(ctDefinedName);
+
+        CTDefinedName rowAutoHeightHint = createRowAutoHeightHint(ctDefinedName, factory);
+        definedNames.getDefinedName().add(rowAutoHeightHint);
+    }
+
+    protected CTDefinedName createRowAutoHeightHint(CTDefinedName sourceDefinedName, ObjectFactory factory) {
+        CTDefinedName rowAutoHeightHint = factory.createCTDefinedName();
+        rowAutoHeightHint.setName(ROW_AUTO_HEIGHT_HINT + sourceDefinedName.getName());
+        rowAutoHeightHint.setValue(sourceDefinedName.getValue());
+
+        return rowAutoHeightHint;
     }
 
     protected CTBorder generateBorder(ObjectFactory factory, CTBorderPr borderPr) {

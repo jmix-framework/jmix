@@ -23,6 +23,7 @@ import io.jmix.flowui.kit.action.Action;
 import org.springframework.lang.Nullable;
 import java.util.List;
 
+@Deprecated(since = "2.2", forRemoval = true)
 public class ShortcutActionsHolderBindingImpl<H extends Component, A extends Action, C extends Component>
         extends AbstractShortcutActionBindingImpl<H, A, C> implements ShortcutActionsHolderBinding<H, A, C> {
 

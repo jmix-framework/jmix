@@ -65,11 +65,24 @@ public class ViewValidation {
         this.notifications = notifications;
     }
 
+    /**
+     * Validates UI components located inside the given container by invoking their
+     * {@link SupportsValidation#executeValidators()}.
+     *
+     * @param container a component that can contain other components
+     * @return validation errors
+     */
     public ValidationErrors validateUiComponents(Component container) {
         Preconditions.checkNotNullArgument(container);
         return validateUiComponents(UiComponentUtils.getComponents(container));
     }
 
+    /**
+     * Validates UI components by invoking their {@link SupportsValidation#executeValidators()}.
+     *
+     * @param components components collection
+     * @return validation errors
+     */
     public ValidationErrors validateUiComponents(Collection<Component> components) {
         Preconditions.checkNotNullArgument(components);
 
@@ -83,6 +96,12 @@ public class ViewValidation {
         return errors;
     }
 
+    /**
+     * Validates UI component by invoking their {@link SupportsValidation#executeValidators()}.
+     *
+     * @param component UI component
+     * @return validation errors
+     */
     public ValidationErrors validateUiComponent(Component component) {
         Preconditions.checkNotNullArgument(component);
 
@@ -95,6 +114,13 @@ public class ViewValidation {
         }
     }
 
+    /**
+     * Performs Java Bean Validation of the given object.
+     *
+     * @param groupClass the group or list of groups targeted for validation
+     * @param item object to validate
+     * @return validation errors
+     */
     public ValidationErrors validateBeanGroup(Class<?> groupClass, Object item) {
         ValidationErrors errors = new ValidationErrors();
 
@@ -112,6 +138,11 @@ public class ViewValidation {
         return errors;
     }
 
+    /**
+     * Shows a notification with validation errors.
+     *
+     * @param errors validation errors
+     */
     public void showValidationErrors(ValidationErrors errors) {
         showValidationErrorsNotification(errors,
                 viewProperties.getValidationNotificationDuration(),
@@ -139,6 +170,11 @@ public class ViewValidation {
                 .show();
     }
 
+    /**
+     * Focuses a component corresponding to the first validation error, if there is one.
+     *
+     * @param errors validation errors
+     */
     public void focusProblemComponent(ValidationErrors errors) {
         Preconditions.checkNotNullArgument(errors);
 
@@ -151,6 +187,12 @@ public class ViewValidation {
         }
     }
 
+    /**
+     * Creates a message explaining the given validation errors.
+     *
+     * @param errors validation errors
+     * @return error messsage
+     */
     public static String getValidationErrorsMessage(ValidationErrors errors) {
         Preconditions.checkNotNullArgument(errors);
 
@@ -193,6 +235,14 @@ public class ViewValidation {
         }
     }
 
+    /**
+     * Shows confirmation dialog about discarding unsaved changes.
+     * <p>
+     * The options invoke the callback methods of the returned {@link UnsavedChangesDialogResult} object.
+     *
+     * @param origin view controller
+     * @return object that contains "discard" and "cancel" callbacks to be assigned by the caller.
+     */
     public UnsavedChangesDialogResult showUnsavedChangesDialog(View<?> origin) {
         UnsavedChangesDialogResult result = new UnsavedChangesDialogResult();
 
@@ -216,6 +266,14 @@ public class ViewValidation {
         return result;
     }
 
+    /**
+     * Shows confirmation dialog about saving or discarding unsaved changes.
+     * <p>
+     * The options invoke the callback methods of the returned {@link SaveChangesDialogResult} object.
+     *
+     * @param origin view controller
+     * @return object that contains "save", "discard" and "cancel" callbacks to be assigned by the caller.
+     */
     public SaveChangesDialogResult showSaveConfirmationDialog(View<?> origin) {
         SaveChangesDialogResult result = new SaveChangesDialogResult();
 
@@ -245,7 +303,7 @@ public class ViewValidation {
     }
 
     /**
-     * Callbacks holder for unsaved changes dialog.
+     * Callbacks holder for discarding unsaved changes dialog.
      */
     public static class UnsavedChangesDialogResult {
         protected Runnable discardHandler;
@@ -278,7 +336,7 @@ public class ViewValidation {
     }
 
     /**
-     * Callbacks holder for save changes dialog.
+     * Callbacks holder for saving or discarding unsaved changes dialog.
      */
     public static class SaveChangesDialogResult {
         protected Runnable saveHandler;

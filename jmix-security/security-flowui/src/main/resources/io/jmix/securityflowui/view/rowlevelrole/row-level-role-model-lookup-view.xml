@@ -31,9 +31,10 @@
         <dataGrid id="roleModelsTable"
                   dataContainer="roleModelsDc"
                   selectionMode="MULTI"
+                  columnReorderingAllowed="true"
                   minHeight="20em"
                   width="100%">
-            <columns>
+            <columns resizable="true">
                 <column property="name" resizable="true"/>
                 <column property="code" resizable="true"/>
             </columns>

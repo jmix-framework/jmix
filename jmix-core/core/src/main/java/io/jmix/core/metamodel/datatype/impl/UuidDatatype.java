@@ -15,10 +15,12 @@
  */
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.Messages;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.util.Locale;
@@ -26,6 +28,13 @@ import java.util.UUID;
 
 @DatatypeDef(id = "uuid", javaClass = UUID.class, defaultForClass = true, value = "core_UuidDatatype")
 public class UuidDatatype implements Datatype<UUID> {
+
+    protected Messages messages;
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
+    }
 
     @Override
     public String format(Object value) {
@@ -45,7 +54,8 @@ public class UuidDatatype implements Datatype<UUID> {
             try {
                 return UuidProvider.fromString(value.trim());
             } catch (Exception e) {
-                throw new ParseException("Error parsing UUID", 0);
+                throw new ParseException(messages.formatMessage(
+                        "", "datatype.unparseableUuid.message", value.trim()), 0);
             }
         }
     }

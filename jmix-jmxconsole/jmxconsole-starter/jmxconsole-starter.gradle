@@ -1,0 +1,8 @@
+group = 'io.jmix.jmxconsole'
+archivesBaseName = 'jmix-jmxconsole-starter'
+
+dependencies {
+    api project(':jmxconsole')
+
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+}

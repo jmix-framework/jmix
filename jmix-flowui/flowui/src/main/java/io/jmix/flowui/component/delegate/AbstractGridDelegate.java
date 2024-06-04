@@ -18,12 +18,17 @@ package io.jmix.flowui.component.delegate;
 
 import com.google.common.base.Strings;
 import com.google.common.primitives.Booleans;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.data.selection.SelectionModel;
@@ -39,8 +44,12 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.list.EditAction;
+import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.SupportsEnterPress.EnterPressEvent;
+import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
@@ -51,7 +60,10 @@ import io.jmix.flowui.data.aggregation.Aggregations;
 import io.jmix.flowui.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
+import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.sys.BeanUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
@@ -61,6 +73,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -84,7 +97,12 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected Registration itemSetChangeRegistration;
     protected Registration valueChangeRegistration;
 
+    // own selection listeners registration is needed to keep listeners if selection model is changed
     protected Set<SelectionListener<Grid<E>, E>> selectionListeners = new HashSet<>();
+
+    protected Set<ComponentEventListener<ItemDoubleClickEvent<E>>> itemDoubleClickListeners = new HashSet<>();
+    protected Consumer<EnterPressEvent<C>> enterPressHandler;
+
     protected Consumer<ColumnSecurityContext<E>> afterColumnSecurityApplyHandler;
 
     protected boolean aggregatable;
@@ -133,6 +151,19 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         component.addSortListener(this::onSort);
         component.addColumnReorderListener(this::onColumnReorderChange);
         addSelectionListener(this::notifyDataProviderSelectionChanged);
+
+        // Can't use method reference, because of compilation error
+        //noinspection Convert2Lambda,Anonymous2MethodRef
+        ComponentUtil.addListener(component, ItemDoubleClickEvent.class, new ComponentEventListener<>() {
+            @Override
+            public void onComponentEvent(ItemDoubleClickEvent event) {
+                //noinspection unchecked
+                onItemDoubleClick(event);
+            }
+        });
+
+        Shortcuts.addShortcutListener(component, this::handleEnterPress, Key.ENTER)
+                .listenOn(component);
     }
 
     @Nullable
@@ -179,6 +210,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         closeEditorIfOpened();
         component.getDataCommunicator().reset();
         updateAggregationRow();
+        //refresh selection because it contains old item instances which may not exist in the container anymore
+        refreshSelection(event.getSource().getItems());
     }
 
     protected void closeEditorIfOpened() {
@@ -195,6 +228,31 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                 ((DataGridDataProviderChangeObserver) editor).dataProviderChanged();
             }
         }
+    }
+
+    /**
+     * Refreshes current selection using provided items.
+     */
+    protected void refreshSelection(Collection<E> items) {
+        Set<E> prevSelectedItemsToRefresh = new HashSet<>(getSelectedItems());
+
+        List<E> itemsToSelect = new ArrayList<>(prevSelectedItemsToRefresh.size());
+        for (E item : items) {
+            //select the item if it was selected before refresh
+            if (prevSelectedItemsToRefresh.remove(item)) {
+                itemsToSelect.add(item);
+            }
+
+            //skip further checks if no more items were selected
+            if (prevSelectedItemsToRefresh.isEmpty()) {
+                break;
+            }
+        }
+        //selection model doesn't provide direct access to selected items,
+        //so to update the model we are forced to deselect all items and select new items again
+        //to handle any changes in item collection or items themselves
+        deselectAll();
+        select(itemsToSelect);
     }
 
     protected void itemsValueChanged(DataGridItems.ValueChangeEvent<E> event) {
@@ -294,6 +352,16 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         };
     }
 
+    public Registration addItemDoubleClickListener(ComponentEventListener<ItemDoubleClickEvent<E>> listener) {
+        itemDoubleClickListeners.add(listener);
+        return () -> itemDoubleClickListeners.remove(listener);
+    }
+
+
+    public void setEnterPressHandler(@Nullable Consumer<EnterPressEvent<C>> handler) {
+        this.enterPressHandler = handler;
+    }
+
     public boolean isAggregatable() {
         return aggregatable;
     }
@@ -339,7 +407,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         Map<AggregationInfo, String> aggregationInfoMap = getAggregatableDelegate().aggregate(
                 aggregationInfos.toArray(new AggregationInfo[0]),
                 getItems().getItems().stream()
-                        .map(EntityValues::getId)
+                        .map(EntityValues::getIdOrEntity)
                         .toList()
         );
 
@@ -467,20 +535,29 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         }
     }
 
+    public BiFunction<Renderer<E>, String, Grid.Column<E>> getDefaultColumnFactory() {
+        return (Renderer<E> renderer, String columnId) -> {
+            DataGridColumn<E> dataGridColumn =
+                    new DataGridColumn<>(component, columnId, renderer);
+            BeanUtil.autowireContext(applicationContext, dataGridColumn);
+            return dataGridColumn;
+        };
+    }
+
     @Nullable
     public MetaPropertyPath getColumnMetaPropertyPath(Grid.Column<E> column) {
         return propertyColumns.get(column);
     }
 
-    public Grid.Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
+    public DataGridColumn<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         Grid.Column<E> column = addColumnInternal(key, metaPropertyPath);
         propertyColumns.put(column, metaPropertyPath);
-        return column;
+        return (DataGridColumn<E>) column;
     }
 
-    public Grid.Column<E> addColumn(Grid.Column<E> column) {
+    public DataGridColumn<E> addColumn(Grid.Column<E> column) {
         columns.add(column);
-        return column;
+        return (DataGridColumn<E>) column;
     }
 
     protected void setupEmptyDataProvider() {
@@ -649,24 +726,12 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         return List.copyOf(columns);
     }
 
-    /**
-     * @return a copy of columns that are visible and not hidden by security
-     * @deprecated use {@link Grid#getColumns()} and filter by visibility
-     */
-    @Deprecated
-    public List<Grid.Column<E>> getVisibleColumns() {
-        return columns.stream()
-                .filter(c -> c.isVisible()
-                        && (!propertyColumns.containsKey(c) || isPropertyEnabledBySecurity(propertyColumns.get(c))))
-                .collect(Collectors.toList());
-    }
-
     @Nullable
-    public Grid.Column<E> getColumnByKey(String key) {
+    public DataGridColumn<E> getColumnByKey(String key) {
         if (Strings.isNullOrEmpty(key)) {
             return null;
         }
-        return columns.stream()
+        return (DataGridColumn<E>) columns.stream()
                 .filter(c -> key.equals(c.getKey()))
                 .findFirst()
                 .orElse(null);
@@ -723,6 +788,64 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         this.afterColumnSecurityApplyHandler = afterColumnSecurityApplyHandler;
     }
 
+    protected void onItemDoubleClick(ItemDoubleClickEvent<E> itemDoubleClickEvent) {
+        if (itemDoubleClickListeners.isEmpty()) {
+            handleDoubleClickAction(itemDoubleClickEvent.getItem());
+        } else {
+            fireItemDoubleClick(itemDoubleClickEvent);
+        }
+    }
+
+    protected void fireItemDoubleClick(ItemDoubleClickEvent<E> itemDoubleClickEvent) {
+        for (ComponentEventListener<ItemDoubleClickEvent<E>> listener : itemDoubleClickListeners) {
+            listener.onComponentEvent(itemDoubleClickEvent);
+        }
+    }
+
+    protected void handleEnterPress() {
+        handleDoubleClickAction(null);
+    }
+
+    protected void handleDoubleClickAction(@Nullable E item) {
+        if (item != null) {
+            // have to select clicked item to make action work, otherwise
+            // consecutive clicks on the same item deselect it
+            component.select(item);
+        }
+
+        if (enterPressHandler != null) {
+            enterPressHandler.accept(new EnterPressEvent<>(component));
+            return;
+        }
+
+        Action action = findEnterAction();
+        if (action == null) {
+            action = component.getAction(EditAction.ID);
+            if (action == null) {
+                action = component.getAction(ReadAction.ID);
+            }
+        }
+
+        if (action != null && action.isEnabled()) {
+            action.actionPerform(component);
+        }
+    }
+
+    @Nullable
+    protected Action findEnterAction() {
+        for (Action action : component.getActions()) {
+            KeyCombination keyCombination = action.getShortcutCombination();
+            if (keyCombination != null) {
+                if ((keyCombination.getKeyModifiers() == null || keyCombination.getKeyModifiers().length == 0)
+                        && keyCombination.getKey() == Key.ENTER) {
+                    return action;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public static class ColumnSecurityContext<E> {
 
         protected Grid.Column<E> column;
@@ -737,8 +860,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             this.propertyEnabled = propertyEnabled;
         }
 
-        public Grid.Column<E> getColumn() {
-            return column;
+        public DataGridColumn<E> getColumn() {
+            return (DataGridColumn<E>) column;
         }
 
         public MetaPropertyPath getMetaPropertyPath() {

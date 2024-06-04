@@ -103,16 +103,9 @@ class UrlParamSerializerTest extends FlowuiTestSpecification {
 
     def "Negative serialization cases"() {
         def nullId = null
-        def array = [1, 2, 3]
 
         when: "null passed as id"
         urlParamSerializer.serialize(nullId)
-
-        then: "fail"
-        thrown IllegalArgumentException
-
-        when: "array is passed as id"
-        urlParamSerializer.serialize(array)
 
         then: "fail"
         thrown IllegalArgumentException

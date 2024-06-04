@@ -36,11 +36,13 @@ public class CodeEditorLoader extends AbstractComponentLoader<CodeEditor> {
         getDataLoaderSupport().loadData(resultComponent, element);
 
         loadBoolean(element, "highlightActiveLine", resultComponent::setHighlightActiveLine);
+        loadBoolean(element, "highlightGutterLine", resultComponent::setHighlightGutterLine);
         loadBoolean(element, "showGutter", resultComponent::setShowGutter);
         loadBoolean(element, "showLineNumbers", resultComponent::setShowLineNumbers);
         loadBoolean(element, "showPrintMargin", resultComponent::setShowPrintMargin);
         loadInteger(element, "printMarginColumn", resultComponent::setPrintMarginColumn);
         loadString(element, "fontSize", resultComponent::setFontSize);
+        loadBoolean(element, "textWrap", resultComponent::setTextWrap);
 
         loadEnum(element, CodeEditorMode.class, "mode", resultComponent::setMode);
         loadEnum(element, CodeEditorTheme.class, "theme", resultComponent::setTheme);
@@ -53,7 +55,7 @@ public class CodeEditorLoader extends AbstractComponentLoader<CodeEditor> {
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);
-        componentLoader().loadTabIndex(resultComponent, element);
+        componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadTooltip(resultComponent, element);
     }

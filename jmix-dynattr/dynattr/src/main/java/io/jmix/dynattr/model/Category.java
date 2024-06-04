@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
-@jakarta.persistence.Entity(name = "dynat_Category")
+@Entity(name = "dynat_Category")
 @Table(name = "DYNAT_CATEGORY")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.INTEGER)
@@ -87,7 +87,7 @@ public class Category implements Serializable {
     protected String entityType;
 
     @Column(name = "IS_DEFAULT")
-    protected Boolean isDefault;
+    protected Boolean isDefault = false;
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryAttribute.class)
     @OnDelete(DeletePolicy.CASCADE)

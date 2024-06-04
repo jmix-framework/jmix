@@ -66,7 +66,8 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             fontSize == "20"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
+            !highlightActiveLine
+            !highlightGutterLine
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -76,12 +77,12 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             printMarginColumn == 120
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             !showGutter
             !showLineNumbers
             !showPrintMargin
             tabIndex == 3
+            textWrap
             theme == CodeEditorTheme.TERMINAL
             title == "titleString"
             !visible

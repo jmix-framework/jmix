@@ -1,6 +1,6 @@
 plugins {
-    id 'io.jmix' version '2.0.2'
-    id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+    id 'io.jmix' version '2.2.3'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
     id 'java'
 }
 
@@ -34,8 +34,6 @@ dependencies {
     implementation 'io.jmix.datatools:jmix-datatools-starter'
     implementation 'io.jmix.datatools:jmix-datatools-flowui-starter'
 
-    implementation 'io.jmix.flowui:jmix-flowui-kit'
-
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     runtimeOnly 'org.hsqldb:hsqldb'
@@ -48,4 +46,8 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+vaadin {
+    optimizeBundle = false
 }

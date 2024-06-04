@@ -24,4 +24,11 @@ public class HeaderLoader extends AbstractHtmlContainerLoader<Header> {
     protected Header createComponent() {
         return factory.create(Header.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

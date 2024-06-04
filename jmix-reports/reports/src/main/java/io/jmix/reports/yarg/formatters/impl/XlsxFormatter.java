@@ -41,6 +41,7 @@ import org.docx4j.dml.chart.CTAxDataSource;
 import org.docx4j.dml.chart.CTChart;
 import org.docx4j.dml.chart.CTNumDataSource;
 import org.docx4j.dml.chart.CTPlotArea;
+import org.docx4j.dml.spreadsheetdrawing.CTOneCellAnchor;
 import org.docx4j.dml.spreadsheetdrawing.CTTwoCellAnchor;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
@@ -350,11 +351,15 @@ public class XlsxFormatter extends AbstractFormatter {
 
     protected void shiftChart(Document.ChartWrapper chart, Range templateRange, Range firstResultRange) {
         Offset offset = calculateOffset(templateRange, firstResultRange);
-        CTTwoCellAnchor anchor = chart.getAnchor();
-        anchor.getFrom().setRow(anchor.getFrom().getRow() + offset.downOffset);
-        anchor.getFrom().setCol(anchor.getFrom().getCol() + offset.rightOffset);
-        anchor.getTo().setRow(anchor.getTo().getRow() + offset.downOffset);
-        anchor.getTo().setCol(anchor.getTo().getCol() + offset.rightOffset);
+        if (chart.getAnchor() instanceof CTOneCellAnchor anchor) {
+            anchor.getFrom().setRow(anchor.getFrom().getRow() + offset.downOffset);
+            anchor.getFrom().setCol(anchor.getFrom().getCol() + offset.rightOffset);
+        } else if (chart.getAnchor() instanceof CTTwoCellAnchor anchor) {
+            anchor.getFrom().setRow(anchor.getFrom().getRow() + offset.downOffset);
+            anchor.getFrom().setCol(anchor.getFrom().getCol() + offset.rightOffset);
+            anchor.getTo().setRow(anchor.getTo().getRow() + offset.downOffset);
+            anchor.getTo().setCol(anchor.getTo().getCol() + offset.rightOffset);
+        }
     }
 
     //todo support formulas without range but with list of cells

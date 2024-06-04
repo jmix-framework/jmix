@@ -18,10 +18,15 @@ package io.jmix.flowui.facet.urlqueryparameters;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.AccessManager;
+import io.jmix.core.accesscontext.EntityAttributeContext;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
@@ -50,6 +55,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 import static java.util.Objects.requireNonNull;
@@ -74,6 +80,9 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected UiComponents uiComponents;
     protected SingleFilterSupport singleFilterSupport;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
+    protected AccessManager accessManager;
+
+    protected Registration filterComponentsChangeRegistration;
 
     public GenericFilterUrlQueryParametersBinder(GenericFilter filter,
                                                  UrlParamSerializer urlParamSerializer,
@@ -89,9 +98,8 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected void autowireDependencies() {
         uiComponents = applicationContext.getBean(UiComponents.class);
         filterUrlQueryParametersSupport = applicationContext.getBean(FilterUrlQueryParametersSupport.class);
+        accessManager = applicationContext.getBean(AccessManager.class);
     }
-
-    protected Registration filterComponentsChangeRegistration;
 
     protected void initComponent(GenericFilter filter) {
         filter.addConfigurationChangeListener(this::onConfigurationChanged);
@@ -193,7 +201,13 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         } else if (parameters.containsKey(getConditionParam())) {
             List<String> conditionParams = parameters.get(getConditionParam());
 
-            Configuration currentConfiguration = filter.getCurrentConfiguration();
+            // For cases where there is a default design-time configuration.
+            // The design-time configuration can't be modified, so an empty configuration is entered
+            // to be able to add conditions from the URL query parameters.
+            Configuration currentConfiguration = filter.getCurrentConfiguration() instanceof RunTimeConfiguration
+                    ? filter.getCurrentConfiguration()
+                    : filter.getEmptyConfiguration();
+
             LogicalFilterComponent<?> rootLogicalFilterComponent = currentConfiguration.getRootLogicalFilterComponent();
 
             List<FilterComponent> conditions = deserializeConditions(conditionParams,
@@ -214,10 +228,35 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected List<FilterComponent> deserializeConditions(List<String> conditionParams, DataLoader dataLoader) {
         List<FilterComponent> conditions = new ArrayList<>(conditionParams.size());
         for (String conditionString : conditionParams) {
-            conditions.add(parseCondition(conditionString, dataLoader));
+            FilterComponent filterComponent = parseCondition(conditionString, dataLoader);
+            if (isPermitted(dataLoader, filterComponent)) {
+                conditions.add(filterComponent);
+            }
         }
 
         return conditions;
+    }
+
+    protected boolean isPermitted(DataLoader dataLoader, FilterComponent filterComponent) {
+        if (filterComponent instanceof PropertyFilter<?> propertyFilter && propertyFilter.getProperty() != null) {
+            MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
+            MetaPropertyPath propertyPath = entityMetaClass.getPropertyPath(propertyFilter.getProperty());
+
+            Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
+            if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {
+                return false;
+            }
+
+            EntityAttributeContext context = new EntityAttributeContext(propertyPath);
+            accessManager.applyRegisteredConstraints(context);
+            if (!context.canView()) {
+                return false;
+            }
+
+            return propertyPath == null ||
+                    !propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class);
+        }
+        return true;
     }
 
     protected void updateConfigurationConditions(Configuration currentConfiguration, List<String> conditionParams) {
@@ -331,10 +370,15 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
         String valueString = conditionString.substring(separatorIndex + 1);
         if (!Strings.isNullOrEmpty(valueString)) {
-            Object parsedValue = filterUrlQueryParametersSupport
-                    .parseValue(dataLoader.getContainer().getEntityMetaClass(),
-                            property, operation.getType(), valueString);
-            propertyFilter.setValue(parsedValue);
+            try {
+                Object parsedValue = filterUrlQueryParametersSupport
+                        .parseValue(dataLoader.getContainer().getEntityMetaClass(),
+                                property, operation.getType(), valueString);
+                propertyFilter.setValue(parsedValue);
+            } catch (Exception e) {
+                log.info("Cannot parse URL parameter. {}", e.toString());
+                propertyFilter.setValue(null);
+            }
         }
 
         return propertyFilter;
@@ -389,5 +433,11 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
             singleFilterSupport = applicationContext.getBean(SingleFilterSupport.class);
         }
         return singleFilterSupport;
+    }
+
+    @Nullable
+    @Override
+    public Component getComponent() {
+        return filter;
     }
 }

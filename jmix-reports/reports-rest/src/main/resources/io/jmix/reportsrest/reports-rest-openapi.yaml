@@ -7,16 +7,22 @@ info:
 
     Jmix Reports REST API provides the following functionality:
 
-    * Getting list of avaliable reports
-    * Getting report metadata (parameters, templates)
-    * Getting report group details
-    * Execution of report
+    * Getting a list of reports.
+    * Getting the details on a specific report.
+    * Running a report and getting the result.
+    * Getting the details on a specific report group.
+    * Getting Swagger documentation.
+  
+    Reports REST API uses the OAuth2 protocol for authentication in the same way as [Generic REST](https://docs.jmix.io/jmix/rest/access-control.html).
 
     The Reports REST API is available at the URL `/rest/reports`, e.g. `http://localhost:8080/rest/reports/report`
+  
+    To make a report available through the REST API, select the **Available through REST API** checkbox on the Report details tab.
+
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.0
+  version: "2.2"
 servers:
   - url: /rest/reports
 security:
@@ -78,6 +84,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+        404:
+          description: Not Found. No objects with this identifier were found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
   /group/{groupId}:
     get:
       tags:
@@ -106,6 +118,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+        404:
+          description: Not Found. No objects with this identifier were found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
   /run/{reportId}:
     post:
       tags:
@@ -125,7 +143,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/runObject'
+              oneOf:
+                - $ref: '#/components/schemas/runObjectWithSingleParameter'
+                - $ref: '#/components/schemas/runObjectWithArrayParameter'
         required: false
       responses:
         200:
@@ -139,6 +159,12 @@ paths:
                 $ref: '#/components/schemas/error'
         403:
           description: Forbidden. The user doesn't have permissions to read the report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not Found. No objects with this identifier were found.
           content:
             application/json:
               schema:
@@ -179,30 +205,38 @@ components:
         id:
           type: string
           description: Report id
+          example: 7df0e05c-a47e-6319-78fe-5feb3312043f
         name:
           type: string
           description: Report name
+          example: List of User
         code:
           type: string
           description: Report code
+          example: users
         group:
           type: string
           description: Group id
+          example: 4e083530-0b9c-11e1-9b41-6bdaa41bff94
     reportFull:
       type: object
       properties:
         id:
           type: string
           description: Report id
+          example: ca0ff466-bcd8-674b-f020-18e618bd4395
         name:
           type: string
           description: Report name
+          example: User
         code:
           type: string
           description: Report code
+          example: user
         group:
           type: string
           description: Group id
+          example: 4e083530-0b9c-11e1-9b41-6bdaa41bff94
         inputParameters:
           type: array
           items:
@@ -210,10 +244,15 @@ components:
             properties:
               name:
                 type: string
+                description: Parameter name, as it will appear in the parameter input form when running the report.
+                example: Entity
               alias:
                 type: string
+                description: Parameter alias used to access it in datasets.
+                example: entity
               type:
                 type: string
+                description: Parameter type
                 enum:
                   - DATE
                   - TEXT
@@ -224,15 +263,20 @@ components:
                   - ENUMERATION
                   - DATETIME
                   - TIME
+                example: ENTITY
               required:
                 type: boolean
+                description: Flag determining if the parameter is mandatory.
+                example: true
               hidden:
                 type: boolean
+                description: Flag that defines whether the request for parameter should be hidden from users.
+                example: false
               entityMetaClass:
                 type: string
                 description: |
                   For ENTITY, ENTITY_LIST type there will be a entity metaclass name here
-                example: sec_User
+                example: User
               enumerationClass:
                 type: string
                 description: |
@@ -240,7 +284,8 @@ components:
               defaultValue:
                 type: string
                 description: |
-                  Default value of parameter in string form
+                  Defines the parameter value that will be used by default if no other value is selected by the user.
+                example: 60885987-1b61-4247-94c7-dff348347f93
         templates:
           type: array
           items:
@@ -248,6 +293,8 @@ components:
             properties:
               code:
                 type: string
+                description: Identification code for a template.
+                example: DEFAULT
               outputType:
                 type: string
                 enum:
@@ -259,9 +306,13 @@ components:
                   - XLSX
                   - CUSTOM
                   - CSV
+                description: Report output type.
+                example: DOCX
               default:
-                  type: boolean
-    runObject:
+                type: boolean
+                description: Flag responsible for the default template.
+                example: true
+    runObjectWithSingleParameter:
       type: object
       properties:
         template:
@@ -276,25 +327,53 @@ components:
             properties:
               name:
                 type: string
-                description: parameter alias
+                description: Parameter alias
+                example: entity
               value:
                 type: string
+                description: Parameter value
+                example: 2be3432c-c2e3-2357-7622-15bea63fb4c0
+    runObjectWithArrayParameter:
+      type: object
+      required:
+        - value
+      properties:
+        template:
+          type: string
+          description: template code
+        attachment:
+          type: boolean
+        parameters:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Parameter alias
+                example: entities
               values:
                 type: array
                 items:
                   type: string
+                description: Parameter values
+                example:
+                  - "2be3432c-c2e3-2357-7622-15bea63fb4c0"
     group:
       type: object
       properties:
         id:
           type: string
           description: Group id
+          example: 4e083530-0b9c-11e1-9b41-6bdaa41bff94
         title:
           type: string
           description: Group title
+          example: General
         code:
           type: string
           description: Group code
+          example: ReportGroup.default
   parameters:
     reportIdParam:
       name: reportId

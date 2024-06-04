@@ -16,16 +16,16 @@
 
 package io.jmix.flowui.view.builder;
 
+import com.vaadin.flow.component.HasValue;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.LookupView;
 import io.jmix.flowui.view.View;
-import com.vaadin.flow.component.HasValue;
-import io.jmix.flowui.model.CollectionContainer;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -101,6 +101,12 @@ public class LookupWindowClassBuilder<E, V extends View<?> & LookupView<E>> exte
     }
 
     @Override
+    public LookupWindowClassBuilder<E, V> withLookupComponentMultiSelect(boolean lookupComponentMultiSelect) {
+        super.withLookupComponentMultiSelect(lookupComponentMultiSelect);
+        return this;
+    }
+
+    @Override
     public <T extends HasValue<?, Collection<E>>> LookupWindowClassBuilder<E, V> withMultiValueField(@Nullable T field) {
         super.withMultiValueField(field);
         return this;
@@ -115,6 +121,12 @@ public class LookupWindowClassBuilder<E, V extends View<?> & LookupView<E>> exte
     @Override
     public LookupWindowClassBuilder<E, V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
+        return this;
+    }
+
+    @Override
+    public LookupWindowClassBuilder<E, V> withViewConfigurer(@Nullable Consumer<V> configurer) {
+        super.withViewConfigurer(configurer);
         return this;
     }
 

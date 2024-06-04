@@ -27,6 +27,7 @@ import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.component.*;
@@ -45,8 +46,12 @@ import org.springframework.lang.Nullable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static io.jmix.flowui.component.DateInternationalizationHelper.*;
+import static io.jmix.flowui.component.DateInternationalizationHelper.getFirstDayOfWeek;
 
 public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
         implements SupportsValueSource<V>, SupportsTypedValue<TypedDateTimePicker<V>,
@@ -59,6 +64,7 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
     protected Messages messages;
 
     protected DateTimePickerDelegate<V> fieldDelegate;
+    protected CurrentAuthentication currentAuthentication;
 
     protected V internalValue;
 
@@ -86,14 +92,23 @@ public class TypedDateTimePicker<V extends Comparable> extends DateTimePicker
     protected void autowireDependencies() {
         dateTimeTransformations = applicationContext.getBean(DateTimeTransformations.class);
         messages = applicationContext.getBean(Messages.class);
+        currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
     }
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
 
+        Locale locale = currentAuthentication.getLocale();
+
         // todo rp date format only for DatePicker
         setDatePickerI18n(new DatePicker.DatePickerI18n()
-                .setDateFormat(messages.getMessage("dateFormat")));
+                .setDateFormat(messages.getMessage("dateFormat"))
+                .setToday(messages.getMessage("datepicker.today"))
+                .setCancel(messages.getMessage("datepicker.cancel"))
+                .setWeekdays(getWeekdayNames(locale))
+                .setWeekdaysShort(getShortWeekdayNames(locale))
+                .setMonthNames(getMonthNames(locale))
+                .setFirstDayOfWeek(getFirstDayOfWeek(locale)));
 
         attachValueChangeListener();
     }

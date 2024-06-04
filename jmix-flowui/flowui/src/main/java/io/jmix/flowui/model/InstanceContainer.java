@@ -58,28 +58,11 @@ public interface InstanceContainer<E> {
     MetaClass getEntityMetaClass();
 
     /**
-     * @deprecated replaced by {@link InstanceContainer#getFetchPlan()}
-     */
-    @Nullable
-    @Deprecated
-    default FetchPlan getView() {
-        return getFetchPlan();
-    }
-
-    /**
      * Returns the view which was set by previous call to {@link #setFetchPlan(FetchPlan)}.
      * The view is normally used when loading entities for this container.
      */
     @Nullable
     FetchPlan getFetchPlan();
-
-    /**
-     * @deprecated replaced by {@link InstanceContainer#setFetchPlan(FetchPlan)}
-     */
-    @Deprecated
-    default void setView(FetchPlan view) {
-        setFetchPlan(view);
-    }
 
     /**
      * Sets a view to be used when loading entities for this container.

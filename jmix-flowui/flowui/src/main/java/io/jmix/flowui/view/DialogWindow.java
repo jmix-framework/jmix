@@ -34,6 +34,8 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.event.view.ViewClosedEvent;
+import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.View.BeforeShowEvent;
 import io.jmix.flowui.view.View.ReadyEvent;
@@ -41,8 +43,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.EventObject;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -222,6 +224,7 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
     protected void onDialogOpenedChanged(Dialog.OpenedChangeEvent openedChangeEvent) {
         if (openedChangeEvent.isOpened() && !readyEventFired) {
             fireViewReadyEvent(view);
+            fireViewOpenedEvent(view);
 
             AfterOpenEvent<V> event = new AfterOpenEvent<>(this);
             publish(AfterOpenEvent.class, event);
@@ -232,12 +235,27 @@ public class DialogWindow<V extends View<?>> implements HasSize, HasTheme, HasSt
     }
 
     protected void onViewAfterClosed(View.AfterCloseEvent closeEvent) {
+        fireViewAfterCloseEvent(closeEvent);
+        fireViewClosedEvent(this.getView());
+    }
+
+    protected void fireViewAfterCloseEvent(View.AfterCloseEvent closeEvent) {
         AfterCloseEvent<V> event = new AfterCloseEvent<>(this, closeEvent.getCloseAction());
         publish(AfterCloseEvent.class, event);
     }
 
     protected void fireViewBeforeShowEvent(View<?> view) {
         ViewControllerUtils.fireEvent(view, new BeforeShowEvent(view));
+    }
+
+    protected void fireViewClosedEvent(View<?> view) {
+        ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this.getView());
+        applicationContext.publishEvent(viewClosedEvent);
+    }
+
+    protected void fireViewOpenedEvent(View<?> view) {
+        ViewOpenedEvent viewOpenedEvent = new ViewOpenedEvent(view);
+        applicationContext.publishEvent(viewOpenedEvent);
     }
 
     protected void fireViewReadyEvent(View<?> view) {

@@ -22,19 +22,19 @@
 }
 
 .jmix-list-menu .jmix-menubar-item .menubar-list {
-  margin-left: var(--lumo-space-m);
+  margin-inline-start: var(--lumo-space-m);
 }
 
 .jmix-list-menu .jmix-menubar-item {
   padding: var(--lumo-space-s);
-  padding-right: 0;
+  padding-inline-end: 0;
   margin: 0;
 }
 
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container {
   display: flex;
   gap: var(--lumo-space-s);
-  padding: var(--lumo-space-xs) 0;
+  align-items: center;
 }
 
 .jmix-list-menu .jmix-menu-item-link .link-icon,
@@ -44,11 +44,32 @@
   flex-shrink: 0;
 }
 
+.jmix-list-menu .jmix-menu-item-link .prefix-component,
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .prefix-component {
+  flex-shrink: 0;
+}
+
+.jmix-list-menu .jmix-menu-item-link vaadin-icon.prefix-component,
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container vaadin-icon.prefix-component {
+  width: var(--lumo-icon-size-s);
+  height: var(--lumo-icon-size-s);
+}
+
 .jmix-list-menu .jmix-menubar-item .menubar-summary {
   white-space: nowrap;
   font-weight: bold;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.jmix-list-menu .jmix-menu-item-link .suffix-component,
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .suffix-component {
+  margin-inline-start: auto;
+  flex-shrink: 0;
+}
+
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container > :last-child {
+  margin-inline-end: var(--lumo-space-s);
 }
 
 .jmix-list-menu .jmix-menu-item-link {
@@ -57,6 +78,7 @@
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+  align-items: center;
 }
 
 .jmix-list-menu .jmix-menu-item-link .link-text {
@@ -78,4 +100,15 @@
 .jmix-list-menu .jmix-menubar-item vaadin-details-summary::part(content) {
   display: flex;
   overflow: hidden;
+  width: 100%;
+  align-items: center;
+}
+
+.jmix-list-menu[theme~='toggle-reverse'] vaadin-details-summary {
+  justify-content: space-between;
+}
+
+.jmix-list-menu[theme~='toggle-reverse'] vaadin-details-summary::part(toggle) {
+  order: 1;
+  margin-inline-end: 0;
 }

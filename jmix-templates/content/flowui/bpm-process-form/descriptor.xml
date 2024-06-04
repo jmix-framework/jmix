@@ -1,23 +1,51 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
-  ~ Copyright 2023 Haulmont.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<%
+def dcId = ''
+def nestedCollectionDatasourceProperties = []
+def is_inline_detailFetchPlan_ = false
+def inline_detailFetchPlan_ = ''
+def entityName = entity != null ? entity : entityObject
+if (processFormTemplate.name() == 'ENTITY') {
+    dcId = "${entityName.uncapitalizedClassName}Dc"
+    nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
+    is_inline_detailFetchPlan_ = is_inline_detailFetchPlan
+    inline_detailFetchPlan_ = inline_detailFetchPlan
+}
+def containerXml = api.processSnippet('bpm_container.xml',
+        ['variables': processFormVariables,
+        'formTemplate': processFormTemplate,
+        'dcId': dcId,
+        'entity': entityName,
+        'detailFetchPlan': detailFetchPlan,
+        'is_inline_detailFetchPlan': is_inline_detailFetchPlan_,
+        'inline_detailFetchPlan': inline_detailFetchPlan_,
+        'nestedCollectionDatasourceProperties': nestedCollectionDatasourceProperties,
+        'api': api])
+def formXml = api.processSnippet('bpm_processform.xml',
+        ['variables': processFormVariables,
+        'formTemplate': processFormTemplate,
+        'dcId': dcId,
+        'detailFetchPlan': detailFetchPlan,
+        'nestedCollectionDatasourceProperties': nestedCollectionDatasourceProperties,
+        'messageKeys': messageKeys,
+        'api': api])
+def buttonsXml = api.processSnippet('bpm_buttons.xml',
+        ['outputes': processFormOutcomes,
+        'formType': processFormType,
+        'formTemplate': processFormTemplate,
+        'messageKeys': messageKeys,
+        'api': api])
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="${messageKeys['title']}">
-    <layout>
-
+    ${containerXml}
+    <layout><%if (bpmTaskDetails != null && bpmTaskDetails.trim() != '') {%>
+        <details opened="true">
+            <p text="${messageKeys['description']}"/>
+        </details><%}%>
+        ${formXml}
+        <hbox id="actionsPanel">
+            ${buttonsXml}
+        </hbox>
     </layout>
 </view>

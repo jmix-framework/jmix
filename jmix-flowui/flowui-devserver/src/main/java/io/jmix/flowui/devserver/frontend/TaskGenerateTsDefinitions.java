@@ -35,6 +35,9 @@ public class TaskGenerateTsDefinitions extends AbstractTaskClientGenerator {
 
     /**
      * Create a task to generate <code>types.d.ts</code> file.
+     *
+     * @param options
+     *            Task Options.
      */
     TaskGenerateTsDefinitions(Options options) {
         this.options = options;

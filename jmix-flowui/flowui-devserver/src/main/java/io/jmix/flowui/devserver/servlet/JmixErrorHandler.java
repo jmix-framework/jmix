@@ -16,23 +16,10 @@
 
 package io.jmix.flowui.devserver.servlet;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.handler.ErrorHandler;
-
-import java.io.IOException;
-import java.io.Writer;
+import org.eclipse.jetty.util.Callback;
 
 public class JmixErrorHandler extends ErrorHandler {
-    @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        super.handle(target, baseRequest, request, response);
-    }
-
-    @Override
-    protected void handleErrorPage(HttpServletRequest request, Writer writer, int code, String message) throws IOException {
-        super.handleErrorPage(request, writer, code, message);
-    }
 }

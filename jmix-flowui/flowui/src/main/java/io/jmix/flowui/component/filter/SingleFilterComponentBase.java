@@ -201,7 +201,10 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     @Override
     public void apply() {
-        if (dataLoader != null) {
+        //If a filter condition has a default value then DataLoader loads data when GenericFilter is initialised.
+        // So if we have several such conditions we get redundant data loading.
+        // To avoid this problem FilterComponent skips data loading if it's not attached to the UI.
+        if (isAttached() && dataLoader != null) {
             setupLoaderFirstResult();
             if (autoApply) {
                 dataLoader.load();
@@ -236,6 +239,7 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
             super.setLabel(labelVisible ? labelText : null);
         } else {
             this.label.setText(labelVisible ? labelText : null);
+            this.label.setTitle(labelVisible && labelText != null ? labelText : "");
             this.label.setVisible(labelVisible);
         }
     }
@@ -366,6 +370,12 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
         // Overwriting the valueComponent's id will make it impossible to inject the valueComponent into controller
         if (((Component) valueComponent).getId().isEmpty()) {
             ((Component) valueComponent).setId(getInnerComponentPrefix() + "valueComponent");
+        }
+
+        // WA: min-width (in a flexbox) defaults not to 0 but to the element's intrinsic width,
+        // which in this case is the default width
+        if (valueComponent instanceof HasSize hasSizeComponent) {
+            hasSizeComponent.setMinWidth("1px");
         }
 
         if (valueComponent instanceof SupportsTypedValue) {

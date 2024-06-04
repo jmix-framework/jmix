@@ -16,13 +16,15 @@
 
 package io.jmix.core.metamodel.annotation;
 
+import io.jmix.core.entity.annotation.MetaAnnotation;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Allows to provide description comment for data model entities and their attributes.
+ * Used to provide a description for data model entities and their attributes.
  *
  * <p>For persistent entities and attributes Jmix Studio adds comment text as a table or column
  * remarks attribute when generating Liquibase changelogs. Therefore, it will be added to the database
@@ -30,10 +32,11 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
+@MetaAnnotation
 public @interface Comment {
 
     /**
-     * Comment text. Multi-line comments supported.
+     * Comment text. Multi-line comments are supported.
      */
     String value() default "";
 }

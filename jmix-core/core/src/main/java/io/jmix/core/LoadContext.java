@@ -325,6 +325,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         private boolean cacheable;
         private Condition condition;
         private Sort sort;
+        private boolean distinct;
 
         protected Query() {
         }
@@ -471,6 +472,23 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         }
 
         /**
+         * @return true if query result should contain only unique elements ('distinct' will be added to jpql query),
+         * false otherwise
+         */
+        public boolean isDistinct() {
+            return distinct;
+        }
+
+        /**
+         * Sets whether query result should contain only unique elements ('distinct' will be added to jpql query).
+         *
+         * @param distinct flag indicating whether query result should contain only unique elements
+         */
+        public void setDistinct(boolean distinct) {
+            this.distinct = distinct;
+        }
+
+        /**
          * Creates a copy of this Query instance.
          */
         public Query copy() {
@@ -519,6 +537,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
                     ", sort=" + sort +
                     ", firstResult=" + firstResult +
                     ", maxResults=" + maxResults +
+                    ", distinct=" + distinct +
                     "}";
             return StringHelper.removeExtraSpaces(stringResult.replace('\n', ' '));
         }

@@ -46,6 +46,7 @@ public class XslxHintProcessor {
 
     protected void initHintList(Document template, Document result) {
         hints.add(new CustomCellStyleXlsxHint(result));
+        hints.add(new RowAutoHeightXlsxHint(result));
     }
 
     protected void initDescriptors(Document template, Document result) {

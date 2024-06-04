@@ -74,8 +74,20 @@ public class JmixLdapGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
     @Override
     public Set<GrantedAuthority> mapAuthorities(Collection<? extends GrantedAuthority> authorities) {
         Set<GrantedAuthority> mapped = new HashSet<>(authorities.size());
-        for (GrantedAuthority authority : authorities) {
-            mapped.addAll(mapAuthority(authority.getAuthority()));
+        for (GrantedAuthority grantedAuthority : authorities) {
+            String authority = grantedAuthority.getAuthority();
+            if (authority != null) {
+                mapped.addAll(mapAuthority(authority));
+                if (authority.startsWith(roleGrantedAuthorityUtils.getDefaultRolePrefix())) {
+                    //there may be an authority like ROLE_manager, we need to extract the role code (manager)
+                    String roleCode = authority.substring(roleGrantedAuthorityUtils.getDefaultRolePrefix().length());
+                    mapped.addAll(mapAuthority(roleCode));
+                } else if (authority.startsWith(roleGrantedAuthorityUtils.getDefaultRowLevelRolePrefix())) {
+                    //there may be an authority like ROW_LEVEL_ROLE_manager, we need to extract the role code (manager)
+                    String roleCode = authority.substring(roleGrantedAuthorityUtils.getDefaultRowLevelRolePrefix().length());
+                    mapped.addAll(mapAuthority(roleCode));
+                }
+            }
         }
 
         if (this.defaultRoles != null) {

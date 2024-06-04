@@ -16,12 +16,12 @@
 
 package io.jmix.imap.protocol;
 
-import com.sun.mail.iap.ProtocolException;
-import com.sun.mail.imap.IMAPStore;
-import com.sun.mail.imap.protocol.IMAPProtocol;
-
 import jakarta.mail.Session;
 import jakarta.mail.URLName;
+import org.eclipse.angus.mail.iap.ProtocolException;
+import org.eclipse.angus.mail.imap.IMAPStore;
+import org.eclipse.angus.mail.imap.protocol.IMAPProtocol;
+
 import java.io.IOException;
 
 public class JmixIMAPStore extends IMAPStore {

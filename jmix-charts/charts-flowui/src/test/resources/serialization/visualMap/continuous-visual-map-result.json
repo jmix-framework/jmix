@@ -1,0 +1,95 @@
+{
+  "visualMap": [
+    {
+      "type": "continuous",
+      "id": "myVisualMap",
+      "min": 0,
+      "max": 100,
+      "range": [
+        20,
+        80
+      ],
+      "inverse": false,
+      "precision": 0,
+      "itemWidth": 20,
+      "itemHeight": 140,
+      "align": "auto",
+      "textGap": 10,
+      "show": true,
+      "dimension": "value",
+      "seriesIndex": [
+        0
+      ],
+      "hoverLink": true,
+      "inRange": {
+        "color": [
+          "#FFFFF0"
+        ],
+        "symbolSize": [
+          30,
+          100
+        ]
+      },
+      "outOfRange": {
+        "color": [
+          "#FFFFF0"
+        ],
+        "symbolSize": [
+          30,
+          100
+        ]
+      },
+      "calculable": true,
+      "realtime": false,
+      "textStyle": {
+        "color": "#FFFFF0",
+        "fontSize": 12
+      },
+      "formatter": "value",
+      "handleIcon": "iconName",
+      "handleSize": "120%",
+      "handleStyle": {
+        "color": "#FFFFF0",
+        "borderColor": "#FFFFF0"
+      },
+      "indicatorIcon": "circle",
+      "indicatorSize": "50%",
+      "indicatorStyle": {
+        "color": "#FFFFF0",
+        "borderColor": "#FFFFF0",
+        "borderWidth": 2
+      },
+      "zlevel": 10,
+      "z": 4,
+      "left": "center",
+      "top": "top",
+      "right": "auto",
+      "bottom": "auto",
+      "orient": "horizontal",
+      "padding": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "backgroundColor": "#FFFFF0",
+      "borderColor": "#FFFFF0",
+      "borderWidth": 1,
+      "text": [
+        "startText",
+        "endText"
+      ],
+      "controller": {
+        "inRange": {
+          "color": [
+            "#FFFFF0"
+          ],
+          "symbolSize": [
+            30,
+            100
+          ]
+        }
+      }
+    }
+  ]
+}

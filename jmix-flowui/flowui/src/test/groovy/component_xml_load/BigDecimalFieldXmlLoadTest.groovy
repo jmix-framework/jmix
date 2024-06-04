@@ -59,7 +59,6 @@ class BigDecimalFieldXmlLoadTest extends FlowuiTestSpecification {
         then: "BigDecimalField attributes will be loaded"
         verifyAll(componentView.bigDecimalFieldId) {
             id.get() == "bigDecimalFieldId"
-            !invalid
             autocapitalize == Autocapitalize.SENTENCES
             autocomplete == Autocomplete.ADDITIONAL_NAME
             autocorrect
@@ -80,7 +79,6 @@ class BigDecimalFieldXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])

@@ -58,6 +58,11 @@ public @interface Subscribe {
     String id() default "";
 
     /**
+     * @return explicit method name that will be set using annotated method
+     */
+    String subject() default "";
+
+    /**
      * Declares whether the annotated dependency is required.
      * <p>Defaults to {@code true}.
      */

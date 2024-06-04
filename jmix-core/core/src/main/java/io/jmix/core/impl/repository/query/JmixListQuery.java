@@ -19,126 +19,42 @@ package io.jmix.core.impl.repository.query;
 import io.jmix.core.Sort;
 import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.data.domain.*;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
-import org.springframework.lang.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class JmixListQuery extends JmixStructuredQuery {
-    protected Sort staticSort;
 
-    private static final Logger log = LoggerFactory.getLogger(JmixStructuredQuery.class);
 
-    public JmixListQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
-        super(dataManager, jmixMetadata, method, metadata, factory, qryTree);
-        staticSort = LoaderHelper.springToJmixSort(qryTree.getSort());
+    protected final Sort staticSort;
+
+    public JmixListQuery(DataManager dataManager,
+                         Metadata jmixMetadata,
+                         FetchPlanRepository fetchPlanRepository,
+                         List<QueryStringProcessor> queryStringProcessors,
+                         Method method,
+                         RepositoryMetadata metadata,
+                         ProjectionFactory factory,
+                         PartTree qryTree) {
+        super(dataManager, jmixMetadata, fetchPlanRepository, queryStringProcessors, method, metadata, factory, qryTree);
+
+        this.staticSort = LoaderHelper.springToJmixSort(qryTree.getSort());
     }
 
     @Override
-    public Object execute(Object[] parameters) {
-        FluentLoader.ByCondition<?> loader = dataManager.load(metadata.getDomainType())
-                .condition(conditions)
-                .hints(queryHints)
-                .parameters(buildNamedParametersMap(parameters));
-
-        if (fetchPlanIndex != -1) {
-            loader.fetchPlan((FetchPlan) parameters[fetchPlanIndex]);
-        } else {
-            loader.fetchPlan(fetchPlan);
-        }
-
-        if (maxResults != null) {
-            loader.maxResults(maxResults);
-        }
-
-        considerSorting(loader, parameters);
-        return processAccordingToReturnType(loader, parameters);
-    }
-
-    protected void considerSorting(FluentLoader.ByCondition<?> loader, Object[] parameters) {
+    protected List<Sort.Order> getSortFromParams(Object[] parameters) {
         List<Sort.Order> orders = new LinkedList<>();
 
         if (staticSort != null) {
             orders.addAll(staticSort.getOrders());
         }
-        if (sortIndex != -1) {
-            orders.addAll(LoaderHelper.springToJmixSort((org.springframework.data.domain.Sort) parameters[sortIndex])
-                    .getOrders());
-        }
-        if (pageableIndex != -1) {
-            orders.addAll(LoaderHelper.springToJmixSort(((Pageable) parameters[pageableIndex]).getSort()).getOrders());
-        }
-        loader.sort(Sort.by(orders));
-    }
 
-    @Nullable
-    protected Object processAccordingToReturnType(FluentLoader.ByCondition<?> loader, Object[] parameters) {
-        Class<?> returnType = method.getReturnType();
-        if (Slice.class.isAssignableFrom(returnType)) {
-            if (pageableIndex == -1) {
-                throw new DevelopmentException(String.format("Pageable parameter should be provided for method returns instance of Slice: %s", formatMethod(method)));
-            }
+        orders.addAll(super.getSortFromParams(parameters));
 
-            Pageable pageable = (Pageable) parameters[pageableIndex];
-
-            LoaderHelper.applyPageableForConditionLoader(loader, pageable);
-
-            if (Page.class.isAssignableFrom(returnType)) {
-                String entityName = jmixMetadata.getClass(metadata.getDomainType()).getName();
-
-                String queryString = String.format("select e from %s e", entityName);
-
-                LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
-                        .setQuery(new LoadContext.Query(queryString)
-                                .setCondition(conditions)
-                                .setParameters(buildNamedParametersMap(parameters)))
-                        .setHints(queryHints);
-
-                long count = dataManager.getCount(context);
-
-                return new PageImpl(loader.list(), pageable, count);
-            } else {
-
-                if (pageable.isPaged())
-                    loader.maxResults(pageable.getPageSize() + 1);
-
-                List<?> results = loader.list();
-                boolean hasNext = pageable.isPaged() && results.size() > pageable.getPageSize();
-
-                return new SliceImpl(hasNext ? results.subList(0, pageable.getPageSize()) : results, pageable, hasNext);
-            }
-
-        }
-
-        List<?> result = loader.list();
-
-        if (returnType.isAssignableFrom(metadata.getDomainType())
-                || Optional.class.isAssignableFrom(returnType)) {
-            if (result.size() > 1) {
-                throw new IncorrectResultSizeDataAccessException(1, result.size());
-            }
-            return result.size() == 1 ? result.iterator().next() : null;
-        }
-
-        if (Iterator.class.isAssignableFrom(returnType)) {
-            return result.iterator();
-        }
-        if (Objects.equals(maxResults, 1) && !isMultipleReturnType(returnType)) {//just in case of unconsidered return type
-            return result.isEmpty() ? null : result.iterator().next();
-        }
-        return result;
-    }
-
-    protected boolean isMultipleReturnType(Class<?> returnType) {
-        return Iterable.class.isAssignableFrom(returnType) || Stream.class.isAssignableFrom(returnType);
+        return orders;
     }
 
     @Override

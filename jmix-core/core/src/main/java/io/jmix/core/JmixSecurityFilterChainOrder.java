@@ -21,8 +21,16 @@ package io.jmix.core;
  * modules.
  */
 public interface JmixSecurityFilterChainOrder {
+
+    /**
+     * Use this constant and its derivatives (CUSTOM - 10, CUSTOM - 20, etc.) for custom
+     * {@link org.springframework.security.web.SecurityFilterChain}s.
+     */
+    int CUSTOM = JmixOrder.HIGHEST_PRECEDENCE - 1000;
+
     int WEBDAV_REST_BASIC = JmixOrder.HIGHEST_PRECEDENCE + 80;
     int WEBDAV_REST_DIGEST = JmixOrder.HIGHEST_PRECEDENCE + 80;
+    int WEBDAV_REST_COOKIE = JmixOrder.HIGHEST_PRECEDENCE + 80;
     int AUTHSERVER_AUTHORIZATION_SERVER = JmixOrder.HIGHEST_PRECEDENCE + 100;
     int AUTHSERVER_LOGIN_FORM = JmixOrder.HIGHEST_PRECEDENCE + 110;
     int OIDC_RESOURCE_SERVER = JmixOrder.HIGHEST_PRECEDENCE + 150;

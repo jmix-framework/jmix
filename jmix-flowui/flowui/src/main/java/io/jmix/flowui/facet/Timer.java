@@ -50,6 +50,18 @@ public interface Timer extends Facet {
     void setDelay(int delayMs);
 
     /**
+     * @return true if timer starts automatically when added to a view.
+     */
+    boolean isAutostart();
+
+    /**
+     * Sets whether timer should start automatically when added to a view
+     *
+     * @param autostart autostart flag
+     */
+    void setAutostart(boolean autostart);
+
+    /**
      * Starts the timer. If the timer is already started call will be ignored.
      */
     void start();

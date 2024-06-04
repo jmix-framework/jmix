@@ -1,0 +1,43 @@
+{
+  "color": [
+    "#00FFFF",
+    "#FF0000",
+    "#008000"
+  ],
+  "backgroundColor": "#000000",
+  "textStyle": {
+    "color": "#FFFFF0",
+    "fontStyle": "italic",
+    "fontWeight": "bold",
+    "fontFamily": "monospace",
+    "fontSize": 40,
+    "lineHeight": 56,
+    "width": 50,
+    "height": 47,
+    "textBorderColor": "#FFFFF0",
+    "textBorderWidth": 2.5,
+    "textBorderType": "dashed",
+    "textBorderDashOffset": 3,
+    "textShadowColor": "#FFFFF0",
+    "textShadowBlur": 4,
+    "textShadowOffsetX": 4,
+    "textShadowOffsetY": 5,
+    "overflow": "breakAll",
+    "ellipsis": "........"
+  },
+  "animation": true,
+  "animationThreshold": 1501,
+  "animationDuration": 1500,
+  "animationEasing": "backOut",
+  "animationDelay": 15,
+  "animationDurationUpdate": 150,
+  "animationEasingUpdate": "cubicOut",
+  "animationDelayUpdate": 15,
+  "stateAnimation": {
+    "duration": 500,
+    "easing": "cubicIn"
+  },
+  "blendMode": "lighter",
+  "hoverLayerThreshold": 6000,
+  "useUTC": true
+}

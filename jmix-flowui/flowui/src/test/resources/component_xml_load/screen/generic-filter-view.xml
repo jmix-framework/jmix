@@ -45,6 +45,7 @@
                        themeNames="small, filled"
                        visible="true"
                        width="100px"
+                       propertyHierarchyDepth="5"
         />
 
         <genericFilter id="genericFilterWithInnerElementsId" dataLoader="ordersDl">

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.devserver.frontend;
 
+import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.frontend.FallibleCommand;
 import com.vaadin.flow.server.frontend.FrontendVersion;
@@ -299,11 +300,20 @@ public abstract class NodeUpdater implements FallibleCommand {
         return result;
     }
 
-    static Map<String, String> getDefaultDependencies() {
-        return readDependencies("default", "dependencies");
+    Map<String, String> getDefaultDependencies() {
+        Map<String, String> dependencies = readDependencies("default",
+                "dependencies");
+        if (options.getFeatureFlags().isEnabled(FeatureFlags.REACT_ROUTER)) {
+            dependencies
+                    .putAll(readDependencies("react-router", "dependencies"));
+        } else {
+            dependencies
+                    .putAll(readDependencies("vaadin-router", "dependencies"));
+        }
+        return dependencies;
     }
 
-    private static Map<String, String> readDependencies(String id,
+    static Map<String, String> readDependencies(String id,
                                                         String packageJsonKey) {
         try {
             Map<String, String> map = new HashMap<>();
@@ -327,7 +337,6 @@ public abstract class NodeUpdater implements FallibleCommand {
         try (InputStream packageJson = FrontendUtils.getResourceAsStream(
                 "dependencies/" + id + "/package.json")) {
             JsonObject jsonObject = Json.parse(IOUtils.toString(packageJson, UTF_8));
-            packageJson.close();
             return jsonObject;
         }
     }
@@ -482,17 +491,16 @@ public abstract class NodeUpdater implements FallibleCommand {
     String writePackageFile(JsonObject json, File packageFile)
             throws IOException {
         String content = stringify(json, 2) + "\n";
-        if (!packageFile.exists()) {
+        if (!packageFile.exists() ) {
             packageFile.createNewFile();
         }
-        if (packageFile.exists() || options.isProductionMode()
-                || options.isFrontendHotdeploy()
-                || options.isDevBundleBuild()) {
+        if (packageFile.exists() || options.isFrontendHotdeploy()
+                || options.isBundleBuild()) {
             String message = String.format("writing file %s.", packageFile.getAbsolutePath());
             FrontendUtils.logInFile(message);
             log().debug(message);
             FileUtils.forceMkdirParent(packageFile);
-            FileUtils.writeStringToFile(packageFile, content, UTF_8.name());
+            FileIOUtils.writeIfChanged(packageFile, content);
         }
         return content;
     }
@@ -520,7 +528,7 @@ public abstract class NodeUpdater implements FallibleCommand {
         File vaadinJsonFile = getVaadinJsonFile();
         FileUtils.forceMkdirParent(vaadinJsonFile);
         String content = stringify(fileContent, 2) + "\n";
-        FileUtils.writeStringToFile(vaadinJsonFile, content, UTF_8.name());
+        FileIOUtils.writeIfChanged(vaadinJsonFile, content);
     }
 
     Logger log() {
@@ -565,16 +573,9 @@ public abstract class NodeUpdater implements FallibleCommand {
         JsonObject versionsJson = Json.createObject();
         // if we don't have versionsJson lock package dependency versions.
         final JsonObject dependencies = packageJson.getObject(DEPENDENCIES);
-        final JsonObject devDependencies = packageJson
-                .getObject(DEV_DEPENDENCIES);
         if (dependencies != null) {
             for (String key : dependencies.keys()) {
                 versionsJson.put(key, dependencies.getString(key));
-            }
-        }
-        if (devDependencies != null) {
-            for (String key : devDependencies.keys()) {
-                versionsJson.put(key, devDependencies.getString(key));
             }
         }
 

@@ -4,6 +4,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
+import io.jmix.quartz.exception.QuartzJobSaveException;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
@@ -165,7 +166,7 @@ public class QuartzTest {
         triggerModel.setStartDate(Date.from(LocalDateTime.now().plus(1, ChronoUnit.HOURS).atZone(ZoneId.systemDefault()).toInstant()));
         triggerModels.add(triggerModel);
 
-        Assertions.assertThrows(IllegalStateException.class, () -> quartzService.updateQuartzJob(jobModel, jobDataParameterModels, triggerModels, false));
+        Assertions.assertThrows(QuartzJobSaveException.class, () -> quartzService.updateQuartzJob(jobModel, jobDataParameterModels, triggerModels, false));
 
         List<JobModel> allJobs = quartzService.getAllJobs();
         Assertions.assertEquals(2, allJobs.size());

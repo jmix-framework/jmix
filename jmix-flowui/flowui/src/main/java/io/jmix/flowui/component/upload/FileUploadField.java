@@ -17,7 +17,7 @@
 package io.jmix.flowui.component.upload;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.upload.FileRejectedEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.shared.Registration;
@@ -26,7 +26,7 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.delegate.FieldDelegate;
+import io.jmix.flowui.component.delegate.FileFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -44,8 +44,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 public class FileUploadField extends JmixFileUploadField<FileUploadField> implements SupportsValueSource<byte[]>,
@@ -59,7 +59,7 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
     protected Notifications notifications;
     protected ObjectProvider<MultipartProperties> multipartPropertiesProvider;
 
-    protected FieldDelegate<FileUploadField, byte[], byte[]> fieldDelegate;
+    protected FileFieldDelegate<FileUploadField, byte[], byte[]> fieldDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -96,8 +96,8 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
         attachUploadEvents(uploadButton);
     }
 
-    protected FieldDelegate<FileUploadField, byte[], byte[]> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
+    protected FileFieldDelegate<FileUploadField, byte[], byte[]> createFieldDelegate() {
+        return applicationContext.getBean(FileFieldDelegate.class, this);
     }
 
     @Nullable
@@ -113,7 +113,6 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
 
     @Override
     public boolean isInvalid() {
-        validate();
         return fieldDelegate.isInvalid();
     }
 
@@ -159,6 +158,20 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
     @Override
     public void setInvalid(boolean invalid) {
         fieldDelegate.setInvalid(invalid);
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        validate();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        validate();
     }
 
     @Override
@@ -250,7 +263,7 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
     }
 
     protected void onValueChange(ComponentValueChangeEvent<FileUploadField, byte[]> event) {
-        isInvalid();
+        validate();
     }
 
     @Override
@@ -266,11 +279,5 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
     protected void applyI18nDefaults() {
         JmixUploadI18N i18nDefaults = applicationContext.getBean(UploadFieldI18NSupport.class).getI18nUploadField();
         setI18n(i18nDefaults);
-    }
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-        isInvalid();
     }
 }

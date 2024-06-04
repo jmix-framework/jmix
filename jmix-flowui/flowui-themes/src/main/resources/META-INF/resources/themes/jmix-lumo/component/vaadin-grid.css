@@ -8,6 +8,9 @@ vaadin-dialog-overlay[class~='column-filter-popup']::part(backdrop) {
 }
 
 vaadin-dialog-overlay[class~='column-filter-dialog']::part(content) {
+  display: flex;
+  flex-direction: row;
+  gap: var(--lumo-space-s);
   padding: var(--lumo-space-wide-m);
 }
 

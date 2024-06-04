@@ -20,12 +20,12 @@ import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.MapModel;
 import freemarker.template.*;
 import groovy.text.GStringTemplateEngine;
-import io.jmix.reports.yarg.formatters.factory.HtmlToPdfConverterFactory;
-import io.jmix.reports.yarg.formatters.impl.pdf.HtmlToPdfConverter;
-import io.jmix.reports.yarg.formatters.impl.pdf.ITextPdfConverter;
 import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.exception.UnsupportedFormatException;
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
+import io.jmix.reports.yarg.formatters.factory.HtmlToPdfConverterFactory;
+import io.jmix.reports.yarg.formatters.impl.pdf.HtmlToPdfConverter;
+import io.jmix.reports.yarg.formatters.impl.pdf.ITextPdfConverter;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportOutputType;
 import org.apache.commons.io.FileUtils;
@@ -33,7 +33,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -118,25 +117,6 @@ public class HtmlFormatter extends AbstractFormatter {
             FileUtils.deleteQuietly(temporaryFile);
         }
     }
-
-    /**
-     * @deprecated
-     * @see #loadFonts(HtmlToPdfConverter)
-     */
-    @Deprecated
-    protected void loadFonts(ITextRenderer renderer) {
-        loadFonts(new ITextPdfConverter(renderer));
-    }
-
-    /**
-     * @deprecated
-     * @see #loadFontsFromDirectory(HtmlToPdfConverter, File)
-     */
-    @Deprecated
-    protected void loadFontsFromDirectory(ITextRenderer renderer, File fontsDir) {
-        loadFontsFromDirectory(new ITextPdfConverter(renderer), fontsDir);
-    }
-
 
     protected void loadFonts(HtmlToPdfConverter converter) {
         if (StringUtils.isNotBlank(fontsDirectory)) {

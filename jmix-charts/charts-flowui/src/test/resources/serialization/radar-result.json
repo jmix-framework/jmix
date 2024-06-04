@@ -1,0 +1,211 @@
+{
+  "radar": {
+    "id": "radarId",
+    "zlevel": 15,
+    "z": 12,
+    "center": [
+      "213",
+      "23"
+    ],
+    "radius": [
+      "50%",
+      "50%"
+    ],
+    "startAngle": 45,
+    "axisName": {
+      "show": true,
+      "formatter": "[{value}]",
+      "color": "#FFFFF0",
+      "fontStyle": "italic",
+      "fontWeight": "bold",
+      "fontFamily": "monospace",
+      "fontSize": 40,
+      "lineHeight": 56,
+      "backgroundColor": "#FFFFF0",
+      "borderColor": "#FFFFF0",
+      "borderWidth": 321,
+      "borderType": "dashed",
+      "borderDashOffset": 312,
+      "borderRadius": 75,
+      "padding": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "shadowColor": "#FFFFF0",
+      "shadowBlur": 312,
+      "shadowOffsetX": 12,
+      "shadowOffsetY": 84,
+      "width": 50,
+      "height": 47,
+      "textBorderColor": "#FFFFF0",
+      "textBorderWidth": 2.5,
+      "textBorderType": "dashed",
+      "textBorderDashOffset": 3,
+      "textShadowColor": "#FFFFF0",
+      "textShadowBlur": 4,
+      "textShadowOffsetX": 4,
+      "textShadowOffsetY": 5,
+      "overflow": "breakAll",
+      "ellipsis": "........"
+    },
+    "nameGap": 123,
+    "splitNumber": 43,
+    "shape": "circle",
+    "scale": true,
+    "silent": true,
+    "triggerEvent": true,
+    "axisLine": {
+      "show": false,
+      "onZero": false,
+      "onZeroAxisIndex": 5,
+      "symbol": [
+        "diamond",
+        "arrow"
+      ],
+      "symbolSize": [
+        15,
+        10
+      ],
+      "symbolOffset": [
+        4,
+        1
+      ],
+      "lineStyle": {
+        "color": "#FFFFF0",
+        "width": 421,
+        "type": "dashed",
+        "dashOffset": 41,
+        "cap": "square",
+        "join": "miter",
+        "miterLimit": 41,
+        "shadowBlur": 59,
+        "shadowColor": "#FFFFF0",
+        "shadowOffsetX": 12,
+        "shadowOffsetY": 24,
+        "opacity": 0.41
+      }
+    },
+    "axisTick": {
+      "show": false,
+      "alignWithLabel": true,
+      "interval": 15,
+      "inside": true,
+      "length": 10,
+      "lineStyle": {
+        "color": "#FFFFF0",
+        "width": 421,
+        "type": "dashed",
+        "dashOffset": 41,
+        "cap": "square",
+        "join": "miter",
+        "miterLimit": 41,
+        "shadowBlur": 59,
+        "shadowColor": "#FFFFF0",
+        "shadowOffsetX": 12,
+        "shadowOffsetY": 24,
+        "opacity": 0.41
+      }
+    },
+    "axisLabel": {
+      "show": true,
+      "interval": 10,
+      "inside": true,
+      "rotate": 15,
+      "margin": 5,
+      "formatter": "{value} kg",
+      "showMinLabel": true,
+      "showMaxLabel": true,
+      "hideOverlap": true,
+      "color": "#FFFFF0",
+      "fontStyle": "italic",
+      "fontWeight": "bold",
+      "fontFamily": "monospace",
+      "fontSize": 40,
+      "align": "center",
+      "verticalAlign": "top",
+      "lineHeight": 56,
+      "backgroundColor": "#FFFFF0",
+      "borderColor": "#FFFFF0",
+      "borderWidth": 4,
+      "borderType": "dashed",
+      "borderDashOffset": 51,
+      "borderRadius": 41,
+      "padding": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "shadowColor": "#FFFFF0",
+      "shadowOffsetX": 12,
+      "shadowOffsetY": 24,
+      "width": 50,
+      "height": 47,
+      "textBorderColor": "#FFFFF0",
+      "textBorderWidth": 2.5,
+      "textBorderType": "dashed",
+      "textBorderDashOffset": 3,
+      "textShadowColor": "#FFFFF0",
+      "textShadowBlur": 4,
+      "textShadowOffsetX": 4,
+      "textShadowOffsetY": 5,
+      "overflow": "breakAll",
+      "ellipsis": "........"
+    },
+    "splitLine": {
+      "show": true,
+      "interval": 15,
+      "lineStyle": {
+        "color": "#FFFFF0",
+        "width": 421,
+        "type": "dashed",
+        "dashOffset": 41,
+        "cap": "square",
+        "join": "miter",
+        "miterLimit": 41,
+        "shadowBlur": 59,
+        "shadowColor": "#FFFFF0",
+        "shadowOffsetX": 12,
+        "shadowOffsetY": 24,
+        "opacity": 0.41
+      }
+    },
+    "splitArea": {
+      "interval": 15,
+      "show": true,
+      "areaStyle": {
+        "color": [
+          "#FFFFF0",
+          "#FFFFF0"
+        ],
+        "shadowBlur": 59,
+        "shadowColor": "#FFFFF0",
+        "shadowOffsetX": 12,
+        "shadowOffsetY": 24,
+        "opacity": 0.41
+      }
+    },
+    "indicator": [
+      {
+        "name": "first",
+        "max": 6000,
+        "min": 1000,
+        "color": "#FFFFF0"
+      },
+      {
+        "name": "second",
+        "max": 10000,
+        "min": 5000,
+        "color": "#FFFFF0"
+      },
+      {
+        "name": "third",
+        "max": 2000,
+        "min": 500,
+        "color": "#FFFFF0"
+      }
+    ]
+  }
+}

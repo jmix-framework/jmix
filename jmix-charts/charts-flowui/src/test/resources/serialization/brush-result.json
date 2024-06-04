@@ -1,0 +1,66 @@
+{
+  "brush": {
+    "id": "myBrush",
+    "toolbox": [
+      "rect",
+      "polygon",
+      "keep",
+      "clear"
+    ],
+    "brushLink": [
+      0,
+      1
+    ],
+    "seriesIndex": "all",
+    "geoIndex": "all",
+    "xAxisIndex": 1,
+    "yAxisIndex": [
+      0,
+      1
+    ],
+    "brushType": "rect",
+    "brushMode": "single",
+    "transformable": true,
+    "brushStyle": {
+      "borderWidth": 1,
+      "color": "#FFFFF0",
+      "borderColor": "#FFFFF0"
+    },
+    "throttleType": "fixRate",
+    "throttleDelay": 300,
+    "removeOnClick": true,
+    "inBrush": {
+      "symbol": [
+        "circle"
+      ],
+      "symbolSize": [
+        10,
+        10
+      ],
+      "color": [
+        "#FFFFF0"
+      ],
+      "opacity": [
+        1,
+        1
+      ]
+    },
+    "outOfBrush": {
+      "symbol": [
+        "circle"
+      ],
+      "symbolSize": [
+        8,
+        8
+      ],
+      "color": [
+        "#FFFFF0"
+      ],
+      "opacity": [
+        0.7,
+        0.7
+      ]
+    },
+    "z": 10000
+  }
+}

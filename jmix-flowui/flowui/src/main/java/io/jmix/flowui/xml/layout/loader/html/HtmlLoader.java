@@ -29,18 +29,17 @@ import java.io.InputStream;
 public class HtmlLoader extends AbstractComponentLoader<Html> {
 
     protected static final String HTML_CONTENT_ELEMENT_NAME = "content";
-    protected static final String FILE_CONTENT_ELEMENT_NAME = "file";
 
     @Override
     protected Html createComponent() {
-        InputStream inputStream = loadFileContent(element);
-        if (inputStream != null) {
-            return new Html(inputStream);
-        }
-
         String htmlContent = loadHtmlContent(element);
         if (!Strings.isNullOrEmpty(htmlContent)) {
             return new Html(htmlContent);
+        }
+
+        InputStream inputStream = loadFileContent(element);
+        if (inputStream != null) {
+            return new Html(inputStream);
         }
 
         htmlContent = getLoaderSupport().loadResourceString(element, "content", context.getMessageGroup())
@@ -66,16 +65,10 @@ public class HtmlLoader extends AbstractComponentLoader<Html> {
 
     @Nullable
     protected InputStream loadFileContent(Element element) {
-        Element contentElement = element.element(FILE_CONTENT_ELEMENT_NAME);
-        if (contentElement == null) {
-            return null;
-        }
-
-        String path = getLoaderSupport().loadResourceString(contentElement, "path", context.getMessageGroup())
-                .orElseThrow(() -> new GuiDevelopmentException(
-                        String.format("'%s' path cannot be null or empty", FILE_CONTENT_ELEMENT_NAME), context));
-
-        return applicationContext.getBean(Resources.class).getResourceAsStream(path);
+        return getLoaderSupport().loadResourceString(element, "file", context.getMessageGroup())
+                .map(path ->
+                        applicationContext.getBean(Resources.class).getResourceAsStream(path))
+                .orElse(null);
     }
 
     @Override

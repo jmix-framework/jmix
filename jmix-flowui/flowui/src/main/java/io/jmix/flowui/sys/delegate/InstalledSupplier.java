@@ -17,8 +17,8 @@
 package io.jmix.flowui.sys.delegate;
 
 
+import com.vaadin.flow.component.Component;
 import io.jmix.flowui.view.Install;
-import io.jmix.flowui.view.View;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,18 +26,18 @@ import java.util.function.Supplier;
 
 public class InstalledSupplier implements Supplier<Object> {
 
-    private final View<?> controller;
+    private final Component component;
     private final Method method;
 
-    public InstalledSupplier(View<?> controller, Method method) {
-        this.controller = controller;
+    public InstalledSupplier(Component component, Method method) {
+        this.component = component;
         this.method = method;
     }
 
     @Override
     public Object get() {
         try {
-            return method.invoke(controller);
+            return method.invoke(component);
         } catch (IllegalAccessException | InvocationTargetException e) {
             if (e instanceof InvocationTargetException
                     && ((InvocationTargetException) e).getTargetException() instanceof RuntimeException) {
@@ -51,7 +51,7 @@ public class InstalledSupplier implements Supplier<Object> {
     @Override
     public String toString() {
         return "InstalledSupplier{" +
-                "target=" + controller.getClass() +
+                "target=" + component.getClass() +
                 ", method=" + method +
                 '}';
     }

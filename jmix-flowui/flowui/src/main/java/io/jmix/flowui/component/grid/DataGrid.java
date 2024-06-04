@@ -16,8 +16,12 @@
 
 package io.jmix.flowui.component.grid;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSelectionModel;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.grid.dataview.GridDataView;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -30,13 +34,17 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
+import io.jmix.flowui.component.SupportsEnterPress;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.GridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
 import io.jmix.flowui.data.grid.DataGridItems;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
+import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -46,13 +54,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
-        EnhancedDataGrid<E>, ApplicationContextAware, InitializingBean {
+        EnhancedDataGrid<E>, SupportsEnterPress<DataGrid<E>>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
     protected GridDelegate<E, DataGridItems<E>> gridDelegate;
+    protected JmixGridContextMenu<E> contextMenu;
 
     protected boolean editorCreated = false;
 
@@ -134,6 +145,36 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     }
 
     @Override
+    public Registration addItemDoubleClickListener(ComponentEventListener<ItemDoubleClickEvent<E>> listener) {
+        return gridDelegate.addItemDoubleClickListener(listener);
+    }
+
+    /**
+     * Sets code to execute when Enter key is pressed.
+     * <p>
+     * If such code is not set, this component responds to Enter press
+     * by attempting to find and execute the following actions:
+     * <ul>
+     *     <li>Action assigned to Enter key by setting its {@link KeyCombination}</li>
+     *     <li>{@link io.jmix.flowui.action.list.EditAction}</li>
+     *     <li>{@link io.jmix.flowui.action.list.ReadAction}</li>
+     * </ul>
+     * <p>
+     * If one of these actions is found and enabled, it is executed.
+     * <p>
+     * Note: if no explicit double click listeners are added, then the
+     * above rule is used to handle double clicks on this component.
+     *
+     * @param handler code to execute when Enter key is pressed
+     *                or {@code null} to remove previously set.
+     * @see com.vaadin.flow.component.grid.Grid#addItemDoubleClickListener(ComponentEventListener)
+     */
+    @Override
+    public void setEnterPressHandler(@Nullable Consumer<EnterPressEvent<DataGrid<E>>> handler) {
+        gridDelegate.setEnterPressHandler(handler);
+    }
+
+    @Override
     public void enableMultiSelect() {
         gridDelegate.enableMultiSelect();
     }
@@ -152,6 +193,11 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return selectionModel;
     }
 
+    @Override
+    protected BiFunction<Renderer<E>, String, Column<E>> getDefaultColumnFactory() {
+        return gridDelegate.getDefaultColumnFactory();
+    }
+
     @Nullable
     @Override
     public MetaPropertyPath getColumnMetaPropertyPath(Column<E> column) {
@@ -165,7 +211,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
      * @return added column
      */
     @Override
-    public Column<E> addColumn(MetaPropertyPath metaPropertyPath) {
+    public DataGridColumn<E> addColumn(MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
 
         MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
@@ -181,7 +227,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
      * @return added column
      */
     @Override
-    public Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
+    public DataGridColumn<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
         Preconditions.checkNotNullArgument(key);
 
@@ -189,21 +235,31 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
     }
 
     @Override
-    public Column<E> addColumn(ValueProvider<E, ?> valueProvider) {
+    public DataGridColumn<E> addColumn(ValueProvider<E, ?> valueProvider) {
         Column<E> column = super.addColumn(valueProvider);
         return gridDelegate.addColumn(column);
     }
 
     @Override
-    public Column<E> addColumn(Renderer<E> renderer) {
+    public DataGridColumn<E> addColumn(Renderer<E> renderer) {
         Column<E> column = super.addColumn(renderer);
         return gridDelegate.addColumn(column);
     }
 
-    @Deprecated
     @Override
-    public List<Column<E>> getVisibleColumns() {
-        return gridDelegate.getVisibleColumns();
+    public <V extends Component> DataGridColumn<E> addComponentColumn(ValueProvider<E, V> componentProvider) {
+        return (DataGridColumn<E>) super.addComponentColumn(componentProvider);
+    }
+
+    @Override
+    public <V extends Comparable<? super V>> DataGridColumn<E> addColumn(ValueProvider<E, V> valueProvider,
+                                                                         String... sortingProperties) {
+        return (DataGridColumn<E>) super.addColumn(valueProvider, sortingProperties);
+    }
+
+    @Override
+    public DataGridColumn<E> addColumn(String propertyName) {
+        return (DataGridColumn<E>) super.addColumn(propertyName);
     }
 
     @Override
@@ -263,7 +319,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
 
     @Nullable
     @Override
-    public Column<E> getColumnByKey(String columnKey) {
+    public DataGridColumn<E> getColumnByKey(String columnKey) {
         return gridDelegate.getColumnByKey(columnKey);
     }
 
@@ -316,10 +372,10 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return new DataGridEditorImpl<>(this, applicationContext);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     @Override
     protected GridActionsSupport<JmixGrid<E>, E> createActionsSupport() {
-        return new DataGridActionsSupport(this);
+        return applicationContext.getBean(DataGridActionsSupport.class, this);
     }
 
     protected void onAfterApplyColumnSecurity(AbstractGridDelegate.ColumnSecurityContext<E> context) {
@@ -327,5 +383,36 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
             // Remove column from component while GridDelegate stores this column
             super.removeColumn(context.getColumn());
         }
+    }
+
+    @Override
+    public JmixGridContextMenu<E> getContextMenu() {
+        if (contextMenu == null) {
+            contextMenu = new JmixGridContextMenu<>(this);
+        }
+        return contextMenu;
+    }
+
+    @Override
+    public GridContextMenu<E> addContextMenu() {
+        throw new UnsupportedOperationException(getClass().getSimpleName() +
+                " can have only one context menu attached, use getContextMenu() to retrieve it");
+    }
+
+    @Nullable
+    @Override
+    public Object getSubPart(String name) {
+        Object column = super.getSubPart(name);
+        if (column != null) {
+            return column;
+        }
+        if (contextMenu != null) {
+            if (UiComponentUtils.sameId(contextMenu, name)) {
+                return contextMenu;
+            } else {
+                return contextMenu.getSubPart(name);
+            }
+        }
+        return null;
     }
 }

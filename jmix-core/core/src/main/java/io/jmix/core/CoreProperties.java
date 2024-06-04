@@ -16,9 +16,9 @@
 
 package io.jmix.core;
 
-import org.springframework.lang.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.lang.Nullable;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -94,15 +94,17 @@ public class CoreProperties {
     Duration triggerFilesProcessInterval;
 
     /**
-     * Pessimistic lock configuration.
-     */
-    PessimisticLock pessimisticLock;
-
-    /**
      * Whether BigDecimalDatatype, DoubleDatatype and FloatDatatype should round the actual parsed value
      * according to format settings.
      */
     boolean roundDecimalValueByFormat;
+
+    /**
+     *
+     * Whether JpqlCondition and PropertyСondition should be skipped by default if property value is null or empty
+     * @see io.jmix.core.querycondition.SkippableCondition
+     */
+    boolean skipNullOrEmptyConditionsByDefault;
 
     public CoreProperties(
             String webHostName,
@@ -123,8 +125,8 @@ public class CoreProperties {
             @DefaultValue("false") boolean legacyFetchPlanSerializationAttributeName,
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
-            @DefaultValue PessimisticLock pessimisticLock,
-            @DefaultValue("true") boolean roundDecimalValueByFormat) {
+            @DefaultValue("true") boolean roundDecimalValueByFormat,
+            @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -152,8 +154,8 @@ public class CoreProperties {
         this.legacyFetchPlanSerializationAttributeName = legacyFetchPlanSerializationAttributeName;
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
-        this.pessimisticLock = pessimisticLock;
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
+        this.skipNullOrEmptyConditionsByDefault = skipNullOrEmptyConditionsByDefault;
     }
 
     public String getWebHostName() {
@@ -250,48 +252,18 @@ public class CoreProperties {
         return triggerFilesProcessInterval;
     }
 
-    public PessimisticLock getPessimisticLock() {
-        return pessimisticLock;
-    }
-
-    public static class PessimisticLock {
-
-        /**
-         * CRON expression that is used by default pessimistic lock expiration scheduling configuration.
-         */
-        String expirationCron;
-
-        /**
-         * Whether the default pessimistic lock expiration scheduling configuration is used.
-         */
-        boolean useDefaultQuartzConfiguration;
-
-        public PessimisticLock(@DefaultValue("0 * * * * ?") String expirationCron,
-                               @DefaultValue("true") boolean useDefaultQuartzConfiguration) {
-            this.expirationCron = expirationCron;
-            this.useDefaultQuartzConfiguration = useDefaultQuartzConfiguration;
-        }
-
-        /**
-         * @see #expirationCron
-         */
-        public String getExpirationCron() {
-            return expirationCron;
-        }
-
-        /**
-         * @see #useDefaultQuartzConfiguration
-         */
-        public boolean isUseDefaultQuartzConfiguration() {
-            return useDefaultQuartzConfiguration;
-        }
-
-    }
-
     /**
      * @see #roundDecimalValueByFormat
      */
     public boolean isRoundDecimalValueByFormat() {
         return roundDecimalValueByFormat;
+    }
+
+    /**
+     *
+     * @see #skipNullOrEmptyConditionsByDefault
+     */
+    public boolean isSkipNullOrEmptyConditionsByDefault() {
+        return skipNullOrEmptyConditionsByDefault;
     }
 }

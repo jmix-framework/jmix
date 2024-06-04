@@ -24,4 +24,11 @@ public class ListItemLoader extends AbstractHtmlContainerLoader<ListItem> {
     protected ListItem createComponent() {
         return factory.create(ListItem.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

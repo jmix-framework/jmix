@@ -16,26 +16,26 @@
 
 package io.jmix.flowui.sys.delegate;
 
+import com.vaadin.flow.component.Component;
 import io.jmix.flowui.view.Install;
-import io.jmix.flowui.view.View;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class InstalledRunnable implements Runnable {
 
-    private final View<?> controller;
+    private final Component component;
     private final Method method;
 
-    public InstalledRunnable(View<?> controller, Method method) {
-        this.controller = controller;
+    public InstalledRunnable(Component component, Method method) {
+        this.component = component;
         this.method = method;
     }
 
     @Override
     public void run() {
         try {
-            method.invoke(controller);
+            method.invoke(component);
         } catch (IllegalAccessException | InvocationTargetException e) {
             if (e instanceof InvocationTargetException
                     && ((InvocationTargetException) e).getTargetException() instanceof RuntimeException) {
@@ -49,7 +49,7 @@ public class InstalledRunnable implements Runnable {
     @Override
     public String toString() {
         return "InstalledRunnable{" +
-                "target=" + controller.getClass() +
+                "target=" + component.getClass() +
                 ", method=" + method +
                 '}';
     }

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.container;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.component.HasSize;
@@ -28,9 +29,12 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.formlayout.JmixFormLayout;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.SupportsValueSource;
+import io.jmix.flowui.data.value.ContainerValueSourceProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
@@ -40,7 +44,7 @@ import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
+public class FormLayoutLoader extends AbstractComponentLoader<JmixFormLayout> {
 
     protected MetadataTools metaDataTools;
     protected MessageTools messageTools;
@@ -48,8 +52,8 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
     protected LabelsPosition defaultLabelPosition = LabelsPosition.TOP;
 
     @Override
-    protected FormLayout createComponent() {
-        return factory.create(FormLayout.class);
+    protected JmixFormLayout createComponent() {
+        return factory.create(JmixFormLayout.class);
     }
 
     @Override
@@ -57,9 +61,19 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
+        loadData(resultComponent, element);
         loadLabelPosition(element);
         loadSubComponents();
+    }
+
+    protected void loadData(JmixFormLayout resultComponent, Element element) {
+        String containerId = element.attributeValue("dataContainer");
+        if (!Strings.isNullOrEmpty(containerId)) {
+            InstanceContainer<?> container = getComponentContext().getViewData().getContainer(containerId);
+            resultComponent.setValueSourceProvider(new ContainerValueSourceProvider<>(container));
+        }
     }
 
     protected void loadLabelPosition(Element element) {
@@ -184,6 +198,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
             loadLabel(resultComponent, element);
             componentLoader().loadEnabled(resultComponent, element);
             componentLoader().loadClassNames(resultComponent, element);
+            componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
             loadSubComponent();
         }

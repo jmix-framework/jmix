@@ -109,6 +109,7 @@ public class EntitySearcherImpl implements EntitySearcher {
 
             TotalHits totalHits = searchHits.getTotalHits();
             long totalHitsValue = totalHits == null ? 0 : totalHits.value;
+            searchResult.setTotalHits(totalHitsValue);
             moreDataAvailable = (totalHitsValue - searchResult.getEffectiveOffset()) > 0;
         } while (moreDataAvailable && !isResultFull(searchResult, searchContext));
         searchResult.setMoreDataAvailable(moreDataAvailable);

@@ -237,7 +237,10 @@ public class ViewDataXmlLoader {
         }
 
         InstanceLoader<Object> loader = factory.createInstanceLoader();
-        loader.setDataContext(viewData.getDataContext());
+
+        if (!Boolean.parseBoolean(element.attributeValue("readOnly"))) {
+            loader.setDataContext(viewData.getDataContextOrNull());
+        }
         loader.setContainer(container);
 
         loadAdditionalLoaderProperties(element, loader);
@@ -255,7 +258,10 @@ public class ViewDataXmlLoader {
         }
 
         CollectionLoader<Object> loader = createCollectionLoader(element);
-        loader.setDataContext(viewData.getDataContextOrNull());
+
+        if (!Boolean.parseBoolean(element.attributeValue("readOnly"))) {
+            loader.setDataContext(viewData.getDataContextOrNull());
+        }
         loader.setContainer(container);
 
         loadQuery(element, loader);

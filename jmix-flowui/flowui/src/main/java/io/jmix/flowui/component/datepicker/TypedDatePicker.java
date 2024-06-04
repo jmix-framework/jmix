@@ -25,20 +25,24 @@ import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.component.*;
-import io.jmix.flowui.data.SupportsValueSource;
-import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.component.delegate.DatePickerDelegate;
 import io.jmix.flowui.component.validation.Validator;
+import io.jmix.flowui.data.SupportsValueSource;
+import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.function.Consumer;
+
+import static io.jmix.flowui.component.DateInternationalizationHelper.*;
 
 public class TypedDatePicker<V extends Comparable> extends DatePicker
         implements SupportsValueSource<V>, SupportsTypedValue<TypedDatePicker<V>,
@@ -50,6 +54,7 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
     protected Messages messages;
 
     protected DatePickerDelegate<V> fieldDelegate;
+    protected CurrentAuthentication currentAuthentication;
 
     protected V internalValue;
 
@@ -75,14 +80,23 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
     protected void autowireDependencies() {
         dateTimeTransformations = applicationContext.getBean(DateTimeTransformations.class);
         messages = applicationContext.getBean(Messages.class);
+        currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
     }
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
         fieldDelegate.setToModelConverter(this::convertToModel);
 
+        Locale locale = currentAuthentication.getLocale();
+
         setI18n(new DatePickerI18n()
-                .setDateFormat(messages.getMessage("dateFormat")));
+                .setDateFormat(messages.getMessage("dateFormat"))
+                .setToday(messages.getMessage("datepicker.today"))
+                .setCancel(messages.getMessage("datepicker.cancel"))
+                .setWeekdays(getWeekdayNames(locale))
+                .setWeekdaysShort(getShortWeekdayNames(locale))
+                .setMonthNames(getMonthNames(locale))
+                .setFirstDayOfWeek(getFirstDayOfWeek(locale)));
 
         attachValueChangeListener();
     }

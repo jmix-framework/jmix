@@ -81,7 +81,6 @@ class FileStorageUploadFieldXmlLoadTest extends FlowuiTestSpecification {
         field.i18n.uploading.remainingTime.prefix == "remainingTimeText"
         field.i18n.uploading.remainingTime.unknown == "remainingTimeUnknownText"
         field.required
-        field.requiredIndicatorVisible
         field.requiredMessage == "requiredMessage"
         field.i18n.uploadDialog.cancel == "uploadDialogCancelText"
         field.i18n.uploadDialog.title == "uploadDialogTitle"

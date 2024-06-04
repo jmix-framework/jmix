@@ -24,4 +24,11 @@ public class SectionLoader extends AbstractHtmlContainerLoader<Section> {
     protected Section createComponent() {
         return factory.create(Section.class);
     }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        componentLoader().loadClickNotifierAttributes(resultComponent, element);
+    }
 }

@@ -51,7 +51,7 @@ public interface InstanceLoader<E> extends DataLoader {
     /**
      * Sets the id of the entity to load.
      */
-    void setEntityId(Object entityId);
+    void setEntityId(@Nullable Object entityId);
 
     /**
      * Returns the fetch plan used for loading the entity.

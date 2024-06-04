@@ -20,7 +20,12 @@ import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 import org.springframework.stereotype.Component;
 
-@Component("flowui_ViewAccessCheckerInitializer")
+/**
+ * @deprecated Vaadin introduced new {@link com.vaadin.flow.server.auth.NavigationAccessControl} mechanism.
+ * {@link JmixNavigationAccessChecker} is used for view access control.
+ */
+@Deprecated(since = "2.3", forRemoval = true)
+//@Component("flowui_ViewAccessCheckerInitializer")
 public class UiViewAccessCheckerInitializer implements VaadinServiceInitListener {
 
     protected UiViewAccessChecker viewAccessChecker;

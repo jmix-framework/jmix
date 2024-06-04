@@ -21,6 +21,7 @@ group = 'io.jmix.flowui'
 archivesBaseName = 'jmix-flowui-kit'
 
 dependencies {
+    api 'org.dom4j:dom4j'
     api 'com.google.guava:guava'
     api 'jakarta.annotation:jakarta.annotation-api'
     api("com.vaadin:vaadin-core") {

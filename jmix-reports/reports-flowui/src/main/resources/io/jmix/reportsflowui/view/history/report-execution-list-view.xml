@@ -49,12 +49,13 @@
             <button id="downloadBtn" action="executionsDataGrid.download"/>
             <simplePagination id="pagination" dataLoader="executionsDl"/>
         </hbox>
-        <dataGrid id="executionsDataGrid" dataContainer="executionsDc" width="100%" selectionMode="MULTI">
+        <dataGrid id="executionsDataGrid" dataContainer="executionsDc" width="100%" selectionMode="MULTI"
+                  columnReorderingAllowed="true">
             <actions>
                 <action id="excel" type="grdexp_excelExport"/>
                 <action id="download" text="msg://action.download.text" icon="DOWNLOAD"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="startTime"/>
                 <column property="finishTime"/>
                 <column property="reportName"/>

@@ -19,6 +19,7 @@ package io.jmix.flowui.facet.impl;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.DevelopmentException;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -31,12 +32,12 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
+import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.View.BeforeShowEvent;
 import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowui.sys.ViewControllerReflectionInspector;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,10 +54,13 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
     protected List<Trigger> triggers = new ArrayList<>();
 
-    protected ViewControllerReflectionInspector reflectionInspector;
+    protected ReflectionCacheManager reflectionCacheManager;
+    private final QueryParamValuesManager queryParamValuesManager;
 
-    public DataLoadCoordinatorImpl(ViewControllerReflectionInspector reflectionInspector) {
-        this.reflectionInspector = reflectionInspector;
+    public DataLoadCoordinatorImpl(ReflectionCacheManager reflectionCacheManager,
+                                   QueryParamValuesManager queryParamValuesManager) {
+        this.reflectionCacheManager = reflectionCacheManager;
+        this.queryParamValuesManager = queryParamValuesManager;
     }
 
     @Override
@@ -76,7 +80,7 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
     @Override
     public void addOnViewEventLoadTrigger(DataLoader loader, Class<?> eventClass) {
-        triggers.add(new OnViewEventLoadTrigger(getOwnerNN(), reflectionInspector, loader, eventClass));
+        triggers.add(new OnViewEventLoadTrigger(getOwnerNN(), reflectionCacheManager, loader, eventClass));
     }
 
     @Override
@@ -127,7 +131,11 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
     }
 
     protected void configureAutomatically(DataLoader loader, View<?> view) {
-        List<String> queryParameters = DataLoadersHelper.getQueryParameters(loader);
+        List<String> queryParameters = DataLoadersHelper.getQueryParameters(loader).stream()
+                .filter(paramName ->
+                        !queryParamValuesManager.supports(paramName))
+                .toList();
+
         List<String> allParameters = new ArrayList<>(queryParameters);
         allParameters.addAll(getConditionParameters(loader));
 

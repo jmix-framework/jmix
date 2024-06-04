@@ -19,16 +19,17 @@ package test_support.entity.lazyloading;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import test_support.entity.BaseEntity;
-
 import jakarta.persistence.*;
+import test_support.entity.BaseEntity;
 
 @Table(name = "TEST_MANY_TO_ONE_ENTITY")
 @JmixEntity
 @Entity(name = "test_ManyToOneEntity")
 public class ManyToOneEntity extends BaseEntity {
+
     @Column(name = "NAME")
     protected String name;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TEST_ONE_TO_MANY_ENTITY_ID")
     protected OneToManyEntity oneToManyEntity;

@@ -39,10 +39,6 @@ public abstract class AbstractHtmlContainerLoader<T extends HtmlContainer> exten
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadWhiteSpace(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
-        loadBadge();
-    }
-
-    protected void loadBadge() {
-        componentLoader().loadBadge(resultComponent, element);
+        componentLoader().loadThemeList(resultComponent, element);
     }
 }

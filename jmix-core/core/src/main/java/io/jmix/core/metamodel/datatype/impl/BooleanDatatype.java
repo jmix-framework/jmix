@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.Messages;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
@@ -32,6 +33,13 @@ public class BooleanDatatype implements Datatype<Boolean> {
 
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
+
+    protected Messages messages;
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
+    }
 
     @Override
     public String format(@Nullable Object value) {
@@ -61,7 +69,8 @@ public class BooleanDatatype implements Datatype<Boolean> {
             if (falseString.equalsIgnoreCase(value)) {
                 return Boolean.FALSE;
             }
-            throw new ParseException(String.format("Can't parse '%s'", value), 0);
+            throw new ParseException(messages.formatMessage(
+                    "", "datatype.unparseableBoolean.message", value), 0);
         }
         return null;
     }

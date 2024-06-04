@@ -51,13 +51,14 @@
         <dataGrid id="tenantsTable"
                   width="100%"
                   minHeight="20em"
+                  columnReorderingAllowed="true"
                   dataContainer="tenantsDc">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
                 <action id="remove" type="list_remove"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="tenantId"/>
                 <column property="name"/>
             </columns>

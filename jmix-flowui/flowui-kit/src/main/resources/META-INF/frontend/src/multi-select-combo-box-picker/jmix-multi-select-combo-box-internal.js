@@ -18,9 +18,10 @@ import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import { ComboBoxDataProviderMixin } from '@vaadin/combo-box/src/vaadin-combo-box-data-provider-mixin.js';
 import { ComboBoxMixin } from '@vaadin/combo-box/src/vaadin-combo-box-mixin.js';
 import { ComboBoxPlaceholder } from '@vaadin/combo-box/src/vaadin-combo-box-placeholder.js';
+import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.0.3]
+// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.3.1]
 class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBoxMixin(ThemableMixin(PolymerElement))) {
     static get is() {
         return 'jmix-multi-select-combo-box-internal';
@@ -87,12 +88,29 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
             },
 
             /**
+             * Set to true to group selected items at the top of the overlay.
+             * @attr {boolean} selected-items-on-top
+             */
+            selectedItemsOnTop: {
+                type: Boolean,
+                value: false,
+            },
+
+            /**
              * Last input value entered by the user before value is updated.
              * Used to store `filter` property value before clearing it.
              */
             lastFilter: {
                 type: String,
                 notify: true,
+            },
+
+            /**
+             * A subset of items to be shown at the top of the overlay.
+             */
+            topGroup: {
+                type: Array,
+                observer: '_topGroupChanged',
             },
 
             _target: {
@@ -140,6 +158,44 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
     }
 
     /**
+     * Override combo-box method to group selected
+     * items at the top of the overlay.
+     *
+     * @protected
+     * @override
+     */
+    _setDropdownItems(items) {
+        if (this.readonly) {
+            this._dropdownItems = this.selectedItems;
+            return;
+        }
+
+        if (this.filter || !this.selectedItemsOnTop) {
+            this._dropdownItems = items;
+            return;
+        }
+
+        if (items && items.length && this.topGroup && this.topGroup.length) {
+            // Filter out items included to the top group.
+            const filteredItems = items.filter(
+                (item) => this._comboBox._findIndex(item, this.topGroup, this.itemIdPath) === -1,
+            );
+
+            this._dropdownItems = this.topGroup.concat(filteredItems);
+            return;
+        }
+
+        this._dropdownItems = items;
+    }
+
+    /** @private */
+    _topGroupChanged(topGroup) {
+        if (topGroup) {
+            this._setDropdownItems(this.filteredItems);
+        }
+    }
+
+    /**
      * Override combo-box method to set correct owner for using by item renderers.
      * This needs to be done before the scroller gets added to the DOM to ensure
      * Lit directive works in case when combo-box is opened using attribute.
@@ -150,21 +206,9 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
     _initScroller() {
         const comboBox = this.getRootNode().host;
 
+        this._comboBox = comboBox;
+
         super._initScroller(comboBox);
-    }
-
-    /**
-     * Override method from `InputMixin`.
-     *
-     * @protected
-     * @override
-     */
-    clear() {
-        super.clear();
-
-        if (this.inputElement) {
-            this.inputElement.value = '';
-        }
     }
 
     /**
@@ -175,33 +219,44 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
      * @override
      */
     _onEnter(event) {
-        this.__enterPressed = true;
+        if (this.opened) {
+            // Do not submit the surrounding form.
+            event.preventDefault();
+            // Do not trigger global listeners.
+            event.stopPropagation();
+
+            if (this.readonly) {
+                this.close();
+            } else {
+                // Keep selected item focused after committing on Enter.
+                const focusedItem = this.filteredItems[this._focusedIndex];
+                this._commitValue();
+                this._focusedIndex = this.filteredItems.indexOf(focusedItem);
+            }
+
+            return;
+        }
 
         super._onEnter(event);
     }
 
     /**
+     * Override Escape handler to not clear
+     * selected items when readonly.
+     * @param {!Event} event
      * @protected
      * @override
      */
-    _closeOrCommit() {
+    _onEscape(event) {
         if (this.readonly) {
-            this.close();
+            event.stopPropagation();
+            if (this.opened) {
+                this.close();
+            }
             return;
         }
 
-        if (this.__enterPressed) {
-            this.__enterPressed = null;
-
-            // Keep selected item focused after committing on Enter.
-            const focusedItem = this.filteredItems[this._focusedIndex];
-            this._commitValue();
-            this._focusedIndex = this.filteredItems.indexOf(focusedItem);
-
-            return;
-        }
-
-        super._closeOrCommit();
+        super._onEscape(event);
     }
 
     /**
@@ -247,18 +302,20 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
     /**
      * Override method inherited from the combo-box
      * to close dropdown on blur when readonly.
-     * @param {FocusEvent} event
+     * @param {boolean} focused
      * @protected
      * @override
      */
-    _onFocusout(event) {
+    _setFocused(focused) {
         // Disable combo-box logic that updates selectedItem
         // based on the overlay focused index on input blur
-        this._ignoreCommitValue = true;
+        if (!focused) {
+            this._ignoreCommitValue = true;
+        }
 
-        super._onFocusout(event);
+        super._setFocused(focused);
 
-        if (this.readonly && !this._closeOnBlurIsPrevented) {
+        if (!focused && this.readonly && !this._closeOnBlurIsPrevented) {
             this.close();
         }
     }
@@ -360,4 +417,4 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
     }
 }
 
-customElements.define(JmixMultiSelectComboBoxInternal.is, JmixMultiSelectComboBoxInternal);
+defineCustomElement(JmixMultiSelectComboBoxInternal);

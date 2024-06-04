@@ -19,6 +19,7 @@ package io.jmix.flowui.view.navigation;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.view.View;
 
 import javax.annotation.Nullable;
@@ -34,6 +35,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  */
 public abstract class AbstractViewNavigator {
 
+    protected final View<?> origin;
     protected final Consumer<? extends AbstractViewNavigator> handler;
 
     protected String viewId;
@@ -43,18 +45,37 @@ public abstract class AbstractViewNavigator {
 
     protected boolean backwardNavigation;
 
+    @Deprecated(since = "2.3", forRemoval = true)
     protected AbstractViewNavigator(Consumer<? extends AbstractViewNavigator> handler) {
         checkNotNullArgument(handler);
 
+        this.origin = UiComponentUtils.getCurrentView();
+        this.handler = handler;
+    }
+
+    protected AbstractViewNavigator(View<?> origin,
+                                    Consumer<? extends AbstractViewNavigator> handler) {
+        checkNotNullArgument(origin);
+        checkNotNullArgument(handler);
+
+        this.origin = origin;
         this.handler = handler;
     }
 
     protected AbstractViewNavigator(AbstractViewNavigator viewNavigator) {
+        this.origin = viewNavigator.origin;
         this.handler = viewNavigator.handler;
         this.viewId = viewNavigator.viewId;
         this.routeParameters = viewNavigator.routeParameters;
         this.queryParameters = viewNavigator.queryParameters;
         this.backwardNavigation = viewNavigator.backwardNavigation;
+    }
+
+    /**
+     * @return invoking view
+     */
+    public View<?> getOrigin() {
+        return origin;
     }
 
     /**

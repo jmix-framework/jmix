@@ -34,6 +34,16 @@ public class UiComponentProperties {
     String gridEditShortcut;
     String gridReadShortcut;
 
+    /**
+     * Whether to show action icons in grid context menu
+     */
+    boolean gridContextMenuShowActionIcons;
+
+    /**
+     * Whether to show action shortcuts in grid context menu
+     */
+    boolean gridContextMenuShowActionShortcuts;
+
     String defaultNotificationPosition;
     int defaultNotificationDuration;
 
@@ -67,12 +77,29 @@ public class UiComponentProperties {
      */
     boolean filterShowConfigurationIdField;
 
+    /**
+     * Whether non-JPA properties for filter should be visible in the {@link AddConditionView}.
+     */
+    boolean filterShowNonJpaProperties;
+
+    /**
+     * Whether validation of filter configuration name uniqueness should be enabled
+     */
+    boolean filterConfigurationUniqueNamesEnabled;
+
+    /**
+     * Whether error message should be shown below the field or not.
+     */
+    boolean showErrorMessageBelowField;
+
     public UiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
             String gridRemoveShortcut,
             @DefaultValue("ENTER") String gridEditShortcut,
             @DefaultValue("ENTER") String gridReadShortcut,
+            @DefaultValue("false") boolean gridContextMenuShowActionIcons,
+            @DefaultValue("false") boolean gridContextMenuShowActionShortcuts,
             @DefaultValue("MIDDLE") String defaultNotificationPosition,
             @DefaultValue("3000") int defaultNotificationDuration,
             String pickerLookupShortcut,
@@ -82,12 +109,17 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean filterAutoApply,
             String filterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
-            @DefaultValue("false") boolean filterShowConfigurationIdField) {
+            @DefaultValue("false") boolean filterShowConfigurationIdField,
+            @DefaultValue("true") boolean filterShowNonJpaProperties,
+            @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled,
+            @DefaultValue("true") boolean showErrorMessageBelowField) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
         this.gridEditShortcut = gridEditShortcut;
         this.gridReadShortcut = gridReadShortcut;
+        this.gridContextMenuShowActionIcons = gridContextMenuShowActionIcons;
+        this.gridContextMenuShowActionShortcuts = gridContextMenuShowActionShortcuts;
         this.defaultNotificationPosition = defaultNotificationPosition;
         this.defaultNotificationDuration = defaultNotificationDuration;
 
@@ -101,6 +133,10 @@ public class UiComponentProperties {
         this.filterApplyShortcut = filterApplyShortcut;
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
+        this.filterShowNonJpaProperties = filterShowNonJpaProperties;
+        this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
+
+        this.showErrorMessageBelowField = showErrorMessageBelowField;
     }
 
     public String getGridCreateShortcut() {
@@ -121,6 +157,20 @@ public class UiComponentProperties {
 
     public String getGridReadShortcut() {
         return gridReadShortcut;
+    }
+
+    /**
+     * @see #gridContextMenuShowActionIcons
+     */
+    public boolean isGridContextMenuShowActionIcons() {
+        return gridContextMenuShowActionIcons;
+    }
+
+    /**
+     * @see #gridContextMenuShowActionShortcuts
+     */
+    public boolean isGridContextMenuShowActionShortcuts() {
+        return gridContextMenuShowActionShortcuts;
     }
 
     public Notification.Position getDefaultNotificationPosition() {
@@ -176,5 +226,26 @@ public class UiComponentProperties {
      */
     public boolean isFilterShowConfigurationIdField() {
         return filterShowConfigurationIdField;
+    }
+
+    /**
+     * @see #filterShowNonJpaProperties
+     */
+    public boolean isFilterShowNonJpaProperties() {
+        return filterShowNonJpaProperties;
+    }
+
+    /**
+     * @see #filterConfigurationUniqueNamesEnabled
+     */
+    public boolean isFilterConfigurationUniqueNamesEnabled() {
+        return filterConfigurationUniqueNamesEnabled;
+    }
+
+    /**
+     * @see #showErrorMessageBelowField
+     */
+    public boolean isShowErrorMessageBelowField() {
+        return showErrorMessageBelowField;
     }
 }

@@ -16,7 +16,6 @@
 package io.jmix.email.impl;
 
 import com.google.common.base.Strings;
-import com.sun.mail.smtp.SMTPAddressFailedException;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.SystemAuthenticator;
@@ -25,6 +24,7 @@ import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.angus.mail.smtp.SMTPAddressFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -19,6 +19,7 @@ package io.jmix.autoconfigure.oidc;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.oidc.OidcConfiguration;
 import io.jmix.oidc.OidcProperties;
+import io.jmix.oidc.OidcVaadinWebSecurity;
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
 import io.jmix.oidc.claimsmapper.DefaultClaimsRolesMapper;
 import io.jmix.oidc.jwt.JmixJwtAuthenticationConverter;
@@ -40,12 +41,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @AutoConfiguration
 @Import({OidcConfiguration.class})
@@ -80,56 +83,14 @@ public class OidcAutoConfiguration {
     }
 
     /**
-     * Configures UI endpoint protection
+     * Configures FlowUI views protection.
      */
     @EnableWebSecurity
     @ConditionalOnProperty(value = "jmix.oidc.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
-    public static class OAuth2LoginSecurityConfiguration {
-
-        public static final String SECURITY_CONFIGURER_QUALIFIER = "oidc-login";
-
-        @Bean("oidc_OAuthLoginSecurityFilterChain")
-        @Order(JmixSecurityFilterChainOrder.OIDC_LOGIN)
-        public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                       JmixOidcUserService jmixOidcUserService,
-                                                       ClientRegistrationRepository clientRegistrationRepository) throws Exception {
-            http.authorizeHttpRequests(authorize -> {
-                        authorize
-                                //if we don't allow /vaadinServlet/PUSH URL the Session Expired toolbox won't
-                                //be shown in the web browser
-                                .requestMatchers("/vaadinServlet/PUSH/**").permitAll()
-                                .anyRequest().authenticated();
-                    })
-                    .oauth2Login(oauth2Login -> {
-                        oauth2Login.userInfoEndpoint(userInfoEndpoint -> {
-                            userInfoEndpoint.oidcUserService(jmixOidcUserService);
-                        });
-                    })
-                    .logout(logout -> {
-                        logout.logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository));
-                    })
-                    .csrf(csrf -> {
-                        csrf.disable();
-                    })
-                    .headers(headers -> {
-                        headers.frameOptions(frameOptions -> {
-                            frameOptions.sameOrigin();
-                        });
-                    });
-            http.apply(new SessionManagementConfigurer());
-            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
-            return http.build();
-        }
-
-        protected OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
-            OidcClientInitiatedLogoutSuccessHandler successHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-            successHandler.setPostLogoutRedirectUri("{baseUrl}");
-            return successHandler;
-        }
-    }
+    public static class DefaulOidcVaadinWebSecurity extends OidcVaadinWebSecurity {}
 
     /**
-     * Configures API endpoints (REST, GraphQL, etc.) protection. Invocations to these resources require a bearer token
+     * Configures API endpoints (e.g. REST API) protection. Invocations to these resources require a bearer token
      * in the request header.
      */
     @EnableWebSecurity
@@ -144,11 +105,12 @@ public class OidcAutoConfiguration {
                                                        JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter,
                                                        ApplicationEventPublisher applicationEventPublisher) throws Exception {
             http.oauth2ResourceServer(resourceServer -> {
-                resourceServer.jwt(jwt -> {
-                    jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
-                });
-            });
-            http.apply(SecurityConfigurers.apiSecurity());
+                        resourceServer.jwt(jwt -> {
+                            jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
+                        });
+                    })
+                    .cors(Customizer.withDefaults());
+            http.with(SecurityConfigurers.apiSecurity(), Customizer.withDefaults());
 
             OidcResourceServerEventSecurityFilter resourceServerEventSecurityFilter =
                     new OidcResourceServerEventSecurityFilter(applicationEventPublisher);

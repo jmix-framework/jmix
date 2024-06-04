@@ -30,6 +30,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.audit.EntityLog;
@@ -50,6 +51,7 @@ import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.select.JmixSelect;
@@ -84,6 +86,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
@@ -109,7 +112,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected ComboBox<String> entityNameField;
     @ViewComponent
-    protected ComboBox<String> userField;
+    protected JmixComboBox<String> userField;
     @ViewComponent
     protected ComboBox<String> filterEntityNameField;
     @ViewComponent
@@ -254,10 +257,8 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         entityNameField.setItems(entityMetaClassesMap.values());
         ComponentUtils.setItemsMap(changeTypeField, changeTypeMap);
 
-        userField.setItems(userRepository.getByUsernameLike("")
-                .stream()
-                .map(UserDetails::getUsername)
-                .collect(Collectors.toList()));
+        userField.setItemsFetchCallback(this::onUserFieldFetchCallback);
+
         filterEntityNameField.setItems(entityMetaClassesMap.values());
         instancePicker.setFormatter(value -> value != null ? metadataTools.getInstanceName(value) : null);
 
@@ -298,6 +299,21 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         entityLogAttrTable.setColumnOrder(columnsOrder);
 
         setupWrapper.setColspan(loggedEntityTableBox, 2);
+    }
+
+    @SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
+    protected Stream<String> onUserFieldFetchCallback(Query<String, String> query) {
+        // Ignore offset and limit since methods called to avoid exception
+        query.getOffset();
+        query.getLimit();
+
+        String enteredValue = query.getFilter().orElse(null);
+
+        log.debug("EntityLogView.userField Search {}", enteredValue);
+
+        return StringUtils.isNotBlank(enteredValue)
+                ? userRepository.getByUsernameLike(enteredValue).stream().map(UserDetails::getUsername)
+                : Stream.empty();
     }
 
     protected Object generateAttributeColumn(EntityLogAttr entityLogAttr) {
@@ -886,9 +902,18 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
             List<Object> importedEntities = getImportedEntityList(event.getFileName(), bytes);
 
-            if (importedEntities.size() > 0) {
+            if (!importedEntities.isEmpty()) {
                 loggedEntityDl.load();
-                loggedAttrDl.load();
+                List<LoggedEntity> loggedEntityImportedList = importedEntities.stream()
+                        .filter(entity -> entity instanceof LoggedEntity)
+                        .map(entity -> (LoggedEntity) entity)
+                        .toList();
+
+                if(loggedEntityImportedList.size() == 1) {
+                    LoggedEntity entity = loggedEntityImportedList.get(0);
+                    loggedAttrDl.setParameter("entityId", entity.getId());
+                    loggedAttrDl.load();
+                }
 
                 notifications.create(messages.getMessage(EntityLogView.class, "importSuccessful"))
                         .withType(Notifications.Type.SUCCESS)

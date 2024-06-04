@@ -19,15 +19,26 @@ package io.jmix.flowui.model.impl;
 import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.model.*;
+import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
+import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static io.jmix.flowui.monitoring.UiMonitoring.*;
 
 /**
  *
@@ -43,6 +54,8 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     protected SorterFactory sorterFactory;
     @Autowired
     protected List<QueryStringProcessor> queryStringProcessors;
+    @Autowired
+    protected MeterRegistry meterRegistry;
 
     protected DataContext dataContext;
     protected CollectionContainer<E> container;
@@ -58,6 +71,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     protected Map<String, Serializable> hints = new HashMap<>();
     protected Function<LoadContext<E>, List<E>> delegate;
     protected EventHub events = new EventHub();
+    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
 
     @Nullable
     @Override
@@ -68,6 +82,17 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     @Override
     public void setDataContext(@Nullable DataContext dataContext) {
         this.dataContext = dataContext;
+    }
+
+    @Override
+    public void setMonitoringInfoProvider(Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider) {
+        Preconditions.checkNotNullArgument(monitoringInfoProvider);
+        this.monitoringInfoProvider = monitoringInfoProvider;
+    }
+
+    @Override
+    public Function<DataLoader, DataLoaderMonitoringInfo> getMonitoringInfoProvider() {
+        return monitoringInfoProvider;
     }
 
     @Override
@@ -88,11 +113,20 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         }
 
         List<E> list;
+
+        Timer.Sample sample = startTimerSample(meterRegistry);
+
         if (delegate == null) {
             list = dataManager.loadList(loadContext);
         } else {
             list = delegate.apply(loadContext);
+            if (list == null) {
+                return false;
+            }
         }
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
 
         if (dataContext != null) {
             List<E> mergedList = new ArrayList<>(list.size());
@@ -124,6 +158,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         query.setParameters(parameters);
 
         query.setCacheable(cacheable);
+        query.setDistinct(canLeadToDuplicateResultsRecursive(condition));
 
         if (firstResult > 0)
             query.setFirstResult(firstResult);
@@ -134,6 +169,42 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         loadContext.setHints(hints);
 
         return loadContext;
+    }
+
+    /**
+     * Evaluates recursively if the condition depends on some x-to-many property
+     * so the list of loaded entities can contain duplicates.
+     *
+     * @param condition condition to check
+     * @return true if duplicate results are possible, false otherwise
+     */
+    protected boolean canLeadToDuplicateResultsRecursive(Condition condition) {
+        if (condition instanceof LogicalCondition) {
+            LogicalCondition logicalCondition = (LogicalCondition) condition;
+            for (Condition childCondition : logicalCondition.getConditions()) {
+                boolean duplicatesPossible = canLeadToDuplicateResultsRecursive(childCondition);
+                if (duplicatesPossible) {
+                    return true;
+                }
+            }
+            return false;
+        } else if (condition instanceof PropertyCondition) {
+            PropertyCondition propertyCondition = (PropertyCondition) condition;
+            MetaPropertyPath mpp = container.getEntityMetaClass().getPropertyPath(propertyCondition.getProperty());
+            if (mpp == null) {
+                return false;
+            }
+            MetaProperty[] metaProperties = mpp.getMetaProperties();
+            //length - 1 because no duplicates will be produced if the only x-to-many property is the last one
+            for (int i = 0; i < metaProperties.length - 1; i++) {
+                if (metaProperties[i].getRange().getCardinality().isMany()) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
     }
 
     protected FetchPlan resolveFetchPlan() {
@@ -149,13 +220,26 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
     protected boolean sendPreLoadEvent(LoadContext<E> loadContext) {
         PreLoadEvent<E> preLoadEvent = new PreLoadEvent<>(this, loadContext);
+
+        Timer.Sample sample = startTimerSample(meterRegistry);
+
         events.publish(PreLoadEvent.class, preLoadEvent);
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.PRE_LOAD, info);
+
         return !preLoadEvent.isLoadPrevented();
     }
 
     protected void sendPostLoadEvent(List<E> entities) {
         PostLoadEvent<E> postLoadEvent = new PostLoadEvent<>(this, entities);
+
+        Timer.Sample sample = startTimerSample(meterRegistry);
+
         events.publish(PostLoadEvent.class, postLoadEvent);
+
+        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
+        stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.POST_LOAD, info);
     }
 
     @Override

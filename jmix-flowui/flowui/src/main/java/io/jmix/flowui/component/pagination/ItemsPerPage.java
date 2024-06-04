@@ -202,4 +202,11 @@ public class ItemsPerPage extends JmixItemsPerPage implements ApplicationContext
     protected boolean isItemsPerPageVisible() {
         return getParent().isPresent();
     }
+
+    protected boolean containsItem(@Nullable Integer item) {
+        if (CollectionUtils.isNotEmpty(processedItems)) {
+            return processedItems.contains(item);
+        }
+        return false;
+    }
 }

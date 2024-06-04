@@ -22,6 +22,7 @@ import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.View;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -71,6 +72,12 @@ public class WindowBuilder<V extends View<?>> extends AbstractWindowBuilder<V> i
     @Override
     public WindowBuilder<V> withAfterCloseListener(@Nullable Consumer<AfterCloseEvent<V>> listener) {
         super.withAfterCloseListener(listener);
+        return this;
+    }
+
+    @Override
+    public WindowBuilder<V> withViewConfigurer(@Nullable Consumer<V> configurer) {
+        super.withViewConfigurer(configurer);
         return this;
     }
 

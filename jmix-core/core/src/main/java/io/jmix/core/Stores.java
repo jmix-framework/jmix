@@ -16,21 +16,19 @@
 
 package io.jmix.core;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import io.jmix.core.impl.NoopStoreDescriptor;
-import io.jmix.core.impl.JpaStoreDescriptor;
-import io.jmix.core.impl.UndefinedStoreDescriptor;
+import io.jmix.core.impl.StoreDescriptorsRegistry;
 import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.StoreDescriptor;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-import jakarta.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class for accessing registered data store names.
@@ -46,52 +44,27 @@ public class Stores {
     protected Environment environment;
 
     @Autowired
-    protected JpaStoreDescriptor jpaStoreDescriptor;
-
-    @Autowired
-    protected NoopStoreDescriptor noopStoreDescriptor;
-
-    @Autowired
-    protected UndefinedStoreDescriptor undefinedStoreDescriptor;
-
-    @Autowired
     protected ApplicationContext applicationContext;
 
     @Autowired
-    protected Map<String, StoreDescriptor> descriptors;
+    protected StoreDescriptorsRegistry descriptorsRegistry;
 
     protected Map<String, Store> stores = new HashMap<>();
 
-    protected static final Splitter SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
-
     @PostConstruct
     protected void initialize() {
+        StoreDescriptor undefinedStoreDescriptor = descriptorsRegistry.getStoreDescriptor(UNDEFINED);
         stores.put(UNDEFINED, applicationContext.getBean(Store.class, UNDEFINED, undefinedStoreDescriptor));
 
-        StoreDescriptor mainDescriptor = getStoreDescriptor(MAIN);
-        stores.put(MAIN, applicationContext.getBean(Store.class, MAIN, mainDescriptor != null ? mainDescriptor : jpaStoreDescriptor));
+        StoreDescriptor mainDescriptor = descriptorsRegistry.getStoreDescriptor(MAIN);
+        stores.put(MAIN, applicationContext.getBean(Store.class, MAIN, mainDescriptor));
 
-        StoreDescriptor noopDescriptor = getStoreDescriptor(NOOP);
-        stores.put(NOOP, applicationContext.getBean(Store.class, NOOP, noopDescriptor != null ? noopDescriptor : noopStoreDescriptor));
+        StoreDescriptor noopDescriptor = descriptorsRegistry.getStoreDescriptor(NOOP);
+        stores.put(NOOP, applicationContext.getBean(Store.class, NOOP, noopDescriptor));
 
         for (String storeName : getAdditional()) {
-            StoreDescriptor storeDescriptor = getStoreDescriptor(storeName);
-            stores.put(storeName, applicationContext.getBean(Store.class, storeName, storeDescriptor != null ? storeDescriptor : jpaStoreDescriptor));
-        }
-    }
-
-    @Nullable
-    protected StoreDescriptor getStoreDescriptor(String storeName) {
-        String descriptorName = environment.getProperty("jmix.core.store-descriptor-" + storeName);
-        if (descriptorName != null) {
-            StoreDescriptor descriptor = descriptors.get(descriptorName);
-            if (descriptor != null) {
-                return descriptor;
-            } else {
-                throw new IllegalStateException("Store descriptor not found: " + descriptorName);
-            }
-        } else {
-            return null;
+            StoreDescriptor storeDescriptor = descriptorsRegistry.getStoreDescriptor(storeName);
+            stores.put(storeName, applicationContext.getBean(Store.class, storeName, storeDescriptor));
         }
     }
 
@@ -125,10 +98,6 @@ public class Stores {
      * @return the list of additional data store names registered in the {@code jmix.core.additional-stores} property
      */
     public List<String> getAdditional() {
-        String property = environment.getProperty("jmix.core.additional-stores");
-        if (!Strings.isNullOrEmpty(property))
-            return SPLITTER.splitToList(property);
-        else
-            return Collections.emptyList();
+        return descriptorsRegistry.getAdditionalDataStoreNames();
     }
 }

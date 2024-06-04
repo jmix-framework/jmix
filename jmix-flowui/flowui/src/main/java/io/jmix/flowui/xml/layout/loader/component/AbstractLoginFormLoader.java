@@ -27,6 +27,7 @@ public abstract class AbstractLoginFormLoader<C extends AbstractLogin> extends A
     @Override
     public void loadComponent() {
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadClassNames(resultComponent, element);
         loadBoolean(element, "forgotPasswordButtonVisible", resultComponent::setForgotPasswordButtonVisible);
 
         loadLocalization(resultComponent, element);

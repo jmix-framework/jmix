@@ -16,27 +16,21 @@
 
 package io.jmix.flowui.component.filedownloader;
 
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.function.SerializableConsumer;
-import com.vaadin.flow.server.RequestHandler;
-import com.vaadin.flow.server.StreamResource;
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinResponse;
-import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ContentDisposition;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -45,6 +39,7 @@ public class JmixFileDownloader extends Composite<Anchor> {
 
     private static final Logger log = LoggerFactory.getLogger(JmixFileDownloader.class);
 
+    protected static final String DOWNLOAD_RESOURCE_PREFIX = "download/";
     protected static final String CLICK_EXPRESSION = "this.click()";
     protected static final String SELF_REMOVE_EXPRESSION =
             "setTimeout((element) => {" +
@@ -123,7 +118,7 @@ public class JmixFileDownloader extends Composite<Anchor> {
 
     protected void runCommand(StreamResource resource) {
         contentWriter = (stream) -> {
-            try (stream) {
+            try {
                 resource.getWriter().accept(stream, VaadinSession.getCurrent());
             } catch (IOException e) {
                 throw new RuntimeException("Error copying stream");
@@ -140,7 +135,7 @@ public class JmixFileDownloader extends Composite<Anchor> {
     }
 
     protected void beforeClientResponseDownloadHandler(UI ui) {
-        String identifier = UUID.randomUUID().toString();
+        String identifier = DOWNLOAD_RESOURCE_PREFIX + UUID.randomUUID();
 
         requestHandler = (session, request, response) -> {
             if (request.getPathInfo().endsWith(identifier)) {
@@ -150,8 +145,10 @@ public class JmixFileDownloader extends Composite<Anchor> {
                 response.setStatus(200);
                 response.setHeader(
                         "Content-Disposition",
-                        type + "; filename=\"" + getFileName(session, request) + "\""
-                );
+                        ContentDisposition.builder(type)
+                                .filename(getFileName(session, request), StandardCharsets.UTF_8)
+                                .build()
+                                .toString());
 
                 if (isViewDocumentRequest && Strings.isNotEmpty(contentType)) {
                     response.setContentType(contentType);
@@ -160,9 +157,8 @@ public class JmixFileDownloader extends Composite<Anchor> {
                 try {
                     contentWriter.andThen(this::afterWriteHandler)
                             .accept(response.getOutputStream());
-
                     log.debug("response {} has been sent", response);
-                } catch (IOException e) {
+                } catch (IOException | RuntimeException e) {
                     if (!isViewDocumentRequest
                             || fileNotFoundExceptionHandler == null
                             || !fileNotFoundExceptionHandler.test(new FileNotFoundContext(e, response))) {
@@ -172,6 +168,8 @@ public class JmixFileDownloader extends Composite<Anchor> {
                         // exception is handled in listener
                         return true;
                     }
+                } finally {
+                    response.getOutputStream().close();
                 }
 
                 return true;

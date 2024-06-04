@@ -50,6 +50,34 @@ public interface StudioGenericFilterDataActions {
     void removeAction();
 
     @StudioAction(
+            type = "genericFilter_makeDefault",
+            description = "Makes the filter configuration default for this view",
+            classFqn = "io.jmix.flowuidata.action.genericfilter.GenericFilterMakeDefaultAction",
+            icon = "io/jmix/flowui/kit/meta/icon/action/action.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
+                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
+                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
+                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID,
+                            required = true, initialValue = "genericFilter_makeDefault"),
+                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
+                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
+            },
+            items = {
+                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true")
+            }
+    )
+    void makeDefaultAction();
+
+    @StudioAction(
             type = "genericFilter_save",
             description = "Saves changes to current filter configuration",
             classFqn = "io.jmix.flowuidata.action.genericfilter.GenericFilterSaveAction",

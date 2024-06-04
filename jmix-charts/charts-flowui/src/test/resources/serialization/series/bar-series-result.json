@@ -1,0 +1,95 @@
+{
+  "series": [
+    {
+      "type": "bar",
+      "id": "barId",
+      "name": "barName",
+      "colorBy": "data",
+      "legendHoverLink": false,
+      "coordinateSystem": "polar",
+      "xAxisIndex": 1,
+      "yAxisIndex": 2,
+      "polarIndex": 3,
+      "roundCap": true,
+      "realtimeSort": true,
+      "showBackground": true,
+      "backgroundStyle": {
+        "color": "#FFFFF0",
+        "borderColor": "#FFFFF0",
+        "borderWidth": 12,
+        "borderType": "dashed",
+        "borderRadius": 31,
+        "shadowBlur": 32,
+        "shadowColor": "#FFFFF0",
+        "shadowOffsetX": 32,
+        "shadowOffsetY": 12,
+        "opacity": 0.34
+      },
+      "labelLine": {
+        "show": true,
+        "lineStyle": {
+          "color": "#FFFFF0",
+          "width": 421,
+          "type": "dashed",
+          "dashOffset": 41,
+          "cap": "square",
+          "join": "miter",
+          "miterLimit": 41,
+          "shadowBlur": 59,
+          "shadowColor": "#FFFFF0",
+          "shadowOffsetX": 12,
+          "shadowOffsetY": 24,
+          "opacity": 0.41
+        }
+      },
+      "emphasis": {
+        "disabled": true,
+        "focus": "self",
+        "blurScope": "global"
+      },
+      "select": {
+        "disabled": false
+      },
+      "selectedMode": "multiple",
+      "stack": "secondStack",
+      "stackStrategy": "positive",
+      "sampling": "lttb",
+      "cursor": "pointer",
+      "barWidth": "60%",
+      "barMaxWidth": "60%",
+      "barMinWidth": "40%",
+      "barMinHeight": 321,
+      "barMinAngle": 12,
+      "barGap": "31%",
+      "barCategoryGap": "25%",
+      "large": true,
+      "largeThreshold": 400,
+      "progressive": 6000,
+      "progressiveThreshold": 4000,
+      "progressiveChunkMode": "sequential",
+      "encode": {
+        "radius": [
+          "name"
+        ],
+        "angle": [
+          "angle"
+        ]
+      },
+      "seriesLayoutBy": "row",
+      "datasetIndex": 41,
+      "dataGroupId": "group",
+      "clip": false,
+      "zlevel": 123,
+      "z": 32,
+      "silent": true,
+      "animation": true,
+      "animationThreshold": 1501,
+      "animationDuration": 1500,
+      "animationEasing": "backOut",
+      "animationDelay": 15,
+      "animationDurationUpdate": 150,
+      "animationEasingUpdate": "cubicOut",
+      "animationDelayUpdate": 15
+    }
+  ]
+}

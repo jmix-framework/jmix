@@ -21,9 +21,11 @@ import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.ComponentView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
+import io.jmix.core.metamodel.datatype.impl.BooleanDatatype
 import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype
 import io.jmix.core.metamodel.datatype.impl.LocalDateDatatype
 import io.jmix.core.metamodel.datatype.impl.LocalTimeDatatype
+import io.jmix.core.metamodel.datatype.impl.StringDatatype
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -87,7 +89,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             minHeight == "40px"
             minWidth == "80px"
             readOnly
-            requiredIndicatorVisible
             tabIndex == 3
             value
             visible
@@ -133,13 +134,13 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             autoOpen
             classNames.containsAll(["cssClassName1", "cssClassName2"])
+            datatype.class == StringDatatype
             style.get("color") == "red"
             clearButtonVisible
             enabled
             errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -151,7 +152,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             allowedCharPattern == "charPattern"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
@@ -189,10 +189,8 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             datatype.class == LocalDateDatatype
             i18n.dateFormats.containsAll(["yyyy-MM-dd", "MM/dd/yyyy", "dd.MM.yyyy"])
             enabled
-            errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             max == LocalDate.of(2023, 7, 7)
             maxHeight == "55px"
@@ -205,7 +203,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
@@ -242,10 +239,8 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             clearButtonVisible
             datatype.class == LocalTimeDatatype
             enabled
-            errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             max == LocalTime.of(18, 0)
             maxHeight == "55px"
@@ -256,7 +251,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             step == Duration.ofMinutes(15)
             tabIndex == 3
@@ -293,10 +287,8 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             datePlaceholder == "datePlaceholderString"
             datePickerI18n.dateFormats.containsAll(["yyyy-MM-dd", "MM/dd/yyyy", "dd.MM.yyyy"])
             enabled
-            errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             max == LocalDateTime.of(2023, 7, 7, 10, 15, 30)
             maxHeight == "55px"
@@ -306,7 +298,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             step == Duration.ofMinutes(15)
             tabIndex == 3
@@ -339,11 +330,11 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(componentView.radioButtonGroupId) {
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
+            datatype.class == StringDatatype
             enabled
             errorMessage == null
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -351,7 +342,6 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             !readOnly
             required
-            requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
             themeNames.containsAll([RadioGroupVariant.LUMO_VERTICAL.name()])
             value == order.number
@@ -374,13 +364,12 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             autofocus
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
+            datatype.class == BooleanDatatype
             emptySelectionAllowed
             emptySelectionCaption == "emptySelectionString"
             enabled
-            errorMessage == "errorMessageString"
             height == "50px"
             helperText == "helperTextString"
-            !invalid
             label == "labelString"
             maxHeight == "55px"
             maxWidth == "120px"
@@ -388,8 +377,8 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             placeholder == "placeholderString"
             readOnly
-            requiredIndicatorVisible
             tabIndex == 3
+            themeNames.containsAll(["helper-above-field", "align-center"])
             value == order.number
             visible
             width == "100px"

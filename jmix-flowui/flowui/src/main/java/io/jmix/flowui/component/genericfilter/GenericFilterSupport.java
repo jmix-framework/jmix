@@ -172,6 +172,7 @@ public class GenericFilterSupport {
         }
 
         resultConfiguration.setName(name);
+        resultConfiguration.setAvailableForAllUsers(existedConfiguration.isAvailableForAllUsers());
 
         return resultConfiguration;
     }

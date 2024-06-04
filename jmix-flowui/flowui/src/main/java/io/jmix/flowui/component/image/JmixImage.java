@@ -24,6 +24,7 @@ import io.jmix.core.FileRef;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.DataUnit;
+import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.GuiDevelopmentException;
@@ -55,6 +56,7 @@ public class JmixImage<V> extends Image implements SupportsValueSource<V>, HasTh
 
     protected Registration valueSourceValueChangeRegistration;
     protected Registration valueSourceStateChangeRegistration;
+    protected Registration instanceChangeSubscription;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -102,6 +104,10 @@ public class JmixImage<V> extends Image implements SupportsValueSource<V>, HasTh
         }
         valueSourceValueChangeRegistration = valueSource.addValueChangeListener(this::onValueSourceValueChange);
         valueSourceStateChangeRegistration = valueSource.addStateChangeListener(this::onValueSourceStateChange);
+        if (valueSource instanceof EntityValueSource<?,?> entityValueSource) {
+            instanceChangeSubscription = entityValueSource
+                    .addInstanceChangeListener(this::onValueSourceInstanceChange);
+        }
     }
 
     protected void unbind() {
@@ -113,6 +119,10 @@ public class JmixImage<V> extends Image implements SupportsValueSource<V>, HasTh
             valueSourceStateChangeRegistration.remove();
             valueSourceStateChangeRegistration = null;
         }
+        if (instanceChangeSubscription != null) {
+            instanceChangeSubscription.remove();
+            instanceChangeSubscription = null;
+        }
     }
 
     protected void onValueSourceValueChange(ValueSource.ValueChangeEvent<V> event) {
@@ -120,6 +130,10 @@ public class JmixImage<V> extends Image implements SupportsValueSource<V>, HasTh
     }
 
     protected void onValueSourceStateChange(DataUnit.StateChangeEvent event) {
+        updateSource();
+    }
+
+    protected void onValueSourceInstanceChange(EntityValueSource.InstanceChangeEvent<?> instanceChangeEvent) {
         updateSource();
     }
 

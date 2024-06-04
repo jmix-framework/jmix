@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.testassist;
 
+import com.vaadin.flow.spring.VaadinScopesConfig;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -28,13 +29,11 @@ import io.jmix.flowui.view.ViewAttributes;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.*;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
 
 @Configuration
+@Import({VaadinScopesConfig.class})
 public class FlowuiTestAssistConfiguration {
 
     @Bean("ui_PropagationExceptionHandler")

@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Component("ui_Aggregations")
+@Component("flowui_Aggregations")
 public class Aggregations {
 
     protected DatatypeRegistry datatypeRegistry;

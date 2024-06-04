@@ -23,11 +23,12 @@ import spock.lang.Specification
 
 import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
+import test_support.base.TestBaseConfiguration
 import test_support.base.entity.BaseUuidEntity
 
 import org.springframework.beans.factory.annotation.Autowired
 
-@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAddon1Configuration])
 class MetadataLoaderTest extends Specification {
 
     @Autowired

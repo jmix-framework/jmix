@@ -1,0 +1,56 @@
+/*
+ * Copyright 2024 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* @Deprecated since 2.3, has typos, unused in the framework, will be removed */
+.jmix-role-assigment-layout {
+    container-type: inline-size;
+    container-name: jmix-role-assigment-layout;
+}
+
+/* @Deprecated since 2.3, has typos, unused in the framework, will be removed */
+.jmix-role-assigment-content-wrapper {
+    flex-direction: column;
+
+    overflow: auto;
+    gap: var(--lumo-space-m);
+    padding: var(--lumo-space-m);
+}
+
+/* @Deprecated since 2.3, has typos, unused in the framework, will be removed */
+@container jmix-role-assigment-layout (min-width: 60em) {
+    .jmix-role-assigment-content-wrapper {
+        flex-direction: row;
+    }
+}
+
+.jmix-role-assignment-layout {
+    container-type: inline-size;
+    container-name: jmix-role-assignment-layout;
+}
+
+.jmix-role-assignment-content-wrapper {
+    flex-direction: column;
+
+    overflow: auto;
+    gap: var(--lumo-space-m);
+    padding: var(--lumo-space-m);
+}
+
+@container jmix-role-assignment-layout (min-width: 60em) {
+    .jmix-role-assignment-content-wrapper {
+        flex-direction: row;
+    }
+}

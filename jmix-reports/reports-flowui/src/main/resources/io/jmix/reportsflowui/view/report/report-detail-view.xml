@@ -271,7 +271,8 @@
                             <button id="upButton" action="inputParametersDataGrid.up"/>
                             <button id="downButton" action="inputParametersDataGrid.down"/>
                         </hbox>
-                        <dataGrid id="inputParametersDataGrid" dataContainer="parametersDc" height="15em">
+                        <dataGrid id="inputParametersDataGrid" dataContainer="parametersDc" height="15em"
+                                  columnReorderingAllowed="true">
                             <actions>
                                 <action id="createParameter" type="list_create">
                                     <properties>
@@ -287,7 +288,7 @@
                                 <action id="up" type="list_itemTracking" icon="ARROW_UP"/>
                                 <action id="down" type="list_itemTracking" icon="ARROW_DOWN"/>
                             </actions>
-                            <columns>
+                            <columns resizable="true">
                                 <column property="name"/>
                                 <column property="alias"/>
                                 <column property="type"/>
@@ -361,7 +362,7 @@
                         <button action="templatesDataGrid.copy"/>
                     </hbox>
                     <dataGrid id="templatesDataGrid" width="100%" dataContainer="templatesDc"
-                             columnReorderingAllowed="true"  detailsVisibleOnClick="false">
+                              columnReorderingAllowed="true" detailsVisibleOnClick="false">
                         <actions>
                             <action id="create" type="list_create"/>
                             <action id="remove" type="list_remove"/>
@@ -370,11 +371,11 @@
                                     icon="CHECK"/>
                             <action id="copy" type="list_itemTracking" text="msg://report.template.copy" icon="COPY"/>
                         </actions>
-                        <columns>
-                            <column property="name" resizable="true" flexGrow="3" sortable="false"/>
-                            <column property="code" resizable="true" flexGrow="0" sortable="false"/>
-                            <column property="reportOutputType" resizable="true" flexGrow="1" sortable="false"/>
-                            <column property="customDefinition" resizable="true" flexGrow="1" sortable="false"/>
+                        <columns resizable="true">
+                            <column property="name" flexGrow="3" sortable="false"/>
+                            <column property="code" flexGrow="0" sortable="false"/>
+                            <column property="reportOutputType" flexGrow="1" sortable="false"/>
+                            <column property="customDefinition" flexGrow="1" sortable="false"/>
                         </columns>
                     </dataGrid>
                 </vbox>

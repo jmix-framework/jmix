@@ -16,6 +16,7 @@
 
 package io.jmix.securityflowui.model;
 
+import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.security.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,13 @@ import java.util.stream.Collectors;
 @Component("sec_RoleModelConverter")
 public class RoleModelConverter {
 
+    private final EntityStates entityStates;
     @Autowired
     protected Metadata metadata;
+
+    public RoleModelConverter(EntityStates entityStates) {
+        this.entityStates = entityStates;
+    }
 
     public ResourceRoleModel createResourceRoleModel(ResourceRole role) {
         ResourceRoleModel roleModel = metadata.create(ResourceRoleModel.class);
@@ -42,6 +48,8 @@ public class RoleModelConverter {
         initBaseParameters(roleModel, role);
         roleModel.setScopes(role.getScopes());
         roleModel.setResourcePolicies(createResourcePolicyModels(role.getResourcePolicies()));
+
+        entityStates.setNew(roleModel, false);
 
         return roleModel;
     }
@@ -53,6 +61,8 @@ public class RoleModelConverter {
         initBaseParameters(roleModel, role);
 
         roleModel.setRowLevelPolicies(createRowLevelPolicyModels(role.getRowLevelPolicies()));
+
+        entityStates.setNew(roleModel, false);
 
         return roleModel;
     }
@@ -76,6 +86,7 @@ public class RoleModelConverter {
                     model.setEffect(resourcePolicy.getEffect());
                     model.setPolicyGroup(resourcePolicy.getPolicyGroup());
                     model.setCustomProperties(resourcePolicy.getCustomProperties());
+                    entityStates.setNew(model, false);
                     return model;
                 })
                 .collect(Collectors.toList());
@@ -92,6 +103,7 @@ public class RoleModelConverter {
                     model.setWhereClause(rowLevelPolicy.getWhereClause());
                     model.setScript(rowLevelPolicy.getScript());
                     model.setCustomProperties(rowLevelPolicy.getCustomProperties());
+                    entityStates.setNew(model, false);
                     return model;
                 })
                 .collect(Collectors.toList());

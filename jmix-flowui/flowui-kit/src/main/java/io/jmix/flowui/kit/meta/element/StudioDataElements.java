@@ -32,6 +32,7 @@ public interface StudioDataElements {
             target = "io.jmix.flowui.model.InstanceContainer",
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
+            documentationLink = "%VERSION%/flow-ui/data/property-containers.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING, required = true),
@@ -45,6 +46,7 @@ public interface StudioDataElements {
             xmlElement = "collection",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/collection.svg",
             target = {"io.jmix.flowui.model.InstanceContainer"},
+            documentationLink = "%VERSION%/flow-ui/data/property-containers.html",
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             properties = {
@@ -63,12 +65,15 @@ public interface StudioDataElements {
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer",
                     "io.jmix.flowui.model.CollectionContainer"},
+            documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
     )
@@ -82,6 +87,7 @@ public interface StudioDataElements {
             target = "io.jmix.flowui.model.CollectionContainer",
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
+            documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
@@ -89,6 +95,8 @@ public interface StudioDataElements {
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "cacheable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
@@ -103,6 +111,7 @@ public interface StudioDataElements {
             target = "io.jmix.flowui.model.KeyValueContainer",
             unsupportedTarget = {"io.jmix.flowui.model.CollectionContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
+            documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE),
@@ -117,6 +126,7 @@ public interface StudioDataElements {
             xmlElement = "loader",
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueLoader.svg",
             target = "io.jmix.flowui.model.KeyValueCollectionContainer",
+            documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,

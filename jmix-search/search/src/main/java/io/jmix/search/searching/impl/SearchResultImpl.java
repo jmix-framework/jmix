@@ -28,6 +28,7 @@ public class SearchResultImpl implements SearchResult {
     protected final Map<String, Collection<SearchResultEntry>> entriesByEntityName = new HashMap<>();
     protected final Collection<SearchResultEntry> allEntries = new ArrayList<>();
     protected int size = 0;
+    protected long totalHits;
     protected int effectiveOffset;
     protected boolean moreDataAvailable = false;
     protected SearchStrategy searchStrategy;
@@ -76,6 +77,16 @@ public class SearchResultImpl implements SearchResult {
     @Override
     public int getSize() {
         return size;
+    }
+
+    @Override
+    public long getTotalHits() {
+        return totalHits;
+    }
+
+    @Override
+    public void setTotalHits(long totalHits) {
+       this.totalHits = totalHits;
     }
 
     @Override

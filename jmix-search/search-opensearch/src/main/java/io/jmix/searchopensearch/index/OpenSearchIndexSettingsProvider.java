@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.searchelasticsearch.index;
+package io.jmix.searchopensearch.index;
 
-import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import io.jmix.search.index.IndexConfiguration;
+import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,17 +26,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class ElasticsearchIndexSettingsConfigurerProcessor {
+public class OpenSearchIndexSettingsProvider {
 
-    protected final List<ElasticsearchIndexSettingsConfigurer> configurers;
+    protected final List<OpenSearchIndexSettingsConfigurer> configurers;
 
-    protected final ElasticsearchIndexSettingsConfigurationContext context;
+    protected final OpenSearchIndexSettingsConfigurationContext context;
 
     protected final IndexSettings commonSettings;
     protected final Map<Class<?>, IndexSettings> indexSpecificSettings;
 
     @Autowired
-    public ElasticsearchIndexSettingsConfigurerProcessor(List<ElasticsearchIndexSettingsConfigurer> configurers) {
+    public OpenSearchIndexSettingsProvider(List<OpenSearchIndexSettingsConfigurer> configurers) {
         this.configurers = configurers;
         this.context = configureContext();
         this.commonSettings = context.getCommonSettingsBuilder().build();
@@ -59,8 +59,8 @@ public class ElasticsearchIndexSettingsConfigurerProcessor {
         return indexSettings;
     }
 
-    protected ElasticsearchIndexSettingsConfigurationContext configureContext() {
-        ElasticsearchIndexSettingsConfigurationContext context = new ElasticsearchIndexSettingsConfigurationContext();
+    protected OpenSearchIndexSettingsConfigurationContext configureContext() {
+        OpenSearchIndexSettingsConfigurationContext context = new OpenSearchIndexSettingsConfigurationContext();
         configurers.forEach(configurer -> configurer.configure(context));
         return context;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.searchopensearch.index;
+@Internal
+package io.jmix.autoconfigure.searchelasticsearch;
 
-import org.springframework.lang.NonNullApi;
+import io.jmix.core.annotation.Internal;

@@ -32,11 +32,12 @@ import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.utils.SslConfigurer;
 import io.jmix.searchelasticsearch.SearchElasticsearchConfiguration;
-import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfigurerProcessor;
+import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
 import io.jmix.searchelasticsearch.index.impl.ElasticsearchEntityIndexer;
 import io.jmix.searchelasticsearch.index.impl.ElasticsearchIndexManager;
-import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategyManager;
 import io.jmix.searchelasticsearch.searching.impl.ElasticsearchEntitySearcher;
+import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
+import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategyManager;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.http.HttpHost;
@@ -49,11 +50,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
+import java.util.Collection;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class, SearchElasticsearchConfiguration.class})
@@ -67,6 +70,7 @@ public class SearchElasticsearchAutoConfiguration {
     protected SslConfigurer sslConfigurer;
 
     @Bean("search_ElasticsearchClient")
+    @ConditionalOnMissingBean(ElasticsearchClient.class)
     public ElasticsearchClient elasticsearchClient() {
         CredentialsProvider credentialsProvider = createCredentialsProvider();
         SSLContext sslContext = sslConfigurer.createSslContext();
@@ -95,7 +99,7 @@ public class SearchElasticsearchAutoConfiguration {
                                                        IndexConfigurationManager indexConfigurationManager,
                                                        SearchProperties searchProperties,
                                                        IndexStateRegistry indexStateRegistry,
-                                                       ElasticsearchIndexSettingsConfigurerProcessor indexSettingsProcessor) {
+                                                       ElasticsearchIndexSettingsProvider indexSettingsProcessor) {
         return new ElasticsearchIndexManager(client,
                 indexStateRegistry,
                 indexConfigurationManager,
@@ -150,6 +154,13 @@ public class SearchElasticsearchAutoConfiguration {
                 policyStore,
                 searchStrategyManager
         );
+    }
+
+    @Bean("search_ElasticsearchSearchStrategyManager")
+    protected ElasticsearchSearchStrategyManager elasticsearchSearchStrategyManager(
+            Collection<ElasticsearchSearchStrategy> searchStrategies,
+            SearchProperties applicationProperties) {
+        return new ElasticsearchSearchStrategyManager(searchStrategies, applicationProperties);
     }
 
     @Nullable

@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.searchopensearch.index;
+package io.jmix.searchelasticsearch.searching.strategy;
 
 import org.springframework.lang.NonNullApi;

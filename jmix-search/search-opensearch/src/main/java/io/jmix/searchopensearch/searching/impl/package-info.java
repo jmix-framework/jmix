@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+@Internal
 @NonNullApi
-package io.jmix.searchopensearch.index;
+package io.jmix.searchopensearch.searching.impl;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

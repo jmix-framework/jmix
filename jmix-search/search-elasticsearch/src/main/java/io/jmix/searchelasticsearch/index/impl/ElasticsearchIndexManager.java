@@ -31,7 +31,7 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.BaseIndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfigurerProcessor;
+import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonGenerator;
 import jakarta.json.stream.JsonParser;
@@ -52,13 +52,13 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchIndexManager.class);
 
     protected final ElasticsearchClient client;
-    protected final ElasticsearchIndexSettingsConfigurerProcessor indexSettingsProcessor;
+    protected final ElasticsearchIndexSettingsProvider indexSettingsProcessor;
 
     public ElasticsearchIndexManager(ElasticsearchClient client,
                                      IndexStateRegistry indexStateRegistry,
                                      IndexConfigurationManager indexConfigurationManager,
                                      SearchProperties searchProperties,
-                                     ElasticsearchIndexSettingsConfigurerProcessor indexSettingsProcessor) {
+                                     ElasticsearchIndexSettingsProvider indexSettingsProcessor) {
         super(indexConfigurationManager, indexStateRegistry, searchProperties);
         this.client = client;
         this.indexSettingsProcessor = indexSettingsProcessor;

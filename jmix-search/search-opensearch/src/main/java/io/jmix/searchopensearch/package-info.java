@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2023 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.searchopensearch.index;
+package io.jmix.searchopensearch;
 
 import org.springframework.lang.NonNullApi;

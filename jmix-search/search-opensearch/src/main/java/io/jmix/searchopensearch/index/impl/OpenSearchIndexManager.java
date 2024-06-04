@@ -23,10 +23,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.*;
+import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.impl.BaseIndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurerProcessor;
+import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonGenerator;
 import jakarta.json.stream.JsonParser;
@@ -42,17 +43,16 @@ import org.springframework.lang.Nullable;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
 
-public class OpenSearchIndexManager implements ESIndexManager {
+public class OpenSearchIndexManager extends BaseIndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchIndexManager.class);
 
     protected final OpenSearchClient client;
-    protected final IndexStateRegistry indexStateRegistry;
-    protected final IndexConfigurationManager indexConfigurationManager;
-    protected final SearchProperties searchProperties;
-    protected final OpenSearchIndexSettingsConfigurerProcessor indexSettingsProcessor;
+    protected final OpenSearchIndexSettingsProvider indexSettingsProcessor;
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -60,11 +60,9 @@ public class OpenSearchIndexManager implements ESIndexManager {
                                   IndexStateRegistry indexStateRegistry,
                                   IndexConfigurationManager indexConfigurationManager,
                                   SearchProperties searchProperties,
-                                  OpenSearchIndexSettingsConfigurerProcessor indexSettingsProcessor) {
+                                  OpenSearchIndexSettingsProvider indexSettingsProcessor) {
+        super(indexConfigurationManager, indexStateRegistry, searchProperties);
         this.client = client;
-        this.indexStateRegistry = indexStateRegistry;
-        this.indexConfigurationManager = indexConfigurationManager;
-        this.searchProperties = searchProperties;
         this.indexSettingsProcessor = indexSettingsProcessor;
     }
 
@@ -73,14 +71,14 @@ public class OpenSearchIndexManager implements ESIndexManager {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         String indexName = indexConfiguration.getIndexName();
-        TypeMapping mapping = buildMapping(indexConfiguration); //todo
-        IndexSettings settings = buildSettings(indexConfiguration); //todo
+        TypeMapping mapping = buildMapping(indexConfiguration);
+        IndexSettings settings = buildSettings(indexConfiguration);
 
         CreateIndexRequest createIndexRequest = CreateIndexRequest.of(
                 builder -> builder.index(indexName).mappings(mapping).settings(settings)
         );
 
-        log.info("Create index '{}' with mapping {}", indexConfiguration.getIndexName(), mapping); //todo debug?
+        log.info("Create index '{}' with mapping {}", indexConfiguration.getIndexName(), mapping);
 
         CreateIndexResponse response;
         try {
@@ -114,38 +112,6 @@ public class OpenSearchIndexManager implements ESIndexManager {
     }
 
     @Override
-    public Map<IndexConfiguration, Boolean> recreateIndexes() { //todo super class
-        Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
-        return recreateIndexes(indexConfigurations);
-    }
-
-    @Override
-    public Map<IndexConfiguration, Boolean> recreateIndexes(Collection<IndexConfiguration> indexConfigurations) { //todo super class
-        Preconditions.checkNotNullArgument(indexConfigurations);
-
-        Map<IndexConfiguration, Boolean> result = new HashMap<>();
-        indexConfigurations.forEach(config -> {
-            boolean created = recreateIndex(config);
-            result.put(config, created);
-        });
-        return result;
-    }
-
-    @Override
-    public boolean recreateIndex(IndexConfiguration indexConfiguration) { //todo super class
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
-        String indexName = indexConfiguration.getIndexName();
-        if (isIndexExist(indexName)) {
-            boolean dropped = dropIndex(indexName);
-            if (!dropped) {
-                return false;
-            }
-        }
-        return createIndex(indexConfiguration);
-    }
-
-    @Override
     public boolean isIndexExist(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
         try {
@@ -153,151 +119,6 @@ public class OpenSearchIndexManager implements ESIndexManager {
         } catch (IOException e) {
             throw new RuntimeException("Unable to check existence of index '" + indexName + "'", e);
         }
-    }
-
-    @Override
-    public Map<IndexConfiguration, IndexValidationStatus> validateIndexes() { //todo super class
-        Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
-        return validateIndexes(indexConfigurations);
-    }
-
-    @Override
-    public Map<IndexConfiguration, IndexValidationStatus> validateIndexes(Collection<IndexConfiguration> indexConfigurations) {
-        Preconditions.checkNotNullArgument(indexConfigurations);
-
-        Map<IndexConfiguration, IndexValidationStatus> result = new HashMap<>();
-        indexConfigurations.forEach(config -> {
-            IndexValidationStatus status = validateIndex(config);
-            result.put(config, status);
-        });
-        return result;
-    }
-
-    @Override
-    public IndexValidationStatus validateIndex(IndexConfiguration indexConfiguration) {
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
-        IndexValidationStatus status;
-        if (isIndexExist(indexConfiguration.getIndexName())) {
-            if (isIndexActual(indexConfiguration)) {
-                status = IndexValidationStatus.ACTUAL;
-                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-            } else {
-                status = IndexValidationStatus.IRRELEVANT;
-                indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
-            }
-        } else {
-            status = IndexValidationStatus.MISSING;
-            indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
-        }
-
-        log.info("Validation status of search index '{}' (entity '{}'): {}",
-                indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), status);
-        return status;
-    }
-
-    //@Override
-    public Map<String, ObjectNode> getIndexMetadata(String indexName) {
-        Map<String, IndexState> content = getIndexMetadataMapInternal(indexName);
-        Map<String, ObjectNode> result = new HashMap<>();
-        //todo convert to objectNodes
-        content.forEach((index, indexState) -> {
-            JsonNode indexStateJsonNode = toJsonNode(indexState);
-            if (indexStateJsonNode.isObject()) {
-                result.put(index, (ObjectNode) indexStateJsonNode);
-            }
-        });
-        return result;
-    }
-
-    /*@Override
-    public GetIndexResponse getIndex(String indexName) { //todo get index data as Json (map indexName - Json)?
-        org.opensearch.client.opensearch.indices.GetIndexResponse indexResponse = client.indices().get(builder -> builder.index(indexName));
-        Map<String, IndexState> result = indexResponse.result();
-
-    }*/
-
-    @Override
-    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas() { //todo super class
-        Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
-        return synchronizeIndexSchemas(indexConfigurations);
-    }
-
-    @Override
-    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations) { //todo super class
-        Preconditions.checkNotNullArgument(indexConfigurations);
-
-        Map<IndexConfiguration, IndexSynchronizationStatus> result = new HashMap<>();
-        indexConfigurations.forEach(config -> {
-            IndexSynchronizationStatus status = synchronizeIndexSchema(config);
-            result.put(config, status);
-        });
-        return result;
-    }
-
-    @Override
-    public IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration) { //todo super class
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
-        IndexSchemaManagementStrategy strategy = searchProperties.getIndexSchemaManagementStrategy();
-        return synchronizeIndexSchema(indexConfiguration, strategy);
-    }
-
-    protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) { //todo super class
-        log.info("Synchronize search index '{}' (entity '{}') according to strategy '{}'",
-                indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), strategy);
-        IndexSynchronizationStatus status;
-        boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
-        if (indexExist) {
-            boolean indexActual = isIndexActual(indexConfiguration);
-            if (indexActual) {
-                status = IndexSynchronizationStatus.ACTUAL;
-                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-            } else {
-                status = handleIrrelevantIndex(indexConfiguration, strategy);
-            }
-        } else {
-            status = handleMissingIndex(indexConfiguration, strategy);
-        }
-        log.info("Synchronization status of search index '{}' (entity '{}'): {}",
-                indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), status);
-        return status;
-    }
-
-    protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) { //todo super class
-        IndexSynchronizationStatus status;
-        if (IndexSchemaManagementStrategy.CREATE_OR_RECREATE.equals(strategy)) {
-            boolean created = recreateIndex(indexConfiguration);
-            if (created) {
-                status = IndexSynchronizationStatus.RECREATED;
-                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-            } else {
-                status = IndexSynchronizationStatus.IRRELEVANT;
-                indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
-            }
-        } else {
-            status = IndexSynchronizationStatus.IRRELEVANT;
-            indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
-        }
-        return status;
-    }
-
-    protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) { //todo super class
-        IndexSynchronizationStatus status;
-
-        if (IndexSchemaManagementStrategy.NONE.equals(strategy)) {
-            status = IndexSynchronizationStatus.MISSING;
-        } else {
-            boolean created = createIndex(indexConfiguration);
-            if (created) {
-                status = IndexSynchronizationStatus.CREATED;
-                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-            } else {
-                status = IndexSynchronizationStatus.MISSING;
-                indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
-            }
-        }
-        return status;
     }
 
     protected TypeMapping buildMapping(IndexConfiguration indexConfiguration) {
@@ -328,8 +149,7 @@ public class OpenSearchIndexManager implements ESIndexManager {
         String stringValue = stringWriter.toString();
 
         try {
-            JsonNode jsonNode = objectMapper.readTree(stringValue);
-            return jsonNode;
+            return objectMapper.readTree(stringValue);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Unable to generate JsonNode", e);
         }
@@ -344,10 +164,9 @@ public class OpenSearchIndexManager implements ESIndexManager {
         }
     }
 
-    protected boolean isIndexActual(IndexConfiguration indexConfiguration) { //todo
+    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
-        //GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());
         IndexState indexState = getIndexMetadataInternal(indexConfiguration.getIndexName());
         if (indexState == null) {
             return false;
@@ -358,7 +177,7 @@ public class OpenSearchIndexManager implements ESIndexManager {
         return indexMappingActual && indexSettingsActual;
     }
 
-    protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName) {
+    protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName) { //todo getIndexMetadata (single) to API
         Preconditions.checkNotNullArgument(indexName);
         try {
             return client.indices().get(builder -> builder.index(indexName).includeDefaults(true)).result();
@@ -394,39 +213,24 @@ public class OpenSearchIndexManager implements ESIndexManager {
 
     protected boolean isIndexSettingsActual(IndexConfiguration indexConfiguration, IndexState currentIndexState) {
         IndexSettings expectedSettings = indexSettingsProcessor.getSettingsForIndex(indexConfiguration);
-        IndexSettings allCurrentSettings = currentIndexState.settings();
-        IndexSettings defaults = currentIndexState.defaults();
+        IndexSettings allAppliedSettings = currentIndexState.settings();
 
-        if (allCurrentSettings == null) {
-            throw new IllegalArgumentException("No info about all current settings for index '" + indexConfiguration.getIndexName() + "'");
+        if (allAppliedSettings == null) {
+            throw new IllegalArgumentException("No info about all applied settings for index '" + indexConfiguration.getIndexName() + "'");
         }
 
-        IndexSettings currentSettings = allCurrentSettings.index();
-        if (currentSettings == null) {
-            throw new IllegalArgumentException("No info about index current settings for index '" + indexConfiguration.getIndexName() + "'");
+        IndexSettings appliedSettings = allAppliedSettings.index();
+        if (appliedSettings == null) {
+            throw new IllegalArgumentException("No info about applied index settings for index '" + indexConfiguration.getIndexName() + "'");
         }
 
         ObjectNode expectedSettingsNode = toObjectNode(expectedSettings);
-        ObjectNode currentSettingsNode = toObjectNode(currentSettings);
-        ObjectNode defaultsNode = defaults == null ? objectMapper.createObjectNode() : toObjectNode(defaults);
-        //todo implement inclusion check
-        Map<String, Object> expectedSettingsMap = objectMapper.convertValue(expectedSettingsNode, new TypeReference<>() {
-        });
-        Map<String, Object> currentSettingsMap = objectMapper.convertValue(currentSettingsNode, new TypeReference<>() {
-        });
-        Map<String, Object> defaultsMap = objectMapper.convertValue(defaultsNode, new TypeReference<>() {
-        });
+        ObjectNode currentSettingsNode = toObjectNode(appliedSettings);
 
-        log.debug("Settings of index '{}':\nCurrent: {}\nExpected: {}",
-                indexConfiguration.getIndexName(), currentSettingsMap, expectedSettingsMap);
-
-        boolean settingsActual = nodeContains(currentSettingsNode, expectedSettingsNode);
-
-
-        return settingsActual;
+        return nodeContains(currentSettingsNode, expectedSettingsNode);
     }
 
-    protected boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) {
+    protected boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) { //todo to super class
         log.info("[IVGA] Check if node {} contains {}", containerNode, contentNode);
         Iterator<Map.Entry<String, JsonNode>> fieldsIterator = contentNode.fields();
         while (fieldsIterator.hasNext()) {

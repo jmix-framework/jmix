@@ -28,10 +28,11 @@ import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.utils.SslConfigurer;
 import io.jmix.searchopensearch.SearchOpenSearchConfiguration;
-import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurerProcessor;
+import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
 import io.jmix.searchopensearch.index.impl.OpenSearchEntityIndexer;
 import io.jmix.searchopensearch.index.impl.OpenSearchIndexManager;
 import io.jmix.searchopensearch.searching.impl.OpenSearchEntitySearcher;
+import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyManager;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -49,11 +50,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
+import java.util.Collection;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class, SearchOpenSearchConfiguration.class})
@@ -66,51 +69,8 @@ public class SearchOpenSearchAutoConfiguration {
     @Autowired
     protected SslConfigurer sslConfigurer;
 
-
-    /*@Bean("search_OpenSearchClient")
-    //@ConditionalOnProperty(name = "jmix.search.platform", havingValue = "os") //todo
-    public OpenSearchClient openSearchClient() {
-        *//*System.setProperty("javax.net.ssl.trustStore", "com/company/sandbox/keystore/localhost.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "123qwe");*//*
-
-        final org.apache.hc.core5.http.HttpHost host = new org.apache.hc.core5.http.HttpHost("http", "localhost", 9200);
-        final org.apache.hc.client5.http.auth.CredentialsProvider credentialsProvider = new org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider();
-        // Only for demo purposes. Don't specify your credentials in code.
-        //credentialsProvider.setCredentials(new AuthScope(host), new UsernamePasswordCredentials("admin", "admin".toCharArray()));
-
-        *//*final SSLContext sslcontext = SSLContextBuilder
-                .create()
-                .loadTrustMaterial(null, (chains, authType) -> true)
-                .build();*//*
-
-        final ApacheHttpClient5TransportBuilder builder = ApacheHttpClient5TransportBuilder.builder(host);
-        builder.setHttpClientConfigCallback(httpClientBuilder -> {
-            *//*final TlsStrategy tlsStrategy = ClientTlsStrategyBuilder.create()
-                    .setSslContext(SSLContextBuilder.create().build())
-                    // See https://issues.apache.org/jira/browse/HTTPCLIENT-2219
-                    .setTlsDetailsFactory(new Factory<SSLEngine, TlsDetails>() {
-                        @Override
-                        public TlsDetails create(final SSLEngine sslEngine) {
-                            return new TlsDetails(sslEngine.getSession(), sslEngine.getApplicationProtocol());
-                        }
-                    })
-                    .build();*//*
-
-            final PoolingAsyncClientConnectionManager connectionManager = PoolingAsyncClientConnectionManagerBuilder
-                    .create()
-                    //.setTlsStrategy(tlsStrategy)
-                    .build();
-
-            return httpClientBuilder
-                    .setDefaultCredentialsProvider(credentialsProvider)
-                    .setConnectionManager(connectionManager);
-        });
-
-        final OpenSearchTransport transport = ApacheHttpClient5TransportBuilder.builder(host).build();
-        return new OpenSearchClient(transport);
-    }*/
-
     @Bean("search_OpenSearchClient")
+    @ConditionalOnMissingBean(OpenSearchClient.class)
     public OpenSearchClient openSearchClient() {
         HttpHost host = HttpHost.create(searchProperties.getConnectionUrl());
         CredentialsProvider credentialsProvider = createCredentialsProvider();
@@ -136,7 +96,7 @@ public class SearchOpenSearchAutoConfiguration {
                                                     IndexStateRegistry indexStateRegistry,
                                                     IndexConfigurationManager indexConfigurationManager,
                                                     SearchProperties searchProperties,
-                                                    OpenSearchIndexSettingsConfigurerProcessor indexSettingsProcessor) {
+                                                    OpenSearchIndexSettingsProvider indexSettingsProcessor) {
         return new OpenSearchIndexManager(client, indexStateRegistry, indexConfigurationManager, searchProperties, indexSettingsProcessor);
     }
 
@@ -186,6 +146,13 @@ public class SearchOpenSearchAutoConfiguration {
                 policyStore,
                 searchStrategyManager
         );
+    }
+
+    @Bean("search_OpenSearchSearchStrategyManager")
+    protected OpenSearchSearchStrategyManager openSearchSearchStrategyManager(
+            Collection<OpenSearchSearchStrategy> searchStrategies,
+            SearchProperties applicationProperties) {
+        return new OpenSearchSearchStrategyManager(searchStrategies, applicationProperties);
     }
 
     @Nullable

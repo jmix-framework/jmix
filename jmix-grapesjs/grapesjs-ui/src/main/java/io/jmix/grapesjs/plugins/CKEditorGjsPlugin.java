@@ -23,6 +23,6 @@ public class CKEditorGjsPlugin extends GjsPlugin {
     public static final String XSD_CODE = "ckeditor";
 
     public CKEditorGjsPlugin(String options) {
-        super("gjs-plugin-ckeditor", options);
+        super("grapesjs-plugin-ckeditor", options);
     }
 }

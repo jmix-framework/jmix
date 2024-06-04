@@ -199,7 +199,129 @@ class DataManagerPropertyConditionTest extends DataSpec {
         list.contains(testEntity3)
     }
 
-    def "load using PropertyCondition for collections"() {
+    def "load using PropertyCondition for non-empty collections"() {
+
+        TestAppEntity testAppEntity1 = dataManager.create(TestAppEntity)
+        testAppEntity1.name = 'test one'
+
+        TestAppEntity testAppEntity2 = dataManager.create(TestAppEntity)
+        testAppEntity2.name = 'test two'
+
+        TestAppEntityItem appEntityItem1 = dataManager.create(TestAppEntityItem)
+        appEntityItem1.name = 'one one'
+        appEntityItem1.appEntity = testAppEntity1
+
+        TestAppEntityItem appEntityItem2 = dataManager.create(TestAppEntityItem)
+        appEntityItem2.name = 'one two'
+        appEntityItem2.appEntity = testAppEntity1
+
+        dataManager.save(testAppEntity1, testAppEntity2, appEntityItem1, appEntityItem2)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(
+                        LogicalCondition.and()
+                                .add(PropertyCondition.isCollectionEmpty("items", false))
+                )
+                .list()
+
+        then:
+
+        list == [testAppEntity1]
+    }
+
+    def "load using PropertyCondition for empty collections"() {
+
+        TestAppEntity testAppEntity1 = dataManager.create(TestAppEntity)
+        testAppEntity1.name = 'test one'
+
+        TestAppEntity testAppEntity2 = dataManager.create(TestAppEntity)
+        testAppEntity2.name = 'test two'
+
+        TestAppEntityItem appEntityItem1 = dataManager.create(TestAppEntityItem)
+        appEntityItem1.name = 'one one'
+        appEntityItem1.appEntity = testAppEntity1
+
+        TestAppEntityItem appEntityItem2 = dataManager.create(TestAppEntityItem)
+        appEntityItem2.name = 'one two'
+        appEntityItem2.appEntity = testAppEntity1
+
+        dataManager.save(testAppEntity1, testAppEntity2, appEntityItem1, appEntityItem2)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(
+                        LogicalCondition.and()
+                                .add(PropertyCondition.isCollectionEmpty("items", true))
+                )
+                .list()
+
+        then:
+
+        list == [testAppEntity2]
+    }
+
+    def "load using PropertyCondition 'member of'"() {
+
+        TestAppEntity testAppEntity1 = dataManager.create(TestAppEntity)
+        testAppEntity1.name = 'test one'
+
+        TestAppEntity testAppEntity2 = dataManager.create(TestAppEntity)
+        testAppEntity2.name = 'test two'
+
+        TestAppEntityItem appEntityItem1 = dataManager.create(TestAppEntityItem)
+        appEntityItem1.name = 'one one'
+        appEntityItem1.appEntity = testAppEntity1
+
+        TestAppEntityItem appEntityItem2 = dataManager.create(TestAppEntityItem)
+        appEntityItem2.name = 'two one'
+        appEntityItem2.appEntity = testAppEntity2
+
+        dataManager.save(testAppEntity1, testAppEntity2, appEntityItem1, appEntityItem2)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.memberOfCollection("items", appEntityItem1))
+                .list()
+
+        then:
+
+        list == [testAppEntity1]
+    }
+
+    def "load using PropertyCondition 'not member of'"() {
+
+        TestAppEntity testAppEntity1 = dataManager.create(TestAppEntity)
+        testAppEntity1.name = 'test one'
+
+        TestAppEntity testAppEntity2 = dataManager.create(TestAppEntity)
+        testAppEntity2.name = 'test two'
+
+        TestAppEntityItem appEntityItem1 = dataManager.create(TestAppEntityItem)
+        appEntityItem1.name = 'one one'
+        appEntityItem1.appEntity = testAppEntity1
+
+        TestAppEntityItem appEntityItem2 = dataManager.create(TestAppEntityItem)
+        appEntityItem2.name = 'two one'
+        appEntityItem2.appEntity = testAppEntity2
+
+        dataManager.save(testAppEntity1, testAppEntity2, appEntityItem1, appEntityItem2)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.notMemberOfCollection("items", appEntityItem1))
+                .list()
+
+        then:
+
+        list == [testAppEntity2]
+    }
+
+    def "load using PropertyCondition for collection properties"() {
 
         TestAppEntity testAppEntity1 = dataManager.create(TestAppEntity)
         testAppEntity1.name = 'test one'

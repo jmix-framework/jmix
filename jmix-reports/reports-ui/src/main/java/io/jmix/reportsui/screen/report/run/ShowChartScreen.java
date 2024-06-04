@@ -16,7 +16,7 @@
 
 package io.jmix.reportsui.screen.report.run;
 
-import com.haulmont.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ReportSecurityManager;

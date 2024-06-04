@@ -17,7 +17,7 @@
 package io.jmix.emailtemplatesui.screen.emailtemplate.send;
 
 
-import com.haulmont.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.DataManager;
 import io.jmix.core.Messages;

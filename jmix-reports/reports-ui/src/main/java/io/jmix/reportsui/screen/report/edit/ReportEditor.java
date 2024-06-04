@@ -17,7 +17,7 @@ package io.jmix.reportsui.screen.report.edit;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.haulmont.yarg.structure.BandOrientation;
+import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.SaveContext;

@@ -16,7 +16,10 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.meta.*;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.EventObject;
 import java.util.Map;
@@ -56,6 +59,37 @@ public interface FileMultiUploadField extends UploadField {
      * @return a registration object for removing an event listener
      */
     Subscription addQueueUploadCompleteListener(Consumer<QueueUploadCompleteEvent> listener);
+
+    /**
+     * Sets whether total progress should be displayed during files loading
+     *
+     * @param totalProgressEnabled flag indicating whether total progress should be displayed
+     */
+    @StudioProperty(type = PropertyType.BOOLEAN, defaultValue = "true")
+    void setTotalProgressEnabled(boolean totalProgressEnabled);
+
+    /**
+     * @return true if total progress should be displayed, false otherwise
+     */
+    boolean isTotalProgressEnabled();
+
+    /**
+     * Sets caption format that will be used in total progress display section.
+     * Two '%s' placeholders are supported in the format - the first is for current file number,
+     * the second is for total file number. <br>
+     * Examples: "File %s of %s", "%s of %s" etc.
+     *
+     * @param totalProgressFormat caption format which will be used in total progress display section
+     */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING,
+            defaultValue = "msg:///multiupload.totalProgressFormat")
+    void setTotalProgressFormat(String totalProgressFormat);
+
+    /**
+     * @return caption format which is used in total progress display section.
+     * @see #setTotalProgressFormat(String)
+     */
+    String getTotalProgressFormat();
 
     /**
      * Describes queue upload complete event.

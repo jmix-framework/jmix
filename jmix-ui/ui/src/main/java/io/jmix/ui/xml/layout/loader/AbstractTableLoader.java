@@ -447,7 +447,14 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
         String collapsed = element.attributeValue("collapsed");
         if (StringUtils.isNotEmpty(collapsed)) {
-            column.setCollapsed(Boolean.parseBoolean(collapsed));
+            //There is a check in Vaadin Table component if the column to collapse is related to
+            //container property or is generated one (exception will be thrown if neither one nor other condition met).
+            //If the column being created is generated one then it will not be related to some container property
+            //and will be added to Table component as generated only after full table initialization (including
+            //injection of generator methods in a view marked with @Install).
+            //So we defer setting of collapsed property until the initialization is completed.
+            getComponentContext().addPostInitTask((context, window) ->
+                    column.setCollapsed(Boolean.parseBoolean(collapsed)));
         }
 
         String sortable = element.attributeValue("sortable");

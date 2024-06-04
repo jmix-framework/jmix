@@ -17,6 +17,7 @@ package test_support.base.entity;
 
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.Comment;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 @MappedSuperclass
 @JmixEntity(name = "base_BaseUuidEntity")
+@Comment("Base class of entities with UUID PK")
 public abstract class BaseUuidEntity extends BaseGenericIdEntity<UUID> {
 
     private static final long serialVersionUID = -2217624132287086972L;
@@ -33,6 +35,7 @@ public abstract class BaseUuidEntity extends BaseGenericIdEntity<UUID> {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue
+    @Comment("Entity identifier")
     protected UUID id;
 
     public BaseUuidEntity() {

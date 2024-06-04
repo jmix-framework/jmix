@@ -28,7 +28,6 @@ import io.jmix.ui.component.table.GroupTableDataContainer;
 import io.jmix.ui.component.table.TableDataContainer;
 import io.jmix.ui.component.table.TableItemsEventsDelegate;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
-import io.jmix.ui.settings.component.binder.GroupTableSettingsBinder;
 import io.jmix.ui.widget.JmixEnhancedTable.AggregationInputValueChangeContext;
 import io.jmix.ui.widget.JmixGroupTable;
 import io.jmix.ui.widget.JmixGroupTable.GroupAggregationContext;
@@ -177,6 +176,7 @@ public class GroupTableImpl<E> extends AbstractTable<JmixGroupTable, E>
         component.setGroupPropertyValueFormatter((groupId, value) ->
                 formatAggregatableGroupPropertyValue((GroupInfo<MetaPropertyPath>) groupId, value)
         );
+        component.setSortOnGroupEnabled(getUiComponentProperties().isGroupTableSortOnGroupEnabled());
     }
 
     protected JmixGroupTable createComponent() {
@@ -548,6 +548,16 @@ public class GroupTableImpl<E> extends AbstractTable<JmixGroupTable, E>
         }
 
         return metadataTools.format(value, propertyPath.getMetaProperty());
+    }
+
+    @Override
+    public boolean isSortOnGroupEnabled() {
+        return component.isSortOnGroupEnabled();
+    }
+
+    @Override
+    public void setSortOnGroupEnabled(boolean sortOnGroupEnabled) {
+        component.setSortOnGroupEnabled(sortOnGroupEnabled);
     }
 
     protected static class GroupAggregationCells {

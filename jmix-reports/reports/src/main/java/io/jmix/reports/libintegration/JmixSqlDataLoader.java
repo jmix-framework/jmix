@@ -16,10 +16,10 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.loaders.impl.SqlDataLoader;
-import com.haulmont.yarg.structure.ReportQuery;
-import com.haulmont.yarg.util.db.QueryRunner;
-import com.haulmont.yarg.util.db.ResultSetHandler;
+import io.jmix.reports.yarg.loaders.impl.SqlDataLoader;
+import io.jmix.reports.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.util.db.QueryRunner;
+import io.jmix.reports.yarg.util.db.ResultSetHandler;
 import io.jmix.data.StoreAwareLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -18,7 +18,7 @@ package io.jmix.reportsui.screen.report.run;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.haulmont.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;

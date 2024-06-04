@@ -67,7 +67,6 @@
             <xs:element name="styleFilter"/>
             <xs:element name="tabs"/>
             <xs:element name="tooltip"/>
-            <xs:element name="touch"/>
             <xs:element name="tuiImageEditor"/>
             <xs:element name="webpage"/>
         </xs:choice>

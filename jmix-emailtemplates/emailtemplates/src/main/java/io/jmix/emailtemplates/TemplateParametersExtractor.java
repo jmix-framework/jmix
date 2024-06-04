@@ -17,7 +17,7 @@
 package io.jmix.emailtemplates;
 
 import com.google.common.collect.ImmutableMap;
-import com.haulmont.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.ClassManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;

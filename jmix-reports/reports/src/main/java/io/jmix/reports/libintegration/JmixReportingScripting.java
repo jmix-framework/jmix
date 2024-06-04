@@ -16,7 +16,7 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.util.groovy.Scripting;
+import io.jmix.reports.yarg.util.groovy.Scripting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;

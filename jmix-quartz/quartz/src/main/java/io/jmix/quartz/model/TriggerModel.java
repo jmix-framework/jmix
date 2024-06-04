@@ -7,6 +7,7 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.annotation.Nullable;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import java.util.Date;
 import java.util.Objects;
@@ -35,7 +36,7 @@ public class TriggerModel {
 
     private String cronExpression;
 
-    @Positive
+    @Min(-1)
     private Integer repeatCount;
 
     @Positive
@@ -149,10 +150,12 @@ public class TriggerModel {
             return cronExpression;
         }
 
-        if (Objects.nonNull(repeatCount) && repeatCount > 0) {
-            return String.format("Repeat %s times every %s seconds", repeatCount, repeatInterval / 1000);
+        if (Objects.isNull(repeatCount) || repeatCount < 0) {
+            return String.format("Execute forever every %s seconds", repeatInterval / 1000);
+        } else if (repeatCount == 0) {
+            return "Execute once";
         } else {
-            return String.format("Repeat forever every %s seconds", repeatInterval / 1000);
+            return String.format("Execute %s times every %s seconds", repeatCount + 1, repeatInterval / 1000);
         }
     }
 

@@ -22,6 +22,9 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.gridexportui.action.ExportAction;
 import io.jmix.gridexportui.exporter.AbstractTableExporter;
 import io.jmix.gridexportui.exporter.ExportMode;
+import io.jmix.gridexportui.exporter.ExporterSortHelper;
+import io.jmix.gridexportui.exporter.entitiesloader.AllEntitiesLoader;
+import io.jmix.gridexportui.exporter.entitiesloader.AllEntitiesLoaderFactory;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.download.ByteArrayDataProvider;
@@ -44,14 +47,14 @@ import java.util.stream.Collectors;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JsonExporter extends AbstractTableExporter<JsonExporter> {
 
+    private final AllEntitiesLoaderFactory allEntitiesLoaderFactory;
     protected Metadata metadata;
-    protected JsonAllRecordsExporter jsonAllRecordsExporter;
 
     protected Function<GsonBuilder, GsonBuilder> gsonConfigurer;
 
-    public JsonExporter(Metadata metadata, JsonAllRecordsExporter jsonAllRecordsExporter) {
+    public JsonExporter(Metadata metadata, AllEntitiesLoaderFactory allEntitiesLoaderFactory) {
         this.metadata = metadata;
-        this.jsonAllRecordsExporter = jsonAllRecordsExporter;
+        this.allEntitiesLoaderFactory = allEntitiesLoaderFactory;
     }
 
     /**
@@ -71,11 +74,14 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
         JsonArray jsonElements = new JsonArray();
 
         if (exportMode == ExportMode.ALL_ROWS) {
-            jsonAllRecordsExporter.exportAll(table.getItems(),
-                    entity -> {
-                        JsonObject jsonObject = createJsonObjectFromEntity(table, entity);
+            AllEntitiesLoader entitiesLoader = allEntitiesLoaderFactory.getEntitiesLoader();
+            entitiesLoader.loadAll(table.getItems(),
+                    context -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(table, context.getEntity());
                         jsonElements.add(jsonObject);
-                    });
+                        return true;
+                    },
+                    ExporterSortHelper.getSortOrder(table.getSortInfo()));
         } else {
             Collection<Object> items = getItems(table, exportMode);
 
@@ -96,11 +102,14 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
         JsonArray jsonElements = new JsonArray();
 
         if (exportMode == ExportMode.ALL_ROWS) {
-            jsonAllRecordsExporter.exportAll(dataGrid.getItems(),
-                    entity -> {
-                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+            AllEntitiesLoader entitiesLoader = allEntitiesLoaderFactory.getEntitiesLoader();
+            entitiesLoader.loadAll(dataGrid.getItems(),
+                    context -> {
+                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, context.getEntity());
                         jsonElements.add(jsonObject);
-                    });
+                        return true;
+                    },
+                    ExporterSortHelper.getSortOrder(dataGrid.getSortOrder()));
         } else {
             Collection<Object> items = getItems(dataGrid, exportMode);
 

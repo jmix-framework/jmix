@@ -27,8 +27,10 @@ import javax.persistence.*;
 @JmixEntity
 @Entity(name = "test_ManyToOneEntity")
 public class ManyToOneEntity extends BaseEntity {
+
     @Column(name = "NAME")
     protected String name;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TEST_ONE_TO_MANY_ENTITY_ID")
     protected OneToManyEntity oneToManyEntity;

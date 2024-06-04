@@ -67,7 +67,6 @@
                     <et:plugin name="tuiImageEditor"/>
                     <et:plugin name="customcode"/>
                     <et:plugin name="postcss"/>
-                    <et:plugin name="touch"/>
                     <et:plugin name="styleFilter"/>
                 </et:grapesJsNewsletterHtmlEditor>
             </tab>

@@ -4,7 +4,7 @@
     startupFocus: true,
     extraAllowedContent: '*(*);*{*}',
     allowedContent: true,
-    enterMode: CKEDITOR.ENTER_BR,
+    enterMode: 2, // CKEDITOR.ENTER_BR
     extraPlugins: 'sharedspace,justify,colorbutton,panelbutton,font',
     toolbar: [{
       name: 'styles',

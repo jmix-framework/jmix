@@ -41,7 +41,6 @@ public class GjsPluginsRepositoryImpl implements GjsPluginsRepository {
         registeredPlugins.put(NewsletterGjsPlugin.XSD_CODE, new NewsletterGjsPlugin(getOptions("gjs-preset-newsletter.js")));
         registeredPlugins.put(PostCssGjsPlugin.XSD_CODE, new PostCssGjsPlugin());
         registeredPlugins.put(TabsGjsPlugin.XSD_CODE, new TabsGjsPlugin(getOptions("grapesjs-tabs.js")));
-        registeredPlugins.put(TouchGjsPlugin.XSD_CODE, new TouchGjsPlugin());
         registeredPlugins.put(WebpageGjsPlugin.XSD_CODE, new WebpageGjsPlugin(getOptions("gjs-preset-webpage.js")));
         registeredPlugins.put(BasicBlocksGjsPlugin.XSD_CODE, new BasicBlocksGjsPlugin());
         registeredPlugins.put(FlexBlocksGjsPlugin.XSD_CODE, new FlexBlocksGjsPlugin());

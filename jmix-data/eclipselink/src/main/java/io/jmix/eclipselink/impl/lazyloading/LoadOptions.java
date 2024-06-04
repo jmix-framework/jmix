@@ -20,6 +20,7 @@ import io.jmix.core.constraint.AccessConstraint;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,12 +43,22 @@ class LoadOptions implements Serializable {
     private LoadOptions() {
     }
 
+    /**
+     * @return unmodifiable map of query hints
+     */
     public Map<String, Serializable> getHints() {
         return hints == null ? Collections.emptyMap() : hints;
     }
 
+    /**
+     * @return shallow clone of query hints map
+     */
+    public Map<String, Serializable> getHintsCopy() {
+        return hints == null ? new HashMap<>() : new HashMap<>(hints);
+    }
+
     public LoadOptions setHints(Map<String, Serializable> hints) {
-        this.hints = hints;
+        this.hints = Collections.unmodifiableMap(hints);
         return this;
     }
 

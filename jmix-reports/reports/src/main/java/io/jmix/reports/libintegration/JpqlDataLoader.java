@@ -16,11 +16,11 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.exception.DataLoadingException;
-import com.haulmont.yarg.loaders.ReportDataLoader;
-import com.haulmont.yarg.loaders.impl.AbstractDbDataLoader;
-import com.haulmont.yarg.structure.BandData;
-import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.exception.DataLoadingException;
+import io.jmix.reports.yarg.loaders.ReportDataLoader;
+import io.jmix.reports.yarg.loaders.impl.AbstractDbDataLoader;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.*;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.reports.app.EntityMap;

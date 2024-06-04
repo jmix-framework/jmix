@@ -231,6 +231,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
         private String[] noConversionParams;
         private Condition condition;
         private Sort sort;
+        private boolean distinct;
 
         /**
          * @param queryString JPQL query string. Only named parameters are supported.
@@ -377,6 +378,23 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
             return maxResults;
         }
 
+        /**
+         * @return true if query result should contain only unique elements ('distinct' will be added to jpql query),
+         * false otherwise
+         */
+        public boolean isDistinct() {
+            return distinct;
+        }
+
+        /**
+         * Sets whether query result should contain only unique elements ('distinct' will be added to jpql query).
+         *
+         * @param distinct flag indicating whether query result should contain only unique elements
+         */
+        public void setDistinct(boolean distinct) {
+            this.distinct = distinct;
+        }
+
         @Nullable
         public String[] getNoConversionParams() {
             return noConversionParams;
@@ -390,6 +408,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
                     ", sort=" + sort +
                     ", firstResult=" + firstResult +
                     ", maxResults=" + maxResults +
+                    ", distinct=" + distinct +
                     "}";
             return StringHelper.removeExtraSpaces(stringResult.replace('\n', ' '));
         }

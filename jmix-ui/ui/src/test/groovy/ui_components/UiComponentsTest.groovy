@@ -16,6 +16,7 @@
 
 package ui_components
 
+
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.metamodel.datatype.impl.IntegerDatatype
 import io.jmix.data.DataConfiguration
@@ -28,10 +29,12 @@ import io.jmix.ui.testassistspock.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Unroll
+
 import test_support.UiTestConfiguration
+import test_support.UiTestSecurityConfiguration
 import test_support.entity.Foo
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+@ContextConfiguration(classes = [CoreConfiguration, UiTestSecurityConfiguration, UiConfiguration, DataConfiguration,
         EclipselinkConfiguration, UiTestConfiguration])
 class UiComponentsTest extends ScreenSpecification {
 

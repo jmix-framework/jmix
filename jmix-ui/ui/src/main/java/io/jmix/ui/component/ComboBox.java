@@ -96,16 +96,6 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
     void setTextInputAllowed(boolean textInputAllowed);
 
     /**
-     * When enabled popup automatically opens on focus.
-     */
-    void setAutomaticPopupOnFocus(boolean automaticPopupOnFocus);
-
-    /**
-     * @return whether popup is automatically shows on focus.
-     */
-    boolean isAutomaticPopupOnFocus();
-
-    /**
      * @return the page length of the suggestion popup.
      */
     int getPageLength();

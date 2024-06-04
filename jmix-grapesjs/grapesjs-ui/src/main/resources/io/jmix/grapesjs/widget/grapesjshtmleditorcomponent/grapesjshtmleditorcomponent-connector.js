@@ -113,13 +113,6 @@ io_jmix_grapesjs_widget_grapesjshtmleditorcomponent_GrapesJsHtmlEditorComponent 
         console.log('Stored ', e)
     });
 
-    CKEDITOR.dtd.$editable.span = 1
-    CKEDITOR.dtd.$editable.a = 1
-    CKEDITOR.dtd.$editable.strong = 1
-    CKEDITOR.dtd.$editable.b = 1
-    CKEDITOR.dtd.$editable.i = 1
-    CKEDITOR.dtd.$editable.li = 1
-
     let cmdm = editor.Commands;
     var opt = {};
 
@@ -184,6 +177,20 @@ io_jmix_grapesjs_widget_grapesjshtmleditorcomponent_GrapesJsHtmlEditorComponent 
     connector.stopCommand = function (command) {
             editor.stopCommand(command)
         };
+
+    editor.onReady(function () {
+        // Wait for CKEDITOR load
+        setTimeout(() => {
+            if (CKEDITOR) {
+                CKEDITOR.dtd.$editable.span = 1
+                CKEDITOR.dtd.$editable.a = 1
+                CKEDITOR.dtd.$editable.strong = 1
+                CKEDITOR.dtd.$editable.b = 1
+                CKEDITOR.dtd.$editable.i = 1
+                CKEDITOR.dtd.$editable.li = 1
+            }
+        }, 200);
+    });
 }
 
 function getHtml(editor, state) {

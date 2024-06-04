@@ -1627,15 +1627,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 }
 
                 if (column.isCollapsed() && component.isColumnCollapsingAllowed()) {
-                    UiEntityAttributeContext attributeContext = columnId instanceof MetaPropertyPath ?
-                            new UiEntityAttributeContext((MetaPropertyPath) columnId) :
-                            new UiEntityAttributeContext(metaClass, columnId.toString());
-
-                    accessManager.applyRegisteredConstraints(attributeContext);
-
-                    if (!(columnId instanceof MetaPropertyPath) || attributeContext.canView()) {
-                        component.setColumnCollapsed(column.getId(), true);
-                    }
+                    setColumnCollapsedUiPermissionsAware(columnId, true);
                 }
 
                 if (column.getAggregation() != null) {
@@ -1658,6 +1650,32 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 log.info("Entity '{}' is not permitted to read or update",
                         metaClass.getName());
             }
+        }
+    }
+
+    protected void setColumnCollapsedUiPermissionsAware(Object columnId, boolean collapsed) {
+        UiEntityAttributeContext attributeContext = null;
+
+        if (columnId instanceof MetaPropertyPath) {
+            MetaPropertyPath metaPropertyPath = (MetaPropertyPath) columnId;
+            attributeContext = new UiEntityAttributeContext(metaPropertyPath);
+
+        } else if (getItems() != null) {
+            // Table supports only EntityTableItems
+            EntityTableItems<?> items = ((EntityTableItems<?>) getItems());
+            MetaClass metaClass = items.getEntityMetaClass();
+
+            if (metaClass != null) {
+                attributeContext = new UiEntityAttributeContext(metaClass, columnId.toString());
+            }
+        }
+
+        if (attributeContext != null) {
+            accessManager.applyRegisteredConstraints(attributeContext);
+        }
+
+        if (!(columnId instanceof MetaPropertyPath) || attributeContext.canView()) {
+            component.setColumnCollapsed(columnId, collapsed);
         }
     }
 
@@ -2013,7 +2031,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                     this.collapsed = collapsed;
 
                     if (owner != null) {
-                        owner.getComponent().setColumnCollapsed(id, collapsed);
+                        owner.setColumnCollapsedUiPermissionsAware(id, collapsed);
                     }
                 }
             }

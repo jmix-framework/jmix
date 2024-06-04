@@ -17,6 +17,7 @@
 package io.jmix.ui.facet;
 
 import com.google.common.base.Preconditions;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataLoadCoordinator;
@@ -41,10 +42,16 @@ import javax.inject.Inject;
 public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadCoordinator> {
 
     private UiControllerReflectionInspector reflectionInspector;
+    private QueryParamValuesManager queryParamValuesManager;
 
     @Inject
     public void setReflectionInspector(UiControllerReflectionInspector reflectionInspector) {
         this.reflectionInspector = reflectionInspector;
+    }
+
+    @Inject
+    public void setQueryParamValuesManager(QueryParamValuesManager queryParamValuesManager) {
+        this.queryParamValuesManager = queryParamValuesManager;
     }
 
     @Override
@@ -54,7 +61,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
     @Override
     public DataLoadCoordinator create() {
-        return new DataLoadCoordinatorImpl(reflectionInspector);
+        return new DataLoadCoordinatorImpl(reflectionInspector, queryParamValuesManager);
     }
 
     @Override

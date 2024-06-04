@@ -16,9 +16,9 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.yarg.structure.BandData;
-import com.haulmont.yarg.structure.ProxyWrapper;
-import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.ProxyWrapper;
+import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.EntityValues;

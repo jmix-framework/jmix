@@ -1,11 +1,210 @@
-﻿/*
- Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
- For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
-*/
-(function(){CKEDITOR.dialog.add("templates",function(c){function r(a,b){var n=CKEDITOR.dom.element.createFromHtml('\x3ca href\x3d"javascript:void(0)" tabIndex\x3d"-1" role\x3d"option" \x3e\x3cdiv class\x3d"cke_tpl_item"\x3e\x3c/div\x3e\x3c/a\x3e'),d='\x3ctable style\x3d"width:350px;" class\x3d"cke_tpl_preview" role\x3d"presentation"\x3e\x3ctr\x3e';a.image&&b&&(d+='\x3ctd class\x3d"cke_tpl_preview_img"\x3e\x3cimg src\x3d"'+CKEDITOR.getUrl(b+a.image)+'"'+(CKEDITOR.env.ie6Compat?' onload\x3d"this.width\x3dthis.width"':
-"")+' alt\x3d"" title\x3d""\x3e\x3c/td\x3e');d+='\x3ctd style\x3d"white-space:normal;"\x3e\x3cspan class\x3d"cke_tpl_title"\x3e'+a.title+"\x3c/span\x3e\x3cbr/\x3e";a.description&&(d+="\x3cspan\x3e"+a.description+"\x3c/span\x3e");d+="\x3c/td\x3e\x3c/tr\x3e\x3c/table\x3e";n.getFirst().setHtml(d);n.on("click",function(){if(a.htmlFile){var b=CKEDITOR.dialog.getCurrent();b.setState(CKEDITOR.DIALOG_STATE_BUSY);CKEDITOR.ajax.loadText(a.htmlFile,function(a){l(a);b.setState(CKEDITOR.DIALOG_STATE_IDLE)})}else l(a.html)});
-return n}function l(a){var b=CKEDITOR.dialog.getCurrent();b.getValueOf("selectTpl","chkInsertOpt")?(c.fire("saveSnapshot"),c.setData(a,function(){b.hide();var a=c.createRange();a.moveToElementEditStart(c.editable());a.select();setTimeout(function(){c.fire("saveSnapshot")},0)})):(c.insertHtml(a),b.hide())}function k(a){var b=a.data.getTarget(),c=g.equals(b);if(c||g.contains(b)){var d=a.data.getKeystroke(),f=g.getElementsByTag("a"),e;if(f){if(c)e=f.getItem(0);else switch(d){case 40:e=b.getNext();break;
-case 38:e=b.getPrevious();break;case 13:case 32:b.fire("click")}e&&(e.focus(),a.data.preventDefault())}}}var h=CKEDITOR.plugins.get("templates");CKEDITOR.document.appendStyleSheet(CKEDITOR.getUrl(h.path+"dialogs/templates.css"));var g,h="cke_tpl_list_label_"+CKEDITOR.tools.getNextNumber(),f=c.lang.templates,p=c.config;return{title:c.lang.templates.title,minWidth:CKEDITOR.env.ie?440:400,minHeight:340,contents:[{id:"selectTpl",label:f.title,elements:[{type:"vbox",padding:5,children:[{id:"chkInsertOpt",
-type:"checkbox",label:f.insertOption,"default":p.templates_replaceContent},{id:"selectTplText",type:"html",html:"\x3cspan\x3e"+f.selectPromptMsg+"\x3c/span\x3e"},{id:"templatesList",type:"html",focus:!0,html:'\x3cdiv class\x3d"cke_tpl_list" tabIndex\x3d"-1" role\x3d"listbox" aria-labelledby\x3d"'+h+'"\x3e\x3cdiv class\x3d"cke_tpl_loading"\x3e\x3cspan\x3e\x3c/span\x3e\x3c/div\x3e\x3c/div\x3e\x3cspan class\x3d"cke_voice_label" id\x3d"'+h+'"\x3e'+f.options+"\x3c/span\x3e"}]}]}],buttons:[CKEDITOR.dialog.cancelButton],
-onShow:function(){var a=this.getContentElement("selectTpl","templatesList");g=a.getElement();CKEDITOR.loadTemplates(p.templates_files,function(){var b=(p.templates||"default").split(",");if(b.length){var c=g;c.setHtml("");for(var d=0,h=b.length;d<h;d++)for(var e=CKEDITOR.getTemplates(b[d]),l=e.imagesPath,e=e.templates,k=e.length,m=0;m<k;m++){var q=r(e[m],l);q.setAttribute("aria-posinset",m+1);q.setAttribute("aria-setsize",k);c.append(q)}a.focus()}else g.setHtml('\x3cdiv class\x3d"cke_tpl_empty"\x3e\x3cspan\x3e'+
-f.emptyListMsg+"\x3c/span\x3e\x3c/div\x3e")});this._.element.on("keydown",k)},onHide:function(){this._.element.removeListener("keydown",k)}}})})();
+/**
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ */
+
+( function() {
+	CKEDITOR.dialog.add( 'templates', function( editor ) {
+		// Constructs the HTML view of the specified templates data.
+		function renderTemplatesList( container, templatesDefinitions ) {
+			// clear loading wait text.
+			container.setHtml( '' );
+
+			for ( var i = 0, totalDefs = templatesDefinitions.length; i < totalDefs; i++ ) {
+				var definition = CKEDITOR.getTemplates( templatesDefinitions[ i ] ),
+					imagesPath = definition.imagesPath,
+					templates = definition.templates,
+					count = templates.length;
+
+				for ( var j = 0; j < count; j++ ) {
+					var template = templates[ j ],
+						item = createTemplateItem( template, imagesPath );
+					item.setAttribute( 'aria-posinset', j + 1 );
+					item.setAttribute( 'aria-setsize', count );
+					container.append( item );
+				}
+			}
+		}
+
+		function createTemplateItem( template, imagesPath ) {
+			var item = CKEDITOR.dom.element.createFromHtml( '<a href="javascript:void(0)" tabIndex="-1" role="option" >' +
+				'<div class="cke_tpl_item"></div>' +
+				'</a>' );
+
+			// Build the inner HTML of our new item DIV.
+			var html = '<table style="width:350px;" class="cke_tpl_preview" role="presentation"><tr>';
+
+			if ( template.image && imagesPath ) {
+				html += '<td class="cke_tpl_preview_img"><img src="' +
+					CKEDITOR.getUrl( imagesPath + template.image ) + '"' +
+					( CKEDITOR.env.ie6Compat ? ' onload="this.width=this.width"' : '' ) + ' alt="" title=""></td>';
+			}
+
+			html += '<td style="white-space:normal;"><span class="cke_tpl_title">' + template.title + '</span><br/>';
+
+			if ( template.description )
+				html += '<span>' + template.description + '</span>';
+
+			html += '</td></tr></table>';
+
+			item.getFirst().setHtml( html );
+
+			item.on( 'click', function() {
+				if( template.htmlFile ) {
+					var templatesDialog = CKEDITOR.dialog.getCurrent();
+
+					templatesDialog.setState( CKEDITOR.DIALOG_STATE_BUSY );
+
+					// Load HTML of the file before inserting it.
+					CKEDITOR.ajax.loadText( template.htmlFile, function( html ) {
+						insertTemplate( html );
+						templatesDialog.setState( CKEDITOR.DIALOG_STATE_IDLE );
+					} );
+				} else {
+					insertTemplate( template.html );
+				}
+			} );
+
+			return item;
+		}
+
+		// Insert the specified template content into editor.
+		// @param {Number} index
+		function insertTemplate( html ) {
+			var dialog = CKEDITOR.dialog.getCurrent(),
+				isReplace = dialog.getValueOf( 'selectTpl', 'chkInsertOpt' );
+
+			if ( isReplace ) {
+				editor.fire( 'saveSnapshot' );
+				// Everything should happen after the document is loaded (https://dev.ckeditor.com/ticket/4073).
+				editor.setData( html, function() {
+					dialog.hide();
+
+					// Place the cursor at the first editable place.
+					var range = editor.createRange();
+					range.moveToElementEditStart( editor.editable() );
+					range.select();
+					setTimeout( function() {
+						editor.fire( 'saveSnapshot' );
+					}, 0 );
+
+				} );
+			} else {
+				editor.insertHtml( html );
+				dialog.hide();
+			}
+		}
+
+		function keyNavigation( evt ) {
+			var target = evt.data.getTarget(),
+				onList = listContainer.equals( target );
+
+			// Keyboard navigation for template list.
+			if ( onList || listContainer.contains( target ) ) {
+				var keystroke = evt.data.getKeystroke(),
+					items = listContainer.getElementsByTag( 'a' ),
+					focusItem;
+
+				if ( items ) {
+					// Focus not yet onto list items?
+					if ( onList )
+						focusItem = items.getItem( 0 );
+					else {
+						switch ( keystroke ) {
+							case 40: // ARROW-DOWN
+								focusItem = target.getNext();
+								break;
+
+							case 38: // ARROW-UP
+								focusItem = target.getPrevious();
+								break;
+
+							case 13: // ENTER
+							case 32: // SPACE
+								target.fire( 'click' );
+						}
+					}
+
+					if ( focusItem ) {
+						focusItem.focus();
+						evt.data.preventDefault();
+					}
+				}
+			}
+		}
+
+		// Load skin at first.
+		var plugin = CKEDITOR.plugins.get( 'templates' );
+		CKEDITOR.document.appendStyleSheet( CKEDITOR.getUrl( plugin.path + 'dialogs/templates.css' ) );
+
+
+		var listContainer;
+
+		var templateListLabelId = 'cke_tpl_list_label_' + CKEDITOR.tools.getNextNumber(),
+			lang = editor.lang.templates,
+			config = editor.config;
+		return {
+			title: editor.lang.templates.title,
+
+			minWidth: CKEDITOR.env.ie ? 440 : 400,
+			minHeight: 340,
+
+			contents: [ {
+				id: 'selectTpl',
+				label: lang.title,
+				elements: [ {
+					type: 'vbox',
+					padding: 5,
+					children: [ {
+						id: 'chkInsertOpt',
+						type: 'checkbox',
+						label: lang.insertOption,
+						'default': config.templates_replaceContent
+					},
+					{
+						id: 'selectTplText',
+						type: 'html',
+						html: '<span>' +
+							lang.selectPromptMsg +
+							'</span>'
+					},
+					{
+						id: 'templatesList',
+						type: 'html',
+						focus: true,
+						html: '<div class="cke_tpl_list" tabIndex="-1" role="listbox" aria-labelledby="' + templateListLabelId + '">' +
+								'<div class="cke_tpl_loading"><span></span></div>' +
+							'</div>' +
+							'<span class="cke_voice_label" id="' + templateListLabelId + '">' + lang.options + '</span>'
+					} ]
+				} ]
+			} ],
+
+			buttons: [ CKEDITOR.dialog.cancelButton ],
+
+			onShow: function() {
+				var templatesListField = this.getContentElement( 'selectTpl', 'templatesList' );
+				listContainer = templatesListField.getElement();
+
+				CKEDITOR.loadTemplates( config.templates_files, function() {
+					var templates = ( config.templates || 'default' ).split( ',' );
+
+					if ( templates.length ) {
+						renderTemplatesList( listContainer, templates );
+						templatesListField.focus();
+					} else {
+						listContainer.setHtml( '<div class="cke_tpl_empty">' +
+							'<span>' + lang.emptyListMsg + '</span>' +
+							'</div>' );
+					}
+				} );
+
+				this._.element.on( 'keydown', keyNavigation );
+			},
+
+			onHide: function() {
+				this._.element.removeListener( 'keydown', keyNavigation );
+			}
+		};
+	} );
+} )();

@@ -1,8 +1,228 @@
-﻿/*
- Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
- For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
-*/
-(function(){function g(b){return""===b?!1:b}function h(b){if(!/(o|u)l/i.test(b.parent.name))return b;d.elements.replaceWithChildren(b);return!1}function k(b){function d(a,f){var b,c;if(a&&"tr"===a.name){b=a.children;for(c=0;c<f.length&&b[c];c++)b[c].attributes.width=f[c];d(a.next,f)}}var c=b.parent;b=function(a){return CKEDITOR.tools.array.map(a,function(a){return Number(a.attributes.width)})}(b.children);var a=function(a){return CKEDITOR.tools.array.reduce(a,function(a,b){return a+b},0)}(b);c.attributes.width=
-a;d(function(a){return(a=CKEDITOR.tools.array.find(a.children,function(a){return a.name&&("tr"===a.name||"tbody"===a.name)}))&&a.name&&"tbody"===a.name?a.children[0]:a}(c),b)}var e=CKEDITOR.plugins.pastetools,d=e.filters.common,c=d.styles;CKEDITOR.plugins.pastetools.filters.gdocs={rules:function(b,e,l){return{elementNames:[[/^meta/,""]],comment:function(){return!1},attributes:{id:function(a){return!/^docs\-internal\-guid\-/.test(a)},dir:function(a){return"ltr"===a?!1:a},style:function(a,b){return g(c.normalizedStyles(b,
-e))},"class":function(a){return g(a.replace(/kix-line-break/ig,""))}},elements:{div:function(a){var b=1===a.children.length,c="table"===a.children[0].name;"div"===a.name&&b&&c&&delete a.attributes.align},colgroup:k,span:function(a){c.createStyleStack(a,l,e,/vertical-align|white-space|font-variant/);var b=/vertical-align:\s*sub/,d=a.attributes.style;/vertical-align:\s*super/.test(d)?a.name="sup":b.test(d)&&(a.name="sub");a.attributes.style=d.replace(/vertical-align\s*.+?;?/,"")},b:function(a){d.elements.replaceWithChildren(a);
-return!1},p:function(a){if(a.parent&&"li"===a.parent.name)return d.elements.replaceWithChildren(a),!1},ul:function(a){c.pushStylesLower(a);return h(a)},ol:function(a){c.pushStylesLower(a);return h(a)},li:function(a){c.pushStylesLower(a);var b=a.children,e=/(o|u)l/i;1===b.length&&e.test(b[0].name)&&(d.elements.replaceWithChildren(a),a=!1);return a}}}}};CKEDITOR.pasteFilters.gdocs=e.createFilter({rules:[d.rules,CKEDITOR.plugins.pastetools.filters.gdocs.rules]})})();
+/**
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ */
+
+/* globals CKEDITOR */
+
+( function() {
+	'use strict';
+
+	var pastetools = CKEDITOR.plugins.pastetools,
+		commonFilter = pastetools.filters.common,
+		Style = commonFilter.styles;
+
+	/**
+	 * Set of Paste from Google Docs plugin helpers.
+	 *
+	 * @since 4.13.0
+	 * @private
+	 * @member CKEDITOR.plugins.pastetools.filters
+	 */
+	CKEDITOR.plugins.pastetools.filters.gdocs = {
+		/**
+		 * Rules for the Paste from Google Docs filter.
+		 *
+		 * @since 4.13.0
+		 * @private
+		 * @member CKEDITOR.plugins.pastetools.filters.gdocs
+		 */
+		rules: function( html, editor, filter ) {
+			return {
+				elementNames: [
+					[ /^meta/, '' ]
+				],
+
+				comment: function() {
+					return false;
+				},
+
+				attributes: {
+					'id': function( value ) {
+						var gDocsIdRegex = /^docs\-internal\-guid\-/;
+
+						return !gDocsIdRegex.test( value );
+					},
+					'dir': function( value ) {
+						return value === 'ltr' ? false : value;
+					},
+					'style': function( styles, element ) {
+						return falseIfEmpty( Style.normalizedStyles( element, editor ) );
+					},
+					'class': function( classes ) {
+						return falseIfEmpty( classes.replace( /kix-line-break/ig, '' ) );
+					}
+				},
+
+				elements: {
+					'div': function( element ) {
+						if ( isTableWrapper( element ) ) {
+							// Align attribute does not seem to change anything
+							// and as we translate it to float, it safer to remove it (#3435).
+							delete element.attributes.align;
+						}
+					},
+
+					colgroup: handleColGroup,
+
+					'span': function( element ) {
+						Style.createStyleStack( element, filter, editor, /vertical-align|white-space|font-variant/ );
+
+						handleSuperAndSubScripts( element );
+					},
+
+					'b': function( element ) {
+						// Google docs sometimes uses `b` as a wrapper without semantic value.
+						commonFilter.elements.replaceWithChildren( element );
+
+						return false;
+					},
+
+					'p': function( element ) {
+						if ( element.parent && element.parent.name === 'li' ) {
+							commonFilter.elements.replaceWithChildren( element );
+
+							return false;
+						}
+					},
+
+					'ul': function( element ) {
+						Style.pushStylesLower( element );
+
+						return fixList( element );
+					},
+
+					'ol': function( element ) {
+						Style.pushStylesLower( element );
+
+						return fixList( element );
+					},
+
+					'li': function( element ) {
+						Style.pushStylesLower( element );
+
+						return unwrapList( element );
+					}
+				}
+			};
+		}
+	};
+
+	function falseIfEmpty( value ) {
+		if ( value === '' ) {
+			return false;
+		}
+
+		return value;
+	}
+
+	function fixList( element ) {
+		var listRegex = /(o|u)l/i;
+
+		if ( !listRegex.test( element.parent.name ) ) {
+			return element;
+		}
+
+		commonFilter.elements.replaceWithChildren( element );
+
+		return false;
+	}
+
+	function unwrapList( element ) {
+		var children = element.children,
+			listRegex = /(o|u)l/i;
+
+		if ( children.length !== 1 || !listRegex.test( children[ 0 ].name ) ) {
+			return element;
+		}
+
+		commonFilter.elements.replaceWithChildren( element );
+
+		return false;
+	}
+
+	function handleSuperAndSubScripts( element ) {
+		var superScriptRegex = /vertical-align:\s*super/,
+			subScriptRegex = /vertical-align:\s*sub/,
+			replaceRegex = /vertical-align\s*.+?;?/,
+			style = element.attributes.style;
+
+		if ( superScriptRegex.test( style ) ) {
+			element.name = 'sup';
+		} else if ( subScriptRegex.test( style ) ) {
+			element.name = 'sub';
+		}
+
+		element.attributes.style = style.replace( replaceRegex, '' );
+	}
+
+	function isTableWrapper( element ) {
+		var isDiv = element.name === 'div',
+			isOnlyOneChild = element.children.length === 1,
+			isTableInside = element.children[ 0 ].name === 'table';
+
+		return isDiv && isOnlyOneChild && isTableInside;
+	}
+
+	function handleColGroup( colgroup ) {
+		var table = colgroup.parent,
+			cols = colgroup.children,
+			colsWidths = getWidths( cols ),
+			overallWidth = getOverallWidth( colsWidths );
+
+		table.attributes.width = overallWidth;
+		addWidthToCells( getFirstRow( table ), colsWidths );
+
+		function getOverallWidth( widths ) {
+			return CKEDITOR.tools.array.reduce( widths, function( overallWidth, width ) {
+				return overallWidth + width;
+			}, 0 );
+		}
+
+		function getWidths( cols ) {
+			return CKEDITOR.tools.array.map( cols, function( col ) {
+				return Number( col.attributes.width );
+			} );
+		}
+
+		function getFirstRow( table ) {
+			var row = CKEDITOR.tools.array.find( table.children, function( child ) {
+				return child.name && ( child.name === 'tr' || child.name === 'tbody' );
+			} );
+
+			if ( row && row.name && row.name === 'tbody' ) {
+				return row.children[ 0 ];
+			}
+
+			return row;
+		}
+
+		function addWidthToCells( row, widths ) {
+			var cells,
+				i;
+
+			if ( !row || row.name !== 'tr' ) {
+				return;
+			}
+
+			cells = row.children;
+
+			for ( i = 0; i < widths.length; i++ ) {
+				if ( !cells[ i ] ) {
+					break;
+				}
+
+				cells[ i ].attributes.width = widths[ i ];
+			}
+
+			addWidthToCells( row.next, widths );
+		}
+	}
+
+	CKEDITOR.pasteFilters.gdocs = pastetools.createFilter( {
+		rules: [
+			commonFilter.rules,
+			CKEDITOR.plugins.pastetools.filters.gdocs.rules
+		]
+	} );
+} )();

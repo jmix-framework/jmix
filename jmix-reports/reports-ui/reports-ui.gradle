@@ -31,14 +31,6 @@ dependencies {
     api project(':security-ui')
     compileOnly project(':dynattr')
 
-    api ('com.haulmont.yarg:yarg-api') {
-        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
-    }
-    api ('com.haulmont.yarg:yarg') {
-        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
-        exclude group: 'commons-dbcp', module: 'commons-dbcp'
-    }
-
     implementation 'com.google.code.gson:gson'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.core:jackson-databind'

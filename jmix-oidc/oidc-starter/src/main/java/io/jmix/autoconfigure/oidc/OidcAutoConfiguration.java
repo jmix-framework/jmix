@@ -39,6 +39,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
@@ -141,10 +142,11 @@ public class OidcAutoConfiguration {
                                                        JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter,
                                                        ApplicationEventPublisher applicationEventPublisher) throws Exception {
             http.oauth2ResourceServer(resourceServer -> {
-                resourceServer.jwt(jwt -> {
-                    jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
-                });
-            });
+                        resourceServer.jwt(jwt -> {
+                            jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
+                        });
+                    })
+                    .cors(Customizer.withDefaults());
             http.apply(SecurityConfigurers.apiSecurity());
 
             OidcResourceServerLastSecurityFilter lastSecurityFilter = new OidcResourceServerLastSecurityFilter(applicationEventPublisher);

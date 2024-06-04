@@ -11,6 +11,7 @@ if (screen.descriptor != null && screen.descriptor.rootTag != null) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <$rootTagName xmlns="$rootTagNamespace"
         caption="${caption}"
-        extends="${extendScreen.reference}">
+        extends="${extendScreen.reference}"<%if (messagesGroup != null && messagesGroup != '') {%>
+        messagesGroup="$messagesGroup"<%}%>>
     <layout/>
 </$rootTagName>

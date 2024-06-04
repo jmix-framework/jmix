@@ -16,24 +16,18 @@
 
 package io.jmix.reports.entity;
 
-import java.io.ObjectStreamException;
-
-public class JmixReportOutputType extends com.haulmont.yarg.structure.ReportOutputType {
+public class JmixReportOutputType extends io.jmix.reports.yarg.structure.ReportOutputType {
     public final static JmixReportOutputType chart = new JmixReportOutputType("chart");
     public final static JmixReportOutputType table = new JmixReportOutputType("table");
     public final static JmixReportOutputType pivot = new JmixReportOutputType("pivot");
 
     static {
-       values.put(chart.getId(), chart);
-       values.put(table.getId(), table);
-       values.put(pivot.getId(), pivot);
+        values.put(chart.getId(), chart);
+        values.put(table.getId(), table);
+        values.put(pivot.getId(), pivot);
     }
 
     public JmixReportOutputType(String id) {
         super(id);
-    }
-
-    private Object readResolve() throws ObjectStreamException {
-        return getOutputTypeById(getId());
     }
 }

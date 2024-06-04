@@ -17,6 +17,7 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.impl.DataLoadCoordinatorImpl;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -26,8 +27,8 @@ import javax.annotation.Nullable;
 
 public class CubaDataLoadCoordinator extends DataLoadCoordinatorImpl {
 
-    public CubaDataLoadCoordinator(UiControllerReflectionInspector reflectionInspector) {
-        super(reflectionInspector);
+    public CubaDataLoadCoordinator(UiControllerReflectionInspector reflectionInspector, QueryParamValuesManager queryParamValuesManager) {
+        super(reflectionInspector, queryParamValuesManager);
     }
 
     @Override

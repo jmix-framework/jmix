@@ -18,6 +18,7 @@ package io.jmix.ui.component.impl;
 
 import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -44,6 +45,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCoordinator {
@@ -54,11 +56,13 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
     private List<Trigger> triggers = new ArrayList<>();
 
     private UiControllerReflectionInspector reflectionInspector;
+    private final QueryParamValuesManager queryParamValuesManager;
 
     private static final Pattern LIKE_PATTERN = Pattern.compile("\\s+like\\s+:([\\w$]+)");
 
-    public DataLoadCoordinatorImpl(UiControllerReflectionInspector reflectionInspector) {
+    public DataLoadCoordinatorImpl(UiControllerReflectionInspector reflectionInspector, QueryParamValuesManager queryParamValuesManager) {
         this.reflectionInspector = reflectionInspector;
+        this.queryParamValuesManager = queryParamValuesManager;
     }
 
     @Override
@@ -129,7 +133,10 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
     }
 
     private void configureAutomatically(DataLoader loader, FrameOwner frameOwner) {
-        List<String> queryParameters = DataLoadersHelper.getQueryParameters(loader);
+        List<String> queryParameters = DataLoadersHelper.getQueryParameters(loader).stream()
+                .filter(paramName ->
+                        !queryParamValuesManager.supports(paramName))
+                .collect(Collectors.toList());
         List<String> allParameters = new ArrayList<>(queryParameters);
         allParameters.addAll(getConditionParameters(loader));
 

@@ -57,6 +57,12 @@ public class UiComponentProperties {
     int tablePageLength;
 
     /**
+     * Whether to enable automatic sorting on grouping columns when collection of grouping columns
+     * is changed (reorder, add or remove grouping columns)
+     */
+    boolean groupTableSortOnGroupEnabled;
+
+    /**
      * This property adjusts a possible caching mechanism of table implementation.
      * <br>
      * Table component may fetch and render some rows outside visible area. With complex tables (for example containing
@@ -126,6 +132,11 @@ public class UiComponentProperties {
      */
     boolean filterShowConfigurationIdField;
 
+    /**
+     * Whether validation of filter configuration name uniqueness should be enabled
+     */
+    boolean filterConfigurationUniqueNamesEnabled;
+
     public UiComponentProperties(
             @DefaultValue("true") boolean htmlSanitizerEnabled,
             @DefaultValue("20") int uploadFieldMaxUploadSizeMb,
@@ -136,6 +147,7 @@ public class UiComponentProperties {
             @DefaultValue("ENTER") String tableViewShortcut,
             @DefaultValue("15") int tablePageLength,
             @DefaultValue("2") double tableCacheRate,
+            @DefaultValue("true") boolean groupTableSortOnGroupEnabled,
             @DefaultValue("CTRL-ALT") String pickerShortcutModifiers,
             @DefaultValue("CTRL-ALT-L") String pickerLookupShortcut,
             @DefaultValue("CTRL-ALT-O") String pickerOpenShortcut,
@@ -152,7 +164,8 @@ public class UiComponentProperties {
             @DefaultValue("SHIFT-ENTER") String filterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("3") int filterColumnsCount,
-            @DefaultValue("false") boolean filterShowConfigurationIdField
+            @DefaultValue("false") boolean filterShowConfigurationIdField,
+            @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled
     ) {
         this.htmlSanitizerEnabled = htmlSanitizerEnabled;
         this.uploadFieldMaxUploadSizeMb = uploadFieldMaxUploadSizeMb;
@@ -163,6 +176,7 @@ public class UiComponentProperties {
         this.tableViewShortcut = tableViewShortcut;
         this.tablePageLength = tablePageLength;
         this.tableCacheRate = tableCacheRate;
+        this.groupTableSortOnGroupEnabled = groupTableSortOnGroupEnabled;
         this.pickerShortcutModifiers = pickerShortcutModifiers;
         this.pickerLookupShortcut = pickerLookupShortcut;
         this.pickerOpenShortcut = pickerOpenShortcut;
@@ -180,6 +194,7 @@ public class UiComponentProperties {
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterColumnsCount = filterColumnsCount;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
+        this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
     }
 
     public int getUploadFieldMaxUploadSizeMb() {
@@ -252,6 +267,13 @@ public class UiComponentProperties {
     }
 
     /**
+     * @see #groupTableSortOnGroupEnabled
+     */
+    public boolean isGroupTableSortOnGroupEnabled() {
+        return groupTableSortOnGroupEnabled;
+    }
+
+    /**
      * @see #mainTabSheetMode
      */
     public MainTabSheetMode getMainTabSheetMode() {
@@ -320,5 +342,12 @@ public class UiComponentProperties {
      */
     public boolean isFilterShowConfigurationIdField() {
         return filterShowConfigurationIdField;
+    }
+
+    /**
+     * @see #filterConfigurationUniqueNamesEnabled
+     */
+    public boolean isFilterConfigurationUniqueNamesEnabled() {
+        return filterConfigurationUniqueNamesEnabled;
     }
 }

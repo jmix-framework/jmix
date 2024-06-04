@@ -72,8 +72,18 @@
         <property name="name"/>
     </fetchPlan>
 
+    <fetchPlan class="test_support.entity.lazyloading.OneToOneFieldEntity" name="FullOneToOneFieldEntity"
+               extends="OneToOneFieldEntity">
+        <property name="oneToOneNoFieldEntity" fetchPlan="_local"/>
+    </fetchPlan>
+
     <fetchPlan class="test_support.entity.lazyloading.OneToOneNoFieldEntity" name="OneToOneNoFieldEntity">
         <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.lazyloading.OneToOneNoFieldEntity" name="FullOneToOneNoFieldEntity"
+               extends="OneToOneNoFieldEntity">
+        <property name="oneToOneFieldEntity" fetchPlan="_local"/>
     </fetchPlan>
 
     <fetchPlan class="test_support.entity.repository.SalesOrder" name="SalesOrder.full" extends="_local">

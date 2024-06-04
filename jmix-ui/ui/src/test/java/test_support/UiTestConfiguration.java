@@ -45,6 +45,8 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -68,6 +70,11 @@ public class UiTestConfiguration {
     @Bean
     public MessageSource messageSource(JmixModules modules, Resources resources) {
         return new JmixMessageSource(modules, resources);
+    }
+
+    @Bean
+    public ConversionService conversionService() {
+        return new DefaultConversionService();
     }
 
     @Bean

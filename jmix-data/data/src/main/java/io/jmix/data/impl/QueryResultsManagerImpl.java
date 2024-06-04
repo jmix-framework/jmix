@@ -125,6 +125,7 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
             queryBuilder.setQueryString(queryString)
                     .setEntityName(entityName)
                     .setCondition(contextQuery.getCondition())
+                    .setDistinct(contextQuery.isDistinct())
                     .setSort(contextQuery.getSort())
                     .setQueryParameters(contextQuery.getParameters());
 

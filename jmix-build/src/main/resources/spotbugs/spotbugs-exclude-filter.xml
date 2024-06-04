@@ -108,11 +108,6 @@
         <Package name="~io\.jmix\.ui\.testassist.*"/>
     </Match>
 
-    <!-- todo Temporarily ignored FlowUI module -->
-    <Match>
-        <Package name="~io\.jmix\.flowui.*"/>
-    </Match>
-
     <!-- Ignored problems in classes -->
 
     <Match>

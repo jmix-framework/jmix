@@ -17,7 +17,7 @@
 package test_support;
 
 import io.jmix.core.JmixOrder;
-import io.jmix.data.QueryParamValueProvider;
+import io.jmix.core.QueryParamValueProvider;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

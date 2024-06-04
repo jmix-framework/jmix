@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import io.jmix.core.*;
 import io.jmix.core.common.util.StringHelper;
+import io.jmix.core.impl.QueryParamValuesManager;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.*;
@@ -70,6 +71,8 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
 
     protected String resultQuery;
     protected Map<String, Object> resultParameters;
+
+    protected boolean distinct;
 
     @Autowired
     protected Metadata metadata;
@@ -152,6 +155,11 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         return this;
     }
 
+    public JpqlQueryBuilder setDistinct(boolean distinct) {
+        this.distinct = distinct;
+        return this;
+    }
+
     public String getResultQueryString() {
         if (resultQuery == null) {
             buildResultQuery();
@@ -219,6 +227,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         applyFiltering();
         applySorting();
         applyCount();
+        applyDistinct();
         restrictByPreviousResults();
     }
 
@@ -270,6 +279,14 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         if (countQuery) {
             QueryTransformer transformer = queryTransformerFactory.transformer(resultQuery);
             transformer.replaceWithCount();
+            resultQuery = transformer.getResult();
+        }
+    }
+
+    protected void applyDistinct() {
+        if (distinct) {
+            QueryTransformer transformer = queryTransformerFactory.transformer(resultQuery);
+            transformer.addDistinct();
             resultQuery = transformer.getResult();
         }
     }

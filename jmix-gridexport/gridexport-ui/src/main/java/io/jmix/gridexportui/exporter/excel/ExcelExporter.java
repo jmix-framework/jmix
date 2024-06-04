@@ -23,10 +23,14 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.gridexportui.GridExportProperties;
 import io.jmix.gridexportui.action.ExportAction;
 import io.jmix.gridexportui.exporter.AbstractTableExporter;
 import io.jmix.gridexportui.exporter.ExportMode;
+import io.jmix.gridexportui.exporter.ExporterSortHelper;
+import io.jmix.gridexportui.exporter.entitiesloader.AllEntitiesLoader;
+import io.jmix.gridexportui.exporter.entitiesloader.AllEntitiesLoaderFactory;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.*;
@@ -50,7 +54,11 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.Time;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -71,6 +79,8 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
     private static final int SPACE_COUNT = 10;
 
     public static final int MAX_ROW_COUNT = SpreadsheetVersion.EXCEL2007.getMaxRows();
+    private final CurrentAuthentication currentAuthentication;
+    private final AllEntitiesLoaderFactory allEntitiesLoaderFactory;
 
     protected Workbook wb;
 
@@ -94,12 +104,12 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
     protected GridExportProperties gridExportProperties;
 
-    protected ExcelAllRecordsExporter excelAllRecordsExporter;
-
     public ExcelExporter(GridExportProperties gridExportProperties,
-                         ExcelAllRecordsExporter excelAllRecordsExporter) {
+                         CurrentAuthentication currentAuthentication,
+                         AllEntitiesLoaderFactory allEntitiesLoaderFactory) {
         this.gridExportProperties = gridExportProperties;
-        this.excelAllRecordsExporter = excelAllRecordsExporter;
+        this.currentAuthentication = currentAuthentication;
+        this.allEntitiesLoaderFactory = allEntitiesLoaderFactory;
     }
 
     protected void createWorkbookWithSheet() {
@@ -242,10 +252,19 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 }
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(table instanceof TreeTable);
-                excelAllRecordsExporter.exportAll(tableItems, (context) -> {
-                    createRowForEntityInstance(table, columns, 0, context.getRowNumber(), context.getEntity(),
-                            addLevelPadding);
-                }, this::checkIsRowNumberExceed);
+
+                AllEntitiesLoader entitiesLoader = allEntitiesLoaderFactory.getEntitiesLoader();
+                entitiesLoader.loadAll(
+                        tableItems,
+                        context -> {
+                            if (!checkIsRowNumberExceed(context.getEntityNumber())) {
+                                createRowForEntityInstance(table, columns, 0, context.getEntityNumber(),
+                                        context.getEntity(), addLevelPadding);
+                                return true;
+                            }
+                            return false;
+                        },
+                        ExporterSortHelper.getSortOrder(table.getSortInfo()));
             }
 
             for (int c = 0; c < columns.size(); c++) {
@@ -361,10 +380,19 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 }
             } else if (exportMode == ExportMode.ALL_ROWS) {
                 boolean addLevelPadding = !(dataGrid instanceof TreeDataGrid);
-                excelAllRecordsExporter.exportAll(dataGrid.getItems(), (context) -> {
-                    createDataGridRowForEntityInstance(dataGrid, columns, 0, context.getRowNumber(),
-                            context.getEntity(), addLevelPadding);
-                }, this::checkIsRowNumberExceed);
+
+                AllEntitiesLoader entitiesLoader = allEntitiesLoaderFactory.getEntitiesLoader();
+                entitiesLoader.loadAll(
+                        dataGrid.getItems(),
+                        context -> {
+                            if (!checkIsRowNumberExceed(context.getEntityNumber())) {
+                                createDataGridRowForEntityInstance(dataGrid, columns, 0, context.getEntityNumber(),
+                                        context.getEntity(), addLevelPadding);
+                                return true;
+                            }
+                            return false;
+                        },
+                        ExporterSortHelper.getSortOrder(dataGrid.getSortOrder()));
             }
 
             for (int c = 0; c < columns.size(); c++) {
@@ -445,16 +473,27 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
     protected void createFormats() {
         timeFormatCellStyle = wb.createCellStyle();
+        DataFormat dataFormat = wb.getCreationHelper().createDataFormat();
+
         String timeFormat = getMessage("excelExporter.timeFormat");
-        timeFormatCellStyle.setDataFormat(getBuiltinFormat(timeFormat));
+        short timeDataFormat = getBuiltinFormat(timeFormat) == -1
+                ? dataFormat.getFormat(timeFormat)
+                : getBuiltinFormat(timeFormat);
+        timeFormatCellStyle.setDataFormat(timeDataFormat);
 
         dateFormatCellStyle = wb.createCellStyle();
         String dateFormat = getMessage("excelExporter.dateFormat");
-        dateFormatCellStyle.setDataFormat(getBuiltinFormat(dateFormat));
+        short dateDataFormat = getBuiltinFormat(dateFormat) == -1
+                ? dataFormat.getFormat(dateFormat)
+                : getBuiltinFormat(dateFormat);
+        dateFormatCellStyle.setDataFormat(dateDataFormat);
 
         dateTimeFormatCellStyle = wb.createCellStyle();
         String dateTimeFormat = getMessage("excelExporter.dateTimeFormat");
-        dateTimeFormatCellStyle.setDataFormat(getBuiltinFormat(dateTimeFormat));
+        short dateTimeDataFormat = getBuiltinFormat(dateTimeFormat) == -1
+                ? dataFormat.getFormat(dateTimeFormat)
+                : getBuiltinFormat(dateTimeFormat);
+        dateTimeFormatCellStyle.setDataFormat(dateTimeDataFormat);
 
         integerFormatCellStyle = wb.createCellStyle();
         String integerFormat = getMessage("excelExporter.integerFormat");
@@ -708,7 +747,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             } else {
                 try {
                     str = datatype.format(n);
-                    Number result = (Number) datatype.parse(str);
+                    Number result = (Number) datatype.parse(str, currentAuthentication.getLocale());
                     if (result != null) {
                         if (n instanceof Integer || n instanceof Long || n instanceof Byte || n instanceof Short) {
                             cell.setCellValue(result.longValue());
@@ -738,7 +777,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
             cell.setCellValue(date);
 
-            if (Objects.equals(java.sql.Time.class, javaClass)) {
+            if (Objects.equals(Time.class, javaClass)) {
                 cell.setCellStyle(timeFormatCellStyle);
             } else if (Objects.equals(java.sql.Date.class, javaClass)) {
                 cell.setCellStyle(dateFormatCellStyle);
@@ -749,34 +788,34 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 String str = datatypeRegistry.get(Date.class).format(date);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
-        } else if (cellValue instanceof java.time.LocalTime) {
-            java.time.LocalTime time = (java.time.LocalTime) cellValue;
+        } else if (cellValue instanceof LocalTime) {
+            LocalTime time = (LocalTime) cellValue;
 
-            cell.setCellValue(java.sql.Time.valueOf(time));
+            cell.setCellValue(Time.valueOf(time));
             cell.setCellStyle(timeFormatCellStyle);
 
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
-                String str = datatypeRegistry.get(java.time.LocalTime.class).format(time);
+                String str = datatypeRegistry.get(LocalTime.class).format(time);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
-        } else if (cellValue instanceof java.time.LocalDate) {
-            java.time.LocalDate date = (java.time.LocalDate) cellValue;
+        } else if (cellValue instanceof LocalDate) {
+            LocalDate date = (LocalDate) cellValue;
 
             cell.setCellValue(date);
             cell.setCellStyle(dateFormatCellStyle);
 
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
-                String str = datatypeRegistry.get(java.time.LocalDate.class).format(date);
+                String str = datatypeRegistry.get(LocalDate.class).format(date);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
-        } else if (cellValue instanceof java.time.LocalDateTime) {
-            java.time.LocalDateTime dateTime = (java.time.LocalDateTime) cellValue;
+        } else if (cellValue instanceof LocalDateTime) {
+            LocalDateTime dateTime = (LocalDateTime) cellValue;
 
             cell.setCellValue(dateTime);
             cell.setCellStyle(dateTimeFormatCellStyle);
 
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
-                String str = datatypeRegistry.get(java.time.LocalDateTime.class).format(dateTime);
+                String str = datatypeRegistry.get(LocalDateTime.class).format(dateTime);
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
         } else if (cellValue instanceof Boolean) {

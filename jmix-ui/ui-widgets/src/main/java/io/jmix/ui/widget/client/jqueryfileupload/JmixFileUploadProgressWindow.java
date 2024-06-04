@@ -111,8 +111,14 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
     protected CloseListener closeListener;
 
     protected VLabel currentFileLabel;
+    protected VLabel totalFilesLabel;
     protected VButton cancelButton;
     protected VProgressBar progressBar;
+    protected VProgressBar totalProgressBar;
+
+    protected int filesNumber;
+    protected boolean totalProgressEnabled;
+    protected String totalProgressFormat;
 
     public JmixFileUploadProgressWindow() {
         super(false, true); // no autohide, modal
@@ -245,6 +251,16 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
         progressBar.setState(0);
         progressBar.setWidth("100%");
 
+        totalFilesLabel = new VLabel();
+        totalFilesLabel.addStyleName("upload-file-total-label");
+        totalFilesLabel.setWidth("100%");
+
+        totalProgressBar = new VProgressBar();
+        totalProgressBar.addStyleName("upload-total-progressbar");
+        totalProgressBar.setIndeterminate(false);
+        totalProgressBar.setState(0);
+        totalProgressBar.setWidth("100%");
+
         cancelButton = new VButton();
         cancelButton.addStyleName("upload-cancel-button");
         cancelButton.addClickHandler(new ClickHandler() {
@@ -269,6 +285,10 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
 
         verticalPanel.add(currentFileLabel);
         verticalPanel.add(progressBar);
+
+        verticalPanel.add(totalFilesLabel);
+        verticalPanel.add(totalProgressBar);
+
         verticalPanel.add(cancelButton);
 
         contentPanel.setWidget(verticalPanel);
@@ -425,6 +445,50 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
 
     public void setProgress(float state) {
         progressBar.setState(state);
+    }
+
+    public void updateTotalProgress(int filesLeft) {
+        if (!totalProgressEnabled) {
+            return;
+        }
+
+        int currentFileNumber = filesNumber - filesLeft;
+        totalFilesLabel.setText(getTotalProgressMessage(currentFileNumber));
+
+        float state = (float) currentFileNumber / (float) filesNumber;
+        totalProgressBar.setState(state);
+    }
+
+    protected String getTotalProgressMessage(int currentFileNumber) {
+        if (totalProgressFormat == null) {
+            return "";
+        }
+        //because String.format(..) doesn't work in GWT
+        String placeholder = "%s";
+        String tmpResult =
+                totalProgressFormat.replaceFirst(placeholder, Integer.toString(currentFileNumber));
+        return tmpResult.replaceFirst(placeholder, Integer.toString(filesNumber));
+    }
+
+    public void initFilesNumber(int filesNumber) {
+        this.filesNumber = filesNumber;
+        if (totalProgressEnabled) {
+            totalFilesLabel.setText(getTotalProgressMessage(0));
+        }
+    }
+
+    protected void updateTotalProgressComponents() {
+        totalFilesLabel.setVisible(totalProgressEnabled);
+        totalProgressBar.setVisible(totalProgressEnabled);
+    }
+
+    public void setTotalProgressEnabled(boolean totalProgressEnabled) {
+        this.totalProgressEnabled = totalProgressEnabled;
+        updateTotalProgressComponents();
+    }
+
+    public void setTotalProgressFormat(String totalProgressFormat) {
+        this.totalProgressFormat = totalProgressFormat;
     }
 
     @Override

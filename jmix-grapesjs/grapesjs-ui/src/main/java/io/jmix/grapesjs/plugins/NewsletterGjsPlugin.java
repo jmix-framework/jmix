@@ -24,6 +24,6 @@ public class NewsletterGjsPlugin extends GjsPlugin {
     public static final String XSD_CODE = "newsletter";
 
     public NewsletterGjsPlugin(String options) {
-        super("gjs-preset-newsletter", options);
+        super("grapesjs-preset-newsletter", options);
     }
 }

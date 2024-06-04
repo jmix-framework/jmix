@@ -317,6 +317,26 @@ public class JmixFileUpload extends AbstractComponent
         }
     }
 
+    public void setTotalProgressEnabled(boolean totalProgressEnabled) {
+        if (isTotalProgressEnabled() != totalProgressEnabled) {
+            getState().totalProgressEnabled = totalProgressEnabled;
+        }
+    }
+
+    public boolean isTotalProgressEnabled() {
+        return getState(false).totalProgressEnabled;
+    }
+
+    public void setTotalProgressFormat(String totalProgressFormat) {
+        if (!Objects.equals(getTotalProgressFormat(), totalProgressFormat)) {
+            getState().totalProgressFormat = totalProgressFormat;
+        }
+    }
+
+    public String getTotalProgressFormat() {
+        return getState(false).totalProgressFormat;
+    }
+
     protected com.vaadin.server.StreamVariable getStreamVariable() {
         if (streamVariable == null) {
             streamVariable = new com.vaadin.server.StreamVariable() {

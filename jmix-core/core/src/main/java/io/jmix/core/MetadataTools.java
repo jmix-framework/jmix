@@ -509,10 +509,19 @@ public class MetadataTools {
     }
 
     /**
-     * @return annotation value for specified metaProperty and annotation
+     * @return meta-annotation value for specified metaClass and annotation
      */
     @SuppressWarnings("unchecked")
-    public <T> T getMetaAnnotationValue(MetaProperty metaProperty, Class metaAnnotationClass) {
+    public <T> T getMetaAnnotationValue(MetaClass metaClass, Class<?> metaAnnotationClass) {
+        Map<String, Object> metaAnnotationAttributes = getMetaAnnotationAttributes(metaClass.getAnnotations(), metaAnnotationClass);
+        return (T) metaAnnotationAttributes.get("value");
+    }
+
+    /**
+     * @return meta-annotation value for specified metaProperty and annotation
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getMetaAnnotationValue(MetaProperty metaProperty, Class<?> metaAnnotationClass) {
         Map<String, Object> metaAnnotationAttributes = getMetaAnnotationAttributes(metaProperty.getAnnotations(), metaAnnotationClass);
         return (T) metaAnnotationAttributes.get("value");
     }

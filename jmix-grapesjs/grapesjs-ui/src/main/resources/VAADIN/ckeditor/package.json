@@ -1,0 +1,50 @@
+{
+	"name": "ckeditor4-dev",
+	"version": "4.22.1",
+	"description": "The development version of CKEditor - JavaScript WYSIWYG web text editor.",
+	"devDependencies": {
+		"benderjs": "^0.4.6",
+		"benderjs-coverage": "^0.2.2",
+		"benderjs-jquery": "^0.3.0",
+		"benderjs-sinon": "^0.3.1",
+		"benderjs-yui": "^0.3.2",
+		"benderjs-yui-beautified": "0.1.2",
+		"cksource-samples-framework": "^1.0.1",
+		"grunt": "^1.6.1",
+		"grunt-contrib-concat": "^2.1.0",
+		"grunt-contrib-imagemin": "^4.0.0",
+		"grunt-contrib-jshint": "^3.2.0",
+		"grunt-contrib-less": "^3.0.0",
+		"grunt-contrib-watch": "^1.0.0",
+		"grunt-githooks": "^0.6.0",
+		"grunt-jscs": "^3.0.1",
+		"grunt-jsduck": "^1.0.1",
+		"less": "^4.1.3",
+		"lesshat": "^4.1.0",
+		"replace-in-file": "^6.3.5",
+		"shelljs": "^0.8.5",
+		"uglify-js": "^3.17.4"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"ckeditor4",
+		"ckeditor",
+		"fckeditor",
+		"editor",
+		"wysiwyg",
+		"html",
+		"richtext",
+		"text",
+		"javascript"
+	],
+	"author": "CKSource (https://cksource.com/)",
+	"license": "(GPL-2.0-or-later OR LGPL-2.1-or-later OR MPL-1.1-or-later)",
+	"bugs": "https://github.com/ckeditor/ckeditor4/issues",
+	"homepage": "https://ckeditor.com",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ckeditor/ckeditor4.git"
+	}
+}

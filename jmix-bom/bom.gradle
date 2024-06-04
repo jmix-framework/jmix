@@ -396,8 +396,6 @@ dependencies {
         api 'org.jetbrains:annotations:22.0.0'
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
-
-        api 'com.hazelcast:hazelcast:5.3.2'
     }
 }
 

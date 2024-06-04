@@ -30,7 +30,8 @@ import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
-import io.jmix.search.utils.ElasticsearchSslConfigurer;
+import io.jmix.search.utils.SslConfigurer;
+import io.jmix.searchelasticsearch.SearchElasticsearchConfiguration;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfigurerProcessor;
 import io.jmix.searchelasticsearch.index.impl.ElasticsearchEntityIndexer;
 import io.jmix.searchelasticsearch.index.impl.ElasticsearchIndexManager;
@@ -55,7 +56,7 @@ import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class})
+@Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class, SearchElasticsearchConfiguration.class})
 public class SearchElasticsearchAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SearchElasticsearchAutoConfiguration.class);
@@ -63,14 +64,14 @@ public class SearchElasticsearchAutoConfiguration {
     @Autowired
     protected SearchProperties searchProperties;
     @Autowired
-    protected ElasticsearchSslConfigurer elasticsearchSslConfigurer;
+    protected SslConfigurer sslConfigurer;
 
     @Bean("search_ElasticsearchClient")
     public ElasticsearchClient elasticsearchClient() {
         CredentialsProvider credentialsProvider = createCredentialsProvider();
-        SSLContext sslContext = elasticsearchSslConfigurer.createSslContext();
+        SSLContext sslContext = sslConfigurer.createSslContext();
 
-        String esUrl = searchProperties.getElasticsearchUrl();
+        String esUrl = searchProperties.getConnectionUrl();
         RestClient restClient = RestClient
                 .builder(HttpHost.create(esUrl))
                 .setHttpClientConfigCallback(httpClientBuilder -> {
@@ -154,12 +155,12 @@ public class SearchElasticsearchAutoConfiguration {
     @Nullable
     protected CredentialsProvider createCredentialsProvider() {
         CredentialsProvider credentialsProvider = null;
-        if (!Strings.isNullOrEmpty(searchProperties.getElasticsearchLogin())) {
+        if (!Strings.isNullOrEmpty(searchProperties.getConnectionLogin())) {
             credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(
-                            searchProperties.getElasticsearchLogin(),
-                            searchProperties.getElasticsearchPassword()
+                            searchProperties.getConnectionLogin(),
+                            searchProperties.getConnectionPassword()
                     )
             );
         }

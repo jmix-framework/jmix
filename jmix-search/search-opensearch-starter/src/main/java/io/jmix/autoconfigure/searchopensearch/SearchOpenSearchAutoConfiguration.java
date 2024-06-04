@@ -26,7 +26,8 @@ import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
-import io.jmix.search.utils.ElasticsearchSslConfigurer;
+import io.jmix.search.utils.SslConfigurer;
+import io.jmix.searchopensearch.SearchOpenSearchConfiguration;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurerProcessor;
 import io.jmix.searchopensearch.index.impl.OpenSearchEntityIndexer;
 import io.jmix.searchopensearch.index.impl.OpenSearchIndexManager;
@@ -39,9 +40,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.opensearch.client.RestClient;
-import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.transport.OpenSearchTransport;
@@ -57,7 +56,7 @@ import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class})
+@Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class, SearchOpenSearchConfiguration.class})
 public class SearchOpenSearchAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SearchOpenSearchAutoConfiguration.class);
@@ -65,7 +64,7 @@ public class SearchOpenSearchAutoConfiguration {
     @Autowired
     protected SearchProperties searchProperties;
     @Autowired
-    protected ElasticsearchSslConfigurer elasticsearchSslConfigurer;
+    protected SslConfigurer sslConfigurer;
 
 
     /*@Bean("search_OpenSearchClient")
@@ -113,9 +112,9 @@ public class SearchOpenSearchAutoConfiguration {
 
     @Bean("search_OpenSearchClient")
     public OpenSearchClient openSearchClient() {
-        HttpHost host = HttpHost.create(searchProperties.getElasticsearchUrl());
+        HttpHost host = HttpHost.create(searchProperties.getConnectionUrl());
         CredentialsProvider credentialsProvider = createCredentialsProvider();
-        SSLContext sslContext = elasticsearchSslConfigurer.createSslContext();
+        SSLContext sslContext = sslConfigurer.createSslContext();
 
         RestClient restClient = RestClient.builder(host).
                 setHttpClientConfigCallback(httpClientBuilder -> {
@@ -192,12 +191,12 @@ public class SearchOpenSearchAutoConfiguration {
     @Nullable
     protected CredentialsProvider createCredentialsProvider() {
         CredentialsProvider credentialsProvider = null;
-        if (!Strings.isNullOrEmpty(searchProperties.getElasticsearchLogin())) {
+        if (!Strings.isNullOrEmpty(searchProperties.getConnectionLogin())) {
             credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(
-                            searchProperties.getElasticsearchLogin(),
-                            searchProperties.getElasticsearchPassword()
+                            searchProperties.getConnectionLogin(),
+                            searchProperties.getConnectionPassword()
                     )
             );
         }

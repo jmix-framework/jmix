@@ -38,9 +38,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
 @Component("search_ElasticsearchSslConfigurer")
-public class ElasticsearchSslConfigurer {
+public class SslConfigurer {
 
-    private static final Logger log = LoggerFactory.getLogger(ElasticsearchSslConfigurer.class);
+    private static final Logger log = LoggerFactory.getLogger(SslConfigurer.class);
 
     @Autowired
     protected SearchProperties searchProperties;
@@ -49,7 +49,7 @@ public class ElasticsearchSslConfigurer {
 
     @Nullable
     public SSLContext createSslContext() {
-        String certificateLocation = searchProperties.getElasticsearchSslCertificateLocation();
+        String certificateLocation = searchProperties.getConnectionSslCertificateLocation();
 
         if (Strings.isNullOrEmpty(certificateLocation)) {
             return null;
@@ -58,14 +58,14 @@ public class ElasticsearchSslConfigurer {
             CertificateFactory factory = getCertificateFactory();
             Certificate certificate = createCertificate(factory, certificateLocation);
             KeyStore keyStore = getKeyStore();
-            setCertificateToStore(keyStore, searchProperties.getElasticsearchSslCertificateAlias(), certificate);
+            setCertificateToStore(keyStore, searchProperties.getConnectionSslCertificateAlias(), certificate);
             return buildSslContext(keyStore);
         }
     }
 
     protected CertificateFactory getCertificateFactory() {
         try {
-            String factoryType = searchProperties.getElasticsearchSslCertificateFactoryType();
+            String factoryType = searchProperties.getConnectionSslCertificateFactoryType();
             log.debug("Get Certificate Factory '{}'", factoryType);
             return CertificateFactory.getInstance(factoryType);
         } catch (CertificateException e) {
@@ -89,7 +89,7 @@ public class ElasticsearchSslConfigurer {
 
     protected KeyStore getKeyStore() {
         try {
-            String keyStoreType = searchProperties.getElasticsearchSslKeyStoreType();
+            String keyStoreType = searchProperties.getConnectionSslKeyStoreType();
             log.debug("Get Key Store '{}'", keyStoreType);
             KeyStore keyStore = KeyStore.getInstance(keyStoreType);
             keyStore.load(null, null);

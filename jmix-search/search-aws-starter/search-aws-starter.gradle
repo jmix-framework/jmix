@@ -18,7 +18,7 @@ group = 'io.jmix.search'
 archivesBaseName = 'jmix-search-aws-starter'
 
 dependencies {
-    api project(':search-starter')
+    api project(':search-elasticsearch-starter')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 

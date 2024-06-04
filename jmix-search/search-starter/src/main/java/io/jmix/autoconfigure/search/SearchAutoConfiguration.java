@@ -20,7 +20,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.utils.ElasticsearchSslConfigurer;
+import io.jmix.search.utils.SslConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class SearchAutoConfiguration {
     @Autowired
     protected SearchProperties searchProperties;
     @Autowired
-    protected ElasticsearchSslConfigurer elasticsearchSslConfigurer;
+    protected SslConfigurer sslConfigurer;
 
     /*@Bean("search_RestHighLevelClient")
     @ConditionalOnMissingBean(RestHighLevelClient.class)
@@ -48,7 +48,7 @@ public class SearchAutoConfiguration {
         RestClientBuilder restClientBuilder = RestClient.builder(esHttpHost);
 
         CredentialsProvider credentialsProvider = createCredentialsProvider();
-        SSLContext sslContext = elasticsearchSslConfigurer.createSslContext();
+        SSLContext sslContext = sslConfigurer.createSslContext();
 
         restClientBuilder.setHttpClientConfigCallback(httpClientBuilder -> {
             if (credentialsProvider != null) {
@@ -69,7 +69,7 @@ public class SearchAutoConfiguration {
     @ConditionalOnProperty(name = "jmix.search.platform", havingValue = "es") //todo
     public ElasticsearchClient elasticsearchClient() {
         CredentialsProvider credentialsProvider = createCredentialsProvider();
-        SSLContext sslContext = elasticsearchSslConfigurer.createSslContext();
+        SSLContext sslContext = sslConfigurer.createSslContext();
 
         String esUrl = searchProperties.getElasticsearchUrl();
         RestClient restClient = RestClient

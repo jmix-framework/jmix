@@ -18,7 +18,7 @@ package io.jmix.search;
 
 import io.jmix.core.Resources;
 import io.jmix.search.index.IndexSchemaManagementStrategy;
-import io.jmix.search.index.UnifiedRefresh;
+import io.jmix.search.index.RefreshPolicy;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +88,7 @@ public class SearchProperties {
     protected final boolean restHighLevelClientApiCompatibilityModeEnabled;
 
 
-    protected final Elasticsearch elasticsearch;
+    protected final Connection connection;
 
     /**
      * Name of default search strategy
@@ -142,7 +142,7 @@ public class SearchProperties {
             @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
             @DefaultValue("0/5 * * * * ?") String enqueueingSessionProcessingCron,
             @DefaultValue("es") String platform,
-            @DefaultValue Elasticsearch elasticsearch) {
+            @DefaultValue Connection connection) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
@@ -155,7 +155,7 @@ public class SearchProperties {
         this.enqueueingSessionProcessingCron = enqueueingSessionProcessingCron;
         this.defaultSearchStrategy = defaultSearchStrategy;
         this.indexSchemaManagementStrategy = IndexSchemaManagementStrategy.getByKey(indexSchemaManagementStrategy);
-        this.elasticsearch = elasticsearch;
+        this.connection = connection;
         this.enqueueIndexAllOnStartupIndexRecreationEnabled = enqueueIndexAllOnStartupIndexRecreationEnabled;
         this.restHighLevelClientApiCompatibilityModeEnabled = restHighLevelClientApiCompatibilityModeEnabled;
         this.enqueueIndexAllOnStartupIndexRecreationEntities = prepareStartupEnqueueingEntities(enqueueIndexAllOnStartupIndexRecreationEntities);
@@ -273,59 +273,59 @@ public class SearchProperties {
     }
 
     /**
-     * @see Elasticsearch#url
+     * @see Connection#url
      */
-    public String getElasticsearchUrl() {
-        return elasticsearch.url;
+    public String getConnectionUrl() {
+        return connection.url;
     }
 
     /**
-     * @see Elasticsearch#login
+     * @see Connection#login
      */
-    public String getElasticsearchLogin() {
-        return elasticsearch.login;
+    public String getConnectionLogin() {
+        return connection.login;
     }
 
     /**
-     * @see Elasticsearch#password
+     * @see Connection#password
      */
-    public String getElasticsearchPassword() {
-        return elasticsearch.password;
+    public String getConnectionPassword() {
+        return connection.password;
     }
 
     /**
      * @see SSL#certificateLocation
      */
-    public String getElasticsearchSslCertificateLocation() {
-        return elasticsearch.ssl.certificateLocation;
+    public String getConnectionSslCertificateLocation() {
+        return connection.ssl.certificateLocation;
     }
 
     /**
      * @see SSL#certificateAlias
      */
-    public String getElasticsearchSslCertificateAlias() {
-        return elasticsearch.ssl.certificateAlias;
+    public String getConnectionSslCertificateAlias() {
+        return connection.ssl.certificateAlias;
     }
 
     /**
      * @see SSL#certificateFactoryType
      */
-    public String getElasticsearchSslCertificateFactoryType() {
-        return elasticsearch.ssl.certificateFactoryType;
+    public String getConnectionSslCertificateFactoryType() {
+        return connection.ssl.certificateFactoryType;
     }
 
     /**
      * @see SSL#keyStoreType
      */
-    public String getElasticsearchSslKeyStoreType() {
-        return elasticsearch.ssl.keyStoreType;
+    public String getConnectionSslKeyStoreType() {
+        return connection.ssl.keyStoreType;
     }
 
     /**
-     * @see Elasticsearch#bulkRequestRefreshPolicy
+     * @see Connection#bulkRequestRefreshPolicy
      */
-    public UnifiedRefresh getElasticsearchBulkRequestRefreshPolicy() { //todo string?
-        return elasticsearch.bulkRequestRefreshPolicy;
+    public RefreshPolicy getBulkRequestRefreshPolicy() { //todo string?
+        return connection.bulkRequestRefreshPolicy;
     }
 
     /**
@@ -345,7 +345,7 @@ public class SearchProperties {
         return result;
     }
 
-    protected static class Elasticsearch {
+    protected static class Connection {
 
         /**
          * Elasticsearch URL.
@@ -365,11 +365,11 @@ public class SearchProperties {
         protected final SSL ssl;
 
         /**
-         * UnifiedRefresh policy that should be used with bulk requests to Elasticsearch: NONE (default), WAIT_UNTIL, IMMEDIATE
+         * RefreshPolicy policy that should be used with bulk requests to Elasticsearch: NONE (default), WAIT_UNTIL, IMMEDIATE
          */
-        protected final UnifiedRefresh bulkRequestRefreshPolicy;
+        protected final RefreshPolicy bulkRequestRefreshPolicy;
 
-        public Elasticsearch(
+        public Connection(
                 @DefaultValue("localhost:9200") String url,
                 String login,
                 String password,
@@ -382,12 +382,12 @@ public class SearchProperties {
             this.bulkRequestRefreshPolicy = resolveRefreshPolicy(bulkRequestRefreshPolicy.toUpperCase());
         }
 
-        protected UnifiedRefresh resolveRefreshPolicy(String propertyValue) {
-            UnifiedRefresh refreshPolicy;
+        protected RefreshPolicy resolveRefreshPolicy(String propertyValue) {
+            RefreshPolicy refreshPolicy;
             try {
-                refreshPolicy = UnifiedRefresh.valueOf(propertyValue);
+                refreshPolicy = RefreshPolicy.valueOf(propertyValue);
             } catch (Exception e) {
-                refreshPolicy = UnifiedRefresh.FALSE;
+                refreshPolicy = RefreshPolicy.FALSE;
                 log.warn("Unknown refresh policy '{}'. Default one ('{}') will be used.", propertyValue, refreshPolicy);
             }
             return refreshPolicy;

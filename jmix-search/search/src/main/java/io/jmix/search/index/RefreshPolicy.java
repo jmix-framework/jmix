@@ -16,7 +16,7 @@
 
 package io.jmix.search.index;
 
-public enum UnifiedRefresh { //todo naming
+public enum RefreshPolicy { //todo naming
     TRUE("true"),
 
     FALSE("false"),
@@ -25,7 +25,7 @@ public enum UnifiedRefresh { //todo naming
 
     private final String value;
 
-    UnifiedRefresh(String value) {
+    RefreshPolicy(String value) {
         this.value = value;
     }
 

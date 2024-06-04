@@ -16,31 +16,32 @@
 
 package io.jmix.autoconfigure.searchaws;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.amazonaws.auth.*;
 import com.google.common.base.Strings;
-import io.jmix.autoconfigure.search.SearchAutoConfiguration;
+import io.jmix.autoconfigure.searchelasticsearch.SearchElasticsearchAutoConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.utils.ElasticsearchSslConfigurer;
+import io.jmix.search.utils.SslConfigurer;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.RestHighLevelClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 
 import javax.net.ssl.SSLContext;
 
 @AutoConfiguration
-@AutoConfigureBefore(SearchAutoConfiguration.class)
+@AutoConfigureBefore(SearchElasticsearchAutoConfiguration.class)
 @ConfigurationPropertiesScan
 public class SearchAwsAutoConfiguration {
 
@@ -51,18 +52,18 @@ public class SearchAwsAutoConfiguration {
     @Autowired
     protected SearchAwsProperties searchAwsProperties;
     @Autowired
-    protected ElasticsearchSslConfigurer elasticsearchSslConfigurer;
+    protected SslConfigurer sslConfigurer;
 
-    @Bean("search_RestHighLevelClient")
-    @ConditionalOnProperty(name = "jmix.search.elasticsearch.aws.iam-auth", matchIfMissing = true)
+    /*@Bean("search_RestHighLevelClient")
+    @ConditionalOnProperty(name = "jmix.search.connection.aws.iam-auth", matchIfMissing = true)
     public RestHighLevelClient elasticSearchClient() {
         log.debug("Create ES Client with AWS IAM Authentication");
-        String esUrl = searchProperties.getElasticsearchUrl();
+        String esUrl = searchProperties.getConnectionUrl();
         HttpHost esHttpHost = HttpHost.create(esUrl);
         RestClientBuilder restClientBuilder = RestClient.builder(esHttpHost);
 
         HttpRequestInterceptor interceptor = createHttpRequestInterceptor();
-        SSLContext sslContext = elasticsearchSslConfigurer.createSslContext();
+        SSLContext sslContext = sslConfigurer.createSslContext();
         restClientBuilder.setHttpClientConfigCallback(builder -> {
             builder.addInterceptorLast(interceptor);
             if (sslContext != null) {
@@ -74,11 +75,36 @@ public class SearchAwsAutoConfiguration {
         return new RestHighLevelClientBuilder(restClientBuilder.build())
                 .setApiCompatibilityMode(searchProperties.isRestHighLevelClientApiCompatibilityModeEnabled())
                 .build();
+    }*/
+
+    @Bean("search_ElasticsearchClient")
+    @ConditionalOnProperty(name = "jmix.search.connection.aws.iam-auth", matchIfMissing = true)
+    public ElasticsearchClient elasticsearchClient() {
+        log.debug("Create ES Client with AWS IAM Authentication");
+        String esUrl = searchProperties.getConnectionUrl();
+        HttpRequestInterceptor interceptor = createHttpRequestInterceptor();
+        SSLContext sslContext = sslConfigurer.createSslContext();
+
+
+        RestClient restClient = RestClient
+                .builder(HttpHost.create(esUrl))
+                .setHttpClientConfigCallback(httpClientBuilder -> {
+                    httpClientBuilder.addInterceptorLast(interceptor);
+                    if (sslContext != null) {
+                        httpClientBuilder.setSSLContext(sslContext);
+                    }
+                    return httpClientBuilder;
+                })
+                .build();
+
+
+        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        return new ElasticsearchClient(transport);
     }
 
     protected HttpRequestInterceptor createHttpRequestInterceptor() {
-        String region = searchAwsProperties.getElasticsearchAwsRegion();
-        String serviceName = searchAwsProperties.getElasticsearchAwsServiceName();
+        String region = searchAwsProperties.getAwsRegion();
+        String serviceName = searchAwsProperties.getAwsServiceName();
 
         AWS4Signer signer = createAWS4Signer(serviceName, region);
         AWSCredentialsProvider credentialsProvider = createAWSCredentialsProvider();
@@ -94,12 +120,12 @@ public class SearchAwsAutoConfiguration {
 
     protected AWSCredentialsProvider createAWSCredentialsProvider() {
         AWSCredentialsProvider credentialsProvider;
-        if (Strings.isNullOrEmpty(searchAwsProperties.getElasticsearchAwsAccessKey())) {
+        if (Strings.isNullOrEmpty(searchAwsProperties.getAwsAccessKey())) {
             credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance();
         } else {
             AWSCredentials credentials = new BasicAWSCredentials(
-                    searchAwsProperties.getElasticsearchAwsAccessKey(),
-                    searchAwsProperties.getElasticsearchAwsSecretKey()
+                    searchAwsProperties.getAwsAccessKey(),
+                    searchAwsProperties.getAwsSecretKey()
             );
 
             credentialsProvider = new AWSStaticCredentialsProvider(credentials);

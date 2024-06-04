@@ -20,7 +20,7 @@ import io.jmix.core.*;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
-import io.jmix.search.index.UnifiedRefresh;
+import io.jmix.search.index.RefreshPolicy;
 import io.jmix.search.index.impl.BaseEntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
@@ -148,8 +148,8 @@ public class OpenSearchEntityIndexer extends BaseEntityIndexer {
     }
 
     protected Refresh resolveRefresh() {
-        UnifiedRefresh unifiedRefresh = searchProperties.getElasticsearchBulkRequestRefreshPolicy();
-        switch (unifiedRefresh) {
+        RefreshPolicy refreshPolicy = searchProperties.getBulkRequestRefreshPolicy();
+        switch (refreshPolicy) {
             case TRUE -> {
                 return Refresh.True;
             }

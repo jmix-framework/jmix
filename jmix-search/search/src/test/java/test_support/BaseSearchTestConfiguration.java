@@ -91,14 +91,14 @@ public class BaseSearchTestConfiguration {
 
     @Bean
     public RestHighLevelClient baseElasticSearchClient() {
-        String esUrl = searchProperties.getElasticsearchUrl();
+        String esUrl = searchProperties.getConnectionUrl();
         HttpHost esHttpHost = HttpHost.create(esUrl);
         RestClientBuilder restClientBuilder = RestClient.builder(esHttpHost);
 
-        if (!Strings.isNullOrEmpty(searchProperties.getElasticsearchLogin())) {
+        if (!Strings.isNullOrEmpty(searchProperties.getConnectionLogin())) {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(searchProperties.getElasticsearchLogin(), searchProperties.getElasticsearchPassword())
+                    new UsernamePasswordCredentials(searchProperties.getConnectionLogin(), searchProperties.getConnectionPassword())
             );
             restClientBuilder.setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
         }

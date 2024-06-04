@@ -272,8 +272,8 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     private IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
-        if(result.mappingUpdateIsRequired()){
-            if(strategy == IndexSchemaManagementStrategy.CREATE_OR_RECREATE){
+        if(strategy.canUpdateConfiguration()) {
+            if(result.mappingUpdateIsRequired()){
                 boolean mappingSavingResult = putMapping(indexConfiguration);
                 if (mappingSavingResult) {
                     indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
@@ -284,18 +284,16 @@ public class ESIndexManagerImpl implements ESIndexManager {
                     return IndexSynchronizationStatus.IRRELEVANT;
                 }
             }
-            else {
-                indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
-                return IndexSynchronizationStatus.IRRELEVANT;
-            }
+            throw new IllegalStateException("Only index mapping update is supported currently");
+        } else {
+            indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+            return IndexSynchronizationStatus.IRRELEVANT;
         }
-
-        throw new IllegalStateException("Only index mapping update is supported currently");
     }
 
     protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
-        if (IndexSchemaManagementStrategy.CREATE_OR_RECREATE.equals(strategy)) {
+        if (strategy.canRecreateIndex()) {
             boolean created = recreateIndex(indexConfiguration);
             if (created) {
                 status = IndexSynchronizationStatus.RECREATED;
@@ -314,7 +312,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
     protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
 
-        if (IndexSchemaManagementStrategy.NONE.equals(strategy)) {
+        if (!strategy.canCreateIndex()) {
             status = IndexSynchronizationStatus.MISSING;
         } else {
             boolean created = createIndex(indexConfiguration);

@@ -38,12 +38,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -320,6 +315,14 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         return routerLink;
     }
 
+    protected void addMenuOpenedChangeListener(Details details, MenuItem menuItem) {
+        details.addOpenedChangeListener((ComponentEventListener<Details.OpenedChangeEvent>) event -> {
+            if (menuItem.getOpenedChangeHandler() != null) {
+                menuItem.getOpenedChangeHandler().accept(new ListMenuBarOpenedChangeEvent(menuItem, event.isOpened()));
+            }
+        });
+    }
+
     protected void addMenuItemClickListener(RouterLink routerLink, MenuItem menuItem) {
         routerLink.getElement().addEventListener("click", event -> {
             if (menuItem.getClickHandler() != null) {
@@ -379,27 +382,9 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
         menuItemComponent.setContent(menuList);
 
-        menuItemComponent.addOpenedChangeListener(this::menuBarOpenedChangeListener);
+        addMenuOpenedChangeListener(menuItemComponent, menuBarItem);
 
         return menuItemComponent;
-    }
-
-    protected void menuBarOpenedChangeListener(Details.OpenedChangeEvent event) {
-        MenuItem menuItem = findMenuItemWithOpenedChangeState(event.getSource());
-
-        if (menuItem != null && menuItem.getOpenedChangeHandler() != null) {
-            menuItem.getOpenedChangeHandler().accept(menuItem, event.isOpened());
-        }
-    }
-
-    protected MenuItem findMenuItemWithOpenedChangeState(Details details) {
-        for (Pair<MenuItem, ListItem> menuItemWithContainer : registrations.values()) {
-            MenuItem menuItem = menuItemWithContainer.getKey();
-            if (menuItem.isMenu() && details.equals(getMenuBarComponent(menuItem))) {
-                return menuItem;
-            }
-        }
-        return null;
     }
 
     protected UnorderedList getMenuBarContent(MenuItem menuItem) {
@@ -537,7 +522,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         protected VaadinIcon icon;
         protected List<String> classNames;
         protected Consumer<MenuItem> clickHandler;
-        protected BiConsumer<MenuItem, Boolean> openedChangeHandler;
+        protected Consumer<ListMenuBarOpenedChangeEvent> openedChangeHandler;
         protected KeyCombination shortcutCombination;
         protected Component prefixComponent;
         protected Component suffixComponent;
@@ -697,11 +682,11 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         @Nullable
-        public BiConsumer<MenuItem, Boolean> getOpenedChangeHandler() {
+        public Consumer<ListMenuBarOpenedChangeEvent> getOpenedChangeHandler() {
             return openedChangeHandler;
         }
 
-        public MenuItem withOpenedChangeHandler(@Nullable BiConsumer<MenuItem, Boolean> openedChangeHandler) {
+        public MenuItem withOpenedChangeHandler(@Nullable Consumer<ListMenuBarOpenedChangeEvent> openedChangeHandler) {
             this.openedChangeHandler = openedChangeHandler;
             return this;
         }
@@ -1068,6 +1053,25 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         @Override
         public boolean isSeparator() {
             return true;
+        }
+    }
+
+    public static class ListMenuBarOpenedChangeEvent extends EventObject {
+        private final boolean opened;
+
+        public ListMenuBarOpenedChangeEvent(Object source, boolean opened) {
+            super(source);
+
+            this.opened = opened;
+        }
+
+        @Override
+        public MenuItem getSource() {
+            return (MenuItem) super.getSource();
+        }
+
+        public boolean isOpened() {
+            return opened;
         }
     }
 }

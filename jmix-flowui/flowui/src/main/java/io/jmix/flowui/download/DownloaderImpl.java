@@ -108,6 +108,9 @@ public class DownloaderImpl implements Downloader {
     @Override
     public void setFileStorage(FileStorage fileStorage) {
         this.fileStorage = fileStorage;
+
+        log.warn("From version 2.3 it is no longer necessary to set FileStorage explicitly. " +
+                "Access to file storage is via FileStorageLocator using FileRef::getStorageName");
     }
 
     @Override

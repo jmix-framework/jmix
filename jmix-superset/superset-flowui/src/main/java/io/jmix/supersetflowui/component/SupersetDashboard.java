@@ -54,13 +54,10 @@ import static io.jmix.superset.client.model.GuestTokenBody.Resource.DASHBOARD_TY
  * To work with the component correctly, you should provide the embedded ID from a configured dashboard in Superset
  * and set it to the component.
  * <p>
- * By default, the component manages guest token getting and refreshing requests. It configures the request according
- * to the Superset API and contains the following information: dataset constraints, the embedded ID and the current
- * username.
- * <p>
- * The client-side of the component handles token expiration and the component requests fetching a new token. The
- * component enables setting a custom guest token provider that will replace the default one and will be invoked when
- * the token is about to expire.
+ * By default, the component manages guest token acquisition and refresh requests. It configures the request according
+ * to the Superset API and contains the following information: dataset constraints, the embedded ID, and the current
+ * username. The client-side of the component handles token expiration time. Before expiration, the component requests
+ * fetching a new token in a non-blocking manner.
  * <p>
  * The example of component in a view descriptor:
  * <pre>
@@ -96,6 +93,7 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
         backgroundWorker = applicationContext.getBean(BackgroundWorker.class);
         currentUserSubstitution = applicationContext.getBean(CurrentUserSubstitution.class);
         supersetFlowuiProperties = applicationContext.getBean(SupersetFlowuiProperties.class);
+
         setUrlInternal(applicationContext.getBean(SupersetProperties.class).getUrl());
     }
 

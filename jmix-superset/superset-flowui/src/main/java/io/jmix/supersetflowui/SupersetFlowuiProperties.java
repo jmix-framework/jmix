@@ -28,8 +28,7 @@ import java.time.Duration;
 public class SupersetFlowuiProperties {
 
     /**
-     * Timeout of background task that fetches guest token for {@link SupersetDashboard} component
-     * in {@link DefaultGuestTokenProvider}.
+     * Timeout of background task that fetches guest token for {@link SupersetDashboard} component.
      */
     Duration backgroundFetchingGuestTokenTimeout;
 

@@ -28,9 +28,7 @@ public abstract class AbstractLoginFormLoader<C extends AbstractLogin> extends A
     public void loadComponent() {
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
-        loadBoolean(element, "forgotPasswordButtonVisible").ifPresentOrElse(
-                resultComponent::setForgotPasswordButtonVisible,
-                () -> resultComponent.setForgotPasswordButtonVisible(false));
+        loadBoolean(element, "forgotPasswordButtonVisible", resultComponent::setForgotPasswordButtonVisible);
 
         loadLocalization(resultComponent, element);
     }
@@ -60,7 +58,7 @@ public abstract class AbstractLoginFormLoader<C extends AbstractLogin> extends A
         }
     }
 
-    protected void loadForm(C resultComponent, Element element, LoginI18n i18n) {
+    protected void loadForm(C resultComponent, Element element, JmixLoginI18n i18n) {
         Element formElement = element.element("form");
         if (formElement != null) {
             JmixLoginI18n.JmixForm form = new JmixLoginI18n.JmixForm();
@@ -78,7 +76,7 @@ public abstract class AbstractLoginFormLoader<C extends AbstractLogin> extends A
             loadResourceString(formElement, "rememberMe",
                     context.getMessageGroup(), form::setRememberMe);
 
-            i18n.setForm(form);
+            i18n.setJmixForm(form);
         }
     }
 

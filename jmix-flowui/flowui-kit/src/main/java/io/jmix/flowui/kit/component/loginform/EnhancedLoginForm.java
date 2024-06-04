@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.component.loginform;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.internal.JsonSerializer;
 import com.vaadin.flow.shared.Registration;
 
@@ -210,6 +211,12 @@ public class EnhancedLoginForm extends LoginForm {
      */
     public void setLocaleItemLabelGenerator(@Nullable Function<Locale, String> localeItemLabelGenerator) {
         this.localeItemLabelGenerator = localeItemLabelGenerator;
+    }
+
+    @Override
+    public void setI18n(LoginI18n i18n) {
+        this.getElement().setPropertyJson("i18n", JsonSerializer.toJson(
+                i18n instanceof JmixLoginI18n ? i18n : i18n));
     }
 
     protected void onRememberMeChangedEvent(JmixRememberMeChangedEvent event) {

@@ -29,11 +29,7 @@ public class LoginFormLoader extends AbstractLoginFormLoader<JmixLoginForm> {
     public void loadComponent() {
         super.loadComponent();
 
-        loadBoolean(element, "rememberMeVisible").ifPresentOrElse(
-                resultComponent::setRememberMeVisible,
-                () -> resultComponent.setRememberMeVisible(true));
-        loadBoolean(element, "localesVisible").ifPresentOrElse(
-                resultComponent::setLocalesVisible,
-                () -> resultComponent.setLocalesVisible(true));
+        loadBoolean(element, "rememberMeVisible", resultComponent::setRememberMeVisible);
+        loadBoolean(element, "localesVisible", resultComponent::setLocalesVisible);
     }
 }

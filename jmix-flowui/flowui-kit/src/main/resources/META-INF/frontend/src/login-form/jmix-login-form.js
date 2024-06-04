@@ -61,7 +61,7 @@ class JmixLoginForm extends LoginForm {
                     <input id="csrf" type="hidden"/>
                     <vaadin-text-field
                             name="username"
-                            label="[[i18n.form.username]]"
+                            label="[[i18n.jmixForm.username]]"
                             error-message="[[i18n.errorMessage.username]]"
                             id="vaadinLoginUsername"
                             required
@@ -77,7 +77,7 @@ class JmixLoginForm extends LoginForm {
 
                     <vaadin-password-field
                             name="password"
-                            label="[[i18n.form.password]]"
+                            label="[[i18n.jmixForm.password]]"
                             error-message="[[i18n.errorMessage.password]]"
                             id="vaadinLoginPassword"
                             required
@@ -91,7 +91,7 @@ class JmixLoginForm extends LoginForm {
 
                     <div id="additionalFields" class="jmix-login-form-additional-fields-container">
                         <vaadin-checkbox id="rememberMeCheckbox"
-                                         label="[[i18n.form.rememberMe]]"
+                                         label="[[i18n.jmixForm.rememberMe]]"
                                          class="jmix-login-form-remember-me"></vaadin-checkbox>
                         <vaadin-select id="localesSelect"
                                        class="jmix-login-form-locales-select">
@@ -100,7 +100,7 @@ class JmixLoginForm extends LoginForm {
                 </form>
 
                 <vaadin-button slot="submit" theme="primary contained submit" on-click="submit" disabled$="[[disabled]]">
-                    [[i18n.form.submit]]
+                    [[i18n.jmixForm.submit]]
                 </vaadin-button>
 
                 <vaadin-button
@@ -109,7 +109,7 @@ class JmixLoginForm extends LoginForm {
                         on-click="_onForgotPasswordClick"
                         hidden$="[[noForgotPassword]]"
                 >
-                    [[i18n.form.forgotPassword]]
+                    [[i18n.jmixForm.forgotPassword]]
                 </vaadin-button>
             </vaadin-login-form-wrapper>
         `;
@@ -137,7 +137,7 @@ class JmixLoginForm extends LoginForm {
             },
             localesVisibility: {
                 type: Boolean,
-                value: true,
+                notify: true
             },
             locales: {
                 type: Object,
@@ -148,13 +148,13 @@ class JmixLoginForm extends LoginForm {
                 type: Object,
                 value: function () {
                     return {
-                        form: {
+                        jmixForm: {
                             title: 'Log in',
                             username: 'Username',
                             password: 'Password',
                             submit: 'Log in',
                             forgotPassword: 'Forgot password',
-                            rememberMe: "Remember me"
+                            rememberMe: 'Remember me'
                         },
                         errorMessage: {
                             title: 'Incorrect username or password',
@@ -181,8 +181,8 @@ class JmixLoginForm extends LoginForm {
         this.$.localesSelect.addEventListener('value-changed', (e) => this._localeValueChanged(e));
         this.$.rememberMeCheckbox.addEventListener('checked-changed', (e) => this._onRememberMeValueChange(e));
 
-        this.$.localesSelect.jmixUserOriginated = true
-        this.$.rememberMeCheckbox.jmixUserOriginated = true
+        this.$.localesSelect.jmixUserOriginated = true;
+        this.$.rememberMeCheckbox.jmixUserOriginated = true;
     }
 
     _onVisibilityPropertiesChanged(rememberMeVisibility, localesVisibility) {

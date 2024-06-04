@@ -41,11 +41,10 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
 
     /**
      * Sets an embedded dashboard ID. This ID can be taken from dashboard if Superset has {@code EMBEDDED_SUPERSET}
-     * feature flag. Without an embedded ID, the component won't start the request for fetching guest token. An
-     * embedded ID can be set in any time of a View lifecycle.
+     * feature flag. Without an embedded ID, the component won't start the request for fetching guest token.
      * <p>
-     * Note that every time the embedded ID set to the component it will start a process of fetching guest token and
-     * handling its expiration.
+     * Note that every time the embedded ID is set to the component, it will start a process of fetching a guest
+     * token and handling its expiration.
      *
      * @param embeddedId a dashboard embedded ID
      */

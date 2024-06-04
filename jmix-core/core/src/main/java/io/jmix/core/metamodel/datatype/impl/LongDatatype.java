@@ -91,7 +91,8 @@ public class LongDatatype extends NumberDatatype implements Datatype<Long> {
 
         Number result = super.parse(value, format);
         if (!hasValidLongRange(result)) {
-            throw new ParseException(String.format("Integer range exceeded: \"%s\"", value), 0);
+            throw new ParseException(messages.formatMessage(
+                    "", "datatype.longOutOfRange.message", value), 0);
         }
         return result;
     }

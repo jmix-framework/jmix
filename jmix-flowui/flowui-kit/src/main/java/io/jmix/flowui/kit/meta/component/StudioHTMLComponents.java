@@ -808,7 +808,7 @@ public interface StudioHTMLComponents {
                     @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),

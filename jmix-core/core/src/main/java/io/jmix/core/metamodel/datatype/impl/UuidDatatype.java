@@ -55,7 +55,7 @@ public class UuidDatatype implements Datatype<UUID> {
                 return UuidProvider.fromString(value.trim());
             } catch (Exception e) {
                 throw new ParseException(messages.formatMessage(
-                        "","datatype.unparseableUuid.message", value.trim()), 0);
+                        "", "datatype.unparseableUuid.message", value.trim()), 0);
             }
         }
     }

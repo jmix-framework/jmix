@@ -54,7 +54,7 @@ public class CharacterDatatype implements Datatype<Character> {
 
         if (value.length() > 1)
             throw new ParseException(messages.formatMessage(
-                    "","datatype.unparseableCharacter.message", value), 0);
+                    "", "datatype.unparseableCharacter.message", value), 0);
 
         return value.charAt(0);
     }

@@ -86,7 +86,7 @@ public abstract class NumberDatatype implements ParameterizedDatatype {
         Number res = format.parse(value.trim(), pos);
         if (pos.getIndex() != value.length()) {
             throw new ParseException(messages.formatMessage(
-                    "","datatype.unparseableNumber.message", value), pos.getErrorIndex());
+                    "", "datatype.unparseableNumber.message", value), pos.getErrorIndex());
         }
         return res;
     }

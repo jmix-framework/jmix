@@ -70,7 +70,7 @@ public class BooleanDatatype implements Datatype<Boolean> {
                 return Boolean.FALSE;
             }
             throw new ParseException(messages.formatMessage(
-                    "","datatype.unparseableBoolean.message", value), 0);
+                    "", "datatype.unparseableBoolean.message", value), 0);
         }
         return null;
     }

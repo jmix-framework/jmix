@@ -107,7 +107,7 @@ public class FloatDatatype extends NumberDatatype implements Datatype<Float> {
 
         if (!isInFloatRange(result)) {
             throw new ParseException(messages.formatMessage(
-                    "","datatype.floatOutOfRange.message", value), 0);
+                    "", "datatype.floatOutOfRange.message", value), 0);
         }
 
         return result;

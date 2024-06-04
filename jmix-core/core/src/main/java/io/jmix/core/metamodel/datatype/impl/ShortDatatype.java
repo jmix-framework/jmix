@@ -93,7 +93,7 @@ public class ShortDatatype extends NumberDatatype implements Datatype<Short> {
         Number result = super.parse(value, format);
         if (!hasValidShortRange(result)) {
             throw new ParseException(messages.formatMessage(
-                    "","datatype.shortOutOfRange.message", value), 0);
+                    "", "datatype.shortOutOfRange.message", value), 0);
         }
         return result;
     }

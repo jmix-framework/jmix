@@ -320,14 +320,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         return routerLink;
     }
 
-    protected void addMenuOpenedChangeListener(Details details, MenuItem menuItem) {
-        details.addOpenedChangeListener((ComponentEventListener<Details.OpenedChangeEvent>) event -> {
-            if (menuItem.getOpenedChangeHandler() != null) {
-                menuItem.getOpenedChangeHandler().accept(menuItem, event.isOpened());
-            }
-        });
-    }
-
     protected void addMenuItemClickListener(RouterLink routerLink, MenuItem menuItem) {
         routerLink.getElement().addEventListener("click", event -> {
             if (menuItem.getClickHandler() != null) {
@@ -387,9 +379,27 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
         menuItemComponent.setContent(menuList);
 
-        addMenuOpenedChangeListener(menuItemComponent, menuBarItem);
+        menuItemComponent.addOpenedChangeListener(this::menuBarOpenedChangeListener);
 
         return menuItemComponent;
+    }
+
+    protected void menuBarOpenedChangeListener(Details.OpenedChangeEvent event) {
+        MenuItem menuItem = findMenuItemWithOpenedChangeState(event.getSource());
+
+        if (menuItem != null && menuItem.getOpenedChangeHandler() != null) {
+            menuItem.getOpenedChangeHandler().accept(menuItem, event.isOpened());
+        }
+    }
+
+    protected MenuItem findMenuItemWithOpenedChangeState(Details details) {
+        for (Pair<MenuItem, ListItem> menuItemWithContainer : registrations.values()) {
+            MenuItem menuItem = menuItemWithContainer.getKey();
+            if (menuItem.isMenu() && details.equals(getMenuBarComponent(menuItem))) {
+                return menuItem;
+            }
+        }
+        return null;
     }
 
     protected UnorderedList getMenuBarContent(MenuItem menuItem) {

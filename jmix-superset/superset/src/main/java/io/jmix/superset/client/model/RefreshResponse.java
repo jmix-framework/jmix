@@ -17,7 +17,7 @@
 package io.jmix.superset.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public class RefreshResponse {
 

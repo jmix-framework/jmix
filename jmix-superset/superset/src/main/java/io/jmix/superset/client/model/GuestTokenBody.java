@@ -17,7 +17,7 @@
 package io.jmix.superset.client.model;
 
 import io.jmix.core.common.util.Preconditions;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.util.ArrayList;

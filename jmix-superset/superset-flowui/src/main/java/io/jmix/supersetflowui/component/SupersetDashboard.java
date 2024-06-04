@@ -29,7 +29,6 @@ import io.jmix.superset.client.model.GuestTokenResponse;
 import io.jmix.supersetflowui.SupersetUiProperties;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraintsProvider;
-import jakarta.annotation.Nullable;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
@@ -39,6 +38,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
+import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.util.Collections;

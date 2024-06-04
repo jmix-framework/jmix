@@ -20,7 +20,7 @@ import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.SupersetTokenManager;
 import io.jmix.superset.schedule.SupersetTokenScheduleConfigurer;
 import io.jmix.superset.client.model.*;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 

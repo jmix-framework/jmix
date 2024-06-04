@@ -1,9 +1,9 @@
 package io.jmix.superset;
 
 import io.jmix.superset.schedule.SupersetTokenScheduleConfigurer;
-import jakarta.annotation.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.lang.Nullable;
 
 import java.time.Duration;
 

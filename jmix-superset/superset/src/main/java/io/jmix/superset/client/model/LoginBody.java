@@ -16,7 +16,7 @@
 
 package io.jmix.superset.client.model;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 

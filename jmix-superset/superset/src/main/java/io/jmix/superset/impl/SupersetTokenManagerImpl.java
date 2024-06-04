@@ -26,11 +26,12 @@ import io.jmix.superset.client.model.CsrfTokenResponse;
 import io.jmix.superset.client.model.LoginResponse;
 import io.jmix.superset.client.model.RefreshResponse;
 import io.jmix.superset.client.SupersetClient;
-import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
@@ -200,7 +201,7 @@ public class SupersetTokenManagerImpl implements SupersetTokenManager {
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String[] chunks = accessToken.split("\\.");
         if (chunks.length >= 2) { // chunks[0] - header, chunks[1] - payload
-            String payloadJson = new String(decoder.decode(chunks[1]));
+            String payloadJson = new String(decoder.decode(chunks[1]), StandardCharsets.UTF_8);
             Map<String, Object> payloadMap;
             try {
                 payloadMap = objectMapper.readValue(payloadJson, Map.class);

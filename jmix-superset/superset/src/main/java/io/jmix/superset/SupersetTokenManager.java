@@ -18,7 +18,7 @@ package io.jmix.superset;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.superset.schedule.SupersetTokenScheduleConfigurer;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Provides Superset tokens management: access token, CSRF token (if is enabled). It stores tokens and cares about

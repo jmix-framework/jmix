@@ -25,12 +25,12 @@ import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.client.SupersetClient;
 import io.jmix.superset.client.cookie.SupersetCookieManager;
 import io.jmix.superset.client.model.*;
-import jakarta.annotation.Nullable;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

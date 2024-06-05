@@ -86,20 +86,20 @@ public class IndexConfigurationComparator {
             this.settingsComparingResult = settingsComparingResult;
         }
 
-        public boolean indexRecreatingIsRequired(){
+        public boolean isIndexRecreatingRequired(){
             return mappingComparingResult.indexRecreatingIsRequired() || settingsComparingResult.indexRecreatingIsRequired();
         }
 
-        public boolean mappingUpdateIsRequired() {
+        public boolean isMappingUpdateRequired() {
             return mappingComparingResult.configurationUpdateIsRequired();
         }
 
-        public boolean settingsUpdateIsRequired() {
+        public boolean isSettingsUpdateRequired() {
             return settingsComparingResult.configurationUpdateIsRequired();
         }
 
-        public boolean configurationUpdate(){
-            return mappingUpdateIsRequired() || settingsUpdateIsRequired();
+        public boolean isConfigurationUpdateRequired(){
+            return isMappingUpdateRequired() || isSettingsUpdateRequired();
         }
     }
 }

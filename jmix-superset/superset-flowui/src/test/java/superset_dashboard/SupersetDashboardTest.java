@@ -16,10 +16,10 @@
 
 package superset_dashboard;
 
-import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
+import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +34,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SupersetDashboardTest {
 
     @Autowired
-    ViewNavigators viewNavigators;
+    ViewNavigationSupport navigationSupport;
 
     @Test
     @DisplayName("Load SupersetDashboard component from XML")
     public void loadSupersetDashboardFromXml() {
-        viewNavigators.view(SupersetDashboardTestView.class)
-                .navigate();
+        navigationSupport.navigate(SupersetDashboardTestView.class);
 
         var view = (SupersetDashboardTestView) UiTestUtils.getCurrentView();
         var dashboard1 = view.dashboard1;

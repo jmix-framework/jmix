@@ -21,10 +21,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
-    <property name="uuid.type" dbms="!oracle" value="uuid"/>
-
-    <include file="/io/jmix/flowuidata/liquibase/changelog/001-flowui-data.xml"/>
-    <include file="/io/jmix/flowuidata/liquibase/changelog/002-flowui-data.xml"/>
+    <changeSet id="1" author="flowui-data">
+        <modifyDataType tableName="FLOWUI_USER_SETTINGS" columnName="CREATED_BY" newDataType="varchar(255)"/>
+    </changeSet>
 
 </databaseChangeLog>

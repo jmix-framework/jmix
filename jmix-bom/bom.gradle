@@ -402,7 +402,8 @@ dependencies {
         api 'org.jetbrains:annotations:22.0.0'
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
-        api 'org.opensearch.client:opensearch-java:2.9.1'
+        api 'org.opensearch.client:opensearch-java:2.10.3'
+        api 'org.opensearch.client:opensearch-rest-client:2.14.0'
     }
 }
 

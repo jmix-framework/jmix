@@ -12,14 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package test_support;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.elasticsearch.action.DocWriteRequest;
 
-public class TestBulkRequestIndexActionValidationData extends TestAbstractBulkRequestActionWithBodyValidationData {
+public class TestBulkRequestIndexActionValidationData extends TestAbstractBulkRequestActionWithBodyValidationData { //todo platform specific
 
     public TestBulkRequestIndexActionValidationData(String index, String id, JsonNode source) {
         super(index, id, source);
@@ -30,3 +31,4 @@ public class TestBulkRequestIndexActionValidationData extends TestAbstractBulkRe
         return DocWriteRequest.OpType.INDEX;
     }
 }
+*/

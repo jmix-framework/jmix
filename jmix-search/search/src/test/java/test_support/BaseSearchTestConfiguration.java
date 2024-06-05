@@ -33,7 +33,11 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
+import io.jmix.search.index.EntityIndexer;
+import io.jmix.search.index.IndexManager;
+import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.StartupIndexSynchronizer;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import io.jmix.security.SecurityConfiguration;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -81,6 +85,18 @@ public class BaseSearchTestConfiguration {
     @Primary
     public StartupIndexSynchronizer startupIndexSynchronizer() {
         return new TestNoopStartupIndexSynchronizer();
+    }
+
+    @Bean("search_EntityIndexer")
+    public EntityIndexer entityIndexer() {
+        return new TestNoopEntityIndexer();
+    }
+
+    @Bean("search_IndexManager")
+    public IndexManager indexManager(IndexConfigurationManager indexConfigurationManager,
+                                     IndexStateRegistry indexStateRegistry,
+                                     SearchProperties searchProperties) {
+        return new TestNoopIndexManager(indexConfigurationManager, indexStateRegistry, searchProperties);
     }
 
     @Bean

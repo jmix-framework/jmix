@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package test_support;
 
@@ -20,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Objects;
 
-public abstract class TestAbstractBulkRequestActionWithBodyValidationData extends TestAbstractBulkRequestActionValidationData {
+public abstract class TestAbstractBulkRequestActionWithBodyValidationData extends TestAbstractBulkRequestActionValidationData { //todo platform specific
 
     protected JsonNode source;
 
@@ -52,3 +53,4 @@ public abstract class TestAbstractBulkRequestActionWithBodyValidationData extend
         return Objects.hash(super.hashCode(), source);
     }
 }
+*/

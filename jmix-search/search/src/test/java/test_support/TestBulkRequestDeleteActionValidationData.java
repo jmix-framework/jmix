@@ -12,13 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package test_support;
 
 import org.elasticsearch.action.DocWriteRequest;
 
-public class TestBulkRequestDeleteActionValidationData extends TestAbstractBulkRequestActionValidationData {
+public class TestBulkRequestDeleteActionValidationData extends TestAbstractBulkRequestActionValidationData { //platform specific
 
     public TestBulkRequestDeleteActionValidationData(String index, String id) {
         super(index, id);
@@ -29,3 +30,4 @@ public class TestBulkRequestDeleteActionValidationData extends TestAbstractBulkR
         return DocWriteRequest.OpType.DELETE;
     }
 }
+*/

@@ -5,6 +5,7 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
 
+import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Component;
  * Different terms can be present in different fields.
  */
 @Component("search_AllTermsAnyFieldElasticsearchSearchStrategy")
-public class AllTermsAnyFieldElasticsearchSearchStrategy implements ElasticsearchSearchStrategy {
+public class AllTermsAnyFieldElasticsearchSearchStrategy extends AbstractSearchStrategy
+        implements ElasticsearchSearchStrategy {
 
     @Override
     public String getName() {

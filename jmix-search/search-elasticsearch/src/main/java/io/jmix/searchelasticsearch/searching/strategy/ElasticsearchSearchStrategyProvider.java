@@ -1,6 +1,7 @@
 package io.jmix.searchelasticsearch.searching.strategy;
 
 import io.jmix.search.SearchProperties;
+import io.jmix.search.searching.SearchStrategyProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -9,16 +10,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ElasticsearchSearchStrategyManager {
+public class ElasticsearchSearchStrategyProvider implements SearchStrategyProvider<ElasticsearchSearchStrategy> {
 
-    private static final Logger log = LoggerFactory.getLogger(ElasticsearchSearchStrategyManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ElasticsearchSearchStrategyProvider.class);
 
     protected final Map<String, ElasticsearchSearchStrategy> registry;
 
     protected final String defaultStrategyName;
 
-    public ElasticsearchSearchStrategyManager(Collection<ElasticsearchSearchStrategy> searchStrategies,
-                                              SearchProperties applicationProperties) {
+    public ElasticsearchSearchStrategyProvider(Collection<ElasticsearchSearchStrategy> searchStrategies,
+                                               SearchProperties applicationProperties) {
         log.debug("Available search strategies: {}", searchStrategies);
         Map<String, ElasticsearchSearchStrategy> tmpRegistry = new HashMap<>();
         searchStrategies.forEach(searchStrategy -> {
@@ -69,6 +70,7 @@ public class ElasticsearchSearchStrategyManager {
 
     /**
      * Returns all registered search strategies.
+     *
      * @return all {@link ElasticsearchSearchStrategy}
      */
     public Collection<ElasticsearchSearchStrategy> getAllSearchStrategies() {

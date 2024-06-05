@@ -18,7 +18,7 @@ import io.jmix.search.searching.*;
 import io.jmix.search.searching.impl.SearchResultImpl;
 import io.jmix.search.utils.Constants;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
-import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategyManager;
+import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategyProvider;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +47,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
     protected final IdSerialization idSerialization;
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
-    protected final ElasticsearchSearchStrategyManager searchStrategyManager;
+    protected final ElasticsearchSearchStrategyProvider searchStrategyManager;
 
     protected final ObjectMapper objectMapper;
 
@@ -61,7 +61,7 @@ public class ElasticsearchEntitySearcher implements EntitySearcher {
                                        IdSerialization idSerialization,
                                        SecureOperations secureOperations,
                                        PolicyStore policyStore,
-                                       ElasticsearchSearchStrategyManager searchStrategyManager) {
+                                       ElasticsearchSearchStrategyProvider searchStrategyManager) {
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;

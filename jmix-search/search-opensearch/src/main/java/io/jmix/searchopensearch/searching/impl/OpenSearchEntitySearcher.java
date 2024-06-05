@@ -13,7 +13,7 @@ import io.jmix.search.searching.*;
 import io.jmix.search.searching.impl.SearchResultImpl;
 import io.jmix.search.utils.Constants;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
-import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyManager;
+import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyProvider;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +47,7 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
     protected final IdSerialization idSerialization;
     protected final SecureOperations secureOperations;
     protected final PolicyStore policyStore;
-    protected final OpenSearchSearchStrategyManager searchStrategyManager;
+    protected final OpenSearchSearchStrategyProvider searchStrategyManager;
 
     protected final ObjectMapper objectMapper;
 
@@ -61,7 +61,7 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
                                     IdSerialization idSerialization,
                                     SecureOperations secureOperations,
                                     PolicyStore policyStore,
-                                    OpenSearchSearchStrategyManager searchStrategyManager) {
+                                    OpenSearchSearchStrategyProvider searchStrategyManager) {
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.metadata = metadata;

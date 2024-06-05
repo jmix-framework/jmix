@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchStrategy;
+import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,8 @@ import org.springframework.stereotype.Component;
  * Fields with partial match a not suitable.
  */
 @Component("search_AllTermsSingleFieldElasticsearchSearchStrategy")
-public class AllTermsSingleFieldElasticsearchSearchStrategy implements ElasticsearchSearchStrategy {
+public class AllTermsSingleFieldElasticsearchSearchStrategy extends AbstractSearchStrategy
+        implements ElasticsearchSearchStrategy {
 
     @Override
     public String getName() {

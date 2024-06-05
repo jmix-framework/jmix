@@ -1,6 +1,7 @@
 package io.jmix.searchopensearch.searching.strategy;
 
 import io.jmix.search.SearchProperties;
+import io.jmix.search.searching.SearchStrategyProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -9,16 +10,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OpenSearchSearchStrategyManager {
+public class OpenSearchSearchStrategyProvider implements SearchStrategyProvider<OpenSearchSearchStrategy> {
 
-    private static final Logger log = LoggerFactory.getLogger(OpenSearchSearchStrategyManager.class);
+    private static final Logger log = LoggerFactory.getLogger(OpenSearchSearchStrategyProvider.class);
 
     protected final Map<String, OpenSearchSearchStrategy> registry;
 
     protected final String defaultStrategyName;
 
-    public OpenSearchSearchStrategyManager(Collection<OpenSearchSearchStrategy> searchStrategies,
-                                           SearchProperties applicationProperties) {
+    public OpenSearchSearchStrategyProvider(Collection<OpenSearchSearchStrategy> searchStrategies,
+                                            SearchProperties applicationProperties) {
         log.debug("Available search strategies: {}", searchStrategies);
         Map<String, OpenSearchSearchStrategy> tmpRegistry = new HashMap<>();
         searchStrategies.forEach(searchStrategy -> {
@@ -69,6 +70,7 @@ public class OpenSearchSearchStrategyManager {
 
     /**
      * Returns all registered search strategies.
+     *
      * @return all {@link OpenSearchSearchStrategy}
      */
     public Collection<OpenSearchSearchStrategy> getAllSearchStrategies() {

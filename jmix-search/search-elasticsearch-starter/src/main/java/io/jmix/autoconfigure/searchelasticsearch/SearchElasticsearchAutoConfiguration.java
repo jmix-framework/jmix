@@ -37,7 +37,7 @@ import io.jmix.searchelasticsearch.index.impl.ElasticsearchEntityIndexer;
 import io.jmix.searchelasticsearch.index.impl.ElasticsearchIndexManager;
 import io.jmix.searchelasticsearch.searching.impl.ElasticsearchEntitySearcher;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
-import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategyManager;
+import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategyProvider;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.http.HttpHost;
@@ -140,7 +140,7 @@ public class SearchElasticsearchAutoConfiguration {
                                                          IdSerialization idSerialization,
                                                          SecureOperations secureOperations,
                                                          PolicyStore policyStore,
-                                                         ElasticsearchSearchStrategyManager searchStrategyManager) {
+                                                         ElasticsearchSearchStrategyProvider searchStrategyManager) {
         return new ElasticsearchEntitySearcher(
                 client,
                 indexConfigurationManager,
@@ -157,10 +157,10 @@ public class SearchElasticsearchAutoConfiguration {
     }
 
     @Bean("search_ElasticsearchSearchStrategyManager")
-    protected ElasticsearchSearchStrategyManager elasticsearchSearchStrategyManager(
+    protected ElasticsearchSearchStrategyProvider elasticsearchSearchStrategyManager(
             Collection<ElasticsearchSearchStrategy> searchStrategies,
             SearchProperties applicationProperties) {
-        return new ElasticsearchSearchStrategyManager(searchStrategies, applicationProperties);
+        return new ElasticsearchSearchStrategyProvider(searchStrategies, applicationProperties);
     }
 
     @Nullable

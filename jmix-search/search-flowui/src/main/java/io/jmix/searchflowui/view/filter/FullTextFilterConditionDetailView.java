@@ -22,7 +22,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.SearchStrategyManager;
+import io.jmix.search.searching.SearchStrategyProvider;
 import io.jmix.searchflowui.entity.FullTextFilterCondition;
 import io.jmix.searchflowui.utils.FullTextFilterUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +46,7 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
-    protected SearchStrategyManager searchStrategyManager;
+    protected SearchStrategyProvider<SearchStrategy> searchStrategyProvider;
 
     @Override
     public InstanceContainer<FullTextFilterCondition> getInstanceContainer() {
@@ -78,7 +78,7 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
     }
 
     private void initSearchStrategyNameItems() {
-        Collection<SearchStrategy> searchStrategies = searchStrategyManager.getAllSearchStrategies();
+        Collection<SearchStrategy> searchStrategies = searchStrategyProvider.getAllSearchStrategies();
         List<String> searchStrategyNames = searchStrategies.stream()
                 .map(SearchStrategy::getName)
                 .collect(Collectors.toList());

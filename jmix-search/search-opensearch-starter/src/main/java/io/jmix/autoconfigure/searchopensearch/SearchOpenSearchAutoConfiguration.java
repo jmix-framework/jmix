@@ -33,7 +33,7 @@ import io.jmix.searchopensearch.index.impl.OpenSearchEntityIndexer;
 import io.jmix.searchopensearch.index.impl.OpenSearchIndexManager;
 import io.jmix.searchopensearch.searching.impl.OpenSearchEntitySearcher;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
-import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyManager;
+import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyProvider;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.http.HttpHost;
@@ -132,7 +132,7 @@ public class SearchOpenSearchAutoConfiguration {
                                                       IdSerialization idSerialization,
                                                       SecureOperations secureOperations,
                                                       PolicyStore policyStore,
-                                                      OpenSearchSearchStrategyManager searchStrategyManager) {
+                                                      OpenSearchSearchStrategyProvider searchStrategyManager) {
         return new OpenSearchEntitySearcher(
                 client,
                 indexConfigurationManager,
@@ -149,10 +149,10 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchSearchStrategyManager")
-    protected OpenSearchSearchStrategyManager openSearchSearchStrategyManager(
+    protected OpenSearchSearchStrategyProvider openSearchSearchStrategyManager(
             Collection<OpenSearchSearchStrategy> searchStrategies,
             SearchProperties applicationProperties) {
-        return new OpenSearchSearchStrategyManager(searchStrategies, applicationProperties);
+        return new OpenSearchSearchStrategyProvider(searchStrategies, applicationProperties);
     }
 
     @Nullable

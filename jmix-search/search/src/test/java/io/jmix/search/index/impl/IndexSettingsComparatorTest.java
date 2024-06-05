@@ -30,7 +30,7 @@ class IndexSettingsComparatorTest {
         Map<String, String> indexSettings = Map.of("setting1", "value1", "setting2", "value2");
         Map<String, String> applicationSetting = Map.of("setting1", "value1", "setting2", "value2");
         IndexSettingsComparator.SettingsComparingResult result = indexSettingsComparator.compare(indexSettings, applicationSetting);
-        assertEquals(IndexSettingsComparator.SettingsComparingResult.SETTINGS_ARE_EQUAL, result);
+        assertEquals(IndexSettingsComparator.SettingsComparingResult.EQUAL, result);
     }
 
     @Test
@@ -39,7 +39,7 @@ class IndexSettingsComparatorTest {
         Map<String, String> indexSettings = Map.of("setting1", "value1", "setting2", "value2", "setting3", "value3");
         Map<String, String> applicationSetting = Map.of("setting1", "value1", "setting2", "value2");
         IndexSettingsComparator.SettingsComparingResult result = indexSettingsComparator.compare(indexSettings, applicationSetting);
-        assertEquals(IndexSettingsComparator.SettingsComparingResult.SETTINGS_ARE_EQUAL, result);
+        assertEquals(IndexSettingsComparator.SettingsComparingResult.EQUAL, result);
     }
 
     @Test
@@ -48,6 +48,6 @@ class IndexSettingsComparatorTest {
         Map<String, String> indexSettings = Map.of("setting1", "value1", "setting2", "value2");
         Map<String, String> applicationSetting = Map.of("setting1", "value1", "setting2", "value2", "setting3", "value3");
         IndexSettingsComparator.SettingsComparingResult result = indexSettingsComparator.compare(indexSettings, applicationSetting);
-        assertEquals(IndexSettingsComparator.SettingsComparingResult.SETTINGS_ARE_NOT_COMPATIBLE, result);
+        assertEquals(IndexSettingsComparator.SettingsComparingResult.NOT_COMPATIBLE, result);
     }
 }

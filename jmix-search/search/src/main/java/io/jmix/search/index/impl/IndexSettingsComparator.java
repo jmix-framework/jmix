@@ -30,16 +30,16 @@ public class IndexSettingsComparator {
             return !actualValue.equals(currentValue);
         }).count();
 
-        return unmatchedSettings == 0 ? SettingsComparingResult.SETTINGS_ARE_EQUAL : SettingsComparingResult.SETTINGS_ARE_NOT_COMPATIBLE;
+        return unmatchedSettings == 0 ? SettingsComparingResult.EQUAL : SettingsComparingResult.NOT_COMPATIBLE;
     }
 
     enum SettingsComparingResult implements ConfigurationPartComparingResult{
-        SETTINGS_ARE_EQUAL,
-        SETTINGS_ARE_NOT_COMPATIBLE;
+        EQUAL,
+        NOT_COMPATIBLE;
 
         @Override
         public boolean indexRecreatingIsRequired() {
-            return this == SETTINGS_ARE_NOT_COMPATIBLE;
+            return this == NOT_COMPATIBLE;
         }
 
         @Override

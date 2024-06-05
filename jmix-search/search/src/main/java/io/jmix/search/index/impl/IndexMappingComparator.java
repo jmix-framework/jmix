@@ -32,50 +32,50 @@ public class IndexMappingComparator {
     public MappingComparingResult compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
 
         if (!applicationMapping.keySet().containsAll(searchIndexMapping.keySet())) {
-            return MappingComparingResult.MAPPINGS_NOT_COMPATIBLE;
+            return MappingComparingResult.NOT_COMPATIBLE;
         }
 
         if (mappingFieldComparator.isLeafField(searchIndexMapping)) {
             if (mappingFieldComparator.isLeafField(applicationMapping)) {
                 return mappingFieldComparator.compareLeafFields(searchIndexMapping, applicationMapping);
             } else {
-                return MappingComparingResult.MAPPINGS_NOT_COMPATIBLE;
+                return MappingComparingResult.NOT_COMPATIBLE;
             }
         }
 
-        MappingComparingResult result = MappingComparingResult.MAPPINGS_ARE_EQUAL;
+        MappingComparingResult result = MappingComparingResult.EQUAL;
         for (Map.Entry<String, Object> mapEntry : searchIndexMapping.entrySet()) {
             if (!(mapEntry.getValue() instanceof Map)) {
-                return MappingComparingResult.MAPPINGS_NOT_COMPATIBLE;
+                return MappingComparingResult.NOT_COMPATIBLE;
             }
 
             MappingComparingResult currentResult = compare((Map<String, Object>) mapEntry.getValue(), (Map<String, Object>) applicationMapping.get(mapEntry.getKey()));
-            if (currentResult == MappingComparingResult.MAPPINGS_NOT_COMPATIBLE) return MappingComparingResult.MAPPINGS_NOT_COMPATIBLE;
-            if (currentResult == MappingComparingResult.INDEX_MAPPING_CAN_BE_UPDATED && result != MappingComparingResult.INDEX_MAPPING_CAN_BE_UPDATED) {
-                result = MappingComparingResult.INDEX_MAPPING_CAN_BE_UPDATED;
+            if (currentResult == MappingComparingResult.NOT_COMPATIBLE) return MappingComparingResult.NOT_COMPATIBLE;
+            if (currentResult == MappingComparingResult.CAN_BE_UPDATED && result != MappingComparingResult.CAN_BE_UPDATED) {
+                result = MappingComparingResult.CAN_BE_UPDATED;
             }
         }
 
-        if (result == MappingComparingResult.MAPPINGS_ARE_EQUAL && applicationMapping.size() > searchIndexMapping.size()) {
-            return MappingComparingResult.INDEX_MAPPING_CAN_BE_UPDATED;
+        if (result == MappingComparingResult.EQUAL && applicationMapping.size() > searchIndexMapping.size()) {
+            return MappingComparingResult.CAN_BE_UPDATED;
         }
 
         return result;
     }
 
     enum MappingComparingResult implements ConfigurationPartComparingResult{
-        MAPPINGS_ARE_EQUAL,
-        INDEX_MAPPING_CAN_BE_UPDATED,
-        MAPPINGS_NOT_COMPATIBLE;
+        EQUAL,
+        CAN_BE_UPDATED,
+        NOT_COMPATIBLE;
 
         @Override
         public boolean indexRecreatingIsRequired() {
-            return this == MAPPINGS_NOT_COMPATIBLE;
+            return this == NOT_COMPATIBLE;
         }
 
         @Override
         public boolean configurationUpdateIsRequired() {
-            return this == INDEX_MAPPING_CAN_BE_UPDATED;
+            return this == CAN_BE_UPDATED;
         }
     }
 }

@@ -52,7 +52,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_ARE_EQUAL, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.EQUAL, result);
     }
 
     @Test
@@ -81,7 +81,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_ARE_EQUAL, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.EQUAL, result);
     }
 
     @Test
@@ -113,7 +113,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.INDEX_MAPPING_CAN_BE_UPDATED, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.CAN_BE_UPDATED, result);
     }
 
     @Test
@@ -140,7 +140,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -185,7 +185,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_ARE_EQUAL, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.EQUAL, result);
     }
 
     @Test
@@ -228,7 +228,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -250,7 +250,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -271,7 +271,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.INDEX_MAPPING_CAN_BE_UPDATED, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.CAN_BE_UPDATED, result);
     }
 
     @Test
@@ -314,7 +314,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -357,7 +357,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -402,7 +402,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -447,7 +447,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -492,7 +492,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -537,7 +537,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -584,7 +584,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -629,7 +629,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -669,7 +669,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.INDEX_MAPPING_CAN_BE_UPDATED, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.CAN_BE_UPDATED, result);
     }
 
     @Test
@@ -706,6 +706,6 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new IndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 }

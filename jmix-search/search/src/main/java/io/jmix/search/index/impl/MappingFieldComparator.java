@@ -33,6 +33,6 @@ public class MappingFieldComparator {
 
     public IndexMappingComparator.MappingComparingResult compareLeafFields(@NotNull Map<String, Object> searchIndexMapping, @NotNull Map<String, Object> applicationMapping) {
         if (isNull(searchIndexMapping) || isNull(applicationMapping)) throw new NullPointerException();
-        return searchIndexMapping.equals(applicationMapping) ? IndexMappingComparator.MappingComparingResult.MAPPINGS_ARE_EQUAL : IndexMappingComparator.MappingComparingResult.MAPPINGS_NOT_COMPATIBLE;
+        return searchIndexMapping.equals(applicationMapping) ? IndexMappingComparator.MappingComparingResult.EQUAL : IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE;
     }
 }

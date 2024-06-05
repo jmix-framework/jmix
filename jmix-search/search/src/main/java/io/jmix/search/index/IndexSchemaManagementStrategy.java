@@ -33,9 +33,9 @@ public enum IndexSchemaManagementStrategy {
     CREATE_ONLY("create-only"),
 
     /**
-     * Creates missing but skips existent indexes. Updates index(updates mapping or configuration) it is possible.
+     * Creates missing but skips existent indexes. Updates index(updates mapping or configuration) if it is possible.
      */
-    CREATE_OR_CONFIGURATION_UPDATE("create-or-configuration-update"),
+    CREATE_OR_UPDATE("create-or-update"),
 
     /**
      * Creates missing and recreates irrelevant indexes.
@@ -81,7 +81,7 @@ public enum IndexSchemaManagementStrategy {
     }
 
     public boolean canUpdateConfiguration(){
-        return this == CREATE_OR_CONFIGURATION_UPDATE || this == CREATE_OR_RECREATE;
+        return this == CREATE_OR_UPDATE || this == CREATE_OR_RECREATE;
     }
 
     public boolean canCreateIndex(){

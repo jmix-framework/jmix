@@ -277,7 +277,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
                 boolean mappingSavingResult = putMapping(indexConfiguration);
                 if (mappingSavingResult) {
                     indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-                    return IndexSynchronizationStatus.INDEX_MAPPING_UPDATED;
+                    return IndexSynchronizationStatus.UPDATED;
                 }else{
                     log.error("Problem with index mapping saving.");
                     indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());

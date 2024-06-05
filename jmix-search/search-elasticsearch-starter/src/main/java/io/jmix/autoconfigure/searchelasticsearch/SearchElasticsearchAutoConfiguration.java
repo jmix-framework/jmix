@@ -18,15 +18,14 @@ package io.jmix.autoconfigure.searchelasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.data.DataConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.EntityIndexer;
+import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
@@ -90,7 +89,7 @@ public class SearchElasticsearchAutoConfiguration {
                 .build();
 
 
-        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
     }
 

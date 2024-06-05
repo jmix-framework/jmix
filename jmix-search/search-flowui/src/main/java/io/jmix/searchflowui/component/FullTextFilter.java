@@ -26,7 +26,9 @@ import io.jmix.flowui.component.jpqlfilter.JpqlFilterSupport;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.*;
+import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchResult;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;

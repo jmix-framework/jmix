@@ -21,7 +21,7 @@ import io.jmix.core.*;
 import io.jmix.data.DataConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.ESIndexManager;
+import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
@@ -92,11 +92,11 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     @Bean("search_OpenSearchIndexManager")
-    protected ESIndexManager openSearchIndexManager(OpenSearchClient client,
-                                                    IndexStateRegistry indexStateRegistry,
-                                                    IndexConfigurationManager indexConfigurationManager,
-                                                    SearchProperties searchProperties,
-                                                    OpenSearchIndexSettingsProvider indexSettingsProcessor) {
+    protected IndexManager openSearchIndexManager(OpenSearchClient client,
+                                                  IndexStateRegistry indexStateRegistry,
+                                                  IndexConfigurationManager indexConfigurationManager,
+                                                  SearchProperties searchProperties,
+                                                  OpenSearchIndexSettingsProvider indexSettingsProcessor) {
         return new OpenSearchIndexManager(client, indexStateRegistry, indexConfigurationManager, searchProperties, indexSettingsProcessor);
     }
 

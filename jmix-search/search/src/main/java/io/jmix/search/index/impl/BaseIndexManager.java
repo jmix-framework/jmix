@@ -20,7 +20,7 @@ import java.util.Map;
  * Contains non-platform-specific operations.
  * Interaction with indexes is performed in platform-specific implementations.
  */
-public abstract class BaseIndexManager implements ESIndexManager {
+public abstract class BaseIndexManager implements IndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(BaseIndexManager.class);
 

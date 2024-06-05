@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Provides functionality for index management.
  */
-public interface ESIndexManager {
+public interface IndexManager {
 
     /**
      * Creates index if not exists using provided {@link IndexConfiguration}.
@@ -106,8 +106,8 @@ public interface ESIndexManager {
 
     /**
      * Synchronizes schemas of all search indexes defined in application.
-     * <p>See {@link ESIndexManager#synchronizeIndexSchemas(Collection)}
-     * <p>See {@link ESIndexManager#synchronizeIndexSchema(IndexConfiguration)}
+     * <p>See {@link IndexManager#synchronizeIndexSchemas(Collection)}
+     * <p>See {@link IndexManager#synchronizeIndexSchema(IndexConfiguration)}
      *
      * @return {@link IndexSynchronizationStatus} per each {@link IndexConfiguration}
      */
@@ -116,7 +116,7 @@ public interface ESIndexManager {
     /**
      * Synchronizes schemas of search indexes for provided collection of {@link IndexConfiguration}.
      * <p>
-     * See {@link ESIndexManager#synchronizeIndexSchema(IndexConfiguration)}
+     * See {@link IndexManager#synchronizeIndexSchema(IndexConfiguration)}
      *
      * @param indexConfigurations actual index configurations
      * @return {@link IndexSynchronizationStatus} per each {@link IndexConfiguration}

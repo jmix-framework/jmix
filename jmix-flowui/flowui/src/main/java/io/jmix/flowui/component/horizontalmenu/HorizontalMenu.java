@@ -17,16 +17,7 @@
 package io.jmix.flowui.component.horizontalmenu;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.HasComponents;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.KeyModifier;
-import com.vaadin.flow.component.ShortcutEvent;
-import com.vaadin.flow.component.ShortcutRegistration;
-import com.vaadin.flow.component.Shortcuts;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -53,12 +44,7 @@ import io.jmix.flowui.menu.provider.MenuItemProvider;
 import io.jmix.flowui.view.View;
 import jakarta.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -813,6 +799,13 @@ public class HorizontalMenu extends Composite<JmixMenuBar>
 
             this.viewClass = viewClass;
             getContent().setRoute(viewClass);
+        }
+
+        public ViewMenuItem(String id, Class<? extends View<?>> viewClass, List<MenuItemParameter> routeParameters) {
+            super(id);
+
+            this.viewClass = viewClass;
+            setRouteParameters(routeParameters);
         }
 
         /**

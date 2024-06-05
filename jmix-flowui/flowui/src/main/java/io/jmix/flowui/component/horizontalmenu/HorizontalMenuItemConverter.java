@@ -20,6 +20,9 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.router.QueryParameters;
+import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.RouterLink;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.menu.MenuConfig;
@@ -31,16 +34,20 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Component("flowui_HorizontalMenuItemConverter")
 public class HorizontalMenuItemConverter {
@@ -53,6 +60,7 @@ public class HorizontalMenuItemConverter {
     protected MessageTools messageTools;
     protected UiAccessChecker uiAccessChecker;
     protected MenuItemCommands menuItemCommands;
+    protected ViewNavigationSupport viewNavigationSupport;
 
     public HorizontalMenuItemConverter(MenuConfig menuConfig,
                                        ViewRegistry viewRegistry,
@@ -64,6 +72,11 @@ public class HorizontalMenuItemConverter {
         this.messageTools = messageTools;
         this.uiAccessChecker = uiAccessChecker;
         this.menuItemCommands = menuItemCommands;
+    }
+
+    @Autowired
+    protected void setViewNavigationSupport(ViewNavigationSupport viewNavigationSupport) {
+        this.viewNavigationSupport = viewNavigationSupport;
     }
 
     public Optional<HorizontalMenu.AbstractMenuItem<?>> createMenuItemWithChildren(MenuItem menuItemDescriptor) {
@@ -184,8 +197,10 @@ public class HorizontalMenuItemConverter {
     }
 
     protected HorizontalMenu.MenuItem createViewMenuItem(MenuItem menuItemDescriptor) {
-        HorizontalMenu.ViewMenuItem viewMenuItem =
-                new HorizontalMenu.ViewMenuItem(menuItemDescriptor.getId(), getViewClass(menuItemDescriptor));
+        HorizontalMenu.ViewMenuItem viewMenuItem = menuItemDescriptor.getRouteParameters().isEmpty()
+                ? new HorizontalMenu.ViewMenuItem(menuItemDescriptor.getId(), getViewClass(menuItemDescriptor))
+                : new HorizontalMenu.ViewMenuItem(menuItemDescriptor.getId(), getViewClass(menuItemDescriptor),
+                menuItemDescriptor.getRouteParameters());
 
         viewMenuItem.setPrefixComponent(getIcon(menuItemDescriptor));
         viewMenuItem.setTitle(menuConfig.getItemTitle(menuItemDescriptor));
@@ -193,8 +208,40 @@ public class HorizontalMenuItemConverter {
         viewMenuItem.setTooltipText(getDescription(menuItemDescriptor));
         viewMenuItem.addClassNames(getClassNames(menuItemDescriptor));
         viewMenuItem.setUrlQueryParameters(menuItemDescriptor.getUrlQueryParameters());
-        viewMenuItem.setRouteParameters(menuItemDescriptor.getRouteParameters());
         viewMenuItem.setShortcutCombination(menuItemDescriptor.getShortcutCombination());
+
+        // if the menu item is in the root
+        // workaround will be applied
+        // remove after Vaadin's bugfix: https://github.com/vaadin/flow-components/issues/1440
+        if (menuItemDescriptor.getParent() == null) {
+            RouterLink link = viewMenuItem.getContent();
+            link.getElement().executeJs("""
+                    this.addEventListener("click", e => {
+                        e.preventDefault();
+                        this.dispatchEvent(new CustomEvent('client-side-click'));
+                    });
+                    """);
+
+            link.getElement().addEventListener("client-side-click", event -> {
+                RouteParameters routeParameters = new RouteParameters(
+                        menuItemDescriptor.getRouteParameters().stream()
+                                .collect(
+                                        Collectors.toMap(MenuItem.MenuItemParameter::getName,
+                                                MenuItem.MenuItemParameter::getValue)
+                                )
+                );
+
+                QueryParameters urlQueryParameters = viewMenuItem.getUrlQueryParameters() == null
+                        ? QueryParameters.empty()
+                        : viewMenuItem.getUrlQueryParameters();
+
+                viewNavigationSupport.navigate(
+                        Objects.requireNonNull(viewMenuItem.getViewClass()),
+                        routeParameters,
+                        urlQueryParameters
+                );
+            });
+        }
 
         return viewMenuItem;
     }

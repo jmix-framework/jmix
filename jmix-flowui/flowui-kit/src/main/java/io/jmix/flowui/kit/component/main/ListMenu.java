@@ -39,7 +39,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ListMenu extends Composite<UnorderedList> implements HasSize, HasStyle, HasThemeVariant<ListMenuVariant> {

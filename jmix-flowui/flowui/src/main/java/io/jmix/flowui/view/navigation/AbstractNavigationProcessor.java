@@ -19,6 +19,7 @@ package io.jmix.flowui.view.navigation;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.shared.Registration;
@@ -31,6 +32,7 @@ import io.jmix.flowui.view.navigation.SupportsAfterViewNavigationHandler.AfterVi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.util.Optional;
 
 public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigator> {
@@ -66,7 +68,7 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
 
         if (navigator.isBackwardNavigation()) {
             log.trace("Fetching current URL for backward navigation");
-            UI.getCurrent().getPage().fetchCurrentURL(url -> {
+            fetchCurrentURL(url -> {
                 log.trace("Fetched URL: {}", url.toString());
 
                 Registration detachRegistration = ViewControllerUtils.addDetachListener(origin, __ -> {
@@ -125,6 +127,10 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         } else {
             return inferViewClass(navigator);
         }
+    }
+
+    protected void fetchCurrentURL(SerializableConsumer<URL> callback) {
+        UI.getCurrent().getPage().fetchCurrentURL(callback);
     }
 
     protected abstract Class<? extends View> inferViewClass(N navigator);

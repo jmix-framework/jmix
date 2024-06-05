@@ -16,19 +16,19 @@
 
 package io.jmix.autoconfigure.searchaws;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.ElasticsearchTransport;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.amazonaws.auth.*;
 import com.google.common.base.Strings;
-import io.jmix.autoconfigure.searchelasticsearch.SearchElasticsearchAutoConfiguration;
+import io.jmix.autoconfigure.searchopensearch.SearchOpenSearchAutoConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.utils.SslConfigurer;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
-import org.elasticsearch.client.RestClient;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.json.jackson.JacksonJsonpMapper;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.transport.OpenSearchTransport;
+import org.opensearch.client.transport.rest_client.RestClientTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Bean;
 import javax.net.ssl.SSLContext;
 
 @AutoConfiguration
-@AutoConfigureBefore(SearchElasticsearchAutoConfiguration.class)
+@AutoConfigureBefore(SearchOpenSearchAutoConfiguration.class)
 @ConfigurationPropertiesScan
 public class SearchAwsAutoConfiguration {
 
@@ -54,40 +54,16 @@ public class SearchAwsAutoConfiguration {
     @Autowired
     protected SslConfigurer sslConfigurer;
 
-    /*@Bean("search_RestHighLevelClient")
+    @Bean("search_OpenSearchClient")
     @ConditionalOnProperty(name = "jmix.search.server.aws.iam-auth", matchIfMissing = true)
-    public RestHighLevelClient elasticSearchClient() {
-        log.debug("Create ES Client with AWS IAM Authentication");
-        String esUrl = searchProperties.getConnectionUrl();
-        HttpHost esHttpHost = HttpHost.create(esUrl);
-        RestClientBuilder restClientBuilder = RestClient.builder(esHttpHost);
-
+    public OpenSearchClient openSearchClient() {
+        log.debug("Create OpenSearch Client with AWS IAM Authentication");
+        String url = searchProperties.getServerUrl();
         HttpRequestInterceptor interceptor = createHttpRequestInterceptor();
         SSLContext sslContext = sslConfigurer.createSslContext();
-        restClientBuilder.setHttpClientConfigCallback(builder -> {
-            builder.addInterceptorLast(interceptor);
-            if (sslContext != null) {
-                builder.setSSLContext(sslContext);
-            }
-            return builder;
-        });
-
-        return new RestHighLevelClientBuilder(restClientBuilder.build())
-                .setApiCompatibilityMode(searchProperties.isRestHighLevelClientApiCompatibilityModeEnabled())
-                .build();
-    }*/
-
-    @Bean("search_ElasticsearchClient")
-    @ConditionalOnProperty(name = "jmix.search.server.aws.iam-auth", matchIfMissing = true)
-    public ElasticsearchClient elasticsearchClient() {
-        log.debug("Create ES Client with AWS IAM Authentication");
-        String esUrl = searchProperties.getServerUrl();
-        HttpRequestInterceptor interceptor = createHttpRequestInterceptor();
-        SSLContext sslContext = sslConfigurer.createSslContext();
-
 
         RestClient restClient = RestClient
-                .builder(HttpHost.create(esUrl))
+                .builder(HttpHost.create(url))
                 .setHttpClientConfigCallback(httpClientBuilder -> {
                     httpClientBuilder.addInterceptorLast(interceptor);
                     if (sslContext != null) {
@@ -97,9 +73,8 @@ public class SearchAwsAutoConfiguration {
                 })
                 .build();
 
-
-        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
-        return new ElasticsearchClient(transport);
+        OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        return new OpenSearchClient(transport);
     }
 
     protected HttpRequestInterceptor createHttpRequestInterceptor() {

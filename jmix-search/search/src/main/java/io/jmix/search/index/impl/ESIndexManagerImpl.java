@@ -22,6 +22,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -225,14 +226,14 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     @Override
-    public boolean putMapping(IndexConfiguration indexConfiguration) {
-        PutMappingRequest request = new PutMappingRequest(indexConfiguration.getIndexName());
+    public boolean putMapping(String indexName, IndexMappingConfiguration mapping) {
+        PutMappingRequest request = new PutMappingRequest(indexName);
 
         String mappingBody;
         try {
-            mappingBody = objectMapper.writeValueAsString(indexConfiguration.getMapping());
+            mappingBody = objectMapper.writeValueAsString(mapping);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to update index mapping'" + indexConfiguration.getIndexName() + "': Failed to parse index mapping.", e);
+            throw new RuntimeException("Unable to update index mapping'" + indexName + "': Failed to parse index mapping.", e);
         }
 
         request.source(mappingBody, XContentType.JSON);
@@ -274,7 +275,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
     private IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
         if(strategy.canUpdateConfiguration()) {
             if(result.isMappingUpdateRequired()){
-                boolean mappingSavingResult = putMapping(indexConfiguration);
+                boolean mappingSavingResult = putMapping(indexConfiguration.getIndexName(), indexConfiguration.getMapping());
                 if (mappingSavingResult) {
                     indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
                     return IndexSynchronizationStatus.UPDATED;

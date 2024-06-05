@@ -148,8 +148,8 @@ public class SearchOpenSearchAutoConfiguration {
         );
     }
 
-    @Bean("search_OpenSearchSearchStrategyManager")
-    protected OpenSearchSearchStrategyProvider openSearchSearchStrategyManager(
+    @Bean("search_OpenSearchSearchStrategyProvider")
+    protected OpenSearchSearchStrategyProvider openSearchSearchStrategyProvider(
             Collection<OpenSearchSearchStrategy> searchStrategies,
             SearchProperties applicationProperties) {
         return new OpenSearchSearchStrategyProvider(searchStrategies, applicationProperties);

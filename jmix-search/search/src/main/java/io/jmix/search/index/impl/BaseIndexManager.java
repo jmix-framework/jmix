@@ -1,6 +1,9 @@
 package io.jmix.search.index.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
@@ -10,8 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Contains non-platform-specific operations.
+ * Interaction with indexes is performed in platform-specific implementations.
+ */
 public abstract class BaseIndexManager implements ESIndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(BaseIndexManager.class);
@@ -21,6 +29,9 @@ public abstract class BaseIndexManager implements ESIndexManager {
     protected final SearchProperties searchProperties;
 
     protected final ObjectMapper objectMapper;
+
+    protected final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
+    };
 
     protected BaseIndexManager(IndexConfigurationManager indexConfigurationManager,
                                IndexStateRegistry indexStateRegistry,
@@ -111,7 +122,7 @@ public abstract class BaseIndexManager implements ESIndexManager {
     }
 
     @Override
-    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations) { //todo super class
+    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations) {
         Preconditions.checkNotNullArgument(indexConfigurations);
 
         Map<IndexConfiguration, IndexSynchronizationStatus> result = new HashMap<>();
@@ -123,14 +134,16 @@ public abstract class BaseIndexManager implements ESIndexManager {
     }
 
     @Override
-    public IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration) { //todo super class
+    public IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         IndexSchemaManagementStrategy strategy = searchProperties.getIndexSchemaManagementStrategy();
         return synchronizeIndexSchema(indexConfiguration, strategy);
     }
 
-    protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) { //todo super class
+    protected abstract boolean isIndexActual(IndexConfiguration indexConfiguration);
+
+    protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         log.info("Synchronize search index '{}' (entity '{}') according to strategy '{}'",
                 indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), strategy);
         IndexSynchronizationStatus status;
@@ -151,7 +164,7 @@ public abstract class BaseIndexManager implements ESIndexManager {
         return status;
     }
 
-    protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) { //todo super class
+    protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
         if (IndexSchemaManagementStrategy.CREATE_OR_RECREATE.equals(strategy)) {
             boolean created = recreateIndex(indexConfiguration);
@@ -169,7 +182,7 @@ public abstract class BaseIndexManager implements ESIndexManager {
         return status;
     }
 
-    protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) { //todo super class
+    protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
 
         if (IndexSchemaManagementStrategy.NONE.equals(strategy)) {
@@ -187,5 +200,48 @@ public abstract class BaseIndexManager implements ESIndexManager {
         return status;
     }
 
-    protected abstract boolean isIndexActual(IndexConfiguration indexConfiguration);
+    protected boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) {
+        log.trace("Check if node {} contains {}", containerNode, contentNode);
+        Iterator<Map.Entry<String, JsonNode>> fieldsIterator = contentNode.fields();
+        while (fieldsIterator.hasNext()) {
+            Map.Entry<String, JsonNode> entry = fieldsIterator.next();
+            String fieldName = entry.getKey();
+            log.trace("Check field '{}'", fieldName);
+            JsonNode contentFieldValue = entry.getValue();
+            JsonNode containerFieldValue;
+            if (containerNode.has(fieldName)) {
+                log.trace("Container has field '{}'", fieldName);
+                containerFieldValue = containerNode.get(fieldName);
+            } else {
+                log.trace("Container doesn't have field '{}'. STOP - FALSE", fieldName);
+                return false;
+            }
+
+            if (containerFieldValue == null) {
+                log.trace("Container has NULL field '{}'. STOP - FALSE", fieldName);
+                return false;
+            }
+
+            if (!contentFieldValue.getNodeType().equals(containerFieldValue.getNodeType())) {
+                log.trace("Type of container field ({}) doesn't match the type of content field ({}). STOP - FALSE",
+                        containerFieldValue.getNodeType(), contentFieldValue.getNodeType());
+                return false;
+            }
+
+            if (contentFieldValue.isObject() && containerFieldValue.isObject()) {
+                log.trace("Both container and content field is objects - check nested structure");
+                boolean nestedResult = nodeContains((ObjectNode) containerFieldValue, (ObjectNode) contentFieldValue);
+                if (!nestedResult) {
+                    log.trace("Structures of the nested objects ({}) are different. STOP - FALSE", fieldName);
+                    return false;
+                }
+            }
+
+            if (!containerFieldValue.equals(contentFieldValue)) {
+                return false;
+            }
+        }
+        log.trace("Structures are the same. TRUE");
+        return true;
+    }
 }

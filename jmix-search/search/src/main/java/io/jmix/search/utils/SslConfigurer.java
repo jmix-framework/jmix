@@ -37,7 +37,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
-@Component("search_ElasticsearchSslConfigurer")
+@Component("search_SslConfigurer")
 public class SslConfigurer {
 
     private static final Logger log = LoggerFactory.getLogger(SslConfigurer.class);

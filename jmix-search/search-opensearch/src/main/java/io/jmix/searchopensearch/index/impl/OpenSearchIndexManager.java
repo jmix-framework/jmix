@@ -17,7 +17,6 @@
 package io.jmix.searchopensearch.index.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -44,9 +43,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Implementation for OpenSearch
+ */
 public class OpenSearchIndexManager extends BaseIndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchIndexManager.class);
@@ -121,6 +122,29 @@ public class OpenSearchIndexManager extends BaseIndexManager {
         }
     }
 
+    @Override
+    public ObjectNode getIndexMetadata(String indexName) {
+        IndexState indexState = getIndexMetadataInternal(indexName);
+        if (indexState == null) {
+            return objectMapper.createObjectNode();
+        }
+        return toObjectNode(indexState);
+    }
+
+    @Override
+    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
+        Preconditions.checkNotNullArgument(indexConfiguration);
+
+        IndexState indexState = getIndexMetadataInternal(indexConfiguration.getIndexName());
+        if (indexState == null) {
+            return false;
+        }
+        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexState);
+        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexState);
+
+        return indexMappingActual && indexSettingsActual;
+    }
+
     protected TypeMapping buildMapping(IndexConfiguration indexConfiguration) {
         String mappingBody;
         try {
@@ -164,20 +188,7 @@ public class OpenSearchIndexManager extends BaseIndexManager {
         }
     }
 
-    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
-        IndexState indexState = getIndexMetadataInternal(indexConfiguration.getIndexName());
-        if (indexState == null) {
-            return false;
-        }
-        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexState);
-        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexState);
-
-        return indexMappingActual && indexSettingsActual;
-    }
-
-    protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName) { //todo getIndexMetadata (single) to API
+    protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
         try {
             return client.indices().get(builder -> builder.index(indexName).includeDefaults(true)).result();
@@ -198,14 +209,9 @@ public class OpenSearchIndexManager extends BaseIndexManager {
             currentMapping = Collections.emptyMap();
         } else {
             ObjectNode currentMappingNode = toObjectNode(typeMapping);
-            currentMapping = objectMapper.convertValue(currentMappingNode, new TypeReference<>() {
-            });
+            currentMapping = objectMapper.convertValue(currentMappingNode, MAP_TYPE_REF);
         }
-        Map<String, Object> actualMapping = objectMapper.convertValue(
-                indexConfiguration.getMapping(),
-                new TypeReference<>() {
-                }
-        );
+        Map<String, Object> actualMapping = objectMapper.convertValue(indexConfiguration.getMapping(), MAP_TYPE_REF);
         log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
                 indexConfiguration.getIndexName(), currentMapping, actualMapping);
         return actualMapping.equals(currentMapping);
@@ -216,62 +222,21 @@ public class OpenSearchIndexManager extends BaseIndexManager {
         IndexSettings allAppliedSettings = currentIndexState.settings();
 
         if (allAppliedSettings == null) {
-            throw new IllegalArgumentException("No info about all applied settings for index '" + indexConfiguration.getIndexName() + "'");
+            throw new IllegalArgumentException(
+                    "No info about all applied settings for index '" + indexConfiguration.getIndexName() + "'"
+            );
         }
 
         IndexSettings appliedSettings = allAppliedSettings.index();
         if (appliedSettings == null) {
-            throw new IllegalArgumentException("No info about applied index settings for index '" + indexConfiguration.getIndexName() + "'");
+            throw new IllegalArgumentException(
+                    "No info about applied index settings for index '" + indexConfiguration.getIndexName() + "'"
+            );
         }
 
         ObjectNode expectedSettingsNode = toObjectNode(expectedSettings);
         ObjectNode currentSettingsNode = toObjectNode(appliedSettings);
 
         return nodeContains(currentSettingsNode, expectedSettingsNode);
-    }
-
-    protected boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) { //todo to super class
-        log.info("[IVGA] Check if node {} contains {}", containerNode, contentNode);
-        Iterator<Map.Entry<String, JsonNode>> fieldsIterator = contentNode.fields();
-        while (fieldsIterator.hasNext()) {
-            Map.Entry<String, JsonNode> entry = fieldsIterator.next();
-            String fieldName = entry.getKey();
-            log.info("[IVGA] Check field '{}'", fieldName);
-            JsonNode contentFieldValue = entry.getValue();
-            JsonNode containerFieldValue;
-            if (containerNode.has(fieldName)) {
-                log.info("[IVGA] Container has field '{}'", fieldName);
-                containerFieldValue = containerNode.get(fieldName);
-            } else {
-                log.info("[IVGA] Container doesn't have field '{}'. STOP - FALSE", fieldName);
-                return false;
-            }
-
-            if (containerFieldValue == null) {
-                log.info("[IVGA] Container has NULL field '{}'. STOP - FALSE", fieldName);
-                return false;
-            }
-
-            if (!contentFieldValue.getNodeType().equals(containerFieldValue.getNodeType())) {
-                log.info("[IVGA] Type of container field ({}) doesn't match the type of content field ({}). STOP - FALSE",
-                        containerFieldValue.getNodeType(), contentFieldValue.getNodeType());
-                return false;
-            }
-
-            if (contentFieldValue.isObject() && containerFieldValue.isObject()) {
-                log.info("[IVGA] Both container and content field is objects - check nested structure");
-                boolean nestedResult = nodeContains((ObjectNode) containerFieldValue, (ObjectNode) contentFieldValue);
-                if (!nestedResult) {
-                    log.info("[IVGA] Structures of the nested objects ({}) are different. STOP - FALSE", fieldName);
-                    return false;
-                }
-            }
-
-            if (!containerFieldValue.equals(contentFieldValue)) {
-                return false;
-            }
-        }
-        log.info("[IVGA] Structures are the same. TRUE");
-        return true;
     }
 }

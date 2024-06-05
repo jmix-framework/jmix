@@ -111,7 +111,7 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
             Map<MetaClass, List<Hit<ObjectNode>>> hitsByEntityName = groupHitsByEntity(hits);
             fillSearchResult(searchResult, hitsByEntityName);
 
-            long totalHits = hits.total().value();
+            long totalHits = hits.total() == null ? hits.hits().size() : hits.total().value();
             searchResult.setTotalHits(totalHits);
             moreDataAvailable = (totalHits - searchResult.getEffectiveOffset()) > 0;
         } while (moreDataAvailable && !isResultFull(searchResult, searchContext));
@@ -154,11 +154,20 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
                                           int offset) {
 
         SearchRequest.Builder builder = new SearchRequest.Builder();
-        builder.index(targetIndexes);
+        initRequest(builder, targetIndexes);
         searchStrategy.configureRequest(builder, searchContext);
+        applyPostStrategyRequestSettings(builder, searchContext, offset);
+        return builder.build();
+    }
+
+    protected void initRequest(SearchRequest.Builder builder, List<String> targetIndexes) {
+        builder.index(targetIndexes);
+    }
+
+    protected void applyPostStrategyRequestSettings(SearchRequest.Builder builder, SearchContext searchContext, int offset) {
         builder.size(searchContext.getSize()).from(offset);
         configureHighlight(builder);
-        return builder.build();
+        builder.trackTotalHits(b -> b.enabled(true));
     }
 
     protected void configureHighlight(SearchRequest.Builder requestBuilder) {

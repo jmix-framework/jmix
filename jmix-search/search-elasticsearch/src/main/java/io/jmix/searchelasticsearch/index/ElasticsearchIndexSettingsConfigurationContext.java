@@ -19,6 +19,9 @@ package io.jmix.searchelasticsearch.index;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import io.jmix.search.index.BaseIndexSettingsConfigurationContext;
 
+/**
+ * Configuration context for Elasticsearch index settings
+ */
 public class ElasticsearchIndexSettingsConfigurationContext extends BaseIndexSettingsConfigurationContext<IndexSettings.Builder> {
 
     public ElasticsearchIndexSettingsConfigurationContext() {

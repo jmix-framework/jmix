@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
- * Allows to configure Elasticsearch index settings.
+ * Allows to configure index settings (including analysis).
  * <p>
  * Settings can be configured for all search indexes ({@link BaseIndexSettingsConfigurationContext#getCommonSettingsBuilder()})
  * or for index related to specific entity ({@link BaseIndexSettingsConfigurationContext#getEntitySettingsBuilder(Class)}).
@@ -42,10 +42,8 @@ public class BaseIndexSettingsConfigurationContext<T> {
 
     /**
      * Provides builder to set settings for all search indexes.
-     * <p>
-     * Use builder's 'put' methods to set settings values.
      *
-     * @return ES index settings builder
+     * @return Index settings builder
      */
     public T getCommonSettingsBuilder() {
         return commonSettingsBuilder;
@@ -53,9 +51,7 @@ public class BaseIndexSettingsConfigurationContext<T> {
 
     /**
      * Provides builder to set settings for index related to provided entity.
-     * Value explicitly set for specific index overrides common value.
-     * <p>
-     * Use builder's 'put' methods to set settings values.
+     * All necessary settings should be configured explicitly - they will not be merged with the common ones.
      *
      * @param entityClass entity class
      * @return ES index settings builder

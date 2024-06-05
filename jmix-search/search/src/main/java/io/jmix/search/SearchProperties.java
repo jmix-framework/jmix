@@ -122,8 +122,6 @@ public class SearchProperties {
      */
     protected final List<String> enqueueIndexAllOnStartupIndexRecreationEntities;
 
-    protected final String platform; //todo
-
     public SearchProperties(
             @DefaultValue("100") int searchResultPageSize,
             @DefaultValue("100") int maxSearchPageCount,
@@ -141,7 +139,6 @@ public class SearchProperties {
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
             @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
             @DefaultValue("0/5 * * * * ?") String enqueueingSessionProcessingCron,
-            @DefaultValue("es") String platform,
             @DefaultValue Connection connection) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
@@ -160,11 +157,6 @@ public class SearchProperties {
         this.restHighLevelClientApiCompatibilityModeEnabled = restHighLevelClientApiCompatibilityModeEnabled;
         this.enqueueIndexAllOnStartupIndexRecreationEntities = prepareStartupEnqueueingEntities(enqueueIndexAllOnStartupIndexRecreationEntities);
         this.searchIndexNamePrefix = searchIndexNamePrefix;
-        this.platform = platform;
-    }
-
-    public String getPlatform() {
-        return platform;
     }
 
     /**
@@ -324,7 +316,7 @@ public class SearchProperties {
     /**
      * @see Connection#bulkRequestRefreshPolicy
      */
-    public RefreshPolicy getBulkRequestRefreshPolicy() { //todo string?
+    public RefreshPolicy getBulkRequestRefreshPolicy() {
         return connection.bulkRequestRefreshPolicy;
     }
 
@@ -345,7 +337,7 @@ public class SearchProperties {
         return result;
     }
 
-    protected static class Connection {
+    public static class Connection {
 
         /**
          * Elasticsearch URL.

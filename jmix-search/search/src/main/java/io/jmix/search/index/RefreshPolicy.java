@@ -16,7 +16,7 @@
 
 package io.jmix.search.index;
 
-public enum RefreshPolicy { //todo naming
+public enum RefreshPolicy {
     TRUE("true"),
 
     FALSE("false"),

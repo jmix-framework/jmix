@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Provides Elasticsearch search strategies
+ */
 public class ElasticsearchSearchStrategyProvider implements SearchStrategyProvider<ElasticsearchSearchStrategy> {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchSearchStrategyProvider.class);

@@ -21,6 +21,9 @@ import org.opensearch.client.opensearch.indices.IndexSettings;
 
 import java.util.Map;
 
+/**
+ * Configuration context for OpenSearch index settings
+ */
 public class OpenSearchIndexSettingsConfigurationContext extends BaseIndexSettingsConfigurationContext<IndexSettings.Builder> {
 
     public OpenSearchIndexSettingsConfigurationContext() {

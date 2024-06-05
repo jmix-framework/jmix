@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
+@Component("search_ElasticsearchIndexSettingsProvider")
 public class ElasticsearchIndexSettingsProvider {
 
     protected final List<ElasticsearchIndexSettingsConfigurer> configurers;

@@ -128,8 +128,6 @@ public class AnnotatedIndexDefinitionProcessor {
         Set<Class<?>> affectedEntityClasses = getAffectedEntityClasses(indexMappingConfiguration);
         log.debug("Index Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
 
-        //Settings settings = configureSettings(indexDef.getEntityClass(), indexMappingConfiguration); //todo
-
         Predicate<Object> indexablePredicate = createIndexablePredicate(indexDef);
 
         return new IndexConfiguration(

@@ -37,6 +37,10 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Provides non-platform-specific functionality.
+ * Interaction with indexes is performed in platform-specific implementations.
+ */
 public abstract class BaseEntityIndexer implements EntityIndexer {
 
     private static final Logger log = LoggerFactory.getLogger(BaseEntityIndexer.class);
@@ -398,5 +402,5 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
     }
 
     protected record IndexDocumentData(String indexName, String id, ObjectNode source) {
-    } //todo naming
+    }
 }

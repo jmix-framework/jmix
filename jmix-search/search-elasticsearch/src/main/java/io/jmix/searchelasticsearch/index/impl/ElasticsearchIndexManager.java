@@ -22,7 +22,6 @@ import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.json.JsonpSerializable;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.common.util.Preconditions;
@@ -43,10 +42,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Implementation for Elasticsearch
+ */
 public class ElasticsearchIndexManager extends BaseIndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchIndexManager.class);
@@ -119,26 +119,28 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
         }
     }
 
-    //@Override
-    public Map<String, ObjectNode> getIndexMetadata(String indexName) {
-        Map<String, IndexState> content = getIndexMetadataMapInternal(indexName);
-        Map<String, ObjectNode> result = new HashMap<>();
-        //todo convert to objectNodes
-        content.forEach((index, indexState) -> {
-            JsonNode indexStateJsonNode = toJsonNode(indexState);
-            if (indexStateJsonNode.isObject()) {
-                result.put(index, (ObjectNode) indexStateJsonNode);
-            }
-        });
-        return result;
+    @Override
+    public ObjectNode getIndexMetadata(String indexName) {
+        IndexState indexState = getIndexMetadataInternal(indexName);
+        if (indexState == null) {
+            return objectMapper.createObjectNode();
+        }
+        return toObjectNode(indexState);
     }
 
-    /*@Override
-    public GetIndexResponse getIndex(String indexName) { //todo get index data as Json (map indexName - Json)?
-        org.opensearch.client.opensearch.indices.GetIndexResponse indexResponse = client.indices().get(builder -> builder.index(indexName));
-        Map<String, IndexState> result = indexResponse.result();
+    @Override
+    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
+        Preconditions.checkNotNullArgument(indexConfiguration);
 
-    }*/
+        IndexState indexState = getIndexMetadataInternal(indexConfiguration.getIndexName());
+        if (indexState == null) {
+            return false;
+        }
+        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexState);
+        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexState);
+
+        return indexMappingActual && indexSettingsActual;
+    }
 
     protected TypeMapping buildMapping(IndexConfiguration indexConfiguration) {
         String mappingBody;
@@ -183,20 +185,6 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
         }
     }
 
-    @Override
-    protected boolean isIndexActual(IndexConfiguration indexConfiguration) { //todo
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
-        IndexState indexState = getIndexMetadataInternal(indexConfiguration.getIndexName());
-        if (indexState == null) {
-            return false;
-        }
-        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexState);
-        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexState);
-
-        return indexMappingActual && indexSettingsActual;
-    }
-
     protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
         try {
@@ -218,14 +206,9 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
             currentMapping = Collections.emptyMap();
         } else {
             ObjectNode currentMappingNode = toObjectNode(typeMapping);
-            currentMapping = objectMapper.convertValue(currentMappingNode, new TypeReference<>() { //todo type ref
-            });
+            currentMapping = objectMapper.convertValue(currentMappingNode, MAP_TYPE_REF);
         }
-        Map<String, Object> actualMapping = objectMapper.convertValue(
-                indexConfiguration.getMapping(),
-                new TypeReference<>() {
-                }
-        );
+        Map<String, Object> actualMapping = objectMapper.convertValue(indexConfiguration.getMapping(), MAP_TYPE_REF);
         log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
                 indexConfiguration.getIndexName(), currentMapping, actualMapping);
         return actualMapping.equals(currentMapping);
@@ -255,50 +238,5 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
                 indexConfiguration.getIndexName(), expectedSettingsNode, appliedSettingsNode);
 
         return nodeContains(appliedSettingsNode, expectedSettingsNode);
-    }
-
-    protected boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) {
-        log.info("[IVGA] Check if node {} contains {}", containerNode, contentNode);
-        Iterator<Map.Entry<String, JsonNode>> fieldsIterator = contentNode.fields();
-        while (fieldsIterator.hasNext()) {
-            Map.Entry<String, JsonNode> entry = fieldsIterator.next();
-            String fieldName = entry.getKey();
-            log.info("[IVGA] Check field '{}'", fieldName);
-            JsonNode contentFieldValue = entry.getValue();
-            JsonNode containerFieldValue;
-            if (containerNode.has(fieldName)) {
-                log.info("[IVGA] Container has field '{}'", fieldName);
-                containerFieldValue = containerNode.get(fieldName);
-            } else {
-                log.info("[IVGA] Container doesn't have field '{}'. STOP - FALSE", fieldName);
-                return false;
-            }
-
-            if (containerFieldValue == null) {
-                log.info("[IVGA] Container has NULL field '{}'. STOP - FALSE", fieldName);
-                return false;
-            }
-
-            if (!contentFieldValue.getNodeType().equals(containerFieldValue.getNodeType())) {
-                log.info("[IVGA] Type of container field ({}) doesn't match the type of content field ({}). STOP - FALSE",
-                        containerFieldValue.getNodeType(), contentFieldValue.getNodeType());
-                return false;
-            }
-
-            if (contentFieldValue.isObject() && containerFieldValue.isObject()) {
-                log.info("[IVGA] Both container and content field is objects - check nested structure");
-                boolean nestedResult = nodeContains((ObjectNode) containerFieldValue, (ObjectNode) contentFieldValue);
-                if (!nestedResult) {
-                    log.info("[IVGA] Structures of the nested objects ({}) are different. STOP - FALSE", fieldName);
-                    return false;
-                }
-            }
-
-            if (!containerFieldValue.equals(contentFieldValue)) {
-                return false;
-            }
-        }
-        log.info("[IVGA] Structures are the same. TRUE");
-        return true;
     }
 }

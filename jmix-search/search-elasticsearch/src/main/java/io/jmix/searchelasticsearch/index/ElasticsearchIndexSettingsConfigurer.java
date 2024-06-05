@@ -16,6 +16,48 @@
 
 package io.jmix.searchelasticsearch.index;
 
+/**
+ * Base interface for configurers of Elasticsearch index settings.
+ * <p>
+ * Create Spring Bean that implements this interface.
+ * Index settings can be configured inside
+ * {@link ElasticsearchIndexSettingsConfigurer#configure(ElasticsearchIndexSettingsConfigurationContext)} by using
+ * settings builders.
+ * <p>
+ * See {@link ElasticsearchIndexSettingsConfigurationContext}.
+ * <p>
+ * Example:
+ * <pre>
+ * &#64;Component("demo_ElasticsearchIndexSettingsConfigurer")
+ * public class DemoElasticsearchIndexSettingsConfigurer implements ElasticsearchIndexSettingsConfigurer {
+ *
+ *     &#64;Override
+ *     public void configure(ElasticsearchIndexSettingsConfigurationContext context) {
+ *         IndexSettings.Builder commonSettingsBuilder = context.getCommonSettingsBuilder();
+ *         commonSettingsBuilder
+ *                 .maxResultWindow(15000)
+ *                 .analysis(analysisBuilder ->
+ *                         analysisBuilder.analyzer("customized_standard", analyzerBuilder ->
+ *                                 analyzerBuilder.standard(stdAnalyzerBuilder ->
+ *                                         stdAnalyzerBuilder.maxTokenLength(100)
+ *                                 )
+ *                         )
+ *                 );
+ *
+ *         IndexSettings.Builder personSettingsBuilder = context.getEntitySettingsBuilder(Person.class);
+ *         personSettingsBuilder
+ *                 .maxResultWindow(20000)
+ *                 .analysis(analysisBuilder ->
+ *                         analysisBuilder.analyzer("customized_standard", analyzerBuilder ->
+ *                                 analyzerBuilder.standard(stdAnalyzerBuilder ->
+ *                                         stdAnalyzerBuilder.maxTokenLength(100)
+ *                                 )
+ *                         )
+ *                 );
+ *     }
+ * }
+ * </pre>
+ */
 public interface ElasticsearchIndexSettingsConfigurer {
 
     void configure(ElasticsearchIndexSettingsConfigurationContext context);

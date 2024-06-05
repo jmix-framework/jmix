@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Provides OpenSearch search strategies
+ */
 public class OpenSearchSearchStrategyProvider implements SearchStrategyProvider<OpenSearchSearchStrategy> {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchSearchStrategyProvider.class);

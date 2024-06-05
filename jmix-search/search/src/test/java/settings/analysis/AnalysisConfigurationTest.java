@@ -47,7 +47,7 @@ import static settings.SettingsConfigurationTestCaseProvider.provideAnalysisTest
 @ContextConfiguration(
         classes = {AnalysisConfigurationTestConfiguration.class}
 )
-public class AnalysisConfigurationTest { //todo platform specific?
+public class AnalysisConfigurationTest { //todo platform specific
 
     private static final Logger log = LoggerFactory.getLogger(AnnotatedIndexDefinitionProcessorTest.class);
 

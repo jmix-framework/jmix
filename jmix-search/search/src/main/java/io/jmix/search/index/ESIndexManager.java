@@ -16,6 +16,8 @@
 
 package io.jmix.search.index;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -95,14 +97,12 @@ public interface ESIndexManager {
     IndexValidationStatus validateIndex(IndexConfiguration indexConfiguration);
 
     /**
-     * Requests info about index from ES cluster.
+     * Requests info about index from server.
      *
      * @param indexName index name
-     * @return response
+     * @return response as Json
      */
-    //GetIndexResponse getIndex(String indexName);
-
-    //Map<String, ObjectNode> getIndexMetadata(String indexName);
+    ObjectNode getIndexMetadata(String indexName);
 
     /**
      * Synchronizes schemas of all search indexes defined in application.

@@ -16,6 +16,48 @@
 
 package io.jmix.searchopensearch.index;
 
+/**
+ * Base interface for configurers of OpenSearch index settings.
+ * <p>
+ * Create Spring Bean that implements this interface.
+ * Index settings can be configured inside
+ * {@link OpenSearchIndexSettingsConfigurer#configure(OpenSearchIndexSettingsConfigurationContext)} by using
+ * settings builders.
+ * <p>
+ * See {@link OpenSearchIndexSettingsConfigurationContext}.
+ * <p>
+ * Example:
+ * <pre>
+ * &#64;Component("demo_OpenSearchIndexSettingsConfigurer")
+ * public class DemoOpenSearchIndexSettingsConfigurer implements OpenSearchIndexSettingsConfigurer {
+ *
+ *     &#64;Override
+ *     public void configure(OpenSearchIndexSettingsConfigurationContext context) {
+ *         IndexSettings.Builder commonSettingsBuilder = context.getCommonSettingsBuilder();
+ *         commonSettingsBuilder
+ *                 .maxResultWindow(15000)
+ *                 .analysis(analysisBuilder ->
+ *                         analysisBuilder.analyzer("customized_standard", analyzerBuilder ->
+ *                                 analyzerBuilder.standard(stdAnalyzerBuilder ->
+ *                                         stdAnalyzerBuilder.maxTokenLength(100)
+ *                                 )
+ *                         )
+ *                 );
+ *
+ *         IndexSettings.Builder personSettingsBuilder = context.getEntitySettingsBuilder(Person.class);
+ *         personSettingsBuilder
+ *                 .maxResultWindow(20000)
+ *                 .analysis(analysisBuilder ->
+ *                         analysisBuilder.analyzer("customized_standard", analyzerBuilder ->
+ *                                 analyzerBuilder.standard(stdAnalyzerBuilder ->
+ *                                         stdAnalyzerBuilder.maxTokenLength(100)
+ *                                 )
+ *                         )
+ *                 );
+ *     }
+ * }
+ * </pre>
+ */
 public interface OpenSearchIndexSettingsConfigurer {
 
     void configure(OpenSearchIndexSettingsConfigurationContext context);

@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Implementation for OpenSearch
+ */
 public class OpenSearchEntityIndexer extends BaseEntityIndexer {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchEntityIndexer.class);

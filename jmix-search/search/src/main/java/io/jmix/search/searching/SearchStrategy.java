@@ -19,7 +19,7 @@ package io.jmix.search.searching;
 /**
  * Describes the way search context should be processed.
  */
-public interface SearchStrategy { //todo
+public interface SearchStrategy {
 
     /**
      * Provides the name of this search strategy.

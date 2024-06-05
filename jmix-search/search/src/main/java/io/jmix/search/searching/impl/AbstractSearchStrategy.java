@@ -21,7 +21,7 @@ import io.jmix.search.searching.SearchStrategy;
 /**
  * Base class for all search strategies.
  */
-public abstract class AbstractSearchStrategy implements SearchStrategy { //todo
+public abstract class AbstractSearchStrategy implements SearchStrategy {
 
     @Override
     public String toString() {

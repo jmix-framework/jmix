@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Implementation for Elasticsearch
+ */
 public class ElasticsearchEntityIndexer extends BaseEntityIndexer {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchEntityIndexer.class);
@@ -161,136 +164,4 @@ public class ElasticsearchEntityIndexer extends BaseEntityIndexer {
             }
         }
     }
-
-
-
-
-    /*@Override
-    public IndexResult index(Object entityInstance) {
-        return indexCollection(Collections.singletonList(entityInstance));
-    }
-
-    @Override
-    public IndexResult indexCollection(Collection<Object> entityInstances) {
-        Map<IndexConfiguration, Collection<Object>> groupedInstances = prepareInstancesForIndexing(entityInstances);
-        return indexGroupedInstances(groupedInstances);
-    }
-
-    @Override
-    public IndexResult indexByEntityId(Id<?> entityId) {
-        return indexCollectionByEntityIds(Collections.singletonList(entityId));
-    }
-
-    @Override
-    public IndexResult indexCollectionByEntityIds(Collection<Id<?>> entityIds) {
-        Map<IndexConfiguration, Collection<Object>> groupedInstances = prepareInstancesForIndexingByIds(entityIds);
-        return indexGroupedInstances(groupedInstances);
-    }
-
-    @Override
-    public IndexResult delete(Object entityInstance) {
-        return deleteCollection(Collections.singletonList(entityInstance));
-    }
-
-    @Override
-    public IndexResult deleteCollection(Collection<Object> entityInstances) {
-        Map<IndexConfiguration, Collection<String>> groupedIndexIds = prepareIndexIdsByEntityInstances(entityInstances);
-        return deleteByGroupedDocIds(groupedIndexIds);
-    }
-
-    @Override
-    public IndexResult deleteByEntityId(Id<?> entityId) {
-        return deleteCollectionByEntityIds(Collections.singletonList(entityId));
-    }
-
-    @Override
-    public IndexResult deleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
-        Map<IndexConfiguration, Collection<String>> groupedIndexIds = prepareIndexIdsByEntityIds(entityIds);
-        return deleteByGroupedDocIds(groupedIndexIds);
-    }*/
-
-    /*@Override
-    protected IndexResult indexDocuments(List<IndexDocumentData> documents) {
-        BulkRequest request = new BulkRequest();
-        documents.forEach(doc -> {
-            try {
-                request.add(new IndexRequest()
-                        .index(doc.indexName())
-                        .id(doc.id())
-                        .source(objectMapper.writeValueAsString(doc.source()), XContentType.JSON));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Failed to create index request: unable to parse source object", e);
-            }
-        });
-
-        BulkResponse response = executeBulkRequest(request);
-        return createIndexResult(response);
-    }
-
-    @Override
-    protected IndexResult deleteByGroupedDocIds(Map<IndexConfiguration, Collection<String>> groupedDocIds) {
-        BulkRequest request = new BulkRequest();
-        for (Map.Entry<IndexConfiguration, Collection<String>> entry : groupedDocIds.entrySet()) {
-            IndexConfiguration indexConfiguration = entry.getKey();
-            String indexName = indexConfiguration.getIndexName();
-            Collection<String> docIds = entry.getValue();
-            docIds.forEach(docId -> request.add(new DeleteRequest(indexName, docId)));
-        }
-
-        BulkResponse response = executeBulkRequest(request);
-        return createIndexResult(response);
-    }*/
-
-    /*protected RefreshPolicy resolveRefresh() {
-        RefreshPolicy unifiedRefresh = searchProperties.getElasticsearchBulkRequestRefreshPolicy();
-        switch (unifiedRefresh) {
-            case TRUE -> {
-                return RefreshPolicy.IMMEDIATE;
-            }
-            case WAIT_FOR -> {
-                return RefreshPolicy.WAIT_UNTIL;
-            }
-            default -> {
-                return RefreshPolicy.NONE;
-            }
-        }
-    }*/
-
-    /*protected BulkResponse executeBulkRequest(BulkRequest request) {
-        if (request.requests().isEmpty()) {
-            log.debug("Bulk request has no operations");
-            return createNoopBulkResponse();
-        }
-
-        try {
-            RefreshPolicy refresh = resolveRefresh();
-            log.debug("Execute bulk request with Refresh: {}", refresh);
-            request.setRefreshPolicy(refresh);
-            BulkResponse bulkResponse = client.bulk(request, RequestOptions.DEFAULT);
-            log.debug("Bulk response: took {}, status = {}, has failures = {}",
-                    bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures());
-            return bulkResponse;
-        } catch (IOException e) {
-            throw new RuntimeException("Bulk request failed", e);
-        }
-    }
-
-    protected IndexResult createIndexResult(BulkResponse response) {
-        List<IndexResult.Failure> failures;
-        if (response.hasFailures()) {
-            failures = Stream.of(response.getItems())
-                    .filter(BulkItemResponse::isFailed)
-                    .map(item -> new IndexResult.Failure(item.getId(), item.getIndex(), item.getFailureMessage()))
-                    .collect(Collectors.toList());
-
-
-        } else {
-            failures = Collections.emptyList();
-        }
-        return new IndexResult(response.getItems().length, failures);
-    }
-
-    protected BulkResponse createNoopBulkResponse() {
-        return new BulkResponse(new BulkItemResponse[]{}, 0L);
-    }*/
 }

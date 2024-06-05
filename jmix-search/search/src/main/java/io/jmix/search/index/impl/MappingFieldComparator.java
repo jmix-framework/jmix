@@ -16,6 +16,7 @@
 
 package io.jmix.search.index.impl;
 
+import io.jmix.core.common.util.Preconditions;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,8 @@ public class MappingFieldComparator {
     }
 
     public IndexMappingComparator.MappingComparingResult compareLeafFields(@NotNull Map<String, Object> searchIndexMapping, @NotNull Map<String, Object> applicationMapping) {
-        if (isNull(searchIndexMapping) || isNull(applicationMapping)) throw new NullPointerException();
+        Preconditions.checkNotNullArgument(searchIndexMapping, "\"searchIndexMapping\" parameter value can't be null.");
+        Preconditions.checkNotNullArgument(applicationMapping, "\"applicationMapping\" parameter value can't be null.");
         return searchIndexMapping.equals(applicationMapping) ? IndexMappingComparator.MappingComparingResult.EQUAL : IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE;
     }
 }

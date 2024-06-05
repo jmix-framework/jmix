@@ -169,13 +169,13 @@ public class ESIndexManagerImpl implements ESIndexManager {
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            IndexConfigurationComparator.ConfigurationComparingResult result = compareWithIndexConfiguration(indexConfiguration);
-            if (!result.isIndexRecreatingRequired()) {
-                status = IndexValidationStatus.ACTUAL;
-                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-            } else {
+            IndexConfigurationComparator.ConfigurationComparingResult result = compareWithAppliedIndexConfiguration(indexConfiguration);
+            if (result.isIndexRecreatingRequired()) {
                 status = IndexValidationStatus.IRRELEVANT;
                 indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+            } else {
+                status = IndexValidationStatus.ACTUAL;
+                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             }
         } else {
             status = IndexValidationStatus.MISSING;
@@ -252,8 +252,10 @@ public class ESIndexManagerImpl implements ESIndexManager {
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            IndexConfigurationComparator.ConfigurationComparingResult result = compareWithIndexConfiguration(indexConfiguration);
-            if (!result.isIndexRecreatingRequired()) {
+            IndexConfigurationComparator.ConfigurationComparingResult result = compareWithAppliedIndexConfiguration(indexConfiguration);
+            if (result.isIndexRecreatingRequired()) {
+                status = handleIrrelevantIndex(indexConfiguration, strategy);
+            } else {
                 if (result.isConfigurationUpdateRequired()){
                     status = updateIndexConfiguration(indexConfiguration, strategy, result);
                 }else {
@@ -261,8 +263,6 @@ public class ESIndexManagerImpl implements ESIndexManager {
                     indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
                 }
 
-            } else {
-                status = handleIrrelevantIndex(indexConfiguration, strategy);
             }
         } else {
             status = handleMissingIndex(indexConfiguration, strategy);
@@ -272,7 +272,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    private IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
+    protected IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
         if(strategy.canUpdateConfiguration()) {
             if(result.isMappingUpdateRequired()){
                 boolean mappingSavingResult = putMapping(indexConfiguration.getIndexName(), indexConfiguration.getMapping());
@@ -328,7 +328,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    protected IndexConfigurationComparator.ConfigurationComparingResult compareWithIndexConfiguration(IndexConfiguration indexConfiguration) {
+    protected IndexConfigurationComparator.ConfigurationComparingResult compareWithAppliedIndexConfiguration(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
         GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());
         return indexConfigurationComparator.compareConfigurations(indexConfiguration, indexResponse);

@@ -22,6 +22,7 @@ import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.internal.CurrentInstance;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.InitParameters;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
@@ -30,6 +31,7 @@ import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.flow.spring.VaadinServletContextInitializer;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.backgroundtask.BackgroundTaskManager;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.flowui.sys.event.UiEventsManager;
@@ -37,6 +39,7 @@ import io.jmix.flowui.testassist.vaadin.TestServletContext;
 import io.jmix.flowui.testassist.vaadin.TestSpringServlet;
 import io.jmix.flowui.testassist.vaadin.TestVaadinRequest;
 import io.jmix.flowui.testassist.vaadin.TestVaadinSession;
+import io.jmix.flowui.view.DefaultMainViewParent;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
@@ -274,7 +277,7 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
         List<ViewInfo> viewInfos = applicationContext.getBean(ViewRegistry.class)
                 .getViewInfos().stream()
                 .filter(info -> isClassInPackages(info.getControllerClass().getPackageName(), viewBasePackages))
-                .collect(Collectors.toList());
+                .toList();
 
         for (ViewInfo view : viewInfos) {
             Class<? extends View> controllerClass = view.getControllerClass();
@@ -293,12 +296,39 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
                 routeConfiguration.removeRoute(route.value());
             }
 
-            if (route.layout() == UI.class) {
-                routeConfiguration.setRoute(route.value(), controllerClass);
-            } else {
-                routeConfiguration.setRoute(route.value(), controllerClass, route.layout());
+            routeConfiguration.setRoute(route.value(), controllerClass,
+                    getParentChain(route, getDefaultParentChain(context)));
+        }
+    }
+
+    /* CAUTION! Copied from ViewRegistry#getParentChain() */
+    protected List<Class<? extends RouterLayout>> getParentChain(Route route,
+                                                                 List<Class<? extends RouterLayout>> defaultChain) {
+        Class<? extends RouterLayout> layout = route.layout();
+        if (DefaultMainViewParent.class.isAssignableFrom(layout)) {
+            return defaultChain;
+        }
+
+        // UI is the default route parent, so no need to add it explicitly
+        return UI.class == layout ? Collections.emptyList() : List.of(layout);
+    }
+
+    /* CAUTION! Copied from ViewRegistry#getDefaultParentChain() */
+    @SuppressWarnings("unchecked")
+    protected List<Class<? extends RouterLayout>> getDefaultParentChain(ExtensionContext context) {
+        String mainViewId = getApplicationContext(context).getBean(UiProperties.class)
+                .getMainViewId();
+        Optional<ViewInfo> mainViewInfo = getApplicationContext(context).getBean(ViewRegistry.class)
+                .findViewInfo(mainViewId);
+
+        if (mainViewInfo.isPresent()) {
+            Class<? extends View<?>> controllerClass = mainViewInfo.get().getControllerClass();
+            if (RouterLayout.class.isAssignableFrom(controllerClass)) {
+                return List.of(((Class<? extends RouterLayout>) controllerClass));
             }
         }
+
+        return Collections.emptyList();
     }
 
     protected boolean isClassInPackages(String classPackage, List<String> viewBasePackages) {

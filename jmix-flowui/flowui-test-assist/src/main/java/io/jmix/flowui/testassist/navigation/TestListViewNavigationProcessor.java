@@ -16,13 +16,13 @@
 
 package io.jmix.flowui.testassist.navigation;
 
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.function.SerializableConsumer;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.StandardListView;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.*;
+
+import java.net.URL;
 
 /**
  * The main goal of this class is supporting backward navigation in UI integration tests.
@@ -52,11 +52,16 @@ public class TestListViewNavigationProcessor extends ListViewNavigationProcessor
 
     @Override
     public void processNavigation(ListViewNavigator<?> navigator) {
-        Class<? extends View<?>> viewClass = (Class<? extends View<?>>) getViewClass(navigator);
-        RouteParameters routeParameters = getRouteParameters(navigator);
-        QueryParameters queryParameters = getQueryParameters(navigator);
+        super.processNavigation(navigator);
 
-        navigationDelegate.processNavigation(navigator, viewClass, routeParameters, queryParameters,
-                view -> fireAfterViewNavigation(navigator, view));
+        navigationDelegate.saveCurrentNavigation(
+                getViewClass(navigator),
+                getRouteParameters(navigator),
+                getQueryParameters(navigator));
+    }
+
+    @Override
+    protected void fetchCurrentURL(SerializableConsumer<URL> callback) {
+        callback.accept(navigationDelegate.fetchCurrentUrl());
     }
 }

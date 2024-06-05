@@ -30,11 +30,9 @@ import io.jmix.flowui.view.navigation.ViewNavigator;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
- * Class is designed for processing navigation in UI integration tests.
+ * Class is designed for helping navigation in UI integration tests.
  * <p>
  * For building backward navigation URL it uses:
  * <ul>
@@ -63,31 +61,13 @@ public class ViewNavigationDelegate<N extends AbstractViewNavigator> {
         this.viewSupport = viewSupport;
     }
 
-    public void processNavigation(N navigator, Class<? extends View<?>> viewClass,
-                                  RouteParameters routeParameters, QueryParameters queryParameters,
-                                  Consumer<View<?>> fireAfterViewNavigation) {
-        if (navigator.isBackwardNavigation()) {
-            URL url = fetchCurrentUrl();
-            Optional<View<?>> view = navigationSupport.navigate(viewClass, routeParameters, queryParameters);
-            if (view.isPresent()) {
-                viewSupport.registerBackwardNavigation(viewClass, url);
-                fireAfterViewNavigation.accept(view.get());
-            }
-        } else {
-            Optional<View<?>> view = navigationSupport.navigate(viewClass, routeParameters, queryParameters);
-            view.ifPresent(fireAfterViewNavigation);
-        }
-
-        saveCurrentNavigation(viewClass, routeParameters, queryParameters);
-    }
-
-    protected URL fetchCurrentUrl() {
+    public URL fetchCurrentUrl() {
         VaadinSession session = UI.getCurrent().getSession();
         URL url = (URL) session.getAttribute(CURRENT_NAVIGATION_URL_ATTRIBUTE);
         return url != null ? url : getHostUrl();
     }
 
-    protected void saveCurrentNavigation(Class<? extends View<?>> viewClass, RouteParameters routeParameters,
+    public void saveCurrentNavigation(Class<? extends View> viewClass, RouteParameters routeParameters,
                                          QueryParameters queryParameters) {
         String path = getRouteConfiguration().getUrl(viewClass, routeParameters);
         Location location = new Location(path, queryParameters);

@@ -18,12 +18,16 @@ package io.jmix.flowui;
 
 import com.vaadin.flow.component.notification.Notification;
 import io.jmix.flowui.app.filter.condition.AddConditionView;
+import io.jmix.flowui.component.factory.EntityFieldCreationSupport;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationDetail;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @ConfigurationProperties(prefix = "jmix.ui.component")
 public class UiComponentProperties {
@@ -55,6 +59,22 @@ public class UiComponentProperties {
      * Items for rows per page component.
      */
     List<Integer> paginationItemsPerPageItems;
+
+
+    /**
+     * Map for defining the component to be used for selecting the specified entity in generation strategy mechanisms
+     *
+     * @see EntityFieldCreationSupport
+     */
+    Map<String, String> entityFieldFqn;
+
+    /**
+     * Map for defining actions to be added to the selection component for the specified entity in generation strategy
+     * mechanisms
+     *
+     * @see EntityFieldCreationSupport
+     */
+    Map<String, List<String>> entityFieldActions;
 
     /**
      * Default value for the autoApply attribute of the {@link GenericFilter} component
@@ -106,6 +126,8 @@ public class UiComponentProperties {
             String pickerOpenShortcut,
             String pickerClearShortcut,
             @DefaultValue({"20", "50", "100", "500", "1000", "5000"}) List<Integer> paginationItemsPerPageItems,
+            @Nullable Map<String, String> entityFieldFqn,
+            @Nullable Map<String, List<String>> entityFieldActions,
             @DefaultValue("true") boolean filterAutoApply,
             String filterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
@@ -128,6 +150,9 @@ public class UiComponentProperties {
         this.pickerClearShortcut = pickerClearShortcut;
 
         this.paginationItemsPerPageItems = paginationItemsPerPageItems;
+
+        this.entityFieldFqn = entityFieldFqn == null ? Collections.emptyMap() : entityFieldFqn;
+        this.entityFieldActions = entityFieldActions == null ? Collections.emptyMap() : entityFieldActions;
 
         this.filterAutoApply = filterAutoApply;
         this.filterApplyShortcut = filterApplyShortcut;
@@ -198,6 +223,20 @@ public class UiComponentProperties {
      */
     public List<Integer> getPaginationItemsPerPageItems() {
         return paginationItemsPerPageItems;
+    }
+
+    /**
+     * @see #entityFieldFqn
+     */
+    public Map<String, String> getEntityFieldFqn() {
+        return entityFieldFqn;
+    }
+
+    /**
+     * @see #entityFieldActions
+     */
+    public Map<String, List<String>> getEntityFieldActions() {
+        return entityFieldActions;
     }
 
     /**

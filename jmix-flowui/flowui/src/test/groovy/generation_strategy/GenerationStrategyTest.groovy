@@ -18,6 +18,10 @@ package generation_strategy
 
 import io.jmix.core.Metadata
 import io.jmix.core.metamodel.model.MetaClass
+import io.jmix.flowui.UiComponentProperties
+import io.jmix.flowui.action.entitypicker.EntityClearAction
+import io.jmix.flowui.action.entitypicker.EntityLookupAction
+import io.jmix.flowui.action.entitypicker.EntityOpenAction
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction
 import io.jmix.flowui.component.ComponentGenerationContext
 import io.jmix.flowui.component.UiComponentsGenerator
@@ -59,6 +63,9 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
 
     @Autowired
     DataComponents dataComponents
+
+    @Autowired
+    UiComponentProperties componentProperties
 
     Order order
     Customer customer
@@ -105,6 +112,12 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
         orderInstanceContainer.setItem(order)
         customerInstanceContainer.setItem(customer)
         userInstanceContainer.setItem(user)
+    }
+
+    @Override
+    void cleanup() {
+        componentProperties.entityFieldFqn.remove 'test_Customer'
+        componentProperties.entityFieldActions.remove 'test_Customer'
     }
 
     def "Generate component for collection attribute"() {
@@ -267,5 +280,49 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
 
         where:
         propertyName << ['total', 'amount']
+    }
+
+    def "Generate component for association attribute with specified entityFieldFqn and entityFieldActions"() {
+        when: "Properties is not specified"
+        def context = new ComponentGenerationContext(orderMetaClass, 'customer')
+
+        def component = uiComponentsGenerator.generate context
+
+        then: "EntityPicker will be created"
+        fieldIsEntityPicker component, [EntityLookupAction.ID, EntityClearAction.ID]
+
+        when: "Entity actions is specified"
+        componentProperties.entityFieldActions.put 'test_Customer', ['entity_lookup', 'entity_open', 'entity_clear']
+
+        component = uiComponentsGenerator.generate context
+
+        then: "EntityPicker will be created with specified actions"
+        fieldIsEntityPicker component, [EntityLookupAction.ID, EntityOpenAction.ID, EntityClearAction.ID]
+
+        when: "EntityComboBox is specified"
+        componentProperties.entityFieldActions.remove 'test_Customer'
+        componentProperties.entityFieldFqn.put 'test_Customer', 'io.jmix.flowui.component.combobox.EntityComboBox'
+
+        component = uiComponentsGenerator.generate context
+        then: "EntityComboBox will be created without actions"
+        fieldIsEntityComboBox component, []
+
+        when: "EntityComboBox is specified with actions"
+        componentProperties.entityFieldActions.put 'test_Customer', ['entity_lookup', 'entity_open', 'entity_clear']
+        component = uiComponentsGenerator.generate context
+
+        then: "EntityComboBox will be created with specified actions"
+        fieldIsEntityComboBox component, [EntityLookupAction.ID, EntityOpenAction.ID, EntityClearAction.ID]
+
+    }
+
+    static void fieldIsEntityPicker(def field, List actionIds) {
+        assert field instanceof EntityPicker
+        assert (field as EntityPicker).actions.collect { it.id } == actionIds
+    }
+
+    static void fieldIsEntityComboBox(def field, List actionIds) {
+        assert field instanceof EntityComboBox
+        assert (field as EntityComboBox).actions.collect { it.id } == actionIds
     }
 }

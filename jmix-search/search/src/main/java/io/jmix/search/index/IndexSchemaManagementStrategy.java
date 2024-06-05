@@ -80,15 +80,15 @@ public enum IndexSchemaManagementStrategy {
         return ENUM_MAP.get(key.toLowerCase());
     }
 
-    public boolean canUpdateConfiguration(){
+    public boolean isConfigurationUpdateSupported(){
         return this == CREATE_OR_UPDATE || this == CREATE_OR_RECREATE;
     }
 
-    public boolean canCreateIndex(){
+    public boolean isIndexCreationSupported(){
         return this != NONE;
     }
 
-    public boolean canRecreateIndex(){
+    public boolean isIndexRecreationSupported(){
         return this == CREATE_OR_RECREATE;
     }
 

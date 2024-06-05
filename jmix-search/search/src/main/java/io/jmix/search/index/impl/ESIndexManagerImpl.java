@@ -273,7 +273,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     protected IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
-        if(strategy.canUpdateConfiguration()) {
+        if(strategy.isConfigurationUpdateSupported()) {
             if(result.isMappingUpdateRequired()){
                 boolean mappingSavingResult = putMapping(indexConfiguration.getIndexName(), indexConfiguration.getMapping());
                 if (mappingSavingResult) {
@@ -294,7 +294,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
 
     protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
-        if (strategy.canRecreateIndex()) {
+        if (strategy.isIndexRecreationSupported()) {
             boolean created = recreateIndex(indexConfiguration);
             if (created) {
                 status = IndexSynchronizationStatus.RECREATED;
@@ -313,7 +313,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
     protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
 
-        if (!strategy.canCreateIndex()) {
+        if (!strategy.isIndexCreationSupported()) {
             status = IndexSynchronizationStatus.MISSING;
         } else {
             boolean created = createIndex(indexConfiguration);

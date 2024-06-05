@@ -4158,7 +4158,7 @@
                     <xs:element name="properties" type="genericComponentProperties" minOccurs="0"/>
                 </xs:all>
 
-                <xs:attribute name="componentClass" type="xs:string" use="required"/>
+                <xs:attribute name="class" type="xs:string" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4200,7 +4200,7 @@
                     <xs:element name="properties" type="genericComponentProperties" minOccurs="0"/>
                 </xs:all>
 
-                <xs:attribute name="fragmentClass" type="xs:string" use="required"/>
+                <xs:attribute name="class" type="xs:string" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

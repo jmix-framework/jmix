@@ -81,7 +81,7 @@ public interface StudioComponents {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "componentClass", type = StudioPropertyType.COMPONENT_CLASS),
+                    @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.COMPONENT_CLASS),
             }
     )
     StudioGenericComponentPreview genericComponent();
@@ -102,7 +102,7 @@ public interface StudioComponents {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "fragmentClass", type = StudioPropertyType.FRAGMENT_CLASS),
+                    @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.FRAGMENT_CLASS),
             }
     )
     StudioFragmentPreview fragment();

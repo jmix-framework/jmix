@@ -18,7 +18,7 @@
     <content>
         <vbox id="layout">
             <fragment id="dataGridFragment"
-                      fragmentClass="component.fragment.component.TestDataGridFragmentProvided"/>
+                      class="component.fragment.component.TestDataGridFragmentProvided"/>
         </vbox>
     </content>
 </fragment>

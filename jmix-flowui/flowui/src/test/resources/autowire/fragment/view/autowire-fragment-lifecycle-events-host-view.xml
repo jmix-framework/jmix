@@ -16,6 +16,6 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
-        <fragment id="fragment" fragmentClass="autowire.fragment.LifecycleEventsDependencyInjectorFragment"/>
+        <fragment id="fragment" class="autowire.fragment.LifecycleEventsDependencyInjectorFragment"/>
     </layout>
 </view>

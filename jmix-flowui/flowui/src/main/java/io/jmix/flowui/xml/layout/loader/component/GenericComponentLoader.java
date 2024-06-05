@@ -26,7 +26,7 @@ public class GenericComponentLoader extends AbstractComponentLoader<Component> {
 
     @Override
     protected Component createComponent() {
-        String componentClass = loadString(element, "componentClass")
+        String componentClass = loadString(element, "class")
                 .orElseThrow(() ->
                         new GuiDevelopmentException("Missing required 'componentClass' attribute", context));
 

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui;
 
+import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.fragment.FragmentOwner;
@@ -25,6 +26,7 @@ import io.jmix.flowui.xml.layout.ComponentLoader;
 /**
  * Factory for creating {@link Fragment}s.
  */
+@Experimental
 public interface Fragments {
 
     /**

@@ -29,16 +29,16 @@
     </facets>
     <layout>
         <fragment id="dataGridFragmentProvided"
-                  fragmentClass="component.fragment.component.TestDataGridFragmentProvided"/>
+                  class="component.fragment.component.TestDataGridFragmentProvided"/>
 
         <fragment id="dataGridFragment"
-                  fragmentClass="component.fragment.component.TestDataGridFragment">
+                  class="component.fragment.component.TestDataGridFragment">
             <properties>
                 <property name="dataContainer" value="productsDc" type="CONTAINER_REF"/>
             </properties>
         </fragment>
 
         <fragment id="hostFragment"
-                  fragmentClass="component.fragment.component.TestHostFragment"/>
+                  class="component.fragment.component.TestHostFragment"/>
     </layout>
 </view>

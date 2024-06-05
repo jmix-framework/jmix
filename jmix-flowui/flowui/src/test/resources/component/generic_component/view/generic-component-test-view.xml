@@ -30,14 +30,14 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-        <component id="button" componentClass="com.vaadin.flow.component.button.Button">
+        <component id="button" class="com.vaadin.flow.component.button.Button">
             <properties>
                 <property name="text" value="Button"/>
                 <property name="icon" value="PLUS" type="ICON"/>
             </properties>
         </component>
 
-        <component id="propertyFilter" componentClass="io.jmix.flowui.component.propertyfilter.PropertyFilter">
+        <component id="propertyFilter" class="io.jmix.flowui.component.propertyfilter.PropertyFilter">
             <properties>
                 <property name="property" value="name"/>
                 <property name="operation" value="CONTAINS"/>
@@ -48,7 +48,7 @@
             </properties>
         </component>
 
-        <component id="testComponent" componentClass="component.generic_component.component.TestComponent">
+        <component id="testComponent" class="component.generic_component.component.TestComponent">
             <properties>
                 <property name="stringsList" value="a b ,c"/>
                 <property name="stringsSet" value="a b ,c"/>

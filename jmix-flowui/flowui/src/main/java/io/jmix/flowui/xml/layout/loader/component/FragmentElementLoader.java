@@ -27,7 +27,7 @@ public class FragmentElementLoader extends AbstractComponentLoader<Fragment<?>> 
 
     @Override
     protected Fragment<?> createComponent() {
-        String fragmentClass = loadString(element, "fragmentClass")
+        String fragmentClass = loadString(element, "class")
                 .orElseThrow(() ->
                         new GuiDevelopmentException("Missing required 'fragmentClass' attribute", context));
 

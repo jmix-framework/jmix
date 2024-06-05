@@ -17,20 +17,19 @@
 package io.jmix.flowui.exception;
 
 import io.jmix.core.DevelopmentException;
-import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Map;
 
 public class GuiDevelopmentException extends DevelopmentException {
 
-    protected String frameId;
+    protected String originId;
     protected Context context;
 
-    public GuiDevelopmentException(String message, @Nullable String frameId) {
+    public GuiDevelopmentException(String message, @Nullable String originId) {
         super(message);
-        this.frameId = frameId;
+        this.originId = originId;
     }
 
     public GuiDevelopmentException(String message, Context context) {
@@ -49,14 +48,21 @@ public class GuiDevelopmentException extends DevelopmentException {
     }
 
     @Nullable
+    public String getOriginId() {
+        return originId != null
+                ? originId
+                : context != null
+                ? context.getFullOriginId()
+                : null;
+    }
+
+    /**
+     * @deprecated Use {@link #getOriginId()} instead
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
+    @Nullable
     public String getFrameId() {
-        if (frameId != null) {
-            return frameId;
-        } else if (context instanceof ComponentContext) {
-            return ((ComponentContext) context).getFullFrameId();
-        } else {
-            return null;
-        }
+        return getOriginId();
     }
 
     @Nullable
@@ -66,7 +72,8 @@ public class GuiDevelopmentException extends DevelopmentException {
 
     @Override
     public String toString() {
-        String frameId = getFrameId();
-        return super.toString() + (frameId != null ? ", frameId=" + frameId : "");
+        String originId = getOriginId();
+        return super.toString() +
+                (originId != null ? ", originId=" + originId : "");
     }
 }

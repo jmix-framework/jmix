@@ -30,15 +30,7 @@
             <xs:all>
                 <xs:element name="data" type="data:viewData" minOccurs="0"/>
 
-                <xs:element name="actions" minOccurs="0">
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:choice maxOccurs="unbounded">
-                                <xs:element name="action" type="layout:viewAction"/>
-                            </xs:choice>
-                        </xs:sequence>
-                    </xs:complexType>
-                </xs:element>
+                <xs:element name="actions" type="layout:viewActions" minOccurs="0"/>
 
                 <xs:element name="facets" minOccurs="0" type="layout:facets"/>
 

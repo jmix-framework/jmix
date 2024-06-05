@@ -89,7 +89,7 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
                     DataLoader dataLoader = screenData.getLoader(dataLoaderId);
                     component.setDataLoader(dataLoader);
 
-                    getComponentContext().addInitTask((context, view) ->
+                    getContext().addInitTask((context, view) ->
                             FilterUtils.updateDataLoaderInitialCondition(resultComponent,
                                     dataLoader.getCondition())
                     );
@@ -132,7 +132,7 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
     protected void loadConfigurations(GenericFilter resultComponent, Element element) {
         Set<String> filterPaths = new HashSet<>();
 
-        getComponentContext().addInitTask((context1, view) -> {
+        getContext().addInitTask((context, view) -> {
             ComponentUtil.findComponents(view.getElement(), component -> {
                 if (component instanceof GenericFilter) {
                     String path = FilterUtils.generateFilterPath((GenericFilter) component);
@@ -140,7 +140,7 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
                     if (filterPaths.contains(path)) {
                         throw new GuiDevelopmentException(
                                 "Filters with the same component path should have different ids",
-                                getComponentContext()
+                                getContext()
                         );
                     } else {
                         filterPaths.add(path);
@@ -175,7 +175,7 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
 
         loadBoolean(configurationElement, "default", defaultValue -> {
             if (defaultValue) {
-                getComponentContext().addInitTask((context1, view) -> {
+                getContext().addInitTask((context, view) -> {
                     if (resultComponent.getCurrentConfiguration() == resultComponent.getEmptyConfiguration()) {
                         resultComponent.setCurrentConfiguration(designTimeConfiguration);
                     }
@@ -236,7 +236,7 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
             resultComponent.addAction(action);
         }
 
-        getComponentContext().addInitTask((context1, view) ->
+        getContext().addInitTask((context, view) ->
                 resultComponent.getActions().forEach(Action::refreshState));
     }
 

@@ -16,36 +16,7 @@
 
 package io.jmix.flowui.view;
 
-import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.HasActions;
 
-import org.springframework.lang.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
-public interface ViewActions {
-
-    default void addAction(Action action) {
-        addAction(action, getActions().size());
-    }
-
-    void addAction(Action action, int index);
-
-    void removeAction(Action action);
-
-    default void removeAction(String id) {
-        Action action = getAction(id);
-        if (action != null) {
-            removeAction(action);
-        }
-    }
-
-    default void removeAllActions() {
-        new ArrayList<>(getActions()).forEach(this::removeAction);
-    }
-
-    Collection<Action> getActions();
-
-    @Nullable
-    Action getAction(String id);
+public interface ViewActions extends HasActions {
 }

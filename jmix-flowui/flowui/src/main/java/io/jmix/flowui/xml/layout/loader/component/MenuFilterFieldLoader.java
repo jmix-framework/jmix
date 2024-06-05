@@ -21,6 +21,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.menufilterfield.MenuFilterField;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.menu.provider.HasMenuItemProvider;
+import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 
@@ -78,15 +79,18 @@ public class MenuFilterFieldLoader extends AbstractComponentLoader<MenuFilterFie
 
         Optional<String> valueOptional = loadString(element, "value");
 
-        getComponentContext().addInitTask((context, view) -> {
-            Component menuComponent = UiComponentUtils.findComponent(view, menuId).orElse(null);
+        getContext().addInitTask(new AbstractInitTask() {
+            @Override
+            public void execute(Context context) {
+                Component menuComponent = UiComponentUtils.findComponent(context.getOrigin(), menuId).orElse(null);
+                if (!(menuComponent instanceof HasMenuItemProvider<?> hasMenuItemProvider)) {
+                    throw new GuiDevelopmentException("Failed to find a menu with item provider",
+                            context, "Menu", menuId);
+                }
+                resultComponent.setMenuItemProvider(hasMenuItemProvider.getMenuItemProvider());
 
-            if (!(menuComponent instanceof HasMenuItemProvider<?> hasMenuItemProvider)) {
-                throw new GuiDevelopmentException("Failed to find a menu with item provider", context, "Menu", menuId);
+                valueOptional.ifPresent(resultComponent::setValue);
             }
-            resultComponent.setMenuItemProvider(hasMenuItemProvider.getMenuItemProvider());
-
-            valueOptional.ifPresent(resultComponent::setValue);
         });
     }
 }

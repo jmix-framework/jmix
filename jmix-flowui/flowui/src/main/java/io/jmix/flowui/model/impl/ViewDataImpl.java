@@ -16,31 +16,17 @@
 
 package io.jmix.flowui.model.impl;
 
-import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.model.DataLoader;
-import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
-import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 @Component("flowui_ViewData")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ViewDataImpl implements ViewData {
+public class ViewDataImpl extends AbstractDataComponentsHolder implements ViewData {
 
     protected String viewId;
-
-    protected DataContext dataContext;
-
-    protected Map<String, InstanceContainer<?>> containers = new LinkedHashMap<>();
-
-    protected Map<String, DataLoader> loaders = new LinkedHashMap<>();
 
     @Override
     @Nullable
@@ -53,71 +39,9 @@ public class ViewDataImpl implements ViewData {
         this.viewId = viewId;
     }
 
+    @Nullable
     @Override
-    public DataContext getDataContext() {
-        if (dataContext == null) {
-            throw new IllegalStateException("DataContext is not defined");
-        }
-        return dataContext;
-    }
-
-    @Override
-    public DataContext getDataContextOrNull() {
-        return dataContext;
-    }
-
-    @Override
-    public void setDataContext(DataContext dataContext) {
-        this.dataContext = dataContext;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends InstanceContainer<?>> T getContainer(String id) {
-        T container = (T) containers.get(id);
-        if (container == null) {
-            throw new IllegalArgumentException(String.format("Container '%s' not found", id));
-        }
-        return container;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends DataLoader> T getLoader(String id) {
-        T loader = (T) loaders.get(id);
-        if (loader == null) {
-            throw new IllegalArgumentException(String.format("Loader '%s' not found", id));
-        }
-        return loader;
-    }
-
-    @Override
-    public Set<String> getContainerIds() {
-        return containers.keySet();
-    }
-
-    @Override
-    public Set<String> getLoaderIds() {
-        return loaders.keySet();
-    }
-
-    @Override
-    public void loadAll() {
-        for (DataLoader loader : loaders.values()) {
-            loader.load();
-        }
-    }
-
-    @Override
-    public void registerContainer(String id, InstanceContainer<?> container) {
-        containers.put(id, container);
-    }
-
-    @Override
-    public void registerLoader(String id, DataLoader loader) {
-        loaders.put(id, loader);
-
-        DataLoaderMonitoringInfo monitoringInfo = new DataLoaderMonitoringInfo(getViewId(), id);
-        loader.setMonitoringInfoProvider(dl -> monitoringInfo);
+    protected String getOwnerId() {
+        return getViewId();
     }
 }

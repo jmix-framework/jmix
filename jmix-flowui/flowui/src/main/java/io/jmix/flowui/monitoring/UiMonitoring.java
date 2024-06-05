@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.monitoring;
 
-import io.jmix.flowui.model.impl.ViewDataXmlLoader;
+import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
@@ -81,7 +81,7 @@ public class UiMonitoring {
         }
         String loaderId = monitoringInfo.loaderId();
         return !StringUtils.isBlank(loaderId)
-                && !loaderId.startsWith(ViewDataXmlLoader.GENERATED_PREFIX);
+                && !loaderId.startsWith(DataComponentsLoaderSupport.GENERATED_PREFIX);
     }
 
     protected static boolean canViewBeMonitored(@Nullable ViewLifeCycle lifeCycle, @Nullable String viewId) {

@@ -20,23 +20,20 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
-import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class AssignGridColumnVisibilityPropertiesInitTask implements ComponentLoader.InitTask {
+public class AssignGridColumnVisibilityPropertiesInitTask extends AbstractInitTask {
 
-    protected View<?> view;
     protected DeferredLoadContext loadContext;
 
     public AssignGridColumnVisibilityPropertiesInitTask(DeferredLoadContext loadContext) {
@@ -44,16 +41,13 @@ public class AssignGridColumnVisibilityPropertiesInitTask implements ComponentLo
     }
 
     @Override
-    public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-        Preconditions.checkNotNullArgument(context);
-        Preconditions.checkNotNullArgument(view);
-
+    public void execute(ComponentLoader.Context context) {
         String dataGridId = loadContext.getDataGridId();
-        Component gridComponent = UiComponentUtils.findComponent(view, dataGridId).orElse(null);
-
+        Component gridComponent = UiComponentUtils.findComponent(context.getOrigin(), dataGridId).orElse(null);
         if (!(gridComponent instanceof DataGrid<?>) && !(gridComponent instanceof TreeDataGrid<?>)) {
             throw new GuiDevelopmentException("Failed to find a grid with specified id", context, "Data Grid", dataGridId);
         }
+
         Grid<?> grid = (Grid<?>) gridComponent;
         JmixGridColumnVisibility columnVisibilityComponent = loadContext.getComponent();
         columnVisibilityComponent.setGrid(grid);

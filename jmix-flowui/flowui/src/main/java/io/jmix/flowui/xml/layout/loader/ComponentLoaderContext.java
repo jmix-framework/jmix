@@ -17,53 +17,73 @@
 package io.jmix.flowui.xml.layout.loader;
 
 
+import com.vaadin.flow.component.Component;
+import io.jmix.flowui.component.HasDataComponents;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import org.apache.commons.collections4.CollectionUtils;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class ComponentLoaderContext implements ComponentContext {
+public class ComponentLoaderContext extends AbstractLoaderContext implements ComponentContext {
 
-    protected ComponentContext parent;
-
-    protected ViewData viewData;
-    protected ViewActions viewActions;
-
-    protected String messageGroup;
     protected View<?> view;
     protected String fullFrameId;
     protected String currentFrameId;
 
     protected List<ComponentLoader.InitTask> preInitTasks;
-    protected List<ComponentLoader.InitTask> initTasks;
+    protected List<ComponentLoader.AutowireTask> autowireTasks;
 
     public ComponentLoaderContext() {
     }
 
     @Override
     public ViewData getViewData() {
-        return viewData;
+        if (dataHolder instanceof ViewData viewData) {
+            return viewData;
+        }
+
+        throw new IllegalStateException("Data holder is not an instance of " +
+                ViewData.class.getSimpleName());
     }
 
+    /**
+     * @deprecated Use {@link #setDataHolder(HasDataComponents)} instead
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
     public void setViewData(ViewData viewData) {
-        this.viewData = viewData;
+        setDataHolder(viewData);
     }
 
     @Override
     public ViewActions getViewActions() {
-        return viewActions;
+        if (actionsHolder instanceof ViewActions viewActions) {
+            return viewActions;
+        }
+
+        throw new IllegalStateException("Actions holder is not an instance of " +
+                ViewActions.class.getSimpleName());
     }
 
+    /**
+     * @deprecated Use {@link #setActionsHolder(HasActions)} instead
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
     public void setViewActions(ViewActions viewActions) {
-        this.viewActions = viewActions;
+        setActionsHolder(viewActions);
+    }
+
+    @Override
+    public Component getOrigin() {
+        return getView();
     }
 
     @Override
@@ -76,17 +96,8 @@ public class ComponentLoaderContext implements ComponentContext {
     }
 
     @Override
-    public String getMessageGroup() {
-        return messageGroup;
-    }
-
-    public void setMessageGroup(String messageGroup) {
-        this.messageGroup = messageGroup;
-    }
-
-    @Override
     public String getFullFrameId() {
-        return fullFrameId;
+        return fullFrameId != null ? fullFrameId : getFullOriginId();
     }
 
     public void setFullFrameId(String frameId) {
@@ -95,7 +106,7 @@ public class ComponentLoaderContext implements ComponentContext {
 
     @Override
     public String getCurrentFrameId() {
-        return currentFrameId;
+        return currentFrameId != null ? currentFrameId : getFullOriginId();
     }
 
     public void setCurrentFrameId(String currentFrameId) {
@@ -112,27 +123,42 @@ public class ComponentLoaderContext implements ComponentContext {
     }
 
     @Override
-    public void addInitTask(ComponentLoader.InitTask task) {
-        if (initTasks == null) {
-            initTasks = new ArrayList<>();
+    public void addAutowireTask(ComponentLoader.AutowireTask task) {
+        if (autowireTasks == null) {
+            autowireTasks = new ArrayList<>();
         }
 
-        initTasks.add(task);
+        autowireTasks.add(task);
     }
 
     @Override
     public Optional<ComponentContext> getParent() {
-        return Optional.ofNullable(parent);
+        if (parentContext == null) {
+            return Optional.empty();
+        }
+
+        if (parentContext instanceof ComponentLoaderContext componentLoaderContext) {
+            return Optional.of(componentLoaderContext);
+        }
+
+        throw new IllegalStateException("Parent context is not an instance of " +
+                ComponentLoaderContext.class.getSimpleName());
     }
 
+    /**
+     * @deprecated Use {@link #setParentContext(ComponentLoader.Context)} instead
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
     public void setParent(@Nullable ComponentContext parent) {
-        this.parent = parent;
+        setParentContext(parent);
     }
 
+    @Deprecated(since = "2.3", forRemoval = true)
     public List<ComponentLoader.InitTask> getPreInitTasks() {
         return preInitTasks != null ? preInitTasks : Collections.emptyList();
     }
 
+    @Deprecated(since = "2.3", forRemoval = true)
     public List<ComponentLoader.InitTask> getInitTasks() {
         return initTasks != null ? initTasks : Collections.emptyList();
     }
@@ -141,19 +167,19 @@ public class ComponentLoaderContext implements ComponentContext {
     public void executePreInitTasks() {
         if (CollectionUtils.isNotEmpty(preInitTasks)) {
             for (ComponentLoader.InitTask initTask : preInitTasks) {
-                initTask.execute(this, view);
+                initTask.execute(this);
             }
             preInitTasks.clear();
         }
     }
 
     @Override
-    public void executeInitTasks() {
-        if (CollectionUtils.isNotEmpty(initTasks)) {
-            for (ComponentLoader.InitTask initTask : initTasks) {
-                initTask.execute(this, view);
+    public void executeAutowireTasks() {
+        if (CollectionUtils.isNotEmpty(autowireTasks)) {
+            for (ComponentLoader.AutowireTask autowireTask : autowireTasks) {
+                autowireTask.execute(this);
             }
-            initTasks.clear();
+            autowireTasks.clear();
         }
     }
 }

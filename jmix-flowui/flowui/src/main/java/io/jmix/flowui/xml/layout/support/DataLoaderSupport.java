@@ -23,6 +23,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.FetchPlanLoader;
+import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.component.SupportsItemsFetchCallback;
 import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.SupportsItemsEnum;
@@ -31,11 +32,7 @@ import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.substitutor.StringSubstitutor;
-import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.LoaderResolver;
 import org.dom4j.Element;
@@ -49,8 +46,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
-
-import static com.google.common.base.Preconditions.checkState;
 
 @org.springframework.stereotype.Component("flowui_DataLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -136,10 +131,8 @@ public class DataLoaderSupport implements ApplicationContextAware {
                                 "attribute is not defined", containerId, element.attributeValue("id")), context);
             }
 
-            View<?> view = getComponentContext().getView();
-            ViewData viewData = ViewControllerUtils.getViewData(view);
-
-            return Optional.of(viewData.getContainer(containerId));
+            HasDataComponents dataHolder = context.getDataHolder();
+            return Optional.of(dataHolder.getContainer(containerId));
         }
 
         return Optional.empty();
@@ -193,7 +186,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
                 .map(ReflectionHelper::getClass)
                 .orElseThrow(() ->
                         new GuiDevelopmentException(String.format("Field 'class' is empty in component %s.",
-                                ((Component) component).getId()), getComponentContext()));
+                                ((Component) component).getId()), context));
 
         loadEntityItemsQueryInternal(component, itemsElement, entityClass);
     }
@@ -266,7 +259,7 @@ public class DataLoaderSupport implements ApplicationContextAware {
         if (queryElement == null) {
             throw new GuiDevelopmentException(String.format("Nested 'query' element is missing " +
                             "for '%s' element in component %s.",
-                    ITEMS_QUERY_ELEMENT, component.getId()), getComponentContext());
+                    ITEMS_QUERY_ELEMENT, component.getId()), context);
         }
 
         return queryElement.getTextTrim();
@@ -336,9 +329,8 @@ public class DataLoaderSupport implements ApplicationContextAware {
         String containerId = element.attributeValue("itemsContainer");
         if (containerId != null) {
 
-            View<?> view = getComponentContext().getView();
-            ViewData viewData = ViewControllerUtils.getViewData(view);
-            InstanceContainer<?> container = viewData.getContainer(containerId);
+            HasDataComponents dataHolder = context.getDataHolder();
+            InstanceContainer<?> container = dataHolder.getContainer(containerId);
             if (!(container instanceof CollectionContainer)) {
                 throw new GuiDevelopmentException(String.format("Not a %s: %s",
                         CollectionContainer.class.getSimpleName(), containerId),
@@ -379,12 +371,5 @@ public class DataLoaderSupport implements ApplicationContextAware {
         log.warn("Unable to load container for component with '{}' ID", element.attributeValue("id"));
 
         return null;
-    }
-
-    protected ComponentContext getComponentContext() {
-        checkState(context instanceof ComponentContext,
-                "'context' must implement " + ComponentContext.class.getName());
-
-        return (ComponentContext) context;
     }
 }

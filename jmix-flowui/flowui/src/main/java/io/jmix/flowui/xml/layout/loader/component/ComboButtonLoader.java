@@ -41,9 +41,9 @@ public class ComboButtonLoader extends AbstractDropdownButtonLoader<ComboButton>
         loadString(element, "action")
                 .ifPresent(actionId -> {
                     AssignActionInitTask<ComboButton> task =
-                            new AssignActionInitTask<>(component, actionId, getComponentContext().getView());
+                            new AssignActionInitTask<>(component, actionId);
                     task.setAfterExecuteHandler(this::afterActionSet);
-                    getComponentContext().addInitTask(task);
+                    getContext().addInitTask(task);
                 });
     }
 

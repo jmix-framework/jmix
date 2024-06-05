@@ -33,9 +33,11 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.ComponentLoader.FragmentContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -291,39 +293,44 @@ public class ExceptionDialog implements InitializingBean {
     protected String getMessage(Throwable rootCause) {
         StringBuilder msg = new StringBuilder();
 
-        if (msg.length() == 0) {
-            msg.append(rootCause.getClass().getSimpleName());
-            if (!StringUtils.isBlank(rootCause.getMessage())) {
-                msg.append(": ").append(rootCause.getMessage());
-            }
+        msg.append(rootCause.getClass().getSimpleName());
+        if (!StringUtils.isBlank(rootCause.getMessage())) {
+            msg.append(": ").append(rootCause.getMessage());
+        }
 
-            if (rootCause instanceof DevelopmentException) {
-                Map<String, Object> params = new LinkedHashMap<>();
-                if (rootCause instanceof GuiDevelopmentException) {
-                    GuiDevelopmentException guiDevException = (GuiDevelopmentException) rootCause;
-                    ComponentLoader.Context context = guiDevException.getContext();
-                    if (guiDevException.getFrameId() != null) {
-                        String frameId = guiDevException.getFrameId();
-                        params.put("Frame ID", frameId);
-                        try {
-                            params.put("XML descriptor",
-                                    viewRegistry.getViewInfo(frameId).
-                                            getTemplatePath().orElse(null));
-                        } catch (Exception e) {
-                            params.put("XML descriptor", "not found for " + frameId);
-                        }
+        if (rootCause instanceof DevelopmentException) {
+            Map<String, Object> params = new LinkedHashMap<>();
+            if (rootCause instanceof GuiDevelopmentException guiDevException) {
+                ComponentLoader.Context context = guiDevException.getContext();
+                if (context instanceof ComponentLoader.FragmentContext) {
+                    Class<?> componentClass = ((FragmentContext) context).getFragment().getClass();
+                    params.put("Component Class", componentClass);
+                    FragmentDescriptor template = componentClass.getAnnotation(FragmentDescriptor.class);
+                    if (template != null) {
+                        params.put("XML descriptor", template.value());
+                    }
+                } else if (guiDevException.getFrameId() != null) {
+                    String frameId = guiDevException.getFrameId();
+                    params.put("Frame ID", frameId);
+                    try {
+                        params.put("XML descriptor",
+                                viewRegistry.getViewInfo(frameId).
+                                        getTemplatePath().orElse(null));
+                    } catch (Exception e) {
+                        params.put("XML descriptor", "not found for " + frameId);
                     }
                 }
-                params.putAll(((DevelopmentException) rootCause).getParams());
+            }
+            params.putAll(((DevelopmentException) rootCause).getParams());
 
-                if (!params.isEmpty()) {
-                    msg.append("\n\n");
-                    for (Map.Entry<String, Object> entry : params.entrySet()) {
-                        msg.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-                    }
+            if (!params.isEmpty()) {
+                msg.append("\n\n");
+                for (Map.Entry<String, Object> entry : params.entrySet()) {
+                    msg.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
                 }
             }
         }
+
         return msg.toString();
     }
 

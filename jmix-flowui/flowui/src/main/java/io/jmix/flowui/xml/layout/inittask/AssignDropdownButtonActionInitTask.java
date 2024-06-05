@@ -28,14 +28,24 @@ public class AssignDropdownButtonActionInitTask<C extends Component & DropdownBu
     protected String id;
     protected int index;
 
+    @Deprecated(since = "2.3", forRemoval = true)
     public AssignDropdownButtonActionInitTask(C component,
                                               String actionId,
                                               String actionItemId,
                                               int index,
                                               View<?> view) {
-        super(component, actionId, view);
+        this(component, actionId, actionItemId, index);
         this.index = index;
         this.id = actionItemId;
+    }
+
+    public AssignDropdownButtonActionInitTask(C component,
+                                              String actionId,
+                                              String actionItemId,
+                                              int index) {
+        super(component, actionId);
+        this.id = actionItemId;
+        this.index = index;
     }
 
     @Override
@@ -44,7 +54,7 @@ public class AssignDropdownButtonActionInitTask<C extends Component & DropdownBu
     }
 
     @Override
-    protected void addAction(ComponentLoader.ComponentContext context, Action action) {
+    protected void addAction(ComponentLoader.Context context, Action action) {
         component.addItem(id, action, index);
     }
 }

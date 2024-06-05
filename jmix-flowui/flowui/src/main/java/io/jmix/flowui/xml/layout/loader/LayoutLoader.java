@@ -102,6 +102,7 @@ public class LayoutLoader {
 
     @SuppressWarnings("rawtypes")
     protected ComponentLoader<?> initLoader(Element element, Class<? extends ComponentLoader> loaderClass) {
+        // In case if of changes, sync with 'io.jmix.flowui.xml.layout.loader.FragmentLoader.initLoader'
         ComponentLoader<?> loader;
 
         Constructor<? extends ComponentLoader> constructor;

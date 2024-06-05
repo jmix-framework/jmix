@@ -37,9 +37,9 @@ public enum Target {
     CONTROLLER,
 
     /**
-     * Parent UI controller
+     * Host UI controller
      */
-    PARENT_CONTROLLER,
+    HOST_CONTROLLER,
 
     /**
      * {@link DataLoader} defined in {@link ViewData}.

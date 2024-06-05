@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.loader;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.LoaderResolver;
 import io.jmix.flowui.xml.layout.support.ComponentLoaderSupport;
@@ -145,7 +146,13 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected void loadId(Component component, Element element) {
-        loaderSupport.loadString(element, "id", component::setId);
+        loaderSupport.loadString(element, "id").ifPresent(id -> {
+            if (context instanceof ComponentLoader.FragmentContext) {
+                FragmentUtils.setComponentId(component, id);
+            } else {
+                component.setId(id);
+            }
+        });
     }
 
     protected void loadVisible(Component component, Element element) {

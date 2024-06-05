@@ -1,0 +1,44 @@
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <data>
+        <instance id="addressDc"
+                  class="test_support.entity.petclinic.Address">
+            <fetchPlan extends="_base"/>
+            <loader/>
+        </instance>
+        <collection id="countriesDc"
+                    class="test_support.entity.petclinic.Country">
+            <fetchPlan extends="_base"/>
+            <loader id="countriesDl">
+                <query>
+                    <![CDATA[select e from pc_Country e]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="productsDc"
+                    class="test_support.entity.sales.Product">
+            <fetchPlan extends="_base"/>
+            <loader id="productsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from test_Product e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <fragment id="dataGridFragmentProvided"
+                  class="component.fragment.component.TestDataGridFragmentProvided"/>
+
+        <fragment id="dataGridFragment"
+                  class="component.fragment.component.TestDataGridFragment">
+            <properties>
+                <property name="dataContainer" value="productsDc" type="CONTAINER_REF"/>
+            </properties>
+        </fragment>
+
+        <fragment id="hostFragment"
+                  class="component.fragment.component.TestHostFragment"/>
+    </layout>
+</view>

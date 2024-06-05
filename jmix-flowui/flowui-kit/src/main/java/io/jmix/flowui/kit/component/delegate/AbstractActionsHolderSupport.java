@@ -18,6 +18,7 @@ package io.jmix.flowui.kit.component.delegate;
 
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.ShortcutRegistration;
 import com.vaadin.flow.component.Shortcuts;
 import io.jmix.flowui.kit.action.Action;
@@ -75,7 +76,7 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
     protected void addShortcutListenerIfNeeded(Action action) {
         KeyCombination keyCombination = action.getShortcutCombination();
         if (keyCombination != null) {
-            ShortcutRegistration shortcutRegistration = Shortcuts.addShortcutListener(component,
+            ShortcutRegistration shortcutRegistration = Shortcuts.addShortcutListener(getShortcutLifecycleOwner(),
                     () -> action.actionPerform(component),
                     keyCombination.getKey(),
                     keyCombination.getKeyModifiers());
@@ -87,11 +88,23 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
             if (listenOnComponents != null) {
                 shortcutRegistration.listenOn(listenOnComponents);
             } else {
-                shortcutRegistration.listenOn(component);
+                shortcutRegistration.listenOn(getDefaultListenOnComponent());
             }
 
             getActionShortcutBinding().put(action, shortcutRegistration);
         }
+    }
+
+    protected Component getShortcutLifecycleOwner() {
+        return component instanceof Composite<?> composite
+                ? composite.getContent()
+                : component;
+    }
+
+    protected Component getDefaultListenOnComponent() {
+        return component instanceof Composite<?> composite
+                ? composite.getContent()
+                : component;
     }
 
     protected void removeShortcutListener(Action action) {
@@ -102,7 +115,7 @@ public abstract class AbstractActionsHolderSupport<C extends Component> {
     }
 
     public void removeAction(Action action) {
-        Preconditions.checkNotNull(action, "Action cannot be null");
+        Preconditions.checkNotNull(action, Action.class.getSimpleName() + " cannot be null");
 
         removeActionInternal(action);
     }

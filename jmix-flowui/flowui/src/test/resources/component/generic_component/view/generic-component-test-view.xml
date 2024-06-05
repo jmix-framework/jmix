@@ -1,0 +1,61 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <data>
+        <collection id="productsDc"
+                    class="test_support.entity.sales.Product">
+            <fetchPlan extends="_base"/>
+            <loader id="productsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from test_Product e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <component id="button" class="com.vaadin.flow.component.button.Button">
+            <properties>
+                <property name="text" value="Button"/>
+                <property name="icon" value="PLUS" type="ICON"/>
+            </properties>
+        </component>
+
+        <component id="propertyFilter" class="io.jmix.flowui.component.propertyfilter.PropertyFilter">
+            <properties>
+                <property name="property" value="name"/>
+                <property name="operation" value="CONTAINS"/>
+                <property name="dataLoader" value="productsDl" type="LOADER_REF"/>
+                <property name="parameterName" value="productName"/>
+                <property name="label" value="Property Filter"/>
+                <property name="tabIndex" value="2"/>
+            </properties>
+        </component>
+
+        <component id="testComponent" class="component.generic_component.component.TestComponent">
+            <properties>
+                <property name="stringsList" value="a b ,c"/>
+                <property name="stringsSet" value="a b ,c"/>
+                <property name="stringsArray" value="a b ,c"/>
+                <property name="strings" value="a b ,c"/>
+                <property name="dataContainer" value="productsDc" type="CONTAINER_REF"/>
+            </properties>
+        </component>
+    </layout>
+</view>

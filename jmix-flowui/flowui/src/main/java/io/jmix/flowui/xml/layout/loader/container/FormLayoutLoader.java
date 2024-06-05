@@ -71,7 +71,7 @@ public class FormLayoutLoader extends AbstractComponentLoader<JmixFormLayout> {
     protected void loadData(JmixFormLayout resultComponent, Element element) {
         String containerId = element.attributeValue("dataContainer");
         if (!Strings.isNullOrEmpty(containerId)) {
-            InstanceContainer<?> container = getComponentContext().getViewData().getContainer(containerId);
+            InstanceContainer<?> container = context.getDataHolder().getContainer(containerId);
             resultComponent.setValueSourceProvider(new ContainerValueSourceProvider<>(container));
         }
     }

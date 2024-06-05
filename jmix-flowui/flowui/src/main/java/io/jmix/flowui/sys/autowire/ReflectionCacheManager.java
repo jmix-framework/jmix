@@ -55,17 +55,17 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
 /**
  * Loads and caches data for a fields and methods that are used for autowiring.
  * <p>
- * Introspects the passed view for methods and fields that are annotated with UI system annotations. Also analyzes
+ * Introspects the passed component for methods and fields that are annotated with UI system annotations. Also analyzes
  * target classes for injection, collecting and caching data for methods-candidates for autowiring.
  * </p>
  */
 @Component("flowui_ReflectionCacheManager")
 public class ReflectionCacheManager {
 
-    protected final LoadingCache<Class<?>, ViewIntrospectionData> viewIntrospectionCache =
+    protected final LoadingCache<Class<?>, ComponentIntrospectionData> componentIntrospectionCache =
             CacheBuilder.newBuilder()
                     .weakKeys()
-                    .build(CacheLoader.from(this::getViewIntrospectionDataNotCached));
+                    .build(CacheLoader.from(this::getComponentIntrospectionDataNotCached));
 
     protected final LoadingCache<Class<?>, TargetIntrospectionData> targetIntrospectionCache =
             CacheBuilder.newBuilder()
@@ -108,58 +108,58 @@ public class ReflectionCacheManager {
     }
 
     /**
-     * Introspects view class if it has never introspected before and finds fields
+     * Introspects component class if it has never introspected before and finds fields
      * annotated by {@link ViewComponent} for autowiring.
      *
-     * @param viewClass view class to introspect
+     * @param componentClass component class to introspect
      * @return list of {@link AutowireElement}
      */
-    public List<AutowireElement> getViewAutowireElements(Class<?> viewClass) {
-        return viewIntrospectionCache.getUnchecked(viewClass).getAutowireElements();
+    public List<AutowireElement> getAutowireElements(Class<?> componentClass) {
+        return componentIntrospectionCache.getUnchecked(componentClass).getAutowireElements();
     }
 
     /**
-     * Introspects view class if it has never introspected before and
+     * Introspects component class if it has never introspected before and
      * finds methods annotated by {@link Subscribe} for autowiring.
      *
-     * @param viewClass view class to introspect
+     * @param componentClass component class to introspect
      * @return list of {@link AnnotatedMethod}
      */
-    public List<AnnotatedMethod<Subscribe>> getViewSubscribeMethods(Class<?> viewClass) {
-        return viewIntrospectionCache.getUnchecked(viewClass).getSubscribeMethods();
+    public List<AnnotatedMethod<Subscribe>> getSubscribeMethods(Class<?> componentClass) {
+        return componentIntrospectionCache.getUnchecked(componentClass).getSubscribeMethods();
     }
 
     /**
-     * Introspects view class if it has never introspected before and
+     * Introspects component class if it has never introspected before and
      * finds methods annotated by {@link Install} for autowiring.
      *
-     * @param viewClass view class to introspect
+     * @param componentClass composite class to introspect
      * @return list of {@link AnnotatedMethod}
      */
-    public List<AnnotatedMethod<Install>> getViewInstallMethods(Class<?> viewClass) {
-        return viewIntrospectionCache.getUnchecked(viewClass).getInstallMethods();
+    public List<AnnotatedMethod<Install>> getInstallMethods(Class<?> componentClass) {
+        return componentIntrospectionCache.getUnchecked(componentClass).getInstallMethods();
     }
 
     /**
-     * Introspects view class if it has never introspected before and
+     * Introspects component class if it has never introspected before and
      * finds methods annotated by {@link Supply} for autowiring.
      *
-     * @param viewClass view class to introspect
+     * @param componentClass composite class to introspect
      * @return list of {@link AnnotatedMethod}
      */
-    public List<AnnotatedMethod<Supply>> getViewSupplyMethods(Class<?> viewClass) {
-        return viewIntrospectionCache.getUnchecked(viewClass).getSupplyMethods();
+    public List<AnnotatedMethod<Supply>> getSupplyMethods(Class<?> componentClass) {
+        return componentIntrospectionCache.getUnchecked(componentClass).getSupplyMethods();
     }
 
     /**
-     * Introspects view class if it has never introspected before and
+     * Introspects component class if it has never introspected before and
      * finds methods annotated by {@link EventListener} for autowiring.
      *
-     * @param viewClass view class to introspect
+     * @param componentClass composite class to introspect
      * @return list of {@link Method}
      */
-    public List<Method> getViewEventListenerMethods(Class<?> viewClass) {
-        return viewIntrospectionCache.getUnchecked(viewClass).getEventListenerMethods();
+    public List<Method> getEventListenerMethods(Class<?> componentClass) {
+        return componentIntrospectionCache.getUnchecked(componentClass).getEventListenerMethods();
     }
 
     /**
@@ -339,13 +339,13 @@ public class ReflectionCacheManager {
      * Clear underlying reflection caches.
      */
     public void clearCache() {
-        viewIntrospectionCache.invalidateAll();
+        componentIntrospectionCache.invalidateAll();
         targetIntrospectionCache.invalidateAll();
 
         lambdaMethodsCache.invalidateAll();
     }
 
-    protected ViewIntrospectionData getViewIntrospectionDataNotCached(Class<?> viewClass) {
+    protected ComponentIntrospectionData getComponentIntrospectionDataNotCached(Class<?> viewClass) {
         Method[] methods = ReflectionUtils.getUniqueDeclaredMethods(viewClass);
 
         List<AutowireElement> autowireElements = getAnnotatedAutowireElementsNotCached(viewClass, methods);
@@ -356,7 +356,7 @@ public class ReflectionCacheManager {
 
         List<Method> eventListenerMethods = getAnnotatedListenerMethodsNotCached(methods);
 
-        return new ViewIntrospectionData(
+        return new ComponentIntrospectionData(
                 autowireElements,
                 subscribeMethods,
                 installMethods,
@@ -379,11 +379,11 @@ public class ReflectionCacheManager {
         );
     }
 
-    protected List<AutowireElement> getAnnotatedAutowireElementsNotCached(Class<?> viewClass, Method[] methods) {
+    protected List<AutowireElement> getAnnotatedAutowireElementsNotCached(Class<?> componentClass, Method[] methods) {
         Map<AnnotatedElement, Class<?>> toAutowire = Collections.emptyMap(); // lazily initialized
 
-        List<Class<?>> classes = ClassUtils.getAllSuperclasses(viewClass);
-        classes.add(0, viewClass);
+        List<Class<?>> classes = ClassUtils.getAllSuperclasses(componentClass);
+        classes.add(0, componentClass);
         Collections.reverse(classes);
 
         for (Field field : getAllFields(classes)) {
@@ -577,6 +577,7 @@ public class ReflectionCacheManager {
     @Nullable
     protected Class<?> getAutowiringAnnotationClass(AnnotatedElement element) {
         // TODO: kd, remove after major release
+        //  deprecated function,
         //  the @ViewComponent should be the only annotation for the fields that is processed by the framework.
         //  currently, @Autowired is only needed for messageBundle bean. not removed for backward compatibility.
         if (element.isAnnotationPresent(Autowired.class)) {
@@ -621,7 +622,7 @@ public class ReflectionCacheManager {
     }
 
     @SuppressWarnings("ClassCanBeRecord")
-    public static class ViewIntrospectionData {
+    public static class ComponentIntrospectionData {
 
         protected final List<AutowireElement> autowireElements;
 
@@ -631,11 +632,11 @@ public class ReflectionCacheManager {
 
         protected final List<Method> eventListenerMethods;
 
-        public ViewIntrospectionData(List<AutowireElement> autowireElements,
-                                     List<AnnotatedMethod<Subscribe>> subscribeMethods,
-                                     List<AnnotatedMethod<Install>> installMethods,
-                                     List<AnnotatedMethod<Supply>> supplyMethods,
-                                     List<Method> eventListenerMethods) {
+        public ComponentIntrospectionData(List<AutowireElement> autowireElements,
+                                          List<AnnotatedMethod<Subscribe>> subscribeMethods,
+                                          List<AnnotatedMethod<Install>> installMethods,
+                                          List<AnnotatedMethod<Supply>> supplyMethods,
+                                          List<Method> eventListenerMethods) {
             this.autowireElements = autowireElements;
             this.subscribeMethods = subscribeMethods;
             this.installMethods = installMethods;

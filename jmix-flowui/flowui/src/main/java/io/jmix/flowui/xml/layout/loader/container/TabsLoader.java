@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.container;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
@@ -59,6 +60,11 @@ public class TabsLoader extends AbstractTabsLoader<Tabs> {
         @Override
         protected Tab createComponent() {
             return factory.create(Tab.class);
+        }
+
+        @Override
+        protected void loadId(Component component, Element element) {
+            loaderSupport.loadString(element, "id", component::setId);
         }
 
         @Override

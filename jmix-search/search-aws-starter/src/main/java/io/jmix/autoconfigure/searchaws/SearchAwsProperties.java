@@ -19,7 +19,7 @@ package io.jmix.autoconfigure.searchaws;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-@ConfigurationProperties(prefix = "jmix.search.connection.aws")
+@ConfigurationProperties(prefix = "jmix.search.server.aws")
 public class SearchAwsProperties {
 
     /**

@@ -49,7 +49,7 @@ public class SslConfigurer {
 
     @Nullable
     public SSLContext createSslContext() {
-        String certificateLocation = searchProperties.getConnectionSslCertificateLocation();
+        String certificateLocation = searchProperties.getServerSslCertificateLocation();
 
         if (Strings.isNullOrEmpty(certificateLocation)) {
             return null;
@@ -58,14 +58,14 @@ public class SslConfigurer {
             CertificateFactory factory = getCertificateFactory();
             Certificate certificate = createCertificate(factory, certificateLocation);
             KeyStore keyStore = getKeyStore();
-            setCertificateToStore(keyStore, searchProperties.getConnectionSslCertificateAlias(), certificate);
+            setCertificateToStore(keyStore, searchProperties.getServerSslCertificateAlias(), certificate);
             return buildSslContext(keyStore);
         }
     }
 
     protected CertificateFactory getCertificateFactory() {
         try {
-            String factoryType = searchProperties.getConnectionSslCertificateFactoryType();
+            String factoryType = searchProperties.getServerSslCertificateFactoryType();
             log.debug("Get Certificate Factory '{}'", factoryType);
             return CertificateFactory.getInstance(factoryType);
         } catch (CertificateException e) {
@@ -89,7 +89,7 @@ public class SslConfigurer {
 
     protected KeyStore getKeyStore() {
         try {
-            String keyStoreType = searchProperties.getConnectionSslKeyStoreType();
+            String keyStoreType = searchProperties.getServerSslKeyStoreType();
             log.debug("Get Key Store '{}'", keyStoreType);
             KeyStore keyStore = KeyStore.getInstance(keyStoreType);
             keyStore.load(null, null);

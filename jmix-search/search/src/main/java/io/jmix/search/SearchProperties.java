@@ -88,7 +88,7 @@ public class SearchProperties {
     protected final boolean restHighLevelClientApiCompatibilityModeEnabled;
 
 
-    protected final Connection connection;
+    protected final Server server;
 
     /**
      * Name of default search strategy
@@ -139,7 +139,7 @@ public class SearchProperties {
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
             @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
             @DefaultValue("0/5 * * * * ?") String enqueueingSessionProcessingCron,
-            @DefaultValue Connection connection) {
+            @DefaultValue Server server) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
@@ -152,7 +152,7 @@ public class SearchProperties {
         this.enqueueingSessionProcessingCron = enqueueingSessionProcessingCron;
         this.defaultSearchStrategy = defaultSearchStrategy;
         this.indexSchemaManagementStrategy = IndexSchemaManagementStrategy.getByKey(indexSchemaManagementStrategy);
-        this.connection = connection;
+        this.server = server;
         this.enqueueIndexAllOnStartupIndexRecreationEnabled = enqueueIndexAllOnStartupIndexRecreationEnabled;
         this.restHighLevelClientApiCompatibilityModeEnabled = restHighLevelClientApiCompatibilityModeEnabled;
         this.enqueueIndexAllOnStartupIndexRecreationEntities = prepareStartupEnqueueingEntities(enqueueIndexAllOnStartupIndexRecreationEntities);
@@ -265,59 +265,59 @@ public class SearchProperties {
     }
 
     /**
-     * @see Connection#url
+     * @see Server#url
      */
-    public String getConnectionUrl() {
-        return connection.url;
+    public String getServerUrl() {
+        return server.url;
     }
 
     /**
-     * @see Connection#login
+     * @see Server#login
      */
-    public String getConnectionLogin() {
-        return connection.login;
+    public String getServerLogin() {
+        return server.login;
     }
 
     /**
-     * @see Connection#password
+     * @see Server#password
      */
-    public String getConnectionPassword() {
-        return connection.password;
+    public String getServerPassword() {
+        return server.password;
     }
 
     /**
      * @see SSL#certificateLocation
      */
-    public String getConnectionSslCertificateLocation() {
-        return connection.ssl.certificateLocation;
+    public String getServerSslCertificateLocation() {
+        return server.ssl.certificateLocation;
     }
 
     /**
      * @see SSL#certificateAlias
      */
-    public String getConnectionSslCertificateAlias() {
-        return connection.ssl.certificateAlias;
+    public String getServerSslCertificateAlias() {
+        return server.ssl.certificateAlias;
     }
 
     /**
      * @see SSL#certificateFactoryType
      */
-    public String getConnectionSslCertificateFactoryType() {
-        return connection.ssl.certificateFactoryType;
+    public String getServerSslCertificateFactoryType() {
+        return server.ssl.certificateFactoryType;
     }
 
     /**
      * @see SSL#keyStoreType
      */
-    public String getConnectionSslKeyStoreType() {
-        return connection.ssl.keyStoreType;
+    public String getServerSslKeyStoreType() {
+        return server.ssl.keyStoreType;
     }
 
     /**
-     * @see Connection#bulkRequestRefreshPolicy
+     * @see Server#bulkRequestRefreshPolicy
      */
     public RefreshPolicy getBulkRequestRefreshPolicy() {
-        return connection.bulkRequestRefreshPolicy;
+        return server.bulkRequestRefreshPolicy;
     }
 
     /**
@@ -337,7 +337,7 @@ public class SearchProperties {
         return result;
     }
 
-    public static class Connection {
+    public static class Server {
 
         /**
          * Elasticsearch URL.
@@ -361,7 +361,7 @@ public class SearchProperties {
          */
         protected final RefreshPolicy bulkRequestRefreshPolicy;
 
-        public Connection(
+        public Server(
                 @DefaultValue("localhost:9200") String url,
                 String login,
                 String password,

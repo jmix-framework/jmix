@@ -72,7 +72,7 @@ public class SearchOpenSearchAutoConfiguration {
     @Bean("search_OpenSearchClient")
     @ConditionalOnMissingBean(OpenSearchClient.class)
     public OpenSearchClient openSearchClient() {
-        HttpHost host = HttpHost.create(searchProperties.getConnectionUrl());
+        HttpHost host = HttpHost.create(searchProperties.getServerUrl());
         CredentialsProvider credentialsProvider = createCredentialsProvider();
         SSLContext sslContext = sslConfigurer.createSslContext();
 
@@ -158,12 +158,12 @@ public class SearchOpenSearchAutoConfiguration {
     @Nullable
     protected CredentialsProvider createCredentialsProvider() {
         CredentialsProvider credentialsProvider = null;
-        if (!Strings.isNullOrEmpty(searchProperties.getConnectionLogin())) {
+        if (!Strings.isNullOrEmpty(searchProperties.getServerLogin())) {
             credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(
-                            searchProperties.getConnectionLogin(),
-                            searchProperties.getConnectionPassword()
+                            searchProperties.getServerLogin(),
+                            searchProperties.getServerPassword()
                     )
             );
         }

@@ -75,9 +75,9 @@ public class SearchElasticsearchAutoConfiguration {
         CredentialsProvider credentialsProvider = createCredentialsProvider();
         SSLContext sslContext = sslConfigurer.createSslContext();
 
-        String esUrl = searchProperties.getConnectionUrl();
+        String url = searchProperties.getServerUrl();
         RestClient restClient = RestClient
-                .builder(HttpHost.create(esUrl))
+                .builder(HttpHost.create(url))
                 .setHttpClientConfigCallback(httpClientBuilder -> {
                     if (credentialsProvider != null) {
                         httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
@@ -166,12 +166,12 @@ public class SearchElasticsearchAutoConfiguration {
     @Nullable
     protected CredentialsProvider createCredentialsProvider() {
         CredentialsProvider credentialsProvider = null;
-        if (!Strings.isNullOrEmpty(searchProperties.getConnectionLogin())) {
+        if (!Strings.isNullOrEmpty(searchProperties.getServerLogin())) {
             credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(
-                            searchProperties.getConnectionLogin(),
-                            searchProperties.getConnectionPassword()
+                            searchProperties.getServerLogin(),
+                            searchProperties.getServerPassword()
                     )
             );
         }

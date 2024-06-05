@@ -55,7 +55,7 @@ public class SearchAwsAutoConfiguration {
     protected SslConfigurer sslConfigurer;
 
     /*@Bean("search_RestHighLevelClient")
-    @ConditionalOnProperty(name = "jmix.search.connection.aws.iam-auth", matchIfMissing = true)
+    @ConditionalOnProperty(name = "jmix.search.server.aws.iam-auth", matchIfMissing = true)
     public RestHighLevelClient elasticSearchClient() {
         log.debug("Create ES Client with AWS IAM Authentication");
         String esUrl = searchProperties.getConnectionUrl();
@@ -78,10 +78,10 @@ public class SearchAwsAutoConfiguration {
     }*/
 
     @Bean("search_ElasticsearchClient")
-    @ConditionalOnProperty(name = "jmix.search.connection.aws.iam-auth", matchIfMissing = true)
+    @ConditionalOnProperty(name = "jmix.search.server.aws.iam-auth", matchIfMissing = true)
     public ElasticsearchClient elasticsearchClient() {
         log.debug("Create ES Client with AWS IAM Authentication");
-        String esUrl = searchProperties.getConnectionUrl();
+        String esUrl = searchProperties.getServerUrl();
         HttpRequestInterceptor interceptor = createHttpRequestInterceptor();
         SSLContext sslContext = sslConfigurer.createSslContext();
 

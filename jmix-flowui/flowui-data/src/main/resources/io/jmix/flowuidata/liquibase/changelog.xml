@@ -25,5 +25,6 @@
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
     <include file="/io/jmix/flowuidata/liquibase/changelog/001-flowui-data.xml"/>
+    <include file="/io/jmix/flowuidata/liquibase/changelog/002-flowui-data.xml"/>
 
 </databaseChangeLog>

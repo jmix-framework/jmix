@@ -92,7 +92,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
                 new KeyModifier[]{KeyModifier.CONTROL})
         applicationViewMenuItem.getViewClass() == HorizontalMenuView.class
         applicationViewMenuItem.getUrlQueryParameters().getParameters().isEmpty()
-        applicationViewMenuItem.getRouteParameters().getParameterNames().isEmpty()
+        applicationViewMenuItem.getRouteParameters() == null
 
         def separatorItem = parentApplicationItem.getChildItems().get(1)
         separatorItem instanceof HorizontalMenu.SeparatorMenuItem
@@ -131,7 +131,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
         nestedViewMenuItem.getShortcutCombination() == null
         nestedViewMenuItem.getViewClass() == HorizontalMenuView.class
         nestedViewMenuItem.getUrlQueryParameters().getParameters().isEmpty()
-        nestedViewMenuItem.getRouteParameters().getParameterNames().isEmpty()
+        nestedViewMenuItem.getRouteParameters() == null
 
         def administrationViewItem = menu.getMenuItem("Administration.view")
         administrationViewItem != null
@@ -150,7 +150,7 @@ class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
         administrationViewMenuItem.getViewClass() == HorizontalMenuView.class
         administrationViewMenuItem.getUrlQueryParameters().getSingleParameter("a").isPresent()
         administrationViewMenuItem.getUrlQueryParameters().getSingleParameter("a").get() == "A"
-        administrationViewMenuItem.getRouteParameters().getParameterNames().isEmpty()
+        administrationViewMenuItem.getRouteParameters() == null
     }
 
     def "Load HorizontalMenu component without loading items from XML"() {

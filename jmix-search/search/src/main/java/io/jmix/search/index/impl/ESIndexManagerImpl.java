@@ -17,22 +17,18 @@
 package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.elasticsearch.client.indices.CreateIndexResponse;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.client.indices.GetIndexResponse;
-import org.elasticsearch.cluster.metadata.MappingMetadata;
-import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.client.indices.*;
 import org.elasticsearch.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +53,8 @@ public class ESIndexManagerImpl implements ESIndexManager {
     protected SearchProperties searchProperties;
     @Autowired
     protected IndexStateRegistry indexStateRegistry;
+    @Autowired
+    private IndexConfigurationsChecker indexConfigurationsChecker;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -172,7 +170,8 @@ public class ESIndexManagerImpl implements ESIndexManager {
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            if (isIndexActual(indexConfiguration)) {
+            IndexConfigurationsChecker.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
+            if (result.isCompartible()) {
                 status = IndexValidationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             } else {
@@ -227,16 +226,55 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return synchronizeIndexSchema(indexConfiguration, strategy);
     }
 
+    @Override
+    public boolean saveIndexMapping(IndexConfiguration indexConfiguration) {
+        PutMappingRequest request = new PutMappingRequest(indexConfiguration.getIndexName());
+
+        String mappingBody;
+        try {
+            mappingBody = objectMapper.writeValueAsString(indexConfiguration.getMapping());
+        } catch (JsonProcessingException e) {
+            //TODO
+            throw new RuntimeException("Unable to create index '" + indexConfiguration.getIndexName() + "': Failed to parse index definition", e);
+        }
+
+        request.source(mappingBody, XContentType.JSON);
+        AcknowledgedResponse response;
+        try {
+            response = esClient.indices().putMapping(request, RequestOptions.DEFAULT);
+        } catch (IOException | ElasticsearchStatusException e) {
+            log.error("Problem with saving index mapping.", e);
+            return false;
+        }
+        return response.isAcknowledged();
+    }
+
     protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+        String indexName = indexConfiguration.getIndexName();
         log.info("Synchronize search index '{}' (entity '{}') according to strategy '{}'",
-                indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), strategy);
+                indexName, indexConfiguration.getEntityName(), strategy);
         IndexSynchronizationStatus status;
-        boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
+        boolean indexExist = isIndexExist(indexName);
         if (indexExist) {
-            boolean indexActual = isIndexActual(indexConfiguration);
-            if (indexActual) {
+            IndexConfigurationsChecker.ConfiguarionComparingResult result = isIndexActual(indexConfiguration);
+            if (result.isCompartible()) {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
+                if (result.isMappingMustBeActualized()) {
+                    boolean mappingSavingResult = saveIndexMapping(indexConfiguration);
+                    if (!mappingSavingResult) {
+                        log.error("Problem with index mapping saving. Index name is {}.", indexName);
+                        status = handleIrrelevantIndex(indexConfiguration, strategy);
+                    }
+                }
+                if (result.isSettingsMustBeActualized()) {
+                    boolean settingsAreSavedSuccessfully = saveSettings(indexConfiguration);
+                    if (!settingsAreSavedSuccessfully) {
+                        log.error("Problem with index settings saving. Index name is {}.", indexName);
+                        status = handleIrrelevantIndex(indexConfiguration, strategy);
+                    }
+                }
+
             } else {
                 status = handleIrrelevantIndex(indexConfiguration, strategy);
             }
@@ -244,8 +282,23 @@ public class ESIndexManagerImpl implements ESIndexManager {
             status = handleMissingIndex(indexConfiguration, strategy);
         }
         log.info("Synchronization status of search index '{}' (entity '{}'): {}",
-                indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), status);
+                indexName, indexConfiguration.getEntityName(), status);
         return status;
+    }
+
+    private boolean saveSettings(IndexConfiguration indexConfiguration) {
+        UpdateSettingsRequest request = new UpdateSettingsRequest(indexConfiguration.getIndexName());
+        request.settings(indexConfiguration.getSettings());
+
+        AcknowledgedResponse response;
+        try {
+            response = esClient.indices().putSettings(request, RequestOptions.DEFAULT);
+        } catch (IOException | ElasticsearchStatusException e) {
+            log.error("Problem with saving index settings.", e);
+            return false;
+        }
+
+        return response.isAcknowledged();
     }
 
     protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
@@ -284,40 +337,11 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return status;
     }
 
-    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
+    protected IndexConfigurationsChecker.ConfiguarionComparingResult isIndexActual(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());
-        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexResponse);
-        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexResponse);
 
-        return indexMappingActual && indexSettingsActual;
-    }
-
-    protected boolean isIndexMappingActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
-        Map<String, MappingMetadata> mappings = indexResponse.getMappings();
-        MappingMetadata indexMappingMetadata = mappings.get(indexConfiguration.getIndexName());
-        Map<String, Object> currentMapping = indexMappingMetadata.getSourceAsMap();
-        Map<String, Object> actualMapping = objectMapper.convertValue(
-                indexConfiguration.getMapping(),
-                new TypeReference<Map<String, Object>>() {
-                }
-        );
-        log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
-                indexConfiguration.getIndexName(), currentMapping, actualMapping);
-        return actualMapping.equals(currentMapping);
-    }
-
-    protected boolean isIndexSettingsActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
-        Map<String, Settings> settings = indexResponse.getSettings();
-        Settings currentSettings = settings.get(indexConfiguration.getIndexName());
-        Settings actualSettings = indexConfiguration.getSettings();
-        long unmatchedSettings = actualSettings.keySet().stream().filter(key -> {
-            String actualValue = actualSettings.get(key);
-            String currentValue = currentSettings.get(key);
-            return !actualValue.equals(currentValue);
-        }).count();
-
-        return unmatchedSettings == 0;
+        return indexConfigurationsChecker.compareConfigurations(indexConfiguration, indexResponse);
     }
 }

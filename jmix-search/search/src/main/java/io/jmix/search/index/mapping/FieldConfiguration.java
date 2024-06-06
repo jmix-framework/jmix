@@ -31,7 +31,7 @@ public class FieldConfiguration {
     }
 
     /**
-     * Provides field configuration as Elasticsearch-native json.
+     * Provides field configuration as native json.
      *
      * @return json with field configuration
      */

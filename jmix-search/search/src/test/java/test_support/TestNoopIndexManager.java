@@ -6,6 +6,7 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.BaseIndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import org.springframework.lang.NonNull;
 
 public class TestNoopIndexManager extends BaseIndexManager {
 
@@ -36,7 +37,7 @@ public class TestNoopIndexManager extends BaseIndexManager {
     }
 
     @Override
-    public ObjectNode getIndexMetadata(String indexName) {
+    public ObjectNode getIndexMetadata(@NonNull String indexName) {
         return objectMapper.createObjectNode();
     }
 }

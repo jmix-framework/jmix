@@ -289,7 +289,7 @@ public class MappingDefinitionElement {
         }
 
         /**
-         * Defines field configuration as String json object with Elasticsearch-native configuration.
+         * Defines field configuration as String json object with native configuration.
          * It should contain only configuration itself without field name:
          * <pre>
          * {@code
@@ -330,7 +330,7 @@ public class MappingDefinitionElement {
         }
 
         /**
-         * Defines field configuration as json object with Elasticsearch-native configuration.
+         * Defines field configuration as json object with native configuration.
          * It should contain only configuration itself without field name:
          * <pre>
          * {@code

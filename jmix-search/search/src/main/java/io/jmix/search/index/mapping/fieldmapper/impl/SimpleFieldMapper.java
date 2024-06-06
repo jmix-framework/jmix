@@ -25,10 +25,10 @@ public abstract class SimpleFieldMapper extends AbstractFieldMapper {
     @Override
     public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
         Map<String, Object> effectiveParameters = createEffectiveParameters(parameters);
-        effectiveParameters.put("type", getElasticsearchDatatype());
+        effectiveParameters.put("type", getSearchPlatformDatatype());
 
         return objectMapper.convertValue(effectiveParameters, ObjectNode.class);
     }
 
-    protected abstract String getElasticsearchDatatype();
+    protected abstract String getSearchPlatformDatatype();
 }

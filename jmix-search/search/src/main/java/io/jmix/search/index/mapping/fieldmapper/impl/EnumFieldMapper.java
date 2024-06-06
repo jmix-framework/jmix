@@ -31,7 +31,7 @@ public class EnumFieldMapper extends SimpleFieldMapper {
     );
 
     @Override
-    protected String getElasticsearchDatatype() {
+    protected String getSearchPlatformDatatype() {
         return "text";
     }
 

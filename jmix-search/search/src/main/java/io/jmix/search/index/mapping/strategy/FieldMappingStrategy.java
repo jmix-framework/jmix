@@ -45,7 +45,7 @@ public interface FieldMappingStrategy {
     boolean isSupported(MetaPropertyPath propertyPath);
 
     /**
-     * Creates field configuration as Elasticsearch-native json.
+     * Creates field configuration as native json.
      *
      * @param propertyPath property to generate configuration for
      * @param parameters   input parameters

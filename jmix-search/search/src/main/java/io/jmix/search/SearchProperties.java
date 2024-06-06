@@ -80,13 +80,6 @@ public class SearchProperties {
      */
     protected final boolean enqueueIndexAllOnStartupIndexRecreationEnabled;
 
-    /**
-     * Whether the Rest High Level Client should be able to communicate with Elasticsearch version 8.x.
-     * Note that when compatibility mode is enabled, the Rest High Level Client not able to communicate
-     * with Elasticsearch version lower than 7.11.
-     */
-    protected final boolean restHighLevelClientApiCompatibilityModeEnabled;
-
 
     protected final Server server;
 
@@ -132,7 +125,6 @@ public class SearchProperties {
             @DefaultValue("true") boolean useDefaultIndexingQueueProcessingQuartzConfiguration,
             @DefaultValue("true") boolean useDefaultEnqueueingSessionProcessingQuartzConfiguration,
             @DefaultValue("true") boolean enqueueIndexAllOnStartupIndexRecreationEnabled,
-            @DefaultValue("true") boolean restHighLevelClientApiCompatibilityModeEnabled,
             @DefaultValue("") String enqueueIndexAllOnStartupIndexRecreationEntities,
             @DefaultValue("search_index_") String searchIndexNamePrefix,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
@@ -154,7 +146,6 @@ public class SearchProperties {
         this.indexSchemaManagementStrategy = IndexSchemaManagementStrategy.getByKey(indexSchemaManagementStrategy);
         this.server = server;
         this.enqueueIndexAllOnStartupIndexRecreationEnabled = enqueueIndexAllOnStartupIndexRecreationEnabled;
-        this.restHighLevelClientApiCompatibilityModeEnabled = restHighLevelClientApiCompatibilityModeEnabled;
         this.enqueueIndexAllOnStartupIndexRecreationEntities = prepareStartupEnqueueingEntities(enqueueIndexAllOnStartupIndexRecreationEntities);
         this.searchIndexNamePrefix = searchIndexNamePrefix;
     }
@@ -241,13 +232,6 @@ public class SearchProperties {
      */
     public boolean isEnqueueIndexAllOnStartupIndexRecreationEnabled() {
         return enqueueIndexAllOnStartupIndexRecreationEnabled;
-    }
-
-    /**
-     * @see #restHighLevelClientApiCompatibilityModeEnabled
-     */
-    public boolean isRestHighLevelClientApiCompatibilityModeEnabled() {
-        return restHighLevelClientApiCompatibilityModeEnabled;
     }
 
     /**
@@ -340,24 +324,24 @@ public class SearchProperties {
     public static class Server {
 
         /**
-         * Elasticsearch URL.
+         * URL.
          */
         protected final String url;
 
         /**
-         * Elasticsearch login for common base authentication.
+         * Login for basic authentication.
          */
         protected final String login;
 
         /**
-         * Elasticsearch password for common base authentication.
+         * Password for basic authentication.
          */
         protected final String password;
 
         protected final SSL ssl;
 
         /**
-         * RefreshPolicy policy that should be used with bulk requests to Elasticsearch: NONE (default), WAIT_UNTIL, IMMEDIATE
+         * RefreshPolicy policy that should be used with bulk requests to search platform: FALSE (default), TRUE, WAIT_FOR
          */
         protected final RefreshPolicy bulkRequestRefreshPolicy;
 
@@ -366,7 +350,7 @@ public class SearchProperties {
                 String login,
                 String password,
                 @DefaultValue SSL ssl,
-                @DefaultValue("NONE") String bulkRequestRefreshPolicy) {
+                @DefaultValue("FALSE") String bulkRequestRefreshPolicy) {
             this.url = url;
             this.login = login;
             this.password = password;
@@ -386,10 +370,10 @@ public class SearchProperties {
         }
     }
 
-    protected static class SSL {
+    public static class SSL {
 
         /**
-         * Location of CA certificate for connection to Elasticsearch service. Location is handled according to the
+         * Location of CA certificate for connection to search platform service. Location is handled according to the
          * rules of {@link Resources}
          */
         protected final String certificateLocation;

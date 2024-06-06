@@ -26,7 +26,7 @@ import java.util.Map;
 public interface FieldMapper {
 
     /**
-     * Creates field configuration as Elasticsearch-native json.
+     * Creates field configuration as native json.
      *
      * @param parameters input parameters
      * @return json object

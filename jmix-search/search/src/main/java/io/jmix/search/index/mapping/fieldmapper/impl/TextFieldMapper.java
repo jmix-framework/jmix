@@ -39,7 +39,7 @@ public class TextFieldMapper extends SimpleFieldMapper {
     }
 
     @Override
-    public String getElasticsearchDatatype() {
+    public String getSearchPlatformDatatype() {
         return "text";
     }
 }

@@ -31,7 +31,7 @@ public abstract class AbstractFieldMapper implements FieldMapper {
     protected static final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * Defines Elasticsearch-native parameters supported by this field mapper.
+     * Defines search platform native parameters supported by this field mapper.
      * They will be used to build field configuration.
      *
      * @return names of supported parameters

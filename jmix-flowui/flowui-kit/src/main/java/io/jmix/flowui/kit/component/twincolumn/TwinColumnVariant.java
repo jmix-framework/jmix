@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.twincolumn;
+package io.jmix.flowui.kit.component.twincolumn;
 
 import com.vaadin.flow.component.shared.ThemeVariant;
 
 /**
- * Set of theme variants applicable for {@link TwinColumn} component.
+ * Set of theme variants applicable for {@link JmixTwinColumn} component.
  */
 public enum TwinColumnVariant implements ThemeVariant {
 

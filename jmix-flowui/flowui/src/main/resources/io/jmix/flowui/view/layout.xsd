@@ -2158,10 +2158,10 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="grid"/>
-                    <xs:enumeration value="rounded"/>
+                    <xs:enumeration value="no-border"/>
+                    <xs:enumeration value="no-row-border"/>
                     <xs:enumeration value="checkboxes"/>
-                    <xs:enumeration value="no-spaces"/>
+                    <xs:enumeration value="no-space-between-actions"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

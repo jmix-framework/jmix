@@ -20,6 +20,8 @@ import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
 import { InputFieldMixin } from '@vaadin/field-base/src/input-field-mixin.js'
 import { css, registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import './jmix-twin-column-styles.js';
+
 
 export class JmixTwinColumn extends InputFieldMixin(ThemableMixin(ElementMixin(PolymerElement))) {
     static get is() {

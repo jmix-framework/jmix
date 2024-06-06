@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.twincolumn;
+package io.jmix.flowui.component.delegate;
 
 import com.vaadin.flow.component.AbstractField;
 import io.jmix.flowui.component.delegate.AbstractFieldDelegate;
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 @Component("flowui_TwinColumnDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class TwinColumnDelegate<C extends AbstractField<C, V>, T, V> extends AbstractFieldDelegate<C, T, V> {
+public class TwinColumnDelegate<C extends AbstractField<?, V>, T, V> extends AbstractFieldDelegate<C, T, V> {
 
     protected ApplicationContext applicationContext;
 

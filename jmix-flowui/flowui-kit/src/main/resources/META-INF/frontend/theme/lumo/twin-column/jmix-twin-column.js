@@ -14,6 +14,4 @@
  * limitations under the License.
  */
 
-import '@vaadin/input-container/theme/lumo/vaadin-input-container.js';
-import './jmix-twin-column-styles.js';
 import '../../../src/twin-column/jmix-twin-column.js';

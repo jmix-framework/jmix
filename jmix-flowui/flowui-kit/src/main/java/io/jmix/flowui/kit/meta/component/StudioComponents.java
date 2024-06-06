@@ -53,6 +53,7 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.multiselectcomboboxpicker.MultiSelectComboBoxPicker;
 import io.jmix.flowui.kit.component.pagination.JmixSimplePagination;
 import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
+import io.jmix.flowui.kit.component.twincolumn.JmixTwinColumn;
 import io.jmix.flowui.kit.component.upload.JmixFileStorageUploadField;
 import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
@@ -3086,7 +3087,7 @@ public interface StudioComponents {
                     )
             }
     )
-    HorizontalLayout twinColumn();
+    JmixTwinColumn twinColumn();
 
     @StudioComponent(
             name = "GridColumnVisibility",

@@ -47,8 +47,8 @@ public class JmixBaseEntityManagerFactoryBean extends LocalContainerEntityManage
         }
 
         throw new RuntimeException(String.format("Cannot find persistence.xml for '%1$s' store.\n" +
-                "Please make sure that property 'jmix.core.additional-stores' defined in application.properties " +
-                        "and contains this store name or at least one entity with '@Store(name = \"%1$s\")' annotation present.",
+                        "Please make sure that the property 'jmix.core.additional-stores' is defined in application.properties " +
+                        "and contains this store name, or that at least one entity with the '@Store(name = \"%1$s\")' annotation is present.",
                 storeName));
     }
 

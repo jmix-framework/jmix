@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-@Experimental
 @NonNullApi
 package io.jmix.search.index.mapping.fieldmapper;
 
-import io.jmix.core.annotation.Experimental;
 import org.springframework.lang.NonNullApi;

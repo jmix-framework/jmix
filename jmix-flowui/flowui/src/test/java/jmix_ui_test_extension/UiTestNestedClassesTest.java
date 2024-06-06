@@ -25,6 +25,7 @@ import io.jmix.flowui.exception.NoSuchViewException;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
+import io.jmix.flowui.testassist.view.initial.InitialView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import jmix_ui_test_extension.test_support.CustomUiTestAuthenticator;
@@ -85,9 +86,17 @@ public class UiTestNestedClassesTest {
 
             Assertions.assertEquals(CustomUiTestAuthenticator.username, user.getUsername());
         }
+
+        @Test
+        @DisplayName("Use initial view from outer class")
+        public void useInitialViewFromOuterClass() {
+            Assertions.assertInstanceOf(InitialView.class, UiTestUtils.getCurrentView());
+        }
     }
 
-    @UiTest(viewBasePackages = "component.listmenu", authenticator = ExtCustomUiTestAuthenticator.class)
+    @UiTest(viewBasePackages = "component.listmenu",
+            authenticator = ExtCustomUiTestAuthenticator.class,
+            initialView = BlankTestView.class)
     @Nested
     class NestedClassWithUiTestAnnotation {
 
@@ -112,6 +121,12 @@ public class UiTestNestedClassesTest {
             UserDetails user = currentAuthentication.getUser();
 
             Assertions.assertEquals(CustomUiTestAuthenticator.username, user.getUsername());
+        }
+
+        @Test
+        @DisplayName("Checks that outer class' initial view is not overriden")
+        public void checkInitialView() {
+            Assertions.assertInstanceOf(InitialView.class, UiTestUtils.getCurrentView());
         }
     }
 

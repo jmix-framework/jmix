@@ -17,6 +17,9 @@
 package io.jmix.flowui.testassist;
 
 import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.flowui.testassist.view.initial.InitialView;
+import io.jmix.flowui.view.View;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -47,6 +50,8 @@ import java.lang.annotation.*;
  *     }
  * }
  * </pre>
+ * If the annotation is used on nested classes with the {@link Nested} annotation, it does not override the
+ * parameters from the annotation of the outer class.
  *
  * @see JmixUiTestExtension
  */
@@ -74,6 +79,16 @@ public @interface UiTest {
      * @return class that implements {@link UiTestAuthenticator}
      */
     Class<? extends UiTestAuthenticator> authenticator() default DefaultUiTestAuthenticator.class;
+
+    /**
+     * Initial view that will be opened before each test.
+     * <p>
+     * Note that for application tests, by default, the Main View class specified in the application properties will
+     * be used. If it does not exist, the {@link InitialView} will be used instead.
+     *
+     * @return view that will be opened before each test
+     */
+    Class<? extends View> initialView() default InitialView.class;
 
     /**
      * Dummy class. By default, the {@link JmixUiTestExtension} will use {@link SystemAuthenticator}.

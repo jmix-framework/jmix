@@ -36,7 +36,7 @@ class UserUiTest {
     @Test
     fun test_createUser() {
         // Navigate to user list view
-        viewNavigators.view(UserListView::class.java)
+        viewNavigators.view(UiTestUtils.getCurrentView(), UserListView::class.java)
                 .navigate()
 
         var userListView = UiTestUtils.getCurrentView<UserListView>()

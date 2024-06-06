@@ -16,12 +16,16 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.listbox.MultiSelectListBox
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import component_xml_load.screen.TwinColumnView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
 import io.jmix.flowui.component.listbox.JmixMultiSelectListBox
 import io.jmix.flowui.component.twincolumn.TwinColumn
-import io.jmix.flowui.kit.component.button.JmixButton
+import io.jmix.flowui.sys.BeanUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -91,7 +95,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             reorderable
             required
-            selectAllButtonsVisible
+            isSelectAllButtonsVisible()
             selectedItemsColumnLabel == "Selected"
             themeNames.contains("rounded")
             !visible
@@ -120,15 +124,18 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
         when:
         def animals = dataManager.load(Animal).all().list()
         def twinColumnView = navigateToView(TwinColumnView.class)
-        def twinColumnWithItemsContainer = twinColumnView.twinColumnWithItemsContainer
-        def options = (JmixMultiSelectListBox<Animal>) twinColumnWithItemsContainer.getSubPart("options")
+        def customTwinColumn = new CustomTwinColumn()
+        BeanUtil.autowireContext(applicationContext, customTwinColumn)
+        customTwinColumn.setItems(twinColumnView.animalsDc)
+
+        def options = (MultiSelectListBox<Animal>) customTwinColumn.getSubPart("options")
         twinColumnView.loadData()
 
         then: "Set options listBox selected items"
         options.getListDataView().getItems().toList().size() == animals.size()
 
         when: "Change twinColumn value"
-        twinColumnWithItemsContainer.value = new LinkedList<>(List.of(animals[0]))
+        customTwinColumn.value = new LinkedList<>(List.of(animals[0]))
 
         then:
         options.getListDataView().getItems().toList().size() == animals.size() - 1
@@ -138,27 +145,21 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
         given: "Open the TwinColumnView and load data"
         def animals = dataManager.load(Animal).all().list()
         def twinColumnView = navigateToView(TwinColumnView.class)
-        def twinColumnWithItemsContainer = twinColumnView.twinColumnWithItemsContainer
+        def customTwinColumn = new CustomTwinColumn()
+        BeanUtil.autowireContext(applicationContext, customTwinColumn)
+        customTwinColumn.setItems(twinColumnView.animalsDc)
 
-        def field = TwinColumn.getDeclaredField("saveAndRestoreListBoxesScrollTopPosition")
-        field.setAccessible(true)
-        field.set(twinColumnWithItemsContainer, false)
+        customTwinColumn.setSelectAllButtonsVisible(true)
 
-        def options = (JmixMultiSelectListBox<Animal>) twinColumnWithItemsContainer.getSubPart("options")
-        def selected = (JmixMultiSelectListBox<Animal>) twinColumnWithItemsContainer.getSubPart("selected")
-        def selectItems = (JmixButton) twinColumnWithItemsContainer.getSubPart("selectItems")
-        def selectAllItems = (JmixButton) twinColumnWithItemsContainer.getSubPart("selectAllItems")
-        def deselectItems = (JmixButton) twinColumnWithItemsContainer.getSubPart("deselectItems")
-        def deselectAllItems = (JmixButton) twinColumnWithItemsContainer.getSubPart("deselectAllItems")
-        def clearListBoxesSelection = (JmixButton) twinColumnWithItemsContainer.getSubPart("clearListBoxesSelection")
+        def options = (MultiSelectListBox<Animal>) customTwinColumn.getSubPart("options")
+        def selected = (MultiSelectListBox<Animal>) customTwinColumn.getSubPart("selected")
+        def selectItems = (Button) customTwinColumn.getSubPart("selectItems")
+        def selectAllItems = (Button) customTwinColumn.getSubPart("selectAllItems")
+        def deselectItems = (Button) customTwinColumn.getSubPart("deselectItems")
+        def deselectAllItems = (Button) customTwinColumn.getSubPart("deselectAllItems")
+        def actionsPanel = (VerticalLayout) customTwinColumn.getSubPart("actionsPanel")
 
         twinColumnView.loadData()
-        //test clear listBox item selection
-        when:
-        options.setValue(Set.of(animals[0]))
-        clearListBoxesSelection.click()
-        then:
-        options.getValue().isEmpty()
 
         //test select items
         when:
@@ -167,7 +168,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
         then:
         options.getListDataView().getItemCount() == animals.size() - 3
         selected.getListDataView().getItemCount() == 3
-        twinColumnWithItemsContainer.getValue().size() == 3
+        customTwinColumn.getValue().size() == 3
 
         //test deselect items
         when:
@@ -175,7 +176,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
         then:
         options.getListDataView().getItemCount() == animals.size()
         selected.getListDataView().getItemCount() == 0
-        twinColumnWithItemsContainer.getValue().size() == 0
+        customTwinColumn.getValue().size() == 0
 
         //test select all items
         when:
@@ -183,7 +184,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
         then:
         options.getListDataView().getItemCount() == 0
         selected.getListDataView().getItemCount() == animals.size()
-        twinColumnWithItemsContainer.getValue().size() == animals.size()
+        customTwinColumn.getValue().size() == animals.size()
 
         //test deselect all items
         when:
@@ -191,11 +192,11 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
         then:
         options.getListDataView().getItemCount() == animals.size()
         selected.getListDataView().getItemCount() == 0
-        twinColumnWithItemsContainer.getValue().size() == 0
+        customTwinColumn.getValue().size() == 0
 
         //test reorderable false
         when:
-        twinColumnWithItemsContainer.setReorderable(false)
+        customTwinColumn.setReorderable(false)
         options.setValue(Set.of(animals[1]))
         selectItems.click()
         options.setValue(Set.of(animals[0]))
@@ -206,7 +207,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
 
         //test reorderable true
         when:
-        twinColumnWithItemsContainer.setReorderable(true)
+        customTwinColumn.setReorderable(true)
         deselectAllItems.click()
         options.setValue(Set.of(animals[1]))
         selectItems.click()
@@ -217,28 +218,42 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
         selected.getListDataView().getItem(0) == animals[0]
         selected.getListDataView().getItem(1) == animals[1]
 
-        //test clear listBoxes selection button visible
-        when:
-        twinColumnWithItemsContainer.setClearColumnsSelectionButtonVisible(true)
-        then:
-        twinColumnWithItemsContainer.isClearColumnsSelectionButtonVisible()
-        clearListBoxesSelection.isVisible()
-        when:
-        twinColumnWithItemsContainer.setClearColumnsSelectionButtonVisible(false)
-        then:
-        !clearListBoxesSelection.isVisible()
-
         //test show select all items button
         when:
-        twinColumnWithItemsContainer.setSelectAllButtonsVisible(true)
+        customTwinColumn.setSelectAllButtonsVisible(false)
         then:
-        selectAllItems.isVisible()
-        deselectAllItems.isVisible()
+        actionsPanel.indexOf(selectAllItems) == -1
+        actionsPanel.indexOf(deselectAllItems) == -1
 
         when:
-        twinColumnWithItemsContainer.setSelectAllButtonsVisible(false)
+        customTwinColumn.setSelectAllButtonsVisible(true)
         then:
-        !selectAllItems.isVisible()
-        !deselectAllItems.isVisible()
+        actionsPanel.indexOf(selectAllItems) != -1
+        actionsPanel.indexOf(deselectAllItems) != -1
+    }
+
+    class CustomTwinColumn extends TwinColumn {
+        CustomTwinColumn() {
+            saveAndRestoreColumnsScrollTopPosition = false;
+        }
+
+        Component getSubPart(String id) {
+            if (id == "options") {
+                return options
+            } else if (id == "selected") {
+                return selected
+            } else if (id == "selectItems") {
+                return selectItems
+            } else if (id == "deselectItems") {
+                return deselectItems
+            } else if (id == "selectAllItems") {
+                return selectAllItems
+            } else if (id == "deselectAllItems") {
+                return deselectAllItems
+            } else if (id == "actionsPanel") {
+                return actionsPanel;
+            }
+            return null;
+        }
     }
 }

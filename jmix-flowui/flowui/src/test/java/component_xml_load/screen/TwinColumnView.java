@@ -18,6 +18,7 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.twincolumn.TwinColumn;
+import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
@@ -32,10 +33,13 @@ import java.util.Collection;
 public class TwinColumnView extends StandardView {
 
     @ViewComponent
-    public TwinColumn<Collection<Animal>> twinColumn;
+    public TwinColumn<Animal> twinColumn;
 
     @ViewComponent
-    public TwinColumn<Collection<Animal>> twinColumnWithItemsContainer;
+    public TwinColumn<Animal> twinColumnWithItemsContainer;
+
+    @ViewComponent
+    public CollectionContainer<Animal> animalsDc;
 
     public void loadData() {
         getViewData().loadAll();

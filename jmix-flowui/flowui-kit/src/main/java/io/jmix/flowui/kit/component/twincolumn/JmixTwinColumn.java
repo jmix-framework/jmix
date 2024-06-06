@@ -47,7 +47,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     protected NativeLabel optionsColumnLabel;
     protected NativeLabel selectedItemsColumnLabel;
 
-    protected JmixMultiSelectListBox<V> options;
+    protected MultiSelectListBox<V> options;
     protected MultiSelectListBox<V> selected;
 
     protected VerticalLayout actionsPanel;
@@ -65,8 +65,9 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
 
     protected boolean reorderable = false;
 
-    //change in tests using reflection
-    private final boolean saveAndRestoreColumnsScrollTopPosition = true;
+    //If a listBox and a grid change items at the same time the scrollTop position of the listBox becomes incorrect.
+    // In this case the component saves and restores the scrollTop position to maintain the correct value.
+    protected boolean saveAndRestoreColumnsScrollTopPosition = true;
 
     public JmixTwinColumn() {
         super(null);
@@ -124,7 +125,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
      * @return <code>true</code> if the buttons for selecting and deselection all items are visible, <code>false</code> otherwise
      */
     public Boolean isSelectAllButtonsVisible() {
-        return selectAllItems.isVisible();
+        return selectAllItems != null && actionsPanel.indexOf(selectAllItems) >= 0;
     }
 
     /**

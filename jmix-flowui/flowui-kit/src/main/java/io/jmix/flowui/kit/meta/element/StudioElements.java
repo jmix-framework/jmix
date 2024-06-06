@@ -512,6 +512,14 @@ public interface StudioElements {
     DropdownButtonItem textItem();
 
     @StudioElement(
+            name = "Separator",
+            classFqn = "io.jmix.flowui.kit.component.stub.DropdownButtonStubSeparator",
+            xmlElement = "separator",
+            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#separator"
+    )
+    DropdownButtonItem separator();
+
+    @StudioElement(
             name = "Tooltip",
             classFqn = "com.vaadin.flow.component.shared.Tooltip",
             icon = "io/jmix/flowui/kit/meta/icon/element/tooltip.svg",

@@ -66,7 +66,7 @@
         <codeSnippet name="Get entity state" contextTypes="service,controller" expressionResultType="boolean">
             <inject variable="entityStates" classQualifiedName="io.jmix.core.EntityStates"/>
 
-            <variableInputParameter code="entity" text="Entity" jmixEntity="true"/>
+            <variableInputParameter code="entity" text="Entity variable" jmixEntity="true"/>
             <optionsInputParameter code="state" text="State">
                 <option value="New" name="New"/>
                 <option value="Detached" name="Detached"/>
@@ -88,7 +88,7 @@
         <codeSnippet name="Save entity" contextTypes="service,controller" expressionResultType="var">
             <inject variable="dataManager" classQualifiedName="io.jmix.core.DataManager"/>
 
-            <variableInputParameter code="entity" text="Entity" optional="true" jmixEntity="true"/>
+            <variableInputParameter code="entity" text="Entity variable" optional="true" jmixEntity="true"/>
 
             <text language="java">
                 dataManager.save(${entity});

@@ -21,7 +21,7 @@
         <codeSnippet name="Get localized message" contextTypes="controller" expressionResultType="String">
             <inject variable="messageBundle" classQualifiedName="io.jmix.flowui.view.MessageBundle"/>
 
-            <messageKeyInputParameter code="key" text="Message key" optional="true"/>
+            <messageKeyInputParameter code="key" text="Message key in the current group" optional="true"/>
 
             <text language="java">
                 messageBundle.getMessage("${key}");

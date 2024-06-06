@@ -41,6 +41,9 @@ class EnhancingAction implements Action<Task> {
 
     static final String MAIN_STORE_NAME = "main"
 
+    static final String APP_PROPERTIES_FILE = "application.properties"
+    static final String ADDITIONAL_STORE_PROPERTY = "jmix.core.additional-stores"
+
     private String sourceSetName
 
     EnhancingAction(String sourceSetName) {
@@ -55,6 +58,8 @@ class EnhancingAction implements Action<Task> {
 
         ClassesInfo classesInfo = collectClasses(project, sourceSet)
 
+        addAbsentEmptyStores(classesInfo, sourceSet, project)
+
         constructDescriptors(project, sourceSet, classesInfo)
 
         boolean entitiesEnhancingRequired = !project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing ||
@@ -68,6 +73,47 @@ class EnhancingAction implements Action<Task> {
             }
         } else {
             project.logger.lifecycle "Entities enhancing was skipped, because entity classes haven't been changed since the last build"
+        }
+    }
+
+    /**
+     * Completes {@code classesInfo} with "empty" data stores in order to `persistence.xml` and `orm.xml` descriptors will be generated for them.
+     * An "Empty" store is a store without entities. Such stores will not be added to {@code classesInfo} by
+     * the {@link io.jmix.gradle.EnhancingAction#collectClasses} discovery method.
+     */
+    protected void addAbsentEmptyStores(ClassesInfo classesInfo, SourceSet sourceSet, Project project) {
+        def appPropertyFiles = new HashSet<File>()
+        for (File srcDir : sourceSet.getResources().getSrcDirs()) {
+            if (srcDir.exists()) {
+                File candidate = new File(srcDir, APP_PROPERTIES_FILE)
+                if (candidate.exists()){
+                    appPropertyFiles.add(candidate)
+                }
+            }
+        }
+
+        def additionalStores = []
+
+        for (File file : appPropertyFiles) {
+            project.logger.debug "Looking for '$ADDITIONAL_STORE_PROPERTY' in ${file.getPath()} ..."
+            def properties = new Properties()
+            file.withInputStream { properties.load(it) }
+
+            if (properties.containsKey(ADDITIONAL_STORE_PROPERTY)) {
+                project.logger.debug "Additional datastores found in '${file.getPath()}': ${properties.getProperty(ADDITIONAL_STORE_PROPERTY)}"
+                additionalStores.addAll(properties.getProperty(ADDITIONAL_STORE_PROPERTY)
+                        .split(',')
+                        .collect { it.trim() })
+            }
+        }
+
+        def allStores = classesInfo.allStores()
+
+        for (String additionalStore : additionalStores) {
+            if (!allStores.contains(additionalStore)) {
+                project.logger.info "Store $additionalStore has no entities. Empty 'persistence.xml' and 'orm.xml' will be generated for it.";
+                classesInfo.classesByStores.get(additionalStore)
+            }
         }
     }
 

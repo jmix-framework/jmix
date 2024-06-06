@@ -45,9 +45,11 @@ public class JmixBaseEntityManagerFactoryBean extends LocalContainerEntityManage
                 return;
             }
         }
-        log.warn("Cannot find persistence.xml for '{}' store. Falling back to classpath scan for entity classes.", storeName);
-        setPersistenceUnitName(storeName);
-        setPackagesToScan("");
+
+        throw new RuntimeException(String.format("Cannot find persistence.xml for '%1$s' store.\n" +
+                "Please make sure that property 'jmix.core.additional-stores' defined in application.properties " +
+                        "and contains this store name or at least one entity with '@Store(name = \"%1$s\")' annotation present.",
+                storeName));
     }
 
     protected String getPersistenceXmlPath(JmixModuleDescriptor module, String storeName) {

@@ -60,7 +60,6 @@ import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.meta.*;
-import io.jmix.flowui.kit.meta.component.preview.StudioFragmentPreview;
 import io.jmix.flowui.kit.meta.component.preview.StudioGenericComponentPreview;
 
 @StudioUiKit
@@ -81,14 +80,15 @@ public interface StudioComponents {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.COMPONENT_CLASS),
+                    @StudioProperty(xmlAttribute = "class",
+                            type = StudioPropertyType.COMPONENT_CLASS, useAsInjectionType = true, required = true),
             }
     )
     StudioGenericComponentPreview genericComponent();
 
     @StudioComponent(
             name = "Fragment",
-            classFqn = "com.vaadin.flow.component.Component",
+            classFqn = "io.jmix.flowui.fragment.Fragment",
             category = "Components",
             xmlElement = "fragment",
             icon = "io/jmix/flowui/kit/meta/icon/component/fragment.svg",
@@ -102,10 +102,11 @@ public interface StudioComponents {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.FRAGMENT_CLASS),
+                    @StudioProperty(xmlAttribute = "class",
+                            type = StudioPropertyType.FRAGMENT_CLASS, useAsInjectionType = true, required = true)
             }
     )
-    StudioFragmentPreview fragment();
+    VerticalLayout fragment();
 
     @StudioComponent(
             name = "Avatar",

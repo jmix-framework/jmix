@@ -112,6 +112,7 @@ final class StudioPreviewComponentProvider {
         if (loaderInitializationLock.tryLock()) {
             try {
                 loaders.clear();
+                loaders.add(new StudioStandardComponentsPreviewLoader());
                 ClassLoader classLoader = StudioPreviewComponentProvider.class.getClassLoader();
                 ServiceLoader.load(StudioPreviewComponentLoader.class, classLoader).stream()
                         .map(ServiceLoader.Provider::get)

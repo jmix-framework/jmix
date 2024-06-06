@@ -112,4 +112,22 @@ public interface StudioElementsGroups {
             target = {"io.jmix.flowui.component.genericfilter.GenericFilter"}
     )
     void conditions();
+
+    @StudioElementsGroup(
+            name = "Properties",
+            elementClassFqn = "io.jmix.flowui.kit.stub.StudioFragmentPropertyElement",
+            xmlElement = "properties",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",
+            target = {"io.jmix.flowui.fragment.Fragment"}
+    )
+    void fragmentProperties();
+
+    @StudioElementsGroup(
+            name = "Properties",
+            elementClassFqn = "io.jmix.flowui.kit.stub.StudioGenericComponentPropertyElement",
+            xmlElement = "properties",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",
+            target = {"com.vaadin.flow.component.Component", "tag:component"}
+    )
+    void genericComponentProperties();
 }

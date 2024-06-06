@@ -36,7 +36,7 @@ public @interface StudioDataComponent {
      * Describes the available place in the hierarchy.
      * By default, data component can be located inside data.
      */
-    String availablePlaceRegExp() default "^((mainView)|(view))?(/data)$";
+    String availablePlaceRegExp() default "^((mainView)|(view)|(fragment))?(/data)$";
 
     StudioProperty[] properties() default {};
 

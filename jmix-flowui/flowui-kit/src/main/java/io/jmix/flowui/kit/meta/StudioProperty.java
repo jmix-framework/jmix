@@ -84,6 +84,12 @@ public @interface StudioProperty {
     String typeParameter() default "";
 
     /**
+     * Use as type for injected field.
+     * Xml attribute value must be a valid class fqn.
+     */
+    boolean useAsInjectionType() default false;
+
+    /**
      * Specifies component tags that will be taken into account
      * when searching for a reference (if {@code type} equals {@link StudioPropertyType#COMPONENT_REF})
      */

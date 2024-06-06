@@ -40,6 +40,8 @@ import org.dom4j.Element;
  */
 public interface StudioPreviewComponentLoader {
 
+    String VIEW_SCHEMA = "http://jmix.io/schema/flowui/view";
+
     /**
      * Define the element that this loader can load.
      */

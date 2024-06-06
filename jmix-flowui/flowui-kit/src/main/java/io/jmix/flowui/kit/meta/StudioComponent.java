@@ -55,10 +55,10 @@ public @interface StudioComponent {
 
     /**
      * Describes the available place in the Component Hierarchy.
-     * By default, components can be located inside layout or inside a component inherited from {@link HasComponents}
+     * By default, components can be located inside layout (or fragment content) or inside a component inherited from {@link HasComponents}
      */
-    String availablePlaceRegExp() default "((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/initialLayout)))$)|(^view/layout$)" +
-            "|((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/initialLayout))|(^view/layout))?(/hasComponents)*$)";
+    String availablePlaceRegExp() default "((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/initialLayout)))$)|(^view/layout$)|(^fragment/content)" +
+            "|((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/initialLayout))|(^view/layout)|(^fragment/content))?(/hasComponents)*$)";
 
     StudioProperty[] properties() default {};
 

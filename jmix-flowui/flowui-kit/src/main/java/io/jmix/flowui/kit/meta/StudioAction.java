@@ -34,6 +34,9 @@ public @interface StudioAction {
 
     String defaultProperty() default "";
 
+    /**
+     * FQN of target component class or component tag (e.g.: <code>tag:button</code>)
+     */
     String[] target() default {};
 
     String[] unsupportedTarget() default {};

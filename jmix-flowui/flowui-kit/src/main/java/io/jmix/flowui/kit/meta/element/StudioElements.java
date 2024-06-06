@@ -20,6 +20,7 @@ import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.login.LoginI18n;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
@@ -1029,4 +1030,50 @@ public interface StudioElements {
                     "com.vaadin.flow.component.grid.contextmenu.GridMenuItem"}
     )
     void gridContextMenuSeparator();
+
+    @StudioElement(
+            name = "Content",
+            icon = "io/jmix/flowui/kit/meta/icon/view/layout.svg",
+            xmlElement = "content",
+            unlimitedCount = false,
+            visible = true,
+            target = {"io.jmix.flowui.fragment.Fragment"},
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(
+                                    qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                                    maxCount = 1000000L
+                            )
+                    }
+            )
+    )
+    VerticalLayout fragmentContent();
+
+    @StudioElement(
+            name = "Property",
+            classFqn = "io.jmix.flowui.kit.stub.StudioFragmentPropertyElement",
+            xmlElement = "property",
+            icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.OPTIONS,
+                            options = {"CONTAINER_REF", "LOADER_REF", "ICON"})
+            }
+    )
+    void fragmentProperty();
+
+    @StudioElement(
+            name = "Property",
+            classFqn = "io.jmix.flowui.kit.stub.StudioGenericComponentPropertyElement",
+            icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
+            xmlElement = "property",
+            properties = {
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.OPTIONS,
+                            options = {"CONTAINER_REF", "LOADER_REF", "ICON"})
+            }
+    )
+    void genericComponentProperty();
 }

@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.meta.component.preview;
-
-import com.vaadin.flow.component.html.Image;
+package io.jmix.flowui.kit.stub;
 
 /**
- * Stub component for Studio preview use only.
+ * Used in Studio.
+ * Marker interface for collecting <code>property</code> elements
+ * into <code>properties</code> elements group in generic component.
  */
-public class StudioFragmentPreview extends Image {
-
-    public StudioFragmentPreview() {
-        initImage();
-    }
-
-    protected void initImage() {
-        setSrc("icons/studio-fragment-preview.svg");
-    }
+final class StudioGenericComponentPropertyElement {
 }

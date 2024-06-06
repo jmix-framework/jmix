@@ -78,7 +78,7 @@ class EnhancingAction implements Action<Task> {
 
     /**
      * Completes {@code classesInfo} with "empty" data stores in order to `persistence.xml` and `orm.xml` descriptors will be generated for them.
-     * "Empty" store is a store without entities. Such stores will not be added to {@code classesInfo} by
+     * An "Empty" store is a store without entities. Such stores will not be added to {@code classesInfo} by
      * the {@link io.jmix.gradle.EnhancingAction#collectClasses} discovery method.
      */
     protected void addAbsentEmptyStores(ClassesInfo classesInfo, SourceSet sourceSet, Project project) {

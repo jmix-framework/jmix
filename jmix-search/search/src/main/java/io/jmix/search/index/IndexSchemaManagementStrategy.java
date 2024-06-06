@@ -31,6 +31,12 @@ public enum IndexSchemaManagementStrategy {
      * Creates missing but skips existent indexes.
      */
     CREATE_ONLY("create-only"),
+
+    /**
+     * Creates missing but skips existent indexes. Updates index(updates mapping or configuration) if it is possible.
+     */
+    CREATE_OR_UPDATE("create-or-update"),
+
     /**
      * Creates missing and recreates irrelevant indexes.
      */
@@ -73,4 +79,17 @@ public enum IndexSchemaManagementStrategy {
     public static IndexSchemaManagementStrategy getByKeyOrNull(String key) {
         return ENUM_MAP.get(key.toLowerCase());
     }
+
+    public boolean isConfigurationUpdateSupported(){
+        return this == CREATE_OR_UPDATE || this == CREATE_OR_RECREATE;
+    }
+
+    public boolean isIndexCreationSupported(){
+        return this != NONE;
+    }
+
+    public boolean isIndexRecreationSupported(){
+        return this == CREATE_OR_RECREATE;
+    }
+
 }

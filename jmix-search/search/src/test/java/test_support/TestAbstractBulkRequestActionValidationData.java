@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package test_support;
 
@@ -20,7 +21,7 @@ import org.elasticsearch.action.DocWriteRequest;
 
 import java.util.Objects;
 
-public abstract class TestAbstractBulkRequestActionValidationData {
+public abstract class TestAbstractBulkRequestActionValidationData { //todo platform specific
 
     protected String index;
     protected String id;
@@ -59,3 +60,4 @@ public abstract class TestAbstractBulkRequestActionValidationData {
         return String.format("Operation=%s Index=%s ID=%s", getOperationType(), index, id);
     }
 }
+*/

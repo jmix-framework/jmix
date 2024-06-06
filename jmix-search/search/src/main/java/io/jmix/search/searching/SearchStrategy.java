@@ -16,8 +16,6 @@
 
 package io.jmix.search.searching;
 
-import org.elasticsearch.action.search.SearchRequest;
-
 /**
  * Describes the way search context should be processed.
  */
@@ -30,16 +28,4 @@ public interface SearchStrategy {
      * @return name
      */
     String getName();
-
-    /**
-     * Configures Elasticsearch {@link SearchRequest}.
-     * <p>The main step - create appropriate query based on provided {@link SearchContext} and set it to request.
-     * <p>Configuration of another request parameters is optional.
-     * Custom highlighting can be configured here. If it wasn't - the default one will be used.
-     * <p>Size and offset shouldn't be configured here - these parameters will be overwritten.
-     *
-     * @param searchRequest Elasticsearch {@link SearchRequest}
-     * @param searchContext {@link SearchContext}
-     */
-    void configureRequest(SearchRequest searchRequest, SearchContext searchContext);
 }

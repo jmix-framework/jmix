@@ -21,8 +21,6 @@ import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.PrefixSuffixLoaderSupport;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchflowui.component.SearchField;
 import org.dom4j.Element;
 
@@ -100,13 +98,13 @@ public class SearchFieldLoader extends AbstractComponentLoader<SearchField> {
     }
 
     protected void loadStrategy(SearchField component, Element element) {
-        String strategyName = element.attributeValue("strategy");
-        SearchStrategyManager strategyManager = applicationContext.getBean(SearchStrategyManager.class);
-        SearchStrategy strategy;
-        if (Strings.isNullOrEmpty(strategyName)) {
-            strategy = strategyManager.getDefaultSearchStrategy();
+        String strategyAttributeValue = element.attributeValue("strategy");
+        SearchProperties searchProperties = applicationContext.getBean(SearchProperties.class);
+        String strategy;
+        if (Strings.isNullOrEmpty(strategyAttributeValue)) {
+            strategy = searchProperties.getDefaultSearchStrategy();
         } else {
-            strategy = strategyManager.getSearchStrategyByName(strategyName);
+            strategy = strategyAttributeValue;
         }
         component.setSearchStrategy(strategy);
     }

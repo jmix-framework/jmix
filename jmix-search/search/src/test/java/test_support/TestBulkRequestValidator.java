@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package test_support;
 
@@ -30,7 +31,7 @@ import java.util.List;
 
 import static test_support.TestBulkRequestValidationResult.Failure.create;
 
-public class TestBulkRequestValidator {
+public class TestBulkRequestValidator { //todo platform specific
 
     private static final Logger log = LoggerFactory.getLogger(TestBulkRequestValidator.class);
 
@@ -173,3 +174,4 @@ public class TestBulkRequestValidator {
         return new TestBulkRequestDeleteActionValidationData(index, id);
     }
 }
+*/

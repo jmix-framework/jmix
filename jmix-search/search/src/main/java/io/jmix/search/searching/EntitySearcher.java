@@ -16,11 +16,6 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.core.FetchPlan;
-
-import java.util.Collection;
-import java.util.Map;
-
 /**
  * Provides functionality for searching entities in index.
  */
@@ -28,7 +23,7 @@ public interface EntitySearcher {
 
     /**
      * Performs search in search indexes according to provided {@link SearchContext} and default {@link SearchStrategy}.
-     * <p>See {@link EntitySearcher#search(SearchContext, SearchStrategy)}
+     * <p>See {@link EntitySearcher#search(SearchContext, String)}
      *
      * @param searchContext runtime settings of specific search
      * @return {@link SearchResult} with found objects
@@ -42,7 +37,7 @@ public interface EntitySearcher {
      * @param searchStrategy the way incoming search text should be processed
      * @return {@link SearchResult} with found objects
      */
-    SearchResult search(SearchContext searchContext, SearchStrategy searchStrategy);
+    SearchResult search(SearchContext searchContext, String searchStrategy);
 
     /**
      * Performs search of next page according to {@link SearchContext} and {@link SearchResult} contained

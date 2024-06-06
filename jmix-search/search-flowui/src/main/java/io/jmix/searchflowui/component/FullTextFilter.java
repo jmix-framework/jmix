@@ -26,9 +26,10 @@ import io.jmix.flowui.component.jpqlfilter.JpqlFilterSupport;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.*;
+import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchResult;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.common.Strings;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -45,8 +46,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
     protected IdSerialization idSerialization;
     protected EntitySearcher entitySearcher;
     protected String parameterName;
-    protected SearchStrategy searchStrategy;
-    protected SearchStrategyManager searchStrategyManager;
+    protected String searchStrategy;
     protected SearchProperties searchProperties;
     protected String correctWhere;
 
@@ -56,7 +56,6 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
         jpqlFilterSupport = applicationContext.getBean(JpqlFilterSupport.class);
         idSerialization = applicationContext.getBean(IdSerialization.class);
         entitySearcher = applicationContext.getBean(EntitySearcher.class);
-        searchStrategyManager = applicationContext.getBean(SearchStrategyManager.class);
         searchProperties = applicationContext.getBean(SearchProperties.class);
     }
 
@@ -100,7 +99,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
 
     @Override
     protected void updateQueryCondition(@Nullable String newValue) {
-        if (Strings.isNullOrEmpty(newValue)) {
+        if (StringUtils.isEmpty(newValue)) {
             setQueryConditionParameterValue(Collections.emptyList());
         }
     }
@@ -138,8 +137,7 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
         SearchContext searchContext = new SearchContext(searchTerm);
         searchContext.setEntities(getDataLoader().getContainer().getEntityMetaClass().getName());
         searchContext.setSize(searchProperties.getSearchResultPageSize());
-        SearchResult searchResult = entitySearcher.search(searchContext,
-                searchStrategy != null ? searchStrategy : searchStrategyManager.getDefaultSearchStrategy());
+        SearchResult searchResult = entitySearcher.search(searchContext, searchStrategy);
         return searchResult.getAllEntries().stream()
                 .map(searchResultEntry -> {
                     String docId = searchResultEntry.getDocId();
@@ -173,11 +171,12 @@ public class FullTextFilter extends SingleFilterComponentBase<String> {
         return jpqlFilterSupport.getJpqlFilterPrefix(getId());
     }
 
-    public SearchStrategy getSearchStrategy() {
+    @Nullable
+    public String getSearchStrategy() {
         return searchStrategy;
     }
 
-    public void setSearchStrategy(@Nullable SearchStrategy searchStrategy) {
+    public void setSearchStrategy(@Nullable String searchStrategy) {
         this.searchStrategy = searchStrategy;
     }
 }

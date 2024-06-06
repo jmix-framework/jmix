@@ -19,7 +19,6 @@ package io.jmix.search.searching.impl;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.SearchResultEntry;
-import io.jmix.search.searching.SearchStrategy;
 
 import java.util.*;
 
@@ -31,9 +30,9 @@ public class SearchResultImpl implements SearchResult {
     protected long totalHits;
     protected int effectiveOffset;
     protected boolean moreDataAvailable = false;
-    protected SearchStrategy searchStrategy;
+    protected String searchStrategy;
 
-    public SearchResultImpl(SearchContext searchContext, SearchStrategy searchStrategy) {
+    public SearchResultImpl(SearchContext searchContext, String searchStrategy) {
         this.searchContext = searchContext;
         this.effectiveOffset = searchContext.getOffset();
         this.searchStrategy = searchStrategy;
@@ -86,7 +85,7 @@ public class SearchResultImpl implements SearchResult {
 
     @Override
     public void setTotalHits(long totalHits) {
-       this.totalHits = totalHits;
+        this.totalHits = totalHits;
     }
 
     @Override
@@ -109,7 +108,7 @@ public class SearchResultImpl implements SearchResult {
     }
 
     @Override
-    public SearchStrategy getSearchStrategy() {
+    public String getSearchStrategy() {
         return searchStrategy;
     }
 

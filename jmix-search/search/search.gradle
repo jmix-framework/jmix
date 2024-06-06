@@ -22,13 +22,12 @@ archivesBaseName = 'jmix-search'
 
 dependencies {
     api project(':data')
-    implementation project(':security')
+    api project(':security')
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    api 'org.elasticsearch.client:elasticsearch-rest-high-level-client'
 
     implementation 'org.apache.poi:poi'
     implementation ('org.apache.tika:tika-parsers') {

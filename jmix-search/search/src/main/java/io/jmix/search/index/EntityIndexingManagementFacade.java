@@ -41,7 +41,7 @@ public class EntityIndexingManagementFacade {
     @Autowired
     protected IdSerialization idSerialization;
     @Autowired
-    protected ESIndexManager esIndexManager;
+    protected IndexManager indexManager;
     @Autowired
     protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
@@ -206,7 +206,7 @@ public class EntityIndexingManagementFacade {
             message = "Entity instance not found or can't be processed";
         } else if (indexResult.hasFailures()) {
             IndexResult.Failure failure = indexResult.getFailures().iterator().next();
-            String errorMessage = failure.getCause().getLocalizedMessage();
+            String errorMessage = failure.getCause();
             message = String.format("Failed to index instance of entity '%s' with id '%s': %s",
                     entityName, serializedId, errorMessage);
         } else {
@@ -251,7 +251,7 @@ public class EntityIndexingManagementFacade {
             message = "Entity instance not found or can't be processed";
         } else if (indexResult.hasFailures()) {
             IndexResult.Failure failure = indexResult.getFailures().iterator().next();
-            String errorMessage = failure.getCause().getLocalizedMessage();
+            String errorMessage = failure.getCause();
             message = String.format("Failed to delete document related to instance of entity '%s' with id '%s': %s",
                     entityName, serializedId, errorMessage);
         } else {
@@ -283,7 +283,7 @@ public class EntityIndexingManagementFacade {
     @Authenticated
     @ManagedOperation(description = "Validates schemas of all search indexes defined in application.")
     public String validateIndexes() {
-        Map<IndexConfiguration, IndexValidationStatus> validationResult = esIndexManager.validateIndexes();
+        Map<IndexConfiguration, IndexValidationStatus> validationResult = indexManager.validateIndexes();
         StringBuilder sb = new StringBuilder("Validation result:");
         validationResult.forEach((config, status) -> sb.append(System.lineSeparator()).append("\t")
                 .append(
@@ -309,7 +309,7 @@ public class EntityIndexingManagementFacade {
         }
 
         IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-        IndexValidationStatus status = esIndexManager.validateIndex(indexConfiguration);
+        IndexValidationStatus status = indexManager.validateIndex(indexConfiguration);
         return "Validation result: " + formatSingleStatusString(
                 indexConfiguration.getEntityName(),
                 indexConfiguration.getIndexName(),
@@ -321,7 +321,7 @@ public class EntityIndexingManagementFacade {
     @ManagedOperation(description = "Synchronizes schemas of all search indexes defined in application. " +
             "This may cause deletion of indexes with all their data - depends on schema management strategy")
     public String synchronizeIndexSchemas() {
-        Map<IndexConfiguration, IndexSynchronizationStatus> synchronizationResult = esIndexManager.synchronizeIndexSchemas();
+        Map<IndexConfiguration, IndexSynchronizationStatus> synchronizationResult = indexManager.synchronizeIndexSchemas();
         StringBuilder sb = new StringBuilder("Synchronization result:");
         synchronizationResult.forEach((config, status) -> sb.append(System.lineSeparator()).append("\t")
                 .append(
@@ -348,7 +348,7 @@ public class EntityIndexingManagementFacade {
         }
 
         IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-        IndexSynchronizationStatus status = esIndexManager.synchronizeIndexSchema(indexConfiguration);
+        IndexSynchronizationStatus status = indexManager.synchronizeIndexSchema(indexConfiguration);
         return "Synchronization result: " + formatSingleStatusString(
                 indexConfiguration.getEntityName(),
                 indexConfiguration.getIndexName(),
@@ -359,7 +359,7 @@ public class EntityIndexingManagementFacade {
     @Authenticated
     @ManagedOperation(description = "Drops and creates all search indexes defined in application. All data will be lost.")
     public String recreateIndexes() {
-        Map<IndexConfiguration, Boolean> recreationResult = esIndexManager.recreateIndexes();
+        Map<IndexConfiguration, Boolean> recreationResult = indexManager.recreateIndexes();
         StringBuilder sb = new StringBuilder("Recreation result:");
         recreationResult.forEach((config, created) -> sb.append(System.lineSeparator()).append("\t")
                 .append(
@@ -385,7 +385,7 @@ public class EntityIndexingManagementFacade {
         }
 
         IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-        boolean created = esIndexManager.recreateIndex(indexConfiguration);
+        boolean created = indexManager.recreateIndex(indexConfiguration);
         return "Recreation result: " + formatSingleStatusString(
                 indexConfiguration.getEntityName(),
                 indexConfiguration.getIndexName(),

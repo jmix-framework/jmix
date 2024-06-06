@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package test_support;
 
@@ -40,7 +41,7 @@ import static org.mockito.Mockito.mock;
 @PropertySource("classpath:/test_support/test-entity-indexing-app.properties")
 @EnableWebSecurity
 @MessageSourceBasenames({"test_support/messages"})
-public class IndexingTestConfiguration {
+public class IndexingTestConfiguration { //todo
 
     @Autowired
     protected AutowireCapableBeanFactory beanFactory;
@@ -71,7 +72,7 @@ public class IndexingTestConfiguration {
     @Bean
     @Primary
     public EntityIndexer testEntityIndexer() {
-        return beanFactory.createBean(TestEntityIndexer.class);
+        return beanFactory.createBean(TestElasticsearchEntityIndexer.class);
     }
 
     @Bean
@@ -88,3 +89,4 @@ public class IndexingTestConfiguration {
         return new TestFileStorage();
     }
 }
+*/

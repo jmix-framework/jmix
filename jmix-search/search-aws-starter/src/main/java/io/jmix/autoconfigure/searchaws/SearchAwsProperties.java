@@ -19,7 +19,7 @@ package io.jmix.autoconfigure.searchaws;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-@ConfigurationProperties(prefix = "jmix.search.elasticsearch.aws")
+@ConfigurationProperties(prefix = "jmix.search.server.aws")
 public class SearchAwsProperties {
 
     /**
@@ -63,35 +63,35 @@ public class SearchAwsProperties {
     /**
      * @see #iamAuth
      */
-    public boolean isElasticsearchAwsIamAuthentication() {
+    public boolean isAwsIamAuthentication() {
         return iamAuth;
     }
 
     /**
      * @see #region
      */
-    public String getElasticsearchAwsRegion() {
+    public String getAwsRegion() {
         return region;
     }
 
     /**
      * @see #serviceName
      */
-    public String getElasticsearchAwsServiceName() {
+    public String getAwsServiceName() {
         return serviceName;
     }
 
     /**
      * @see #accessKey
      */
-    public String getElasticsearchAwsAccessKey() {
+    public String getAwsAccessKey() {
         return accessKey;
     }
 
     /**
      * @see #secretKey
      */
-    public String getElasticsearchAwsSecretKey() {
+    public String getAwsSecretKey() {
         return secretKey;
     }
 }

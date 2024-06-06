@@ -33,7 +33,11 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
+import io.jmix.search.index.EntityIndexer;
+import io.jmix.search.index.IndexManager;
+import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.StartupIndexSynchronizer;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import io.jmix.security.SecurityConfiguration;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -42,9 +46,9 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.elasticsearch.client.RestClient;
+/*import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestHighLevelClient;*/
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -83,28 +87,40 @@ public class BaseSearchTestConfiguration {
         return new TestNoopStartupIndexSynchronizer();
     }
 
+    @Bean("search_EntityIndexer")
+    public EntityIndexer entityIndexer() {
+        return new TestNoopEntityIndexer();
+    }
+
+    @Bean("search_IndexManager")
+    public IndexManager indexManager(IndexConfigurationManager indexConfigurationManager,
+                                     IndexStateRegistry indexStateRegistry,
+                                     SearchProperties searchProperties) {
+        return new TestNoopIndexManager(indexConfigurationManager, indexStateRegistry, searchProperties);
+    }
+
     @Bean
     @Primary
     public IndexDefinitionDetector indexDefinitionDetector(@Nullable TestAutoDetectableIndexDefinitionScope testAutoDetectableIndexDefinitionScope) {
         return new TestIndexDefinitionDetector(testAutoDetectableIndexDefinitionScope);
     }
 
-    @Bean
+    /*@Bean
     public RestHighLevelClient baseElasticSearchClient() {
-        String esUrl = searchProperties.getElasticsearchUrl();
+        String esUrl = searchProperties.getConnectionUrl();
         HttpHost esHttpHost = HttpHost.create(esUrl);
         RestClientBuilder restClientBuilder = RestClient.builder(esHttpHost);
 
-        if (!Strings.isNullOrEmpty(searchProperties.getElasticsearchLogin())) {
+        if (!Strings.isNullOrEmpty(searchProperties.getConnectionLogin())) {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(searchProperties.getElasticsearchLogin(), searchProperties.getElasticsearchPassword())
+                    new UsernamePasswordCredentials(searchProperties.getConnectionLogin(), searchProperties.getConnectionPassword())
             );
             restClientBuilder.setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
         }
 
         return new RestHighLevelClient(restClientBuilder);
-    }
+    }*/
 
 
     // Test Common beans

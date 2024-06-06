@@ -33,7 +33,6 @@ import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.component.HasAutofocus;
-import io.jmix.flowui.kit.component.HasPlaceholder;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
@@ -70,7 +69,7 @@ public class SearchField extends CustomField<String>
     protected DialogWindows dialogWindows;
     protected TypedTextField<String> root;
     protected Icon searchIcon;
-    protected SearchStrategy searchStrategy;
+    protected String searchStrategy;
     protected List<String> entities;
     protected OpenMode openMode;
     protected int searchSize;
@@ -174,7 +173,7 @@ public class SearchField extends CustomField<String>
                             Map.of(QUERY_PARAM_VALUE, List.of(searchText),
                                     QUERY_PARAM_ENTITIES, this.getEntities(),
                                     QUERY_PARAM_SEARCH_SIZE, List.of(String.valueOf(this.getSearchSize())),
-                                    QUERY_PARAM_STRATEGY, List.of(this.getSearchStrategy().getName()))))
+                                    QUERY_PARAM_STRATEGY, List.of(this.getSearchStrategy()))))
                     .navigate();
         }
     }
@@ -227,11 +226,11 @@ public class SearchField extends CustomField<String>
         this.openMode = openMode;
     }
 
-    public SearchStrategy getSearchStrategy() {
+    public String getSearchStrategy() {
         return searchStrategy;
     }
 
-    public void setSearchStrategy(SearchStrategy searchStrategy) {
+    public void setSearchStrategy(String searchStrategy) {
         this.searchStrategy = searchStrategy;
     }
 

@@ -29,15 +29,11 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.IndexSettingsConfigurationContext;
-import io.jmix.search.index.IndexSettingsConfigurer;
 import io.jmix.search.index.annotation.FieldMappingAnnotation;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
 import io.jmix.search.index.mapping.*;
 import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
-import io.jmix.search.index.mapping.analysis.impl.AnalysisElementConfiguration;
-import io.jmix.search.index.mapping.analysis.impl.IndexAnalysisElementsRegistry;
 import io.jmix.search.index.mapping.fieldmapper.impl.TextFieldMapper;
 import io.jmix.search.index.mapping.processor.FieldAnnotationProcessor;
 import io.jmix.search.index.mapping.processor.MappingFieldAnnotationProcessorsRegistry;
@@ -49,15 +45,14 @@ import io.jmix.search.index.mapping.strategy.FieldMappingStrategyProvider;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.elasticsearch.common.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -87,9 +82,8 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final InstanceNameProvider instanceNameProvider;
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final SearchProperties searchProperties;
-    protected final List<IndexSettingsConfigurer> indexSettingsConfigurers;
     protected final MethodArgumentsProvider methodArgumentsProvider;
-    protected final IndexAnalysisElementsRegistry indexAnalysisElementsRegistry;
+    //protected final IndexAnalysisElementsRegistry indexAnalysisElementsRegistry;
 
     @Autowired
     public AnnotatedIndexDefinitionProcessor(Metadata metadata,
@@ -100,9 +94,8 @@ public class AnnotatedIndexDefinitionProcessor {
                                              InstanceNameProvider instanceNameProvider,
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
-                                             List<IndexSettingsConfigurer> indexSettingsConfigurers,
-                                             ContextArgumentResolverComposite resolvers,
-                                             IndexAnalysisElementsRegistry indexAnalysisElementsRegistry) {
+                                             ContextArgumentResolverComposite resolvers/*,
+                                             IndexAnalysisElementsRegistry indexAnalysisElementsRegistry*/) {
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
@@ -111,9 +104,8 @@ public class AnnotatedIndexDefinitionProcessor {
         this.instanceNameProvider = instanceNameProvider;
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
         this.searchProperties = searchProperties;
-        this.indexSettingsConfigurers = indexSettingsConfigurers;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
-        this.indexAnalysisElementsRegistry = indexAnalysisElementsRegistry;
+        //this.indexAnalysisElementsRegistry = indexAnalysisElementsRegistry;
     }
 
     /**
@@ -136,8 +128,6 @@ public class AnnotatedIndexDefinitionProcessor {
         Set<Class<?>> affectedEntityClasses = getAffectedEntityClasses(indexMappingConfiguration);
         log.debug("Index Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
 
-        Settings settings = configureSettings(indexDef.getEntityClass(), indexMappingConfiguration);
-
         Predicate<Object> indexablePredicate = createIndexablePredicate(indexDef);
 
         return new IndexConfiguration(
@@ -145,7 +135,6 @@ public class AnnotatedIndexDefinitionProcessor {
                 indexDef.getEntityClass(),
                 indexName,
                 indexMappingConfiguration,
-                settings,
                 affectedEntityClasses,
                 indexablePredicate
         );
@@ -349,14 +338,14 @@ public class AnnotatedIndexDefinitionProcessor {
         return affectedClasses;
     }
 
-    protected Settings configureSettings(Class<?> entityClass, IndexMappingConfiguration mappingConfiguration) {
+    /*protected Settings configureSettings(Class<?> entityClass, IndexMappingConfiguration mappingConfiguration) {
         Settings.Builder settingsBuilder = Settings.builder();
         configureAnalysisSettings(settingsBuilder, mappingConfiguration);
         configureIndexSettings(settingsBuilder, entityClass);
         return settingsBuilder.build();
-    }
+    }*/
 
-    protected void configureAnalysisSettings(Settings.Builder settingsBuilder, IndexMappingConfiguration mappingConfiguration) {
+    /*protected void configureAnalysisSettings(Settings.Builder settingsBuilder, IndexMappingConfiguration mappingConfiguration) {
         FieldAnalysisDetailsAggregator aggregator = new FieldAnalysisDetailsAggregator();
         Map<String, MappingFieldDescriptor> fields = mappingConfiguration.getFields();
         fields.values().stream()
@@ -379,16 +368,16 @@ public class AnnotatedIndexDefinitionProcessor {
         }
 
         analysisElementConfigurations.forEach(analysisElementConfig -> settingsBuilder.put(analysisElementConfig.getSettings()));
-    }
+    }*/
 
-    protected void configureIndexSettings(Settings.Builder settingsBuilder, Class<?> entityClass) {
+    /*protected void configureIndexSettings(Settings.Builder settingsBuilder, Class<?> entityClass) {
         IndexSettingsConfigurationContext context = new IndexSettingsConfigurationContext();
         indexSettingsConfigurers.forEach(configurer -> configurer.configure(context));
 
         Settings commonSettings = context.getCommonSettingsBuilder().build();
         Settings entitySettings = context.getEntitySettingsBuilder(entityClass).build();
         settingsBuilder.put(commonSettings).put(entitySettings);
-    }
+    }*/
 
     protected Map<String, MappingFieldDescriptor> processMappingDefinition(MetaClass metaClass, MappingDefinition mappingDefinition) {
         return mappingDefinition.getElements().stream()

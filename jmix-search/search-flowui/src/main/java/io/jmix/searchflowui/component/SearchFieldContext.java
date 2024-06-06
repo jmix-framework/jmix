@@ -17,12 +17,11 @@
 package io.jmix.searchflowui.component;
 
 import io.jmix.flowui.view.OpenMode;
-import io.jmix.search.searching.SearchStrategy;
 
 import java.util.List;
 
 public class SearchFieldContext {
-    protected SearchStrategy searchStrategy;
+    protected String searchStrategy;
     protected List<String> entities;
     protected String value;
     protected OpenMode openMode;
@@ -47,11 +46,11 @@ public class SearchFieldContext {
         this.openMode = openMode;
     }
 
-    public SearchStrategy getSearchStrategy() {
+    public String getSearchStrategy() {
         return searchStrategy;
     }
 
-    public void setSearchStrategy(SearchStrategy searchStrategy) {
+    public void setSearchStrategy(String searchStrategy) {
         this.searchStrategy = searchStrategy;
     }
 

@@ -17,7 +17,7 @@
 package io.jmix.search.index.impl;
 
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.ESIndexManager;
+import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexSynchronizationStatus;
 import io.jmix.search.index.queue.IndexingQueueManager;
@@ -41,7 +41,7 @@ public class StartupIndexSynchronizer {
     private static final Logger log = LoggerFactory.getLogger(StartupIndexSynchronizer.class);
 
     @Autowired
-    protected ESIndexManager esIndexManager;
+    protected IndexManager indexManager;
     @Autowired
     protected IndexingQueueManager indexingQueueManager;
     @Autowired
@@ -53,7 +53,7 @@ public class StartupIndexSynchronizer {
     protected void postConstruct() {
         try {
             log.info("Start initial index synchronization");
-            Map<IndexConfiguration, IndexSynchronizationStatus> indexSynchronizationResults = esIndexManager.synchronizeIndexSchemas();
+            Map<IndexConfiguration, IndexSynchronizationStatus> indexSynchronizationResults = indexManager.synchronizeIndexSchemas();
 
             List<IndexConfiguration> enqueueAllCandidates = new ArrayList<>();
             List<IndexConfiguration> available = new ArrayList<>();

@@ -23,8 +23,6 @@ import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.component.AbstractSingleFilterComponentLoader;
-import io.jmix.search.searching.SearchStrategy;
-import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchflowui.component.FullTextFilter;
 import io.jmix.searchflowui.utils.FullTextFilterUtils;
 import org.dom4j.Element;
@@ -46,11 +44,7 @@ public class FullTextFilterLoader extends AbstractSingleFilterComponentLoader<Fu
     }
 
     protected void loadSearchStrategy(FullTextFilter resultComponent, Element element) {
-        loadString(element, "searchStrategy")
-                .ifPresent(strategyName -> {
-                    SearchStrategy strategy = applicationContext.getBean(SearchStrategyManager.class).getSearchStrategyByName(strategyName);
-                    resultComponent.setSearchStrategy(strategy);
-                });
+        loadString(element, "searchStrategy").ifPresent(resultComponent::setSearchStrategy);
     }
 
     @Override

@@ -80,6 +80,7 @@
                         type="list_itemTracking"/>
             </actions>
             <columns resizable="true">
+                <column property="name"/>
                 <column property="group"/>
                 <column property="description"/>
                 <column property="code"/>

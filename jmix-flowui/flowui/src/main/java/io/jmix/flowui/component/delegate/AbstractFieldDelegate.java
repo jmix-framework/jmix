@@ -126,15 +126,15 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     }
 
     public void executeValidators() throws ValidationException {
-        if (isInvalidInternal()) {
-            setInvalidInternal(false);
-            setErrorMessage(null);
-        }
-
         if (component.isReadOnly()
                 || !isComponentVisible(component)
                 || !isComponentEnabled(component)) {
             return;
+        }
+
+        if (isInvalidInternal()) {
+            setInvalidInternal(false);
+            setErrorMessage(null);
         }
 
         T modelValue = null;

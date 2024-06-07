@@ -1058,7 +1058,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.OPTIONS,
-                            options = {"CONTAINER_REF", "LOADER_REF", "ICON"})
+                            options = {"CONTAINER_REF", "LOADER_REF", "ICON"}, required = true)
             }
     )
     void fragmentProperty();
@@ -1072,7 +1072,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.OPTIONS,
-                            options = {"CONTAINER_REF", "LOADER_REF", "ICON"})
+                            options = {"CONTAINER_REF", "LOADER_REF", "ICON"}, required = true)
             }
     )
     void genericComponentProperty();

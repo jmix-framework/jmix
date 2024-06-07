@@ -18,20 +18,22 @@ package io.jmix.flowui.component.textfield;
 
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.SupportsStatusChangeHandler;
-import io.jmix.flowui.data.SupportsValueSource;
-import io.jmix.flowui.data.ValueSource;
+import io.jmix.core.Messages;
 import io.jmix.flowui.component.HasRequired;
+import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
+import io.jmix.flowui.data.SupportsValueSource;
+import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.HasTitle;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
+
 import java.math.BigDecimal;
 import java.util.function.Consumer;
 
@@ -40,6 +42,7 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
+    protected Messages messages;
 
     protected FieldDelegate<JmixBigDecimalField, BigDecimal, BigDecimal> fieldDelegate;
 
@@ -51,10 +54,24 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
     @Override
     public void afterPropertiesSet() {
         initComponent();
+
+        messages = applicationContext.getBean(Messages.class);
     }
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
+
+        addParseValidator();
+    }
+
+    protected void addParseValidator() {
+        fieldDelegate.addValidator(value -> {
+            String valueProperty = getElement().getProperty("value");
+            if (value == null && Strings.isNotEmpty(valueProperty)) {
+                throw new ValidationException(messages.formatMessage(
+                        "", "datatype.unparseableBigDecimal.message", valueProperty));
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")

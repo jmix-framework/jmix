@@ -22,7 +22,6 @@ import { InputFieldMixin } from '@vaadin/field-base/src/input-field-mixin.js'
 import { css, registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import './jmix-twin-column-styles.js';
 
-
 export class JmixTwinColumn extends InputFieldMixin(ThemableMixin(ElementMixin(PolymerElement))) {
     static get is() {
         return 'jmix-twin-column';
@@ -30,17 +29,19 @@ export class JmixTwinColumn extends InputFieldMixin(ThemableMixin(ElementMixin(P
 
     static get template() {
         return html`
-        <div class="jmix-twin-column-container">
+        <vaadin-vertical-layout class="jmix-twin-column-container">
             <div part="label" on-click="focus">
               <slot name="label"></slot>
               <span part="required-indicator" aria-hidden="true"></span>
             </div>
 
-            <slot name="options-label"></slot>
-            <slot name="selected-label"></slot>
-            <slot name="options"></slot>
-            <slot name="actions"></slot>
-            <slot name="selected"></slot>
+            <div class="jmix-twin-column-input-container">
+                <slot name="options-label"></slot>
+                <slot name="selected-label"></slot>
+                <slot name="options"></slot>
+                <slot name="actions"></slot>
+                <slot name="selected"></slot>
+            </div>
 
             <div part="helper-text">
               <slot name="helper"></slot>
@@ -49,7 +50,7 @@ export class JmixTwinColumn extends InputFieldMixin(ThemableMixin(ElementMixin(P
             <div part="error-message">
               <slot name="error-message"></slot>
             </div>
-        </div>
+        </vaadin-vertical-layout>
 
         <slot name="tooltip"></slot>
         `;

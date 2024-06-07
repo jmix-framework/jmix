@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.component.twincolumn;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -32,6 +33,7 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.function.SerializableComparator;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import io.jmix.flowui.kit.component.ComponentUtils;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -43,6 +45,8 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
         implements HasSize, HasHelper, HasAriaLabel, HasLabel, HasThemeVariant<TwinColumnVariant> {
 
     private static final String JS_SCROLL_TOP_VARIABLE = "this._scrollerElement.scrollTop";
+    private static final String HAS_WIDTH_ATTRIBUTE_NAME = "has-width";
+    private static final String HAS_HEIGHT_ATTRIBUTE_NAME = "has-height";
 
     protected NativeLabel optionsColumnLabel;
     protected NativeLabel selectedItemsColumnLabel;
@@ -133,6 +137,8 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
      */
     public void setOptionsColumnLabel(String optionsColumnLabel) {
         this.optionsColumnLabel.setText(optionsColumnLabel);
+
+        updateColumnLabelPadding(this.optionsColumnLabel);
     }
 
     /**
@@ -147,6 +153,8 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
      */
     public void setSelectedItemsColumnLabel(String selectedItemsColumnLabel) {
         this.selectedItemsColumnLabel.setText(selectedItemsColumnLabel);
+
+        updateColumnLabelPadding(this.selectedItemsColumnLabel);
     }
 
     /**
@@ -166,6 +174,72 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
         actionsPanel.getChildren()
                 .filter(component -> component instanceof HasEnabled)
                 .forEach(component -> ((HasEnabled) component).setEnabled(!readOnly));
+    }
+
+    @Override
+    public void setMinWidth(String minWidth) {
+        HasSize.super.setMinWidth(minWidth);
+
+        if (ComponentUtils.isAutoSize(getMinWidth()) && ComponentUtils.isAutoSize(getWidth()) && ComponentUtils.isAutoSize(getMaxWidth())) {
+            getElement().removeAttribute(HAS_WIDTH_ATTRIBUTE_NAME);
+        } else {
+            getElement().setAttribute(HAS_WIDTH_ATTRIBUTE_NAME, "");
+        }
+    }
+
+    @Override
+    public void setWidth(String width) {
+        HasSize.super.setWidth(width);
+
+        if (ComponentUtils.isAutoSize(getMinWidth()) && ComponentUtils.isAutoSize(getWidth()) && ComponentUtils.isAutoSize(getMaxWidth())) {
+            getElement().removeAttribute(HAS_WIDTH_ATTRIBUTE_NAME);
+        } else {
+            getElement().setAttribute(HAS_WIDTH_ATTRIBUTE_NAME, "");
+        }
+    }
+
+    @Override
+    public void setMaxWidth(String maxWidth) {
+        HasSize.super.setMaxWidth(maxWidth);
+
+        if (ComponentUtils.isAutoSize(getMinWidth()) && ComponentUtils.isAutoSize(getWidth()) && ComponentUtils.isAutoSize(getMaxWidth())) {
+            getElement().removeAttribute(HAS_WIDTH_ATTRIBUTE_NAME);
+        } else {
+            getElement().setAttribute(HAS_WIDTH_ATTRIBUTE_NAME, "");
+        }
+    }
+
+    @Override
+    public void setMinHeight(String minHeight) {
+        HasSize.super.setMinHeight(minHeight);
+
+        if (ComponentUtils.isAutoSize(getMinHeight()) && ComponentUtils.isAutoSize(getHeight()) && ComponentUtils.isAutoSize(getMaxHeight())) {
+            getElement().removeAttribute(HAS_HEIGHT_ATTRIBUTE_NAME);
+        } else {
+            getElement().setAttribute(HAS_HEIGHT_ATTRIBUTE_NAME, "");
+        }
+    }
+
+    @Override
+    public void setHeight(String height) {
+        HasSize.super.setHeight(height);
+
+        if (ComponentUtils.isAutoSize(getMinHeight()) && ComponentUtils.isAutoSize(getHeight()) && ComponentUtils.isAutoSize(getMaxHeight())) {
+            getElement().removeAttribute(HAS_HEIGHT_ATTRIBUTE_NAME);
+        } else {
+            getElement().setAttribute(HAS_HEIGHT_ATTRIBUTE_NAME, "");
+        }
+    }
+
+    @Override
+    public void setMaxHeight(String maxHeight) {
+        HasSize.super.setMaxHeight(maxHeight);
+
+        if (ComponentUtils.isAutoSize(getMinHeight()) && ComponentUtils.isAutoSize(getHeight()) && ComponentUtils.isAutoSize(getMaxHeight())) {
+            getElement().removeAttribute(HAS_HEIGHT_ATTRIBUTE_NAME);
+        } else {
+            getElement().setAttribute(HAS_HEIGHT_ATTRIBUTE_NAME, "");
+        }
     }
 
     @Override
@@ -298,6 +372,14 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
 
     protected String applyColumnItemLabelFormat(V value) {
         return value.toString();
+    }
+
+    protected void updateColumnLabelPadding(NativeLabel label) {
+        if (Strings.isNullOrEmpty(label.getText())) {
+            label.removeClassName(LumoUtility.Padding.Bottom.XSMALL);
+        } else {
+            label.addClassName(LumoUtility.Padding.Bottom.XSMALL);
+        }
     }
 
     private void moveItems(MultiSelectListBox<V> from, MultiSelectListBox<V> to, boolean moveAllItems) {

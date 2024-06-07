@@ -8,7 +8,6 @@ jmix-twin-column::part(required-indicator) {
     font-weight: 500;
     line-height: 1;
     font-size: var(--lumo-font-size-s);
-    padding-bottom: var(--lumo-space-xs);
 }
 
 jmix-twin-column[disabled] :is(.jmix-twin-column-options-column-label, .jmix-twin-column-selected-column-label) {

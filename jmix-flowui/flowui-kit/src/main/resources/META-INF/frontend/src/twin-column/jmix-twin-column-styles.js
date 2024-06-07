@@ -22,55 +22,70 @@
 
 const jmixTwinColumnStyles = css`
     .jmix-twin-column-container {
-      display: grid;
-      width: 100%;
-      height: 100%;
-      grid-template-columns: 1fr 0fr 1fr;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
     }
 
-    [part="label"] {
-      grid-row: 1;
-      grid-column: span 3;
+    .jmix-twin-column-input-container {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: auto;
+        display: grid;
+        grid-template-columns: 1fr 0fr 1fr;
+    }
+
+    :host([has-width]) .jmix-twin-column-input-container {
+        width: 100%;
     }
 
     ::slotted([slot="options-label"]) {
-      grid-row: 2;
-      grid-column: 1;
+        grid-row: 1;
+        grid-column: 1;
     }
 
     ::slotted([slot="selected-label"]) {
-      grid-row: 2;
-      grid-column: 3;
+        grid-row: 1;
+        grid-column: 3;
     }
 
     ::slotted([slot="options"]) {
-      grid-row: 3;
-      grid-column: 1;
-      overflow-y: auto;
-      min-height: var(--jmix-twin-column-column-min-height, 14.6em);
-      min-width: var(--jmix-twin-column-column-min-width, 12em);
+        grid-row: 2;
+        grid-column: 1;
+        overflow-y: auto;
     }
 
     ::slotted([slot="actions"]) {
-      grid-row: 3;
-      grid-column: 2;
+        grid-row: 2;
+        grid-column: 2;
     }
 
     ::slotted([slot="selected"]) {
-      grid-row: 3;
-      grid-column: 3;
-      overflow-y: auto;
-      overflow-y: auto;
-      min-height: var(--jmix-twin-column-column-min-height, 14.6em);
-      min-width: var(--jmix-twin-column-column-min-width, 12em);
+        grid-row: 2;
+        grid-column: 3;
+        overflow-y: auto;
     }
 
-    [part="helper-text"] {
-      grid-row: 4;
+    :host(:not([has-width])) ::slotted([slot="options"]),
+    :host(:not([has-width])) ::slotted([slot="selected"]) {
+        min-width: var(--jmix-twin-column-column-min-width, 15em);
+        width: var(--jmix-twin-column-column-width, 15em);
+        max-width: var(--jmix-twin-column-column-max-width, 15em);
     }
 
-    [part="error-message"] {
-      grid-row: 5;
+    :host(:not([has-height])) ::slotted([slot="options"]),
+    :host(:not([has-height])) ::slotted([slot="selected"]) {
+        min-height: var(--jmix-twin-column-column-min-height, 20em);
+        height: var(--jmix-twin-column-column-height, 20em);
+        max-height: var(--jmix-twin-column-column-max-height, 20em);
+    }
+
+    :host(:not([has-width])) ::slotted([slot="options-label"]),
+    :host(:not([has-width])) ::slotted([slot="selected-label"]) {
+        min-width: var(--jmix-twin-column-column-min-width, 15em);
+        width: var(--jmix-twin-column-column-width, 15em);
+        max-width: var(--jmix-twin-column-column-max-width, 15em);
     }
 `;
 

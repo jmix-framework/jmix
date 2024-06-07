@@ -52,9 +52,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
 import org.springframework.lang.Nullable;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
+
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -135,6 +134,7 @@ public class DialogsImpl implements Dialogs {
         protected Component content;
 
         protected Action[] actions;
+        protected List<Button> actionButtons = new ArrayList<>(4);
 
         public OptionDialogBuilderImpl() {
             dialog = createDialog();
@@ -317,6 +317,9 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public void open() {
+            actionButtons.forEach(dialog.getFooter()::remove);
+            actionButtons.clear();
+
             DialogAction firstOkAction = findFirstActionWithType(actions,
                     EnumSet.of(DialogAction.Type.YES, DialogAction.Type.OK)
             );
@@ -349,6 +352,7 @@ public class DialogsImpl implements Dialogs {
                     focusComponent = button;
                 }
 
+                actionButtons.add(button);
                 dialog.getFooter().add(button);
             }
 

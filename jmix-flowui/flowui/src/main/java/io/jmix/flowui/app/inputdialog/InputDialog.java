@@ -352,6 +352,7 @@ public class InputDialog extends StandardView {
 
     protected void initParameters() {
         idToContentMap = new HashMap<>();
+        formLayout.removeAll();
 
         for (InputParameter parameter : parameters) {
             if (idToContentMap.containsKey(parameter.getId())) {
@@ -402,6 +403,8 @@ public class InputDialog extends StandardView {
     }
 
     protected void initActions(List<Action> actions) {
+        actionBox.removeAll();
+
         for (Action action : actions) {
             JmixButton button = uiComponents.create(JmixButton.class);
             button.setAction(action);

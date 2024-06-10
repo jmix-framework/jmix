@@ -105,18 +105,6 @@ public class ReportRunView extends StandardListView<Report> {
         this.screenParameter = screenParameter;
     }
 
-    @Subscribe
-    public void onInit(InitEvent event) {
-        List<Grid.Column<Report>> columnsOrder = Arrays.asList(
-                reportDataGrid.getColumnByKey("name"),
-                reportDataGrid.getColumnByKey("group"),
-                reportDataGrid.getColumnByKey("description"),
-                reportDataGrid.getColumnByKey("code"),
-                reportDataGrid.getColumnByKey("updateTs")
-        );
-        reportDataGrid.setColumnOrder(columnsOrder);
-    }
-
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
     private List<Report> reportsDlLoadDelegate(LoadContext loadContext) {
         return reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(),

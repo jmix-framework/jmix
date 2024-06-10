@@ -55,6 +55,7 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.multiselectcomboboxpicker.MultiSelectComboBoxPicker;
 import io.jmix.flowui.kit.component.pagination.JmixSimplePagination;
 import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
+import io.jmix.flowui.kit.component.twincolumn.JmixTwinColumn;
 import io.jmix.flowui.kit.component.upload.JmixFileStorageUploadField;
 import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
@@ -3097,6 +3098,58 @@ public interface StudioComponents {
             }
     )
     VirtualList virtualList();
+
+    @StudioComponent(
+            name = "TwinColumn",
+            classFqn = "io.jmix.flowui.component.twincolumn.TwinColumn",
+            category = "Components",
+            xmlElement = "twinColumn",
+            icon = "io/jmix/flowui/kit/meta/icon/component/twinColumn.svg",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "checkboxGroup"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "multiSelectComboBox"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "multiValuePicker")
+            }),
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO", options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "ariaLabelledBy", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "itemsContainer", type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "optionsColumnLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
+                    @StudioProperty(xmlAttribute = "reorderable", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "selectAllButtonsVisible", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "selectedItemsColumnLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST, options = {"no-border", "compact"}),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE),
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
+            }
+    )
+    JmixTwinColumn twinColumn();
 
     @StudioComponent(
             name = "GridColumnVisibility",

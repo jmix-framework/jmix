@@ -40,6 +40,7 @@
 @import url('component/jmix-code-editor.css');
 @import url('component/jmix-value-picker.css');
 @import url('component/jmix-multi-select-combo-box-picker.css');
+@import url('component/jmix-twin-column.css');
 
 @import url('component/vaadin-text-field.css');
 @import url('component/vaadin-text-area.css');

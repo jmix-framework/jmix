@@ -2151,6 +2151,22 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="twinColumnThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="no-border"/>
+                    <xs:enumeration value="no-row-border"/>
+                    <xs:enumeration value="checkboxes"/>
+                    <xs:enumeration value="no-space-between-actions"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -3124,6 +3140,30 @@
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasClickNotifierAttributes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- TwinColumn -->
+    <xs:complexType name="twinColumnComponent">
+        <xs:complexContent>
+            <xs:extension base="validatableBaseFieldComponent">
+                <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="selectAllButtonsVisible" type="xs:boolean"/>
+                <xs:attribute name="reorderable" type="xs:boolean"/>
+                <xs:attribute name="optionsColumnLabel" type="resourceString"/>
+                <xs:attribute name="selectedItemsColumnLabel" type="resourceString"/>
+                <xs:attribute name="themeNames" type="twinColumnThemeNames"/>
+
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4798,6 +4838,7 @@
                 <xs:element name="menuFilterField" type="menuFilterFieldComponent"/>
                 <xs:element name="horizontalMenu" type="horizontalMenuComponent"/>
                 <xs:element name="richTextEditor" type="richTextEditorComponent"/>
+                <xs:element name="twinColumn" type="twinColumnComponent"/>
                 <xs:element name="component" type="genericComponent"/>
                 <xs:element name="fragment" type="fragmentComponent"/>
             </xs:choice>

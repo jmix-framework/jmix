@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <data readOnly="true">
+        <instance id="zooDc"
+                  class="test_support.entity.Zoo">
+            <fetchPlan extends="_base">
+                <property name="animals" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="zooDl">
+                <query>
+                    <![CDATA[select e from test_Zoo e]]>
+                </query>
+            </loader>
+        </instance>
+        <collection id="animalsDc"
+                    class="test_support.entity.Animal">
+            <loader id="animalsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from test_Animal e]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base"/>
+        </collection>
+    </data>
+    <layout>
+        <twinColumn ariaLabel="ariaLabelString"
+                    classNames="cssClassName1, cssClassName2"
+                    css="color: blue;"
+                    dataContainer="zooDc"
+                    enabled="true"
+                    helperText="helperTextString"
+                    height="500px"
+                    id="twinColumn"
+                    itemsContainer="animalsDc"
+                    label="labelString"
+                    maxHeight="1000px"
+                    maxWidth="700px"
+                    minHeight="100px"
+                    minWidth="80px"
+                    optionsColumnLabel="Options"
+                    property="animals"
+                    readOnly="true"
+                    reorderable="true"
+                    required="true"
+                    selectAllButtonsVisible="true"
+                    selectedItemsColumnLabel="Selected"
+                    themeNames="rounded"
+                    visible="false"
+                    width="200px"/>
+        <twinColumn
+                    id="twinColumnWithItemsContainer"
+                    itemsContainer="animalsDc"
+                    selectAllButtonsVisible="true"
+                    selectedItemsColumnLabel="Selected"/>
+    </layout>
+</view>

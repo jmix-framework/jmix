@@ -723,17 +723,19 @@ public class MetadataTools {
     public Collection<Class<?>> getAllEnums() {
         if (enums == null) {
             synchronized (this) {
-                Set<Class<?>> tmpEnums = new HashSet<>();
-                Set<String> classNames = classpathScanner.getClassNames(EnumDetector.class);
-                for (String className : classNames) {
-                    try {
-                        Class<?> enumClass = ReflectionHelper.loadClass(className);
-                        tmpEnums.add(enumClass);
-                    } catch (ClassNotFoundException e) {
-                        log.warn("Cannot load enum class {}", className, e);
+                if (enums == null) {
+                    Set<Class<?>> tmpEnums = new HashSet<>();
+                    Set<String> classNames = classpathScanner.getClassNames(EnumDetector.class);
+                    for (String className : classNames) {
+                        try {
+                            Class<?> enumClass = ReflectionHelper.loadClass(className);
+                            tmpEnums.add(enumClass);
+                        } catch (ClassNotFoundException e) {
+                            log.warn("Cannot load enum class {}", className, e);
+                        }
                     }
+                    enums = tmpEnums;
                 }
-                enums = tmpEnums;
             }
         }
         return enums;

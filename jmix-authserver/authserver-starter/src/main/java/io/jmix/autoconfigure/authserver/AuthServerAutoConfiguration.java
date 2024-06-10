@@ -60,13 +60,16 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 @ConditionalOnProperty(name = "jmix.authserver.use-default-configuration", matchIfMissing = true)
 public class AuthServerAutoConfiguration {
 
-    @Configuration
-    @Order(AuthorizationServerLoginPageConfiguration.ORDER)
-    public static class AuthorizationServerLoginPageConfiguration implements WebMvcConfigurer {
+    @Configuration(proxyBeanMethods = false)
+    @Order(LoginPageConfiguration.ORDER)
+    @ConditionalOnProperty(name = "jmix.authserver.use-default-login-page-configuration", matchIfMissing = true)
+    public static class LoginPageConfiguration implements WebMvcConfigurer {
+
+        public static final String SECURITY_CONFIGURER_QUALIFIER = "authorization-server-login-form";
 
         private final AuthServerProperties authServerProperties;
 
-        public AuthorizationServerLoginPageConfiguration(AuthServerProperties authServerProperties) {
+        public LoginPageConfiguration(AuthServerProperties authServerProperties) {
             this.authServerProperties = authServerProperties;
         }
 
@@ -77,17 +80,33 @@ public class AuthServerAutoConfiguration {
             registry.addViewController(authServerProperties.getLoginPageUrl())
                     .setViewName(authServerProperties.getLoginPageViewName());
         }
+
+        @Bean("authsr_LoginFormSecurityFilterChain")
+        @Order(JmixSecurityFilterChainOrder.AUTHSERVER_LOGIN_FORM)
+        public SecurityFilterChain loginFormSecurityFilterChain(HttpSecurity http)
+                throws Exception {
+            http
+                    .securityMatcher(authServerProperties.getLoginPageUrl(), "/aslogin/styles/**")
+                    .authorizeHttpRequests(authorize -> {
+                        authorize.anyRequest().permitAll();
+                    })
+                    .formLogin(form -> {
+                        form.loginPage(authServerProperties.getLoginPageUrl());
+                    });
+
+            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);
+            return http.build();
+        }
     }
 
     @Configuration(proxyBeanMethods = false)
-    public static class AuthorizationServerSecurityConfiguration {
+    @ConditionalOnProperty(name = "jmix.authserver.use-default-authorization-server-configuration", matchIfMissing = true)
+    public static class AuthorizationServerConfiguration {
 
         public static final String SECURITY_CONFIGURER_QUALIFIER = "authorization-server";
-        public static final String LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER = "authorization-server-login-form";
-
         private final AuthServerProperties authServerProperties;
 
-        public AuthorizationServerSecurityConfiguration(AuthServerProperties authServerProperties) {
+        public AuthorizationServerConfiguration(AuthServerProperties authServerProperties) {
             this.authServerProperties = authServerProperties;
         }
 
@@ -121,23 +140,6 @@ public class AuthServerAutoConfiguration {
             return http.build();
         }
 
-        @Bean("authsr_LoginFormSecurityFilterChain")
-        @Order(JmixSecurityFilterChainOrder.AUTHSERVER_LOGIN_FORM)
-        public SecurityFilterChain loginFormSecurityFilterChain(HttpSecurity http)
-                throws Exception {
-            http
-                    .securityMatcher(authServerProperties.getLoginPageUrl(), "/aslogin/styles/**")
-                    .authorizeHttpRequests(authorize -> {
-                        authorize.anyRequest().permitAll();
-                    })
-                    .formLogin(form -> {
-                        form.loginPage(authServerProperties.getLoginPageUrl());
-                    });
-
-            SecurityConfigurers.applySecurityConfigurersWithQualifier(http, LOGIN_FORM_SECURITY_CONFIGURER_QUALIFIER);
-            return http.build();
-        }
-
         @Bean
         @ConditionalOnMissingBean
         public OAuth2AuthorizationService oAuth2AuthorizationService() {
@@ -165,7 +167,8 @@ public class AuthServerAutoConfiguration {
     }
 
     @Configuration(proxyBeanMethods = false)
-    public static class ResourceServerSecurityConfiguration {
+    @ConditionalOnProperty(name = "jmix.authserver.use-default-resource-server-configuration", matchIfMissing = true)
+    public static class ResourceServerConfiguration {
 
         public static final String SECURITY_CONFIGURER_QUALIFIER = "authorization-server-resource-server";
 

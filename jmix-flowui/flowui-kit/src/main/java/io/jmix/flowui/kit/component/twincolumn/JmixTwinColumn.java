@@ -126,7 +126,8 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     }
 
     /**
-     * @return <code>true</code> if the buttons for selecting and deselection all items are visible, <code>false</code> otherwise
+     * @return <code>true</code> if the buttons for selecting and deselection all items are visible,
+     * <code>false</code> otherwise
      */
     public Boolean isSelectAllButtonsVisible() {
         return selectAllItems != null && actionsPanel.indexOf(selectAllItems) >= 0;
@@ -180,7 +181,9 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     public void setMinWidth(String minWidth) {
         HasSize.super.setMinWidth(minWidth);
 
-        if (ComponentUtils.isAutoSize(getMinWidth()) && ComponentUtils.isAutoSize(getWidth()) && ComponentUtils.isAutoSize(getMaxWidth())) {
+        if (ComponentUtils.isAutoSize(getMinWidth()) &&
+                ComponentUtils.isAutoSize(getWidth()) &&
+                ComponentUtils.isAutoSize(getMaxWidth())) {
             getElement().removeAttribute(HAS_WIDTH_ATTRIBUTE_NAME);
         } else {
             getElement().setAttribute(HAS_WIDTH_ATTRIBUTE_NAME, "");

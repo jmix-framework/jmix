@@ -34,6 +34,7 @@ const jmixTwinColumnStyles = css`
         overflow-x: auto;
         display: grid;
         grid-template-columns: 1fr 0fr 1fr;
+        grid-template-rows: 0fr 1fr;
     }
 
     :host([has-width]) .jmix-twin-column-input-container {
@@ -65,6 +66,10 @@ const jmixTwinColumnStyles = css`
         grid-row: 2;
         grid-column: 3;
         overflow-y: auto;
+    }
+
+    :host(:not([has-label])) [part='label'] {
+        display: none;
     }
 
     :host(:not([has-width])) ::slotted([slot="options"]),

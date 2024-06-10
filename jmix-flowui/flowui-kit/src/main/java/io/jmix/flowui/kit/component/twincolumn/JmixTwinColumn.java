@@ -380,8 +380,10 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     protected void updateColumnLabelPadding(NativeLabel label) {
         if (Strings.isNullOrEmpty(label.getText())) {
             label.removeClassName(LumoUtility.Padding.Bottom.XSMALL);
+            label.setVisible(false);
         } else {
             label.addClassName(LumoUtility.Padding.Bottom.XSMALL);
+            label.setVisible(true);
         }
     }
 

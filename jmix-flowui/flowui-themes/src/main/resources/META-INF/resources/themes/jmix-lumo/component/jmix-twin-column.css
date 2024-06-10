@@ -1,8 +1,3 @@
-jmix-twin-column::part(required-indicator) {
-    position:absolute;
-    width: 1em;
-}
-
 .jmix-twin-column-options-column-label, .jmix-twin-column-selected-column-label  {
     color: var(--lumo-secondary-text-color);
     font-weight: 500;

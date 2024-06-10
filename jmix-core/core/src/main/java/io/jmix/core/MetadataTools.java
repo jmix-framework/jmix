@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityPreconditions;
 import io.jmix.core.entity.EntityValues;
@@ -27,6 +28,8 @@ import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.impl.scanning.EnumDetector;
+import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -39,6 +42,8 @@ import io.jmix.core.security.CurrentAuthentication;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -78,6 +83,8 @@ public class MetadataTools {
     public static final String CASCADE_PROPERTIES_ANN_NAME = "jmix.cascadeProperties";
     public static final String EMBEDDED_PROPERTIES_ANN_NAME = "jmix.embeddedProperties";
 
+    private static final Logger log = LoggerFactory.getLogger(MetadataTools.class);
+
     /**
      * Not applicable for legacy cuba entities
      */
@@ -114,6 +121,9 @@ public class MetadataTools {
 
     @Autowired(required = false)
     protected Collection<MetaPropertyPathResolver> metaPropertyPathResolvers;
+
+    @Autowired
+    protected JmixModulesClasspathScanner classpathScanner;
 
     protected volatile Collection<Class<?>> enums;
 
@@ -729,19 +739,23 @@ public class MetadataTools {
     }
 
     /**
-     * @return collection of all Java enums used as a type of an entity attribute
+     * @return collection of all Java enums implementing {@link io.jmix.core.metamodel.datatype.impl.EnumClass}
      */
     public Collection<Class<?>> getAllEnums() {
         if (enums == null) {
             synchronized (this) {
-                enums = new HashSet<>();
-                for (MetaClass metaClass : metadata.getSession().getClasses()) {
-                    for (MetaProperty metaProperty : metaClass.getProperties()) {
-                        if (metaProperty.getRange().isEnum()) {
-                            Class<?> c = metaProperty.getRange().asEnumeration().getJavaClass();
-                            enums.add(c);
+                if (enums == null) {
+                    Set<Class<?>> tmpEnums = new HashSet<>();
+                    Set<String> classNames = classpathScanner.getClassNames(EnumDetector.class);
+                    for (String className : classNames) {
+                        try {
+                            Class<?> enumClass = ReflectionHelper.loadClass(className);
+                            tmpEnums.add(enumClass);
+                        } catch (ClassNotFoundException e) {
+                            log.warn("Cannot load enum class {}", className, e);
                         }
                     }
+                    enums = tmpEnums;
                 }
             }
         }

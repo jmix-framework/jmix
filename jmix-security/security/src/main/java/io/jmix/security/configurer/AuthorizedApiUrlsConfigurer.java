@@ -20,15 +20,17 @@ import io.jmix.core.security.AuthorizedUrlsProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.toArray;
 
 public class AuthorizedApiUrlsConfigurer extends AbstractHttpConfigurer<AuthorizedApiUrlsConfigurer, HttpSecurity> {
@@ -40,52 +42,49 @@ public class AuthorizedApiUrlsConfigurer extends AbstractHttpConfigurer<Authoriz
 
     private void initAuthorizedUrls(HttpSecurity http) {
         ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
+        Collection<AuthorizedUrlsProvider> authorizedUrlsProviders = applicationContext.getBeansOfType(AuthorizedUrlsProvider.class).values();
 
-        Collection<String> anonymousUrlPatterns = getAnonymousUrlPatterns(applicationContext);
-        Collection<String> authenticatedUrlPatterns = getAuthenticatedUrlPatterns(applicationContext);
+        Collection<String> anonymousUrlPatterns = authorizedUrlsProviders.stream()
+                .flatMap(p -> p.getAnonymousUrlPatterns().stream())
+                .toList();
+
+        Collection<String> authenticatedUrlPatterns = authorizedUrlsProviders.stream()
+                .flatMap(p -> p.getAuthenticatedUrlPatterns().stream())
+                .toList();
 
         if (!anonymousUrlPatterns.isEmpty() || !authenticatedUrlPatterns.isEmpty()) {
             try {
-                String[] urlPatterns = toArray(concat(anonymousUrlPatterns, authenticatedUrlPatterns), String.class);
-
-
-                AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry urlRegistry = http.securityMatcher(urlPatterns)
-                        .authorizeHttpRequests();
-
-                HandlerMappingIntrospector handlerMappingIntrospector = applicationContext.getBean(HandlerMappingIntrospector.class);
-                MvcRequestMatcher.Builder mvcRequestMatcherBuilder = new MvcRequestMatcher.Builder(handlerMappingIntrospector);
+                http.securityMatcher(createSecurityMatcher(authenticatedUrlPatterns, anonymousUrlPatterns));
 
                 if (!anonymousUrlPatterns.isEmpty()) {
-                    MvcRequestMatcher[] mvcRequestMatchers = createMvcRequestMatchers(anonymousUrlPatterns, mvcRequestMatcherBuilder);
-                    urlRegistry.requestMatchers(mvcRequestMatchers).permitAll();
+                    RequestMatcher[] anonymousRequestMatchers = createAntPathRequestMatchers(anonymousUrlPatterns);
+                    http.authorizeHttpRequests(authorize ->
+                            authorize.requestMatchers(anonymousRequestMatchers).permitAll()
+                    );
                 }
-
                 if (!authenticatedUrlPatterns.isEmpty()) {
-                    MvcRequestMatcher[] mvcRequestMatchers = createMvcRequestMatchers(authenticatedUrlPatterns, mvcRequestMatcherBuilder);
-                    urlRegistry.requestMatchers(mvcRequestMatchers).authenticated();
+                    RequestMatcher[] authenticatedRequestMatchers = createAntPathRequestMatchers(authenticatedUrlPatterns);
+                    http.authorizeHttpRequests(authorize ->
+                            authorize.requestMatchers(authenticatedRequestMatchers).authenticated()
+                    );
                 }
-
             } catch (Exception e) {
                 throw new RuntimeException("Error while init security", e);
             }
         }
     }
 
-    private MvcRequestMatcher[] createMvcRequestMatchers(Collection<String> urlPatterns, MvcRequestMatcher.Builder mvcRequestMatcherBuilder) {
+    private OrRequestMatcher createSecurityMatcher(Collection<String> anonymousUrlPatterns,
+                                                   Collection<String> authenticatedUrlPatterns) {
+        List<RequestMatcher> antPathMatchers = Stream.concat(anonymousUrlPatterns.stream(), authenticatedUrlPatterns.stream())
+                .map(AntPathRequestMatcher::new)
+                .collect(Collectors.toList());
+        return new OrRequestMatcher(antPathMatchers);
+    }
+
+    private AntPathRequestMatcher[] createAntPathRequestMatchers(Collection<String> urlPatterns) {
         return Arrays.stream(toArray(urlPatterns, String.class))
-                .map(urlPattern -> mvcRequestMatcherBuilder.pattern(urlPattern))
-                .toArray(MvcRequestMatcher[]::new);
-    }
-
-    private Collection<String> getAnonymousUrlPatterns(ApplicationContext applicationContext) {
-        return applicationContext.getBeansOfType(AuthorizedUrlsProvider.class).values().stream()
-                .flatMap(p -> p.getAnonymousUrlPatterns().stream())
-                .collect(Collectors.toList());
-    }
-
-    private Collection<String> getAuthenticatedUrlPatterns(ApplicationContext applicationContext) {
-        return applicationContext.getBeansOfType(AuthorizedUrlsProvider.class).values().stream()
-                .flatMap(p -> p.getAuthenticatedUrlPatterns().stream())
-                .collect(Collectors.toList());
+                .map(AntPathRequestMatcher::new)
+                .toArray(AntPathRequestMatcher[]::new);
     }
 }

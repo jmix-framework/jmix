@@ -86,6 +86,8 @@ abstract class AbstractUpdateImports implements Runnable {
     private static final String IMPORT_TEMPLATE = "import '%s';";
 
     private static final Pattern STARTING_DOT_SLASH = Pattern.compile("^\\./+");
+    private static final Pattern VAADIN_LUMO_GLOBAL_IMPORT = Pattern
+            .compile(".*@vaadin/vaadin-lumo-styles/.*-global.js.*");
     final Options options;
 
     private final UnaryOperator<String> themeToLocalPathConverter;
@@ -96,6 +98,7 @@ abstract class AbstractUpdateImports implements Runnable {
     private ClassFinder classFinder;
 
     private final File generatedFlowImports;
+    private final File generatedFlowWebComponentImports;
     private final File generatedFlowDefinitions;
     private File chunkFolder;
 
@@ -115,6 +118,9 @@ abstract class AbstractUpdateImports implements Runnable {
         generatedFlowDefinitions = new File(
                 generatedFlowImports.getParentFile(),
                 FrontendUtils.IMPORTS_D_TS_NAME);
+        generatedFlowWebComponentImports = FrontendUtils
+                .getFlowGeneratedWebComponentsImports(
+                        options.getFrontendDirectory());
         this.chunkFolder = new File(generatedFlowImports.getParentFile(),
                 "chunks");
 
@@ -128,6 +134,8 @@ abstract class AbstractUpdateImports implements Runnable {
         Map<ChunkInfo, List<String>> javascript = getMergedJavascript();
         Map<File, List<String>> output = process(css, javascript);
         writeOutput(output);
+        writeWebComponentImports(
+                filterWebComponentImports(output.get(generatedFlowImports)));
         getLogger().debug("Imports and chunks update took {} ms.",
                 TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
     }
@@ -187,6 +195,28 @@ abstract class AbstractUpdateImports implements Runnable {
         }
     }
 
+    // Visible for test
+    List<String> filterWebComponentImports(List<String> lines) {
+        if (lines != null) {
+            // Exclude Lumo global imports for exported web-component
+            return lines.stream()
+                    .filter(VAADIN_LUMO_GLOBAL_IMPORT.asPredicate().negate())
+                    .collect(Collectors.toList());
+        }
+        return lines;
+    }
+
+    private void writeWebComponentImports(List<String> lines) {
+        if (lines != null) {
+            try {
+                FileIOUtils.writeIfChanged(generatedFlowWebComponentImports,
+                        lines);
+            } catch (IOException e) {
+                throw new IllegalStateException(
+                        "Failed to update the generated Flow imports", e);
+            }
+        }
+    }
     /**
      * Processes what the scanner found and produces a set of files to write to
      * the generated folder.

@@ -168,6 +168,7 @@ public class FrontendUtils {
      * file.
      */
     public static final String IMPORTS_D_TS_NAME = "generated-flow-imports.d.ts";
+    public static final String IMPORTS_WEB_COMPONENT_NAME = "generated-flow-webcomponent-imports.js";
 
     public static final String THEME_IMPORTS_D_TS_NAME = "theme.d.ts";
     public static final String THEME_IMPORTS_NAME = "theme.js";
@@ -1286,6 +1287,21 @@ public class FrontendUtils {
             File frontendFolder) {
         return new File(getFlowGeneratedFolder(frontendFolder),
                 "web-components");
+    }
+
+    /**
+     * Gets the location of the generated import file for exported web
+     * components.
+     *
+     * @param frontendFolder
+     *            the project frontend folder
+     * @return the location of the generated import JS file for exported web
+     *         components
+     */
+    public static File getFlowGeneratedWebComponentsImports(
+            File frontendFolder) {
+        return new File(getFlowGeneratedFolder(frontendFolder),
+                IMPORTS_WEB_COMPONENT_NAME);
     }
 
     public static int findFreePort(int rangeStart, int rangeEnd) {

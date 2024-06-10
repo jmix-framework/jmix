@@ -9,9 +9,9 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { createHash } from 'crypto';
 import * as net from 'net';
 
-import { processThemeResources } from './build/plugins/application-theme-plugin/theme-handle.js';
-import { rewriteCssUrls } from './build/plugins/theme-loader/theme-loader-utils.js';
-import settings from './build/vaadin-dev-server-settings.json';
+import { processThemeResources } from '#buildFolder#/plugins/application-theme-plugin/theme-handle.js';
+import { rewriteCssUrls } from '#buildFolder#/plugins/theme-loader/theme-loader-utils.js';
+import settings from '#settingsImport#';
 import {
   AssetInfo,
   ChunkInfo,
@@ -28,7 +28,7 @@ import * as rollup from 'rollup';
 import brotli from 'rollup-plugin-brotli';
 import replace from '@rollup/plugin-replace';
 import checker from 'vite-plugin-checker';
-import postcssLit from './build/plugins/rollup-plugin-postcss-lit-custom/rollup-plugin-postcss-lit.js';
+import postcssLit from '#buildFolder#/plugins/rollup-plugin-postcss-lit-custom/rollup-plugin-postcss-lit.js';
 
 import { createRequire } from 'module';
 
@@ -53,7 +53,7 @@ const statsFolder = path.resolve(__dirname, devBundle ? settings.devBundleStatsO
 const statsFile = path.resolve(statsFolder, 'stats.json');
 const bundleSizeFile = path.resolve(statsFolder, 'bundle-size.html');
 const nodeModulesFolder = path.resolve(__dirname, 'node_modules');
-const webComponentTags = '';
+const webComponentTags = '#webComponentTags#';
 
 const projectIndexHtml = path.resolve(frontendFolder, 'index.html');
 
@@ -300,13 +300,23 @@ function statsExtracterPlugin(): PluginOption {
           id.startsWith(themeOptions.frontendGeneratedFolder.replace(/\\/g, '/'))
               && id.match(/.*\/jar-resources\/themes\/[^\/]+\/components\//);
 
+      const isGeneratedWebComponentResource = (id: string) =>
+          id.startsWith(themeOptions.frontendGeneratedFolder.replace(/\\/g, '/'))
+              && id.match(/.*\/flow\/web-components\//);
+
+      const isFrontendResourceCollected = (id: string) =>
+          !id.startsWith(themeOptions.frontendGeneratedFolder.replace(/\\/g, '/'))
+          || isThemeComponentsResource(id)
+          || isGeneratedWebComponentResource(id);
+
       // collects project's frontend resources in frontend folder, excluding
       // 'generated' sub-folder, except for legacy shadow DOM stylesheets
-      // packaged in `theme/components/` folder.
+      // packaged in `theme/components/` folder
+      // and generated web component resources in `flow/web-components` folder.
       modules
         .map((id) => id.replace(/\\/g, '/'))
         .filter((id) => id.startsWith(frontendFolder.replace(/\\/g, '/')))
-        .filter((id) => !id.startsWith(themeOptions.frontendGeneratedFolder.replace(/\\/g, '/')) || isThemeComponentsResource(id))
+        .filter(isFrontendResourceCollected)
         .map((id) => id.substring(frontendFolder.length + 1))
         .map((line: string) => (line.includes('?') ? line.substring(0, line.lastIndexOf('?')) : line))
         .forEach((line: string) => {
@@ -332,6 +342,22 @@ function statsExtracterPlugin(): PluginOption {
 
           const fileKey = line.substring(line.indexOf('jar-resources/') + 14);
           frontendFiles[fileKey] = hash;
+        });
+      // collects and hash rest of the Frontend resources excluding files in /generated/ and /themes/
+      // and files already in frontendFiles.
+      let frontendFolderAlias = "Frontend";
+      generatedImports
+        .filter((line: string) => line.startsWith(frontendFolderAlias + '/'))
+        .filter((line: string) => !line.startsWith(frontendFolderAlias + '/generated/'))
+        .filter((line: string) => !line.startsWith(frontendFolderAlias + '/themes/'))
+        .map((line) => line.substring(frontendFolderAlias.length + 1))
+        .filter((line: string) => !frontendFiles[line])
+        .forEach((line: string) => {
+          const filePath = path.resolve(frontendFolder, line);
+          if (projectFileExtensions.includes(path.extname(filePath)) && existsSync(filePath)) {
+            const fileBuffer = readFileSync(filePath, { encoding: 'utf-8' }).replace(/\r\n/g, '\n');
+            frontendFiles[line] = createHash('sha256').update(fileBuffer, 'utf8').digest('hex');
+          }
         });
       // If a index.ts exists hash it to be able to see if it changes.
       if (existsSync(path.resolve(frontendFolder, 'index.ts'))) {
@@ -618,8 +644,6 @@ function runWatchDog(watchDogPort, watchDogHost) {
   client.connect(watchDogPort, watchDogHost || 'localhost');
 }
 
-let spaMiddlewareForceRemoved = false;
-
 const allowedFrontendFolders = [frontendFolder, nodeModulesFolder];
 
 function showRecompileReason(): PluginOption {
@@ -747,18 +771,14 @@ export const vaadinConfig: UserConfigFn = (env) => {
       }),
       {
         name: 'vaadin:force-remove-html-middleware',
-        transformIndexHtml: {
-          order: 'pre',
-          handler(_html, { server }) {
-            if (server && !spaMiddlewareForceRemoved) {
-              server.middlewares.stack = server.middlewares.stack.filter((mw) => {
-                const handleName = '' + mw.handle;
-                return !handleName.includes('viteHtmlFallbackMiddleware');
-              });
-              spaMiddlewareForceRemoved = true;
-            }
-          }
-        }
+        configureServer(server) {
+          return () => {
+            server.middlewares.stack = server.middlewares.stack.filter((mw) => {
+              const handleName = `${mw.handle}`;
+              return !handleName.includes('viteHtmlFallbackMiddleware');
+            });
+          };
+        },
       },
       hasExportedWebComponents && {
         name: 'vaadin:inject-entrypoints-to-web-component-html',

@@ -61,7 +61,7 @@ class JmixLoginForm extends LoginForm {
                     <input id="csrf" type="hidden"/>
                     <vaadin-text-field
                             name="username"
-                            label="[[i18n.jmixForm.username]]"
+                            label="[[i18n.form.username]]"
                             error-message="[[i18n.errorMessage.username]]"
                             id="vaadinLoginUsername"
                             required
@@ -77,7 +77,7 @@ class JmixLoginForm extends LoginForm {
 
                     <vaadin-password-field
                             name="password"
-                            label="[[i18n.jmixForm.password]]"
+                            label="[[i18n.form.password]]"
                             error-message="[[i18n.errorMessage.password]]"
                             id="vaadinLoginPassword"
                             required
@@ -100,7 +100,7 @@ class JmixLoginForm extends LoginForm {
                 </form>
 
                 <vaadin-button slot="submit" theme="primary contained submit" on-click="submit" disabled$="[[disabled]]">
-                    [[i18n.jmixForm.submit]]
+                    [[i18n.form.submit]]
                 </vaadin-button>
 
                 <vaadin-button
@@ -109,7 +109,7 @@ class JmixLoginForm extends LoginForm {
                         on-click="_onForgotPasswordClick"
                         hidden$="[[noForgotPassword]]"
                 >
-                    [[i18n.jmixForm.forgotPassword]]
+                    [[i18n.form.forgotPassword]]
                 </vaadin-button>
             </vaadin-login-form-wrapper>
         `;
@@ -148,12 +148,14 @@ class JmixLoginForm extends LoginForm {
                 type: Object,
                 value: function () {
                     return {
-                        jmixForm: {
+                        form: {
                             title: 'Log in',
                             username: 'Username',
                             password: 'Password',
                             submit: 'Log in',
-                            forgotPassword: 'Forgot password',
+                            forgotPassword: 'Forgot password'
+                        },
+                        jmixForm: {
                             rememberMe: 'Remember me'
                         },
                         errorMessage: {

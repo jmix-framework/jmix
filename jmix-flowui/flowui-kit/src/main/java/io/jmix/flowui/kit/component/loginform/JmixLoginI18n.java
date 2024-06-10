@@ -39,7 +39,7 @@ public class JmixLoginI18n extends LoginI18n {
         try {
             final JsonFactory JSON_FACTORY = new JreJsonFactory();
             JMIX_DEFAULT_I18N = JSON_FACTORY.parse(
-                    IOUtils.toString(JmixLoginI18n.class.getResource("i18n.json"),
+                    IOUtils.toString(LoginI18n.class.getResource("i18n.json"),
                             StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new IllegalStateException(
@@ -49,7 +49,11 @@ public class JmixLoginI18n extends LoginI18n {
     }
 
     public static JmixLoginI18n createDefault() {
-        return JsonSerializer.toObject(JmixLoginI18n.class, JMIX_DEFAULT_I18N);
+        JmixLoginI18n jmixLoginI18n = JsonSerializer.toObject(JmixLoginI18n.class, JMIX_DEFAULT_I18N);
+        JmixForm staticJmixForm = new JmixForm();
+        staticJmixForm.setRememberMe("Remember me");
+        jmixLoginI18n.setJmixForm(staticJmixForm);
+        return jmixLoginI18n;
     }
 
     public JmixForm getJmixForm() {
@@ -60,7 +64,7 @@ public class JmixLoginI18n extends LoginI18n {
         this.jmixForm = jmixForm;
     }
 
-    public static class JmixForm extends Form {
+    public static class JmixForm {
 
         protected String rememberMe;
 

@@ -213,12 +213,6 @@ public class EnhancedLoginForm extends LoginForm {
         this.localeItemLabelGenerator = localeItemLabelGenerator;
     }
 
-    @Override
-    public void setI18n(LoginI18n i18n) {
-        this.getElement().setPropertyJson("i18n", JsonSerializer.toJson(
-                i18n instanceof JmixLoginI18n ? i18n : i18n));
-    }
-
     protected void onRememberMeChangedEvent(JmixRememberMeChangedEvent event) {
         handleRememberMeChanged(event.isFromClient(), event.isChecked());
     }

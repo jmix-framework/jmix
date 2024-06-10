@@ -104,14 +104,17 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
 
         final JmixLoginI18n loginI18n = JmixLoginI18n.createDefault();
 
-        final JmixLoginI18n.JmixForm form = new JmixLoginI18n.JmixForm();
+        final JmixLoginI18n.Form form = new JmixLoginI18n.Form();
         form.setTitle(messageBundle.getMessage("loginForm.headerTitle"));
         form.setUsername(messageBundle.getMessage("loginForm.username"));
         form.setPassword(messageBundle.getMessage("loginForm.password"));
         form.setSubmit(messageBundle.getMessage("loginForm.submit"));
         form.setForgotPassword(messageBundle.getMessage("loginForm.forgotPassword"));
-        form.setRememberMe(messageBundle.getMessage("loginForm.rememberMe"));
         loginI18n.setForm(form);
+
+        final JmixLoginI18n.JmixForm jmixForm = new JmixLoginI18n.JmixForm();
+        jmixForm.setRememberMe(messageBundle.getMessage("loginForm.rememberMe"));
+        loginI18n.setJmixForm(jmixForm);
 
         final LoginI18n.ErrorMessage errorMessage = new LoginI18n.ErrorMessage();
         errorMessage.setTitle(messageBundle.getMessage("loginForm.errorTitle"));

@@ -28,6 +28,8 @@ import test_support.app.TestAppConfiguration
 import test_support.app.entity.Address
 import test_support.app.entity.Owner
 import test_support.app.entity.Pet
+import test_support.app.entity.PetType
+import test_support.app.entity.sales.Status
 import test_support.base.entity.BaseEntity
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
@@ -129,5 +131,14 @@ class MetadataToolsTest extends Specification {
     def "hasUuid with MappedSuperclass inheritance"() {
         expect:
         metadataTools.hasUuid(metadata.getClass(Pet))
+    }
+
+    def "getAllEnums returns all enums including not associated with entities"() {
+        when:
+        def enums = metadataTools.getAllEnums()
+
+        then:
+        enums.contains(Status)
+        enums.contains(PetType)
     }
 }

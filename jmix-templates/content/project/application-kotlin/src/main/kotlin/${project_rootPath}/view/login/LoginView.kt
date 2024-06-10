@@ -95,15 +95,15 @@ open class LoginView : StandardView(), LocaleChangeObserver {
         val loginI18n: JmixLoginI18n = JmixLoginI18n.createDefault()
 
         val form: LoginI18n.Form = LoginI18n.Form()
-        form.setTitle(messageBundle.getMessage("loginForm.headerTitle"))
-        form.setUsername(messageBundle.getMessage("loginForm.username"))
-        form.setPassword(messageBundle.getMessage("loginForm.password"))
-        form.setSubmit(messageBundle.getMessage("loginForm.submit"))
-        form.setForgotPassword(messageBundle.getMessage("loginForm.forgotPassword"))
+        form.title = messageBundle.getMessage("loginForm.headerTitle")
+        form.username = messageBundle.getMessage("loginForm.username")
+        form.password = messageBundle.getMessage("loginForm.password")
+        form.submit = messageBundle.getMessage("loginForm.submit")
+        form.forgotPassword = messageBundle.getMessage("loginForm.forgotPassword")
         loginI18n.form = form
 
-        val jmixForm: LoginI18n.JmixForm = LoginI18n.JmixForm()
-        jmixForm.setRememberMe(messageBundle.getMessage("loginForm.rememberMe"))
+        val jmixForm: JmixLoginI18n.JmixForm = JmixLoginI18n.JmixForm()
+        jmixForm.rememberMe = messageBundle.getMessage("loginForm.rememberMe")
         loginI18n.jmixForm = jmixForm
 
         val errorMessage: LoginI18n.ErrorMessage = LoginI18n.ErrorMessage()

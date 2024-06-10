@@ -2,8 +2,8 @@ package ${packageName}
 
 import ${entity.fqn}<%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%>
 import io.jmix.flowui.view.DefaultMainViewParent<%} else {%>
-import ${routeLayout.getControllerFqn()}
-<%}%>import com.vaadin.flow.router.Route
+import ${routeLayout.getControllerFqn()}<%}%>
+import com.vaadin.flow.router.Route
 import io.jmix.core.LoadContext
 import io.jmix.flowui.view.*
 import io.jmix.flowui.view.Target

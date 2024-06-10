@@ -23,6 +23,7 @@ import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.FieldDelegate;
+import io.jmix.flowui.component.validation.NumberParseValidation;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -56,22 +57,13 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
         initComponent();
 
         messages = applicationContext.getBean(Messages.class);
+
+        fieldDelegate.addValidator(new NumberParseValidation<>(
+                messages, "datatype.unparseableBigDecimal.message", getElement()));
     }
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
-
-        addParseValidator();
-    }
-
-    protected void addParseValidator() {
-        fieldDelegate.addValidator(value -> {
-            String valueProperty = getElement().getProperty("value");
-            if (value == null && Strings.isNotEmpty(valueProperty)) {
-                throw new ValidationException(messages.formatMessage(
-                        "", "datatype.unparseableBigDecimal.message", valueProperty));
-            }
-        });
     }
 
     @SuppressWarnings("unchecked")

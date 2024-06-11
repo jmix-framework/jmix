@@ -30,7 +30,7 @@ public class JmixLoginI18n extends LoginI18n {
 
     protected static final JsonValue JMIX_DEFAULT_I18N;
 
-    private JmixForm jmixForm;
+    private JmixForm form;
 
     /*
      * CAUTION! Copied from com.vaadin.flow.component.login.LoginI18n
@@ -39,7 +39,7 @@ public class JmixLoginI18n extends LoginI18n {
         try {
             final JsonFactory JSON_FACTORY = new JreJsonFactory();
             JMIX_DEFAULT_I18N = JSON_FACTORY.parse(
-                    IOUtils.toString(LoginI18n.class.getResource("i18n.json"),
+                    IOUtils.toString(JmixLoginI18n.class.getResource("i18n.json"),
                             StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new IllegalStateException(
@@ -49,22 +49,18 @@ public class JmixLoginI18n extends LoginI18n {
     }
 
     public static JmixLoginI18n createDefault() {
-        JmixLoginI18n jmixLoginI18n = JsonSerializer.toObject(JmixLoginI18n.class, JMIX_DEFAULT_I18N);
-        JmixForm staticJmixForm = new JmixForm();
-        staticJmixForm.setRememberMe("Remember me");
-        jmixLoginI18n.setJmixForm(staticJmixForm);
-        return jmixLoginI18n;
+        return JsonSerializer.toObject(JmixLoginI18n.class, JMIX_DEFAULT_I18N);
     }
 
-    public JmixForm getJmixForm() {
-        return jmixForm;
+    public void setForm(JmixForm jmixForm) {
+        this.form = jmixForm;
     }
 
-    public void setJmixForm(JmixForm jmixForm) {
-        this.jmixForm = jmixForm;
+    public JmixForm getForm() {
+        return form;
     }
 
-    public static class JmixForm {
+    public static class JmixForm extends Form {
 
         protected String rememberMe;
 

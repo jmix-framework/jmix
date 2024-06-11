@@ -91,7 +91,7 @@ class JmixLoginForm extends LoginForm {
 
                     <div id="additionalFields" class="jmix-login-form-additional-fields-container">
                         <vaadin-checkbox id="rememberMeCheckbox"
-                                         label="[[i18n.jmixForm.rememberMe]]"
+                                         label="[[i18n.form.rememberMe]]"
                                          class="jmix-login-form-remember-me"></vaadin-checkbox>
                         <vaadin-select id="localesSelect"
                                        class="jmix-login-form-locales-select">
@@ -153,9 +153,7 @@ class JmixLoginForm extends LoginForm {
                             username: 'Username',
                             password: 'Password',
                             submit: 'Log in',
-                            forgotPassword: 'Forgot password'
-                        },
-                        jmixForm: {
+                            forgotPassword: 'Forgot password',
                             rememberMe: 'Remember me'
                         },
                         errorMessage: {

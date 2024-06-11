@@ -161,6 +161,14 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         // the component can be obsolete in validation time.
         T value = modelValue != null ? modelValue : getComponentValue();
 
+        if (value == null && component.getElement().getProperty("_hasInputValue", false)) {
+            setInvalidInternal(true);
+            String validationMessage = messages.formatMessage(
+                    "", "validation.defaultMessage", "").replaceAll(" ''", "");
+            setErrorMessage(validationMessage);
+            throw new ComponentValidationException(messages.getMessage("validation.defaultMessage"), component);
+        }
+
         if (CollectionUtils.isNotEmpty(validators)) {
             for (Validator<? super T> validator : validators) {
                 try {

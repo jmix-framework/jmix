@@ -18,18 +18,15 @@ package io.jmix.flowui.component.textfield;
 
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.Messages;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.FieldDelegate;
-import io.jmix.flowui.component.validation.NumberParseValidation;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.HasTitle;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -43,7 +40,6 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
-    protected Messages messages;
 
     protected FieldDelegate<JmixBigDecimalField, BigDecimal, BigDecimal> fieldDelegate;
 
@@ -55,11 +51,6 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
     @Override
     public void afterPropertiesSet() {
         initComponent();
-
-        messages = applicationContext.getBean(Messages.class);
-
-        fieldDelegate.addValidator(new NumberParseValidation<>(
-                messages, "datatype.unparseableBigDecimal.message", getElement()));
     }
 
     protected void initComponent() {

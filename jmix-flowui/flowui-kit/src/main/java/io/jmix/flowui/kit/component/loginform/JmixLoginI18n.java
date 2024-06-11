@@ -52,8 +52,8 @@ public class JmixLoginI18n extends LoginI18n {
         return JsonSerializer.toObject(JmixLoginI18n.class, JMIX_DEFAULT_I18N);
     }
 
-    public void setForm(JmixForm jmixForm) {
-        this.form = jmixForm;
+    public void setForm(JmixForm form) {
+        this.form = form;
     }
 
     public JmixForm getForm() {

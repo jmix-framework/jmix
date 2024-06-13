@@ -949,6 +949,7 @@
                     showPrintMargin="false"
                     tabIndex="3"
                     textWrap="true"
+                    useSoftTabs="false"
                     theme="TERMINAL"
                     title="titleString"
                     visible="false"

@@ -102,9 +102,10 @@ public class FragmentsImpl implements Fragments {
         FragmentActions actions = applicationContext.getBean(FragmentActions.class, fragment);
         FragmentUtils.setFragmentActions(fragment, actions);
 
+        FragmentLoaderContext context;
         String descriptorPath = FragmentUtils.resolveDescriptorPath(fragment.getClass());
         if (descriptorPath != null) {
-            FragmentLoaderContext context = new FragmentLoaderContext();
+            context = new FragmentLoaderContext();
             context.setFragment(fragment);
             context.setFullOriginId(getFullOriginId(hostContext, fragment));
             context.setMessageGroup(FragmentUtils.getMessageGroup(descriptorPath));
@@ -112,15 +113,15 @@ public class FragmentsImpl implements Fragments {
             context.setParentContext(hostContext);
 
             processFragmentDescriptor(context, descriptorPath);
-
-            context.executeInitTasks();
+        } else {
+            context = null;
         }
 
         ComponentLoader.Context hostLoaderContext = findHostLoaderContext(hostContext);
         if (hostLoaderContext instanceof ComponentLoader.ComponentContext componentContext) {
-            componentContext.addAutowireTask(context -> autowireFragment(fragment));
+            componentContext.addAutowireTask(__ -> postInit(fragment, context));
         } else {
-            autowireFragment(fragment);
+            postInit(fragment, context);
         }
     }
 
@@ -134,11 +135,24 @@ public class FragmentsImpl implements Fragments {
                 fragmentId.orElse(fragment.getClass().getSimpleName());
     }
 
+    protected void postInit(Fragment<?> fragment, @Nullable FragmentLoaderContext context) {
+        autowireFragment(fragment);
+
+        // Init tasks should be executed after fragment is autowired,
+        // but before ReadyEvent. In particular, this is needed to make
+        // sure that setting properties from XML is processed after
+        // UI components are injected which so properties are handled
+        // the same for declarative creation of fragment and programmatic
+        if (context != null) {
+            context.executeInitTasks();
+        }
+
+        ComponentUtil.fireEvent(fragment, new Fragment.ReadyEvent(fragment));
+    }
+
     protected void autowireFragment(Fragment<?> fragment) {
         FragmentAutowireContext fragmentAutowireContext = new FragmentAutowireContext(fragment);
         autowireManager.autowire(fragmentAutowireContext);
-
-        ComponentUtil.fireEvent(fragment, new Fragment.ReadyEvent(fragment));
     }
 
     @Nullable

@@ -97,7 +97,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadEnum(element, NestedNullBehavior.class, "nestedNullBehavior", resultComponent::setNestedNullBehavior);
         loadBoolean(element, "editorBuffered", editorBuffered ->
                 resultComponent.getEditor().setBuffered(editorBuffered));
-        loadBoolean(element, "aggregatable", resultComponent::setAggregatable);
         loadEnum(element, EnhancedDataGrid.AggregationPosition.class, "aggregationPosition",
                 resultComponent::setAggregationPosition);
         loadEnum(element, ColumnRendering.class, "columnRendering", resultComponent::setColumnRendering);
@@ -150,6 +149,12 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
                         .ifPresent(__ -> column.setFilterable(true))
         );
         pendingToFilterableColumns.clear();
+
+        // aggregation must be initialized after filters
+        // since Vaadin Framework groups columns when appending a header row, it is necessary to
+        // load the aggregation after the filters
+        // otherwise, when installing a filter, it will be impossible to get actual column from the public API
+        loadBoolean(element, "aggregatable", resultComponent::setAggregatable);
     }
 
     protected void loadMultiSort() {

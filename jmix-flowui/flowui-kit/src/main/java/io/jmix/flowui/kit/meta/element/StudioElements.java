@@ -492,6 +492,8 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "flexGrow", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "lazy", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,
                             options = {"icon-on-top"}),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,

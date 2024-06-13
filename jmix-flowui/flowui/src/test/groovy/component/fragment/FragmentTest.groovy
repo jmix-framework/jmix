@@ -21,6 +21,7 @@ import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.data.provider.Query
 import component.fragment.component.*
 import component.fragment.view.TestFragmentHostView
+import component.fragment.view.TestParametersFragmentHostView
 import component.standarddetailview.view.BlankTestView
 import io.jmix.core.DataManager
 import io.jmix.flowui.Fragments
@@ -385,6 +386,17 @@ class FragmentTest extends FlowuiTestSpecification {
         then: "inheritor is created"
         fragment2 instanceof TestOriginReplacementFragment
         fragment2.message == "Replacement"
+    }
+
+    def "Parameters are set after UI components are injected"() {
+        def parent = navigateToView(BlankTestView)
+
+        when:
+        viewNavigators.view(parent, TestParametersFragmentHostView)
+                .navigate()
+
+        then:
+        noExceptionThrown()
     }
 
     @Nullable

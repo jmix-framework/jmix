@@ -18,35 +18,31 @@ package component.fragment.view;
 
 import com.vaadin.flow.router.Route;
 import component.fragment.component.TestAddressFragmentProvided;
-import component.fragment.component.TestDataGridFragment;
-import component.fragment.component.TestDataGridFragmentProvided;
-import component.fragment.component.TestHostFragment;
+import component.fragment.component.TestParametersFragment;
 import io.jmix.flowui.Fragments;
+import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import test_support.entity.petclinic.Address;
+import test_support.entity.sales.Product;
 
-@Route(value = "TestFragmentHostView/:id")
+@Route(value = "TestParametersFragmentHostView")
 @ViewController
-@ViewDescriptor("test-fragment-host-view.xml")
+@ViewDescriptor("test-parameters-fragment-host-view.xml")
 @EditedEntityContainer("addressDc")
-public class TestFragmentHostView extends StandardDetailView<Address> {
+public class TestParametersFragmentHostView extends StandardView {
 
     @ViewComponent
-    public TestDataGridFragment dataGridFragment;
-    @ViewComponent
-    public TestDataGridFragmentProvided dataGridFragmentProvided;
-    @ViewComponent
-    public TestHostFragment hostFragment;
+    private CollectionContainer<Product> productsDc;
 
     @Autowired
     private Fragments fragments;
 
-    public TestAddressFragmentProvided addressFragment;
-
     @Subscribe
     public void onInit(InitEvent event) {
-        addressFragment = fragments.create(this, TestAddressFragmentProvided.class);
-        getContent().add(addressFragment);
+        TestParametersFragment fragment = fragments.create(this, TestParametersFragment.class);
+        fragment.setContainer(productsDc);
+        fragment.setPlaceholder("Placeholder");
+
+        getContent().add(fragment);
     }
 }

@@ -20,6 +20,7 @@ import io.jmix.core.ClassManager;
 import io.jmix.flowui.Fragments;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.PropertiesLoaderSupport;
 
@@ -44,9 +45,17 @@ public class FragmentElementLoader extends AbstractComponentLoader<Fragment<?>> 
         applicationContext.getBean(Fragments.class).init(context, resultComponent);
 
         if (element.element("properties") != null) {
-            PropertiesLoaderSupport propertiesLoader =
-                    applicationContext.getBean(PropertiesLoaderSupport.class, context);
-            propertiesLoader.loadProperties(resultComponent, element);
+            // setting properties from XML should be processed after UI components
+            // are injected which so properties are handled the same for declarative
+            // creation of fragment and programmatic
+            getContext().addInitTask(new AbstractInitTask() {
+                @Override
+                public void execute(Context context) {
+                    PropertiesLoaderSupport propertiesLoader =
+                            applicationContext.getBean(PropertiesLoaderSupport.class, context);
+                    propertiesLoader.loadProperties(resultComponent, element);
+                }
+            });
         }
     }
 }

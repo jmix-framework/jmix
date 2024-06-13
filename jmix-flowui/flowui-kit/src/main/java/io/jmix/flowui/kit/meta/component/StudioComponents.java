@@ -3032,6 +3032,8 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textWrap", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "useSoftTabs", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "theme", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.kit.component.codeeditor.CodeEditorTheme",

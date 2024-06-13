@@ -51,6 +51,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     protected static final String PROPERTY_PRINT_MARGIN_COLUMN = "printMarginColumn";
     protected static final String PROPERTY_FONT_SIZE = "fontSize";
     protected static final String PROPERTY_TEXT_WRAP = "textWrap";
+    protected static final String PROPERTY_USE_SOFT_TABS = "useSoftTabs";
 
     protected static final int PRINT_MARGIN_COLUMN_DEFAULT_VALUE = 80;
     protected static final String FONT_SIZE_DEFAULT_VALUE = "1rem";
@@ -247,7 +248,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
-     * @return {@code true} is the text content inside editor should be wrapped, {@code false} otherwise
+     * @return {@code true} if the text content inside editor should be wrapped, {@code false} otherwise
      */
     @Synchronize(PROPERTY_TEXT_WRAP)
     public boolean getTextWrap() {
@@ -261,6 +262,26 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     public void setTextWrap(boolean textWrap) {
         getElement().setProperty(PROPERTY_TEXT_WRAP, textWrap);
+    }
+
+    /**
+     * @return {@code true} if tab character should be represented as spaces instead of a special {@code \t} character,
+     * {@code false} otherwise.
+     */
+    @Synchronize(PROPERTY_USE_SOFT_TABS)
+    public boolean isUseSoftTabs() {
+        return getElement().getProperty(PROPERTY_USE_SOFT_TABS, true);
+    }
+
+    /**
+     * Sets the tab character representing mode. Soft tabs mode means that tab character will be represented as a
+     * series of spaces. Hard tabs mode means that tab character will be represented as
+     * the special {@code \t} character. The soft tabs is {@code true} by default.
+     *
+     * @param useSoftTabs whether to use soft tabs
+     */
+    public void setUseSoftTabs(boolean useSoftTabs) {
+        getElement().setProperty(PROPERTY_USE_SOFT_TABS, useSoftTabs);
     }
 
     /**

@@ -4053,6 +4053,7 @@
                 <xs:attribute name="printMarginColumn" type="xs:integer"/>
                 <xs:attribute name="fontSize" type="xs:string"/>
                 <xs:attribute name="textWrap" type="xs:boolean"/>
+                <xs:attribute name="useSoftTabs" type="xs:boolean"/>
 
                 <xs:attribute name="mode" type="codeEditorMode"/>
                 <xs:attribute name="theme" type="codeEditorTheme"/>

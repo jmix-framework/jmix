@@ -127,6 +127,12 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 observer: '_onTextWrapChange'
             },
 
+            useSoftTabs: {
+                type: Boolean,
+                value: true,
+                observer: '_onUseSoftTabsChange'
+            },
+
             /** @private */
             _editor: {
                 type: Object
@@ -160,6 +166,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             value: this.value,
             fontSize: this.fontSize,
             wrap: this.textWrap,
+            useSoftTabs: this.useSoftTabs,
             useWorker: false
         });
 
@@ -356,6 +363,17 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.session.setUseWrapMode(textWrap);
+    }
+
+    /**
+     * @private
+     */
+    _onUseSoftTabsChange(useSoftTabs) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.session.setUseSoftTabs(useSoftTabs);
     }
 
     /**

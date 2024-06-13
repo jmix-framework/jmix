@@ -164,7 +164,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         if (value == null && component.getElement().getProperty("_hasInputValue", false)) {
             setInvalidInternal(true);
             String validationMessage = messages.formatMessage(
-                    "", "validation.defaultMessage", "").replaceAll(" ''", "");
+                    "", "validation.defaultMessageForUnparseableValue", "");
             setErrorMessage(validationMessage);
             throw new ComponentValidationException(messages.getMessage("validation.defaultMessage"), component);
         }

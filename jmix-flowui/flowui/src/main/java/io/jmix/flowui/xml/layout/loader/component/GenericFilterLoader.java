@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.component.filter.FilterComponent;
@@ -31,9 +32,10 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.DataLoader;
-import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import org.dom4j.Element;
@@ -75,24 +77,26 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
 
         loadActions(resultComponent, element);
 
-         //Before SingleFilterComponentBase#apply started to check for attachment to UI,
-         // GenericFilter loaded data during initialisation. Now if the DataLoadCoordinator facet is missed,
-         // the user will see an empty components on a view. So we apply filter manually if DataLoadCoordinator is missed
-         // and there is at least one filter condition with default value.
+        //Before SingleFilterComponentBase#apply started to check for attachment to UI,
+        // GenericFilter loaded data during initialisation. Now if the DataLoadCoordinator facet is missed,
+        // the user will see an empty components on a view. So we apply filter manually if DataLoadCoordinator is missed
+        // and there is at least one filter condition with default value.
         applyFilterIfNeeded();
     }
 
     protected void loadDataLoader(GenericFilter component, Element element) {
         loadString(element, "dataLoader",
                 (dataLoaderId) -> {
-                    ViewData screenData = ViewControllerUtils.getViewData(getComponentContext().getView());
-                    DataLoader dataLoader = screenData.getLoader(dataLoaderId);
+                    DataLoader dataLoader = getContext().getDataHolder().getLoader(dataLoaderId);
                     component.setDataLoader(dataLoader);
 
-                    getContext().addInitTask((context, view) ->
+                    getContext().addInitTask(new AbstractInitTask() {
+                        @Override
+                        public void execute(Context context) {
                             FilterUtils.updateDataLoaderInitialCondition(resultComponent,
-                                    dataLoader.getCondition())
-                    );
+                                    dataLoader.getCondition());
+                        }
+                    });
                 });
     }
 
@@ -132,23 +136,26 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
     protected void loadConfigurations(GenericFilter resultComponent, Element element) {
         Set<String> filterPaths = new HashSet<>();
 
-        getContext().addInitTask((context, view) -> {
-            ComponentUtil.findComponents(view.getElement(), component -> {
-                if (component instanceof GenericFilter) {
-                    String path = FilterUtils.generateFilterPath((GenericFilter) component);
+        getContext().addInitTask(new AbstractInitTask() {
+            @Override
+            public void execute(Context context) {
+                ComponentUtil.findComponents(context.getOrigin().getElement(), component -> {
+                    if (component instanceof GenericFilter) {
+                        String path = FilterUtils.generateFilterPath((GenericFilter) component);
 
-                    if (filterPaths.contains(path)) {
-                        throw new GuiDevelopmentException(
-                                "Filters with the same component path should have different ids",
-                                getContext()
-                        );
-                    } else {
-                        filterPaths.add(path);
+                        if (filterPaths.contains(path)) {
+                            throw new GuiDevelopmentException(
+                                    "Filters with the same component path should have different ids",
+                                    getContext()
+                            );
+                        } else {
+                            filterPaths.add(path);
+                        }
                     }
-                }
-            });
+                });
 
-            resultComponent.loadConfigurationsAndApplyDefault();
+                resultComponent.loadConfigurationsAndApplyDefault();
+            }
         });
 
         Element configurationsElement = element.element("configurations");
@@ -175,9 +182,12 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
 
         loadBoolean(configurationElement, "default", defaultValue -> {
             if (defaultValue) {
-                getContext().addInitTask((context, view) -> {
-                    if (resultComponent.getCurrentConfiguration() == resultComponent.getEmptyConfiguration()) {
-                        resultComponent.setCurrentConfiguration(designTimeConfiguration);
+                getContext().addInitTask(new AbstractInitTask() {
+                    @Override
+                    public void execute(Context context) {
+                        if (resultComponent.getCurrentConfiguration() == resultComponent.getEmptyConfiguration()) {
+                            resultComponent.setCurrentConfiguration(designTimeConfiguration);
+                        }
                     }
                 });
             }
@@ -236,8 +246,12 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
             resultComponent.addAction(action);
         }
 
-        getContext().addInitTask((context, view) ->
-                resultComponent.getActions().forEach(Action::refreshState));
+        getContext().addInitTask(new AbstractInitTask() {
+            @Override
+            public void execute(Context context) {
+                resultComponent.getActions().forEach(Action::refreshState);
+            }
+        });
     }
 
     protected ActionLoaderSupport getActionLoaderSupport() {
@@ -249,23 +263,49 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
     }
 
     protected void applyFilterIfNeeded() {
-        getComponentContext().addInitTask((context, view) -> {
-            DataLoadCoordinator dataLoadCoordinator = ViewControllerUtils.getViewFacet(view, DataLoadCoordinator.class);
-            if (dataLoadCoordinator == null || dataLoadCoordinator.getTriggers().isEmpty()) {
-                List<FilterComponent> filterComponents =
-                        resultComponent.getCurrentConfiguration().getRootLogicalFilterComponent().getFilterComponents();
-                Optional<FilterComponent> filterWithValue = filterComponents.stream()
-                        .filter(filterComponent -> {
-                            if (!(filterComponent instanceof SingleFilterComponent<?> singleFilterComponent)) {
-                                return false;
-                            }
-                            return singleFilterComponent.getValueComponent().getOptionalValue().isPresent();
-                        })
-                        .findFirst();
-                if (filterWithValue.isPresent()) {
-                    resultComponent.apply();
+        getContext().addInitTask(new AbstractInitTask() {
+            @Override
+            public void execute(Context context) {
+                View<?> view = findParentView(context);
+
+                DataLoadCoordinator dataLoadCoordinator =
+                        ViewControllerUtils.getViewFacet(view, DataLoadCoordinator.class);
+                if (dataLoadCoordinator == null
+                        || dataLoadCoordinator.getTriggers().isEmpty()) {
+                    List<FilterComponent> filterComponents =
+                            resultComponent.getCurrentConfiguration()
+                                    .getRootLogicalFilterComponent()
+                                    .getFilterComponents();
+                    Optional<FilterComponent> filterWithValue = filterComponents.stream()
+                            .filter(filterComponent -> {
+                                if (!(filterComponent instanceof SingleFilterComponent<?> singleFilterComponent)) {
+                                    return false;
+                                }
+                                return singleFilterComponent.getValueComponent().getOptionalValue().isPresent();
+                            })
+                            .findFirst();
+                    if (filterWithValue.isPresent()) {
+                        resultComponent.apply();
+                    }
                 }
             }
         });
+    }
+
+    protected View<?> findParentView(Context context) {
+
+        Component origin;
+        Context parentContext = context;
+
+        do {
+            origin = parentContext.getOrigin();
+            parentContext = parentContext.getParentContext();
+        } while (!(origin instanceof View) && parentContext != null);
+
+        if (origin instanceof View<?> view) {
+            return view;
+        } else {
+            throw new GuiDevelopmentException("Cannot find parent " + View.class.getSimpleName(), context);
+        }
     }
 }

@@ -27,10 +27,18 @@ import java.util.Map;
 
 public class SecurityConfigurers {
 
+    /**
+     * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils}
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
     public static StandardSecurityConfigurer empty() {
         return new StandardSecurityConfigurer();
     }
 
+    /**
+     * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils}
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
     public static StandardSecurityConfigurer uiSecurity() {
         return new StandardSecurityConfigurer()
                 .anonymous()
@@ -39,6 +47,10 @@ public class SecurityConfigurers {
                 .allowUiUrls();
     }
 
+    /**
+     * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils}
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
     public static StandardSecurityConfigurer apiSecurity() {
         return new StandardSecurityConfigurer()
                 .anonymous()

@@ -21,6 +21,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.RememberMeServices;
 
+/**
+ * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils#configureRememberMe(HttpSecurity)}
+ */
+@Deprecated(since = "2.3", forRemoval = true)
 public class RememberMeConfigurer extends AbstractHttpConfigurer<RememberMeConfigurer, HttpSecurity> {
 
     @Override

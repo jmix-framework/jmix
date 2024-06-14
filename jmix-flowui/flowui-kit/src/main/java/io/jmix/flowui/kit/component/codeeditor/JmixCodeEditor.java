@@ -251,7 +251,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      * @return {@code true} if the text content inside editor should be wrapped, {@code false} otherwise
      */
     @Synchronize(PROPERTY_TEXT_WRAP)
-    public boolean getTextWrap() {
+    public boolean isTextWrap() {
         return getElement().getProperty(PROPERTY_TEXT_WRAP, false);
     }
 

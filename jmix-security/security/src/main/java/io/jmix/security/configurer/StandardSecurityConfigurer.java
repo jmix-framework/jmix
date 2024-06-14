@@ -16,6 +16,10 @@
 
 package io.jmix.security.configurer;
 
+/**
+ * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils}
+ */
+@Deprecated(since = "2.3", forRemoval = true)
 public class StandardSecurityConfigurer extends CompositeConfigurer {
     public StandardSecurityConfigurer() {
         addConfigurer(new DefaultConfigurer());

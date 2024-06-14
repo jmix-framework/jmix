@@ -26,6 +26,10 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils#configureAnonymous(HttpSecurity)}
+ */
+@Deprecated(since = "2.3", forRemoval = true)
 public class AnonymousConfigurer extends AbstractHttpConfigurer<AnonymousConfigurer, HttpSecurity> {
     @Override
     public void setBuilder(HttpSecurity http) {

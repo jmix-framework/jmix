@@ -19,6 +19,10 @@ package io.jmix.security.configurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
+/**
+ * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils}
+ */
+@Deprecated(since = "2.3", forRemoval = true)
 public class DefaultConfigurer extends AbstractHttpConfigurer<DefaultConfigurer, HttpSecurity> {
 
     @Override

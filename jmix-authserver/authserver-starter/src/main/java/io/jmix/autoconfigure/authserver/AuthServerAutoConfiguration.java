@@ -29,6 +29,7 @@ import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentPropertie
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.security.SecurityConfigurers;
+import io.jmix.security.util.JmixHttpSecurityUtils;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -177,7 +178,8 @@ public class AuthServerAutoConfiguration {
         public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http,
                                                                      OpaqueTokenIntrospector opaqueTokenIntrospector,
                                                                      ApplicationEventPublisher applicationEventPublisher) throws Exception {
-            http.with(SecurityConfigurers.apiSecurity(), Customizer.withDefaults());
+            JmixHttpSecurityUtils.configureAnonymous(http);
+            JmixHttpSecurityUtils.configureAuthorizedUrls(http);
             http
                     .oauth2ResourceServer(oauth2 -> oauth2
                             .opaqueToken(opaqueToken -> opaqueToken

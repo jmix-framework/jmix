@@ -18,10 +18,8 @@ package io.jmix.oidc;
 
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.oidc.userinfo.JmixOidcUserService;
-import io.jmix.security.configurer.AnonymousConfigurer;
-import io.jmix.security.configurer.SessionManagementConfigurer;
+import io.jmix.security.util.JmixHttpSecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
@@ -62,8 +60,8 @@ public class OidcVaadinWebSecurity extends VaadinWebSecurity {
     }
 
     protected void configureJmixSpecifics(HttpSecurity http) throws Exception {
-        http.with(new AnonymousConfigurer(), Customizer.withDefaults());
-        http.with(new SessionManagementConfigurer(), Customizer.withDefaults());
+        JmixHttpSecurityUtils.configureAnonymous(http);
+        JmixHttpSecurityUtils.configureSessionManagement(http);
 
         http.oauth2Login(oauth2Login -> {
                     oauth2Login.userInfoEndpoint(userInfoEndpoint -> {

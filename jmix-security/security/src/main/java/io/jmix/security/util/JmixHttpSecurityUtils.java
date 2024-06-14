@@ -42,8 +42,8 @@ import java.util.stream.Stream;
 public class JmixHttpSecurityUtils {
 
     /**
-     * Configures anonymous access to the application. Anonymous user is taken from the
-     * {@link UserRepository#getAnonymousUser()}.
+     * Configures anonymous access to the application for the given {@link HttpSecurity} instance. Anonymous user is
+     * taken from the {@link UserRepository#getAnonymousUser()}.
      */
     public static void configureAnonymous(HttpSecurity http) throws Exception {
         ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
@@ -62,7 +62,8 @@ public class JmixHttpSecurityUtils {
     }
 
     /**
-     * Configures session management using settings defined in the {@link SessionProperties}.
+     * Configures session management using settings defined in the {@link SessionProperties} for the given
+     * {@link HttpSecurity} instance.
      */
     public static void configureSessionManagement(HttpSecurity http) {
         try {
@@ -99,7 +100,7 @@ public class JmixHttpSecurityUtils {
 
     /**
      * Configures public and protected access to endpoints using URL patterns returned by instances of the
-     * {@link AuthorizedUrlsProvider}.
+     * {@link AuthorizedUrlsProvider} for the given {@link HttpSecurity} instance.
      */
     public static void configureAuthorizedUrls(HttpSecurity http) {
         ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);

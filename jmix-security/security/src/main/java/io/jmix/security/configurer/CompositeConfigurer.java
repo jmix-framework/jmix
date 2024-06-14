@@ -23,6 +23,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils}
+ */
+@Deprecated(since = "2.3", forRemoval = true)
 public class CompositeConfigurer extends AbstractHttpConfigurer<CompositeConfigurer, HttpSecurity> {
     private final Collection<AbstractHttpConfigurer<?, HttpSecurity>> configurers = new ArrayList<>();
     private boolean attached;

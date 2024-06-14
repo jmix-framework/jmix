@@ -25,15 +25,12 @@ import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.security.configurer.AnonymousConfigurer;
-import io.jmix.security.configurer.RememberMeConfigurer;
-import io.jmix.security.configurer.SessionManagementConfigurer;
+import io.jmix.security.util.JmixHttpSecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
@@ -88,9 +85,9 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
      * Configures the {@link HttpSecurity} by adding Jmix-specific settings.
      */
     protected void configureJmixSpecifics(HttpSecurity http) throws Exception {
-        http.with(new AnonymousConfigurer(), Customizer.withDefaults());
-        http.with(new SessionManagementConfigurer(), Customizer.withDefaults());
-        http.with(new RememberMeConfigurer(), Customizer.withDefaults());
+        JmixHttpSecurityUtils.configureAnonymous(http);
+        JmixHttpSecurityUtils.configureSessionManagement(http);
+        JmixHttpSecurityUtils.configureRememberMe(http);
 
         http.authorizeHttpRequests(urlRegistry -> {
             //We need such request matcher here in order to permit access to login page when a query parameter is passed.

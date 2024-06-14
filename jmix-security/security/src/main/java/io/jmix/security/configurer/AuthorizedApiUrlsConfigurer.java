@@ -33,6 +33,10 @@ import java.util.stream.Stream;
 
 import static com.google.common.collect.Iterables.toArray;
 
+/**
+ * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils#configureAuthorizedUrls(HttpSecurity)}
+ */
+@Deprecated(since = "2.3", forRemoval = true)
 public class AuthorizedApiUrlsConfigurer extends AbstractHttpConfigurer<AuthorizedApiUrlsConfigurer, HttpSecurity> {
     @Override
     public void setBuilder(HttpSecurity http) {

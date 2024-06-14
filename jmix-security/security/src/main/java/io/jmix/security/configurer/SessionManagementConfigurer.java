@@ -23,6 +23,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
+/**
+ * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils#configureSessionManagement(HttpSecurity)}
+ */
+@Deprecated(since = "2.3", forRemoval = true)
 public class SessionManagementConfigurer extends AbstractHttpConfigurer<SessionManagementConfigurer, HttpSecurity> {
     @Override
     public void setBuilder(HttpSecurity http) {

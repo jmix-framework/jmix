@@ -53,6 +53,9 @@ public class JRBandDataDataSource implements JRDataSource {
      */
     @Override
     public boolean next() throws JRException {
+        if (currentBand == null)
+            return false;
+
         List<BandData> children = currentBand.getChildrenList();
 
         if (children != null && !children.isEmpty() && !visitedBands.containsKey(currentBand)) {

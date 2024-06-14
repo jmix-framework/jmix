@@ -93,13 +93,12 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
     }
 
     /**
-     * Returns the inner component with given fragment id.
+     * Returns the inner component with given id.
      *
-     * @param id  fragment id
+     * @param id  id of the component
      * @param <C> component type
-     * @return the inner component with given fragment id
-     * @throws IllegalArgumentException if an inner component with given
-     *                                  fragment id is not found
+     * @return the inner component with given id
+     * @throws IllegalArgumentException if an inner component with given id is not found
      */
     @SuppressWarnings("unchecked")
     protected <C extends Component> C getInnerComponent(String id) {
@@ -109,9 +108,9 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
 
     /**
      * Returns an {@link Optional} describing the inner component with given
-     * fragment id, or an empty {@link Optional}.
+     * id, or an empty {@link Optional}.
      *
-     * @param id  fragment id
+     * @param id  id of the component
      * @param <C> component type
      * @return an {@link Optional} describing the found component,
      * or an empty {@link Optional}

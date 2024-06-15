@@ -3722,6 +3722,7 @@
                 <xs:sequence minOccurs="0">
                     <xs:element name="prefix" minOccurs="0" type="prefixOrSuffixComponent"/>
                     <xs:element name="suffix" minOccurs="0" type="prefixOrSuffixComponent"/>
+                    <xs:element name="tab" type="lazyTabComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="themeNames" type="tabSheetThemeNames"/>
@@ -3740,13 +3741,21 @@
         <xs:attribute name="css" type="xs:string"/>
         <xs:attribute name="flexGrow" type="xs:double"/>
         <xs:attribute name="visible" type="xs:boolean"/>
-        <xs:attribute name="lazy" type="xs:boolean"/>
 
         <xs:attributeGroup ref="requiresId"/>
         <xs:attributeGroup ref="hasLabel"/>
         <xs:attributeGroup ref="hasEnabled"/>
         <xs:attributeGroup ref="hasClassNames"/>
         <xs:attributeGroup ref="hasAriaLabel"/>
+    </xs:complexType>
+
+    <!-- Lazy Tab-->
+    <xs:complexType name="lazyTabComponent">
+        <xs:complexContent>
+            <xs:extension base="tabComponent">
+                <xs:attribute name="lazy" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <!-- Select-->

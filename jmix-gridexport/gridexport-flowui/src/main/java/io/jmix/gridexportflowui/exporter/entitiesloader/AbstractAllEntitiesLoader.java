@@ -111,7 +111,9 @@ public abstract class AbstractAllEntitiesLoader implements AllEntitiesLoader {
             query.setFirstResult(firstResult);
             query.setMaxResults(loadBatchSize);
 
-            List<KeyValueEntity> keyValueEntities = dataManager.loadValues(loadContext);
+            List<KeyValueEntity> keyValueEntities = loader.getDelegate() == null
+                    ? dataManager.loadValues(loadContext)
+                    : loader.getDelegate().apply(loadContext);
             for (KeyValueEntity keyValueEntity : keyValueEntities) {
                 EntityExportContext entityExportContext = new EntityExportContext(keyValueEntity, ++rowNumber);
                 proceedToExport = exportedEntityVisitor.visitEntity(entityExportContext);

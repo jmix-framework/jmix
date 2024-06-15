@@ -119,7 +119,9 @@ public class KeysetAllEntitiesLoader extends AbstractAllEntitiesLoader {
             }
             query.setMaxResults(loadBatchSize);
 
-            List<?> entities = dataManager.loadList(loadContext);
+            List<?> entities = collectionLoader.getLoadDelegate() == null
+                    ? dataManager.loadList(loadContext)
+                    : collectionLoader.getLoadDelegate().apply((LoadContext) loadContext);
             for (Object entity : entities) {
                 EntityExportContext entityExportContext = new EntityExportContext(entity, ++rowNumber);
                 proceedToExport = exportedEntityVisitor.visitEntity(entityExportContext);

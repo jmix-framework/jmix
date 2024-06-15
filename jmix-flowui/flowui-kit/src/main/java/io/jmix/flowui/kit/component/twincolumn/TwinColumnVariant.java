@@ -34,9 +34,9 @@ public enum TwinColumnVariant implements ThemeVariant {
     NO_ROW_BORDER("no-row-border"),
 
     /**
-     * Theme variant with checkboxes to select items in columns.
+     * Theme variant with checkmarks to select items in columns.
      */
-    CHECKBOXES("checkboxes"),
+    CHECKMARKS("checkmarks"),
 
     /**
      * Theme variant with no space between buttons and rounded top and bottom borders.

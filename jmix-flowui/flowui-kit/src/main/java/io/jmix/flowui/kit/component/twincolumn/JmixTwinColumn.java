@@ -28,31 +28,35 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.component.shared.SlotUtils;
+import com.vaadin.flow.data.provider.*;
 import com.vaadin.flow.dom.DomEventListener;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.function.SerializableComparator;
 import com.vaadin.flow.function.SerializableConsumer;
-import com.vaadin.flow.theme.lumo.LumoUtility;
+import com.vaadin.flow.function.SerializablePredicate;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.ComponentUtils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Tag("jmix-twin-column")
 @JsModule("./src/twin-column/jmix-twin-column.js")
 public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collection<V>>
-        implements HasSize, HasHelper, HasAriaLabel, HasLabel, HasThemeVariant<TwinColumnVariant> {
+        implements HasSize, HasHelper, HasAriaLabel, HasLabel, HasThemeVariant<TwinColumnVariant>,
+        HasListDataView<V, TwinColumnListDataView<V>>, HasDataView<V, Void, TwinColumnDataView<V>> {
 
     private static final String JS_SCROLL_TOP_VARIABLE = "this._scrollerElement.scrollTop";
     private static final String HAS_WIDTH_ATTRIBUTE_NAME = "has-width";
     private static final String HAS_HEIGHT_ATTRIBUTE_NAME = "has-height";
 
-    protected NativeLabel optionsColumnLabel;
+    protected NativeLabel itemsColumnLabel;
     protected NativeLabel selectedItemsColumnLabel;
 
-    protected MultiSelectListBox<V> options;
-    protected MultiSelectListBox<V> selected;
+    protected MultiSelectListBox<V> items;
+    protected MultiSelectListBox<V> selectedItems;
 
     protected VerticalLayout actionsPanel;
 
@@ -61,9 +65,9 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     protected Button deselectItems;
     protected Button deselectAllItems;
 
-    protected List<V> optionsData;
-    protected Map<Element, Integer> optionsListeners = new HashMap<>();
-    protected Map<Element, Integer> selectedListeners = new HashMap<>();
+    protected List<V> itemsData;
+    protected Map<Element, Integer> itemsListeners = new HashMap<>();
+    protected Map<Element, Integer> selectedItemsListeners = new HashMap<>();
     protected Map<MultiSelectListBox<V>, Integer> columnToScrollValue = new HashMap<>();
     protected Set<MultiSelectListBox<V>> columnsWithSavedScrollPosition = new HashSet<>();
 
@@ -73,8 +77,13 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     // In this case the component saves and restores the scrollTop position to maintain the correct value.
     protected boolean saveAndRestoreColumnsScrollTopPosition = true;
 
+    private final AtomicReference<DataProvider<V, ?>> dataProvider;
+    private Registration dataProviderListenerRegistration;
+
     public JmixTwinColumn() {
         super(null);
+
+        this.dataProvider = new AtomicReference(DataProvider.ofItems(new Object[0]));
 
         initComponent();
     }
@@ -87,7 +96,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     public void setReorderable(Boolean reorderable) {
         this.reorderable = reorderable;
 
-        if (optionsData != null) {
+        if (itemsData != null) {
             updateColumnsReorderableComparator();
             updateColumnsListeners();
         }
@@ -111,12 +120,12 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
                         "jmix-twin-column-select-all-items-action",
                         new Icon(VaadinIcon.ANGLE_DOUBLE_RIGHT),
                         (ComponentEventListener<ClickEvent<Button>>) event ->
-                                moveItems(options, selected, true));
+                                moveItems(items, selectedItems, true));
                 deselectAllItems = createButton(
                         "jmix-twin-column-deselect-all-items-action",
                         new Icon(VaadinIcon.ANGLE_DOUBLE_LEFT),
                         (ComponentEventListener<ClickEvent<Button>>) event ->
-                                moveItems(selected, options, true));
+                                moveItems(selectedItems, items, true));
             }
             actionsPanel.addComponentAtIndex(actionsPanel.indexOf(selectItems) + 1, selectAllItems);
             actionsPanel.addComponentAtIndex(actionsPanel.indexOf(deselectItems) + 1, deselectAllItems);
@@ -134,19 +143,19 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     }
 
     /**
-     * Label text for the options column. It is placed under the options column
+     * Label text for the items column. It is placed under the items column
      */
-    public void setOptionsColumnLabel(String optionsColumnLabel) {
-        this.optionsColumnLabel.setText(optionsColumnLabel);
+    public void setItemsColumnLabel(String itemsColumnLabel) {
+        this.itemsColumnLabel.setText(itemsColumnLabel);
 
-        updateColumnLabelPadding(this.optionsColumnLabel);
+        updateColumnLabelPadding(this.itemsColumnLabel);
     }
 
     /**
-     * @return the options column label text
+     * @return the items column label text
      */
-    public String getOptionsColumnLabel() {
-        return optionsColumnLabel.getText();
+    public String getItemsColumnLabel() {
+        return itemsColumnLabel.getText();
     }
 
     /**
@@ -169,8 +178,8 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
 
-        options.setReadOnly(readOnly);
-        selected.setReadOnly(readOnly);
+        items.setReadOnly(readOnly);
+        selectedItems.setReadOnly(readOnly);
 
         actionsPanel.getChildren()
                 .filter(component -> component instanceof HasEnabled)
@@ -245,6 +254,61 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
         }
     }
 
+    public DataProvider<V, ?> getDataProvider() {
+        return this.dataProvider.get();
+    }
+
+    @Override
+    public TwinColumnListDataView<V> setItems(ListDataProvider<V> dataProvider) {
+        setDataProvider(dataProvider);
+        recreateItems(dataProvider.getItems());
+
+        return getListDataView();
+    }
+
+    @Override
+    public TwinColumnDataView<V> setItems(DataProvider<V, Void> dataProvider) {
+        setDataProvider(dataProvider);
+        return getGenericDataView();
+    }
+
+    @Override
+    public TwinColumnDataView<V> setItems(InMemoryDataProvider<V> inMemoryDataProvider) {
+        DataProvider<V, Void> convertedDataProvider = new DataProviderWrapper<>(inMemoryDataProvider) {
+            protected SerializablePredicate<V> getFilter(Query<V, Void> query) {
+                return Optional.ofNullable(inMemoryDataProvider.getFilter()).orElse((item) -> true);
+            }
+        };
+        return setItems(convertedDataProvider);
+    }
+
+    @Override
+    public TwinColumnDataView<V> getGenericDataView() {
+        return new TwinColumnDataView<>(this::getDataProvider, this);
+    }
+
+    @Override
+    public TwinColumnListDataView<V> getListDataView() {
+        return new TwinColumnListDataView<>(this::getDataProvider, this, (filter, sorting) -> {});
+    }
+
+    public void setItemLabelGenerator(ItemLabelGenerator<V> itemLabelGenerator) {
+        Objects.requireNonNull(itemLabelGenerator, "The item label generator can not be null");
+
+        items.setItemLabelGenerator(itemLabelGenerator);
+        selectedItems.setItemLabelGenerator(itemLabelGenerator);
+    }
+
+    protected void setDataProvider(DataProvider<V, ?> dataProvider) {
+        this.dataProvider.set(dataProvider);
+        recreateItems(List.of());
+        if (this.dataProviderListenerRegistration != null) {
+            this.dataProviderListenerRegistration.remove();
+        }
+
+        this.dataProviderListenerRegistration = dataProvider.addDataProviderListener(this::onDataChange);
+    }
+
     @Override
     protected void setPresentationValue(Collection<V> newPresentationValue) {
         updateValueInternal(newPresentationValue);
@@ -261,37 +325,36 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     }
 
     protected void createColumnLabels() {
-        optionsColumnLabel = createColumnLabel();
+        itemsColumnLabel = createColumnLabel();
         selectedItemsColumnLabel = createColumnLabel();
 
-        optionsColumnLabel.addClassName("jmix-twin-column-options-column-label");
-        selectedItemsColumnLabel.addClassName("jmix-twin-column-selected-column-label");
+        itemsColumnLabel.addClassName("jmix-twin-column-items-column-label");
+        selectedItemsColumnLabel.addClassName("jmix-twin-column-selected-items-column-label");
 
-        SlotUtils.addToSlot(this, "options-label", optionsColumnLabel);
-        SlotUtils.addToSlot(this, "selected-label", selectedItemsColumnLabel);
+        SlotUtils.addToSlot(this, "items-label", itemsColumnLabel);
+        SlotUtils.addToSlot(this, "selected-items-label", selectedItemsColumnLabel);
     }
 
     protected void createColumns() {
-        options = createColumn();
-        selected = createColumn();
+        items = createColumn();
+        selectedItems = createColumn();
 
-        options.setItems(new LinkedList<>());
-        selected.setItems(new LinkedList<>());
+        items.setItems(new LinkedList<>());
+        selectedItems.setItems(new LinkedList<>());
 
-        SlotUtils.addToSlot(this, "options", options);
-        SlotUtils.addToSlot(this, "selected", selected);
+        SlotUtils.addToSlot(this, "items", items);
+        SlotUtils.addToSlot(this, "selected-items", selectedItems);
 
-        options.addClassName("jmix-twin-column-options-column");
-        selected.addClassName("jmix-twin-column-selected-column");
+        items.addClassName("jmix-twin-column-items-column");
+        selectedItems.addClassName("jmix-twin-column-selected-items-column");
 
-        options.setItemLabelGenerator(this::applyColumnItemLabelFormat);
-        selected.setItemLabelGenerator(this::applyColumnItemLabelFormat);
+        items.setItemLabelGenerator(this::applyColumnItemLabelFormat);
+        selectedItems.setItemLabelGenerator(this::applyColumnItemLabelFormat);
     }
 
     protected void createButtonsPanel() {
         actionsPanel = new VerticalLayout();
         actionsPanel.setAlignItems(FlexComponent.Alignment.BASELINE);
-        actionsPanel.setClassName(LumoUtility.Padding.SMALL);
         actionsPanel.setWidth("AUTO");
         actionsPanel.setSpacing(false);
 
@@ -299,13 +362,13 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
                 "jmix-twin-column-select-items-action",
                 new Icon(VaadinIcon.ANGLE_RIGHT),
                 (ComponentEventListener<ClickEvent<Button>>) event ->
-                        moveItems(options, selected, false));
+                        moveItems(items, selectedItems, false));
 
         deselectItems = createButton(
                 "jmix-twin-column-deselect-items-action",
                 new Icon(VaadinIcon.ANGLE_LEFT),
                 (ComponentEventListener<ClickEvent<Button>>) event ->
-                        moveItems(selected, options, false));
+                        moveItems(selectedItems, items, false));
 
         actionsPanel.addClassName("jmix-twin-column-actions-panel");
         actionsPanel.add(selectItems, deselectItems);
@@ -330,33 +393,40 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
         return button;
     }
 
+    protected void onDataChange(DataChangeEvent<V> event) {
+        List<V> newItems = event.getSource()
+                .fetch(DataViewUtils.getQuery(JmixTwinColumn.this))
+                .toList();
+        recreateItems(newItems);
+    }
+
     protected void columnItemDoubleClicked(MultiSelectListBox<V> from,
                                            MultiSelectListBox<V> to,
                                            Integer itemIndex) {
         moveItems(from, to, Collections.singletonList(from.getListDataView().getItem(itemIndex)));
     }
 
-    protected void recreateOptions(Collection<V> newOptions) {
-        if (optionsData == null) {
-            optionsData = new LinkedList<>();
+    protected void recreateItems(Collection<V> newItems) {
+        if (itemsData == null) {
+            itemsData = new LinkedList<>();
         }
 
-        options.getListDataView().removeItems(optionsData);
-        optionsData.clear();
+        items.getListDataView().removeItems(itemsData);
+        itemsData.clear();
 
-        options.getListDataView().addItems(newOptions);
-        optionsData.addAll(newOptions);
+        items.getListDataView().addItems(newItems);
+        itemsData.addAll(newItems);
 
         updateColumnsReorderableComparator();
         updateColumnsListeners();
     }
 
     protected void updateValueInternal(Collection<V> value) {
-        List<V> selectedColumnItems = selected.getListDataView().getItems().toList();
+        List<V> selectedItemsColumn = selectedItems.getListDataView().getItems().toList();
         List<V> itemsToAdd = value != null
-                ? value.stream().filter(item -> !selectedColumnItems.contains(item)).toList()
+                ? value.stream().filter(item -> !selectedItemsColumn.contains(item)).toList()
                 : new LinkedList<>();
-        List<V> itemsToRemove = selected.getListDataView().getItems()
+        List<V> itemsToRemove = selectedItems.getListDataView().getItems()
                 .filter(item -> value == null || !value.contains(item))
                 .toList();
 
@@ -364,11 +434,11 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
             return;
         }
 
-        selected.getListDataView().addItems(itemsToAdd);
-        selected.getListDataView().removeItems(itemsToRemove);
+        selectedItems.getListDataView().addItems(itemsToAdd);
+        selectedItems.getListDataView().removeItems(itemsToRemove);
 
-        options.getListDataView().addItems(itemsToRemove);
-        options.getListDataView().removeItems(itemsToAdd);
+        items.getListDataView().addItems(itemsToRemove);
+        items.getListDataView().removeItems(itemsToAdd);
 
         updateColumnsListeners();
     }
@@ -378,13 +448,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     }
 
     protected void updateColumnLabelPadding(NativeLabel label) {
-        if (Strings.isNullOrEmpty(label.getText())) {
-            label.removeClassName(LumoUtility.Padding.Bottom.XSMALL);
-            label.setVisible(false);
-        } else {
-            label.addClassName(LumoUtility.Padding.Bottom.XSMALL);
-            label.setVisible(true);
-        }
+        label.setVisible(!Strings.isNullOrEmpty(label.getText()));
     }
 
     private void moveItems(MultiSelectListBox<V> from, MultiSelectListBox<V> to, boolean moveAllItems) {
@@ -403,15 +467,15 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
             to.getListDataView().addItems(selectedItems);
             to.select(selectedItems);
 
-            setModelValue(selected.getListDataView().getItems().collect(Collectors.toList()),false);
+            setModelValue(this.selectedItems.getListDataView().getItems().collect(Collectors.toList()),false);
 
             updateColumnsListeners();
 
             columnsWithSavedScrollPosition.clear();
 
             if (saveAndRestoreColumnsScrollTopPosition) {
-                restoreScrollPosition(options);
-                restoreScrollPosition(selected);
+                restoreScrollPosition(items);
+                restoreScrollPosition(this.selectedItems);
             }
         };
 
@@ -423,8 +487,8 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
                 }
             };
 
-            saveScrollPosition(options, moveItemsIfScrollPositionsSaved);
-            saveScrollPosition(selected, moveItemsIfScrollPositionsSaved);
+            saveScrollPosition(items, moveItemsIfScrollPositionsSaved);
+            saveScrollPosition(this.selectedItems, moveItemsIfScrollPositionsSaved);
         } else {
             moveItems.run();
         }
@@ -457,27 +521,27 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
         SerializableComparator<V> columnReorderableComparator = null;
         if (isReorderable()) {
             columnReorderableComparator = (value1, value2) ->
-                    Integer.compare(optionsData.indexOf(value1), optionsData.indexOf(value2));
+                    Integer.compare(itemsData.indexOf(value1), itemsData.indexOf(value2));
         }
-        Set<V> selectedItems = options.getValue();
-        options.getListDataView().setSortComparator(columnReorderableComparator);
+        Set<V> selectedItems = items.getValue();
+        items.getListDataView().setSortComparator(columnReorderableComparator);
         //after comparator setting - the value of the component stays the same, but items order is changed and
         // column selections show incorrect items, so need to change the value to update the component
-        options.setValue(Collections.emptySet());
-        options.setValue(selectedItems);
+        items.setValue(Collections.emptySet());
+        items.setValue(selectedItems);
 
-        selectedItems = selected.getValue();
-        selected.getListDataView().setSortComparator(columnReorderableComparator);
-        selected.setValue(Collections.emptySet());
-        selected.setValue(selectedItems);
+        selectedItems = this.selectedItems.getValue();
+        this.selectedItems.getListDataView().setSortComparator(columnReorderableComparator);
+        this.selectedItems.setValue(Collections.emptySet());
+        this.selectedItems.setValue(selectedItems);
     }
 
     private void updateDoubleClickListeners() {
-        optionsListeners.clear();
-        selectedListeners.clear();
+        itemsListeners.clear();
+        selectedItemsListeners.clear();
 
-        updateDoubleClickListeners(options, selected, optionsListeners);
-        updateDoubleClickListeners(selected, options, selectedListeners);
+        updateDoubleClickListeners(items, selectedItems, itemsListeners);
+        updateDoubleClickListeners(selectedItems, items, selectedItemsListeners);
     }
 
     private void updateDoubleClickListeners(MultiSelectListBox<V> from,

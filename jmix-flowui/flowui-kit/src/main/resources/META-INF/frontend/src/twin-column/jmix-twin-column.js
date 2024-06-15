@@ -36,11 +36,11 @@ export class JmixTwinColumn extends InputFieldMixin(ThemableMixin(ElementMixin(P
             </div>
 
             <div class="jmix-twin-column-input-container">
-                <slot name="options-label"></slot>
-                <slot name="selected-label"></slot>
-                <slot name="options"></slot>
+                <slot name="items-label"></slot>
+                <slot name="selected-items-label"></slot>
+                <slot name="items"></slot>
                 <slot name="actions"></slot>
-                <slot name="selected"></slot>
+                <slot name="selected-items"></slot>
             </div>
 
             <div part="helper-text">
@@ -62,8 +62,8 @@ export class JmixTwinColumn extends InputFieldMixin(ThemableMixin(ElementMixin(P
 
         let components = [
             this.getElementsByClassName("jmix-twin-column-actions-panel")[0],
-            this.getElementsByClassName("jmix-twin-column-options-column")[0],
-            this.getElementsByClassName("jmix-twin-column-selected-column")[0]
+            this.getElementsByClassName("jmix-twin-column-items-column")[0],
+            this.getElementsByClassName("jmix-twin-column-selected-items-column")[0]
         ];
 
         (function(twinColumn) {

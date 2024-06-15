@@ -16,7 +16,10 @@
 
 package io.jmix.flowui.component.twincolumn;
 
-import com.vaadin.flow.data.provider.*;
+import com.vaadin.flow.data.provider.DataChangeEvent;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.InMemoryDataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
@@ -29,6 +32,8 @@ import io.jmix.flowui.data.*;
 import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.twincolumn.JmixTwinColumn;
+import io.jmix.flowui.kit.component.twincolumn.TwinColumnDataView;
+import io.jmix.flowui.kit.component.twincolumn.TwinColumnListDataView;
 import io.jmix.flowui.model.CollectionContainer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeansException;
@@ -38,13 +43,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
-import java.util.List;
 
 public class TwinColumn<V> extends JmixTwinColumn<V> implements
         SupportsItemsContainer<V>, SupportsValueSource<Collection<V>>, SupportsItemsEnum<V>,
         SupportsDataProvider<V>, SupportsValidation<Collection<V>>,
-        HasRequired, HasDataView<V, Void, TwinColumnDataView<V>>, HasListDataView<V, TwinColumnListDataView<V>>,
-        ApplicationContextAware, InitializingBean {
+        HasRequired, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
     protected Messages messages;
@@ -63,6 +66,8 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
         autowireDependencies();
         createValueChangeListener();
         initComponentMessages();
+
+        setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
     }
 
     @Override
@@ -88,13 +93,7 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
     @Override
     public TwinColumnDataView<V> setItems(DataProvider<V, Void> dataProvider) {
         bindDataProvider(dataProvider);
-        dataProvider.addDataProviderListener((DataProviderListener<V>) event -> {
-            List<V> newOptions = event.getSource()
-                    .fetch(DataViewUtils.getQuery(TwinColumn.this))
-                    .toList();
-            recreateOptions(newOptions);
-            updateInvalidState();
-        });
+        dataProvider.addDataProviderListener(this::onDataChange);
         return getGenericDataView();
     }
 
@@ -107,25 +106,16 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
     @Override
     public TwinColumnListDataView<V> setItems(ListDataProvider<V> dataProvider) {
         bindDataProvider(dataProvider);
-        recreateOptions(dataProvider.getItems());
-        updateInvalidState();
-        return getListDataView();
-    }
 
-    @Override
-    public TwinColumnListDataView<V> getListDataView() {
-        return new TwinColumnListDataView<>(this::getDataProvider, this, (filter, sorting) -> {});
+        TwinColumnListDataView<V> twinColumnListDataView = super.setItems(dataProvider);
+        updateInvalidState();
+        return twinColumnListDataView;
     }
 
     @Nullable
     @Override
     public DataProvider<V, ?> getDataProvider() {
         return dataViewDelegate.getDataProvider();
-    }
-
-    @Override
-    public TwinColumnDataView<V> getGenericDataView() {
-        return new TwinColumnDataView<>(this::getDataProvider, this);
     }
 
     @Override
@@ -248,6 +238,13 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
     protected void createValueChangeListener() {
         addValueChangeListener((ValueChangeListener<ComponentValueChangeEvent<JmixTwinColumn<V>, Collection<V>>>)
                 event -> updateInvalidState());
+    }
+
+    @Override
+    protected void onDataChange(DataChangeEvent<V> event) {
+        super.onDataChange(event);
+
+        updateInvalidState();
     }
 
     protected void bindDataProvider(DataProvider<V, ?> dataProvider) {

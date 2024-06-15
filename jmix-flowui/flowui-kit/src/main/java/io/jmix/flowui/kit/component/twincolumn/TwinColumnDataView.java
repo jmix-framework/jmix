@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.twincolumn;
+package io.jmix.flowui.kit.component.twincolumn;
 
 import com.vaadin.flow.data.provider.AbstractDataView;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -24,7 +24,7 @@ import com.vaadin.flow.function.SerializableSupplier;
 public class TwinColumnDataView<V> extends AbstractDataView<V> {
     public TwinColumnDataView(
             SerializableSupplier<? extends DataProvider<V, ?>> dataProviderSupplier,
-            TwinColumn<V> twinColumn) {
+            JmixTwinColumn<V> twinColumn) {
         super(dataProviderSupplier, twinColumn);
     }
 

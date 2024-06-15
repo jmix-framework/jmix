@@ -23,7 +23,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import component_xml_load.screen.TwinColumnView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
-import io.jmix.flowui.component.listbox.JmixMultiSelectListBox
 import io.jmix.flowui.component.twincolumn.TwinColumn
 import io.jmix.flowui.sys.BeanUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -91,7 +90,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
             maxWidth == "700px"
             minHeight == "100px"
             minWidth == "80px"
-            optionsColumnLabel == "Options"
+            itemsColumnLabel == "Options"
             readOnly
             reorderable
             required
@@ -128,7 +127,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
         BeanUtil.autowireContext(applicationContext, customTwinColumn)
         customTwinColumn.setItems(twinColumnView.animalsDc)
 
-        def options = (MultiSelectListBox<Animal>) customTwinColumn.getSubPart("options")
+        def options = (MultiSelectListBox<Animal>) customTwinColumn.getSubPart("items")
         twinColumnView.loadData()
 
         then: "Set options listBox selected items"
@@ -151,8 +150,8 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
 
         customTwinColumn.setSelectAllButtonsVisible(true)
 
-        def options = (MultiSelectListBox<Animal>) customTwinColumn.getSubPart("options")
-        def selected = (MultiSelectListBox<Animal>) customTwinColumn.getSubPart("selected")
+        def options = (MultiSelectListBox<Animal>) customTwinColumn.getSubPart("items")
+        def selected = (MultiSelectListBox<Animal>) customTwinColumn.getSubPart("selectedItems")
         def selectItems = (Button) customTwinColumn.getSubPart("selectItems")
         def selectAllItems = (Button) customTwinColumn.getSubPart("selectAllItems")
         def deselectItems = (Button) customTwinColumn.getSubPart("deselectItems")
@@ -238,10 +237,10 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
         }
 
         Component getSubPart(String id) {
-            if (id == "options") {
-                return options
-            } else if (id == "selected") {
-                return selected
+            if (id == "items") {
+                return items
+            } else if (id == "selectedItems") {
+                return selectedItems
             } else if (id == "selectItems") {
                 return selectItems
             } else if (id == "deselectItems") {

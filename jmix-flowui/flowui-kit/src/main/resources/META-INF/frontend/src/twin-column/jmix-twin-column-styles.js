@@ -41,17 +41,17 @@ const jmixTwinColumnStyles = css`
         width: 100%;
     }
 
-    ::slotted([slot="options-label"]) {
+    ::slotted([slot="items-label"]) {
         grid-row: 1;
         grid-column: 1;
     }
 
-    ::slotted([slot="selected-label"]) {
+    ::slotted([slot="selected-items-label"]) {
         grid-row: 1;
         grid-column: 3;
     }
 
-    ::slotted([slot="options"]) {
+    ::slotted([slot="items"]) {
         grid-row: 2;
         grid-column: 1;
         overflow-y: auto;
@@ -62,7 +62,7 @@ const jmixTwinColumnStyles = css`
         grid-column: 2;
     }
 
-    ::slotted([slot="selected"]) {
+    ::slotted([slot="selected-items"]) {
         grid-row: 2;
         grid-column: 3;
         overflow-y: auto;
@@ -72,25 +72,31 @@ const jmixTwinColumnStyles = css`
         display: none;
     }
 
-    :host(:not([has-width])) ::slotted([slot="options"]),
-    :host(:not([has-width])) ::slotted([slot="selected"]) {
+    :host(:not([has-width])) ::slotted([slot="items"]),
+    :host(:not([has-width])) ::slotted([slot="selected-items"]) {
         min-width: var(--jmix-twin-column-column-min-width, 15em);
         width: var(--jmix-twin-column-column-width, 15em);
         max-width: var(--jmix-twin-column-column-max-width, 15em);
     }
 
-    :host(:not([has-height])) ::slotted([slot="options"]),
-    :host(:not([has-height])) ::slotted([slot="selected"]) {
+    :host(:not([has-height])) ::slotted([slot="items"]),
+    :host(:not([has-height])) ::slotted([slot="selected-items"]) {
         min-height: var(--jmix-twin-column-column-min-height, 20em);
         height: var(--jmix-twin-column-column-height, 20em);
         max-height: var(--jmix-twin-column-column-max-height, 20em);
     }
 
-    :host(:not([has-width])) ::slotted([slot="options-label"]),
-    :host(:not([has-width])) ::slotted([slot="selected-label"]) {
+    :host(:not([has-width])) ::slotted([slot="items-label"]),
+    :host(:not([has-width])) ::slotted([slot="selected-items-label"]) {
         min-width: var(--jmix-twin-column-column-min-width, 15em);
         width: var(--jmix-twin-column-column-width, 15em);
         max-width: var(--jmix-twin-column-column-max-width, 15em);
+    }
+
+    :host(:not([has-height])) ::slotted([slot="actions"]) {
+        min-height: var(--jmix-twin-column-column-min-height, 20em);
+        height: var(--jmix-twin-column-column-height, 20em);
+        max-height: var(--jmix-twin-column-column-max-height, 20em);
     }
 `;
 

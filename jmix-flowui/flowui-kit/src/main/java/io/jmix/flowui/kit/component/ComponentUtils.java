@@ -32,6 +32,7 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementConstants;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
+import io.jmix.flowui.kit.component.twincolumn.JmixTwinColumn;
 import jakarta.annotation.Nullable;
 
 import java.util.List;
@@ -308,6 +309,19 @@ public final class ComponentUtils {
     public static void setItemsMap(EnhancedLoginForm component, Map<Locale, String> items) {
         component.setLocaleItems(items.keySet());
         component.setLocaleItemLabelGenerator(createItemLabelGenerator(items));
+    }
+
+    /**
+     * Sets key set from passed {@link Map} as component's items and {@link Map}
+     * values as visual representation of corresponding item, effectively defining
+     * {@link ItemLabelGenerator}.
+     *
+     * @param component the component to set items and {@link ItemLabelGenerator}
+     * @param items     a map to be used as a source of items and their visual representation
+     */
+    public static <T> void setItemsMap(JmixTwinColumn<T> component, Map<T, String> items) {
+        setItemsMapInternal(component, items);
+        component.setItemLabelGenerator(createItemLabelGenerator(items));
     }
 
     private static <T> void setItemsMapInternal(HasListDataView<T, ?> component, Map<T, String> items) {

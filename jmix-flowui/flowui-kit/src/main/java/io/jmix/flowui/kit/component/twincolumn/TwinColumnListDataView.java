@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.twincolumn;
+package io.jmix.flowui.kit.component.twincolumn;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.AbstractListDataView;

@@ -90,7 +90,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
             maxWidth == "700px"
             minHeight == "100px"
             minWidth == "80px"
-            itemsColumnLabel == "Options"
+            itemsColumnLabel == "Items"
             readOnly
             reorderable
             required

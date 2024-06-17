@@ -2160,7 +2160,7 @@
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="no-border"/>
                     <xs:enumeration value="no-row-border"/>
-                    <xs:enumeration value="checkboxes"/>
+                    <xs:enumeration value="checkmarks"/>
                     <xs:enumeration value="no-space-between-actions"/>
                 </xs:restriction>
             </xs:simpleType>
@@ -3151,7 +3151,7 @@
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="selectAllButtonsVisible" type="xs:boolean"/>
                 <xs:attribute name="reorderable" type="xs:boolean"/>
-                <xs:attribute name="optionsColumnLabel" type="resourceString"/>
+                <xs:attribute name="itemsColumnLabel" type="resourceString"/>
                 <xs:attribute name="selectedItemsColumnLabel" type="resourceString"/>
                 <xs:attribute name="themeNames" type="twinColumnThemeNames"/>
 

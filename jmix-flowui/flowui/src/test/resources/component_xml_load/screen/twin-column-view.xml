@@ -53,7 +53,7 @@
                     maxWidth="700px"
                     minHeight="100px"
                     minWidth="80px"
-                    optionsColumnLabel="Options"
+                    itemsColumnLabel="Items"
                     property="animals"
                     readOnly="true"
                     reorderable="true"

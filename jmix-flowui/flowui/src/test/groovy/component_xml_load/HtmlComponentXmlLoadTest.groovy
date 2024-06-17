@@ -20,6 +20,7 @@ import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.HtmlComponent
 import com.vaadin.flow.component.HtmlContainer
 import com.vaadin.flow.component.html.AnchorTarget
+import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.IFrame
 import com.vaadin.flow.component.html.OrderedList
 import com.vaadin.flow.component.html.RangeInput
@@ -279,5 +280,9 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             visible
             width == "100px"
         }
+    }
+
+    def "Bind data"() {
+        Div div = new Div();
     }
 }

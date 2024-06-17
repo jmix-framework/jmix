@@ -1059,7 +1059,7 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.OPTIONS,
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             options = {"CONTAINER_REF", "LOADER_REF", "ICON"})
             }
     )
@@ -1073,7 +1073,7 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.OPTIONS,
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             options = {"CONTAINER_REF", "LOADER_REF", "ICON"})
             }
     )

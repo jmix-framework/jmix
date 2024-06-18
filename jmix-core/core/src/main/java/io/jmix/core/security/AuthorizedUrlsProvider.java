@@ -21,7 +21,10 @@ import java.util.Collection;
 /**
  * Provider used when configuring HTTP web security for API endpoints (like REST, MVC controllers).
  * Specifies lists of authenticated and anonymous URLs.
+ *
+ * @deprecated use {@code AuthenticatedUrlPatternsProvider}
  */
+@Deprecated(since = "2.4", forRemoval = true)
 public interface AuthorizedUrlsProvider {
     /**
      * Returns URL patterns that are allowed to any authenticated user.

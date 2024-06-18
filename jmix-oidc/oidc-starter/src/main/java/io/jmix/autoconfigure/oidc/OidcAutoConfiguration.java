@@ -29,10 +29,10 @@ import io.jmix.oidc.userinfo.JmixOidcUserService;
 import io.jmix.oidc.usermapper.DefaultOidcUserMapper;
 import io.jmix.oidc.usermapper.OidcUserMapper;
 import io.jmix.security.SecurityConfigurers;
-import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -100,16 +100,17 @@ public class OidcAutoConfiguration {
         @Order(JmixSecurityFilterChainOrder.OIDC_RESOURCE_SERVER)
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                        JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter,
-                                                       ApplicationEventPublisher applicationEventPublisher) throws Exception {
-            http.oauth2ResourceServer(resourceServer -> {
+                                                       ApplicationEventPublisher applicationEventPublisher,
+                                                       CompositeResourceServerRequestMatcherProvider securityMatcherProvider) throws Exception {
+            http
+                    .securityMatcher(securityMatcherProvider.getSecurityMatcher())
+                    .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+                    .oauth2ResourceServer(resourceServer -> {
                         resourceServer.jwt(jwt -> {
                             jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
                         });
                     })
                     .cors(Customizer.withDefaults());
-
-            JmixHttpSecurityUtils.configureAnonymous(http);
-            JmixHttpSecurityUtils.configureAuthorizedUrls(http);
 
             OidcResourceServerEventSecurityFilter resourceServerEventSecurityFilter =
                     new OidcResourceServerEventSecurityFilter(applicationEventPublisher);

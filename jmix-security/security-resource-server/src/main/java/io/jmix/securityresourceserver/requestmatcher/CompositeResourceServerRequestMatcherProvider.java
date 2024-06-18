@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.authserver'
-archivesBaseName = 'jmix-authserver-starter'
+package io.jmix.securityresourceserver.requestmatcher;
 
-dependencies {
-    api project(':authserver')
-    api project(':security-resource-server')
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
-    implementation project(':core-starter')
-    implementation project(':security-starter')
-    implementation project(':security-resource-server-starter')
+/**
+ * Interface provides a {@link RequestMatcher} that will be used a security matcher for the resource server
+ * configuration. Currently, it is used in the Authorization Server and OpenID Connect add-ons.
+ */
+public interface CompositeResourceServerRequestMatcherProvider {
 
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    RequestMatcher getSecurityMatcher();
+
 }

@@ -29,7 +29,7 @@ import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentPropertie
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.security.SecurityConfigurers;
-import io.jmix.security.util.JmixHttpSecurityUtils;
+import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -177,10 +177,11 @@ public class AuthServerAutoConfiguration {
         @Order(JmixSecurityFilterChainOrder.AUTHSERVER_RESOURCE_SERVER)
         public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http,
                                                                      OpaqueTokenIntrospector opaqueTokenIntrospector,
-                                                                     ApplicationEventPublisher applicationEventPublisher) throws Exception {
-            JmixHttpSecurityUtils.configureAnonymous(http);
-            JmixHttpSecurityUtils.configureAuthorizedUrls(http);
+                                                                     ApplicationEventPublisher applicationEventPublisher,
+                                                                     CompositeResourceServerRequestMatcherProvider securityMatcherProvider) throws Exception {
             http
+                    .securityMatcher(securityMatcherProvider.getSecurityMatcher())
+                    .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                     .oauth2ResourceServer(oauth2 -> oauth2
                             .opaqueToken(opaqueToken -> opaqueToken
                                     .introspector(opaqueTokenIntrospector)))

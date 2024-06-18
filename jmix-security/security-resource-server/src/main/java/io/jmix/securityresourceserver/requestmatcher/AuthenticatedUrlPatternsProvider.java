@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.authserver'
-archivesBaseName = 'jmix-authserver-starter'
+package io.jmix.securityresourceserver.requestmatcher;
 
-dependencies {
-    api project(':authserver')
-    api project(':security-resource-server')
+import java.util.List;
 
-    implementation project(':core-starter')
-    implementation project(':security-starter')
-    implementation project(':security-resource-server-starter')
+/**
+ * Provides a list of URL patterns that will be used for building the
+ * {@link org.springframework.security.web.util.matcher.RequestMatcher} by the
+ * {@link AuthenticatedUrlsRequestMatcherProvider}
+ *
+ * @see AuthenticatedUrlsRequestMatcherProvider
+ */
+public interface AuthenticatedUrlPatternsProvider {
 
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    List<String> getAuthenticatedUrlPatterns();
+
 }

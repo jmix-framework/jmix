@@ -142,6 +142,8 @@ includeProject('security-data', 'jmix-security/security-data')
 includeProject('security-data-starter', 'jmix-security/security-data-starter')
 includeProject('security-flowui', 'jmix-security/security-flowui')
 includeProject('security-flowui-starter', 'jmix-security/security-flowui-starter')
+includeProject('security-resource-server', 'jmix-security/security-resource-server')
+includeProject('security-resource-server-starter', 'jmix-security/security-resource-server-starter')
 
 //includeProject('sessions', 'jmix-sessions/sessions')
 //includeProject('sessions-starter', 'jmix-sessions/sessions-starter')

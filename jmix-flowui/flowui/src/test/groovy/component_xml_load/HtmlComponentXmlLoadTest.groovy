@@ -281,8 +281,4 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             width == "100px"
         }
     }
-
-    def "Bind data"() {
-        Div div = new Div();
-    }
 }

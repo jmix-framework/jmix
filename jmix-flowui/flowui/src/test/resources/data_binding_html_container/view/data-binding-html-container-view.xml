@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  ~ Copyright 2022 Haulmont.
+  ~ Copyright 2024 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
         </instance>
         <collection id="animalsDc"
                     class="test_support.entity.Animal">
-            <loader id="animalsDl" readOnly="true">
+            <loader id="animalsDl">
                 <query>
                     <![CDATA[select e from test_Animal e]]>
                 </query>
@@ -38,10 +38,16 @@
             <fetchPlan extends="_base"/>
         </collection>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout>
         <div id="name" dataContainer="zooDc" property="name"/>
         <div id="city" dataContainer="zooDc" property="city"/>
         <div id="zooAnimals" dataContainer="zooDc" property="animals"/>
-        <textField id="zooName" dataContainer="zooDc" property="name"/>
+
+        <formLayout dataContainer="zooDc">
+            <div id="formDiv" property="name"/>
+        </formLayout>
     </layout>
 </view>

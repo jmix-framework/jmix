@@ -22,6 +22,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.MetadataTools
 import io.jmix.core.SaveContext
 import io.jmix.flowui.data.binding.HtmlContainerReadonlyDataBinding
+import io.jmix.flowui.data.value.ContainerValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -81,42 +82,40 @@ class HtmlContainerReadonlyDataBindingTest extends FlowuiTestSpecification {
     def "Bind data containers in loader"() {
         when: "Open DataBindingHtmlContainerView"
         def dataBindingHtmlContainerView = navigateToView(DataBindingHtmlContainerView.class)
-        dataBindingHtmlContainerView.loadData()
 
         def zooAnimals = dataBindingHtmlContainerView.zooDc.getItem().animals
         def zooAnimalsAsString = zooAnimals.stream()
                 .map(metadataTools::format)
                 .collect(Collectors.joining(", "))
 
-        then:
-        dataBindingHtmlContainerView.name.getText() == "Zoo"
-        dataBindingHtmlContainerView.city.getText() == "City"
-        dataBindingHtmlContainerView.zooAnimals.getText() == zooAnimalsAsString
+        then: "Divs with data binding should have text value equal to zoo properties values"
+        dataBindingHtmlContainerView.name.text == "Zoo"
+        dataBindingHtmlContainerView.city.text == "City"
+        dataBindingHtmlContainerView.zooAnimals.text == zooAnimalsAsString
     }
 
     def "Manual binding"() {
         def dataBindingHtmlContainerView = navigateToView(DataBindingHtmlContainerView.class)
-        dataBindingHtmlContainerView.loadData()
 
-        when: "Create div and bind with zooDc"
+        when: "Create div and bind with zooDc using property"
         Div zooName = new Div()
         htmlContainerReadonlyDataBinding.bind(zooName, dataBindingHtmlContainerView.zooDc, "name")
         Div zooCity = new Div()
         htmlContainerReadonlyDataBinding.bind(zooCity, dataBindingHtmlContainerView.zooDc, "city")
 
-        then:
-        zooName.getText() == "Zoo"
-        zooCity.getText() == "City"
+        then: "Divs with data binding should have text value equal to zoo properties values"
+        zooName.text == "Zoo"
+        zooCity.text == "City"
 
         when: "Change name and city properties"
         dataBindingHtmlContainerView.zooDc.getItem().name = "Zoo Zoo"
         dataBindingHtmlContainerView.zooDc.getItem().city = "City City"
 
-        then:
-        zooName.getText() == "Zoo Zoo"
-        zooCity.getText() == "City City"
+        then: "Divs text should change its value after changing entity properties"
+        zooName.text == "Zoo Zoo"
+        zooCity.text == "City City"
 
-        when: "Create div and bind with animalsDc"
+        when: "Create div and bind with collection animalsDc"
         Div animals = new Div()
         htmlContainerReadonlyDataBinding.bind(animals, dataBindingHtmlContainerView.animalsDc)
 
@@ -125,46 +124,57 @@ class HtmlContainerReadonlyDataBindingTest extends FlowuiTestSpecification {
                 .map(metadataTools::format)
                 .collect(Collectors.joining(", "))
 
-        then:
-        animals.getText() == animalsAsString
+        then: "Div text should be equal to collection with CollectionFormatter"
+        animals.text == animalsAsString
     }
 
     def "Manual value source binding"() {
         def dataBindingHtmlContainerView = navigateToView(DataBindingHtmlContainerView.class)
-        dataBindingHtmlContainerView.loadData()
 
         when: "Create div and bind with value source"
         Div zooName = new Div()
-        htmlContainerReadonlyDataBinding.bind(zooName, dataBindingHtmlContainerView.zooName.getValueSource())
+        def zooNameValueSource = new ContainerValueSource<>(dataBindingHtmlContainerView.zooDc, "name")
+        zooNameValueSource.setApplicationContext(applicationContext)
+        htmlContainerReadonlyDataBinding.bind(zooName, zooNameValueSource)
 
-        then:
-        zooName.getText() == "Zoo"
-        dataBindingHtmlContainerView.zooName.getValue() == "Zoo"
+        then: "Div text should be equal to textField value"
+        zooName.text == "Zoo"
+        zooNameValueSource.value == "Zoo"
 
         when: "Change text field value"
-        dataBindingHtmlContainerView.zooName.setValue("Zoo Zoo")
+        zooNameValueSource.value = "Zoo Zoo"
 
-        then:
-        zooName.getText() == dataBindingHtmlContainerView.zooName.getValue()
+        then: "Div should change its value to new value of textField"
+        zooName.text == zooNameValueSource.value
     }
 
     def "Unbind test"() {
         def dataBindingHtmlContainerView = navigateToView(DataBindingHtmlContainerView.class)
-        dataBindingHtmlContainerView.loadData()
 
         when: "Create div and bind with value source"
         Div zooName = new Div()
-        htmlContainerReadonlyDataBinding.bind(zooName, dataBindingHtmlContainerView.zooName.getValueSource())
-        dataBindingHtmlContainerView.zooName.setValue("Zoo Zoo")
 
-        then:
-        zooName.getText() == "Zoo Zoo"
+        def zooNameValueSource = new ContainerValueSource<>(dataBindingHtmlContainerView.zooDc, "name")
+        zooNameValueSource.setApplicationContext(applicationContext)
+        htmlContainerReadonlyDataBinding.bind(zooName, zooNameValueSource)
+        zooNameValueSource.value = "Zoo Zoo"
 
-        when: "Unbind value source"
+        then: "Div text should be equal to textField value"
+        zooName.text == "Zoo Zoo"
+
+        when: "Unbind value source and set new value to textField"
         htmlContainerReadonlyDataBinding.unbind(zooName)
-        dataBindingHtmlContainerView.zooName.setValue("Zoo Zoo Zoo")
+        zooNameValueSource.value = "Zoo Zoo Zoo"
 
-        then:
-        zooName.getText() == "Zoo Zoo"
+        then: "Div should have old value"
+        zooName.text == "Zoo Zoo"
+    }
+
+    def "Bind date for html container in layoutForm"() {
+        when: "Open the view"
+        def dataBindingHtmlContainerView = navigateToView(DataBindingHtmlContainerView.class)
+
+        then: "Html container in formLayout should have the text value equal to zoo instance name value"
+        dataBindingHtmlContainerView.formDiv.text == dataBindingHtmlContainerView.zooDc.item.name
     }
 }

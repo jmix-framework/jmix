@@ -18,7 +18,6 @@ package data_binding_html_container.view;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.StandardView;
@@ -43,15 +42,11 @@ public class DataBindingHtmlContainerView extends StandardView {
     public Div zooAnimals;
 
     @ViewComponent
-    public TypedTextField<String> zooName;
+    public Div formDiv;
 
     @ViewComponent
     public InstanceContainer<Zoo> zooDc;
 
     @ViewComponent
     public CollectionContainer<Animal> animalsDc;
-
-    public void loadData() {
-        getViewData().loadAll();
-    }
 }

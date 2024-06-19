@@ -22,6 +22,8 @@ import io.jmix.flowui.kit.component.formatter.Formatter;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 
+import java.util.Collection;
+
 public interface HtmlContainerReadonlyDataBinding {
 
     void bind(HtmlContainer htmlComponent, ValueSource<?> valueSource);
@@ -34,7 +36,7 @@ public interface HtmlContainerReadonlyDataBinding {
 
     void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer);
 
-    void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, Formatter<Object> format);
+    void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, Formatter<Collection<?>> format);
 
     void unbind(HtmlContainer htmlContainer);
 }

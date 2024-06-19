@@ -19,8 +19,16 @@ package io.jmix.autoconfigure.securityresourceserver;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.security.AuthorizedUrlsProvider;
-import io.jmix.securityresourceserver.requestmatcher.*;
-import io.jmix.securityresourceserver.requestmatcher.compatibility.AuthorizedUrlsProviderRequestMatcherProvider;
+import io.jmix.securityresourceserver.requestmatcher.AnonymousRequestMatcherProvider;
+import io.jmix.securityresourceserver.requestmatcher.AuthenticatedRequestMatcherProvider;
+import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
+import io.jmix.securityresourceserver.requestmatcher.impl.AnonymousUrlPatternsRequestMatcherProvider;
+import io.jmix.securityresourceserver.requestmatcher.impl.AuthenticatedUrlPatternsRequestMatcherProvider;
+import io.jmix.securityresourceserver.requestmatcher.impl.CompositeResourceServerRequestMatcherProviderImpl;
+import io.jmix.securityresourceserver.requestmatcher.urlprovider.AnonymousUrlPatternsProvider;
+import io.jmix.securityresourceserver.requestmatcher.urlprovider.AuthenticatedUrlPatternsProvider;
+import io.jmix.securityresourceserver.requestmatcher.urlprovider.impl.LegacyAuthorizedUrlsPatternsProvider;
+import io.jmix.securityresourceserver.requestmatcher.urlprovider.impl.AppPropertiesUrlPatternsProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -37,24 +45,31 @@ public class SecurityResourceServerAutoConfiguration {
     @ConditionalOnMissingBean
     @Bean("sec_ResourceServerSecurityMatcherProvider")
     CompositeResourceServerRequestMatcherProvider resourceServerSecurityMatcherProvider(
-            List<ResourceServerRequestMatcherProvider> resourceServerRequestMatcherProviders) {
-        return new CompositeRequestMatcherProviderImpl(resourceServerRequestMatcherProviders);
+            List<AuthenticatedRequestMatcherProvider> authenticatedRequestMatcherProviders,
+            List<AnonymousRequestMatcherProvider> anonymousRequestMatcherProviders) {
+        return new CompositeResourceServerRequestMatcherProviderImpl(authenticatedRequestMatcherProviders, anonymousRequestMatcherProviders);
     }
 
-    @Bean("sec_AppPropertiesAuthenticatedUrlPatternsProvider")
-    AppPropertiesAuthenticatedUrlPatternsProvider appPropertiesAuthenticatedUrlPatternsProvider(JmixModules jmixModules) {
-        return new AppPropertiesAuthenticatedUrlPatternsProvider(jmixModules);
+    @Bean("sec_AppPropertiesUrlPatternsProvider")
+    AppPropertiesUrlPatternsProvider appPropertiesUrlPatternsProvider(JmixModules jmixModules) {
+        return new AppPropertiesUrlPatternsProvider(jmixModules);
     }
 
     @Bean("sec_AuthenticatedUrlsRequestMatcherProvider")
-    AuthenticatedUrlsRequestMatcherProvider authorizedUrlsRequestMatcherProvider(
+    AuthenticatedUrlPatternsRequestMatcherProvider authenticatedUrlsRequestMatcherProvider(
             List<AuthenticatedUrlPatternsProvider> authenticatedUrlPatternsProviders) {
-        return new AuthenticatedUrlsRequestMatcherProvider(authenticatedUrlPatternsProviders);
+        return new AuthenticatedUrlPatternsRequestMatcherProvider(authenticatedUrlPatternsProviders);
     }
 
-    @Bean("sec_AuthorizedUrlsProviderRequestMatcherProvider")
-    AuthorizedUrlsProviderRequestMatcherProvider authorizedUrlsProviderRequestMatcherProvider(
+    @Bean("sec_AnonymousUrlsRequestMatcherProvider")
+    AnonymousUrlPatternsRequestMatcherProvider anonymousUrlsRequestMatcherProvider(
+            List<AnonymousUrlPatternsProvider> anonymousUrlPatternsProviders) {
+        return new AnonymousUrlPatternsRequestMatcherProvider(anonymousUrlPatternsProviders);
+    }
+
+    @Bean("sec_LegacyAuthorizedUrlsPatternsProvider")
+    LegacyAuthorizedUrlsPatternsProvider legacyAuthorizedUrlsPatternsProvider(
             List<AuthorizedUrlsProvider> authorizedUrlsProviders) {
-        return new AuthorizedUrlsProviderRequestMatcherProvider(authorizedUrlsProviders);
+        return new LegacyAuthorizedUrlsPatternsProvider(authorizedUrlsProviders);
     }
 }

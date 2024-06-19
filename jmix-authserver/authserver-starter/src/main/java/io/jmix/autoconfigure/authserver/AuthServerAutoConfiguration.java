@@ -29,6 +29,7 @@ import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentPropertie
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.security.SecurityConfigurers;
+import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,6 +50,8 @@ import org.springframework.security.oauth2.server.resource.introspection.OpaqueT
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -179,13 +182,21 @@ public class AuthServerAutoConfiguration {
                                                                      OpaqueTokenIntrospector opaqueTokenIntrospector,
                                                                      ApplicationEventPublisher applicationEventPublisher,
                                                                      CompositeResourceServerRequestMatcherProvider securityMatcherProvider) throws Exception {
+            RequestMatcher authenticatedRequestMatcher = securityMatcherProvider.getAuthenticatedRequestMatcher();
+            RequestMatcher anonymousRequestMatcher = securityMatcherProvider.getAnonymousRequestMatcher();
+            RequestMatcher securityMatcher = new OrRequestMatcher(authenticatedRequestMatcher, anonymousRequestMatcher);
             http
-                    .securityMatcher(securityMatcherProvider.getSecurityMatcher())
-                    .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+                    .securityMatcher(securityMatcher)
+                    .authorizeHttpRequests(authorize -> {
+                        authorize
+                                .requestMatchers(anonymousRequestMatcher).permitAll()
+                                .requestMatchers(authenticatedRequestMatcher).authenticated();
+                    })
                     .oauth2ResourceServer(oauth2 -> oauth2
                             .opaqueToken(opaqueToken -> opaqueToken
                                     .introspector(opaqueTokenIntrospector)))
                     .cors(Customizer.withDefaults());
+            JmixHttpSecurityUtils.configureAnonymous(http);
             AsResourceServerEventSecurityFilter asResourceServerEventSecurityFilter = new AsResourceServerEventSecurityFilter(applicationEventPublisher);
             http.addFilterBefore(asResourceServerEventSecurityFilter, AuthorizationFilter.class);
             SecurityConfigurers.applySecurityConfigurersWithQualifier(http, SECURITY_CONFIGURER_QUALIFIER);

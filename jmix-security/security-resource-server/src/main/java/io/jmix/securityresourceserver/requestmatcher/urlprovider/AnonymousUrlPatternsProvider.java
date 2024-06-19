@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.securityresourceserver.requestmatcher;
+package io.jmix.securityresourceserver.requestmatcher.urlprovider;
+
+import io.jmix.securityresourceserver.requestmatcher.impl.AnonymousUrlPatternsRequestMatcherProvider;
 
 import java.util.List;
 
 /**
- * Provides a list of URL patterns that will be used for building the
+ * Provides a list of anonymous URL patterns that will be used for building the
  * {@link org.springframework.security.web.util.matcher.RequestMatcher} by the
- * {@link AuthenticatedUrlsRequestMatcherProvider}
+ * {@link AnonymousUrlPatternsRequestMatcherProvider}
  *
- * @see AuthenticatedUrlsRequestMatcherProvider
+ * @see AnonymousUrlPatternsRequestMatcherProvider
  */
-public interface AuthenticatedUrlPatternsProvider {
+public interface AnonymousUrlPatternsProvider {
 
-    List<String> getAuthenticatedUrlPatterns();
+    List<String> getAnonymousUrlPatterns();
 
 }

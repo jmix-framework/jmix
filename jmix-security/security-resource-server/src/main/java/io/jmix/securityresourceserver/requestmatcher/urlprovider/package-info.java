@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.securityresourceserver.requestmatcher.compatibility;
+package io.jmix.securityresourceserver.requestmatcher.urlprovider;
 
 import org.springframework.lang.NonNullApi;

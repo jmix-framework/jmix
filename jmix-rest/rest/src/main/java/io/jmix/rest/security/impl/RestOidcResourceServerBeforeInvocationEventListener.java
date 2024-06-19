@@ -21,14 +21,14 @@ import io.jmix.core.Messages;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.oidc.resourceserver.OidcResourceServerBeforeInvocationEvent;
 import io.jmix.rest.accesscontext.RestAccessContext;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.AntPathMatcher;
 
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -43,8 +43,6 @@ public class RestOidcResourceServerBeforeInvocationEventListener {
 
     @Autowired
     protected AccessManager accessManager;
-    @Autowired
-    protected CustomRestAuthorizedUrlsProvider restAuthorizedUrlsProvider;
     @Autowired
     protected Messages messages;
 
@@ -77,19 +75,7 @@ public class RestOidcResourceServerBeforeInvocationEventListener {
         String requestURI = ((HttpServletRequest) request).getRequestURI();
         AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-        for (String urlPattern : restAuthorizedUrlsProvider.getAnonymousUrlPatterns()) {
-            if (antPathMatcher.match(urlPattern, requestURI)) {
-                return false;
-            }
-        }
-
         for (String urlPattern : REST_AUTHORIZED_URLS) {
-            if (antPathMatcher.match(urlPattern, requestURI)) {
-                return true;
-            }
-        }
-
-        for (String urlPattern : restAuthorizedUrlsProvider.getAuthenticatedUrlPatterns()) {
             if (antPathMatcher.match(urlPattern, requestURI)) {
                 return true;
             }

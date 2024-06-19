@@ -16,21 +16,15 @@
 
 package io.jmix.securityresourceserver.requestmatcher;
 
+import io.jmix.securityresourceserver.requestmatcher.impl.CompositeResourceServerRequestMatcherProviderImpl;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
- * Interface provides a {@link RequestMatcher} that will be used a security matcher for the resource server
- * configuration. Currently, it is used in the Authorization Server and OpenID Connect add-ons.
+ * Interface provides a {@link RequestMatcher} for anonymous endpoints that will be processed by the
+ * {@link CompositeResourceServerRequestMatcherProviderImpl}.
  */
-public interface CompositeResourceServerRequestMatcherProvider {
+public interface AnonymousRequestMatcherProvider {
 
-    /**
-     * Returns a {@link RequestMatcher} that matches only authenticated requests.
-     */
-    RequestMatcher getAuthenticatedRequestMatcher();
-
-    /**
-     * Returns a {@link RequestMatcher} that matches only anonymous requests.
-     */
     RequestMatcher getAnonymousRequestMatcher();
+
 }

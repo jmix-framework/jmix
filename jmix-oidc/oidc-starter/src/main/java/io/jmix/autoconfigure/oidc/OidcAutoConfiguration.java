@@ -32,6 +32,7 @@ import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -46,6 +47,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @AutoConfiguration
 @Import({OidcConfiguration.class})
@@ -102,16 +105,23 @@ public class OidcAutoConfiguration {
                                                        JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter,
                                                        ApplicationEventPublisher applicationEventPublisher,
                                                        CompositeResourceServerRequestMatcherProvider securityMatcherProvider) throws Exception {
+            RequestMatcher authenticatedRequestMatcher = securityMatcherProvider.getAuthenticatedRequestMatcher();
+            RequestMatcher anonymousRequestMatcher = securityMatcherProvider.getAnonymousRequestMatcher();
+            RequestMatcher securityMatcher = new OrRequestMatcher(authenticatedRequestMatcher, anonymousRequestMatcher);
             http
-                    .securityMatcher(securityMatcherProvider.getSecurityMatcher())
-                    .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+                    .securityMatcher(securityMatcher)
+                    .authorizeHttpRequests(authorize -> {
+                        authorize
+                                .requestMatchers(anonymousRequestMatcher).permitAll()
+                                .requestMatchers(authenticatedRequestMatcher).authenticated();
+                    })
                     .oauth2ResourceServer(resourceServer -> {
                         resourceServer.jwt(jwt -> {
                             jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
                         });
                     })
                     .cors(Customizer.withDefaults());
-
+            JmixHttpSecurityUtils.configureAnonymous(http);
             OidcResourceServerEventSecurityFilter resourceServerEventSecurityFilter =
                     new OidcResourceServerEventSecurityFilter(applicationEventPublisher);
             http.addFilterBefore(resourceServerEventSecurityFilter, AuthorizationFilter.class);

@@ -14,35 +14,38 @@
  * limitations under the License.
  */
 
-package io.jmix.securityresourceserver.requestmatcher;
+package io.jmix.securityresourceserver.requestmatcher.impl;
 
+import io.jmix.securityresourceserver.requestmatcher.AuthenticatedRequestMatcherProvider;
+import io.jmix.securityresourceserver.requestmatcher.urlprovider.AuthenticatedUrlPatternsProvider;
+import io.jmix.securityresourceserver.requestmatcher.util.RequestMatcherUtils;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * An implementation of {@link ResourceServerRequestMatcherProvider} that collects URL patterns from multiple
- * {@link AuthenticatedUrlPatternsProvider}s and builds the {@link RequestMatcher} from all collected URL patterns.
+ * An implementation of {@link AuthenticatedRequestMatcherProvider} that collects authenticated URL patterns from
+ * multiple {@link AuthenticatedUrlPatternsProvider}s and builds the {@link RequestMatcher} from all collected URL
+ * patterns.
  *
  * @see AuthenticatedUrlPatternsProvider
  */
-public class AuthenticatedUrlsRequestMatcherProvider implements ResourceServerRequestMatcherProvider {
+public class AuthenticatedUrlPatternsRequestMatcherProvider implements AuthenticatedRequestMatcherProvider {
 
     private final List<AuthenticatedUrlPatternsProvider> authenticatedUrlPatternsProviders;
 
-    public AuthenticatedUrlsRequestMatcherProvider(List<AuthenticatedUrlPatternsProvider> authenticatedUrlPatternsProviders) {
+    public AuthenticatedUrlPatternsRequestMatcherProvider(List<AuthenticatedUrlPatternsProvider> authenticatedUrlPatternsProviders) {
         this.authenticatedUrlPatternsProviders = authenticatedUrlPatternsProviders;
     }
 
     @Override
-    public RequestMatcher getRequestMatcher() {
+    public RequestMatcher getAuthenticatedRequestMatcher() {
         List<RequestMatcher> requestMatchers = authenticatedUrlPatternsProviders.stream()
                 .flatMap(urlPatternProvider -> urlPatternProvider.getAuthenticatedUrlPatterns().stream())
                 .map(AntPathRequestMatcher::new)
                 .collect(Collectors.toList());
-        return new OrRequestMatcher(requestMatchers);
+        return RequestMatcherUtils.createCombinedRequestMatcher(requestMatchers);
     }
 }

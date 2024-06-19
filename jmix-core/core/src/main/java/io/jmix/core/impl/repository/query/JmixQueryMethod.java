@@ -34,11 +34,6 @@ public class JmixQueryMethod extends QueryMethod {
         super(method, metadata, factory);
     }
 
-    @Override//todo taimanov: do not remove until it is required by single available constructor of QueryMethod
-    protected JmixParameters createParameters(Method method) {
-        return new JmixParameters(ParametersSource.of(method));
-    }
-
     @Override
     protected Parameters<?, ?> createParameters(ParametersSource parametersSource) {
         return new JmixParameters(parametersSource);

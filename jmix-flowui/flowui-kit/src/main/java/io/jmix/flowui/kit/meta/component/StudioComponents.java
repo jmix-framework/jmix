@@ -3121,7 +3121,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),

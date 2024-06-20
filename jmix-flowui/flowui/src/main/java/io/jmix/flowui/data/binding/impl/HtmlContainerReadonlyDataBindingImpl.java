@@ -22,8 +22,10 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntitySystemAccess;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.formatter.CollectionFormatter;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -86,12 +88,24 @@ public class HtmlContainerReadonlyDataBindingImpl implements HtmlContainerReadon
 
     @Override
     public void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property) {
-        bind(htmlComponent, dataContainer, property, value -> metadataTools.format(value));
+        bind(htmlComponent, dataContainer, property, value -> metadataTools.format(value), true);
+    }
+
+    @Override
+    public void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property,
+                     Formatter<Object> formatter) {
+        bind(htmlComponent, dataContainer, property, formatter, true);
+    }
+
+    @Override
+    public void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property,
+                     boolean dataModelSecurityEnabled) {
+        bind(htmlComponent, dataContainer, property, value -> metadataTools.format(value), dataModelSecurityEnabled);
     }
 
     @Override
     public void bind(HtmlContainer htmlContainer, InstanceContainer<?> dataContainer, String property,
-                     Formatter<Object> formatter) {
+                     Formatter<Object> formatter, boolean dataModelSecurityEnabled) {
         checkNotNullArgument(htmlContainer);
         checkNotNullArgument(dataContainer);
         checkNotEmptyString(property);
@@ -105,11 +119,10 @@ public class HtmlContainerReadonlyDataBindingImpl implements HtmlContainerReadon
             updateHtmlContainerText(htmlContainer, formatter, propertyValue);
         }
 
-        Subscription propertyChangeSubscription = dataContainer.addItemPropertyChangeListener(
-                itemPropertyChangeEvent -> {
-                    if (property.equals(itemPropertyChangeEvent.getProperty())) {
-                    updateHtmlContainerText(htmlContainer, formatter, itemPropertyChangeEvent.getValue());
-                }
+        Subscription propertyChangeSubscription = dataContainer.addItemPropertyChangeListener(itemPropertyChangeEvent -> {
+            if (property.equals(itemPropertyChangeEvent.getProperty())) {
+                updateHtmlContainerText(htmlContainer, formatter, itemPropertyChangeEvent.getValue());
+            }
         });
 
         Subscription itemChangeSubscription = dataContainer.addItemChangeListener(itemChangeEvent -> {
@@ -123,16 +136,30 @@ public class HtmlContainerReadonlyDataBindingImpl implements HtmlContainerReadon
             propertyChangeSubscription.remove();
             itemChangeSubscription.remove();
         });
+
+        if (dataModelSecurityEnabled) {
+            checkPermissions(htmlContainer, dataContainer, property);
+        }
     }
 
     @Override
     public void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer) {
-        bind(htmlComponent, dataContainer, collectionFormatter);
+        bind(htmlComponent, dataContainer, collectionFormatter, true);
+    }
+
+    @Override
+    public void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, boolean dataModelSecurityEnabled) {
+        bind(htmlComponent, dataContainer, collectionFormatter, dataModelSecurityEnabled);
+    }
+
+    @Override
+    public void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, Formatter<Collection<?>> formatter) {
+        bind(htmlComponent, dataContainer, formatter, true);
     }
 
     @Override
     public void bind(HtmlContainer htmlContainer, CollectionContainer<?> dataContainer,
-                     Formatter<Collection<?>> formatter) {
+                     Formatter<Collection<?>> formatter, boolean dataModelSecurityEnabled) {
         checkNotNullArgument(htmlContainer);
         checkNotNullArgument(dataContainer);
         checkNotNullArgument(formatter);
@@ -145,6 +172,10 @@ public class HtmlContainerReadonlyDataBindingImpl implements HtmlContainerReadon
                 updateHtmlContainerText(htmlContainer, formatter, dataContainer.getItems()));
 
         listenersRegistrations.put(htmlContainer, subscription::remove);
+
+        if (dataModelSecurityEnabled) {
+            checkPermissions(htmlContainer, dataContainer);
+        }
     }
 
     public void unbind(HtmlContainer htmlContainer) {
@@ -152,8 +183,8 @@ public class HtmlContainerReadonlyDataBindingImpl implements HtmlContainerReadon
     }
 
     protected <T> void updateHtmlContainerText(HtmlContainer htmlContainer,
-                                           Formatter<T> formatter,
-                                           @Nullable T value) {
+                                               Formatter<T> formatter,
+                                               @Nullable T value) {
         htmlContainer.setText(formatter.apply(value));
     }
 
@@ -174,17 +205,35 @@ public class HtmlContainerReadonlyDataBindingImpl implements HtmlContainerReadon
     }
 
     protected void checkPermissions(HtmlContainer htmlContainer, ValueSource<?> valueSource) {
-        if (valueSource instanceof EntityValueSource<?, ?> entityValueSource) {
+        if (valueSource instanceof EntityValueSource<?, ?> entityValueSource &&
+                entityValueSource.isDataModelSecurityEnabled()) {
             MetaPropertyPath metaPropertyPath = entityValueSource.getMetaPropertyPath();
 
-            if (entityValueSource.isDataModelSecurityEnabled()) {
-                UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaPropertyPath);
-                accessManager.applyRegisteredConstraints(attributeContext);
+            UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaPropertyPath);
+            accessManager.applyRegisteredConstraints(attributeContext);
 
-                if (!attributeContext.canView()) {
-                    ComponentUtils.setVisible(htmlContainer, false);
-                }
+            if (!attributeContext.canView()) {
+                ComponentUtils.setVisible(htmlContainer, false);
             }
+        }
+    }
+
+    protected void checkPermissions(HtmlContainer htmlContainer, InstanceContainer<?> dataContainer, String property) {
+        MetaClass metaClass = dataContainer.getEntityMetaClass();
+        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, property);
+        UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaPropertyPath);
+        accessManager.applyRegisteredConstraints(attributeContext);
+        if (!attributeContext.canView()) {
+            ComponentUtils.setVisible(htmlContainer, false);
+        }
+    }
+
+    protected void checkPermissions(HtmlContainer htmlContainer, CollectionContainer<?> dataContainer) {
+        MetaClass metaClass = dataContainer.getEntityMetaClass();
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+        if (!entityContext.isViewPermitted()) {
+            ComponentUtils.setVisible(htmlContainer, false);
         }
     }
 }

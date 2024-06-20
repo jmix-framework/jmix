@@ -32,11 +32,23 @@ public interface HtmlContainerReadonlyDataBinding {
 
     void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property);
 
-    void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property, Formatter<Object> format);
+    void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property,
+              boolean dataModelSecurityEnabled);
+
+    void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property,
+              Formatter<Object> formatter);
+
+    void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property,
+              Formatter<Object> formatter, boolean dataModelSecurityEnabled);
 
     void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer);
 
-    void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, Formatter<Collection<?>> format);
+    void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, boolean dataModelSecurityEnabled);
+
+    void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, Formatter<Collection<?>> formatter);
+
+    void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, Formatter<Collection<?>> formatter,
+              boolean dataModelSecurityEnabled);
 
     void unbind(HtmlContainer htmlContainer);
 }

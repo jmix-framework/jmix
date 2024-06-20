@@ -167,7 +167,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
             setInvalidInternal(true);
             String validationMessage = messages.getMessage("validation.unparseableValue");
             setErrorMessage(validationMessage);
-            throw new ComponentValidationException(messages.getMessage("validation.defaultMessage"), component);
+            throw new ComponentValidationException(validationMessage, component);
         }
 
         if (CollectionUtils.isNotEmpty(validators)) {

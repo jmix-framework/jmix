@@ -61,21 +61,21 @@ public abstract class AbstractLoginFormLoader<C extends AbstractLogin> extends A
     protected void loadForm(C resultComponent, Element element, JmixLoginI18n i18n) {
         Element formElement = element.element("form");
         if (formElement != null) {
-            JmixLoginI18n.JmixForm jmixForm = new JmixLoginI18n.JmixForm();
+            JmixLoginI18n.JmixForm form = new JmixLoginI18n.JmixForm();
 
             loadResourceString(formElement, "title",
-                    context.getMessageGroup(), jmixForm::setTitle);
+                    context.getMessageGroup(), form::setTitle);
             loadResourceString(formElement, "username",
-                    context.getMessageGroup(), jmixForm::setUsername);
+                    context.getMessageGroup(), form::setUsername);
             loadResourceString(formElement, "password",
-                    context.getMessageGroup(), jmixForm::setPassword);
+                    context.getMessageGroup(), form::setPassword);
             loadResourceString(formElement, "submit",
-                    context.getMessageGroup(), jmixForm::setSubmit);
+                    context.getMessageGroup(), form::setSubmit);
             loadResourceString(formElement, "forgotPassword",
-                    context.getMessageGroup(), jmixForm::setForgotPassword);
+                    context.getMessageGroup(), form::setForgotPassword);
             loadResourceString(formElement, "rememberMe",
-                    context.getMessageGroup(), jmixForm::setRememberMe);
-            i18n.setForm(jmixForm);
+                    context.getMessageGroup(), form::setRememberMe);
+            i18n.setForm(form);
         }
     }
 

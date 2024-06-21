@@ -1044,7 +1044,7 @@ public interface StudioElements {
                     availableTags = {
                             @StudioAvailableChildrenInfo.TagInfo(
                                     qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
-                                    maxCount = 1000000L
+                                    maxCount = 1L
                             )
                     }
             )

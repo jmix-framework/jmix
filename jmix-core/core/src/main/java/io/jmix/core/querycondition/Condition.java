@@ -52,5 +52,12 @@ public interface Condition extends Serializable {
      */
     Condition copy();
 
+    /**
+     * Returns names of parameters that are not present in the given {@code actualParameters} but have null or
+     * empty value.
+     * <p>
+     * For {@link SkippableCondition}, empty parameters are not included in the result if
+     * {@link SkippableCondition#skipNullOrEmpty()} is false.
+     */
     Set<String> getExcludedParameters(Set<String> actualParameters);
 }

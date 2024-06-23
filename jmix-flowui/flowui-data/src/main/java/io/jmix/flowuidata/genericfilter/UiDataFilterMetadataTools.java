@@ -51,7 +51,7 @@ public class UiDataFilterMetadataTools extends FilterMetadataTools {
 
     @Override
     protected boolean isAggregateFunction(MetaPropertyPath propertyPath, String query) {
-        if (Strings.isNullOrEmpty(query)) {
+        if (Strings.isNullOrEmpty(query) || !metadataTools.isJpaEntity(propertyPath.getMetaClass())) {
             return false;
         }
 

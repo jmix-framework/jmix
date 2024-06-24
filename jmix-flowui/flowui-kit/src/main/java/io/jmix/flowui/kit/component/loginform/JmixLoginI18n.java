@@ -45,6 +45,7 @@ public class JmixLoginI18n extends LoginI18n {
         return jmixLoginI18n;
     }
 
+    @Override
     public void setForm(Form form) {
         if (form instanceof JmixForm jmixForm) {
             this.form = jmixForm;

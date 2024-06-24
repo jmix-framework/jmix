@@ -105,7 +105,7 @@ public class EnhancedLoginForm extends LoginForm {
      */
     @Synchronize(LOCALES_VISIBILITY_PROPERTY)
     public boolean isLocalesVisible() {
-        return getElement().getProperty(LOCALES_VISIBILITY_PROPERTY, true);
+        return getElement().getProperty(LOCALES_VISIBILITY_PROPERTY, false);
     }
 
     /**
@@ -133,10 +133,10 @@ public class EnhancedLoginForm extends LoginForm {
 
         getElement().setPropertyJson("locales", JsonSerializer.toJson(localeItems));
 
-        //From 2.3 locales the combo box isn't visible by default. To keep visibility for migrated projects,
+        //From 2.3 the locales combo box isn't visible by default. To keep visibility for migrated projects,
         // the login component checks if locales visibility set explicitly
-        if (!visibilitySetExplicitly && localeItems.size() > 1) {
-            setLocalesVisible(true);
+        if (!visibilitySetExplicitly && !localeItems.isEmpty()) {
+            setLocalesVisibleInternal(true);
         }
     }
 
@@ -218,6 +218,10 @@ public class EnhancedLoginForm extends LoginForm {
      */
     public void setLocaleItemLabelGenerator(@Nullable Function<Locale, String> localeItemLabelGenerator) {
         this.localeItemLabelGenerator = localeItemLabelGenerator;
+    }
+
+    protected void setLocalesVisibleInternal(boolean visible) {
+        getElement().setProperty(LOCALES_VISIBILITY_PROPERTY, visible);
     }
 
     protected void onRememberMeChangedEvent(JmixRememberMeChangedEvent event) {

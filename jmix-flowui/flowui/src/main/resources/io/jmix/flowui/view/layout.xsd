@@ -3168,6 +3168,23 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- TwinColumn -->
+    <xs:complexType name="pivotTableComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="themeNames" type="twinColumnThemeNames"/>
+
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasSize"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- ActionItem-->
     <xs:complexType name="dropdownActionItemType">
         <xs:choice>

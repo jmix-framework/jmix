@@ -27,35 +27,41 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class JmixLoginI18n extends LoginI18n {
-
-    protected static final JsonValue JMIX_DEFAULT_I18N;
-
     private JmixForm form;
 
-    /*
-     * CAUTION! Copied from com.vaadin.flow.component.login.LoginI18n
-     */
-    static {
-        try {
-            final JsonFactory JSON_FACTORY = new JreJsonFactory();
-            JMIX_DEFAULT_I18N = JSON_FACTORY.parse(
-                    IOUtils.toString(JmixLoginI18n.class.getResource("i18n.json"),
-                            StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Cannot find the default i18n configuration. "
-                            + "Please make sure the i18n.json does exist.");
+    public static JmixLoginI18n createDefault() {
+        JmixLoginI18n jmixLoginI18n = new JmixLoginI18n();
+
+        JmixForm jmixForm = new JmixForm();
+        jmixForm.setTitle("Log in");
+        jmixForm.setUsername("Username");
+        jmixForm.setPassword("Password");
+        jmixForm.setSubmit("Log in");
+        jmixForm.setForgotPassword("Forgot password");
+        jmixForm.setRememberMe("Remember me");
+
+        jmixLoginI18n.setForm(jmixForm);
+
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setTitle("Incorrect username or password");
+        errorMessage.setMessage("Check that you have entered the correct username and password and try again.");
+        errorMessage.setUsername("Username is required");
+        errorMessage.setPassword("Password is required");
+
+        jmixLoginI18n.setErrorMessage(errorMessage);
+
+        return jmixLoginI18n;
+    }
+
+    public void setForm(Form form) {
+        if (form instanceof JmixForm jmixForm) {
+            this.form = jmixForm;
+        } else {
+            throw new IllegalStateException("Setter doesn't support value of %s" + form.getClass());
         }
     }
 
-    public static JmixLoginI18n createDefault() {
-        return JsonSerializer.toObject(JmixLoginI18n.class, JMIX_DEFAULT_I18N);
-    }
-
-    public void setForm(JmixForm form) {
-        this.form = form;
-    }
-
+    @Override
     public JmixForm getForm() {
         return form;
     }

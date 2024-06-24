@@ -41,6 +41,7 @@ public class EnhancedLoginForm extends LoginForm {
     protected List<Locale> locales;
     protected Locale selectedLocale = null;
     protected boolean rememberMe = false;
+    protected boolean visibilitySetExplicitly = false;
     protected Function<Locale, String> localeItemLabelGenerator;
 
     public EnhancedLoginForm() {
@@ -113,6 +114,8 @@ public class EnhancedLoginForm extends LoginForm {
      * @param visible whether component should be visible
      */
     public void setLocalesVisible(boolean visible) {
+        visibilitySetExplicitly = true;
+
         getElement().setProperty(LOCALES_VISIBILITY_PROPERTY, visible);
     }
 
@@ -129,6 +132,12 @@ public class EnhancedLoginForm extends LoginForm {
                 .collect(Collectors.toList());
 
         getElement().setPropertyJson("locales", JsonSerializer.toJson(localeItems));
+
+        //From 2.3 locales the combo box isn't visible by default. To keep visibility for migrated projects,
+        // the login component checks if locales visibility set explicitly
+        if (!visibilitySetExplicitly && localeItems.size() > 1) {
+            setLocalesVisible(true);
+        }
     }
 
     /**

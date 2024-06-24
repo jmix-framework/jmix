@@ -17,14 +17,6 @@
 package io.jmix.flowui.kit.component.loginform;
 
 import com.vaadin.flow.component.login.LoginI18n;
-import com.vaadin.flow.internal.JsonSerializer;
-import elemental.json.JsonFactory;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
-import org.apache.commons.io.IOUtils;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 public class JmixLoginI18n extends LoginI18n {
     private JmixForm form;

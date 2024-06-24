@@ -45,6 +45,8 @@ public class EnhancedLoginForm extends LoginForm {
     protected Function<Locale, String> localeItemLabelGenerator;
 
     public EnhancedLoginForm() {
+        super(JmixLoginI18n.createDefault());
+
         ComponentUtil.addListener(this, JmixRememberMeChangedEvent.class, this::onRememberMeChangedEvent);
         ComponentUtil.addListener(this, JmixLocaleChangedEvent.class, this::onLocaleChangedEvent);
     }

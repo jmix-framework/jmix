@@ -53,7 +53,7 @@ dependencies {
     api 'org.apache.avalon.framework:avalon-framework-api'
     api 'org.apache.avalon.framework:avalon-framework-impl'
 
-    api 'javax.media.jai:com.springsource.javax.media.jai.core'
+    //api 'javax.media.jai:com.springsource.javax.media.jai.core'
 
     api 'org.apache.xmlgraphics:fop'
     api 'org.apache.xmlgraphics:xmlgraphics-commons'

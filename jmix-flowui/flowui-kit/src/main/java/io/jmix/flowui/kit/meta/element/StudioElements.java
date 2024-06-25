@@ -847,7 +847,7 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "include", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "exclude", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "excludeProperties", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "excludeProperties", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "excludeRecursively", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false")
             }

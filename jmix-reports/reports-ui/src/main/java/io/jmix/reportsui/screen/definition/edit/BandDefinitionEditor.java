@@ -20,10 +20,18 @@ import com.google.common.collect.ImmutableBiMap;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.reports.entity.*;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.reports.entity.BandDefinition;
+import io.jmix.reports.entity.DataSet;
+import io.jmix.reports.entity.DataSetType;
+import io.jmix.reports.entity.JsonSourceType;
+import io.jmix.reports.entity.Orientation;
+import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reportsui.action.list.EditFetchPlanAction;
 import io.jmix.reportsui.screen.ReportsClientProperties;
@@ -36,7 +44,22 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.BoxLayout;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.component.CheckBox;
+import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ContentMode;
+import io.jmix.ui.component.GridLayout;
+import io.jmix.ui.component.HBoxLayout;
+import io.jmix.ui.component.HasContextHelp;
+import io.jmix.ui.component.Label;
+import io.jmix.ui.component.SourceCodeEditor;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.component.TextArea;
+import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.VBoxLayout;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.component.autocomplete.AutoCompleteSupport;
 import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
 import io.jmix.ui.component.autocomplete.Suggester;
@@ -45,13 +68,28 @@ import io.jmix.ui.component.data.options.MapOptions;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.screen.*;
+import io.jmix.ui.screen.Install;
+import io.jmix.ui.screen.MapScreenOptions;
+import io.jmix.ui.screen.MessageBundle;
+import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.screen.ScreenFragment;
+import io.jmix.ui.screen.StandardCloseAction;
+import io.jmix.ui.screen.Subscribe;
+import io.jmix.ui.screen.Target;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static io.jmix.reports.libintegration.MultiEntityDataLoader.NESTED_COLLECTION_SEPARATOR;
 
 @UiController("report_BandDefinitionEditor.fragment")
 @UiDescriptor("band-definition-edit-fragment.xml")
@@ -160,6 +198,8 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     protected ScreenBuilders screenBuilders;
     @Autowired
     protected Actions actions;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @Autowired
     protected DataContext dataContext;
@@ -384,8 +424,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
             if (dataSet.getType() == DataSetType.SINGLE) {
                 refreshFetchPlanNames(dataSet.getFetchPlanName(), dataSet.getEntityParamName());
             } else if (dataSet.getType() == DataSetType.MULTI) {
-                String alias = StringUtils.substringBefore(dataSet.getListEntitiesParamName(), "#");
-                refreshFetchPlanNames(dataSet.getFetchPlanName(), alias);
+                refreshFetchPlanNames(dataSet.getFetchPlanName(), dataSet.getListEntitiesParamName());
             }
 
             dataSetScriptField.resetEditHistory();
@@ -426,37 +465,65 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     }
 
     @Nullable
-    protected ReportInputParameter findParameterByAlias(String alias) {
-        for (ReportInputParameter reportInputParameter : parametersDc.getItems()) {
-            if (reportInputParameter.getAlias().equals(alias)) {
-                return reportInputParameter;
+    protected String findParameterMetaClassByAlias(String alias) {
+        if (alias.contains(NESTED_COLLECTION_SEPARATOR)) {
+            return findEmbeddedParameterMetaClassByAlias(StringUtils.substringAfter(alias, "#"));
+        }
+
+        return getParameterMetaClass(alias, parametersDc.getItems());
+    }
+
+    @Nullable
+    protected String findEmbeddedParameterMetaClassByAlias(String alias) {
+        for (ReportInputParameter parameter : parametersDc.getItems()) {
+            MetaClass parameterClass = metadata.getClass(parameter.getEntityMetaClass());
+
+            for (MetaProperty property : parameterClass.getProperties()) {
+                if (isMatchingMetaProperty(property, alias)) {
+                    return property.getRange().asClass().getName();
+                }
             }
         }
         return null;
     }
 
-    protected void refreshFetchPlanNames(@Nullable String currentFetchPlanName, String paramName) {
-        ReportInputParameter reportInputParameter = findParameterByAlias(paramName);
-
-        if (reportInputParameter != null) {
-            if (StringUtils.isNotBlank(reportInputParameter.getEntityMetaClass())) {
-                MetaClass parameterMetaClass = metadata.getClass(reportInputParameter.getEntityMetaClass());
-                Collection<String> fetchPlanNames = fetchPlanRepository.getFetchPlanNames(parameterMetaClass);
-                Map<String, String> fetchPlans = new HashMap<>();
-                for (String fetchPlanName : fetchPlanNames) {
-                    fetchPlans.put(fetchPlanName, fetchPlanName);
-                }
-                fetchPlans.put(FetchPlan.LOCAL, FetchPlan.LOCAL);
-                fetchPlans.put(FetchPlan.INSTANCE_NAME, FetchPlan.INSTANCE_NAME);
-                fetchPlans.put(FetchPlan.BASE, FetchPlan.BASE);
-
-                fetchPlanNameField.setOptionsMap(fetchPlans);
-
-                if (currentFetchPlanName == null) {
-                    fetchPlanNameField.setValue(FetchPlan.BASE);
-                }
-                return;
+    @Nullable
+    private String getParameterMetaClass(String alias, List<ReportInputParameter> parameters) {
+        for (ReportInputParameter parameter : parameters) {
+            if (parameter.getAlias().equals(alias)) {
+                return parameter.getEntityMetaClass();
             }
+        }
+        return null;
+    }
+
+    private boolean isMatchingMetaProperty(MetaProperty property, String alias) {
+        return property.getName().equals(alias)
+                && (property.getType() == MetaProperty.Type.ASSOCIATION
+                || property.getType() == MetaProperty.Type.COMPOSITION)
+                && metadataTools.isJpaEntity(property.getRange().asClass());
+    }
+
+    protected void refreshFetchPlanNames(@Nullable String currentFetchPlanName, String paramName) {
+        String parameterMetaClassName = findParameterMetaClassByAlias(paramName);
+
+        if (StringUtils.isNotBlank(parameterMetaClassName)) {
+            MetaClass parameterMetaClass = metadata.getClass(parameterMetaClassName);
+            Collection<String> fetchPlanNames = fetchPlanRepository.getFetchPlanNames(parameterMetaClass);
+            Map<String, String> fetchPlans = new HashMap<>();
+            for (String fetchPlanName : fetchPlanNames) {
+                fetchPlans.put(fetchPlanName, fetchPlanName);
+            }
+            fetchPlans.put(FetchPlan.LOCAL, FetchPlan.LOCAL);
+            fetchPlans.put(FetchPlan.INSTANCE_NAME, FetchPlan.INSTANCE_NAME);
+            fetchPlans.put(FetchPlan.BASE, FetchPlan.BASE);
+
+            fetchPlanNameField.setOptionsMap(fetchPlans);
+
+            if (currentFetchPlanName == null) {
+                fetchPlanNameField.setValue(FetchPlan.BASE);
+            }
+            return;
         }
         fetchPlanNameField.setOptionsMap(new HashMap<>());
     }

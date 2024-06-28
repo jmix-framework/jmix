@@ -1,0 +1,3 @@
+rootProject.name = '${project_name}-all'
+
+includeBuild '${project_name}-backend'

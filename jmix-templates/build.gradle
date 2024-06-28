@@ -19,7 +19,7 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'io.jmix.templates.studio'
+group = 'io.jmix.process-templates.studio'
 
 task copyContent(type: Copy) {
     from('content') {

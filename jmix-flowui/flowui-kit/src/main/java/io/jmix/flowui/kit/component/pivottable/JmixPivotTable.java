@@ -18,10 +18,19 @@ package io.jmix.flowui.kit.component.pivottable;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dependency.NpmPackage;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.shared.SlotUtils;
 
 @Tag("jmix-pivot-table")
 @JsModule("./src/pivot-table/jmix-pivot-table.js")
 public class JmixPivotTable extends Component {
+    public JmixPivotTable() {
+        Div div = new Div();
+        div.setId("div-id");
 
+        SlotUtils.addToSlot(this, "output", div);
+    }
 }

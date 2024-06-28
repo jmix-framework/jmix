@@ -4868,6 +4868,7 @@
                 <xs:element name="twinColumn" type="twinColumnComponent"/>
                 <xs:element name="component" type="genericComponent"/>
                 <xs:element name="fragment" type="fragmentComponent"/>
+                <xs:element name="pivotTable" type="pivotTableComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

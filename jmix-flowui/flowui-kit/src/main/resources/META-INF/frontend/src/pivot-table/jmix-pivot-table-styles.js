@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- import '@vaadin/vaadin-lumo-styles/color.js';
- import '@vaadin/vaadin-lumo-styles/sizing.js';
- import '@vaadin/vaadin-lumo-styles/style.js';
- import '@vaadin/vaadin-lumo-styles/typography.js';
- import {css, registerStyles} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import '@vaadin/vaadin-lumo-styles/color.js';
+import '@vaadin/vaadin-lumo-styles/sizing.js';
+import '@vaadin/vaadin-lumo-styles/style.js';
+import '@vaadin/vaadin-lumo-styles/typography.js';
 
-const jmixTwinColumnStyles = css`
+import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import { externalStyles } from "./jmix-pivot-external-styles";
+
+const jmixStyles = css`
 `;
 
-registerStyles('jmix-pivot-table', [jmixPivotTableStyles], {moduleId: 'jmix-pivot-table-styles'});
+export const jmixPivotTableStyles = [externalStyles, jmixStyles];

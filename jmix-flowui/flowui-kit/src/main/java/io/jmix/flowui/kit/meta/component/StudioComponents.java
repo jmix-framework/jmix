@@ -3159,7 +3159,7 @@ public interface StudioComponents {
             name = "PivotTable",
             classFqn = "io.jmix.flowui.kit.component.pivottable.JmixPivotTable",
             category = "Components",
-            xmlElement = "twinColumn",
+            xmlElement = "pivotTable",
             icon = "io/jmix/flowui/kit/meta/icon/component/pivotTable.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,

@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-import './vendor/jquery-ui.js';
-import './vendor/pivot.js';
+import './pivot/jquery.js';
+import './jquery-ui.min.js';
+import './pivot/pivot.js';
 
 import '@vaadin/button/src/vaadin-button.js';
 import '@vaadin/tooltip/src/vaadin-tooltip.js';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
-import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {Debouncer} from '@vaadin/component-base/src/debounce.js';
 import {LabelMixin} from "@vaadin/field-base/src/label-mixin.js";
 import {FocusMixin} from '@vaadin/a11y-base/src/focus-mixin.js';
 import {HelperController} from "@vaadin/field-base/src/helper-controller.js";
 import {helper} from '@vaadin/vaadin-lumo-styles/mixins/helper.js';
-import './jmix-pivot-table-styles.js';
+import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {jmixPivotTableStyles} from './jmix-pivot-table-styles.js';
+
+registerStyles('jmix-pivot-table', [jmixPivotTableStyles], {moduleId: 'jmix-pivot-table-styles'});
 
 export class PivotTable extends ElementMixin(FocusMixin(LabelMixin(ThemableMixin(PolymerElement)))) {
     static get is() {
@@ -60,12 +63,29 @@ export class PivotTable extends ElementMixin(FocusMixin(LabelMixin(ThemableMixin
 
     constructor() {
         super();
-
     }
 
     /** @protected */
     ready() {
         super.ready();
+
+        const editor = this.shadowRoot.querySelector('[part="output"]');
+
+        $(function(){
+                 /*     $('#outputDiv').pivot([], {});*/
+
+                                $("#div-id").pivotUI(
+                                    [
+                                        {color: "blue", shape: "circle"},
+
+                                        {color: "red", shape: "triangle"}
+                                    ],
+                                    {
+                                        rows: ["color"],
+                                        cols: ["shape"]
+                                    }
+                                );
+                             });
     }
 }
 

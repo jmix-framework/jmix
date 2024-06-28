@@ -16,14 +16,14 @@
 
 package io.jmix.reports.libintegration;
 
-import io.jmix.reports.yarg.structure.BandData;
-import io.jmix.reports.yarg.structure.ProxyWrapper;
-import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.reports.app.EntityMap;
 import io.jmix.reports.entity.DataSet;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.ProxyWrapper;
+import io.jmix.reports.yarg.structure.ReportQuery;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -55,16 +55,11 @@ public class MultiEntityDataLoader extends AbstractEntityDataLoader {
             entities = params.get(paramName);
         } else if (hasNestedCollection && params.containsKey(entityParameterName)) {
             Entity entity = (Entity) params.get(entityParameterName);
-            entity = reloadEntityByDataSetFetchPlan(dataSet, entity);
-            if (entity != null) {
-                entities = EntityValues.getValueEx(entity, nestedCollectionName);
-                if (dataSet instanceof DataSet) {
-                    FetchPlan entityFetchPlan = getFetchPlan(entity, (DataSet) dataSet);
-                    if (entityFetchPlan != null && entityFetchPlan.getProperty(nestedCollectionName) != null) {
-                        //noinspection ConstantConditions
-                        nestedCollectionFetchPLan = entityFetchPlan.getProperty(nestedCollectionName).getFetchPlan();
-                    }
-                }
+            List<Entity> nestedCollection = EntityValues.getValueEx(entity, nestedCollectionName);
+            entities = EntityValues.getValueEx(entity, nestedCollectionName);
+
+            if (dataSet instanceof DataSet && nestedCollection != null && !nestedCollection.isEmpty()) {
+                nestedCollectionFetchPLan = getFetchPlan(nestedCollection.get(0), (DataSet) dataSet);
             }
         }
 

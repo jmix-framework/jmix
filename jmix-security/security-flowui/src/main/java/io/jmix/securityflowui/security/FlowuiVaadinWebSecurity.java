@@ -26,6 +26,7 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.security.util.JmixHttpSecurityUtils;
+import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     protected ViewRegistry viewRegistry;
     protected ApplicationContext applicationContext;
     protected ServerProperties serverProperties;
+    protected ServletContext servletContext;
 
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -70,6 +72,11 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     @Autowired
     public void setServerProperties(ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
+    }
+
+    @Autowired
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 
     @Override
@@ -117,7 +124,12 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
         }
         Class<? extends View<?>> controllerClass =
                 viewRegistry.getViewInfo(loginViewId).getControllerClass();
-        setLoginView(http, controllerClass, "/");
+        setLoginView(http, controllerClass, getLogoutSuccessUrl());
+    }
+
+    protected String getLogoutSuccessUrl() {
+        String contextPath = servletContext.getContextPath();
+        return contextPath.startsWith("/") ? contextPath : "/" + contextPath;
     }
 
     protected String getLoginPath() {

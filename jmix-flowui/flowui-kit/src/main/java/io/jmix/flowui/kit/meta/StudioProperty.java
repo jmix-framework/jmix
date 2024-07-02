@@ -33,7 +33,7 @@ public @interface StudioProperty {
      */
     String classFqn() default "";
 
-    String name() default "";
+    String category() default Category.OTHER;
 
     boolean required() default false;
 
@@ -94,4 +94,12 @@ public @interface StudioProperty {
      * when searching for a reference (if {@code type} equals {@link StudioPropertyType#COMPONENT_REF})
      */
     String[] componentRefTags() default {};
+
+    interface Category {
+        String GENERAL = "General";
+        String SIZE_AND_POSITION = "Size and Position";
+        String DATA_BINDING = "Data Binding";
+        String STYLING = "Styling";
+        String OTHER = "Other";
+    }
 }

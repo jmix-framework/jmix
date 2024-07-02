@@ -20,9 +20,19 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -31,49 +41,21 @@ import org.slf4j.LoggerFactory;
 public class FileIOUtils {
 
     private FileIOUtils() {
-        // Utils only
     }
 
-    /**
-     * Writes the given content into the given file unless the file already
-     * contains that content.
-     *
-     * @param file
-     *            the file to write to
-     * @param content
-     *            the lines to write
-     * @return true if the content was written to the file, false otherwise
-     * @throws IOException
-     *             if something went wrong
-     */
     public static boolean writeIfChanged(File file, List<String> content)
             throws IOException {
-        return writeIfChanged(file,
-                content.stream().collect(Collectors.joining("\n")));
+        return writeIfChanged(file, String.join("\n", content));
     }
 
-    /**
-     * Writes the given content into the given file unless the file already
-     * contains that content.
-     *
-     * @param file
-     *            the file to write to
-     * @param content
-     *            the content to write
-     * @return true if the content was written to the file, false otherwise
-     * @throws IOException
-     *             if something went wrong
-     */
     public static boolean writeIfChanged(File file, String content)
             throws IOException {
         String existingFileContent = getExistingFileContent(file);
         if (content.equals(existingFileContent)) {
-            // Do not write the same contents to avoid frontend recompiles
             log().debug("skipping writing to file '{}' because content matches",
                     file);
             return false;
-        }
-
+        } else {
         log().debug("writing to file '{}' because content does not match",
                 file);
 
@@ -81,31 +63,24 @@ public class FileIOUtils {
         FileUtils.writeStringToFile(file, content, StandardCharsets.UTF_8);
         return true;
     }
+    }
 
     private static Logger log() {
         return LoggerFactory.getLogger(FileIOUtils.class);
     }
 
     private static String getExistingFileContent(File file) throws IOException {
-        if (!file.exists()) {
-            return null;
-        }
-        return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        return !file.exists() ? null : FileUtils.readFileToString(file, StandardCharsets.UTF_8);
     }
 
-    /**
-     * Try determining the project folder from the classpath.
-     *
-     * @return A file referring to the project folder or null if the folder
-     *         could not be determined
-     */
     public static File getProjectFolderFromClasspath() {
         try {
             URL url = FileIOUtils.class.getClassLoader().getResource(".");
             if (url != null && url.getProtocol().equals("file")) {
                 return getProjectFolderFromClasspath(url);
             }
-        } catch (Exception e) {
+        } catch (Exception var1) {
+            Exception e = var1;
             log().warn("Unable to determine project folder using classpath", e);
         }
         return null;
@@ -114,25 +89,59 @@ public class FileIOUtils {
 
     static File getProjectFolderFromClasspath(URL rootFolder)
             throws URISyntaxException {
-        // URI decodes the path so that e.g. " " works correctly
-        // Path.of makes windows paths work correctly
         Path path = Path.of(rootFolder.toURI());
-        if (path.endsWith(Path.of("target", "classes"))) {
-            return path.getParent().getParent().toFile();
-        }
-
-        return null;
+        return path.endsWith(Path.of("target", "classes")) ? path.getParent().getParent().toFile() : null;
     }
 
-    /**
-     * Checks if the given file is likely a temporary file created by an editor.
-     *
-     * @param file
-     *            the file to check
-     * @return true if the file is likely a temporary file, false otherwise
-     */
     public static boolean isProbablyTemporaryFile(File file) {
         return file.getName().endsWith("~");
     }
 
+    public static List<Path> getFilesByPattern(Path baseDir, String pattern) throws IOException {
+        if (baseDir != null && baseDir.toFile().exists()) {
+            if (pattern == null || pattern.isBlank()) {
+                pattern = "*";
+            }
+
+            final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+            final List<Path> matchingPaths = new ArrayList();
+            Files.walkFileTree(baseDir, new SimpleFileVisitor<Path>() {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (matcher.matches(file)) {
+                        matchingPaths.add(file);
+                    }
+
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+            return matchingPaths;
+        } else {
+            throw new IllegalArgumentException("Base directory is empty or doesn't exist: " + baseDir);
+        }
+    }
+
+    public static boolean compareIgnoringIndentationAndEOL(String content1, String content2, BiPredicate<String, String> compareFn) {
+        return compareFn.test(replaceIndentationAndEOL(content1), replaceIndentationAndEOL(content2));
+    }
+
+    public static boolean compareIgnoringIndentationEOLAndWhiteSpace(String content1, String content2, BiPredicate<String, String> compareFn) {
+        return compareFn.test(replaceWhiteSpace(replaceIndentationAndEOL(content1)), replaceWhiteSpace(replaceIndentationAndEOL(content2)));
+    }
+
+    private static String replaceIndentationAndEOL(String text) {
+        return text.replace("\r\n", "\n").replaceFirst("\n$", "").replaceAll("(?m)^(\\s)+", "");
+    }
+
+    private static String replaceWhiteSpace(String text) {
+        String character;
+        for(Iterator var1 = Stream.of("{", "}", ":", "'", "[", "]").toList().iterator(); var1.hasNext(); text = replaceWhiteSpaceAround(text, character)) {
+            character = (String)var1.next();
+        }
+
+        return text;
+    }
+
+    private static String replaceWhiteSpaceAround(String text, String character) {
+        return text.replaceAll(String.format("(\\s)*\\%s", character), character).replaceAll(String.format("\\%s(\\s)*", character), character);
+    }
 }

@@ -224,7 +224,7 @@ public class DevModeInitializer implements Serializable {
         // config,
         // see https://github.com/vaadin/flow/issues/9082
         File target = new File(studioFolder, config.getBuildFolder());
-        options.withWebpack(
+        options.withBuildResultFolders(
                 Paths.get(target.getPath(), "classes", VAADIN_WEBAPP_RESOURCES)
                         .toFile(),
                 Paths.get(target.getPath(), "classes", VAADIN_SERVLET_RESOURCES)
@@ -286,11 +286,12 @@ public class DevModeInitializer implements Serializable {
                 //.withNodeDownloadRoot(URI.create("https://www."))
                 .withPostinstallPackages(
                         Arrays.asList(additionalPostinstallPackages))
+                .withFrontendHotdeploy(true)
                 .withBundleBuild(false)
+                .withReact(false)
                 .withThemeValue(System.getProperty(PARAM_THEME_VALUE))
                 .withThemeVariant(System.getProperty(PARAM_THEME_VARIANT))
                 .withThemeClass(System.getProperty(PARAM_THEME_CLASS))
-                .withFrontendHotdeploy(true)
                 .withStudioFolder(studioFolder);
 
         NodeTasks tasks = new NodeTasks(options);

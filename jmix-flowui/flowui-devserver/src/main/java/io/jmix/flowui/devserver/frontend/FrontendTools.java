@@ -64,11 +64,11 @@ public class FrontendTools {
      * the installed version is older than {@link #SUPPORTED_NODE_VERSION}, i.e.
      * {@value #SUPPORTED_NODE_MAJOR_VERSION}.{@value #SUPPORTED_NODE_MINOR_VERSION}.
      */
-    public static final String DEFAULT_NODE_VERSION = "v20.11.1";
+    public static final String DEFAULT_NODE_VERSION = "v20.14.0";
     /**
      * This is the version shipped with the default Node version.
      */
-    public static final String DEFAULT_NPM_VERSION = "10.2.3";
+    public static final String DEFAULT_NPM_VERSION = "10.7.0";
 
     public static final String DEFAULT_PNPM_VERSION = "8.6.11";
 
@@ -158,6 +158,9 @@ public class FrontendTools {
         }
 
         String getCommand() {
+            if (name.equals("bun")) {
+                return name;
+            }
             return FrontendUtils.isWindows() ? name + ".cmd" : name;
         }
 
@@ -194,7 +197,8 @@ public class FrontendTools {
      * Note: settings for this object can not be changed through the settings
      * object after creation.
      *
-     * @param settings tooling settings to use
+     * @param settings
+     *            tooling settings to use
      */
     public FrontendTools(FrontendToolsSettings settings) {
         this.baseDir = Objects.requireNonNull(settings.getBaseDir());
@@ -212,8 +216,10 @@ public class FrontendTools {
      * Creates an instance using the the given project directory and application
      * configuration.
      *
-     * @param projectRoot              the project root directory
-     * @param applicationConfiguration the configuration for the application
+     * @param projectRoot
+     *            the project root directory
+     * @param applicationConfiguration
+     *            the configuration for the application
      */
     public FrontendTools(ApplicationConfiguration applicationConfiguration,
                          File projectRoot) {
@@ -228,15 +234,19 @@ public class FrontendTools {
      * <p>
      * If {@code alternativeDir} is {@code null} tools won't be installed.
      *
-     * @param baseDir              the base directory to locate the tools, not {@code null}
-     * @param alternativeDirGetter the getter for a directory where tools will be installed if
-     *                             they are not found globally or in the {@code baseDir}, may be
-     *                             {@code null}
-     * @param forceAlternativeNode force usage of node executable from alternative directory
+     *
+     * @param baseDir
+     *            the base directory to locate the tools, not {@code null}
+     * @param alternativeDirGetter
+     *            the getter for a directory where tools will be installed if
+     *            they are not found globally or in the {@code baseDir}, may be
+     *            {@code null}
+     * @param forceAlternativeNode
+     *            force usage of node executable from alternative directory
      * @deprecated use
-     * {@link FrontendTools#FrontendTools(FrontendToolsSettings)}
-     * instead, as it simplifies configuring the frontend tools and
-     * gives the default values to configuration parameters.
+     *             {@link FrontendTools#FrontendTools(FrontendToolsSettings)}
+     *             instead, as it simplifies configuring the frontend tools and
+     *             gives the default values to configuration parameters.
      */
     @Deprecated
     public FrontendTools(String baseDir, Supplier<String> alternativeDirGetter,
@@ -503,11 +513,12 @@ public class FrontendTools {
 
     /**
      * Ensures that given node executable is supported by Vaadin.
-     * <p>
+     *
      * Returns the input executable if version is supported, otherwise
      * {@literal null}.
      *
-     * @param nodeExecutable node executable to be checked
+     * @param nodeExecutable
+     *            node executable to be checked
      * @return input node executable if supported, otherwise {@literal null}.
      */
     private File rejectUnsupportedNodeVersion(File nodeExecutable) {
@@ -556,8 +567,9 @@ public class FrontendTools {
      * the installation directory and if it's not found it downloads and
      * installs it there.
      *
-     * @return the full path to the executable
      * @see #getNodeExecutable()
+     *
+     * @return the full path to the executable
      */
     public String forceAlternativeNodeExecutable() {
         Pair<String, String> nodeCommands = getNodeCommands();
@@ -582,7 +594,7 @@ public class FrontendTools {
      * Locate <code>npm</code> executable.
      *
      * @return the list of all commands in sequence that need to be executed to
-     * have npm running
+     *         have npm running
      */
     public List<String> getNpmExecutable() {
         return getNpmExecutable(true);
@@ -594,7 +606,7 @@ public class FrontendTools {
      * In case pnpm is not available it will be installed.
      *
      * @return the list of all commands in sequence that need to be executed to
-     * have pnpm running
+     *         have pnpm running
      */
     public List<String> getPnpmExecutable() {
         List<String> pnpmCommand = getSuitablePnpm();
@@ -685,10 +697,12 @@ public class FrontendTools {
     /**
      * Install node and npm.
      *
-     * @param nodeVersion  node version to install
-     * @param downloadRoot optional download root for downloading node. May be a
-     *                     filesystem file or a URL see
-     *                     {@link NodeInstaller#setNodeDownloadRoot(URI)}.
+     * @param nodeVersion
+     *            node version to install
+     * @param downloadRoot
+     *            optional download root for downloading node. May be a
+     *            filesystem file or a URL see
+     *            {@link NodeInstaller#setNodeDownloadRoot(URI)}.
      * @return node installation path
      */
     protected String installNode(String nodeVersion, URI downloadRoot) {
@@ -748,9 +762,10 @@ public class FrontendTools {
      * For example, the older versions of npm don't accept whitespaces in
      * folders path.
      *
-     * @param folder the folder to check.
+     * @param folder
+     *            the folder to check.
      * @return <code>true</code>, if the current version of npm accepts the
-     * given folder path, <code>false</code> if it causes issues.
+     *         given folder path, <code>false</code> if it causes issues.
      */
     boolean folderIsAcceptableByNpm(File folder) {
         Objects.requireNonNull(folder);
@@ -788,8 +803,10 @@ public class FrontendTools {
      * installed npm.
      *
      * @return the file object representing path to npm cache directory.
-     * @throws CommandExecutionException if getting the npm cache directory completes exceptionally.
-     * @throws IllegalStateException     if npm cache command return an empty path.
+     * @throws CommandExecutionException
+     *             if getting the npm cache directory completes exceptionally.
+     * @throws IllegalStateException
+     *             if npm cache command return an empty path.
      */
     File getNpmCacheDir()
             throws CommandExecutionException, IllegalStateException {
@@ -812,7 +829,8 @@ public class FrontendTools {
      * Executes <code>npm --version</code> to and parses the result.
      *
      * @return the version of npm.
-     * @throws UnknownVersionException if the npm command fails or returns unexpected output.
+     * @throws UnknownVersionException
+     *             if the npm command fails or returns unexpected output.
      */
     public FrontendVersion getNpmVersion() throws UnknownVersionException {
         List<String> npmVersionCommand = new ArrayList<>(
@@ -965,7 +983,8 @@ public class FrontendTools {
     /**
      * Get the first non null value from the given array.
      *
-     * @param valueArray array of values to get non null from
+     * @param valueArray
+     *            array of values to get non null from
      * @return first non null value or null if no values found
      */
     private String getNonNull(String... valueArray) {

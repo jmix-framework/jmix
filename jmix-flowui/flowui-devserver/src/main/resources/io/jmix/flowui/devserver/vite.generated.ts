@@ -11,6 +11,7 @@ import * as net from 'net';
 
 import { processThemeResources } from '#buildFolder#/plugins/application-theme-plugin/theme-handle.js';
 import { rewriteCssUrls } from '#buildFolder#/plugins/theme-loader/theme-loader-utils.js';
+import { addFunctionComponentSourceLocationBabel } from '#buildFolder#/plugins/react-function-location-plugin/react-function-location-plugin.js';
 import settings from '#settingsImport#';
 import {
   AssetInfo,
@@ -33,6 +34,9 @@ import postcssLit from '#buildFolder#/plugins/rollup-plugin-postcss-lit-custom/r
 import { createRequire } from 'module';
 
 import { visualizer } from 'rollup-plugin-visualizer';
+import reactPlugin from '@vitejs/plugin-react';
+
+//#vitePluginFileSystemRouterImport#
 
 // Make `require` compatible with ES modules
 const require = createRequire(import.meta.url);
@@ -605,7 +609,6 @@ function themePlugin(opts): PluginOption {
       if (!id.startsWith(settings.themeFolder)) {
         return;
       }
-
       for (const location of [themeResourceFolder, frontendFolder]) {
         const result = await this.resolve(path.resolve(location, id));
         if (result) {
@@ -622,8 +625,9 @@ function themePlugin(opts): PluginOption {
       ) {
         return;
       }
-      const [themeName] = bareId.substring(themeFolder.length + 1).split('/');
-      return rewriteCssUrls(raw, path.dirname(bareId), path.resolve(themeFolder, themeName), console, opts);
+      const resourceThemeFolder = bareId.startsWith(themeFolder) ? themeFolder : themeOptions.themeResourceFolder;
+      const [themeName] =  bareId.substring(resourceThemeFolder.length + 1).split('/');
+      return rewriteCssUrls(raw, path.dirname(bareId), path.resolve(resourceThemeFolder, themeName), console, opts);
     }
   };
 }
@@ -714,9 +718,11 @@ export const vaadinConfig: UserConfigFn = (env) => {
       }
     },
     build: {
+      minify: productionMode,
       outDir: buildOutputFolder,
       emptyOutDir: devBundle,
       assetsDir: 'VAADIN/build',
+      target: ["esnext", "safari15"],
       rollupOptions: {
         input: {
           indexhtml: projectIndexHtml,
@@ -768,6 +774,19 @@ export const vaadinConfig: UserConfigFn = (env) => {
           new RegExp(`${themeResourceFolder}/.*/.*\\.css\\?.*`),
           new RegExp('.*/.*\\?html-proxy.*')
         ]
+      }),
+      // The React plugin provides fast refresh and debug source info
+      reactPlugin({
+        include: '**/*.tsx',
+        babel: {
+          // We need to use babel to provide the source information for it to be correct
+          // (otherwise Babel will slightly rewrite the source file and esbuild generate source info for the modified file)
+          presets: [['@babel/preset-react', { runtime: 'automatic', development: !productionMode }]],
+          // React writes the source location for where components are used, this writes for where they are defined
+          plugins: [
+            !productionMode && addFunctionComponentSourceLocationBabel()
+          ].filter(Boolean)
+        }
       }),
       {
         name: 'vaadin:force-remove-html-middleware',
@@ -830,6 +849,7 @@ export const vaadinConfig: UserConfigFn = (env) => {
         typescript: true
       }),
       productionMode && visualizer({ brotliSize: true, filename: bundleSizeFile })
+      //#vitePluginFileSystemRouter#
     ]
   };
 };

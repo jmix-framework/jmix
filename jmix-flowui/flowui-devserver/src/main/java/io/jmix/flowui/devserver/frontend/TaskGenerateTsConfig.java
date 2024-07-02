@@ -35,6 +35,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
 
+    /**
+     * Keeps track of whether a warning update has already been logged. This is
+     * used to avoid spamming the log with the same message.
+     */
+    protected static boolean warningEmitted = false;
     private static final String COMPILER_OPTIONS = "compilerOptions";
 
     static final String TSCONFIG_JSON = "tsconfig.json";
@@ -47,22 +52,25 @@ public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
             "v23.3.0", "v23.2", "v23.1", "v22", "v14", "osgi", "v23.3.4",
             "v23.3.4-hilla" };
 
-    //@formatter:off
-    static final String ERROR_MESSAGE =
-            "%n%n**************************************************************************"
-                    + "%n*  TypeScript config file 'tsconfig.json' has been updated to the latest *"
-                    + "%n*  version by Vaadin. Please verify that the updated 'tsconfig.json'     *"
-                    + "%n*  file contains configuration needed for your project (add missing part *"
-                    + "%n*  from the old file if necessary) and restart the application.          *"
-                    + "%n**************************************************************************%n%n";
-    //@formatter:on
+    static final String ERROR_MESSAGE = """
+
+            **************************************************************************
+            *  TypeScript config file 'tsconfig.json' has been updated to the latest *
+            *  version by Vaadin. Please verify that the updated 'tsconfig.json'     *
+            *  file contains configuration needed for your project (add any missing  *
+            *  parts from the old file if necessary) and restart the application.    *
+            *  Old configuration is stored as a '.bak' file.                         *
+            **************************************************************************
+
+            """;
 
     private Options options;
 
     /**
      * Create a task to generate <code>tsconfig.json</code> file.
      *
-     * @param options the task options
+     * @param options
+     *            the task options
      */
     TaskGenerateTsConfig(Options options) {
         this.options = options;
@@ -81,9 +89,14 @@ public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
         } else {
             fileName = String.format(TSCONFIG_JSON_OLDER_VERSIONS_TEMPLATE, vaadinVersion);
         }
-
         try (InputStream tsConfStream = FrontendUtils.getResourceAsStream(fileName)) {
-            return IOUtils.toString(tsConfStream, UTF_8);
+            String config = IOUtils.toString(tsConfStream, UTF_8);
+
+            config = config.replaceAll("%FRONTEND%",
+                    options.getStudioFolder().toPath()
+                            .relativize(options.getFrontendDirectory().toPath())
+                            .toString().replaceAll("\\\\", "/"));
+            return config;
         }
     }
 
@@ -149,8 +162,7 @@ public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
 
     @Override
     protected boolean shouldGenerate() {
-        File tsConfig = new File(options.getStudioFolder(), TSCONFIG_JSON);
-        return !tsConfig.exists();
+        return !getGeneratedFile().exists();
     }
 
     private void overrideIfObsolete() throws ExecutionFailedException {
@@ -203,11 +215,18 @@ public class TaskGenerateTsConfig extends AbstractTaskClientGenerator {
                 }
             }
 
+            File backupFile = File.createTempFile(
+                    projectTsConfigFile.getName() + ".", ".bak",
+                    projectTsConfigFile.getParentFile());
+            FileIOUtils.writeIfChanged(backupFile, projectTsConfigAsString);
             // Project's TS config has a custom content -
             // rewrite and throw an exception with explanations
             FileIOUtils.writeIfChanged(projectTsConfigFile,
                     latestTsConfigTemplate);
-            throw new ExecutionFailedException(String.format(ERROR_MESSAGE));
+            if (!warningEmitted) {
+                log().warn(ERROR_MESSAGE);
+                warningEmitted = true;
+            }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

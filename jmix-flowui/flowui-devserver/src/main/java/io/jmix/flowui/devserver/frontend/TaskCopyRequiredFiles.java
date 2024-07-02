@@ -35,8 +35,8 @@ import org.apache.commons.io.FileUtils;
  */
 public class TaskCopyRequiredFiles extends NodeUpdater {
 
-    protected TaskCopyRequiredFiles(ClassFinder finder, FrontendDependenciesScanner frontendDependencies, Options options) {
-        super(finder, frontendDependencies, options);
+    protected TaskCopyRequiredFiles(FrontendDependenciesScanner frontendDependencies, Options options) {
+        super(frontendDependencies, options);
     }
 
     @Override

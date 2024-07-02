@@ -18,7 +18,6 @@ package io.jmix.flowui.devserver.frontend;
 
 import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.di.Lookup;
-import com.vaadin.flow.internal.UsageStatistics;
 import com.vaadin.flow.server.ExecutionFailedException;
 import com.vaadin.flow.server.PwaConfiguration;
 import com.vaadin.flow.server.frontend.FallibleCommand;
@@ -90,7 +89,8 @@ public class NodeTasks implements FallibleCommand {
                     TaskCopyTemplateFiles.class,
                     TaskRunDevBundleBuild.class,
                     TaskPrepareProdBundle.class,
-                    TaskCleanFrontendFiles.class
+                    TaskCleanFrontendFiles.class,
+                    TaskRemoveOldFrontendGeneratedFiles.class
         ));
     // @formatter:on
 
@@ -121,52 +121,62 @@ public class NodeTasks implements FallibleCommand {
         }
 
         if (options.isEnablePackagesUpdate() || options.isEnableImportsUpdate()
-                || options.isEnableWebpackConfigUpdate()) {
+                || options.isEnableConfigUpdate()) {
             frontendDependencies = new FrontendDependenciesScanner.FrontendDependenciesScannerFactory()
                     .createScanner(!options.isUseByteCodeScanner(), classFinder,
                             options.isGenerateEmbeddableWebComponents(),
                             featureFlags);
 
-            if (options.isProductionMode()) {
+//            if (options.isProductionMode()) {
 //                boolean needBuild = BundleValidationUtil.needsBuild(options,
-//                        frontendDependencies, classFinder,
+//                        frontendDependencies,
 //                        Mode.PRODUCTION_PRECOMPILED_BUNDLE);
 //                options.withRunNpmInstall(needBuild);
 //                options.withBundleBuild(needBuild);
 //                if (!needBuild) {
 //                    commands.add(new TaskPrepareProdBundle(options));
-//                    UsageStatistics.markAsUsed("flow/prod-pre-compiled-bundle",
-//                            null);
+//                    File prodBundle = ProdBundleUtils
+//                            .getProdBundle(options.getNpmFolder());
+//                    if (prodBundle.exists()) {
+//                        UsageStatistics.markAsUsed("flow/app-prod-bundle",
+//                                null);
+//                    } else {
+//                        UsageStatistics.markAsUsed(
+//                                "flow/prod-pre-compiled-bundle", null);
+//                    }
 //                } else {
 //                    BundleUtils.copyPackageLockFromBundle(options);
 //                }
-            } else if (options.isBundleBuild()) {
-                // The dev bundle check needs the frontendDependencies to be
-                // able to
-                // determine if we need a rebuild as the check happens
-                // immediately
-                // and no update tasks are executed before it.
-                if (false /*BundleValidationUtil.needsBuild(options,
-                        frontendDependencies, classFinder,
-                        Mode.DEVELOPMENT_BUNDLE)*/) {
-                    commands.add(
-                            new TaskCleanFrontendFiles(options.getStudioFolder()));
-                    options.withRunNpmInstall(true);
-                    options.withCopyTemplates(true);
-                    // BundleUtils.copyPackageLockFromBundle(options);
-                    // UsageStatistics.markAsUsed("flow/app-dev-bundle", null);
-                } else {
+//            } else if (options.isBundleBuild()) {
+//                 // The dev bundle check needs the frontendDependencies to be
+//                 // able to
+//                 // determine if we need a rebuild as the check happens
+//                 // immediately
+//                 // and no update tasks are executed before it.
+//                if (BundleValidationUtil.needsBuild(options,
+//                        frontendDependencies, Mode.DEVELOPMENT_BUNDLE)) {
+//                    commands.add(new TaskCleanFrontendFiles(
+//                            options.getNpmFolder(),
+//                            options.getFrontendDirectory(), classFinder));
+//                    options.withRunNpmInstall(true);
+//                    options.withCopyTemplates(true);
+//                    BundleUtils.copyPackageLockFromBundle(options);
+//                    UsageStatistics.markAsUsed("flow/app-dev-bundle", null);
+//                } else {
                     // A dev bundle build is not needed after all, skip it
                     options.withBundleBuild(false);
-//                    File devBundleFolder = DevBundleUtils
-//                            .getDevBundleFolder(options.getNpmFolder());
+//                    File devBundleFolder = DevBundleUtils.getDevBundleFolder(
+//                      options.getNpmFolder(), options.getBuildDirectoryName());
 //                    if (devBundleFolder.exists()) {
 //                        UsageStatistics.markAsUsed("flow/app-dev-bundle", null);
 //                    } else {
 //                        UsageStatistics.markAsUsed("flow/dev-bundle", null);
 //                    }
-                }
-            }
+//                }
+//            }
+//            } else if (options.isFrontendHotdeploy()) {
+//                BundleUtils.copyPackageLockFromBundle(options);
+//            }
 
             if (options.isGenerateEmbeddableWebComponents()) {
                 FrontendWebComponentGenerator generator = new FrontendWebComponentGenerator(classFinder);
@@ -186,12 +196,11 @@ public class NodeTasks implements FallibleCommand {
 //                }
             }
 
-            commands.add(new TaskCopyRequiredFiles(options.getClassFinder(), frontendDependencies, options));
+            commands.add(new TaskCopyRequiredFiles(frontendDependencies, options));
             TaskUpdatePackages packageUpdater = null;
             if (options.isEnablePackagesUpdate()
                     && options.getJarFrontendResourcesFolder() != null) {
-                packageUpdater = new TaskUpdatePackages(classFinder,
-                        frontendDependencies, options);
+                packageUpdater = new TaskUpdatePackages(frontendDependencies, options);
                 commands.add(packageUpdater);
             }
 
@@ -263,14 +272,16 @@ public class NodeTasks implements FallibleCommand {
         }
 
         if (options.isEnableImportsUpdate()) {
-            commands.add(new TaskUpdateImports(classFinder,
-                    frontendDependencies, options, themeDefinition));
+            commands.add(new TaskUpdateImports(frontendDependencies, options, themeDefinition));
 
             commands.add(new TaskUpdateThemeImport(themeDefinition, options));
         }
 
         if (options.isCopyTemplates()) {
             commands.add(new TaskCopyTemplateFiles(classFinder, options));
+        }
+        if (options.isCleanOldGeneratedFiles()) {
+            commands.add(new TaskRemoveOldFrontendGeneratedFiles(options));
         }
     }
 
@@ -279,10 +290,7 @@ public class NodeTasks implements FallibleCommand {
         if (options.isProductionMode() || options.isFrontendHotdeploy()
                 || options.isBundleBuild()) {
             commands.add(new TaskGenerateIndexTs(options));
-            if (options.getFeatureFlags()
-                    .isEnabled(FeatureFlags.REACT_ROUTER)) {
                 commands.add(new TaskGenerateReactFiles(options));
-            }
             if (!options.isProductionMode()) {
                 commands.add(new TaskGenerateViteDevMode(options));
             }
@@ -309,6 +317,10 @@ public class NodeTasks implements FallibleCommand {
     }
 
     private void addEndpointServicesTasks(Options options) {
+        if (!FrontendUtils.isHillaUsed(options.getFrontendDirectory(),
+                options.getClassFinder())) {
+            return;
+        }
         Lookup lookup = options.getLookup();
         EndpointGeneratorTaskFactory endpointGeneratorTaskFactory = lookup
                 .lookup(EndpointGeneratorTaskFactory.class);
@@ -376,7 +388,7 @@ public class NodeTasks implements FallibleCommand {
                         .of(lockInfo.pid());
 
                 if (processHandle.isPresent()
-                        && processHandle.get().info().commandLine().orElse("")
+                        && normalizeCommandLine(processHandle.get().info())
                         .equals(lockInfo.commandLine())) {
                     if (!loggedWaiting) {
                         getLogger().info("Waiting for a previous instance of "
@@ -456,11 +468,15 @@ public class NodeTasks implements FallibleCommand {
     private void writeLockFile() throws IOException {
         ProcessHandle currentProcess = ProcessHandle.current();
         long myPid = currentProcess.pid();
-        String commandLine = currentProcess.info().commandLine().orElse("");
+        String commandLine = normalizeCommandLine(currentProcess.info());
         List<String> lines = List.of(Long.toString(myPid), commandLine);
         Files.write(lockFile, lines, StandardCharsets.UTF_8);
     }
 
+    private String normalizeCommandLine(ProcessHandle.Info processInfo) {
+        return processInfo.commandLine()
+                .map(line -> line.replaceAll("\\r?\\n", " \\\\n")).orElse("");
+    }
     private Logger getLogger() {
         return LoggerFactory.getLogger(getClass());
     }

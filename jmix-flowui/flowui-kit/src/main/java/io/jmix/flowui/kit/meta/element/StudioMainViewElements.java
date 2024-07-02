@@ -62,7 +62,7 @@ public interface StudioMainViewElements {
             unlimitedCount = false,
             visible = true,
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "alignItems", type = StudioPropertyType.ENUMERATION,
                             setParameterFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

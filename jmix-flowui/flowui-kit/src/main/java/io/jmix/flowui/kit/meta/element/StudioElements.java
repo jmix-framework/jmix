@@ -44,7 +44,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
@@ -81,7 +81,7 @@ public interface StudioElements {
             xmlElement = "actionItem",
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#actionItem",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "ref", type = StudioPropertyType.ACTION_REF)
             }
     )
@@ -102,7 +102,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             }
@@ -365,7 +365,7 @@ public interface StudioElements {
                     )
             ),
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true)
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true)
             }
     )
     DropdownButtonItem componentItem();
@@ -467,7 +467,7 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
                             componentRefTags = "genericFilter", required = true),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "configurationParam", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "conditionParam", type = StudioPropertyType.STRING)
             }
@@ -490,7 +490,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "flexGrow", type = StudioPropertyType.DOUBLE),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "lazy", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -508,7 +508,7 @@ public interface StudioElements {
             xmlElement = "textItem",
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#textItem",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
@@ -591,7 +591,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
                             componentRefTags = {"simplePagination"}, required = true),
                     @StudioProperty(xmlAttribute = "firstResultParam", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "maxResultsParam", type = StudioPropertyType.STRING)
             }
     )
@@ -606,7 +606,7 @@ public interface StudioElements {
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF,
                             componentRefTags = "propertyFilter", required = true),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
             }
     )
@@ -619,7 +619,7 @@ public interface StudioElements {
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             properties = {
                     @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
             }
     )
@@ -659,7 +659,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true")
             }
@@ -698,7 +698,7 @@ public interface StudioElements {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -749,7 +749,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "hasInExpression", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "labelVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -809,7 +809,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "operation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.component.logicalfilter.LogicalFilterComponent$Operation",
                             options = {"AND", "OR"}, required = true),
@@ -829,7 +829,7 @@ public interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/configuration.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "default", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "operation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.component.logicalfilter.LogicalFilterComponent$Operation",
@@ -960,7 +960,7 @@ public interface StudioElements {
             xmlElement = "component",
             target = "io.jmix.flowui.facet.SettingsFacet",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN)
             }
     )
@@ -990,7 +990,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true")
             }
@@ -1012,7 +1012,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),

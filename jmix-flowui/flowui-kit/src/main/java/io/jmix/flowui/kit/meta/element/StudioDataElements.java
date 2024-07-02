@@ -34,7 +34,7 @@ public interface StudioDataElements {
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/property-containers.html",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING, required = true),
             }
     )
@@ -50,7 +50,7 @@ public interface StudioDataElements {
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING, required = true),
             }
     )
@@ -67,7 +67,7 @@ public interface StudioDataElements {
                     "io.jmix.flowui.model.CollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
@@ -89,7 +89,7 @@ public interface StudioDataElements {
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
@@ -113,7 +113,7 @@ public interface StudioDataElements {
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE),
                     @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
             }
@@ -128,7 +128,7 @@ public interface StudioDataElements {
             target = "io.jmix.flowui.model.KeyValueCollectionContainer",
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
                             defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,

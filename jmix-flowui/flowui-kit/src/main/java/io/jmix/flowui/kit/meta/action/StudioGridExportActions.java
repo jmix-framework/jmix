@@ -41,8 +41,8 @@ public interface StudioGridExportActions {
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID,
-                            required = true, initialValue = "excelExport"),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "excelExport"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
@@ -72,8 +72,8 @@ public interface StudioGridExportActions {
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID,
-                            required = true, initialValue = "jsonExport"),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "jsonExport"),
                     @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")

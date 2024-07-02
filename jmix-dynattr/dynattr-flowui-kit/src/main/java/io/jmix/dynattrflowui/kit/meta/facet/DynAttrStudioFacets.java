@@ -31,7 +31,7 @@ public interface DynAttrStudioFacets {
             xmlnsAlias = "dynattr",
             icon = "io/jmix/dynattrflowui/icon/facet/dynamicAttributes.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
             }
     )
     void dynamicAttributesFacet();

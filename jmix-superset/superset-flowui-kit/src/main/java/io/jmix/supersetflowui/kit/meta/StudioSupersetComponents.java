@@ -44,7 +44,7 @@ public interface StudioSupersetComponents {
                     @StudioProperty(xmlAttribute = "embeddedId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "filtersExpanded", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),

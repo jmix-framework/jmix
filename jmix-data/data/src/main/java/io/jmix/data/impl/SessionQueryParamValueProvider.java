@@ -17,16 +17,16 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.JmixOrder;
-import io.jmix.core.session.SessionData;
 import io.jmix.core.QueryParamValueProvider;
+import io.jmix.core.impl.session.ThreadLocalSessionData;
+import io.jmix.core.session.SessionData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 /**
  * Takes query parameter values from current session attributes set using {@link SessionData}.
@@ -55,7 +55,11 @@ public class SessionQueryParamValueProvider implements QueryParamValueProvider {
         if (supports(paramName)) {
             String attrName = paramName.substring(SESSION_PREFIX.length());
             try {
-                return sessionDataProvider.getObject().getAttribute(attrName);
+                if (ThreadLocalSessionData.isSet()) {
+                    return ThreadLocalSessionData.getAttribute(attrName);
+                } else {
+                    return sessionDataProvider.getObject().getAttribute(attrName);
+                }
             } catch (Exception e) {
                 log.warn("Unable to get session attribute {}: {}", paramName, e.toString());
             }

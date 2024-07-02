@@ -74,15 +74,15 @@ public interface StudioComponents {
             xmlElement = "component",
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                    @StudioProperty(xmlAttribute = "css", category = Category.STYLING, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "visible", category = Category.STYLING, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                    @StudioProperty(xmlAttribute = "colspan", category = Category.SIZE_AND_POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "alignSelf", category = Category.SIZE_AND_POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "class",
+                    @StudioProperty(xmlAttribute = "class", category = Category.GENERAL,
                             type = StudioPropertyType.COMPONENT_CLASS, useAsInjectionType = true, required = true),
             }
     )
@@ -96,15 +96,15 @@ public interface StudioComponents {
             icon = "io/jmix/flowui/kit/meta/icon/component/fragment.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                    @StudioProperty(xmlAttribute = "css", category = Category.STYLING, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "visible", category = Category.STYLING, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
+                    @StudioProperty(xmlAttribute = "colspan", category = Category.SIZE_AND_POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "alignSelf", category = Category.SIZE_AND_POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "class",
+                    @StudioProperty(xmlAttribute = "class", category = Category.GENERAL,
                             type = StudioPropertyType.FRAGMENT_CLASS, useAsInjectionType = true, required = true)
             }
     )

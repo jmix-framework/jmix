@@ -21,7 +21,6 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.internal.JsonSerializer;
 import com.vaadin.flow.shared.Registration;
-
 import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
@@ -42,9 +41,12 @@ public class EnhancedLoginForm extends LoginForm {
     protected List<Locale> locales;
     protected Locale selectedLocale = null;
     protected boolean rememberMe = false;
+    protected boolean visibilitySetExplicitly = false;
     protected Function<Locale, String> localeItemLabelGenerator;
 
     public EnhancedLoginForm() {
+        super(JmixLoginI18n.createDefault());
+
         ComponentUtil.addListener(this, JmixRememberMeChangedEvent.class, this::onRememberMeChangedEvent);
         ComponentUtil.addListener(this, JmixLocaleChangedEvent.class, this::onLocaleChangedEvent);
     }
@@ -105,7 +107,7 @@ public class EnhancedLoginForm extends LoginForm {
      */
     @Synchronize(LOCALES_VISIBILITY_PROPERTY)
     public boolean isLocalesVisible() {
-        return getElement().getProperty(LOCALES_VISIBILITY_PROPERTY, true);
+        return getElement().getProperty(LOCALES_VISIBILITY_PROPERTY, false);
     }
 
     /**
@@ -114,6 +116,8 @@ public class EnhancedLoginForm extends LoginForm {
      * @param visible whether component should be visible
      */
     public void setLocalesVisible(boolean visible) {
+        visibilitySetExplicitly = true;
+
         getElement().setProperty(LOCALES_VISIBILITY_PROPERTY, visible);
     }
 
@@ -130,6 +134,12 @@ public class EnhancedLoginForm extends LoginForm {
                 .collect(Collectors.toList());
 
         getElement().setPropertyJson("locales", JsonSerializer.toJson(localeItems));
+
+        //From 2.3 the locales combo box isn't visible by default. To keep visibility for migrated projects,
+        // the login component checks if locales visibility set explicitly
+        if (!visibilitySetExplicitly && !localeItems.isEmpty()) {
+            setLocalesVisibleInternal(true);
+        }
     }
 
     /**
@@ -210,6 +220,10 @@ public class EnhancedLoginForm extends LoginForm {
      */
     public void setLocaleItemLabelGenerator(@Nullable Function<Locale, String> localeItemLabelGenerator) {
         this.localeItemLabelGenerator = localeItemLabelGenerator;
+    }
+
+    protected void setLocalesVisibleInternal(boolean visible) {
+        getElement().setProperty(LOCALES_VISIBILITY_PROPERTY, visible);
     }
 
     protected void onRememberMeChangedEvent(JmixRememberMeChangedEvent event) {

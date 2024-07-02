@@ -41,6 +41,7 @@ public abstract class AbstractComboBoxLoader<T extends ComboBox<?>> extends Abst
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
+        loadString(element, "overlayWidth", resultComponent::setOverlayWidth);
 
         componentLoader().loadPlaceholder(resultComponent, element);
         componentLoader().loadLabel(resultComponent, element);

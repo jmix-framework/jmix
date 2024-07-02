@@ -26,8 +26,8 @@ registerStyles('jmix-multi-select-combo-box-picker', [],{
     moduleId: 'jmix-multi-select-combo-box-picker-styles'
 });
 
-// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 24.3.1]
-export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
+// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 24.4.4]
+class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
 
     static get is() {
         return 'jmix-multi-select-combo-box-picker';
@@ -51,9 +51,9 @@ export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
                     <span part="required-indicator" aria-hidden="true" on-click="focus"></span>
                 </div>
 
-                <jmix-multi-select-combo-box-internal
+                <vaadin-multi-select-combo-box-internal
                         id="comboBox"
-                        items="[[__effectiveItems]]"
+                        items="[[items]]"
                         item-id-path="[[itemIdPath]]"
                         item-label-path="[[itemLabelPath]]"
                         item-value-path="[[itemValuePath]]"
@@ -67,12 +67,13 @@ export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
                         last-filter="{{_lastFilter}}"
                         loading="{{loading}}"
                         size="{{size}}"
-                        filtered-items="[[__effectiveFilteredItems]]"
+                        filtered-items="[[filteredItems]]"
                         selected-items="[[selectedItems]]"
                         selected-items-on-top="[[selectedItemsOnTop]]"
                         top-group="[[_topGroup]]"
                         opened="{{opened}}"
                         renderer="[[renderer]]"
+                        keep-filter="[[keepFilter]]"
                         theme$="[[_theme]]"
                         on-combo-box-item-selected="_onComboBoxItemSelected"
                         on-change="_onComboBoxChange"
@@ -126,3 +127,5 @@ export class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
 }
 
 defineCustomElement(JmixMultiSelectComboBoxPicker);
+
+export { JmixMultiSelectComboBoxPicker }

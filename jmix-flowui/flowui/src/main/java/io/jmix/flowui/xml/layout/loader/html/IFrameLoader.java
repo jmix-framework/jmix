@@ -37,6 +37,7 @@ public class IFrameLoader extends AbstractHtmlComponentLoader<IFrame> {
         loadString(element, "resource", resultComponent::setSrc);
         loadString(element, "resourceDoc", resultComponent::setSrcdoc);
         loadEnum(element, IFrame.ImportanceType.class, "importance", resultComponent::setImportance);
+        componentLoader().loadAriaLabel(resultComponent, element);
         loadSandbox();
     }
 

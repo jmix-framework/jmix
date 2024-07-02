@@ -28,8 +28,8 @@ import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.lang.Nullable;
 
-public class JmixCheckbox extends Checkbox implements SupportsValueSource<Boolean>, ApplicationContextAware,
-        InitializingBean {
+public class JmixCheckbox extends Checkbox implements SupportsValueSource<Boolean>,
+        ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 

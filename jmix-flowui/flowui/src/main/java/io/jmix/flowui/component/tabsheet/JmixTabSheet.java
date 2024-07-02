@@ -27,6 +27,7 @@ import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.tabs.TabSheetVariant;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.ComponentContainer;
@@ -43,7 +44,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [last update Vaadin 24.3.1]
+// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [last update Vaadin 24.4.4]
 @Tag("jmix-tabsheet")
 @JsModule("./src/tabsheet/jmix-tabsheet.js")
 public class JmixTabSheet extends Component
@@ -358,15 +359,26 @@ public class JmixTabSheet extends Component
             tabToContent.get(tab).getElement().removeFromParent();
         }
 
-        // On the client, content is associated with a tab by id
-        String id = tab.getId()
-                .orElse(generateTabId());
-        tab.setId(id);
-        content.getElement().setAttribute("tab", id);
+        linkTabToContent(tab, content);
 
         tabToContent.put(tab, content);
 
         updateContent();
+    }
+
+    protected void linkTabToContent(Tab tab, Component content) {
+        runBeforeClientResponse(ui -> {
+            // On the client, content is associated with a tab by id
+            String id = tab.getId()
+                    .orElse(generateTabId());
+            tab.setId(id);
+            content.getElement().setAttribute("tab", id);
+        });
+    }
+
+    protected void runBeforeClientResponse(SerializableConsumer<UI> command) {
+        getElement().getNode().runWhenAttached(ui -> ui
+                .beforeClientResponse(this, context -> command.accept(ui)));
     }
 
     protected String generateTabId() {

@@ -41,8 +41,6 @@ public class RestAsResourceServerBeforeInvocationEventListener {
     @Autowired
     protected AccessManager accessManager;
     @Autowired
-    protected CustomRestAuthorizedUrlsProvider restAuthorizedUrlsProvider;
-    @Autowired
     protected Messages messages;
 
     private static final Collection<String> REST_AUTHORIZED_URLS = Arrays.asList(
@@ -74,19 +72,7 @@ public class RestAsResourceServerBeforeInvocationEventListener {
         String requestURI = ((HttpServletRequest) request).getRequestURI();
         AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-        for (String urlPattern : restAuthorizedUrlsProvider.getAnonymousUrlPatterns()) {
-            if (antPathMatcher.match(urlPattern, requestURI)) {
-                return false;
-            }
-        }
-
         for (String urlPattern : REST_AUTHORIZED_URLS) {
-            if (antPathMatcher.match(urlPattern, requestURI)) {
-                return true;
-            }
-        }
-
-        for (String urlPattern : restAuthorizedUrlsProvider.getAuthenticatedUrlPatterns()) {
             if (antPathMatcher.match(urlPattern, requestURI)) {
                 return true;
             }

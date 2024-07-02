@@ -102,6 +102,7 @@ public class JmixHttpSecurityUtils {
      * Configures public and protected access to endpoints using URL patterns returned by instances of the
      * {@link AuthorizedUrlsProvider} for the given {@link HttpSecurity} instance.
      */
+    @Deprecated(since = "2.4", forRemoval = true)
     public static void configureAuthorizedUrls(HttpSecurity http) {
         ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
         Collection<AuthorizedUrlsProvider> authorizedUrlsProviders = applicationContext.getBeansOfType(AuthorizedUrlsProvider.class).values();

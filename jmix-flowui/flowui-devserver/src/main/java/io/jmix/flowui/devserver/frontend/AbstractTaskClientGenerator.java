@@ -17,6 +17,7 @@
 package io.jmix.flowui.devserver.frontend;
 
 import com.vaadin.flow.server.ExecutionFailedException;
+import com.vaadin.flow.server.frontend.AbstractFileGeneratorFallibleCommand;
 import com.vaadin.flow.server.frontend.FallibleCommand;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * Abstract class for generating client files.
  */
-public abstract class AbstractTaskClientGenerator implements FallibleCommand {
+public abstract class AbstractTaskClientGenerator extends AbstractFileGeneratorFallibleCommand {
 
     /**
      * Get file content for writing to the generated file.

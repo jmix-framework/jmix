@@ -1094,7 +1094,11 @@ public class FrontendUtils {
      * @see FrontendUtils#console(String, Object)
      */
     public static void console(Object message) {
-        console(FrontendUtils.RED, message, true);
+        console(message, true);
+    }
+
+    public static void console(Object message, boolean logInFile) {
+        console(FrontendUtils.BRIGHT_BLUE, message, logInFile);
     }
 
     public static void console(String format, Object message, boolean logInFile) {
@@ -1110,7 +1114,19 @@ public class FrontendUtils {
             } else {
                 text = format(format, message);
             }
-            logInFile(text);
+            logInFile(text, true, false);
+        }
+    }
+
+    public static void logInFile(String text,
+                                 boolean createLogFileIfNotExist,
+                                 boolean throwExceptionIfLogFileNotExist) {
+        try {
+            logInFile(text, createLogFileIfNotExist);
+        } catch (Throwable t) {
+            if (throwExceptionIfLogFileNotExist) {
+                throw t;
+            }
         }
     }
 
@@ -1132,7 +1148,7 @@ public class FrontendUtils {
         if (logFile == null || !logFile.exists()) {
             throw new IllegalStateException("Log file not exists");
         } else {
-            logInFile(logFile, wrapTextForLogging(text));
+            logInFile(logFile, text);
         }
     }
 
@@ -1142,7 +1158,6 @@ public class FrontendUtils {
             Path filePath = getLogFilePath();
             if (filePath == null) {
                 String logFileIsNull = "Log file path is null";
-                getLogger().warn(logFileIsNull);
                 console(RED, logFileIsNull, false);
                 return null;
             }
@@ -1161,7 +1176,6 @@ public class FrontendUtils {
 
         } catch (IOException e) {
             String stackTrace = Arrays.toString(e.getStackTrace());
-            getLogger().warn(stackTrace);
             console(RED, stackTrace, false);
             return null;
         }
@@ -1211,17 +1225,11 @@ public class FrontendUtils {
                 Files.writeString(logFile.toPath(), text, StandardOpenOption.APPEND);
             } catch (IOException e) {
                 String errorMsg = "Error when writing in log file...";
-                getLogger().warn(errorMsg, e);
                 console(RED, errorMsg + "\n" + Arrays.toString(e.getStackTrace()), false);
             }
         } else if (!logFile.exists()) {
             throw new RuntimeException("File not found: " + logFile.getAbsolutePath());
         }
-    }
-
-    @Nonnull
-    private static String wrapTextForLogging(String rawText) {
-        return getCurrentDateTime("yyyy-MM-dd hh:mm:ss") + " LOG INFO: " + rawText + "\n";
     }
 
     @Nonnull

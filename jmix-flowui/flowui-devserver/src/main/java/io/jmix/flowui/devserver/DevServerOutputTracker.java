@@ -64,7 +64,6 @@ public class DevServerOutputTracker {
                 readLinesLoop(reader);
             } catch (IOException e) {
                 getLogger().error("Exception when reading stream.", e);
-                FrontendUtils.logInFile("Exception when reading stream:\n" + e);
                 onMatch.accept(new Result(false));
             }
 
@@ -111,17 +110,14 @@ public class DevServerOutputTracker {
                 // Use a separate logger so these can be enabled like the
                 // similar Spring Boot
                 // log rows
-                LoggerFactory.getLogger(DevServerOutputTracker.class.getName() + ".Reloader").debug(logLine);
-                FrontendUtils.logInFile(logLine);
+                LoggerFactory.getLogger(DevServerOutputTracker.class.getName() + ".Reloader").info(logLine);
             } else if (logLine.startsWith("[vite] page reload")) {
                 // This is partly the same as "Recompiling because" but can
                 // batch some changes
                 // it seems. Mostly it just pollutes the log during development
-                getLogger().debug(logLine);
-                FrontendUtils.logInFile(logLine);
+                getLogger().info(logLine);
             } else {
                 getLogger().info(logLine);
-                FrontendUtils.logInFile(logLine);
             }
 
             boolean succeed = success != null && success.matcher(line).find();

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.devserver.frontend;
 
+import com.vaadin.flow.server.frontend.AbstractFileGeneratorFallibleCommand;
 import com.vaadin.flow.server.frontend.FallibleCommand;
 import com.vaadin.flow.server.frontend.JarContentsManager;
 import org.slf4j.Logger;
@@ -37,7 +38,8 @@ import static com.vaadin.flow.server.Constants.RESOURCES_JAR_DEFAULT;
 /**
  * Copies JavaScript and CSS files from JAR files into a given folder.
  */
-public class TaskCopyFrontendFiles implements FallibleCommand {
+public class TaskCopyFrontendFiles
+        extends AbstractFileGeneratorFallibleCommand {
     private static final String[] WILDCARD_INCLUSIONS = new String[]{
             "**/*.js", "**/*.js.map", "**/*.css", "**/*.css.map", "**/*.ts",
             "**/*.ts.map", "**/*.tsx", "**/*.tsx.map", "**/*.jsx",
@@ -49,7 +51,8 @@ public class TaskCopyFrontendFiles implements FallibleCommand {
     /**
      * Scans the jar files given defined by {@code resourcesToScan}.
      *
-     * @param options build options
+     * @param options
+     *            build options
      */
     TaskCopyFrontendFiles(Options options) {
         this.options = options;
@@ -63,7 +66,6 @@ public class TaskCopyFrontendFiles implements FallibleCommand {
 
         String logMessage = "Copying frontend resources from jar files ...";
         log().info(logMessage);
-        FrontendUtils.logInFile(logMessage);
 
         File targetDirectory = options.getJarFrontendResourcesFolder();
         TaskCopyLocalFrontendFiles.createTargetFolder(targetDirectory);
@@ -113,9 +115,10 @@ public class TaskCopyFrontendFiles implements FallibleCommand {
         existingFiles.forEach(
                 filename -> new File(targetDirectory, filename).delete());
         long ms = (System.nanoTime() - start) / 1000000;
-        String message = String.format("Visited %d resources. Took %d ms.", resourceLocations.size(), ms);
-        log().info(message);
-        FrontendUtils.logInFile(message);
+        String msg = "Visited %d resources. Took %d ms.".formatted(resourceLocations.size(), ms);
+        log().info(msg);
+//        track(handledFiles.stream().map(relativePath -> targetDirectory.toPath()
+//                .resolve(relativePath).toFile()).toList());
     }
 
     static Set<String> getFilesInDirectory(File targetDirectory,

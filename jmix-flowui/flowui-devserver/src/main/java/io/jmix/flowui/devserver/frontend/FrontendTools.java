@@ -445,7 +445,6 @@ public class FrontendTools {
                     "Couldn't find %s. Installing Node and npm to %s.",
                     nodeCommands.getFirst(), getAlternativeDir());
             getLogger().info(message);
-            FrontendUtils.logInFile(message);
             file = new File(installNode(nodeVersion, nodeDownloadRoot));
         }
         if (file == null) {
@@ -488,7 +487,6 @@ public class FrontendTools {
                         installedNodeVersion.getFullVersion(),
                         defaultVersion.getFullVersion());
                 getLogger().info(message);
-                FrontendUtils.logInFile(message);
                 installDefault = true;
             } else if (autoUpdate
                     && installedNodeVersion.isOlderThan(defaultVersion)) {
@@ -498,7 +496,6 @@ public class FrontendTools {
                         defaultVersion.getFullVersion()
                 );
                 getLogger().info(message);
-                FrontendUtils.logInFile(message);
                 installDefault = true;
             }
             if (installDefault) {
@@ -506,7 +503,6 @@ public class FrontendTools {
             }
         } catch (UnknownVersionException e) {
             getLogger().error("Failed to get version for installed node.", e);
-            FrontendUtils.logInFile("Failed to get version for installed node: \n" + e);
         }
         return file;
     }
@@ -543,14 +539,12 @@ public class FrontendTools {
                         alternativeDirGetter.get()
                 );
                 getLogger().info(message);
-                FrontendUtils.logInFile(message);
                 // Global node is not supported use alternative for everything
                 forceAlternativeNode = true;
                 return null;
             }
         } catch (UnknownVersionException e) {
             getLogger().error("Failed to get version for installed node.", e);
-            FrontendUtils.logInFile("Failed to get version for installed node: \n" + e);
         }
         return nodeExecutable;
     }
@@ -585,7 +579,6 @@ public class FrontendTools {
         } else {
             String logMessage = String.format("Node not found in %s. Installing node %s.", dir, nodeVersion);
             getLogger().info(logMessage);
-            FrontendUtils.logInFile(logMessage);
             return installNode(nodeVersion, nodeDownloadRoot);
         }
     }
@@ -641,14 +634,14 @@ public class FrontendTools {
             foundNodeVersionAndExe = getNodeVersionAndExecutable();
             FrontendVersion foundNodeVersion = foundNodeVersionAndExe
                     .getFirst();
-            FrontendUtils.logInFile(String.format(
+            getLogger().info(String.format(
                     "Using node %s located at %s",
                     foundNodeVersion.getFullVersion(),
                     foundNodeVersionAndExe.getSecond()));
             FrontendUtils.validateToolVersion("node", foundNodeVersion,
                     SUPPORTED_NODE_VERSION);
         } catch (UnknownVersionException e) {
-           FrontendUtils.logInFile("Error checking if node is new enough\n" + Arrays.toString(e.getStackTrace()));
+            getLogger().warn("Error checking if node is new enough\n{}", Arrays.toString(e.getStackTrace()));
         } catch (IllegalStateException ise) {
             if (foundNodeVersionAndExe != null) {
                 String message = String.format(
@@ -656,14 +649,13 @@ public class FrontendTools {
                         foundNodeVersionAndExe.getSecond()
                 );
                 getLogger().info(message);
-                FrontendUtils.logInFile(message);
             }
             throw ise;
         }
 
         try {
             FrontendVersion foundNpmVersion = getNpmVersion();
-            FrontendUtils.logInFile(String.format(
+            getLogger().info(String.format(
                     "Using npm %s located at %s",
                     foundNpmVersion.getFullVersion(),
                     getNpmExecutable(false).get(0)));
@@ -672,7 +664,6 @@ public class FrontendTools {
             checkForFaultyNpmVersion(foundNpmVersion);
         } catch (UnknownVersionException e) {
             getLogger().warn("Error checking if npm is new enough", e);
-            FrontendUtils.logInFile("Error checking if npm is new enough");
         }
 
     }
@@ -778,7 +769,6 @@ public class FrontendTools {
                     folder
             );
             getLogger().warn(message);
-            FrontendUtils.logInFile(message);
             return true;
         }
 
@@ -792,7 +782,6 @@ public class FrontendTools {
             } catch (UnknownVersionException e) {
                 String message = String.format("Error checking if npm accepts path '%s'", folder);
                 getLogger().warn(message, e);
-                FrontendUtils.logInFile(message);
             }
         }
         return true;
@@ -860,10 +849,8 @@ public class FrontendTools {
             }
         } catch (IOException e) {
             getLogger().error("IO error while determining --openssl-legacy-provider parameter requirement", e);
-            FrontendUtils.logInFile("IO error while determining --openssl-legacy-provider parameter requirement: \n" + e);
         } catch (InterruptedException e) {
             getLogger().error("Interrupted while determining --openssl-legacy-provider parameter requirement", e);
-            FrontendUtils.logInFile("Interrupted while determining --openssl-legacy-provider parameter requirement: \n" + e);
             // re-interrupt the thread
             Thread.currentThread().interrupt();
         }
@@ -1050,7 +1037,6 @@ public class FrontendTools {
                         }
                     } catch (UnknownVersionException uve) {
                         getLogger().error("Could not determine npm version", uve);
-                        FrontendUtils.logInFile("Could not determine npm version: \n" + uve);
                         // Use from alternate directory if global
                         // version check failed
                         returnCommand = new ArrayList<>();
@@ -1161,7 +1147,6 @@ public class FrontendTools {
         } catch (UnknownVersionException e) {
             String message = String.format("version check '%s' failed", commandLine);
             getLogger().warn(message, e);
-            FrontendUtils.logInFile(message + "\n" + Arrays.toString(e.getStackTrace()));
             return false;
         }
     }

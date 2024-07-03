@@ -87,7 +87,7 @@ public class NodeTasks implements FallibleCommand {
                     TaskUpdateImports.class,
                     TaskUpdateThemeImport.class,
                     TaskCopyTemplateFiles.class,
-                    TaskRunDevBundleBuild.class,
+                    // TaskRunDevBundleBuild.class,
                     TaskPrepareProdBundle.class,
                     TaskCleanFrontendFiles.class,
                     TaskRemoveOldFrontendGeneratedFiles.class
@@ -179,11 +179,11 @@ public class NodeTasks implements FallibleCommand {
 //            }
 
             if (options.isGenerateEmbeddableWebComponents()) {
-                FrontendWebComponentGenerator generator = new FrontendWebComponentGenerator(classFinder);
-                Set<File> webComponents = generator.generateWebComponents(
-                        FrontendUtils.getFlowGeneratedWebComponentsFolder(
-                                options.getFrontendDirectory()),
-                        themeDefinition);
+//                FrontendWebComponentGenerator generator = new FrontendWebComponentGenerator(classFinder);
+//                Set<File> webComponents = generator.generateWebComponents(
+//                        FrontendUtils.getFlowGeneratedWebComponentsFolder(
+//                                options.getFrontendDirectory()),
+//                        themeDefinition);
 
 //                if (webComponents.size() > 0) {
 //                    commands.add(new TaskGenerateWebComponentHtml(options));
@@ -210,9 +210,9 @@ public class NodeTasks implements FallibleCommand {
                 commands.add(new TaskInstallFrontendBuildPlugins(options));
             }
 
-            if (packageUpdater != null && options.isDevBundleBuild()) {
-                commands.add(new TaskRunDevBundleBuild(options));
-            }
+//            if (packageUpdater != null && options.isDevBundleBuild()) {
+//                commands.add(new TaskRunDevBundleBuild(options));
+//            }
 
         }
 
@@ -362,7 +362,7 @@ public class NodeTasks implements FallibleCommand {
             sortCommands(commands);
 
             for (FallibleCommand command : commands) {
-                FrontendUtils.logInFile("Executing task: " + command.getClass().getSimpleName());
+                getLogger().info("Executing task: {}", command.getClass().getSimpleName());
                 command.execute();
             }
         } finally {
@@ -414,7 +414,6 @@ public class NodeTasks implements FallibleCommand {
                 String errorMsg = "Error waiting for another "
                         + getClass().getSimpleName() + " process (pid: "
                         + lockInfo.pid() + ") to finish";
-                FrontendUtils.logInFile(errorMsg);
                 getLogger().error(errorMsg, e);
             }
         }

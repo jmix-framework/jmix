@@ -75,7 +75,6 @@ class VersionsJsonFilter {
                             userManagedDependencies.getString(key), key,
                             versions.getString(key));
                     LoggerFactory.getLogger("Versions").warn(message);
-                    FrontendUtils.logInFile(message);
                 }
             }
                 json.put(key, versions.getString(key));

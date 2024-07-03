@@ -156,7 +156,6 @@ public abstract class NodeUpdater implements FallibleCommand {
                     Constants.VAADIN_CORE_VERSIONS_JSON
             );
             log().info(message);
-            FrontendUtils.logInFile(message);
             return Json.createObject();
         }
 
@@ -401,7 +400,6 @@ public abstract class NodeUpdater implements FallibleCommand {
         if (added > 0) {
             String message = String.format("Added %s default dependencies to main package.json", added);
             log().info(message);
-            FrontendUtils.logInFile(message);
         }
         return added > 0;
     }
@@ -451,7 +449,6 @@ public abstract class NodeUpdater implements FallibleCommand {
                 // versions, as we don't want them to be updated.
                 String message = String.format("Package %s has unparseable version: %s", pkg, e.getMessage());
                 log().warn(message);
-                FrontendUtils.logInFile(message);
                 return false;
             }
         }
@@ -523,7 +520,6 @@ public abstract class NodeUpdater implements FallibleCommand {
         if (packageFile.exists() || options.isFrontendHotdeploy()
                 || options.isBundleBuild()) {
             String message = String.format("writing file %s.", packageFile.getAbsolutePath());
-            FrontendUtils.logInFile(message);
             log().debug(message);
             FileUtils.forceMkdirParent(packageFile);
             FileIOUtils.writeIfChanged(packageFile, content);

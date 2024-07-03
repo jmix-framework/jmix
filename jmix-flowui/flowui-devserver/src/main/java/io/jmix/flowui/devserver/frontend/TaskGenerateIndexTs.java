@@ -145,7 +145,6 @@ public class TaskGenerateIndexTs extends AbstractTaskClientGenerator {
             indexTemplate = getFileContent();
         } catch (IOException e) {
             log().warn("Failed to read file content", e);
-            FrontendUtils.logInFile("Failed to read file content\n" + Arrays.toString(e.getStackTrace()));
         }
         if (indexContent != null && !indexContent.equals(indexTemplate)) {
             UsageStatistics.markAsUsed(Constants.STATISTIC_ROUTING_CLIENT,

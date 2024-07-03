@@ -211,51 +211,52 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
         try {
             ApplicationConfiguration config = ApplicationConfiguration.get(context);
             File projectFolder = FrontendUtils.getProjectBaseDir(config);
-            File studioFolder = new File(System.getProperty(PARAM_STUDIO_DIR));
             Optional<String> themeName = Optional.ofNullable(System.getProperty(PARAM_THEME_VALUE));
 
             if (themeName.isEmpty()) {
                 String msg = "Found no custom theme in the project. "
                         + "Skipping watching the theme files";
-                FrontendUtils.logInFile(msg);
-                log.debug(msg);
+                log.info(msg);
                 return;
             }
 
-            File projectThemesFolder = new File(projectFolder,
-                    Path.of(FrontendUtils.FRONTEND,
-                                    Constants.APPLICATION_THEME_ROOT, themeName.orElse(""))
-                            .toString());
-
-            File studioThemesFolder = new File(studioFolder,
-                    Path.of(FrontendUtils.FRONTEND,
-                                    Constants.APPLICATION_THEME_ROOT, themeName.orElse(""))
-                            .toString());
-
-            projectThemeFilesWatcher = new ThemeFilesSynchronizer(
-                    projectThemeFile -> synchronizeThemesFolders(projectThemesFolder, studioThemesFolder),
-                    projectThemesFolder
-            );
-            projectThemeFilesWatcher.start();
+            startThemesFolderWatcher(themeName.get(), projectFolder, config);
 
         } catch (Exception e) {
             String message = "Failed to start synchronizing themes files";
-            FrontendUtils.logInFile(message + "\n" + Arrays.toString(e.getStackTrace()));
             log.error(message, e);
         }
     }
 
+    private void startThemesFolderWatcher(String themeName, File projectFolder, ApplicationConfiguration config) throws Exception {
+        Path projectFrontendDir = Path.of("src", "main", FrontendUtils.FRONTEND, Constants.APPLICATION_THEME_ROOT, themeName);
+        Path legacyProjectFrontendDir = Path.of(FrontendUtils.FRONTEND, Constants.APPLICATION_THEME_ROOT, themeName);
+
+        File projectThemesFolder = new File(projectFolder, projectFrontendDir.toString());
+        File legacyProjectThemesFolder = new File(projectFolder, legacyProjectFrontendDir.toString());
+        File actualProjectThemesFolder = projectThemesFolder.exists()
+                ? projectThemesFolder : legacyProjectThemesFolder.exists()
+                ? legacyProjectThemesFolder : projectThemesFolder;
+
+        File studioThemesFolder = FrontendUtils.getProjectFrontendDir(config);
+
+        projectThemeFilesWatcher = new ThemeFilesSynchronizer(
+                projectThemeFile -> synchronizeThemesFolders(actualProjectThemesFolder, studioThemesFolder),
+                actualProjectThemesFolder
+        );
+        projectThemeFilesWatcher.start();
+    }
+
     private void synchronizeThemesFolders(File projectThemesFolder, File studioThemesFolder) {
         try {
-            FrontendUtils.logInFile("Synchronizing themes folder...");
+            log.info("Synchronizing themes folder...");
             FileUtils.copyDirectory(projectThemesFolder, studioThemesFolder);
         } catch (IOException e) {
-            FrontendUtils.logInFile(
-                    "Error when trying to synchronize themes folders..." +
-                            "\nProject themes dir:" + projectThemesFolder +
-                            "\nStudio themes dir:" + studioThemesFolder +
-                            "\nTheme changes cannot by applied by live reload..."
-            );
+            log.info("Error when trying to synchronize themes folders...\n" +
+                    "Project themes dir:{}\n" +
+                    "Studio themes dir:{}\n" +
+                    "Theme changes cannot by applied by live reload...",
+                    projectThemesFolder, studioThemesFolder);
         }
     }
 }

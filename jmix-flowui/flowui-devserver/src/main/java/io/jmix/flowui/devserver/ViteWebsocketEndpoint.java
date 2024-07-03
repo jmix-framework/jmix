@@ -63,7 +63,6 @@ public class ViteWebsocketEndpoint extends Endpoint {
                 .getAttribute(ServerContainer.class.getName());
         if (container == null) {
             String msg = "Unable to deploy Vite websocket endpoint, no container value is available";
-            FrontendUtils.logInFile(msg);
             getLogger().error(msg);
             return;
         }
@@ -78,7 +77,6 @@ public class ViteWebsocketEndpoint extends Endpoint {
             container.addEndpoint(endpointConfig);
         } catch (DeploymentException e) {
             String msg = "Error deploying Vite websocket proxy endpoint";
-            FrontendUtils.logInFile(msg + "\n" + Arrays.toString(e.getStackTrace()));
             getLogger().error(msg, e);
         }
 
@@ -101,7 +99,6 @@ public class ViteWebsocketEndpoint extends Endpoint {
             session.addMessageHandler(proxy);
         } catch (Exception e) {
             String msg = "Error creating Vite proxy connection";
-            FrontendUtils.logInFile(msg + "\n" + e);
             getLogger().error(msg, e);
             try {
                 session.close();

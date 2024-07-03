@@ -54,6 +54,7 @@ import java.io.UncheckedIOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -70,6 +71,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -216,7 +218,6 @@ public class DevModeInitializer implements Serializable {
                 .withBuildDirectory(config.getBuildFolder());
 
         log.info("Starting dev-mode updaters in {} folder.", studioFolder);
-        FrontendUtils.logInFile("Starting dev-mode updaters in folder (" + studioFolder + ")", true);
 
         // Regenerate Vite configuration, as it may be necessary to
         // update it
@@ -302,8 +303,7 @@ public class DevModeInitializer implements Serializable {
             // which frontend servlet path to use
             if (VaadinServlet.getFrontendMapping() == null) {
                 String waitingServletMessage = "Waiting for a VaadinServlet to be deployed";
-                FrontendUtils.logInFile(waitingServletMessage);
-                log().debug(waitingServletMessage);
+                log().info(waitingServletMessage);
                 while (VaadinServlet.getFrontendMapping() == null) {
                     try {
                         Thread.sleep(100);
@@ -411,8 +411,7 @@ public class DevModeInitializer implements Serializable {
             tasks.execute();
         } catch (ExecutionFailedException exception) {
             String errorMessage = "Could not initialize dev mode handler. One of the node tasks failed. ";
-            FrontendUtils.logInFile(errorMessage + exception.getMessage());
-            log().debug(errorMessage, exception);
+            log().warn(errorMessage, exception);
             throw new CompletionException(exception);
         }
     }
@@ -469,7 +468,6 @@ public class DevModeInitializer implements Serializable {
                 } else {
                     String message = String.format("Resource %s not visited because does not meet supported formats.", url.getPath());
                     log().warn(message);
-                    FrontendUtils.logInFile(message);
                 }
             }
         } catch (IOException e) {

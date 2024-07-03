@@ -213,12 +213,10 @@ public class NodeInstaller {
             }
 
             getLogger().info("Installing node version {}", nodeVersion);
-            FrontendUtils.logInFile("Installing node version " + nodeVersion);
             if (!nodeVersion.startsWith("v")) {
                 String warnMessage = "Node version does not start with naming convention 'v'. "
                         + "If download fails please add 'v' to the version string.";
                 getLogger().warn(warnMessage);
-                FrontendUtils.logInFile(warnMessage);
             }
             InstallData data = new InstallData(nodeVersion, nodeDownloadRoot,
                     platform);
@@ -240,7 +238,6 @@ public class NodeInstaller {
             if (version.equals(nodeVersion)) {
                 String message = String.format("Node %s is already installed.", version);
                 getLogger().info(message);
-                FrontendUtils.logInFile(message);
                 return true;
             } else {
                 String message = String.format(
@@ -248,7 +245,6 @@ public class NodeInstaller {
                         version, nodeVersion
                 );
                 getLogger().info(message);
-                FrontendUtils.logInFile(message);
                 return false;
             }
         }
@@ -285,7 +281,6 @@ public class NodeInstaller {
 
         String successfullyMessage = "Local node installation successful.";
         getLogger().info(successfullyMessage);
-        FrontendUtils.logInFile(successfullyMessage);
     }
 
     private void installNodeUnix(InstallData data)
@@ -327,7 +322,6 @@ public class NodeInstaller {
     private void extractUnixNpm(InstallData data, File destinationDirectory)
             throws IOException {
         getLogger().info("Extracting npm");
-        FrontendUtils.logInFile("Extracting npm");
         File tmpNodeModulesDir = new File(data.getTmpDirectory(),
                 data.getNodeFilename() + File.separator + "lib" + File.separator
                         + FrontendUtils.NODE_MODULES);
@@ -385,7 +379,6 @@ public class NodeInstaller {
 
         if (npmProvided()) {
             getLogger().info("Extracting npm");
-            FrontendUtils.logInFile("Extracting npm");
             File tmpNodeModulesDir = new File(data.getTmpDirectory(),
                     data.getNodeFilename() + File.separator
                             + FrontendUtils.NODE_MODULES);
@@ -408,7 +401,6 @@ public class NodeInstaller {
                 "Copying node binary from %s to %s", nodeBinary, destination
         );
         getLogger().info(message);
-        FrontendUtils.logInFile(message);
         if (destination.exists() && !destination.delete()) {
             throw new InstallationException(
                     "Could not install Node: Was not allowed to delete "
@@ -495,7 +487,6 @@ public class NodeInstaller {
                     "Unpacking %s (%d bytes) into %s", archive, size, destinationDirectory
             );
             getLogger().info(message);
-            FrontendUtils.logInFile(message);
             archiveExtractor.extract(archive, destinationDirectory);
         } catch (ArchiveExtractionException e) {
             if (e.getCause() instanceof EOFException) {
@@ -530,7 +521,6 @@ public class NodeInstaller {
         if (!destination.exists()) {
             String message = String.format("Downloading %s to %s", downloadUrl, destination);
             getLogger().info(message);
-            FrontendUtils.logInFile(message);
             for (int i = 0; i < MAX_DOWNLOAD_ATTEMPS; i++) {
                 try {
                     fileDownloader.download(downloadUrl, destination, userName,
@@ -543,12 +533,10 @@ public class NodeInstaller {
 
                     String errorMsg = "Error during downloading " + downloadUrl;
                     getLogger().debug(errorMsg, e);
-                    FrontendUtils.logInFile(errorMsg);
 
                     String retryingMsg = "Download failed, retrying in "
                             + DOWNLOAD_ATTEMPT_DELAY + "s...";
                     getLogger().warn(retryingMsg);
-                    FrontendUtils.logInFile(retryingMsg);
 
                     try {
                         Thread.sleep(DOWNLOAD_ATTEMPT_DELAY * 1000);

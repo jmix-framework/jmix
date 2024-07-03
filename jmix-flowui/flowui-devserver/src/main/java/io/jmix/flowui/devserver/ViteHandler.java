@@ -107,10 +107,9 @@ public final class ViteHandler extends AbstractDevServerRunner {
                     String.join(" ", command)
             );
             getLogger().info(startingMessage);
-            FrontendUtils.logInFile(startingMessage);
         }
 
-        FrontendUtils.logInFile(String.format(
+        getLogger().info(String.format(
                 "Starting %s using: %s",
                 this.getServerName(),
                 String.join(" ", command)

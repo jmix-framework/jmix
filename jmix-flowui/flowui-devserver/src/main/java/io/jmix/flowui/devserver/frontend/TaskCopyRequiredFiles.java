@@ -30,7 +30,8 @@ import org.apache.commons.io.FileUtils;
  * Special for Studio designer.
  * <p>
  * Copy <code>package-lock.json</code>, <code>.npmrc</code> from project root folder
- * and themes files from <code>{project}/frontend/themes</code>
+ * and themes files from <code>{project}/src/main/frontend/themes</code>
+ * or <code>{project}/frontend/themes</code>
  * to <code>{project}/.jmix/screen-designer/frontend/themes</code>
  */
 public class TaskCopyRequiredFiles extends NodeUpdater {
@@ -53,7 +54,7 @@ public class TaskCopyRequiredFiles extends NodeUpdater {
             try {
                 FileUtils.copyFile(packageLockFile, studioPackageLockFile);
             } catch (IOException e) {
-                FrontendUtils.logInFile("Exception when copying " + Constants.PACKAGE_LOCK_JSON + " file");
+                log().warn("Exception when copying " + Constants.PACKAGE_LOCK_JSON + " file");
             }
         }
     }
@@ -65,7 +66,7 @@ public class TaskCopyRequiredFiles extends NodeUpdater {
             try {
                 FileUtils.copyFile(npmrcFile, options.getStudioFolder().toPath().resolve(npmrcFileName).toFile());
             } catch (IOException e) {
-                FrontendUtils.logInFile("Exception when copying " + npmrcFileName + " file");
+                log().warn("Exception when copying {} file", npmrcFileName);
             }
         }
     }
@@ -73,13 +74,23 @@ public class TaskCopyRequiredFiles extends NodeUpdater {
     private void copyThemes() {
         File projectFolder = options.getNpmFolder();
         if (projectFolder.exists()) {
-            File projectThemesFolder = projectFolder.toPath().resolve("frontend").resolve("themes").toFile();
-            if (projectThemesFolder.exists() && projectThemesFolder.isDirectory()) {
+            File projectFrontendThemesFolder = projectFolder.toPath()
+                    .resolve("src")
+                    .resolve("main")
+                    .resolve("frontend")
+                    .resolve("themes")
+                    .toFile();
+            File legacyProjectThemesFolder = projectFolder.toPath()
+                    .resolve("frontend")
+                    .resolve("themes")
+                    .toFile();
+            File actualThemesFolder = projectFrontendThemesFolder.exists() ? projectFrontendThemesFolder : legacyProjectThemesFolder;
+            if (actualThemesFolder.exists() && actualThemesFolder.isDirectory()) {
                 try {
                     Path studioThemesFolder = options.getFrontendDirectory().toPath().resolve("themes");
-                    FileUtils.copyDirectory(projectThemesFolder, studioThemesFolder.toFile());
+                    FileUtils.copyDirectory(actualThemesFolder, studioThemesFolder.toFile());
                 } catch (IOException e) {
-                    FrontendUtils.console("Cannot find 'themes' folder in " + projectFolder);
+                    log().warn("Cannot find 'themes' folder in {}", projectFolder);
                 }
             }
         }

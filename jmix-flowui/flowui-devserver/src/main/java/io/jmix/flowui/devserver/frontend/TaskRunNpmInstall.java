@@ -112,7 +112,6 @@ public class TaskRunNpmInstall implements FallibleCommand {
                     + "resolve and optionally download frontend dependencies. "
                     + "This may take a moment, please stand by...";
             packageUpdater.log().info(logMessage);
-            FrontendUtils.logInFile(logMessage);
             runNpmInstall();
             updateLocalHash();
         } else {
@@ -123,7 +122,6 @@ public class TaskRunNpmInstall implements FallibleCommand {
                     packageUpdater.getVaadinJsonFile().getAbsolutePath(),
                     Constants.PACKAGE_JSON);
             packageUpdater.log().info(logMessage);
-            FrontendUtils.logInFile(logMessage);
         }
     }
 
@@ -148,7 +146,6 @@ public class TaskRunNpmInstall implements FallibleCommand {
             if (vaadin == null) {
                 String message = "No vaadin object in package.json";
                 packageUpdater.log().warn(message);
-                FrontendUtils.logInFile(message);
                 return;
             }
             final String hash = vaadin.getString(HASH_KEY);
@@ -163,7 +160,6 @@ public class TaskRunNpmInstall implements FallibleCommand {
         } catch (IOException e) {
             String message = "Failed to update node_modules hash.";
             packageUpdater.log().warn(message, e);
-            FrontendUtils.logInFile(message + "\n" + Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -207,7 +203,6 @@ public class TaskRunNpmInstall implements FallibleCommand {
         } catch (IOException e) {
             String message = "Failed to load hashes forcing npm execution";
             packageUpdater.log().warn(message, e);
-            FrontendUtils.logInFile(message + "\n" + Arrays.toString(e.getStackTrace()));
         }
         return true;
     }
@@ -241,7 +236,6 @@ public class TaskRunNpmInstall implements FallibleCommand {
                         + "package installation may require manaually passing "
                         + "the --shamefully-hoist flag";
                 logger.warn(message, exception);
-                FrontendUtils.logInFile(message);
             }
         }
 
@@ -293,7 +287,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
         postinstallCommand.add("run");
         postinstallCommand.add("postinstall");
 
-        logger.debug(
+        logger.info(
                 commandToString(options.getStudioFolder().getAbsolutePath(),
                         npmInstallCommand));
 
@@ -307,7 +301,6 @@ public class TaskRunNpmInstall implements FallibleCommand {
                 String.join(" ", npmInstallCommand)
         );
         logger.info(logMessage);
-        FrontendUtils.logInFile(logMessage);
 
         // Log a stronger request for patience if package-lock.json is
         // missing as "npm install" in this case can take minutes
@@ -320,22 +313,20 @@ public class TaskRunNpmInstall implements FallibleCommand {
                     + "package-lock.json file persistently in your project. "
                     + "Please stand by...";
             packageUpdater.log().warn(packageLockFileNotFoundWarnMessage);
-            FrontendUtils.logInFile(packageLockFileNotFoundWarnMessage);
         }
 
         Process process = null;
         try {
             process = runNpmCommand(npmInstallCommand, options.getStudioFolder());
 
-            logger.debug("Output of `{}`:", commandString);
+            logger.info("Output of `{}`:", commandString);
             StringBuilder toolOutput = new StringBuilder();
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream(),
                             StandardCharsets.UTF_8))) {
                 String stdoutLine;
                 while ((stdoutLine = reader.readLine()) != null) {
-                    logger.debug(stdoutLine);
-                    FrontendUtils.logInFile(stdoutLine);
+                    logger.info(stdoutLine);
                     toolOutput.append(stdoutLine).append(System.lineSeparator());
                 }
             }
@@ -346,7 +337,6 @@ public class TaskRunNpmInstall implements FallibleCommand {
                 // Echo the stdout from pnpm/npm to error level log
                 logger.error("Command `{}` failed:\n{}", commandString, toolOutput);
                 logger.error(">>> Dependency ERROR. Check that all required dependencies are deployed in {} repositories.", toolName);
-                FrontendUtils.logInFile("ERROR for command: " + commandString + "\n" + toolOutput);
                 throw new ExecutionFailedException(
                         SharedUtil.capitalize(toolName)
                                 + " install has exited with non zero status. "
@@ -355,11 +345,9 @@ public class TaskRunNpmInstall implements FallibleCommand {
             } else {
                 String successfullyResolvedMessage = "Frontend dependencies resolved successfully.";
                 logger.info(successfullyResolvedMessage);
-                FrontendUtils.logInFile(successfullyResolvedMessage);
             }
         } catch (InterruptedException | IOException | UncheckedIOException e) {
             logger.error("Error when running `{} install`", toolName, e);
-            FrontendUtils.logInFile(String.format("Error when running `%s install`", toolName) + "\n" + e);
             Throwable cause = e;
             if (e instanceof InterruptedException) {
                 // Restore interrupted state
@@ -393,7 +381,7 @@ public class TaskRunNpmInstall implements FallibleCommand {
                 JsonObject packageJson = TaskGeneratePackageJson
                         .getJsonFileContent(packageJsonFile);
                 if (!containsPostinstallScript(packageJson)) {
-                    logger.debug(
+                    logger.info(
                             "Skipping postinstall for '{}' as no postinstall script was found in the package.json",
                             postinstallPackage);
                     continue;
@@ -403,11 +391,10 @@ public class TaskRunNpmInstall implements FallibleCommand {
                         "Couldn't read package.json for %s. Skipping postinstall", postinstallPackage
                 );
                 logger.error(errorMessage, ioe);
-                FrontendUtils.logInFile(errorMessage + ":\n" + ioe);
                 continue;
             }
 
-            logger.debug("Running postinstall for '{}'", postinstallPackage);
+            logger.info("Running postinstall for '{}'", postinstallPackage);
             try {
                 process = runNpmCommand(postinstallCommand, packageFolder);
                 process.waitFor();
@@ -520,7 +507,6 @@ public class TaskRunNpmInstall implements FallibleCommand {
                     String message = "Custom .npmrc file ({}) found in "
                             + "project; pnpm package installation may "
                             + "require passing the --shamefully-hoist flag";
-                    FrontendUtils.logInFile(message);
                     packageUpdater.log().info(message, npmrcFile);
                 }
                 shouldWrite = false;
@@ -531,12 +517,11 @@ public class TaskRunNpmInstall implements FallibleCommand {
         if (shouldWrite) {
             try (InputStream content = FrontendUtils.getResourceAsStream("/npmrc")) {
                 if (content == null) {
-                    FrontendUtils.logInFile("Couldn't find template npmrc in the classpath");
+                    packageUpdater.log().warn("Couldn't find template npmrc in the classpath");
                     throw new IOException("Couldn't find template npmrc in the classpath");
                 }
                 FileUtils.copyInputStreamToFile(content, npmrcFile);
-                packageUpdater.log().debug("Generated pnpm configuration: '{}'", npmrcFile);
-                FrontendUtils.logInFile("Generated pnpm configuration: " + npmrcFile);
+                packageUpdater.log().info("Generated pnpm configuration: '{}'", npmrcFile);
             }
         }
     }
@@ -572,12 +557,11 @@ public class TaskRunNpmInstall implements FallibleCommand {
             FrontendUtils.deleteNodeModules(nodeModulesFolder);
         } catch (IOException exception) {
             Logger log = packageUpdater.log();
-            log.debug("Exception removing node_modules", exception);
+            log.info("Exception removing node_modules", exception);
             String failedToRemoveNodeModulesErrorMessage = "Failed to remove '"
                     + options.getStudioFolder().getAbsolutePath()
                     + "'. Please remove it manually.";
             log.error(failedToRemoveNodeModulesErrorMessage);
-            FrontendUtils.logInFile(failedToRemoveNodeModulesErrorMessage);
             throw new ExecutionFailedException("Exception removing node_modules. Please remove it manually.");
         }
     }
@@ -591,12 +575,11 @@ public class TaskRunNpmInstall implements FallibleCommand {
                  | IllegalStateException e) {
             String message = "Failed to get npm cache directory";
             packageUpdater.log().warn(message, e);
-            FrontendUtils.logInFile(message);
         }
 
         if (npmCacheDir != null
                 && !tools.folderIsAcceptableByNpm(npmCacheDir)) {
-            FrontendUtils.console(String.format(NPM_VALIDATION_FAIL_MESSAGE));
+            packageUpdater.log().warn(String.format(NPM_VALIDATION_FAIL_MESSAGE));
             throw new IllegalStateException(
                     String.format(NPM_VALIDATION_FAIL_MESSAGE));
         }

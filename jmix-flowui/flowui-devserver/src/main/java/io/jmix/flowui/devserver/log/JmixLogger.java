@@ -70,12 +70,12 @@ public class JmixLogger extends AbstractLogger {
 
     @Override
     public boolean isDebugEnabled() {
-        return isImportantLog();
+        return false;
     }
 
     @Override
     public boolean isDebugEnabled(Marker marker) {
-        return isImportantLog();
+        return false;
     }
 
     @Override

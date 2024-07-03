@@ -238,12 +238,15 @@ public class DevModeHandlerManagerImpl implements DevModeHandlerManager {
                 ? projectThemesFolder : legacyProjectThemesFolder.exists()
                 ? legacyProjectThemesFolder : projectThemesFolder;
 
-        File studioThemesFolder = FrontendUtils.getProjectFrontendDir(config);
+        File studioThemesFolder = new File(
+                FrontendUtils.getProjectFrontendDir(config),
+                Path.of(Constants.APPLICATION_THEME_ROOT, themeName).toString());
 
         projectThemeFilesWatcher = new ThemeFilesSynchronizer(
                 projectThemeFile -> synchronizeThemesFolders(actualProjectThemesFolder, studioThemesFolder),
                 actualProjectThemesFolder
         );
+
         projectThemeFilesWatcher.start();
     }
 

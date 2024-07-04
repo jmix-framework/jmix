@@ -89,6 +89,7 @@ public class AwsFileStorage implements FileStorage {
     protected String bucket;
     protected int chunkSize;
     protected String endpointUrl;
+    protected boolean usePathStyleBucketAddressing;
 
     @Autowired
     protected TimeSource timeSource;
@@ -131,6 +132,7 @@ public class AwsFileStorage implements FileStorage {
             this.bucket = properties.getBucket();
             this.chunkSize = properties.getChunkSize();
             this.endpointUrl = properties.getEndpointUrl();
+            this.usePathStyleBucketAddressing = properties.getUsePathStyleBucketAddressing();
         }
     }
 
@@ -155,6 +157,7 @@ public class AwsFileStorage implements FileStorage {
         if (!Strings.isNullOrEmpty(endpointUrl)) {
             s3ClientBuilder.endpointOverride(URI.create(endpointUrl));
         }
+        s3ClientBuilder.forcePathStyle(usePathStyleBucketAddressing);
         s3ClientReference.set(s3ClientBuilder.build());
     }
 
@@ -320,5 +323,9 @@ public class AwsFileStorage implements FileStorage {
 
     public void setEndpointUrl(@Nullable String endpointUrl) {
         this.endpointUrl = endpointUrl;
+    }
+
+    public void setUsePathStyleBucketAddressing(boolean usePathStyleBucketAddressing) {
+        this.usePathStyleBucketAddressing = usePathStyleBucketAddressing;
     }
 }

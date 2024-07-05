@@ -73,6 +73,9 @@ public class View<T extends Component> extends Composite<T>
 
     private boolean closeActionPerformed = false;
     private boolean preventBrowserTabClosing = false;
+    private boolean afterNavigationProcessed = false;
+
+    private Runnable afterNavigationHandler;
 
     public View() {
         closeDelegate = createDefaultViewDelegate();
@@ -112,12 +115,34 @@ public class View<T extends Component> extends Composite<T>
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
+        afterNavigationProcessed = false;
+
         Sample sample = start(meterRegistry);
         fireEvent(new ReadyEvent(this));
         stopViewTimerSample(sample, meterRegistry, READY, getId().orElse(null));
 
         ViewOpenedEvent viewOpenedEvent = new ViewOpenedEvent(this);
         applicationContext.publishEvent(viewOpenedEvent);
+
+        // Run operation after all lifecycle events of a view
+        executeAfterNavigationHandler();
+        afterNavigationProcessed = true;
+    }
+
+    @Internal
+    protected void setAfterNavigationHandler(Runnable afterNavigationHandler) {
+        this.afterNavigationHandler = afterNavigationHandler;
+        // Execute afterNavigationHandler immediately if AfterNavigationEvent is already handled
+        if (afterNavigationProcessed) {
+            executeAfterNavigationHandler();
+        }
+    }
+
+    private void executeAfterNavigationHandler() {
+        if (afterNavigationHandler != null) {
+            afterNavigationHandler.run();
+            afterNavigationHandler = null;
+        }
     }
 
     @Override

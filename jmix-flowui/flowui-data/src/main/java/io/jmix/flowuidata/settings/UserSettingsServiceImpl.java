@@ -20,6 +20,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.data.impl.EntityEventManager;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowuidata.entity.UserSettingsItem;
@@ -69,6 +70,11 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     public Optional<String> load(String key) {
         Preconditions.checkNotNullArgument(key);
 
+        // During logout, the authentication object may not be available, so we skip the operation.
+        if (notAuthenticated()) {
+            return Optional.empty();
+        }
+
         String value = transaction.execute(status -> {
             UserSettingsItem us = findUserSettings(key);
             return us == null ? null : us.getValue();
@@ -82,6 +88,11 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     @Override
     public void save(String key, @Nullable String value) {
         Preconditions.checkNotNullArgument(key);
+
+        // During logout, the authentication object may not be available, so we skip the operation.
+        if (notAuthenticated()) {
+            return;
+        }
 
         transaction.executeWithoutResult(status -> {
             UserSettingsItem us = findUserSettings(key);
@@ -101,6 +112,11 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     @Override
     public void delete(String key) {
         Preconditions.checkNotNullArgument(key);
+
+        // During logout, the authentication object may not be available, so we skip the operation.
+        if (notAuthenticated()) {
+            return;
+        }
 
         transaction.executeWithoutResult(status -> {
             UserSettingsItem us = findUserSettings(key);
@@ -148,5 +164,9 @@ public class UserSettingsServiceImpl implements UserSettingsService {
                 .getResultList();
 
         return result.isEmpty() ? null : result.get(0);
+    }
+
+    protected boolean notAuthenticated() {
+        return SecurityContextHelper.getAuthentication() == null;
     }
 }

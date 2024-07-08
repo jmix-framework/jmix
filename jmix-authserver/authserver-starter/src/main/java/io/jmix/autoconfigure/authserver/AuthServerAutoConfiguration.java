@@ -184,6 +184,7 @@ public class AuthServerAutoConfiguration {
                     .oauth2ResourceServer(oauth2 -> oauth2
                             .opaqueToken(opaqueToken -> opaqueToken
                                     .introspector(opaqueTokenIntrospector)))
+                    .csrf(csrf -> csrf.disable())
                     .cors(Customizer.withDefaults());
             AsResourceServerEventSecurityFilter asResourceServerEventSecurityFilter = new AsResourceServerEventSecurityFilter(applicationEventPublisher);
             http.addFilterBefore(asResourceServerEventSecurityFilter, AuthorizationFilter.class);

@@ -106,6 +106,7 @@ public class OidcAutoConfiguration {
                             jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
                         });
                     })
+                    .csrf(csrf -> csrf.disable())
                     .cors(Customizer.withDefaults());
 
             JmixHttpSecurityUtils.configureAnonymous(http);

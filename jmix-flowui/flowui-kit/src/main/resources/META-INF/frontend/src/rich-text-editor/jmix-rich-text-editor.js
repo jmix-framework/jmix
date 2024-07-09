@@ -541,8 +541,6 @@ class RichTextEditor extends ElementMixin(FocusMixin(LabelMixin(ThemableMixin(Po
 
     /** @private */
     _valueChanged(value, editor) {
-        console.info('***** _valueChanged: ' + value);
-
         if (value && this.__pendingHtmlValue) {
             // A non-empty value is set explicitly. Clear pending htmlValue to prevent it from overriding the value.
             this.__pendingHtmlValue = undefined;

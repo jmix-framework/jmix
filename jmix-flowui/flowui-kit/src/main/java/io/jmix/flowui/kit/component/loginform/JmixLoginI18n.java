@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.component.loginform;
 
+import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.login.LoginI18n;
 
 public class JmixLoginI18n extends LoginI18n {
@@ -47,11 +48,9 @@ public class JmixLoginI18n extends LoginI18n {
 
     @Override
     public void setForm(Form form) {
-        if (form instanceof JmixForm jmixForm) {
-            this.form = jmixForm;
-        } else {
-            throw new IllegalStateException("Setter doesn't support value of %s" + form.getClass());
-        }
+        Preconditions.checkArgument(form instanceof JmixForm,
+                "Passed value must be an instance of " + JmixForm.class.getSimpleName());
+        this.form = ((JmixForm) form);
     }
 
     @Override

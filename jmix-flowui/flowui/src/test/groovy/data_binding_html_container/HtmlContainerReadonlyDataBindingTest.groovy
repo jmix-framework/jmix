@@ -117,15 +117,13 @@ class HtmlContainerReadonlyDataBindingTest extends FlowuiTestSpecification {
 
         when: "Create div and bind with collection animalsDc"
         Div animals = new Div()
-        htmlContainerReadonlyDataBinding.bind(animals, dataBindingHtmlContainerView.animalsDc)
 
-        def animalEntities = dataBindingHtmlContainerView.animalsDc.getItems()
-        def animalsAsString = animalEntities.stream()
-                .map(metadataTools::format)
-                .collect(Collectors.joining(", "))
+        def selectedItem = dataBindingHtmlContainerView.animalsDc.getItems().get(1)
+        dataBindingHtmlContainerView.animalsDc.setItem(selectedItem)
+        htmlContainerReadonlyDataBinding.bind(animals, dataBindingHtmlContainerView.animalsDc, "name")
 
         then: "Div text should be equal to collection with CollectionFormatter"
-        animals.text == animalsAsString
+        animals.text == selectedItem.name
     }
 
     def "Manual value source binding"() {

@@ -18,37 +18,44 @@ package io.jmix.flowui.data.binding;
 
 import com.vaadin.flow.component.HtmlContainer;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.kit.component.formatter.Formatter;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 
-import java.util.Collection;
-
+/**
+ * Binds {@link HtmlContainer} with {@link ValueSource}, {@link InstanceContainer} or {@link CollectionContainer}
+ * to show entity property value.
+ */
 public interface HtmlContainerReadonlyDataBinding {
 
-    void bind(HtmlContainer htmlComponent, ValueSource<?> valueSource);
+    /**
+     * Binds {@link HtmlContainer} with {@link ValueSource} to show {@link ValueSource#getValue()}
+     * as a text value in html container
+     * @param htmlContainer html container
+     * @param valueSource data component holding a typed value
+     */
+    void bind(HtmlContainer htmlContainer, ValueSource<?> valueSource);
 
-    void bind(HtmlContainer htmlComponent, ValueSource<?> valueSource, Formatter<Object> formatter);
+    /**
+     * Binds {@link HtmlContainer} with {@link InstanceContainer} to show {@link InstanceContainer#getItem()} property
+     * as a text value in html container
+     * @param htmlContainer html container
+     * @param dataContainer instance container
+     * @param property name of an entity property whose value is showed in html container
+     */
+    void bind(HtmlContainer htmlContainer, InstanceContainer<?> dataContainer, String property);
 
-    void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property);
+    /**
+     * Binds {@link HtmlContainer} with {@link CollectionContainer} to show {@link CollectionContainer#getItem()} property
+     * as a text value in html container
+     * @param htmlContainer html container
+     * @param dataContainer collection container
+     * @param property name of an entity property whose value is showed in html container
+     */
+    void bind(HtmlContainer htmlContainer, CollectionContainer<?> dataContainer, String property);
 
-    void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property,
-              boolean dataModelSecurityEnabled);
-
-    void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property,
-              Formatter<Object> formatter);
-
-    void bind(HtmlContainer htmlComponent, InstanceContainer<?> dataContainer, String property,
-              Formatter<Object> formatter, boolean dataModelSecurityEnabled);
-
-    void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer);
-
-    void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, boolean dataModelSecurityEnabled);
-
-    void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, Formatter<Collection<?>> formatter);
-
-    void bind(HtmlContainer htmlComponent, CollectionContainer<?> dataContainer, Formatter<Collection<?>> formatter,
-              boolean dataModelSecurityEnabled);
-
+    /**
+     * Remove data binding fom html container
+     * @param htmlContainer html container
+     */
     void unbind(HtmlContainer htmlContainer);
 }

@@ -1,0 +1,23 @@
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+:root {
+  --user-panel-text-color: #fff;
+  --user-panel-text-hover-color:#ccc;
+
+  --task-list-layout-background-color: #fff;
+  --task-table-cell-border-color: rgba(186, 224, 255, 0.75);
+
+  --task-table-scroll-background-color: #e1e6e6;
+  --task-table-scroll-color: rgba(66, 132, 245, 0.3);
+  --task-table-scroll-border-radius: 6px;
+  --task-table-scroll-width: 0.5em;
+
+  --task-table-sort-icon-color: #fff;
+  --task-table-sort-icon-active-color: #001d66;
+
+  --dashboard-active-tasks-text-color: #3f8600;
+  --dashboard-overdue-tasks-text-color: #cf1322;
+}

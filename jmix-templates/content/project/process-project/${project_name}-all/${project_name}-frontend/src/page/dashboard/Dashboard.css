@@ -1,0 +1,7 @@
+.dashboard__active-task-statistics > .ant-statistic-content {
+    color: var(--dashboard-active-tasks-text-color);
+}
+
+.dashboard__overdue-task-statistics > .ant-statistic-content {
+    color: var(--dashboard-overdue-tasks-text-color);
+}

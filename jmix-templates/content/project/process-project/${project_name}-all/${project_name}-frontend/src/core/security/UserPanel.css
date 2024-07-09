@@ -1,0 +1,19 @@
+.app-header__user-icon {
+    color: var(--user-panel-text-color);
+}
+
+.app-header__user-label {
+    color: var(--user-panel-text-color);
+}
+
+.app-header__icon-btn.ant-btn-text {
+    color: var(--user-panel-text-hover-color);
+}
+
+.app-header__icon-btn.ant-btn-text:hover {
+    color: var(--user-panel-text-color)!important;
+}
+
+.app-header__icon-btn.ant-btn-text:focus {
+    color: var(--user-panel-text-color);
+}

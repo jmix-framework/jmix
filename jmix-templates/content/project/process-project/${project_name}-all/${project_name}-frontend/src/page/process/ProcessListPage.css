@@ -1,0 +1,59 @@
+.jmix-bpm-tasklist.process-card {
+    width: 100%;
+    border-color: var(--ant-color-border);
+}
+
+.jmix-bpm-tasklist.process-card > .ant-card-head {
+    border-bottom: none;
+}
+
+.jmix-bpm-tasklist.process-card > .ant-card-head > .ant-card-head-wrapper > .ant-card-head-title > * {
+    margin-top: 1em;
+}
+
+.jmix-bpm-tasklist.process-card > .ant-card-body {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.jmix-bpm-tasklist.process-card > .ant-card-actions {
+    border-top: none;
+}
+
+.process-card-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5em;
+}
+
+.process-card-description-lg {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5em;
+}
+
+.process-list-layout-root {
+    min-height: 100%;
+    width: 100%;
+    /*background-color: var(--task-list-layout-background-color);*/
+    padding-inline: 2em;
+    /*border: 1px solid var(--ant-color-border-secondary);*/
+    /*border-radius: 10px;*/
+}
+
+.process-list-layout-container {
+    height: 100%;
+    justify-content: center;
+    flex-grow: 1;
+    padding: 2em 1em 0 2em;
+}
+
+.process-list-search-input {
+    background-color: var(--background-color);
+}

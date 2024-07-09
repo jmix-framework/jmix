@@ -1,0 +1,53 @@
+services:
+  jmee-engine:
+    container_name: "jmee-engine"
+    image: "docker.haulmont.com/jmix-bpm-platform/bpm-platform-all/jmee-engine:test"
+    restart: "no"
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://jmee-database/jmee_engine"
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "root"
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+
+  jmee-application-console:
+    image: "docker.haulmont.com/jmix-bpm-platform/bpm-platform-all/jmee-application-console:test"
+    container_name: "jmee-application-console"
+    restart: "no"
+    environment:
+      MAIN_DATASOURCE_URL: "jdbc:postgresql://jmee-database/jmee_application_console"
+      MAIN_DATASOURCE_USERNAME: "root"
+      MAIN_DATASOURCE_PASSWORD: "root"
+      SERVER_PORT: 8082
+    ports:
+      - "8082:8082"
+
+  jmee-admin-console:
+    image: "docker.haulmont.com/jmix-bpm-platform/bpm-platform-all/jmee-admin-console:test"
+    container_name: "jmee-admin-console"
+    restart: "no"
+    environment:
+      MAIN_DATASOURCE_URL: "jdbc:postgresql://jmee-database/jmee_admin_console"
+      MAIN_DATASOURCE_USERNAME: "root"
+      MAIN_DATASOURCE_PASSWORD: "root"
+      JMEE_CLIENT_BASEURL: "https://bpm-engine.demo.haulmont.com/engine-rest"
+      JMEE_CLIENT_APIKEY: "45b417b6-5d98-41a5-9efa-1cd0ebbd95e1"
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+
+  jmee-database:
+    container_name: "jmee-database"
+    image: postgres:16.3
+    restart: "always"
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "root"
+    volumes:
+      - jmee-database_data:/var/lib/postgresql/data
+      - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+volumes:
+  jmee-database_data:

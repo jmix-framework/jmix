@@ -1,0 +1,9 @@
+.jmix-bpm-tasklist.task-list-layout-root {
+    min-height: 100%;
+    width: 100%;
+    background-color: var(--task-list-layout-background-color);
+    padding-inline: 2em;
+    border: 1px solid var(--ant-color-border-secondary);
+    border-radius: 10px;
+    padding-bottom: 1em;
+}

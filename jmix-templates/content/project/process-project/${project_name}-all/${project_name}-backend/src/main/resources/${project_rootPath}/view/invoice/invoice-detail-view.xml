@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://invoiceDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="invoiceDc"
+                  class="${project_rootPackage}.entity.Invoice">
+            <fetchPlan extends="_base">
+                <property name="bankAccount" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="invoiceDc">
+            <textField id="numberField" property="number"/>
+            <datePicker id="dateField" property="date"/>
+            <select id="paymentStatusField" property="paymentStatus" readOnly="true"/>
+            <entityPicker id="bankAccountField" property="bankAccount">
+                <actions>
+                    <action id="entityLookup" type="entity_lookup"/>
+                    <action id="entityClear" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <textField id="vendorField" property="vendor"/>
+            <textField id="amountField" property="amount"/>
+            <textField id="poNumberField" property="poNumber"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

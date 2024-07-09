@@ -1,0 +1,58 @@
+
+.jmix-bpm-tasklist.ant-table-wrapper {
+    .ant-spin-nested-loading {
+        .ant-spin-container {
+            .ant-table {
+                border: 1px solid var(--ant-color-border-secondary);
+                border-end-start-radius: var(--ant-table-header-border-radius);
+                border-end-end-radius: var(--ant-table-header-border-radius);
+
+                .ant-table-container {
+                    .ant-table-body {
+                        overflow-y: auto;
+                        scrollbar-width: auto;
+                        scrollbar-color: auto;
+
+                        .ant-table-cell {
+                            border-color: var(--task-table-cell-border-color);
+                        }
+                    }
+
+                    .ant-table-body::-webkit-scrollbar {
+                        width: var(--task-table-scroll-width);
+                    }
+
+                    .ant-table-body::-webkit-scrollbar-track {
+                        background-color: var(--task-table-scroll-background-color);
+                    }
+
+                    .ant-table-body::-webkit-scrollbar-thumb {
+                        border-radius: var(--task-table-scroll-border-radius);
+                        background-color: var(--task-table-scroll-color);
+                    }
+                }
+            }
+
+            .ant-table-pagination {
+                margin-top: 0;
+            }
+        }
+    }
+}
+
+.jmix-bpm-tasklist.ant-table .ant-table-column-sorter-inner > span {
+    color: var(--task-table-sort-icon-color);
+}
+
+.jmix-bpm-tasklist.ant-table > .ant-table-container table > tbody > tr:last-child > *:first-child {
+    border-end-start-radius: var(--ant-table-header-border-radius)
+}
+
+.jmix-bpm-tasklist.ant-table > .ant-table-container table > tbody > tr:last-child > *:last-child {
+    border-end-end-radius: var(--ant-table-header-border-radius)
+}
+
+.jmix-bpm-tasklist.ant-table-wrapper .ant-table-column-sorter-up.active,
+.jmix-bpm-tasklist.ant-table-wrapper .ant-table-column-sorter-down.active {
+    color: var(--task-table-sort-icon-active-color);
+}

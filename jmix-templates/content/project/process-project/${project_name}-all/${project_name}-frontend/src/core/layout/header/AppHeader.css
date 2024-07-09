@@ -1,0 +1,14 @@
+.app-header__icon {
+    width: 2em;
+    height: 2em;
+    line-height: 0;
+}
+
+.app-header__controls {
+    margin-left: 4em;
+}
+
+.app-header__app-logo {
+    line-height: initial;
+    margin-right: 1em;
+}

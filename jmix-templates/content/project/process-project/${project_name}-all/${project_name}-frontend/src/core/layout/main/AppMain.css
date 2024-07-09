@@ -1,0 +1,21 @@
+.main-layout {
+    height: 100%;
+}
+
+.main-layout__header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.main-layout__content {
+    overflow: auto
+}
+
+.layout-container.ant-layout {
+    min-height: initial;
+}

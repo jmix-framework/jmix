@@ -1,0 +1,37 @@
+.dashboard-task-list-card__root-card > .ant-card-body {
+    padding: 0 0 1em;
+    height: 34em;
+}
+
+.dashboard-task-list-card__root-card > .ant-card-head {
+    border-bottom: none;
+}
+
+.dashboard-task-list-card__header {
+    padding-inline: 1em;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0.5em;
+}
+
+.dashboard-task-list-card__list-item-meta {
+    width: 100%;
+}
+
+.dashboard-task-list-card__list-item {
+    border-block-end: none !important;
+    padding-inline: 1em !important;
+    padding-bottom: 0 !important;
+}
+
+.dashboard-task-list-card__item-card:hover {
+    background-color: rgba(230, 244, 255, 0.5);
+}
+
+.dashboard-task-list-card__item-card:active {
+    background-color: rgba(230, 244, 255, 0.8);
+}
+
+.dashboard-task-list-card__item-card .ant-card-body {
+    padding: 1em;
+}

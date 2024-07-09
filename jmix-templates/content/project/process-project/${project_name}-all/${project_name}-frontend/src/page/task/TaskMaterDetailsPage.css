@@ -1,0 +1,9 @@
+.task-master-details-root-container {
+    height: 100%;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.jmix-bpm-tasklist.task-list-root-container {
+    padding: 2em 1em 0 2em;
+}

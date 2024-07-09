@@ -1,0 +1,66 @@
+plugins {
+    id 'io.jmix' version '2.3.0'
+    id 'java'
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'com.vaadin'
+
+jmix {
+    bomVersion = '@bomVersion@'<%if (project_id) {%>
+        projectId = '$project_id'<%}%>
+}
+
+group = '${project_group}'
+version = '${project_version}'
+
+repositories {
+    mavenCentral()<%if (project_additionalRepositories) {
+        project_additionalRepositories.each { additionalRepository ->%>
+            ${additionalRepository}<%}}%>
+    maven {
+        url = 'https://global.repo.jmix.io/repository/premium'
+        credentials {
+            username = rootProject['premiumRepoUser']
+            password = rootProject['premiumRepoPass']
+        }
+    }
+}
+
+dependencies {
+    implementation "io.jmee.client:jmee-client-starter:0.0.1-SNAPSHOT"
+
+    implementation 'io.jmix.core:jmix-core-starter'
+    implementation 'io.jmix.data:jmix-eclipselink-starter'
+    implementation 'io.jmix.security:jmix-security-starter'
+    implementation 'io.jmix.security:jmix-security-flowui-starter'
+    implementation 'io.jmix.security:jmix-security-data-starter'
+    implementation 'io.jmix.localfs:jmix-localfs-starter'
+    implementation 'io.jmix.flowui:jmix-flowui-starter'
+    implementation 'io.jmix.flowui:jmix-flowui-data-starter'
+    implementation 'io.jmix.flowui:jmix-flowui-themes'
+    implementation 'io.jmix.datatools:jmix-datatools-starter'
+    implementation 'io.jmix.datatools:jmix-datatools-flowui-starter'
+    implementation 'io.jmix.oidc:jmix-oidc-starter'
+    implementation 'io.jmix.rest:jmix-rest-starter'
+    implementation 'io.jmix.bpm:jmix-bpm-flowui-starter'
+    implementation 'io.jmix.bpm:jmix-bpm-starter'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
+
+    runtimeOnly 'org.hsqldb:hsqldb'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+vaadin {
+    optimizeBundle = false
+}

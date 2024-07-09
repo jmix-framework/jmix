@@ -1,0 +1,86 @@
+
+.jmix-bpm-tasklist__form-container .cds--grid {
+    padding: 0;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-form {
+    padding: 0;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-layout-row {
+    padding-bottom: 0;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-powered-by-link {
+    display: none;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-vertical-group {
+    border-radius: inherit;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-vertical-group > .fjs-input {
+    border-radius: inherit;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-vertical-group > .fjs-number-arrow-container {
+    border-radius: inherit;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-input-group {
+    border-radius: 6px;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-container   {
+    border-radius: 6px;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-input-group > .fjs-datepicker > .flatpickr-wrapper > .fjs-input.flatpickr-input {
+    border-radius: 6px;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-input-group > .fjs-input {
+    border-radius: inherit;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-form-field:not(.fjs-powered-by) {
+    margin-left: 0;
+}
+
+.jmix-bpm-tasklist__form-container .fjs-container .fjs-input-group .fjs-input-adornment.border-radius-left {
+    border-radius: 6px 0 0 6px;
+}
+
+.fjs-container .fjs-taglist:focus-within, .fjs-container .fjs-input-group:focus-within, .fjs-container .fjs-input[type=text]:focus,
+.fjs-container .fjs-input[type=email]:focus, .fjs-container .fjs-input[type=tel]:focus, .fjs-container .fjs-input[type=number]:focus,
+.fjs-container .fjs-button[type=submit]:focus,
+.fjs-container .fjs-button[type=reset]:focus, .fjs-container .fjs-textarea:focus, .fjs-container .fjs-select:focus {
+    border-color: #1677ff;
+    box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
+    outline: none;
+}
+
+.fjs-container .fjs-form-field.fjs-has-errors .fjs-input,
+.fjs-container .fjs-form-field.fjs-has-errors .fjs-select,
+.fjs-container .fjs-form-field.fjs-has-errors .fjs-textarea,
+.fjs-container .fjs-form-field.fjs-has-errors .fjs-taglist,
+.fjs-container .fjs-form-field.fjs-has-errors .fjs-input-group, .fjs-container .fjs-form-field.fjs-has-errors .fjs-input-group .fjs-input {
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1);
+}
+
+.fjs-container .fjs-input[type=checkbox], .fjs-container .fjs-input[type=radio] {
+
+}
+
+.jmix-bpm-tasklist__form-container .fjs-container {
+    --font-family: var(--ant-font-family);
+    --border-definition: 1px solid #d9d9d9;
+    --font-size-group: var(--ant-font-size);
+    --font-size-base: var(--ant-font-size);
+    --font-size-input: var(--ant-font-size);
+    --font-size-label: var(--ant-font-size);
+    --color-warning: #ff4d4f
+}
+

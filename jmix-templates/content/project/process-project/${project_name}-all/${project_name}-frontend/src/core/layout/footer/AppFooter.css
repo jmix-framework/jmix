@@ -1,0 +1,7 @@
+.app-footer__text {
+    bottom: 0;
+    position: absolute;
+    font-size: small;
+    padding-bottom: 0.5em;
+    font-weight: bold;
+}

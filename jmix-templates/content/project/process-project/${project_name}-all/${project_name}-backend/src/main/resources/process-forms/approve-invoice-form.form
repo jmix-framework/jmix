@@ -1,0 +1,107 @@
+{
+  "components": [
+    {
+      "label": "Number",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_12g3psn",
+        "columns": null
+      },
+      "id": "Field_0dtlm24",
+      "key": "textfield_sw6uih",
+      "mappedField": "number"
+    },
+    {
+      "subtype": "date",
+      "dateLabel": "Date",
+      "label": "Date time",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_1jzjn2j",
+        "columns": null
+      },
+      "id": "Field_0dohj14",
+      "key": "datetime_97yanv",
+      "mappedField": "date",
+      "readonly": true
+    },
+    {
+      "label": "Payment Status",
+      "type": "select",
+      "layout": {
+        "row": "Row_1e67c5p",
+        "columns": null
+      },
+      "id": "Field_0gavdde",
+      "key": "status_select",
+      "valuesKey": "paymentStatuses",
+      "mappedField": "paymentStatus"
+    },
+    {
+      "values": [
+        {
+          "label": "Value",
+          "value": "value"
+        }
+      ],
+      "label": "Vendor",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0d0gtjj",
+        "columns": null
+      },
+      "id": "Field_1doc5ea",
+      "key": "select_6r52xg",
+      "readonly": true,
+      "mappedField": "vendor"
+    },
+    {
+      "label": "Bank Account",
+      "type": "select",
+      "layout": {
+        "row": "Row_1rkpsih",
+        "columns": null
+      },
+      "id": "Field_1cqtkdx",
+      "key": "select_1w900r",
+      "valuesKey": "bankAccounts",
+      "readonly": true,
+      "mappedField": "bankAccount"
+    },
+    {
+      "label": "Amount",
+      "type": "number",
+      "layout": {
+        "row": "Row_167x3ax",
+        "columns": null
+      },
+      "id": "Field_0zkaxbk",
+      "key": "number_ymgrce",
+      "mappedField": "amount",
+      "disabled": false,
+      "serializeToString": false,
+      "validate": {
+        "required": false
+      },
+      "readonly": true
+    },
+    {
+      "label": "PO number",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0zwuooc",
+        "columns": null
+      },
+      "id": "Field_1vegrv5",
+      "key": "textfield_h126zc",
+      "mappedField": "poNumber",
+      "readonly": true
+    }
+  ],
+  "type": "default",
+  "id": "approve-invoice-form",
+  "executionPlatform": "Jmee",
+  "executionPlatformVersion": "0.0.1",
+  "mappedEntity": "${project_rootPath}.entity.Invoice",
+  "schemaVersion": 11
+}

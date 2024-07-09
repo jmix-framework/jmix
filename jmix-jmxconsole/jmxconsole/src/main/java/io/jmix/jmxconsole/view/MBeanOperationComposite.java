@@ -46,6 +46,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +80,7 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
     protected JmixButton invokeBtn;
     protected ManagedBeanOperation operation;
     protected AttributeComponentProvider attributeComponentProvider;
-    protected Map<Component, String> attributeFieldsTypeMap = new HashMap<>();
+    protected Map<Component, String> attributeFieldsTypeMap = new LinkedHashMap<>();
 
     @Override
     public void afterPropertiesSet() {

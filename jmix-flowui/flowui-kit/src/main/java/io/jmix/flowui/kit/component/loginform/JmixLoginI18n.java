@@ -16,38 +16,46 @@
 
 package io.jmix.flowui.kit.component.loginform;
 
+import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.login.LoginI18n;
-import com.vaadin.flow.internal.JsonSerializer;
-import elemental.json.JsonFactory;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
-import org.apache.commons.io.IOUtils;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 public class JmixLoginI18n extends LoginI18n {
-
-    protected static final JsonValue JMIX_DEFAULT_I18N;
-
-    /*
-     * CAUTION! Copied from com.vaadin.flow.component.login.LoginI18n
-     */
-    static {
-        try {
-            final JsonFactory JSON_FACTORY = new JreJsonFactory();
-            JMIX_DEFAULT_I18N = JSON_FACTORY.parse(
-                    IOUtils.toString(LoginI18n.class.getResource("i18n.json"),
-                            StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Cannot find the default i18n configuration. "
-                            + "Please make sure the i18n.json does exist.");
-        }
-    }
+    private JmixForm form;
 
     public static JmixLoginI18n createDefault() {
-        return JsonSerializer.toObject(JmixLoginI18n.class, JMIX_DEFAULT_I18N);
+        JmixLoginI18n jmixLoginI18n = new JmixLoginI18n();
+
+        JmixForm jmixForm = new JmixForm();
+        jmixForm.setTitle("Log in");
+        jmixForm.setUsername("Username");
+        jmixForm.setPassword("Password");
+        jmixForm.setSubmit("Log in");
+        jmixForm.setForgotPassword("Forgot password");
+        jmixForm.setRememberMe("Remember me");
+
+        jmixLoginI18n.setForm(jmixForm);
+
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setTitle("Incorrect username or password");
+        errorMessage.setMessage("Check that you have entered the correct username and password and try again.");
+        errorMessage.setUsername("Username is required");
+        errorMessage.setPassword("Password is required");
+
+        jmixLoginI18n.setErrorMessage(errorMessage);
+
+        return jmixLoginI18n;
+    }
+
+    @Override
+    public void setForm(Form form) {
+        Preconditions.checkArgument(form instanceof JmixForm,
+                "Passed value must be an instance of " + JmixForm.class.getSimpleName());
+        this.form = ((JmixForm) form);
+    }
+
+    @Override
+    public JmixForm getForm() {
+        return form;
     }
 
     public static class JmixForm extends Form {

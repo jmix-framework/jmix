@@ -137,7 +137,7 @@ class JmixLoginForm extends LoginForm {
             },
             localesVisibility: {
                 type: Boolean,
-                value: true,
+                notify: true
             },
             locales: {
                 type: Object,
@@ -154,7 +154,7 @@ class JmixLoginForm extends LoginForm {
                             password: 'Password',
                             submit: 'Log in',
                             forgotPassword: 'Forgot password',
-                            rememberMe: "Remember me"
+                            rememberMe: 'Remember me'
                         },
                         errorMessage: {
                             title: 'Incorrect username or password',
@@ -181,8 +181,8 @@ class JmixLoginForm extends LoginForm {
         this.$.localesSelect.addEventListener('value-changed', (e) => this._localeValueChanged(e));
         this.$.rememberMeCheckbox.addEventListener('checked-changed', (e) => this._onRememberMeValueChange(e));
 
-        this.$.localesSelect.jmixUserOriginated = true
-        this.$.rememberMeCheckbox.jmixUserOriginated = true
+        this.$.localesSelect.jmixUserOriginated = true;
+        this.$.rememberMeCheckbox.jmixUserOriginated = true;
     }
 
     _onVisibilityPropertiesChanged(rememberMeVisibility, localesVisibility) {

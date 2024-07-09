@@ -36,19 +36,26 @@ public class AwsFileStorageProperties {
      */
     String endpointUrl;
 
+    /**
+     * Whether to force the client to use path-style addressing for buckets.
+     */
+    boolean usePathStyleBucketAddressing;
+
     public AwsFileStorageProperties(
             String accessKey,
             String secretAccessKey,
             String region,
             String bucket,
             @DefaultValue("8192") int chunkSize,
-            @DefaultValue("") String endpointUrl) {
+            @DefaultValue("") String endpointUrl,
+            @DefaultValue("false") boolean usePathStyleBucketAddressing) {
         this.accessKey = accessKey;
         this.secretAccessKey = secretAccessKey;
         this.region = region;
         this.bucket = bucket;
         this.chunkSize = chunkSize;
         this.endpointUrl = endpointUrl;
+        this.usePathStyleBucketAddressing = usePathStyleBucketAddressing;
     }
 
     /**
@@ -91,5 +98,12 @@ public class AwsFileStorageProperties {
      */
     public String getEndpointUrl() {
         return endpointUrl;
+    }
+
+    /**
+     * @see #usePathStyleBucketAddressing
+     */
+    public boolean getUsePathStyleBucketAddressing() {
+        return usePathStyleBucketAddressing;
     }
 }

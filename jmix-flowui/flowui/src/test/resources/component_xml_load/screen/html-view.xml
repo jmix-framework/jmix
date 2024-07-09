@@ -337,7 +337,8 @@
                  title="sectionTitle"
                  visible="true"
                  whiteSpace="PRE"
-                 width="100px">
+                 width="100px"
+                 ariaLabel="ariaLabelString">
             <section text="sectionChild"/>
         </section>
 
@@ -537,7 +538,8 @@
                 sandbox="ALLOW_SCRIPTS, ALLOW_TOP_NAVIGATION_BY_USER_ACTIVATION"
                 title="iframeTitle"
                 visible="true"
-                width="100px"/>
+                width="100px"
+                ariaLabel="ariaLabelString"/>
 
         <input id="inputId"
                ariaLabel="ariaLabelString"

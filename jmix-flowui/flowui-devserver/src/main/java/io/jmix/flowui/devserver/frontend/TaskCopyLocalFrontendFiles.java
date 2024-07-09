@@ -16,11 +16,6 @@
 
 package io.jmix.flowui.devserver.frontend;
 
-import com.vaadin.flow.server.frontend.FallibleCommand;
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -34,10 +29,16 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.vaadin.flow.server.frontend.AbstractFileGeneratorFallibleCommand;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Copies JavaScript files from the given local frontend folder.
  */
-public class TaskCopyLocalFrontendFiles implements FallibleCommand {
+public class TaskCopyLocalFrontendFiles
+        extends AbstractFileGeneratorFallibleCommand {
 
     private final Options options;
 
@@ -45,7 +46,6 @@ public class TaskCopyLocalFrontendFiles implements FallibleCommand {
      * Copy project local frontend files from defined frontendResourcesDirectory
      * (by default 'src/main/resources/META-INF/resources/frontend'). This
      * enables running jar projects locally.
-     *
      */
     TaskCopyLocalFrontendFiles(Options options) {
         this.options = options;
@@ -59,15 +59,19 @@ public class TaskCopyLocalFrontendFiles implements FallibleCommand {
 
         if (localResourcesFolder != null
                 && localResourcesFolder.isDirectory()) {
-            String startMessage = "Copying project local frontend resources...";
-            log().info(startMessage);
-            FrontendUtils.logInFile(startMessage);
-            copyLocalResources(localResourcesFolder, target);
-            String completeMessage = "Copying frontend directory completed.";
-            log().info(completeMessage);
-            FrontendUtils.logInFile(completeMessage);
+            String startMsg = "Copying project local frontend resources.";
+            log().info(startMsg);
+            Set<String> files = copyLocalResources(localResourcesFolder,
+                    target);
+//            track(files.stream()
+//                    .map(path -> target.toPath().resolve(path).toFile())
+//                    .toList());
+
+            String finishMsg = "Copying frontend directory completed.";
+            log().info(finishMsg);
         } else {
-            log().debug("Found no local frontend resources for the project");
+            String notFoundMsg = "Found no local frontend resources for the project";
+            log().info(notFoundMsg);
         }
     }
 
@@ -76,13 +80,10 @@ public class TaskCopyLocalFrontendFiles implements FallibleCommand {
      * specified target directory ignoring the file exclusions defined as a
      * relative paths to source directory.
      *
-     * @param source
-     *            directory to copy the files from
-     * @param target
-     *            directory to copy the files to
-     * @param relativePathExclusions
-     *            files or directories that shouldn't be copied, relative to
-     *            source directory
+     * @param source                 directory to copy the files from
+     * @param target                 directory to copy the files to
+     * @param relativePathExclusions files or directories that shouldn't be copied, relative to
+     *                               source directory
      * @return set of copied files
      */
     static Set<String> copyLocalResources(File source, File target,

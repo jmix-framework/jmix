@@ -109,11 +109,13 @@ public abstract class AbstractNavigationProcessor<N extends AbstractViewNavigato
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void fireAfterViewNavigation(N navigator, View<?> view) {
-        if (navigator instanceof SupportsAfterViewNavigationHandler) {
-            ((SupportsAfterViewNavigationHandler<?>) navigator)
-                    .getAfterNavigationHandler().ifPresent(handler ->
-                            handler.accept(new AfterViewNavigationEvent(this, view)));
+        if (navigator instanceof SupportsAfterViewNavigationHandler<?> afterViewNavigationHandler) {
+            afterViewNavigationHandler.getAfterNavigationHandler().ifPresent(handler ->
+                    // Make sure that AfterNavigationHandler is invoked after all lifecycle events of a view
+                    ViewControllerUtils.setAfterNavigationHandler(view, () ->
+                            handler.accept(new AfterViewNavigationEvent(this, view))));
         }
     }
 

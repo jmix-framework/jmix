@@ -52,9 +52,12 @@ public class AwsFileStorageManagementFacade {
             @ManagedOperationParameter(name = "region", description = "Amazon S3 region"),
             @ManagedOperationParameter(name = "bucket", description = "Amazon S3 bucket name"),
             @ManagedOperationParameter(name = "chunkSize", description = "Amazon S3 chunk size (kB)"),
-            @ManagedOperationParameter(name = "endpointUrl", description = "Optional custom S3 storage endpoint URL")})
+            @ManagedOperationParameter(name = "endpointUrl", description = "Optional custom S3 storage endpoint URL"),
+            @ManagedOperationParameter(name = "usePathStyleBucketAddressing", description = "Whether to force the client to use path-style addressing for buckets")
+    })
     public String refreshS3Client(String storageName, String accessKey, String secretAccessKey,
-                                  String region, String bucket, int chunkSize, @Nullable String endpointUrl) {
+                                  String region, String bucket, int chunkSize, @Nullable String endpointUrl,
+                                  boolean usePathStyleBucketAddressing) {
         FileStorage fileStorage = fileStorageLocator.getByName(storageName);
         if (fileStorage instanceof AwsFileStorage) {
             AwsFileStorage awsFileStorage = (AwsFileStorage) fileStorage;
@@ -64,6 +67,7 @@ public class AwsFileStorageManagementFacade {
             awsFileStorage.setBucket(bucket);
             awsFileStorage.setChunkSize(chunkSize);
             awsFileStorage.setEndpointUrl(endpointUrl);
+            awsFileStorage.setUsePathStyleBucketAddressing(usePathStyleBucketAddressing);
             awsFileStorage.refreshS3Client();
             return "Refreshed successfully";
         }

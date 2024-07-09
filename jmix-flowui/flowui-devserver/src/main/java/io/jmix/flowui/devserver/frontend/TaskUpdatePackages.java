@@ -20,6 +20,7 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.internal.StringUtil;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.Platform;
+import com.vaadin.flow.server.frontend.ExclusionFilter;
 import com.vaadin.flow.server.frontend.FrontendVersion;
 import com.vaadin.flow.server.frontend.scanner.ClassFinder;
 import com.vaadin.flow.server.frontend.scanner.FrontendDependenciesScanner;
@@ -58,21 +59,18 @@ public class TaskUpdatePackages extends NodeUpdater {
     protected static final String VAADIN_APP_PACKAGE_HASH = "vaadinAppPackageHash";
     private final boolean forceCleanUp;
     private final boolean enablePnpm;
-    private final File jarResourcesFolder;
+    private File jarResourcesFolder;
 
     /**
      * Create an instance of the updater given all configurable parameters.
      *
-     * @param finder
-     *            a reusable class finder
      * @param frontendDependencies
      *            a reusable frontend dependencies
      * @param options
      *            the task options
      */
-    TaskUpdatePackages(ClassFinder finder,
-                       FrontendDependenciesScanner frontendDependencies, Options options) {
-        super(finder, frontendDependencies, options);
+    TaskUpdatePackages(FrontendDependenciesScanner frontendDependencies, Options options) {
+        super(frontendDependencies, options);
         this.jarResourcesFolder = options.getJarFrontendResourcesFolder();
         this.forceCleanUp = options.isCleanNpmFiles();
         this.enablePnpm = options.isEnablePnpm();
@@ -92,6 +90,15 @@ public class TaskUpdatePackages extends NodeUpdater {
             boolean npmVersionLockingUpdated = lockVersionForNpm(packageJson);
 
             if (modified || npmVersionLockingUpdated) {
+                if (!packageJson.hasKey("type")
+                        || !packageJson.getString("type").equals("module")) {
+                    packageJson.put("type", "module");
+                    log().info(
+                            """
+                                    Adding package.json type as module to enable ES6 modules which is now required.
+                                    With this change sources need to use 'import' instead of 'require' for imports.
+                                    """);
+                }
                 writePackageFile(packageJson);
 
             }
@@ -205,9 +212,15 @@ public class TaskUpdatePackages extends NodeUpdater {
             Map<String, String> applicationDevDependencies) throws IOException {
         int added = 0;
 
+        Map<String, String> filteredApplicationDependencies = new ExclusionFilter(
+                finder,
+                options.isReactEnabled()
+                        && FrontendUtils.isReactModuleAvailable(options))
+                .exclude(applicationDependencies);
 
         // Add application dependencies
-        for (Entry<String, String> dep : applicationDependencies.entrySet()) {
+        for (Entry<String, String> dep : filteredApplicationDependencies
+                .entrySet()) {
             added += addDependency(packageJson, DEPENDENCIES, dep.getKey(),
                     dep.getValue());
         }
@@ -227,7 +240,7 @@ public class TaskUpdatePackages extends NodeUpdater {
             // need to double check that not overriding a scanned
             // dependency since add-ons should be able to downgrade
             // version through exclusion
-            if (!applicationDependencies.containsKey(key)
+            if (!filteredApplicationDependencies.containsKey(key)
                     && pinPlatformDependency(packageJson,
                     platformPinnedDependencies, key)) {
                 added++;
@@ -242,7 +255,7 @@ public class TaskUpdatePackages extends NodeUpdater {
 
         // Remove obsolete dependencies
         List<String> dependencyCollection = Stream
-                .concat(applicationDependencies.entrySet().stream(),
+                .concat(filteredApplicationDependencies.entrySet().stream(),
                         getDefaultDependencies().entrySet().stream())
                 .map(Entry::getKey)
                 .collect(Collectors.toList());

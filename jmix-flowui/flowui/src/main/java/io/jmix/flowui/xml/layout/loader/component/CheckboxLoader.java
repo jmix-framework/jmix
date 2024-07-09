@@ -47,6 +47,7 @@ public class CheckboxLoader extends AbstractComponentLoader<JmixCheckbox> {
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
         componentLoader().loadClickNotifierAttributes(resultComponent, element);
+        componentLoader().loadHelperText(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

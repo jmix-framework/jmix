@@ -122,7 +122,6 @@ public class TaskUpdateSettingsFile implements FallibleCommand, Serializable {
             FileIOUtils.writeIfChanged(settingsFile, stringify(settings, 2));
         } catch (IOException e) {
             log().error("Failed to write file: {}", settingsFile, e);
-            FrontendUtils.logInFile("Failed to write file " + settingsFile + "\n" + e);
         }
     }
 

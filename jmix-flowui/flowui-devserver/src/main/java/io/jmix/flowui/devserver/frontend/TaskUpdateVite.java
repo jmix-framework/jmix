@@ -40,12 +40,35 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
     private final Options options;
 
     private final Set<String> webComponentTags;
+    private static final String[] reactPluginTemplatesUsedInStarters = new String[] {
+            getSimplifiedTemplate("vite.config-react.ts"),
+            getSimplifiedTemplate("vite.config-react-swc.ts") };
+
+    static final String FILE_SYSTEM_ROUTER_DEPENDENCY = "@vaadin/hilla-file-router/vite-plugin.js";
 
     TaskUpdateVite(Options options, Set<String> webComponentTags) {
         this.options = options;
         this.webComponentTags = webComponentTags;
     }
 
+    private static String getSimplifiedTemplate(String string) {
+        return simplifyTemplate(getTemplate(string));
+    }
+
+    private static String getTemplate(String string) {
+        try {
+            return IOUtils.toString(
+                    FrontendUtils.getResourceAsStream(string),
+                    StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static String simplifyTemplate(String text) {
+        return text.replace("\n", "").replace("\r", "").replace("\t", "")
+                .replace(" ", "");
+    }
     @Override
     public void execute() {
         try {
@@ -59,6 +82,13 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
     private void createConfig() throws IOException {
         File configFile = new File(options.getStudioFolder(),
                 FrontendUtils.VITE_CONFIG);
+        if (configFile.exists()) {
+            if (!replaceWithDefault(configFile)) {
+                return;
+            }
+            log().info(
+                    "Replacing vite.config.ts with the default version as the React plugin is now automatically included");
+        }
 
         try (InputStream resource = FrontendUtils.getResourceAsStream(FrontendUtils.VITE_CONFIG)) {
             String template = IOUtils.toString(resource, StandardCharsets.UTF_8);
@@ -77,8 +107,7 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
                 configFile.createNewFile();
                 FileUtils.write(configFile, template, StandardCharsets.UTF_8);
                 String message = String.format("Created vite configuration file: '%s'", configFile);
-                log().debug(message);
-                FrontendUtils.logInFile(message);
+                log().info(message);
             } else {
                 List<String> viteConfigLines = FileUtils.readLines(configFile, StandardCharsets.UTF_8);
                 final String hmrPortConstDeclaration = "let hmrPort = " + freePort + ";";
@@ -91,11 +120,21 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
                     }
                 }
                 FileUtils.writeLines(configFile, viteConfigLines);
-                FrontendUtils.logInFile(String.format("Vite configuration '%s' has been updated", configFile));
+                log().info(String.format("Vite configuration '%s' has been updated", configFile));
             }
-
             // --- Special Studio logic end ---
         }
+    }
+
+    private boolean replaceWithDefault(File configFile) throws IOException {
+        String text = simplifyTemplate(
+                IOUtils.toString(configFile.toURI(), StandardCharsets.UTF_8));
+        for (String template : reactPluginTemplatesUsedInStarters) {
+            if (text.equals(template)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void createGeneratedConfig() throws IOException {
@@ -113,10 +152,25 @@ public class TaskUpdateVite implements FallibleCommand, Serializable {
                             webComponentTags == null || webComponentTags.isEmpty()
                                     ? ""
                                     : String.join(";", webComponentTags));
+        template = updateFileSystemRouterVitePlugin(template);
             FileIOUtils.writeIfChanged(generatedConfigFile, template);
             log().debug("Created vite generated configuration file: '{}'",
                     generatedConfigFile);
         }
+    }
+
+    private String updateFileSystemRouterVitePlugin(String template) {
+        if (options.isReactEnabled() && FrontendUtils.isHillaUsed(
+                options.getFrontendDirectory(), options.getClassFinder())) {
+            return template
+                    .replace("//#vitePluginFileSystemRouterImport#",
+                            "import vitePluginFileSystemRouter from '"
+                                    + FILE_SYSTEM_ROUTER_DEPENDENCY + "';")
+                    .replace("//#vitePluginFileSystemRouter#",
+                            ", vitePluginFileSystemRouter({isDevMode: devMode})");
+        }
+        return template.replace("//#vitePluginFileSystemRouterImport#", "")
+                .replace("//#vitePluginFileSystemRouter#", "");
     }
 
     private Logger log() {

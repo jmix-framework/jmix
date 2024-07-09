@@ -54,7 +54,7 @@ public class Options implements Serializable {
 
     private boolean enableImportsUpdate = false;
 
-    private boolean enableWebpackConfigUpdate = false;
+    private boolean enableConfigUpdate = false;
 
     private boolean runNpmInstall = false;
 
@@ -104,9 +104,9 @@ public class Options implements Serializable {
     /**
      * The node.js version to be used when node.js is installed automatically by
      * Vaadin, for example <code>"v16.0.0"</code>. Defaults to
-     * {@value com.vaadin.flow.server.frontend.FrontendTools#DEFAULT_NODE_VERSION}.
+     * {@value FrontendTools#DEFAULT_NODE_VERSION}.
      */
-    private String nodeVersion = com.vaadin.flow.server.frontend.FrontendTools.DEFAULT_NODE_VERSION;
+    private String nodeVersion = FrontendTools.DEFAULT_NODE_VERSION;
 
     /**
      * Download node.js from this URL. Handy in heavily firewalled corporate
@@ -140,15 +140,39 @@ public class Options implements Serializable {
 
     private boolean frontendHotdeploy = false;
 
+    private boolean reactEnable = true;
+
+    /**
+     * Removes generated files from a previous execution that are no more
+     * created.
+     */
+    private boolean cleanOldGeneratedFiles = false;
     /**
      * Creates a new instance.
      *
      * @param lookup
      *            a {@link Lookup} to discover services used by Flow (SPI)
+     * @param npmFolder
+     *            a project's base folder
      */
     public Options(Lookup lookup, File npmFolder) {
+        this(lookup, new ClassFinder.CachedClassFinder(
+                lookup.lookup(ClassFinder.class)), npmFolder);
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param lookup
+     *            a {@link Lookup} to discover services used by Flow (SPI)
+     * @param classFinder
+     *            a class finder to use in node tasks
+     * @param npmFolder
+     *            a project's base folder
+     */
+    public Options(Lookup lookup, ClassFinder classFinder, File npmFolder) {
         this.lookup = lookup;
-        this.classFinder = lookup.lookup(ClassFinder.class);
+        this.classFinder = classFinder;
         this.npmFolder = npmFolder;
     }
 
@@ -215,6 +239,25 @@ public class Options implements Serializable {
         this.buildDirectoryName = buildDirectory;
         return this;
     }
+    /**
+     * Sets the folders where frontend build results should be stored.
+     *
+     * @param webappResourcesDirectory
+     *            the directory to set for build tool to output its build
+     *            results, meant for serving from context root.
+     * @param resourceOutputDirectory
+     *            the directory to output generated non-served resources, such
+     *            as the "config/stats.json" stats file, and the
+     *            "config/flow-build-info.json" token file.
+     * @return this builder
+     */
+    public Options withBuildResultFolders(File webappResourcesDirectory,
+            File resourceOutputDirectory) {
+        this.enableConfigUpdate = true;
+        this.webappResourcesDirectory = webappResourcesDirectory;
+        this.resourceOutputDirectory = resourceOutputDirectory;
+        return this;
+    }
 
     /**
      * Sets the webpack related properties.
@@ -227,21 +270,22 @@ public class Options implements Serializable {
      *            as the "config/stats.json" stats file, and the
      *            "config/flow-build-info.json" token file.
      * @return this builder
+     * @deprecated to be removed, use
+     *             {@link #withBuildResultFolders(File, File)} instead.
      */
+    @Deprecated(since = "24.4", forRemoval = true)
     public Options withWebpack(File webappResourcesDirectory,
                                File resourceOutputDirectory) {
-        this.enableWebpackConfigUpdate = true;
-        this.webappResourcesDirectory = webappResourcesDirectory;
-        this.resourceOutputDirectory = resourceOutputDirectory;
-        return this;
+        return withBuildResultFolders(webappResourcesDirectory,
+                resourceOutputDirectory);
     }
 
     /**
-     * Sets whether to enable packages and webpack file updates. Default is
+     * Sets whether to enable packages and frontend file updates. Default is
      * <code>true</code>.
      *
      * @param enablePackagesUpdate
-     *            <code>true</code> to enable packages and webpack update,
+     *            <code>true</code> to enable packages and frontend update,
      *            otherwise <code>false</code>
      * @return this builder
      */
@@ -316,7 +360,7 @@ public class Options implements Serializable {
 
     /**
      * Sets whether copy resources from classpath to the appropriate npm package
-     * folder so as they are available for webpack build.
+     * folder so as they are available for frontend build.
      *
      * @param jars
      *            set of class nodes to be visited. Not {@code null}
@@ -398,6 +442,9 @@ public class Options implements Serializable {
      * @return folder to generate frontend files in
      */
     public File getFrontendGeneratedFolder() {
+        if (frontendGeneratedFolder == null) {
+            return new File(getFrontendDirectory(), FrontendUtils.GENERATED);
+        }
         return frontendGeneratedFolder;
     }
 
@@ -663,9 +710,9 @@ public class Options implements Serializable {
     }
 
     /**
-     * Get the output directory for webpack output.
+     * Get the output directory for frontend build output.
      *
-     * @return webpackOutputDirectory
+     * @return webappResourcesDirectory
      */
     public File getWebappResourcesDirectory() {
         return webappResourcesDirectory;
@@ -760,8 +807,16 @@ public class Options implements Serializable {
         return enableImportsUpdate;
     }
 
+    public boolean isEnableConfigUpdate() {
+        return enableConfigUpdate;
+    }
+
+    /**
+     * @deprecated use {@link #isEnableConfigUpdate()}
+     */
+    @Deprecated(since = "24.4", forRemoval = true)
     public boolean isEnableWebpackConfigUpdate() {
-        return enableWebpackConfigUpdate;
+        return isEnableConfigUpdate();
     }
 
     public boolean isRunNpmInstall() {
@@ -910,5 +965,42 @@ public class Options implements Serializable {
      */
     public boolean isCompressBundle() {
         return compressBundle;
+    }
+    public boolean isReactEnabled() {
+        return reactEnable;
+    }
+
+    public Options withReact(boolean reactEnable) {
+        this.reactEnable = reactEnable;
+        return this;
+    }
+
+    /**
+     * Sets whether generated files from a previous execution that are no more
+     * created should be removed.
+     * <p>
+     * </p>
+     * By default, the odl generated files are preserved.
+     *
+     * @param clean
+     *            {@literal true} if old generated files should be removed,
+     *            {@literal false} if they should be preserved.
+     *
+     * @return this builder
+     */
+    public Options withCleanOldGeneratedFiles(boolean clean) {
+        this.cleanOldGeneratedFiles = clean;
+        return this;
+    }
+
+    /**
+     * Gets if generated files from a previous execution that are no more
+     * created should be removed.
+     *
+     * @return {@literal true} if old generated files should be removed,
+     *         otherwise {@literal false}.
+     */
+    public boolean isCleanOldGeneratedFiles() {
+        return cleanOldGeneratedFiles;
     }
 }

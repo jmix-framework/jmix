@@ -22,6 +22,9 @@ import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.internal.DevModeHandler;
 import com.vaadin.flow.internal.DevModeHandlerManager;
 import com.vaadin.flow.internal.Pair;
+import com.vaadin.flow.internal.StringUtil;
+import com.vaadin.flow.internal.hilla.EndpointRequestUtil;
+import com.vaadin.flow.router.internal.ClientRoutesProvider;
 import com.vaadin.flow.server.AbstractConfiguration;
 import com.vaadin.flow.server.Constants;
 import com.vaadin.flow.server.VaadinService;
@@ -60,11 +63,15 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static com.vaadin.flow.server.Constants.COMPATIBILITY_RESOURCES_FRONTEND_DEFAULT;
@@ -72,6 +79,7 @@ import static com.vaadin.flow.server.Constants.RESOURCES_FRONTEND_DEFAULT;
 import static com.vaadin.flow.server.Constants.VAADIN_WEBAPP_RESOURCES;
 import static com.vaadin.flow.server.frontend.FrontendTools.INSTALL_NODE_LOCALLY;
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A class for static methods and definitions that might be used in different
@@ -111,9 +119,19 @@ public class FrontendUtils {
      * Path of the folder containing application frontend source files, it needs
      * to be relative to the {@link FrontendUtils#DEFAULT_NODE_DIR}
      *
-     * By default it is <code>/frontend</code> in the project folder.
+     * By default it is <code>/src/main/frontend</code> in the project folder.
      */
     public static final String DEFAULT_FRONTEND_DIR = DEFAULT_NODE_DIR
+            + "src/main/" + FRONTEND;
+
+    /**
+     * Path of the old folder containing application frontend source files, it
+     * needs to be relative to the {@link FrontendUtils#DEFAULT_NODE_DIR}
+     *
+     * By default the old folder is <code>/frontend</code> in the project
+     * folder.
+     */
+    public static final String LEGACY_FRONTEND_DIR = DEFAULT_NODE_DIR
             + FRONTEND;
 
     /**
@@ -168,6 +186,11 @@ public class FrontendUtils {
      * file.
      */
     public static final String IMPORTS_D_TS_NAME = "generated-flow-imports.d.ts";
+
+    /**
+     * Name of the file that contains application imports, javascript, theme and
+     * style annotations used when embedding Flow as web-component.
+     */
     public static final String IMPORTS_WEB_COMPONENT_NAME = "generated-flow-webcomponent-imports.js";
 
     public static final String THEME_IMPORTS_D_TS_NAME = "theme.d.ts";
@@ -225,6 +248,13 @@ public class FrontendUtils {
      */
     public static final String VITE_DEVMODE_TS = "vite-devmode.ts";
 
+    public static final String ROUTES_TS = "routes.ts";
+
+    public static final String ROUTES_TSX = "routes.tsx";
+
+    public static final String ROUTES_FLOW_TSX = "routes-flow.tsx";
+
+    public static final String ROUTES_JS = "routes.js";
     /**
      * Default generated path for generated frontend files.
      */
@@ -268,6 +298,11 @@ public class FrontendUtils {
     public static final String FRONTEND_GENERATED_FLOW_IMPORT_PATH = FRONTEND_FOLDER_ALIAS
             + "generated/flow/";
 
+    /**
+     * The default directory in frontend directory, where Hilla views are
+     * located.
+     */
+    public static final String HILLA_VIEWS_PATH = "views";
     /**
      * File used to enable npm mode.
      */
@@ -325,6 +360,15 @@ public class FrontendUtils {
 
     public static final String BRIGHT_BLUE = "\u001b[94m%s\u001b[0m";
 
+    // Regex pattern matches "...serverSideRoutes"
+    private static final Pattern SERVER_SIDE_ROUTES_PATTERN = Pattern.compile(
+            "(?<=\\s|^)\\.{3}serverSideRoutes(?=\\s|$)", Pattern.MULTILINE);
+
+    // Regex pattern matches everything between "const|let|var routes = [" (or
+    // "const routes: RouteObject[] = [") and "...serverSideRoutes"
+    private static final Pattern CLIENT_SIDE_ROUTES_PATTERN = Pattern.compile(
+            "(?<=(?:const|let|var) routes)(:\\s?\\w*\\[\\s?])?\\s?=\\s?\\[([\\s\\S]*?)(?=\\.{3}serverSideRoutes)",
+            Pattern.MULTILINE);
     /**
      * Only static stuff here.
      */
@@ -353,13 +397,14 @@ public class FrontendUtils {
      * Read a stream and copy the content into a String using system line
      * separators for all 'carriage return' characters.
      *
-     * @param inputStream the input stream
+     * @param inputStream
+     *            the input stream
      * @return the string
      */
     public static String streamToString(InputStream inputStream) {
         String ret = "";
         try (InputStream handledStream = inputStream) {
-            return IOUtils.toString(handledStream, StandardCharsets.UTF_8)
+            return IOUtils.toString(handledStream, UTF_8)
                     .replaceAll("\\R", System.lineSeparator());
         } catch (IOException exception) {
             // ignore exception on close()
@@ -375,7 +420,8 @@ public class FrontendUtils {
      * contains the program is also appended to PATH so that the it can locate
      * related tools.
      *
-     * @param command a list with the program and arguments
+     * @param command
+     *            a list with the program and arguments
      * @return a configured process builder
      */
     public static ProcessBuilder createProcessBuilder(List<String> command) {
@@ -536,10 +582,12 @@ public class FrontendUtils {
     /**
      * Get the contents of a frontend file from the running dev server.
      *
-     * @param service the Vaadin service.
-     * @param path    the file path.
+     * @param service
+     *            the Vaadin service.
+     * @param path
+     *            the file path.
      * @return an input stream for reading the file contents; null if there is
-     * no such file or the dev server is not running.
+     *         no such file or the dev server is not running.
      */
     public static InputStream getFrontendFileFromDevModeHandler(
             VaadinService service, String path) {
@@ -547,7 +595,8 @@ public class FrontendUtils {
         if (devModeHandler.isPresent()) {
             try {
                 File frontendFile = resolveFrontendPath(
-                        devModeHandler.get().getProjectRoot(), path);
+                        devModeHandler.get().getProjectRoot(),
+                        service.getDeploymentConfiguration(), path);
                 return frontendFile == null ? null
                         : new FileInputStream(frontendFile);
             } catch (IOException e) {
@@ -559,17 +608,43 @@ public class FrontendUtils {
 
     /**
      * Looks up the frontend resource at the given path. If the path starts with
-     * {@code ./}, first look in {@code frontend}, then in
-     * {@value FrontendUtils#JAR_RESOURCES_FOLDER}. If the path does not start
-     * with {@code ./}, look in {@code node_modules} instead.
+     * {@code ./}, first look in {@value FrontendUtils#DEFAULT_FRONTEND_DIR},
+     * then in {@value FrontendUtils#JAR_RESOURCES_FOLDER}. If the path does not
+     * start with {@code ./}, look in {@code node_modules} instead.
      *
-     * @param projectRoot the project root folder.
-     * @param path        the file path.
+     * @param projectRoot
+     *            the project root folder.
+     * @param deploymentConfiguration
+     *            the active deployment configuration
+     * @param path
+     *            the file path.
      * @return an existing {@link File} , or null if the file doesn't exist.
      */
-    public static File resolveFrontendPath(File projectRoot, String path) {
+    public static File resolveFrontendPath(File projectRoot,
+            DeploymentConfiguration deploymentConfiguration, String path) {
         return resolveFrontendPath(projectRoot, path,
-                new File(projectRoot, FrontendUtils.FRONTEND));
+                deploymentConfiguration.getFrontendFolder());
+    }
+
+    /**
+     * Get the legacy frontend folder if available and new folder doesn't exist.
+     *
+     * @param projectRoot
+     *            project's root directory
+     * @param frontendDir
+     *            the frontend directory location from project's configuration
+     * @return correct folder or legacy folder if not user defined
+     */
+    public static File getLegacyFrontendFolderIfExists(File projectRoot,
+            File frontendDir) {
+        if (!frontendDir.exists() && frontendDir.toPath()
+                .endsWith(DEFAULT_FRONTEND_DIR.substring(2))) {
+            File legacy = new File(projectRoot, LEGACY_FRONTEND_DIR);
+            if (legacy.exists()) {
+                return legacy;
+            }
+        }
+        return frontendDir;
     }
 
     /**
@@ -578,9 +653,12 @@ public class FrontendUtils {
      * {@value FrontendUtils#JAR_RESOURCES_FOLDER}. If the path does not start
      * with {@code ./}, look in {@code node_modules} instead.
      *
-     * @param projectRoot       the project root folder.
-     * @param path              the file path.
-     * @param frontendDirectory the frontend directory.
+     * @param projectRoot
+     *            the project root folder.
+     * @param path
+     *            the file path.
+     * @param frontendDirectory
+     *            the frontend directory.
      * @return an existing {@link File} , or null if the file doesn't exist.
      */
     public static File resolveFrontendPath(File projectRoot, String path,
@@ -598,7 +676,8 @@ public class FrontendUtils {
     /**
      * Get resource from JAR package.
      *
-     * @param jarImport jar file to get (no resource folder should be added)
+     * @param jarImport
+     *            jar file to get (no resource folder should be added)
      * @return resource as String or {@code null} if not found
      */
     public static String getJarResourceString(String jarImport,
@@ -624,7 +703,8 @@ public class FrontendUtils {
      * Get the front-end resources folder. This is where the contents of JAR
      * dependencies are copied to.
      *
-     * @param frontendDirectory project's frontend directory
+     * @param frontendDirectory
+     *            project's frontend directory
      * @return a {@link File} representing a folder with copied resources
      */
     public static File getJarResourcesFolder(File frontendDirectory) {
@@ -645,27 +725,25 @@ public class FrontendUtils {
     /**
      * Get directory where project's frontend files are located.
      *
-     * @param configuration the current deployment configuration
+     * @param configuration
+     *            the current deployment configuration
+     *
      * @return {@link #DEFAULT_FRONTEND_DIR} or value of
-     * {@link #PARAM_FRONTEND_DIR} if it is set.
+     *         {@link #PARAM_FRONTEND_DIR} if it is set.
      */
     public static File getProjectFrontendDir(
             AbstractConfiguration configuration) {
-        String propertyValue = configuration
-                .getStringProperty(PARAM_FRONTEND_DIR, DEFAULT_FRONTEND_DIR);
-        File f = new File(propertyValue);
-        if (f.isAbsolute()) {
-            return f;
-        }
-        return new File(getProjectBaseDir((ApplicationConfiguration) configuration), propertyValue);
+        return configuration.getFrontendFolder();
     }
 
     /**
      * Get relative path from a source path to a target path in Unix form. All
      * the Windows' path separator will be replaced.
      *
-     * @param source the source path
-     * @param target the target path
+     * @param source
+     *            the source path
+     * @param target
+     *            the target path
      * @return unix relative path from source to target
      */
     public static String getUnixRelativePath(Path source, Path target) {
@@ -675,7 +753,8 @@ public class FrontendUtils {
     /**
      * Get path as a String in Unix form.
      *
-     * @param source path to get
+     * @param source
+     *            path to get
      * @return path as a String in Unix form.
      */
     public static String getUnixPath(Path source) {
@@ -703,8 +782,10 @@ public class FrontendUtils {
          * Constructs an exception telling which tool was being detected and
          * using what command.
          *
-         * @param tool      the tool being detected
-         * @param extraInfo extra information which might be helpful to the end user
+         * @param tool
+         *            the tool being detected
+         * @param extraInfo
+         *            extra information which might be helpful to the end user
          */
         public UnknownVersionException(String tool, String extraInfo) {
             super("Unable to detect version of " + tool + ". " + extraInfo);
@@ -714,9 +795,12 @@ public class FrontendUtils {
          * Constructs an exception telling which tool was being detected and
          * using what command, and the exception causing the failure.
          *
-         * @param tool      the tool being detected
-         * @param extraInfo extra information which might be helpful to the end user
-         * @param cause     the exception causing the failure
+         * @param tool
+         *            the tool being detected
+         * @param extraInfo
+         *            extra information which might be helpful to the end user
+         * @param cause
+         *            the exception causing the failure
          */
         public UnknownVersionException(String tool, String extraInfo,
                                        Exception cause) {
@@ -733,7 +817,8 @@ public class FrontendUtils {
          * Constructs an exception telling what code the command execution
          * process was exited with.
          *
-         * @param processExitCode process exit code
+         * @param processExitCode
+         *            process exit code
          */
         public CommandExecutionException(int processExitCode) {
             super("Process execution failed with exit code " + processExitCode);
@@ -743,9 +828,12 @@ public class FrontendUtils {
          * Constructs an exception telling what code the command execution
          * process was exited with and the output that it produced.
          *
-         * @param processExitCode process exit code
-         * @param output          the output from the command
-         * @param errorOutput     the error output from the command
+         * @param processExitCode
+         *            process exit code
+         * @param output
+         *            the output from the command
+         * @param errorOutput
+         *            the error output from the command
          */
         public CommandExecutionException(int processExitCode, String output,
                                          String errorOutput) {
@@ -757,7 +845,8 @@ public class FrontendUtils {
          * Constructs an exception telling what was the original exception the
          * command execution process failed with.
          *
-         * @param cause the cause exception of process failure.
+         * @param cause
+         *            the cause exception of process failure.
          */
         public CommandExecutionException(Throwable cause) {
             super("Process execution failed", cause);
@@ -788,9 +877,11 @@ public class FrontendUtils {
     /**
      * Executes a given command as a native process.
      *
-     * @param command the command to be executed and it's arguments.
+     * @param command
+     *            the command to be executed and it's arguments.
      * @return process output string.
-     * @throws CommandExecutionException if the process completes exceptionally.
+     * @throws CommandExecutionException
+     *             if the process completes exceptionally.
      */
     public static String executeCommand(List<String> command)
             throws CommandExecutionException {
@@ -829,10 +920,11 @@ public class FrontendUtils {
      * not consumed. See https://github.com/vaadin/flow/issues/15339 for an
      * example case.
      *
-     * @param process the process whose streams should be read
+     * @param process
+     *            the process whose streams should be read
      * @return a {@link CompletableFuture} that return the string contents of
-     * the process input and error streams when both are consumed,
-     * wrapped into a {@link Pair}.
+     *         the process input and error streams when both are consumed,
+     *         wrapped into a {@link Pair}.
      */
     public static CompletableFuture<Pair<String, String>> consumeProcessStreams(
             Process process) {
@@ -847,10 +939,12 @@ public class FrontendUtils {
     /**
      * Parse the version number of node/npm from version output string.
      *
-     * @param versionString string containing version output, typically produced by
-     *                      <code>tool --version</code>
+     * @param versionString
+     *            string containing version output, typically produced by
+     *            <code>tool --version</code>
      * @return FrontendVersion of versionString
-     * @throws IOException if parsing fails
+     * @throws IOException
+     *             if parsing fails
      */
     public static FrontendVersion parseFrontendVersion(String versionString)
             throws IOException {
@@ -901,9 +995,11 @@ public class FrontendUtils {
     /**
      * Parse the version number of node/npm from the given output.
      *
-     * @param output The output, typically produced by <code>tool --version</code>
+     * @param output
+     *            The output, typically produced by <code>tool --version</code>
      * @return the parsed version as an array with 3-4 elements
-     * @throws IOException if parsing fails
+     * @throws IOException
+     *             if parsing fails
      */
     static String parseVersionString(String output) throws IOException {
         Optional<String> lastOuput = Stream.of(output.split("\n"))
@@ -922,8 +1018,10 @@ public class FrontendUtils {
      * columns, and allowing copy and paste in console. It also removes the
      * current directory to avoid security issues in log files.
      *
-     * @param baseDir the current directory
-     * @param command the command and it's arguments
+     * @param baseDir
+     *            the current directory
+     * @param command
+     *            the command and it's arguments
      * @return the string for printing in logs
      */
     public static String commandToString(String baseDir, List<String> command) {
@@ -948,9 +1046,12 @@ public class FrontendUtils {
      * exist, returns {@code null}. In case the value cannot be parsed, logs an
      * error and returns {@code null}.
      *
-     * @param sourceJson    json object that has the package
-     * @param pkg           the package name
-     * @param versionOrigin origin of the version (like a file), used in error message
+     * @param sourceJson
+     *            json object that has the package
+     * @param pkg
+     *            the package name
+     * @param versionOrigin
+     *            origin of the version (like a file), used in error message
      * @return the frontend version the package or {@code null}
      */
     public static FrontendVersion getPackageVersionFromJson(
@@ -978,9 +1079,11 @@ public class FrontendUtils {
      * Intentionally send to console instead to log, useful when executing
      * external processes.
      *
-     * @param format  Format of the line to send to console, it must contain a `%s`
-     *                outlet for the message
-     * @param message the string to show
+     * @param format
+     *            Format of the line to send to console, it must contain a `%s`
+     *            outlet for the message
+     * @param message
+     *            the string to show
      */
     @SuppressWarnings("squid:S106")
     public static void console(String format, Object message) {
@@ -991,7 +1094,11 @@ public class FrontendUtils {
      * @see FrontendUtils#console(String, Object)
      */
     public static void console(Object message) {
-        console(FrontendUtils.RED, message, true);
+        console(message, true);
+    }
+
+    public static void console(Object message, boolean logInFile) {
+        console(FrontendUtils.BRIGHT_BLUE, message, logInFile);
     }
 
     public static void console(String format, Object message, boolean logInFile) {
@@ -1007,7 +1114,19 @@ public class FrontendUtils {
             } else {
                 text = format(format, message);
             }
-            logInFile(text);
+            logInFile(text, true, false);
+        }
+    }
+
+    public static void logInFile(String text,
+                                 boolean createLogFileIfNotExist,
+                                 boolean throwExceptionIfLogFileNotExist) {
+        try {
+            logInFile(text, createLogFileIfNotExist);
+        } catch (Throwable t) {
+            if (throwExceptionIfLogFileNotExist) {
+                throw t;
+            }
         }
     }
 
@@ -1029,7 +1148,7 @@ public class FrontendUtils {
         if (logFile == null || !logFile.exists()) {
             throw new IllegalStateException("Log file not exists");
         } else {
-            logInFile(logFile, wrapTextForLogging(text));
+            logInFile(logFile, text);
         }
     }
 
@@ -1039,7 +1158,6 @@ public class FrontendUtils {
             Path filePath = getLogFilePath();
             if (filePath == null) {
                 String logFileIsNull = "Log file path is null";
-                getLogger().warn(logFileIsNull);
                 console(RED, logFileIsNull, false);
                 return null;
             }
@@ -1058,7 +1176,6 @@ public class FrontendUtils {
 
         } catch (IOException e) {
             String stackTrace = Arrays.toString(e.getStackTrace());
-            getLogger().warn(stackTrace);
             console(RED, stackTrace, false);
             return null;
         }
@@ -1108,17 +1225,11 @@ public class FrontendUtils {
                 Files.writeString(logFile.toPath(), text, StandardOpenOption.APPEND);
             } catch (IOException e) {
                 String errorMsg = "Error when writing in log file...";
-                getLogger().warn(errorMsg, e);
                 console(RED, errorMsg + "\n" + Arrays.toString(e.getStackTrace()), false);
             }
         } else if (!logFile.exists()) {
             throw new RuntimeException("File not found: " + logFile.getAbsolutePath());
         }
-    }
-
-    @Nonnull
-    private static String wrapTextForLogging(String rawText) {
-        return getCurrentDateTime("yyyy-MM-dd hh:mm:ss") + " LOG INFO: " + rawText + "\n";
     }
 
     @Nonnull
@@ -1135,9 +1246,11 @@ public class FrontendUtils {
      * utilities that follow symlinks when deleting and/or modifying permissions
      * may not work as intended.
      *
-     * @param nodeModules the {@code node_modules} directory
-     * @throws IOException on failure to delete any one file, or if the directory name
-     *                     is not {@code node_modules}
+     * @param nodeModules
+     *            the {@code node_modules} directory
+     * @throws IOException
+     *             on failure to delete any one file, or if the directory name
+     *             is not {@code node_modules}
      */
     public static void deleteNodeModules(File nodeModules) throws IOException {
         if (!nodeModules.exists()) {
@@ -1159,8 +1272,10 @@ public class FrontendUtils {
      * Will not delete contents of symlink or junction directories, only the
      * link file.
      *
-     * @param directory directory to delete
-     * @throws IOException on failure to delete or read any one file
+     * @param directory
+     *            directory to delete
+     * @throws IOException
+     *             on failure to delete or read any one file
      */
     public static void deleteDirectory(File directory) throws IOException {
         if (!directory.exists() || !directory.isDirectory()) {
@@ -1182,9 +1297,11 @@ public class FrontendUtils {
      * Check that directory is not a windows junction which is basically a
      * symlink.
      *
-     * @param directory directory path to check
+     * @param directory
+     *            directory path to check
      * @return true if directory is a windows junction
-     * @throws IOException if an I/O error occurs
+     * @throws IOException
+     *             if an I/O error occurs
      */
     private static boolean isJunction(Path directory) throws IOException {
         boolean isWindows = System.getProperty("os.name").toLowerCase()
@@ -1245,8 +1362,8 @@ public class FrontendUtils {
      * for serving the VAADIN frontend bundle.
      *
      * @return the path to the servlet used for the frontend bundle. Empty for a
-     * /* mapping, otherwise always starts with a slash but never ends
-     * with a slash
+     *         /* mapping, otherwise always starts with a slash but never ends
+     *         with a slash
      */
     public static String getFrontendServletPath(ServletContext servletContext) {
         String mapping = VaadinServlet.getFrontendMapping();
@@ -1260,7 +1377,8 @@ public class FrontendUtils {
     /**
      * Gets the folder where Flow generated frontend files are placed.
      *
-     * @param frontendFolder the project frontend folder
+     * @param frontendFolder
+     *            the project frontend folder
      * @return the folder for Flow generated files
      */
     public static File getFlowGeneratedFolder(File frontendFolder) {
@@ -1270,24 +1388,14 @@ public class FrontendUtils {
     /**
      * Gets the location of the generated import file for Flow.
      *
-     * @param frontendFolder the project frontend folder
+     * @param frontendFolder
+     *            the project frontend folder
      * @return the location of the generated import JS file
      */
     public static File getFlowGeneratedImports(File frontendFolder) {
         return new File(getFlowGeneratedFolder(frontendFolder), IMPORTS_NAME);
     }
 
-    /**
-     * Gets the folder where exported web components are generated.
-     *
-     * @param frontendFolder the project frontend folder
-     * @return the exported web components folder
-     */
-    public static File getFlowGeneratedWebComponentsFolder(
-            File frontendFolder) {
-        return new File(getFlowGeneratedFolder(frontendFolder),
-                "web-components");
-    }
 
     /**
      * Gets the location of the generated import file for exported web
@@ -1302,6 +1410,241 @@ public class FrontendUtils {
             File frontendFolder) {
         return new File(getFlowGeneratedFolder(frontendFolder),
                 IMPORTS_WEB_COMPONENT_NAME);
+    }
+
+    /**
+     * Gets the folder where exported web components are generated.
+     *
+     * @param frontendFolder
+     *            the project frontend folder
+     * @return the exported web components folder
+     */
+    public static File getFlowGeneratedWebComponentsFolder(
+            File frontendFolder) {
+        return new File(getFlowGeneratedFolder(frontendFolder),
+                "web-components");
+    }
+
+    /**
+     * Auto-detects what router is used in a project based on what is imported
+     * in {@link FrontendUtils#INDEX_TS} file.
+     *
+     * @param frontendDirectory
+     *            path to the frontend folder in a project.
+     * @return {@code false} if vaadin-router is used, {@code true} otherwise.
+     */
+    public static boolean isReactRouterRequired(File frontendDirectory) {
+        Objects.requireNonNull(frontendDirectory);
+        boolean result = true;
+        File indexTs = new File(frontendDirectory, FrontendUtils.INDEX_TS);
+        if (indexTs.exists()) {
+            try {
+                String indexTsContent = IOUtils.toString(indexTs.toURI(),
+                        UTF_8);
+                indexTsContent = StringUtil.removeComments(indexTsContent);
+                result = !indexTsContent.contains("@vaadin/router");
+            } catch (IOException e) {
+                getLogger().error(
+                        "Couldn't auto-detect React/Lit application, react-router will be used",
+                        e);
+            }
+        }
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug("Auto-detected client-side router to use: {}",
+                    result ? "react-router" : "vaadin-router");
+        }
+        return result;
+    }
+
+    /**
+     * Auto-detects if hilla views are used in the project based on what is in
+     * routes.ts or routes.tsx file.
+     * {@link FrontendUtils#getProjectFrontendDir(AbstractConfiguration)} can be
+     * used to get the frontend directory.
+     *
+     * @param frontendDirectory
+     *            Target frontend directory.
+     * @return {@code true} if hilla views are used, {@code false} otherwise.
+     */
+    public static boolean isHillaViewsUsed(File frontendDirectory) {
+        Objects.requireNonNull(frontendDirectory);
+        File viewsDirectory = new File(frontendDirectory, HILLA_VIEWS_PATH);
+        if (viewsDirectory.exists()) {
+            try {
+                Collection<Path> views = FileIOUtils.getFilesByPattern(
+                        viewsDirectory.toPath(), "**/*.{js,jsx,ts,tsx}");
+                for (Path view : views) {
+                    String viewContent = IOUtils.toString(view.toUri(), UTF_8);
+                    viewContent = StringUtil.removeComments(viewContent);
+                    if (!viewContent.isBlank()) {
+                        return true;
+                    }
+                }
+            } catch (IOException e) {
+                getLogger().error(
+                        "Couldn't scan Hilla views directory for hilla auto-detection",
+                        e);
+            }
+        }
+
+        var files = List.of(FrontendUtils.INDEX_TS, FrontendUtils.INDEX_TSX,
+                FrontendUtils.ROUTES_TS);
+        for (String fileName : files) {
+            File routesFile = new File(frontendDirectory, fileName);
+            if (routesFile.exists()) {
+                try {
+                    String routesTsContent = IOUtils
+                            .toString(routesFile.toURI(), UTF_8);
+                    return isRoutesContentUsingHillaViews(routesTsContent);
+                } catch (IOException e) {
+                    getLogger().error(
+                            "Couldn't read {} for hilla views auto-detection",
+                            routesFile.getName(), e);
+                }
+            }
+        }
+        File routesFile = new File(frontendDirectory, FrontendUtils.ROUTES_TSX);
+        if (routesFile.exists()) {
+            try {
+                String routesTsContent = IOUtils.toString(routesFile.toURI(),
+                        UTF_8);
+                return isRoutesTsxContentUsingHillaViews(routesTsContent);
+            } catch (IOException e) {
+                getLogger().error(
+                        "Couldn't read {} for hilla views auto-detection",
+                        routesFile.getName(), e);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if Hilla is available and Hilla views are used in the project
+     * based on what is in routes.ts or routes.tsx file.
+     * {@link FrontendUtils#getProjectFrontendDir(AbstractConfiguration)} can be
+     * used to get the frontend directory.
+     *
+     * @return {@code true} if Hilla is available and Hilla views are used,
+     *         {@code false} otherwise
+     */
+    public static boolean isHillaUsed(File frontendDirectory) {
+        return EndpointRequestUtil.isHillaAvailable()
+                && isHillaViewsUsed(frontendDirectory);
+    }
+
+    /**
+     * Checks if Hilla is available and Hilla views are used in the project
+     * based on what is in routes.ts or routes.tsx file.
+     * {@link FrontendUtils#getProjectFrontendDir(AbstractConfiguration)} can be
+     * used to get the frontend directory. Given class finder is used to check
+     * the presence of Hilla in a classpath.
+     *
+     * @param classFinder
+     *            class finder to check the presence of Hilla endpoint class
+     * @return {@code true} if Hilla is available and Hilla views are used,
+     *         {@code false} otherwise
+     */
+    public static boolean isHillaUsed(File frontendDirectory,
+            ClassFinder classFinder) {
+        return EndpointRequestUtil.isHillaAvailable(classFinder)
+                && isHillaViewsUsed(frontendDirectory);
+    }
+
+    private static boolean isRoutesContentUsingHillaViews(
+            String routesContent) {
+        routesContent = StringUtil.removeComments(routesContent);
+        if (missingServerSideRoutes(routesContent)) {
+            return true;
+        }
+        return mayHaveClientSideRoutes(routesContent);
+    }
+
+    private static boolean isRoutesTsxContentUsingHillaViews(
+            String routesContent) {
+        routesContent = StringUtil.removeComments(routesContent);
+        // Note that here we assume that Frontend/views doesn't have views and
+        // routes.tsx isn't the auto-generated one
+        if (hasFileOrReactRoutesFunction(routesContent)) {
+            return true;
+        }
+        return isRoutesContentUsingHillaViews(routesContent);
+    }
+
+    private static boolean missingServerSideRoutes(String routesContent) {
+        return !SERVER_SIDE_ROUTES_PATTERN.matcher(routesContent).find();
+    }
+
+    private static boolean hasFileOrReactRoutesFunction(String routesContent) {
+        return !routesContent.isBlank()
+                && (routesContent.contains("withFileRoutes(")
+                        || routesContent.contains("withReactRoutes("));
+    }
+
+    private static boolean mayHaveClientSideRoutes(String routesContent) {
+        Matcher matcher = CLIENT_SIDE_ROUTES_PATTERN.matcher(routesContent);
+        while (matcher.find()) {
+            for (int index = 1; index <= matcher.groupCount(); index++) {
+                String group = matcher.group(index);
+                if (group != null && !group.isBlank()
+                        && group.startsWith(":")) {
+                    continue;
+                }
+                if (group != null && !group.isBlank()) {
+                    group = group.trim();
+                    // Not checking actual routes here. It's enough to know that
+                    // array contains more than just "...serverSideRoutes".
+                    return group.contains(",");
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Is the React module available in the classpath.
+     *
+     * @return true if the React module is available, false otherwise
+     */
+    public static boolean isReactModuleAvailable(Options options) {
+        try {
+            options.getClassFinder().loadClass(
+                    "com.vaadin.flow.component.react.ReactAdapterComponent");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        } catch (Exception e) {
+            return true; // Port is available
+        }
+    }
+
+    /**
+     * Get all available client routes in a distinct list of route paths
+     * collected from all {@link ClientRoutesProvider} implementations found
+     * with Vaadin {@link Lookup}.
+     *
+     * @return a list of available client routes
+     */
+    public static List<String> getClientRoutes() {
+        return Optional.ofNullable(VaadinService.getCurrent())
+                .map(VaadinService::getContext).stream()
+                .flatMap(ctx -> ctx.getAttribute(Lookup.class)
+                        .lookupAll(ClientRoutesProvider.class).stream())
+                .flatMap(provider -> provider.getClientRoutes().stream())
+                .filter(Objects::nonNull).distinct().toList();
+    }
+
+    public static InputStream getResourceAsStream(String name) {
+        final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
+        final ClassLoader classLoader = FrontendUtils.class.getClassLoader();
+        InputStream resource = classLoader.getResourceAsStream(devServerResourcesBaseDir + name);
+        return resource != null ? resource : classLoader.getResourceAsStream(name);
+    }
+
+    public static URL getResource(String name) {
+        final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
+        final ClassLoader classLoader = FrontendUtils.class.getClassLoader();
+        URL resource = classLoader.getResource(devServerResourcesBaseDir + name);
+        return resource != null ? resource : classLoader.getResource(name);
     }
 
     public static int findFreePort(int rangeStart, int rangeEnd) {
@@ -1334,20 +1677,6 @@ public class FrontendUtils {
         } catch (Exception e) {
             return true; // Port is available
         }
-    }
-
-    public static InputStream getResourceAsStream(String name) {
-        final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
-        final ClassLoader classLoader = FrontendUtils.class.getClassLoader();
-        InputStream resource = classLoader.getResourceAsStream(devServerResourcesBaseDir + name);
-        return resource != null ? resource : classLoader.getResourceAsStream(name);
-    }
-
-    public static URL getResource(String name) {
-        final String devServerResourcesBaseDir = "io/jmix/flowui/devserver/";
-        final ClassLoader classLoader = FrontendUtils.class.getClassLoader();
-        URL resource = classLoader.getResource(devServerResourcesBaseDir + name);
-        return resource != null ? resource : classLoader.getResource(name);
     }
 
     public static File getProjectBaseDir(ApplicationConfiguration configuration) {

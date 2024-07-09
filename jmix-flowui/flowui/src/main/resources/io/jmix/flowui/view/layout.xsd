@@ -2275,6 +2275,10 @@
         <xs:attribute name="overlayClass" type="xs:string"/>
     </xs:attributeGroup>
 
+    <xs:attributeGroup name="hasOverlayWidth">
+        <xs:attribute name="overlayWidth" type="xs:string"/>
+    </xs:attributeGroup>
+
     <xs:attributeGroup name="hasSecurityConstraint">
         <xs:attribute name="constraintEntityOp" type="constraintEntityOp"/>
     </xs:attributeGroup>
@@ -2502,6 +2506,7 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasOverlayClass"/>
+                <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -3140,6 +3145,7 @@
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasClickNotifierAttributes"/>
+                <xs:attributeGroup ref="hasHelperText"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3239,6 +3245,7 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasOverlayClass"/>
+                <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
@@ -3274,6 +3281,7 @@
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasOverlayClass"/>
+                <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
@@ -4336,6 +4344,8 @@
                 <xs:attribute name="resourceDoc" type="xs:string"/>
                 <xs:attribute name="sandbox" type="sandboxTypeEnum"/>
                 <xs:attribute name="importance" type="importanceTypeEnum"/>
+
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4348,6 +4358,15 @@
                 <xs:attribute name="type" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Section -->
+    <xs:complexType name="sectionHtmlComponent">
+        <xs:complexContent>
+            <xs:extension base="baseClickableHtmlContainer">
+                <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4758,7 +4777,7 @@
                 <xs:element name="html" type="htmlComponent"/>
                 <xs:element name="div" type="baseClickableHtmlContainer"/>
                 <xs:element name="span" type="baseClickableHtmlContainer"/>
-                <xs:element name="section" type="baseClickableHtmlContainer"/>
+                <xs:element name="section" type="sectionHtmlComponent"/>
                 <xs:element name="pre" type="baseClickableHtmlContainer"/>
                 <xs:element name="p" type="baseClickableHtmlContainer"/>
                 <xs:element name="nav" type="clickableHtmlContainerWithArea"/>

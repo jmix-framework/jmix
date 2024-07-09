@@ -171,6 +171,17 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
             src == "resourceString"
             srcdoc.get() == "resourceDocString"
             title.get() == "iframeTitle"
+            ariaLabel.get() == "ariaLabelString"
+        }
+    }
+
+    def "Load specific section attributes from XML"() {
+        when: "Open the HtmlView"
+        def htmlView = navigateToView(HtmlView.class)
+
+        then: "Specific section attributes will be loaded"
+        verifyAll(htmlView.sectionId) {
+            ariaLabel.get() == "ariaLabelString"
         }
     }
 

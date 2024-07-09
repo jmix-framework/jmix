@@ -3138,6 +3138,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "reorderable", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "selectAllButtonsVisible", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "selectedItemsColumnLabel", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", type = StudioPropertyType.VALUES_LIST,

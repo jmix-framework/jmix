@@ -66,7 +66,6 @@ public class TaskGenerateBootstrap extends AbstractTaskClientGenerator {
                      | IllegalArgumentException | InvocationTargetException
                      | NoSuchMethodException | SecurityException e) {
                 String msg = "Failed to instantiate TypeScriptBootstrapModifier";
-                FrontendUtils.logInFile(msg + "\n" + e);
                 LoggerFactory.getLogger(TaskGenerateBootstrap.class).error(msg, e);
             }
         }

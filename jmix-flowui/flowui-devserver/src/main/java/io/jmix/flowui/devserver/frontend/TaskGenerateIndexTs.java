@@ -19,7 +19,9 @@ package io.jmix.flowui.devserver.frontend;
 import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.internal.UsageStatistics;
 import com.vaadin.flow.server.Constants;
+import com.vaadin.flow.server.ExecutionFailedException;
 import com.vaadin.flow.server.Version;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import static io.jmix.flowui.devserver.frontend.FileIOUtils.writeIfChanged;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.INDEX_JS;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.INDEX_TS;
 import static io.jmix.flowui.devserver.frontend.FrontendUtils.INDEX_TSX;
@@ -41,6 +44,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class TaskGenerateIndexTs extends AbstractTaskClientGenerator {
 
+    private static final String ROUTES_JS_IMPORT_PATH_TOKEN = "%routesJsImportPath%";
     private final File frontendDirectory;
     private Options options;
 
@@ -56,7 +60,27 @@ public class TaskGenerateIndexTs extends AbstractTaskClientGenerator {
     }
 
     @Override
+    public void execute() throws ExecutionFailedException {
+        if (!shouldGenerate()) {
+            cleanup();
+            return;
+        }
+        File generatedFile = getGeneratedFile();
+        try {
+            writeIfChanged(generatedFile, getFileContent());
+        } catch (IOException exception) {
+            String errorMessage = String.format("Error writing '%s'",
+                    generatedFile);
+            throw new ExecutionFailedException(errorMessage, exception);
+        }
+    }
+    @Override
     protected File getGeneratedFile() {
+        if (options.isReactEnabled()) {
+            return new File(
+                    new File(frontendDirectory, FrontendUtils.GENERATED),
+                    INDEX_TSX);
+        }
         return new File(new File(frontendDirectory, FrontendUtils.GENERATED),
                 INDEX_TS);
     }
@@ -74,16 +98,31 @@ public class TaskGenerateIndexTs extends AbstractTaskClientGenerator {
     protected String getFileContent() throws IOException {
         String indexTemplate;
         String indexFile = INDEX_TS;
-        if (options.getFeatureFlags().isEnabled(FeatureFlags.REACT_ROUTER)) {
-            indexFile = "index-react.ts";
+        if (options.isReactEnabled()) {
+            indexFile = "index-react.tsx";
         }
         try (InputStream indexTsStream = FrontendUtils.getResourceAsStream(indexFile)) {
             assert indexTsStream != null;
             indexTemplate = IOUtils.toString(indexTsStream, UTF_8);
+            if (options.isReactEnabled()) {
+                File routesTsx = new File(frontendDirectory,
+                        FrontendUtils.ROUTES_TSX);
+                indexTemplate = indexTemplate.replace(
+                        ROUTES_JS_IMPORT_PATH_TOKEN,
+                        (routesTsx.exists())
+                                ? FrontendUtils.FRONTEND_FOLDER_ALIAS
+                                        + FrontendUtils.ROUTES_JS
+                                : FrontendUtils.FRONTEND_FOLDER_ALIAS
+                                        + FrontendUtils.GENERATED
+                                        + FrontendUtils.ROUTES_JS);
+            }
         }
         return indexTemplate;
     }
 
+    private void cleanup() {
+        FileUtils.deleteQuietly(getGeneratedFile());
+    }
     /**
      * Ensure that the given relative path is valid as an import path. NOTE:
      * expose only for testing purpose.
@@ -106,7 +145,6 @@ public class TaskGenerateIndexTs extends AbstractTaskClientGenerator {
             indexTemplate = getFileContent();
         } catch (IOException e) {
             log().warn("Failed to read file content", e);
-            FrontendUtils.logInFile("Failed to read file content\n" + Arrays.toString(e.getStackTrace()));
         }
         if (indexContent != null && !indexContent.equals(indexTemplate)) {
             UsageStatistics.markAsUsed(Constants.STATISTIC_ROUTING_CLIENT,

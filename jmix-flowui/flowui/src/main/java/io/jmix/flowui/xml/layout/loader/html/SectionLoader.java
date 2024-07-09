@@ -30,5 +30,6 @@ public class SectionLoader extends AbstractHtmlContainerLoader<Section> {
         super.loadComponent();
 
         componentLoader().loadClickNotifierAttributes(resultComponent, element);
+        componentLoader().loadAriaLabel(resultComponent, element);
     }
 }

@@ -461,7 +461,6 @@ abstract class AbstractUpdateImports implements Runnable {
                             "Use the './' prefix for files in JAR files: '%s', please update your component.", importPath
                     );
                     getLogger().warn(message);
-                    FrontendUtils.logInFile(message);
                 }
                 resolved = FrontendUtils.JAR_RESOURCES_IMPORT_FRONTEND_RELATIVE
                         + resource;
@@ -585,7 +584,6 @@ abstract class AbstractUpdateImports implements Runnable {
             String message = notFoundMessage(npmNotFound,
                     "Failed to find the following imports in the `node_modules` tree:", getImportsNotFoundMessage());
             getLogger().info(message);
-            FrontendUtils.logInFile(message);
         }
 
         return es6ImportPaths;
@@ -799,7 +797,6 @@ abstract class AbstractUpdateImports implements Runnable {
                         options.getFrontendDirectory(), jsImport
                 );
                 getLogger().warn(message);
-                FrontendUtils.logInFile(message);
             }
             return FRONTEND_FOLDER_ALIAS
                     + STARTING_DOT_SLASH.matcher(jsImport).replaceFirst("");
@@ -890,7 +887,6 @@ abstract class AbstractUpdateImports implements Runnable {
         } catch (IOException exception) {
             String message = String.format("Could not read file %s. Skipping applying theme for its imports", file.getPath());
             getLogger().warn(message, exception);
-            FrontendUtils.logInFile(message + "\n" + Arrays.toString(exception.getStackTrace()));
         }
     }
 
@@ -924,7 +920,6 @@ abstract class AbstractUpdateImports implements Runnable {
             return resolvedPath;
         } catch (InvalidPathException ipe) {
             getLogger().error("Invalid import '{}' in file '{}'", importedPath, moduleFile);
-            FrontendUtils.logInFile(String.format("Invalid import '%s' in file '%s'", importedPath, moduleFile));
             getLogger().debug("Failed to resolve path.", ipe);
         }
         return importedPath;

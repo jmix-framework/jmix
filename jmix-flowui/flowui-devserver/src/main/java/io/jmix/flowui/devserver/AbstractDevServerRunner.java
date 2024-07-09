@@ -164,7 +164,6 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
             doStartDevModeServer();
         } catch (ExecutionFailedException exception) {
             getLogger().error(null, exception);
-            FrontendUtils.logInFile(Arrays.toString(exception.getStackTrace()));
             throw new CompletionException(exception);
         }
     }
@@ -194,7 +193,6 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
                         "%s port '%d' is defined but it's not working properly. Using a new free port...",
                         getServerName(), port);
                 getLogger().warn(message);
-                FrontendUtils.logInFile(message);
                 port = 0;
             }
         }
@@ -204,7 +202,6 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         long start = System.nanoTime();
         String startMessage = "Starting " + getServerName();
         getLogger().info(startMessage);
-        FrontendUtils.logInFile(startMessage);
 
         watchDog.set(new DevServerWatchDog());
 
@@ -219,12 +216,10 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
             if (!isRunning()) {
                 String msg = "Startup of " + getServerName()
                         + " failed. Output was:\n" + getFailedOutput();
-                FrontendUtils.logInFile(msg);
                 throw new IllegalStateException(msg);
             }
             long ms = (System.nanoTime() - start) / 1000000;
             String startMsg = String.format("Started %s. Time: %d ms", getServerName(), ms);
-            FrontendUtils.logInFile(startMsg);
             getLogger().info(startMsg);
         } finally {
             if (devServerProcess.get() == null) {
@@ -246,21 +241,18 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         if (!getStudioRoot().exists()) {
             String message = String.format("No project folder '%s' exists", getStudioRoot());
             getLogger().warn(message);
-            FrontendUtils.logInFile(message);
             throw new ExecutionFailedException(START_FAILURE
                     + " the target execution folder doesn't exist.");
         }
         if (!binary.exists()) {
             String message = String.format("'%s' doesn't exist. Did you run `npm install`?", binary);
             getLogger().warn(message);
-            FrontendUtils.logInFile(message);
             throw new ExecutionFailedException(String.format(
                     "%s '%s' doesn't exist. `npm install` has not run or failed.",
                     START_FAILURE, binary));
         } else if (!binary.canExecute()) {
             String message = String.format(" '%s' is not an executable. Did you run `npm install`?", binary);
             getLogger().warn(message);
-            FrontendUtils.logInFile(message);
             throw new ExecutionFailedException(String.format(
                     "%s '%s' is not an executable."
                             + " `npm install` has not run or failed.",
@@ -269,7 +261,6 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         if (!config.canRead()) {
             String message = String.format("%s configuration '%s' is not found or is not readable.", getServerName(), config);
             getLogger().warn(message);
-            FrontendUtils.logInFile(message);
             throw new ExecutionFailedException(
                     String.format("%s '%s' doesn't exist or is not readable.",
                             START_FAILURE, config));
@@ -411,7 +402,6 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
             outputTracker.find();
             String startMessage = String.format(LOG_START, getServerName());
             getLogger().info(startMessage);
-            FrontendUtils.logInFile(startMessage, true);
 
             int timeout = Integer.parseInt(config.getStringProperty(
                     InitParameters.SERVLET_PARAMETER_DEVMODE_TIMEOUT,
@@ -422,7 +412,6 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
         } catch (IOException e) {
             String errorMessage = "Failed to start the " + getServerName() + " process";
             getLogger().error(errorMessage, e);
-            FrontendUtils.logInFile(errorMessage);
         } catch (InterruptedException e) {
             getLogger().debug(
                     getServerName() + " process start has been interrupted", e);
@@ -544,7 +533,6 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
     private void reuseExistingPort(int port) {
         String logMessage = String.format("Reusing %s running at %s:%d", getServerName(), DEV_SERVER_HOST, port);
         getLogger().info(logMessage);
-        FrontendUtils.logInFile(logMessage);
         this.usingAlreadyStartedProcess = true;
 
         // Save running port for next usage
@@ -659,11 +647,13 @@ public abstract class AbstractDevServerRunner implements DevModeHandler {
                 devServerStartFuture.getNow(null);
             } catch (CompletionException exception) {
                 isDevServerFailedToStart.set(true);
-                FrontendUtils.logInFile("DevServer start failed." +
-                        " Cause: " + exception.getCause() +
-                        " Message: " + exception.getMessage() +
-                        "Stacktrace: \n" + Arrays.toString(exception.getStackTrace())
-                );
+                getLogger().warn("DevServer start failed. " +
+                        "Cause: {} " +
+                        "Message: {} " +
+                        "Stacktrace: \n{}",
+                        exception.getCause(),
+                        exception.getMessage(),
+                        Arrays.toString(exception.getStackTrace()));
                 throw getCause(exception);
             }
             if (request.getHeader("X-DevModePoll") != null) {

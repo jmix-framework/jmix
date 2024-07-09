@@ -163,4 +163,7 @@ public final class ViewControllerUtils {
         return view.addBeforeShowListener(listener);
     }
 
+    public static void setAfterNavigationHandler(View<?> view, Runnable operation) {
+        view.setAfterNavigationHandler(operation);
+    }
 }

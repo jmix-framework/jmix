@@ -21,7 +21,7 @@ import { ComboBoxPlaceholder } from '@vaadin/combo-box/src/vaadin-combo-box-plac
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.3.1]
+// CAUTION: copied from @vaadin/multi-select-combo-box-internal  [last update Vaadin 24.4.4]
 class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBoxMixin(ThemableMixin(PolymerElement))) {
     static get is() {
         return 'jmix-multi-select-combo-box-internal';
@@ -57,6 +57,14 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
             filteredItems: {
                 type: Array,
                 notify: true,
+            },
+
+            /**
+             * When true, filter string isn't cleared after selecting an item.
+             */
+            keepFilter: {
+                type: Boolean,
+                value: false,
             },
 
             /**
@@ -119,6 +127,10 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
         };
     }
 
+    static get observers() {
+        return ['_readonlyChanged(readonly)'];
+    }
+
     /**
      * Reference to the clear button element.
      * @protected
@@ -154,7 +166,11 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
 
         this._target = this;
         this._toggleElement = this.querySelector('.toggle-button');
-        this._actionsBox = this.querySelector('[part="action-part"]');
+    }
+
+    /** @private */
+    _readonlyChanged() {
+        this._setDropdownItems(this.filteredItems);
     }
 
     /**
@@ -166,12 +182,12 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
      */
     _setDropdownItems(items) {
         if (this.readonly) {
-            this._dropdownItems = this.selectedItems;
+            super._setDropdownItems(this.selectedItems);
             return;
         }
 
         if (this.filter || !this.selectedItemsOnTop) {
-            this._dropdownItems = items;
+            super._setDropdownItems(items);
             return;
         }
 
@@ -181,11 +197,11 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
                 (item) => this._comboBox._findIndex(item, this.topGroup, this.itemIdPath) === -1,
             );
 
-            this._dropdownItems = this.topGroup.concat(filteredItems);
+            super._setDropdownItems(this.topGroup.concat(filteredItems));
             return;
         }
 
-        this._dropdownItems = items;
+        super._setDropdownItems(items);
     }
 
     /** @private */
@@ -227,11 +243,11 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
 
             if (this.readonly) {
                 this.close();
-            } else {
+            } else if (this._hasValidInputValue()) {
                 // Keep selected item focused after committing on Enter.
-                const focusedItem = this.filteredItems[this._focusedIndex];
+                const focusedItem = this._dropdownItems[this._focusedIndex];
                 this._commitValue();
-                this._focusedIndex = this.filteredItems.indexOf(focusedItem);
+                this._focusedIndex = this._dropdownItems.indexOf(focusedItem);
             }
 
             return;
@@ -257,6 +273,30 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
         }
 
         super._onEscape(event);
+    }
+
+    /**
+     * Override from combo-box to ignore requests to clear the filter if the
+     * keepFilter option is enabled. Exceptions are when the dropdown is closed,
+     * so the filter is still cleared on cancel and focus out.
+     * @protected
+     * @override
+     */
+    _clearFilter() {
+        if (!this.keepFilter || !this.opened) {
+            super._clearFilter();
+        }
+    }
+
+    /**
+     * Override method from combo-box to always clear the filter when reverting
+     * the input value, regardless of the keepFilter option.
+     * @override
+     * @protected
+     */
+    _revertInputValueToValue() {
+        super._revertInputValueToValue();
+        this.filter = '';
     }
 
     /**
@@ -372,17 +412,15 @@ class JmixMultiSelectComboBoxInternal extends ComboBoxDataProviderMixin(ComboBox
      * Override method inherited from the combo-box
      * to not request data provider when read-only.
      *
-     * @param {number}
-     * @return {boolean}
      * @protected
      * @override
      */
-    _shouldLoadPage(page) {
+    _shouldFetchData() {
         if (this.readonly) {
             return false;
         }
 
-        return super._shouldLoadPage(page);
+        return super._shouldFetchData();
     }
 
     /**

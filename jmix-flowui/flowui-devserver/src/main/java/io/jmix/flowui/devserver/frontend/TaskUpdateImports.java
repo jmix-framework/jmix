@@ -62,17 +62,14 @@ public class TaskUpdateImports extends NodeUpdater {
     /**
      * Create an instance of the updater given all configurable parameters.
      *
-     * @param finder
-     *            a reusable class finder
      * @param frontendDepScanner
      *            a reusable frontend dependencies scanner
      * @param options
      *            options for the task
      */
-    TaskUpdateImports(ClassFinder finder,
-                      FrontendDependenciesScanner frontendDepScanner,
+    TaskUpdateImports(FrontendDependenciesScanner frontendDepScanner,
                       Options options, ThemeDefinition themeDefinition) {
-        super(finder, frontendDepScanner, options);
+        super(frontendDepScanner, options);
 
         AbstractTheme abstractTheme = null;
         try {

@@ -34,6 +34,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.UiComponentsGenerator;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
@@ -156,7 +157,7 @@ public class MultiValueSelectDialog<E> extends StandardListView<E> implements Mu
 
     @SuppressWarnings("unchecked")
     protected void addValueInternal(HasValue<?, E> component) {
-        E value = component.getValue();
+        E value = UiComponentUtils.getValue(component);
 
         if (value != null
                 && (!(component instanceof SupportsValidation) || isValid((SupportsValidation<E>) component))) {

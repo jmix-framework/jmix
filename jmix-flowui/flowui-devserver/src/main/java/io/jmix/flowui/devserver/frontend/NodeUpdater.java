@@ -107,8 +107,6 @@ public abstract class NodeUpdater implements FallibleCommand {
     /**
      * Constructor.
      *
-     * @param finder
-     *            a reusable class finder
      * @param frontendDependencies
      *            a reusable frontend dependencies
      * @param options

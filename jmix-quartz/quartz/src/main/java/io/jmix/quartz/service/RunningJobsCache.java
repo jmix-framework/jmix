@@ -21,11 +21,15 @@ import io.jmix.core.common.util.Preconditions;
 import jakarta.annotation.PostConstruct;
 import org.quartz.JobKey;
 import org.quartz.TriggerKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +40,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component("quartz_RunningJobsCache")
 public class RunningJobsCache {
+
+    private static final Logger log = LoggerFactory.getLogger(RunningJobsCache.class);
 
     protected Cache jobDetails;
 
@@ -55,13 +61,19 @@ public class RunningJobsCache {
         }
     }
 
+    /**
+     * Checks if job has at least one running trigger
+     *
+     * @param jobKey Job key
+     * @return true if there is running trigger, false otherwise.
+     */
     public boolean isJobRunning(JobKey jobKey) {
         return !getRunningTriggers(jobKey).isEmpty();
     }
 
     public Set<TriggerKey> getRunningTriggers(JobKey key) {
         RunningTriggersWrapper triggersWrapper = jobDetails.get(key, RunningTriggersWrapper.class);
-        if(triggersWrapper == null) {
+        if (triggersWrapper == null) {
             return Collections.emptySet();
         } else {
             return triggersWrapper.getTriggerKeys();
@@ -72,19 +84,47 @@ public class RunningJobsCache {
         RunningTriggersWrapper triggersWrapper = jobDetails.get(jobKey, RunningTriggersWrapper.class);
         if (triggersWrapper == null) {
             triggersWrapper = new RunningTriggersWrapper();
-            jobDetails.put(jobKey, triggersWrapper);
         }
         triggersWrapper.addTrigger(triggerKey);
+
+        jobDetails.put(jobKey, triggersWrapper);
     }
 
     public void invalidate(JobKey jobKey, TriggerKey triggerKey) {
         RunningTriggersWrapper triggersWrapper = jobDetails.get(jobKey, RunningTriggersWrapper.class);
-        if(triggersWrapper != null) {
+        if (triggersWrapper != null) {
             triggersWrapper.removeTrigger(triggerKey);
+            if (triggersWrapper.getTriggerKeys().isEmpty()) {
+                // No more running triggers - evict entire wrapper
+                jobDetails.evictIfPresent(jobKey);
+            } else {
+                jobDetails.put(jobKey, triggersWrapper);
+            }
         }
     }
 
-    private static class RunningTriggersWrapper {
+    /**
+     * Remove all running triggers for provided job from cache
+     *
+     * @param jobKey Job key
+     */
+    public void invalidate(JobKey jobKey) {
+        jobDetails.evictIfPresent(jobKey);
+    }
+
+    /**
+     * Invalidate entire cache
+     */
+    public void invalidateAll() {
+        log.info("Invalidate running Quartz jobs cache");
+        jobDetails.invalidate();
+    }
+
+    private static class RunningTriggersWrapper implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = 7618135979394112959L;
+
         private final Set<TriggerKey> triggersKeys;
 
         public RunningTriggersWrapper() {

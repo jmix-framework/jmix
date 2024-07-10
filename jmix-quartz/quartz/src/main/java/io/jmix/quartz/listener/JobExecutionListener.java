@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.quartzflowui.listener;
+package io.jmix.quartz.listener;
 
+import io.jmix.quartz.QuartzProperties;
 import io.jmix.quartz.service.RunningJobsCache;
+import jakarta.annotation.PostConstruct;
 import org.quartz.*;
 import org.quartz.listeners.JobListenerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 
@@ -36,16 +36,17 @@ public class JobExecutionListener extends JobListenerSupport {
 
     @Autowired
     private Scheduler scheduler;
-
     @Autowired
     protected RunningJobsCache runningJobCache;
+    @Autowired
+    protected QuartzProperties quartzProperties;
 
     @Override
     public String getName() {
         return QUARTZ_JOB_EXECUTION_LISTENER;
     }
 
-    @EventListener(ApplicationStartedEvent.class)
+    @PostConstruct
     private void registerListener() {
         try {
             scheduler.getListenerManager().addJobListener(this);
@@ -57,17 +58,21 @@ public class JobExecutionListener extends JobListenerSupport {
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
         log.debug("Execute job: {}", context);
-        JobKey jobKey = context.getJobDetail().getKey();
-        TriggerKey triggerKey = context.getTrigger().getKey();
-        runningJobCache.put(jobKey, triggerKey);
+        if (quartzProperties.isRunningJobsCacheUsageEnabled()) {
+            JobKey jobKey = context.getJobDetail().getKey();
+            TriggerKey triggerKey = context.getTrigger().getKey();
+            runningJobCache.put(jobKey, triggerKey);
+        }
     }
 
     @Override
     public void jobWasExecuted(JobExecutionContext context,
                                JobExecutionException jobException) {
         log.debug("Complete job: {}", context);
-        JobKey jobKey = context.getJobDetail().getKey();
-        TriggerKey triggerKey = context.getTrigger().getKey();
-        runningJobCache.invalidate(jobKey, triggerKey);
+        if (quartzProperties.isRunningJobsCacheUsageEnabled()) {
+            JobKey jobKey = context.getJobDetail().getKey();
+            TriggerKey triggerKey = context.getTrigger().getKey();
+            runningJobCache.invalidate(jobKey, triggerKey);
+        }
     }
 }

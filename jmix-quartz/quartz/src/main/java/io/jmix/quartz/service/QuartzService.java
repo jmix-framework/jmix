@@ -3,8 +3,9 @@ package io.jmix.quartz.service;
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.core.UnconstrainedDataManager;
-import io.jmix.quartz.job.InvalidJobDetail;
+import io.jmix.quartz.QuartzProperties;
 import io.jmix.quartz.exception.QuartzJobSaveException;
+import io.jmix.quartz.job.InvalidJobDetail;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
 import org.apache.commons.collections4.CollectionUtils;
@@ -45,6 +46,9 @@ public class QuartzService {
     @Autowired
     private RunningJobsCache runningJobsCache;
 
+    @Autowired
+    private QuartzProperties quartzProperties;
+
     /**
      * Returns information about all configured quartz jobs with related triggers
      */
@@ -83,6 +87,7 @@ public class QuartzService {
                 List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
                 if (!CollectionUtils.isEmpty(jobTriggers)) {
                     boolean isActive = false;
+                    boolean hasBlockedTrigger = false;
                     for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
                         TriggerModel triggerModel = dataManager.create(TriggerModel.class);
                         triggerModel.setTriggerName(trigger.getKey().getName());
@@ -111,17 +116,25 @@ public class QuartzService {
                         }
 
                         triggerModels.add(triggerModel);
-                        if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL
+                        Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
+                        if ((triggerState == Trigger.TriggerState.NORMAL || triggerState == Trigger.TriggerState.BLOCKED)
                                 && scheduler.isStarted()
                                 && !scheduler.isInStandbyMode()) {
                             isActive = true;
+                            if (triggerState == Trigger.TriggerState.BLOCKED) {
+                                hasBlockedTrigger = true;
+                            }
                         }
                     }
                     jobModel.setTriggers(triggerModels);
                     if (jobDetail instanceof InvalidJobDetail) {
                         jobModel.setJobState(JobState.INVALID);
                     } else {
-                        if (runningJobsCache.isJobRunning(jobKey)) {
+                        if (hasBlockedTrigger) {
+                            // Some trigger is currently running in blocked mode (job class has @DisallowConcurrentExecution)
+                            jobModel.setJobState(JobState.RUNNING);
+                        } else if (isJobRunning(jobKey)) {
+                            // Job is running according to Scheduler/Cache
                             jobModel.setJobState(JobState.RUNNING);
                         } else {
                             jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
@@ -138,6 +151,24 @@ public class QuartzService {
         return result;
     }
 
+    /**
+     * Checks if provided job is running
+     */
+    public boolean isJobRunning(JobKey jobKey) {
+        boolean running = false;
+        if (quartzProperties.isRunningJobsCacheUsageEnabled()) {
+            // Check if job is running using cache. It's mostly relevant for cluster environment.
+            running = runningJobsCache.isJobRunning(jobKey);
+        }
+        if (!running) {
+            // Check if job is running within current Scheduler.
+            // Additional check in case of cache has been cleared or disabled.
+            // But may not find some running jobs in case of cluster environment.
+            running = isJobRunningWithinCurrentScheduler(jobKey);
+        }
+        return running;
+    }
+
     public String getDisplayedClassName(JobDetail jobDetail) {
         if (jobDetail instanceof InvalidJobDetail) {
             return ((InvalidJobDetail) jobDetail).getOriginClassName();
@@ -145,6 +176,18 @@ public class QuartzService {
             return jobDetail.getJobClass().getName();
         }
 
+    }
+
+    protected boolean isJobRunningWithinCurrentScheduler(JobKey jobKey) {
+        try {
+            List<JobExecutionContext> currentlyExecutingJobs = scheduler.getCurrentlyExecutingJobs();
+            return currentlyExecutingJobs.stream()
+                    .map(JobExecutionContext::getJobDetail)
+                    .map(JobDetail::getKey)
+                    .anyMatch(runningJobKey -> runningJobKey.equals(jobKey));
+        } catch (SchedulerException e) {
+            throw new RuntimeException("Unable to get currently executing jobs", e);
+        }
     }
 
     private String resolveMisfireInstructionId(Trigger trigger) {
@@ -230,7 +273,7 @@ public class QuartzService {
      * @param replaceJobIfExists     replace if job with the same name already exists
      */
     @SuppressWarnings("unchecked")
-    @Transactional(rollbackForClassName={"Exception"})
+    @Transactional(rollbackForClassName = {"Exception"})
     public void updateQuartzJob(JobModel jobModel,
                                 List<JobDataParameterModel> jobDataParameterModels,
                                 List<TriggerModel> triggerModels,

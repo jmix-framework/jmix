@@ -50,7 +50,6 @@ import io.jmix.quartz.model.JobModel;
 import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.service.QuartzService;
-import io.jmix.quartz.service.RunningJobsCache;
 import io.jmix.quartz.util.ScheduleDescriptionProvider;
 import org.apache.commons.collections4.CollectionUtils;
 import org.quartz.JobKey;
@@ -106,8 +105,6 @@ public class JobModelListView extends StandardListView<JobModel> {
     protected MessageTools messageTools;
     @Autowired
     private Metadata metadata;
-    @Autowired
-    private RunningJobsCache runningJobsCache;
     @ViewComponent
     private UrlQueryParametersFacet urlQueryParameters;
 
@@ -242,8 +239,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
         return !CollectionUtils.isEmpty(jobModelsTable.getSelectedItems())
                 && !isJobActive(selectedJobModel)
-                && !isJobInvalid(selectedJobModel)
-                ;
+                && !isJobInvalid(selectedJobModel);
     }
 
     @Install(to = "jobModelsTable.activate", subject = "enabledRule")
@@ -252,8 +248,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         return selectedJobModel != null
                 && !isJobActive(selectedJobModel)
                 && CollectionUtils.isNotEmpty(selectedJobModel.getTriggers())
-                && !isJobInvalid(selectedJobModel)
-                ;
+                && !isJobInvalid(selectedJobModel);
     }
 
     @Install(to = "jobModelsTable.deactivate", subject = "enabledRule")
@@ -261,8 +256,7 @@ public class JobModelListView extends StandardListView<JobModel> {
         JobModel selectedJobModel = jobModelsTable.getSingleSelectedItem();
         return selectedJobModel != null
                 && isJobActive(selectedJobModel)
-                && !isJobInvalid(selectedJobModel)
-                ;
+                && !isJobInvalid(selectedJobModel);
     }
 
     @Install(to = "jobModelsTable.remove", subject = "enabledRule")
@@ -372,7 +366,7 @@ public class JobModelListView extends StandardListView<JobModel> {
             return false;
         }
         JobKey jobKey = JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup());
-        return runningJobsCache.isJobRunning(jobKey);
+        return quartzService.isJobRunning(jobKey);
     }
 
     /**

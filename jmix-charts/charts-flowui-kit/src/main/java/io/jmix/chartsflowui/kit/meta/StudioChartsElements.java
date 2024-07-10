@@ -96,8 +96,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -172,9 +172,9 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "link", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "target", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.Title$Target",
@@ -325,7 +325,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
                             options = {"NORMAL", "ITALIC", "OBLIQUE"}),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
@@ -386,7 +386,7 @@ public interface StudioChartsElements {
                                     "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER)
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER)
             }
     )
     Title.TextStyle titleTextStyle();
@@ -436,7 +436,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
                             options = {"NORMAL", "ITALIC", "OBLIQUE"}),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
@@ -500,7 +500,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "verticalAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VerticalAlign",
                             options = {"TOP", "BOTTOM", "MIDDLE"}),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER)
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER)
             }
     )
     Title.SubtextStyle titleSubtextStyle();
@@ -602,7 +602,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
                             options = {"NORMAL", "ITALIC", "OBLIQUE"}),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "padding", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
@@ -692,7 +692,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "verticalAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VerticalAlign",
                             options = {"TOP", "BOTTOM", "MIDDLE"}),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER)
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER)
             }
     )
     RichStyle richStyle();
@@ -707,7 +707,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "toolboxes", type = StudioPropertyType.VALUES_LIST,
                             options = {"RECT", "POLYGON", "LINE_X", "LINE_Y", "KEEP", "CLEAR"}),
                     @StudioProperty(xmlAttribute = "brushLinkIndexes", type = StudioPropertyType.VALUES_LIST),
@@ -1113,7 +1113,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -1121,8 +1121,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "top", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "right", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "bottom", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "containLabel", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "backgroundColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -1304,7 +1304,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
                             options = {"NORMAL", "ITALIC", "OBLIQUE"}),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
@@ -1393,7 +1393,7 @@ public interface StudioChartsElements {
                                     "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER)
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER)
             }
     )
     AbstractLegend.TextStyle legendTextStyle();
@@ -1408,7 +1408,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -1416,8 +1416,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "top", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "right", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "bottom", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
                             options = {"HORIZONTAL", "VERTICAL"}),
@@ -1648,7 +1648,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
@@ -1656,8 +1656,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "top", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "right", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "bottom", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
                             options = {"HORIZONTAL", "VERTICAL"}),
@@ -1901,8 +1901,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -2117,8 +2117,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -2847,7 +2847,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "center", type = StudioPropertyType.STRING),
@@ -3004,7 +3004,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer.IndicatorType",
@@ -3224,8 +3224,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -3300,7 +3300,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "zLevel", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "z", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "center", type = StudioPropertyType.VALUES_LIST),
@@ -3486,8 +3486,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -3848,8 +3848,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -4014,7 +4014,7 @@ public interface StudioChartsElements {
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
                                     "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "dashOffset", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
@@ -4092,7 +4092,7 @@ public interface StudioChartsElements {
                                     "SEAGREEN", "SEASHELL", "SIENNA", "SILVER", "SKYBLUE", "SLATEBLUE", "SLATEGRAY",
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
                                     "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "dashOffset", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "cap", type = StudioPropertyType.ENUMERATION,
@@ -4163,7 +4163,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDurationUpdateFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelayUpdateFunction", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisType",
                             options = {"CATEGORY", "VALUE", "TIME", "LOG"}),
@@ -4225,7 +4225,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDurationUpdateFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelayUpdateFunction", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisType",
                             options = {"CATEGORY", "VALUE", "TIME", "LOG"}),
@@ -4274,7 +4274,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDurationUpdateFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelayUpdateFunction", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisType",
                             options = {"CATEGORY", "VALUE", "TIME", "LOG"}),
@@ -4329,7 +4329,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDelayFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDurationUpdateFunction", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelayUpdateFunction", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.axis.AxisType",
                             options = {"CATEGORY", "VALUE", "TIME", "LOG"}),
@@ -4401,7 +4401,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
                             options = {"NORMAL", "ITALIC", "OBLIQUE"}),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
@@ -4462,7 +4462,7 @@ public interface StudioChartsElements {
                                     "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
                             options = {"LEFT", "RIGHT", "CENTER"}),
@@ -4635,7 +4635,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "xAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "yAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "radiusAxisIndexes", type = StudioPropertyType.VALUES_LIST),
@@ -4675,7 +4675,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "xAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "yAxisIndexes", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "radiusAxisIndexes", type = StudioPropertyType.VALUES_LIST),
@@ -4791,8 +4791,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "top", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "right", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "bottom", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "brushSelect", type = StudioPropertyType.BOOLEAN)
             }
     )
@@ -4842,7 +4842,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "inverse", type = StudioPropertyType.BOOLEAN),
@@ -4940,7 +4940,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "inverse", type = StudioPropertyType.BOOLEAN),
@@ -5046,7 +5046,7 @@ public interface StudioChartsElements {
             properties = {
                     @StudioProperty(xmlAttribute = "min", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.DOUBLE),
-                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "label", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.DOUBLE),
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -5136,8 +5136,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -5256,7 +5256,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
                             options = {"COLUMN", "ROW"}),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
@@ -5416,8 +5416,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -5967,7 +5967,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
                             options = {"COLUMN", "ROW"}),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
@@ -6054,8 +6054,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "dx", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "dy", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "rotate", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "align", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
                             options = {"LEFT", "RIGHT", "CENTER"}),
@@ -6700,8 +6700,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -6920,8 +6920,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "fontFamily", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "fontSize", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textBorderColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
                                     "BLACK", "BLANCHEDALMOND", "BLUE", "BLUEVIOLET", "BROWN", "BURLYWOOD", "CADETBLUE",
@@ -7414,8 +7414,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "avoidLabelOverlap", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "stillShowZeroSum", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "percentPrecision", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "cursor", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "showEmptyCircle", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "center", type = StudioPropertyType.STRING),
@@ -7440,7 +7440,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
                             options = {"COLUMN", "ROW"}),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
@@ -7572,7 +7572,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
                             options = {"COLUMN", "ROW"}),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
@@ -7701,7 +7701,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
                             options = {"COLUMN", "ROW"}),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
@@ -7856,7 +7856,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.HasSymbols.SymbolType",
                             options = {"CIRCLE", "RECTANGLE", "ROUND_RECTANGLE", "PIN", "TRIANGLE", "DIAMOND",
                                     "ARROW", "NONE"}),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
@@ -8017,7 +8017,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
                             options = {"COLUMN", "ROW"}),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
@@ -8117,7 +8117,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
                             options = {"COLUMN", "ROW"}),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
@@ -8379,8 +8379,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "funnelAlign", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Align",
                             options = {"LEFT", "RIGHT", "CENTER"}),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animation", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "animationThreshold", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "animationDurationUpdate", type = StudioPropertyType.INTEGER),
@@ -8395,7 +8395,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.AbstractAxisAwareSeries.SeriesLayoutType",
                             options = {"COLUMN", "ROW"}),
                     @StudioProperty(xmlAttribute = "datasetIndex", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
@@ -8500,7 +8500,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "animationDurationUpdate", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "animationEasingUpdate", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "animationDelayUpdate", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "colorBy", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.series.ColorBy",
@@ -8664,7 +8664,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
                             options = {"NORMAL", "ITALIC", "OBLIQUE"}),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
@@ -8725,7 +8725,7 @@ public interface StudioChartsElements {
                                     "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER)
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER)
             }
     )
     GaugeSeries.Title gaugeTitle();
@@ -8863,7 +8863,7 @@ public interface StudioChartsElements {
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.FontStyle",
                             options = {"NORMAL", "ITALIC", "OBLIQUE"}),
                     @StudioProperty(xmlAttribute = "fontWeight", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "lineHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "overflow", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Overflow",
@@ -8924,7 +8924,7 @@ public interface StudioChartsElements {
                                     "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
                     @StudioProperty(xmlAttribute = "textShadowOffsetX", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textShadowOffsetY", type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER)
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER)
             }
     )
     GaugeSeries.Detail gaugeDetail();
@@ -8955,7 +8955,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "shadowColor", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -9039,7 +9039,7 @@ public interface StudioChartsElements {
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "overlap", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "roundCap", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "clip", type = StudioPropertyType.BOOLEAN)
             }
@@ -9096,7 +9096,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "offsetCenter", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "length", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "keepAspect", type = StudioPropertyType.BOOLEAN)
             }
     )
@@ -9147,7 +9147,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN)
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN)
             }
     )
     Aria aria();
@@ -9162,8 +9162,8 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.LOCALIZED_STRING)
+                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
     Aria.Label ariaLabel();
@@ -9296,7 +9296,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "orientation", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.Orientation",
@@ -9310,8 +9310,8 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "top", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "right", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "bottom", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.STRING)
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING)
             }
     )
     Toolbox toolbox();
@@ -9555,7 +9555,7 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING)
             }
     )
@@ -9725,7 +9725,7 @@ public interface StudioChartsElements {
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
                                     "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
                     @StudioProperty(xmlAttribute = "excludeComponents", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "pixelRatio", type = StudioPropertyType.INTEGER)
             }
@@ -9741,7 +9741,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID)
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID)
             }
     )
     DataSet dataSet();
@@ -9757,7 +9757,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF,
+                    @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF,
                             required = true, typeParameter = "T"),
                     @StudioProperty(xmlAttribute = "categoryField", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "valueFields", type = StudioPropertyType.VALUES_LIST)

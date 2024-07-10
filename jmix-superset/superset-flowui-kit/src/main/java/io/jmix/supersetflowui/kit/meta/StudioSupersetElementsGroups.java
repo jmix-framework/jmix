@@ -19,7 +19,7 @@ package io.jmix.supersetflowui.kit.meta;
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
-@StudioUiKit(studioClassloaderDependencies = "io.jmix.superset:jmix-superset-flowui-kit")
+@StudioUiKit
 public interface StudioSupersetElementsGroups {
 
     @StudioElementsGroup(

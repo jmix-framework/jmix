@@ -35,20 +35,10 @@ public interface DynAttrStudioComponents {
             xmlnsAlias = "dynattr",
             icon = "io/jmix/dynattrflowui/icon/component/dynamicAttributesPanel.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(
-                            name = "dataContainer",
-                            xmlAttribute = "dataContainer",
-                            type = StudioPropertyType.DATA_CONTAINER_REF,
-                            required = true),
-                    @StudioProperty(
-                            name = "fieldWidth",
-                            xmlAttribute = "fieldWidth",
-                            type = StudioPropertyType.STRING),
-                    @StudioProperty(
-                            name = "categoryFieldVisible",
-                            xmlAttribute = "categoryFieldVisible",
-                            type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,  type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.DATA_CONTAINER_REF, required = true),
+                    @StudioProperty(xmlAttribute = "fieldWidth", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "categoryFieldVisible", type = StudioPropertyType.BOOLEAN),
             })
     Div dynamicAttributesPanel();
 }

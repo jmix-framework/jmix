@@ -20,6 +20,10 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
+/**
+ * Describes properties that included into {@code <properties></properties>} tag.
+ * This is usually relevant for actions.
+ */
 @Documented
 @Target(ElementType.TYPE_PARAMETER)
 public @interface StudioPropertiesItem {
@@ -33,7 +37,7 @@ public @interface StudioPropertiesItem {
      */
     String classFqn() default "";
 
-    String name() default "";
+    String category() default StudioProperty.Category.OTHER;
 
     boolean required() default false;
 

@@ -25,18 +25,20 @@ import io.jmix.reports.entity.Report;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component("report_ReportSecurityManager")
 public class ReportSecurityManager {
+
+    public static final String LIST_VIEW_SUFFIX = ".list";
+
     @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
 
@@ -58,15 +60,15 @@ public class ReportSecurityManager {
     /**
      * Apply security constraints for query to select reports available by roles and screen restrictions
      *
-     * @param lc load context
-     * @param screen screen id
+     * @param lc          load context
+     * @param screenId    screen id
      * @param userDetails user details
      */
-    public void applySecurityPolicies(LoadContext lc, @Nullable String screen, @Nullable UserDetails userDetails) {
+    public void applySecurityPolicies(LoadContext lc, @Nullable String screenId, @Nullable UserDetails userDetails) {
         QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
-        if (screen != null) {
+        if (screenId != null) {
             transformer.addWhereAsIs("r.screensIdx like :screen escape '\\'");
-            lc.getQuery().setParameter("screen", wrapCodeParameterForSearch(screen));
+            lc.getQuery().setParameter("screen", wrapCodeParameterForSearch(screenId));
         }
         if (userDetails != null) {
             List<BaseRole> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
@@ -88,24 +90,25 @@ public class ReportSecurityManager {
 
     /**
      * Apply constraints for query to select reports which have input parameter with class matching inputValueMetaClass
-     * @param lc load context
+     *
+     * @param lc                  load context
+     * @param screenId            screen id
      * @param inputValueMetaClass meta class of input parameter value
      */
-    public void applyPoliciesByEntityParameters(LoadContext lc, @Nullable String screen, @Nullable MetaClass inputValueMetaClass) {
-        if (inputValueMetaClass != null && Strings.isNotEmpty(screen) && !screen.toLowerCase().contains(".list")) {
-
-                QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
-                StringBuilder parameterTypeCondition = new StringBuilder("r.inputEntityTypesIdx like :type escape '\\'");
-                lc.getQuery().setParameter("type", wrapCodeParameterForSearch(inputValueMetaClass.getName()));
-                List<MetaClass> ancestors = inputValueMetaClass.getAncestors();
-                for (int i = 0; i < ancestors.size(); i++) {
-                    MetaClass metaClass = ancestors.get(i);
-                    String paramName = "type" + (i + 1);
-                    parameterTypeCondition.append(" or r.inputEntityTypesIdx like :").append(paramName).append(" escape '\\'");
-                    lc.getQuery().setParameter(paramName, wrapCodeParameterForSearch(metaClass.getName()));
-                }
-                transformer.addWhereAsIs(String.format("(%s)", parameterTypeCondition.toString()));
-                lc.getQuery().setQueryString(transformer.getResult());
+    public void applyPoliciesByEntityParameters(LoadContext lc, @Nullable String screenId, @Nullable MetaClass inputValueMetaClass) {
+        if (inputValueMetaClass != null && !isListView(screenId)) {
+            QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
+            StringBuilder parameterTypeCondition = new StringBuilder("r.inputEntityTypesIdx like :type escape '\\'");
+            lc.getQuery().setParameter("type", wrapCodeParameterForSearch(inputValueMetaClass.getName()));
+            List<MetaClass> ancestors = inputValueMetaClass.getAncestors();
+            for (int i = 0; i < ancestors.size(); i++) {
+                MetaClass metaClass = ancestors.get(i);
+                String paramName = "type" + (i + 1);
+                parameterTypeCondition.append(" or r.inputEntityTypesIdx like :").append(paramName).append(" escape '\\'");
+                lc.getQuery().setParameter(paramName, wrapCodeParameterForSearch(metaClass.getName()));
+            }
+            transformer.addWhereAsIs(String.format("(%s)", parameterTypeCondition));
+            lc.getQuery().setQueryString(transformer.getResult());
         }
     }
 
@@ -115,7 +118,6 @@ public class ReportSecurityManager {
      * @param screenId            - id of the screen
      * @param user                - caller user
      * @param inputValueMetaClass - meta class of report input parameter
-     *
      * @return list of available reports
      */
     public List<Report> getAvailableReports(@Nullable String screenId, @Nullable UserDetails user, @Nullable MetaClass inputValueMetaClass) {
@@ -140,5 +142,9 @@ public class ReportSecurityManager {
 
     protected String wrapCodeParameterForSearch(String value) {
         return "%," + QueryUtils.escapeForLike(value) + ",%";
+    }
+
+    protected boolean isListView(@Nullable String screenId) {
+        return screenId != null && screenId.toLowerCase().contains(LIST_VIEW_SUFFIX);
     }
 }

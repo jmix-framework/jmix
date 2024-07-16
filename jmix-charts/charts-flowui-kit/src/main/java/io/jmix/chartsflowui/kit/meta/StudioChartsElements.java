@@ -9555,7 +9555,7 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING)
             }
     )
@@ -9725,7 +9725,7 @@ public interface StudioChartsElements {
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
                                     "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
                     @StudioProperty(xmlAttribute = "excludeComponents", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "pixelRatio", type = StudioPropertyType.INTEGER)
             }

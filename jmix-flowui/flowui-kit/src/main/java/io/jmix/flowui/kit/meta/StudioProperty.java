@@ -99,9 +99,10 @@ public @interface StudioProperty {
         String GENERAL = "General";
         String DATA_BINDING = "Data Binding";
         String SIZE = "Size";
-        String POSITIONING = "Positioning";
+        String POSITION = "Position";
         String LOOK_AND_FEEL = "Look & Feel";
         String VALIDATION = "Validation";
         String OTHER = "Other";
+        String ADDITIONAL = "Additional";
     }
 }

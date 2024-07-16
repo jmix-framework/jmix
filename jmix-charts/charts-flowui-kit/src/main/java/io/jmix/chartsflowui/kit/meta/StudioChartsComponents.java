@@ -36,7 +36,7 @@ public interface StudioChartsComponents {
                     )
             ),
             properties = {
-                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITIONING, type = StudioPropertyType.ENUMERATION,
+                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
@@ -107,7 +107,7 @@ public interface StudioChartsComponents {
                                     "LUMINOSITY"}),
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITIONING, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "hoverLayerThreshold", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "renderer", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,

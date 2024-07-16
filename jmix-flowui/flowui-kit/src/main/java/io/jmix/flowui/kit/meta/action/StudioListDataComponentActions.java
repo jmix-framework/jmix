@@ -48,13 +48,9 @@ public interface StudioListDataComponentActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "viewId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "openMode", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
+                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "openMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.view.OpenMode", setParameterFqn = "io.jmix.flowui.view.OpenMode",
                             options = {"DIALOG", "NAVIGATION"}),
             }
@@ -85,20 +81,11 @@ public interface StudioListDataComponentActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "viewId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "openMode", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
+                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "openMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.view.OpenMode", setParameterFqn = "io.jmix.flowui.view.OpenMode",
-                            options = {"DIALOG", "NAVIGATION"}),
-                    @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.core.security.EntityOp",
-                            setParameterFqn = "io.jmix.core.security.EntityOp",
-                            defaultValue = "UPDATE",
-                            options = {"READ", "CREATE", "UPDATE", "DELETE"}),
+                            options = {"DIALOG", "NAVIGATION"})
             }
     )
     void editAction();
@@ -126,15 +113,6 @@ public interface StudioListDataComponentActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.core.security.EntityOp",
-                            setParameterFqn = "io.jmix.core.security.EntityOp",
-                            defaultValue = "DELETE",
-                            options = {"READ", "CREATE", "UPDATE", "DELETE"}),
                     @StudioPropertiesItem(xmlAttribute = "confirmation", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "confirmationText", type = StudioPropertyType.LOCALIZED_STRING),
@@ -166,12 +144,8 @@ public interface StudioListDataComponentActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "viewId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING),
             }
     )
     void addAction();
@@ -199,14 +173,6 @@ public interface StudioListDataComponentActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.core.security.EntityOp",
-                            setParameterFqn = "io.jmix.core.security.EntityOp",
-                            options = {"READ", "CREATE", "UPDATE", "DELETE"}),
                     @StudioPropertiesItem(xmlAttribute = "confirmation", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "confirmationText", type = StudioPropertyType.LOCALIZED_STRING),
@@ -239,20 +205,11 @@ public interface StudioListDataComponentActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "viewId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "openMode", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
+                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "openMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.view.OpenMode", setParameterFqn = "io.jmix.flowui.view.OpenMode",
-                            options = {"DIALOG", "NAVIGATION"}),
-                    @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.core.security.EntityOp",
-                            setParameterFqn = "io.jmix.core.security.EntityOp",
-                            defaultValue = "READ",
-                            options = {"READ", "CREATE", "UPDATE", "DELETE"}),
+                            options = {"DIALOG", "NAVIGATION"})
             }
     )
     void readAction();
@@ -278,12 +235,6 @@ public interface StudioListDataComponentActions {
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.Refresh"),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
-            items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
             }
     )
     void refreshAction();
@@ -306,16 +257,6 @@ public interface StudioListDataComponentActions {
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
-            items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.core.security.EntityOp",
-                            setParameterFqn = "io.jmix.core.security.EntityOp",
-                            options = {"READ", "CREATE", "UPDATE", "DELETE"}),
             }
     )
     void itemTrackingAction();

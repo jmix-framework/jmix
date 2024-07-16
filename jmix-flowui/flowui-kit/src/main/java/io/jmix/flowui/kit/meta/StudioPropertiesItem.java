@@ -37,7 +37,7 @@ public @interface StudioPropertiesItem {
      */
     String classFqn() default "";
 
-    String category() default StudioProperty.Category.OTHER;
+    String category() default StudioProperty.Category.ADDITIONAL;
 
     boolean required() default false;
 

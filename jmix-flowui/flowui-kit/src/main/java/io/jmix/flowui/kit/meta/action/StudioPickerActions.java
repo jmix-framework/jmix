@@ -63,12 +63,6 @@ public interface StudioPickerActions {
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.valuePicker.clear.description"),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
-            items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
             }
     )
     void valueClearAction();
@@ -95,12 +89,6 @@ public interface StudioPickerActions {
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
                             defaultValue = "msg:///actions.valuePicker.clear.description"),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
-            items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
             }
     )
     void entityClearAction();
@@ -129,12 +117,8 @@ public interface StudioPickerActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "viewId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING)
+                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING)
             }
     )
     void entityLookupAction();
@@ -163,12 +147,8 @@ public interface StudioPickerActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "viewId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING)
+                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING)
             }
     )
     void entityOpenAction();
@@ -197,12 +177,8 @@ public interface StudioPickerActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "viewId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING)
+                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING)
             }
     )
     void entityOpenCompositionAction();
@@ -230,18 +206,14 @@ public interface StudioPickerActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "useComboBox", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioPropertiesItem(xmlAttribute = "javaClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "entityName", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "enumClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUM_CLASS),
-                    @StudioPropertiesItem(xmlAttribute = "lookupViewId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewId", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING)
+                    @StudioPropertiesItem(xmlAttribute = "javaClass", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "entityName", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "enumClass", type = StudioPropertyType.ENUM_CLASS),
+                    @StudioPropertiesItem(xmlAttribute = "lookupViewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING)
             }
     )
     void multiValueSelectAction();

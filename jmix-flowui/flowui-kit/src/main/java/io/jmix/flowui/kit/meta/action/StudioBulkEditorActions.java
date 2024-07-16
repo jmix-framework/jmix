@@ -48,18 +48,9 @@ public interface StudioBulkEditorActions {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             },
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "constraintEntityOp", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.core.security.EntityOp",
-                            setParameterFqn = "io.jmix.core.security.EntityOp",
-                            defaultValue = "UPDATE",
-                            options = {"READ", "CREATE", "UPDATE", "DELETE"}),
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "exclude", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "includeProperties", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "useConfirmDialog", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
+                    @StudioPropertiesItem(xmlAttribute = "exclude", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "includeProperties", type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = "useConfirmDialog", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
             }
     )
     void bulkEditAction();

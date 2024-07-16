@@ -66,7 +66,7 @@ public interface StudioMainViewComponents {
                     @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "minHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
@@ -90,7 +90,7 @@ public interface StudioMainViewComponents {
             ),
             properties = {
                     @StudioProperty(xmlAttribute = "messagesGroup", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
+                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
     VerticalLayout mainView();

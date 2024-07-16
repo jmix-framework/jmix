@@ -9555,7 +9555,7 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING)
             }
     )
@@ -9725,7 +9725,7 @@ public interface StudioChartsElements {
                                     "SLATEGREY", "SNOW", "SPRINGGREEN", "STEELBLUE", "TAN", "TEAL", "THISTLE", "TOMATO",
                                     "TURQUOISE", "VIOLET", "WHEAT", "WHITE", "WHITESMOKE", "YELLOW", "YELLOWGREEN"}),
                     @StudioProperty(xmlAttribute = "excludeComponents", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "pixelRatio", type = StudioPropertyType.INTEGER)
             }
@@ -9741,7 +9741,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID)
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID)
             }
     )
     DataSet dataSet();
@@ -9759,7 +9759,7 @@ public interface StudioChartsElements {
             properties = {
                     @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF,
                             required = true, typeParameter = "T"),
-                    @StudioProperty(xmlAttribute = "categoryField", type = StudioPropertyType.PROPERTY_REF),
+                    @StudioProperty(xmlAttribute = "categoryField", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "valueFields", type = StudioPropertyType.VALUES_LIST)
             },
             propertiesBindings = {

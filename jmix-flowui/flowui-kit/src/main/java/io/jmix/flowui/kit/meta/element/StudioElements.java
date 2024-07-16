@@ -194,7 +194,7 @@ public interface StudioElements {
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
             properties = {
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "PENCIL",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
@@ -219,7 +219,7 @@ public interface StudioElements {
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
             properties = {
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "CHECK",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
@@ -243,7 +243,7 @@ public interface StudioElements {
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
             properties = {
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "BAN",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
@@ -267,7 +267,7 @@ public interface StudioElements {
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
             properties = {
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "BAN",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
@@ -377,7 +377,7 @@ public interface StudioElements {
             unlimitedCount = false,
             target = {"com.vaadin.flow.component.login.AbstractLogin"},
             properties = {
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "message", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "username", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "password", type = StudioPropertyType.LOCALIZED_STRING)
@@ -396,7 +396,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "password", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "rememberMe", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "submit", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "username", type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
@@ -412,7 +412,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "forgotPassword", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "password", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "submit", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "username", type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
@@ -424,7 +424,7 @@ public interface StudioElements {
             target = {"com.vaadin.flow.component.login.LoginOverlay"},
             unlimitedCount = false,
             properties = {
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
             }
     )

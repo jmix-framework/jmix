@@ -64,7 +64,7 @@ public interface StudioSearchComponents {
                     @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
                             options = {"small", "align-center", "align-right", "helper-above-field",
                                     "always-float-label"}),
-                    @StudioProperty(xmlAttribute = "title", category = StudioProperty.Category.OTHER, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "value", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "valueChangeMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.data.value.ValueChangeMode", options = {"EAGER", "LAZY",

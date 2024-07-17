@@ -31,6 +31,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 @Component("flowui_FilterUrlQueryParametersSupport")
@@ -102,9 +103,11 @@ public class FilterUrlQueryParametersSupport {
             return id != null ? id : "";
         } else if (value instanceof Enum) {
             return replaceSeparatorValue(((Enum<?>) value).name());
-        } else {
-            return value;
+        } else if (value instanceof Collection<?> collection) {
+            return collection.stream().map(this::getSerializableValue).toList();
         }
+
+        return value;
     }
 
     public String replaceSeparatorValue(String value) {

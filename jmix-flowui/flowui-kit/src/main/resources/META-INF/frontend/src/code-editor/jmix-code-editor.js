@@ -233,13 +233,11 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             return;
         }
 
-        if (disabled || readonly) {
-            editor.setReadOnly(true);
-        } else {
-            editor.setReadOnly(false);
+        editor.setReadOnly(disabled || readonly);
+        if (!disabled && !readonly) {
+            editor.textInput.getElement().removeAttribute('disabled')
         }
 
-        this._editor.setReadOnly(readonly);
         this._editor.setHighlightActiveLine(this.highlightActiveLine && !readonly);
         this._editor.setHighlightGutterLine(this.highlightGutterLine && !readonly);
         this._editor.renderer.$cursorLayer.element.style.opacity = readonly

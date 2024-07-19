@@ -2738,6 +2738,12 @@ public interface StudioComponents {
             xmlElement = "propertyFilter",
             icon = "io/jmix/flowui/kit/meta/icon/component/propertyFilter.svg",
             documentationLink = "%VERSION%/flow-ui/vc/components/genericFilter-components.html#property-filter",
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = @StudioAvailableChildrenInfo.TagInfo(
+                            qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,
+                            maxCount = 1
+                    )
+            ),
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

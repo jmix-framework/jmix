@@ -3180,7 +3180,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "hideAllEnabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, initialValue = "COG"),
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "COG", initialValue = "COG"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "include", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),

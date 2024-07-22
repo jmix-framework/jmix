@@ -95,6 +95,14 @@ public @interface StudioProperty {
      */
     String[] componentRefTags() default {};
 
+    /**
+     * Specifies tag that Studio will use
+     * when setting a CDATA value (if {@code type} equals {@link StudioPropertyType#CDATA}).
+     * <p></p>
+     * By default, CDATA value will be set inside component tag (as nested subtag without tag name).
+     */
+    String cdataWrapperTag() default "";
+
     interface Category {
         String GENERAL = "General";
         String DATA_BINDING = "Data Binding";

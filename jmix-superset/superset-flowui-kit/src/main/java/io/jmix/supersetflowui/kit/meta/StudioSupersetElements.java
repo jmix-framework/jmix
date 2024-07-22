@@ -33,6 +33,7 @@ public interface StudioSupersetElements {
             icon = "io/jmix/supersetflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "datasetId", type = StudioPropertyType.INTEGER, required = true),
+                    @StudioProperty(xmlAttribute = "constraint", type = StudioPropertyType.CDATA)
             }
     )
     void datasetConstraint();

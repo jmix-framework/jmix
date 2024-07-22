@@ -36,6 +36,11 @@ public enum StudioPropertyType {
     BOOLEAN,
 
     /**
+     * CDATA expression (in separated subtag).
+     */
+    CDATA,
+
+    /**
      * Identifier of a component. Must be a valid Java identifier.
      */
     COMPONENT_ID,
@@ -64,7 +69,6 @@ public enum StudioPropertyType {
      * ID of an instance data container
      */
     DATA_CONTAINER_REF,
-
 
     /**
      * ID of a datatype.

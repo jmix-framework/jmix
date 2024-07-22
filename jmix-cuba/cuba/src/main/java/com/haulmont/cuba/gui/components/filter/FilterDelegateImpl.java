@@ -2307,7 +2307,16 @@ public class FilterDelegateImpl implements FilterDelegate {
             addToCurSetBtn.setAction(addToCurrSet);
             table.addAction(addToCurrSet);
 
-            removeFromCurrSet = new RemoveFromSetAction(table);
+            if(table instanceof ListComponent) {
+                // CUBA-table case
+                removeFromCurrSet = new RemoveFromSetAction(table);
+            } else {
+                // Jmix-table case
+                JmixRemoveFromSetAction action = new JmixRemoveFromSetAction();
+                action.setTarget(table);
+                removeFromCurrSet = action;
+            }
+
             if (removeFromCurSetBtn == null) {
                 removeFromCurSetBtn = uiComponents.create(Button.class);
                 removeFromCurSetBtn.setId("removeFromCurSetBtn");
@@ -3179,6 +3188,55 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected class RemoveFromSetAction extends ItemTrackingAction {
         protected RemoveFromSetAction(Table table) {
             super((ListComponent) table, "filter.removeFromCurSet");
+        }
+
+        @Override
+        public String getCaption() {
+            return getMainMessage(getId());
+        }
+
+        @Override
+        public void actionPerform(Component component) {
+            if (filterEntity == null) {
+                // todo add notification 'Filter not selected'
+                return;
+            }
+            Set selected = target.getSelected();
+            if (selected.isEmpty()) {
+                return;
+            }
+
+            int size;
+
+            if (target.getItems() instanceof ContainerDataUnit) {
+                CollectionContainer container = ((ContainerDataUnit) target.getItems()).getContainer();
+                size = container.getItems().size();
+            } else if (target.getItems() instanceof DatasourceDataUnit) {
+                CollectionDatasource datasource = ((DatasourceDataUnit) target.getItems()).getDatasource();
+                size = datasource.getItemIds().size();
+            } else {
+                throw new UnsupportedOperationException("Unsupported data unit " + target.getItems());
+            }
+
+            if (size == selected.size()) {
+                filterHelper.removeFolderFromFoldersPane(filterEntity.getFolder());
+                removeFilterEntity();
+
+                Window window = ComponentsHelper.getWindow(filter);
+                window.getFrameOwner().close(FrameOwner.WINDOW_CLOSE_ACTION);
+            } else {
+                String filterXml = filterEntity.getXml();
+                filterEntity.setXml(UserSetHelper.removeEntities(filterXml, selected));
+                filterEntity.getFolder().setFilterXml(filterEntity.getXml());
+                filterEntity.setFolder(saveFolder((filterEntity.getFolder())));
+                setFilterEntity(filterEntity);
+            }
+        }
+    }
+
+    protected class JmixRemoveFromSetAction extends io.jmix.ui.action.ItemTrackingAction {
+        protected JmixRemoveFromSetAction() {
+            super("filter.removeFromCurSet");
         }
 
         @Override

@@ -23,31 +23,21 @@ import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.client.sys.PersistenceManagerClient;
 import com.haulmont.cuba.core.entity.AbstractSearchFolder;
 import com.haulmont.cuba.core.entity.AppFolder;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.CommitContext;
-import com.haulmont.cuba.core.global.Configuration;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.PersistenceHelper;
-import com.haulmont.cuba.core.global.Security;
-import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.core.global.filter.*;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.WindowParams;
-import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.GridLayout;
-import com.haulmont.cuba.gui.components.HasPresentations;
 import com.haulmont.cuba.gui.components.ListComponent;
-import com.haulmont.cuba.gui.components.LookupField;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
 import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
-import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
-import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
-import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
-import com.haulmont.cuba.gui.components.filter.condition.FtsCondition;
-import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;
+import com.haulmont.cuba.gui.components.filter.condition.*;
 import com.haulmont.cuba.gui.components.filter.edit.FilterEditor;
 import com.haulmont.cuba.gui.components.filter.filterselect.FilterSelectWindow;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -59,9 +49,10 @@ import com.haulmont.cuba.security.entity.SearchFolder;
 import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.settings.SettingsImpl;
 import com.haulmont.cuba.settings.component.CubaFilterSettings;
+import io.jmix.core.DataManager;
+import io.jmix.core.EntitySet;
+import io.jmix.core.LoadContext;
 import io.jmix.core.*;
-import io.jmix.data.QueryParser;
-import io.jmix.data.QueryTransformerFactory;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.common.event.Subscription;
@@ -69,23 +60,20 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.JpqlCondition;
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.WindowConfig;
-import io.jmix.ui.WindowInfo;
+import io.jmix.ui.*;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.DialogAction.Type;
-import io.jmix.ui.component.*;
 import io.jmix.ui.component.BoxLayout;
 import io.jmix.ui.component.ButtonsPanel;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Component.Alignment;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.CssLayout;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.Frame;
@@ -97,16 +85,9 @@ import io.jmix.ui.component.Table;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.VBoxLayout;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.component.Component.Alignment;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import com.haulmont.cuba.core.global.filter.Clause;
-import com.haulmont.cuba.core.global.filter.Condition;
-import com.haulmont.cuba.core.global.filter.DenyingClause;
-import com.haulmont.cuba.core.global.filter.LogicalCondition;
-import com.haulmont.cuba.core.global.filter.ParameterInfo;
-import com.haulmont.cuba.core.global.filter.ParametersHelper;
-import com.haulmont.cuba.core.global.filter.QueryFilter;
-import com.haulmont.cuba.core.global.filter.QueryFilters;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.BaseCollectionLoader;
@@ -2307,7 +2288,14 @@ public class FilterDelegateImpl implements FilterDelegate {
             addToCurSetBtn.setAction(addToCurrSet);
             table.addAction(addToCurrSet);
 
-            removeFromCurrSet = new RemoveFromSetAction(table);
+            if (table instanceof ListComponent) {
+                // CUBA-table case
+                removeFromCurrSet = new RemoveFromSetAction((ListComponent) table);
+            } else {
+                // Jmix-table case
+                removeFromCurrSet = new JmixRemoveFromSetAction(table);
+            }
+
             if (removeFromCurSetBtn == null) {
                 removeFromCurSetBtn = uiComponents.create(Button.class);
                 removeFromCurSetBtn.setId("removeFromCurSetBtn");
@@ -3177,8 +3165,58 @@ public class FilterDelegateImpl implements FilterDelegate {
     }
 
     protected class RemoveFromSetAction extends ItemTrackingAction {
-        protected RemoveFromSetAction(Table table) {
-            super((ListComponent) table, "filter.removeFromCurSet");
+        protected RemoveFromSetAction(ListComponent table) {
+            super(table, "filter.removeFromCurSet");
+        }
+
+        @Override
+        public String getCaption() {
+            return getMainMessage(getId());
+        }
+
+        @Override
+        public void actionPerform(Component component) {
+            if (filterEntity == null) {
+                // todo add notification 'Filter not selected'
+                return;
+            }
+            Set selected = target.getSelected();
+            if (selected.isEmpty()) {
+                return;
+            }
+
+            int size;
+
+            if (target.getItems() instanceof ContainerDataUnit) {
+                CollectionContainer container = ((ContainerDataUnit) target.getItems()).getContainer();
+                size = container.getItems().size();
+            } else if (target.getItems() instanceof DatasourceDataUnit) {
+                CollectionDatasource datasource = ((DatasourceDataUnit) target.getItems()).getDatasource();
+                size = datasource.getItemIds().size();
+            } else {
+                throw new UnsupportedOperationException("Unsupported data unit " + target.getItems());
+            }
+
+            if (size == selected.size()) {
+                filterHelper.removeFolderFromFoldersPane(filterEntity.getFolder());
+                removeFilterEntity();
+
+                Window window = ComponentsHelper.getWindow(filter);
+                window.getFrameOwner().close(FrameOwner.WINDOW_CLOSE_ACTION);
+            } else {
+                String filterXml = filterEntity.getXml();
+                filterEntity.setXml(UserSetHelper.removeEntities(filterXml, selected));
+                filterEntity.getFolder().setFilterXml(filterEntity.getXml());
+                filterEntity.setFolder(saveFolder((filterEntity.getFolder())));
+                setFilterEntity(filterEntity);
+            }
+        }
+    }
+
+    protected class JmixRemoveFromSetAction extends io.jmix.ui.action.ItemTrackingAction {
+        protected JmixRemoveFromSetAction(io.jmix.ui.component.ListComponent target) {
+            super("filter.removeFromCurSet");
+            this.setTarget(target);
         }
 
         @Override

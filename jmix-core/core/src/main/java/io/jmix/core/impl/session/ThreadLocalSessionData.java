@@ -27,9 +27,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Thread-local storage for session attributes. This class can be used when running a new thread that does not have
- * access to the HTTP session but needs to access session data in the code executed within the thread. In this case, you
- * should copy the current session data to the thread-local storage and then access the thread-local data in your code.
+ * Provides thread-local storage for session attributes. This utility class facilitates the transfer of HTTP session data
+ * to newly spawned threads that do not inherently have access to the data of the original HTTP session.
+ *
+ * <p>Use this class when you need to perform operations in a new thread that require access to the session data from an
+ * HTTP request. This is particularly useful in asynchronous processing or when handling requests outside the main request
+ * processing thread.</p>
+ *
+ * <p><b>Example Usage:</b></p>
+ * <pre>
+ * Map<String, Object> sessionAttributes = ThreadLocalSessionData.extractHttpSessionAttributes();
+ * ThreadLocalSessionData.setAttributes(sessionAttributes);
+ * // Now, session attributes can be accessed from the new thread using ThreadLocalSessionData.getAttribute(...)
+ * </pre>
+ * <p>
+ * Ensure that you clear the thread-local storage after use. Use {@link #clear()} method once the thread-local data is
+ * no longer needed.</p>
  */
 public class ThreadLocalSessionData {
 

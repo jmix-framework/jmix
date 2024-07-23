@@ -17,8 +17,9 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.JmixOrder;
-import io.jmix.core.session.SessionData;
 import io.jmix.core.QueryParamValueProvider;
+import io.jmix.core.impl.session.ThreadLocalSessionData;
+import io.jmix.core.session.SessionData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -55,7 +56,11 @@ public class SessionQueryParamValueProvider implements QueryParamValueProvider {
         if (supports(paramName)) {
             String attrName = paramName.substring(SESSION_PREFIX.length());
             try {
-                return sessionDataProvider.getObject().getAttribute(attrName);
+                if (ThreadLocalSessionData.isSet()) {
+                    return ThreadLocalSessionData.getAttribute(attrName);
+                } else {
+                    return sessionDataProvider.getObject().getAttribute(attrName);
+                }
             } catch (Exception e) {
                 log.warn("Unable to get session attribute {}: {}", paramName, e.toString());
             }

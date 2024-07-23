@@ -20,6 +20,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 import io.jmix.core.TimeSource;
+import io.jmix.core.impl.session.ThreadLocalSessionData;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.App;
@@ -159,6 +160,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
         private volatile boolean doneHandled = false;
 
         private Authentication authentication;
+        private final Map<String, Object> sessionAttributes;
         private String username;
 
         private Map<String, Object> params;
@@ -173,6 +175,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
                     Collections.emptyMap();
 
             authentication = SecurityContextHelper.getAuthentication();
+            sessionAttributes = ThreadLocalSessionData.extractHttpSessionAttributes();
 
             this.username = currentAuthentication.getUser().getUsername();
 
@@ -181,12 +184,14 @@ public class WebBackgroundWorker implements BackgroundWorker {
                 protected void done() {
                     Authentication previousAuth = SecurityContextHelper.getAuthentication();
                     SecurityContextHelper.setAuthentication(authentication);
+                    ThreadLocalSessionData.setAttributes(sessionAttributes);
                     try {
                         WebTaskExecutor.this.ui.access(() ->
                                 handleDone()
                         );
                     } finally {
                         SecurityContextHelper.setAuthentication(previousAuth);
+                        ThreadLocalSessionData.clear();
                     }
                 }
             };
@@ -201,6 +206,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
             }
 
             SecurityContextHelper.setAuthentication(authentication);
+            ThreadLocalSessionData.setAttributes(sessionAttributes);
             try {
                 // do not run any activity if canceled before start
                 return runnableTask.run(new TaskLifeCycle<T>() {
@@ -231,6 +237,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
                 });
             } finally {
                 SecurityContextHelper.setAuthentication(null);
+                ThreadLocalSessionData.clear();
             }
         }
 

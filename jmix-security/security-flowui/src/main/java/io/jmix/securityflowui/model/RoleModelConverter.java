@@ -80,7 +80,7 @@ public class RoleModelConverter {
         return resourcePolicies.stream()
                 .map(resourcePolicy -> {
                     ResourcePolicyModel model = metadata.create(ResourcePolicyModel.class);
-                    model.setType(ResourcePolicyType.fromId(resourcePolicy.getType()));
+                    model.setType(resourcePolicy.getType());
                     model.setResource(resourcePolicy.getResource());
                     model.setAction(resourcePolicy.getAction());
                     model.setEffect(resourcePolicy.getEffect());

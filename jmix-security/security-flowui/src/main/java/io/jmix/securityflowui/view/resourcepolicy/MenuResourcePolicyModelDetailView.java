@@ -31,7 +31,7 @@ public class MenuResourcePolicyModelDetailView extends StandardDetailView<Resour
     @Subscribe(id = "resourcePolicyModelDc", target = Target.DATA_CONTAINER)
     public void onResourcePolicyModelDcItemPropertyChange(ItemPropertyChangeEvent<ResourcePolicyModel> event) {
         if ("resource".equals(event.getProperty())) {
-            String policyGroup = resourcePolicyGroupResolver.resolvePolicyGroup(getEditedEntity().getTypeId(),
+            String policyGroup = resourcePolicyGroupResolver.resolvePolicyGroup(getEditedEntity().getType(),
                     getEditedEntity().getResource());
             getEditedEntity().setPolicyGroup(policyGroup);
         }

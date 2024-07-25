@@ -18,9 +18,9 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.ResourcePolicyEffect;
+import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.securityflowui.model.DefaultResourcePolicyGroupResolver;
 import io.jmix.securityflowui.model.ResourcePolicyModel;
-import io.jmix.securityflowui.model.ResourcePolicyType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;
@@ -69,7 +69,7 @@ public class EntityAttributeResourcePolicyModelCreateView extends MultipleResour
     private void onEntityFieldValueChange(ComponentValueChangeEvent<ComboBox<String>, String> event) {
         String entityName = event.getValue();
         String policyGroup = resourcePolicyGroupResolver
-                .resolvePolicyGroup(ResourcePolicyType.ENTITY.getId(), entityName);
+                .resolvePolicyGroup(ResourcePolicyType.ENTITY, entityName);
         if (policyGroup != null) {
             policyGroupField.setValue(policyGroup);
         } else {

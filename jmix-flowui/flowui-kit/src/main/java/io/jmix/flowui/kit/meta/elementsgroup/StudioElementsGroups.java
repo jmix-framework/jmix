@@ -67,7 +67,7 @@ public interface StudioElementsGroups {
             elementClassFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveSteps",
             target = {"com.vaadin.flow.component.formlayout.FormLayout"},
-            documentationLink = "%VERSION%/flow-ui/vc/layouts/formLayout.html#columns"
+            documentationLink = "%VERSION%/flow-ui/vc/layouts/formLayout.html#responsive-steps"
     )
     void formLayoutResponsiveSteps();
 

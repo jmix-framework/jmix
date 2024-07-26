@@ -18,6 +18,7 @@ package io.jmix.securityflowui.view.resourcerole;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
@@ -29,6 +30,7 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
@@ -38,9 +40,11 @@ import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.securitydata.entity.ResourcePolicyEntity;
 import io.jmix.securitydata.entity.ResourceRoleEntity;
-import io.jmix.securityflowui.model.*;
 import io.jmix.securityflowui.model.RoleSource;
+import io.jmix.securityflowui.model.*;
 import io.jmix.securityflowui.view.resourcepolicy.*;
+import jakarta.annotation.Nullable;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,9 +99,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     private ResourceRoleRepository roleRepository;
     @Autowired
     private UrlParamSerializer urlParamSerializer;
-
     @Autowired(required = false)
-    private List<ResourcePolicyEditorProvider> resourcePolicyEditorProviders;
+    private List<AdditionalResourcePolicySupporter> additionalResourcePolicySupporters;
 
     private boolean openedByCreateAction = false;
     private final Set<UUID> forRemove = new HashSet<>();
@@ -158,11 +161,23 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     }
 
     private void initAdditionalResourcePolicyTypes() {
-        if (resourcePolicyEditorProviders != null) {
-            for (ResourcePolicyEditorProvider provider : resourcePolicyEditorProviders) {
-                ResourcePolicyEditorProvider.CreatePolicyActionContext context = new ResourcePolicyEditorProvider.CreatePolicyActionContext(resourcePoliciesTable);
-                Action createPolicyAction = provider.getCreatePolicyAction(context);
-                createDropdownButton.addItem(createPolicyAction.getId(), createPolicyAction);
+        if (additionalResourcePolicySupporters != null) {
+            for (AdditionalResourcePolicySupporter resourcePolicySupporter : additionalResourcePolicySupporters) {
+                BaseAction action = new BaseAction(RandomStringUtils.randomAlphabetic(5)) {
+                    @Override
+                    public void actionPerform(Component component) {
+                        dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicySupporter.getCreatePolicyViewClass())
+                                .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)
+                                .open();
+                    }
+
+                    @Nullable
+                    @Override
+                    public String getText() {
+                        return resourcePolicySupporter.getPolicyName();
+                    }
+                };
+                createDropdownButton.addItem(action.getId(), action);
             }
         }
     }
@@ -237,9 +252,9 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     }
 
     private boolean isEffectColumnVisible() {
-        if (resourcePolicyEditorProviders != null) {
-            return resourcePolicyEditorProviders.stream()
-                    .anyMatch(ResourcePolicyEditorProvider::isEffectColumnVisible);
+        if (additionalResourcePolicySupporters != null) {
+            return additionalResourcePolicySupporters.stream()
+                    .anyMatch(AdditionalResourcePolicySupporter::isEffectColumnVisible);
         }
         return false;
     }
@@ -401,10 +416,10 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 return SpecificResourcePolicyModelDetailView.class;
         }
 
-        if (resourcePolicyEditorProviders != null) {
-            for (ResourcePolicyEditorProvider provider : resourcePolicyEditorProviders) {
-                if (provider.supports(resourcePolicyModel.getType())) {
-                    return provider.getPolicyDetailViewClass();
+        if (additionalResourcePolicySupporters != null) {
+            for (AdditionalResourcePolicySupporter supporter : additionalResourcePolicySupporters) {
+                if (supporter.supports(resourcePolicyModel.getType())) {
+                    return supporter.getEditPolicyViewClass();
                 }
             }
         }

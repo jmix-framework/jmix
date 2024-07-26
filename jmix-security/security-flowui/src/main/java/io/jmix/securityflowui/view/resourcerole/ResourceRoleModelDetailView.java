@@ -227,11 +227,21 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 .setKey("action")
                 .setHeader(messageTools.getPropertyCaption(resourcePoliciesDc.getEntityMetaClass(), "action"))
                 .setSortable(true);
-        resourcePoliciesTable.addColumn((ValueProvider<ResourcePolicyModel, String>) resourcePolicyModel ->
-                        messageBundle.getMessage("roleEffect." + resourcePolicyModel.getEffect()))
-                .setKey("effect")
-                .setHeader(messageTools.getPropertyCaption(resourcePoliciesDc.getEntityMetaClass(), "effect"))
-                .setSortable(true);
+        if (isEffectColumnVisible()) {
+            resourcePoliciesTable.addColumn((ValueProvider<ResourcePolicyModel, String>) resourcePolicyModel ->
+                            messageBundle.getMessage("roleEffect." + resourcePolicyModel.getEffect()))
+                    .setKey("effect")
+                    .setHeader(messageTools.getPropertyCaption(resourcePoliciesDc.getEntityMetaClass(), "effect"))
+                    .setSortable(true);
+        }
+    }
+
+    private boolean isEffectColumnVisible() {
+        if (resourcePolicyEditorProviders != null) {
+            return resourcePolicyEditorProviders.stream()
+                    .anyMatch(ResourcePolicyEditorProvider::isEffectColumnVisible);
+        }
+        return false;
     }
 
     private void initScopesField() {

@@ -51,6 +51,11 @@ public interface ResourcePolicyEditorProvider {
     boolean supports(String resourcePolicyType);
 
     /**
+     * Checks if the effect column should be visible in the resource policy editor.
+     */
+    boolean isEffectColumnVisible();
+
+    /**
      * Context for building an action that creates a new resource policy.
      */
     record CreatePolicyActionContext(DataGrid<ResourcePolicyModel> resourcePolicyDataGrid) {

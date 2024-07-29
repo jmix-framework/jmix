@@ -33,13 +33,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.util.UUID;
+
+import java.util.Objects;
 
 /**
  * Component supports data binding with entity properties.
@@ -104,7 +100,7 @@ public class JmixImage<V> extends Image implements SupportsValueSource<V>, HasTh
         }
         valueSourceValueChangeRegistration = valueSource.addValueChangeListener(this::onValueSourceValueChange);
         valueSourceStateChangeRegistration = valueSource.addStateChangeListener(this::onValueSourceStateChange);
-        if (valueSource instanceof EntityValueSource<?,?> entityValueSource) {
+        if (valueSource instanceof EntityValueSource<?, ?> entityValueSource) {
             instanceChangeSubscription = entityValueSource
                     .addInstanceChangeListener(this::onValueSourceInstanceChange);
         }
@@ -140,47 +136,18 @@ public class JmixImage<V> extends Image implements SupportsValueSource<V>, HasTh
     protected void updateSource() {
         V value = valueSource.getValue();
 
-        Object resource = createResource(value);
-        if (resource instanceof String) {
-            setSrc((String) resource);
+        Object resource = UiComponentUtils.createResource(value, fileStorageLocator);
+        if (resource instanceof String stringResource) {
+            setSrc(stringResource);
+        } else if (resource instanceof StreamResource streamResource) {
+            setSrc(streamResource);
         } else {
-            setSrc((StreamResource) createResource(value));
-        }
-    }
+            View<?> view = UiComponentUtils.findView(this);
+            String frameId = view == null ? null : view.getId().orElse(null);
 
-    protected Object createResource(@Nullable V value) {
-        if (value == null) {
-            return new StreamResource(generateFileName(), InputStream::nullInputStream);
+            throw new GuiDevelopmentException(
+                    String.format("The '%s' component does not support property value binding for the property of type: %s",
+                            this.getClass().getName(), Objects.requireNonNull(value).getClass().getName()), frameId);
         }
-        if (value instanceof byte[]) {
-            return new StreamResource(generateFileName(), () -> new ByteArrayInputStream((byte[]) value));
-        }
-        if (value instanceof FileRef) {
-            FileRef fileRef = (FileRef) value;
-            return new StreamResource(((FileRef) value).getFileName(), () ->
-                    fileStorageLocator.getByName(fileRef.getStorageName()).openStream(fileRef));
-        }
-        if (value instanceof String) {
-            return value;
-        }
-        if (value instanceof URI) {
-            URI uri = (URI) value;
-            try {
-                return uri.toURL().toString();
-            } catch (MalformedURLException e) {
-                throw new IllegalArgumentException("Cannot convert provided URI `" + uri + "' to URL", e);
-            }
-        }
-
-        View<?> view = UiComponentUtils.findView(this);
-        String frameId = view == null ? null : view.getId().orElse(null);
-
-        throw new GuiDevelopmentException(
-                String.format("The '%s' component does not support property value binding for the property of type: %s",
-                        this.getClass().getName(), value.getClass().getName()), frameId);
-    }
-
-    protected String generateFileName() {
-        return UUID.randomUUID().toString();
     }
 }

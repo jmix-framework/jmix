@@ -631,8 +631,8 @@ public interface StudioElements {
             xmlElement = "responsiveStep",
             documentationLink = "%VERSION%/flow-ui/vc/layouts/formLayout.html#responsive-steps",
             properties = {
-                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, required = true),
-                    @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
+                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, required = true),
+                    @StudioProperty(xmlAttribute = "columns", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER, required = true),
                     @StudioProperty(xmlAttribute = "labelsPosition", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.formlayout.FormLayout$ResponsiveStep$LabelsPosition",
                             options = {"ASIDE", "TOP"})
@@ -672,8 +672,8 @@ public interface StudioElements {
             classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
             xmlElement = "responsiveStep",
             properties = {
-                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, required = true),
-                    @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
+                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, required = true),
+                    @StudioProperty(xmlAttribute = "columns", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER, required = true),
                     @StudioProperty(xmlAttribute = "labelsPosition", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps$ResponsiveStep$LabelsPosition",
                             options = {"ASIDE", "TOP"})

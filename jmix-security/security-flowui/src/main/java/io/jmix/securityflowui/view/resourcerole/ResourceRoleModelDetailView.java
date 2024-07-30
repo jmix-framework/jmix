@@ -100,7 +100,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     @Autowired
     private UrlParamSerializer urlParamSerializer;
     @Autowired(required = false)
-    private List<AdditionalResourcePolicySupporter> additionalResourcePolicySupporters;
+    private List<ResourcePolicyTypeProvider> resourcePolicyTypeProviders;
 
     private boolean openedByCreateAction = false;
     private final Set<UUID> forRemove = new HashSet<>();
@@ -161,25 +161,30 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     }
 
     private void initAdditionalResourcePolicyTypes() {
-        if (additionalResourcePolicySupporters != null) {
-            for (AdditionalResourcePolicySupporter resourcePolicySupporter : additionalResourcePolicySupporters) {
-                BaseAction action = new BaseAction(RandomStringUtils.randomAlphabetic(5)) {
-                    @Override
-                    public void actionPerform(Component component) {
-                        dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicySupporter.getCreatePolicyViewClass())
-                                .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)
-                                .open();
-                    }
-
-                    @Nullable
-                    @Override
-                    public String getText() {
-                        return resourcePolicySupporter.getPolicyName();
-                    }
-                };
+        if (resourcePolicyTypeProviders != null) {
+            for (ResourcePolicyTypeProvider resourcePolicyTypeProvider : resourcePolicyTypeProviders) {
+                BaseAction action = getCreatePolicyAction(resourcePolicyTypeProvider);
                 createDropdownButton.addItem(action.getId(), action);
             }
         }
+    }
+
+    private BaseAction getCreatePolicyAction(ResourcePolicyTypeProvider resourcePolicyTypeProvider) {
+        BaseAction action = new BaseAction(RandomStringUtils.randomAlphabetic(5)) {
+            @Override
+            public void actionPerform(Component component) {
+                dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicyTypeProvider.getCreatePolicyViewClass())
+                        .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)
+                        .open();
+            }
+
+            @Nullable
+            @Override
+            public String getText() {
+                return resourcePolicyTypeProvider.getLocalizedPolicyName();
+            }
+        };
+        return action;
     }
 
     private void setupRoleReadOnlyMode(boolean isDatabaseSource) {
@@ -252,9 +257,9 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     }
 
     private boolean isEffectColumnVisible() {
-        if (additionalResourcePolicySupporters != null) {
-            return additionalResourcePolicySupporters.stream()
-                    .anyMatch(AdditionalResourcePolicySupporter::isEffectColumnVisible);
+        if (resourcePolicyTypeProviders != null) {
+            return resourcePolicyTypeProviders.stream()
+                    .anyMatch(ResourcePolicyTypeProvider::isEffectColumnVisible);
         }
         return false;
     }
@@ -416,10 +421,10 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 return SpecificResourcePolicyModelDetailView.class;
         }
 
-        if (additionalResourcePolicySupporters != null) {
-            for (AdditionalResourcePolicySupporter supporter : additionalResourcePolicySupporters) {
-                if (supporter.supports(resourcePolicyModel.getType())) {
-                    return supporter.getEditPolicyViewClass();
+        if (resourcePolicyTypeProviders != null) {
+            for (ResourcePolicyTypeProvider resourcePolicyTypeProvider : resourcePolicyTypeProviders) {
+                if (resourcePolicyTypeProvider.supports(resourcePolicyModel.getType())) {
+                    return resourcePolicyTypeProvider.getEditPolicyViewClass();
                 }
             }
         }

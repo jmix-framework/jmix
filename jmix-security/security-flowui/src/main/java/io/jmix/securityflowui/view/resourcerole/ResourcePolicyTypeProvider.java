@@ -25,7 +25,7 @@ import io.jmix.securityflowui.view.resourcepolicy.MultipleResourcePolicyModelCre
  * view. Implementations of this interface provide necessary information for creating and editing resource policies of
  * specific types.
  */
-public interface AdditionalResourcePolicySupporter {
+public interface ResourcePolicyTypeProvider {
 
     /**
      * Returns the class of the view used for creating new resource policies of the specific type.
@@ -53,7 +53,7 @@ public interface AdditionalResourcePolicySupporter {
      *
      * @return the name of the policy
      */
-    String getPolicyName();
+    String getLocalizedPolicyName();
 
     /**
      * Checks if the provider supports the given resource policy type.

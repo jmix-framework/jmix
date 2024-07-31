@@ -17,6 +17,7 @@
 package io.jmix.search.index;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.search.index.mapping.IndexMappingConfiguration;
 
 import java.util.Collection;
 import java.util.Map;
@@ -133,4 +134,14 @@ public interface IndexManager {
      * @return {@link IndexSynchronizationStatus}
      */
     IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration);
+
+
+    /**
+     * Saves mapping to index on the search server or servers cluster.
+     * @param indexName - name of the index for saving mapping
+     * @param mapping - mapping for saving to configuration of the specified index
+     * @return true if saving process was performed successfully.
+     */
+    boolean putMapping(String indexName, IndexMappingConfiguration mapping);
+
 }

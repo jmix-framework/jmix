@@ -115,6 +115,10 @@ includeProject('rest-starter', 'jmix-rest/rest-starter')
 //todo SB3 remove sample-rest project?
 //includeProject('sample-rest', 'jmix-rest/sample-rest')
 
+includeProject('restds', 'jmix-restds/restds')
+includeProject('restds-starter', 'jmix-restds/restds-starter')
+includeProject('sample-rest-service', 'jmix-restds/sample-rest-service')
+
 includeProject('reports', 'jmix-reports/reports')
 includeProject('reports-rest', 'jmix-reports/reports-rest')
 includeProject('reports-starter', 'jmix-reports/reports-starter')

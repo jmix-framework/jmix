@@ -16,20 +16,45 @@
 
 package io.jmix.flowui.kit.meta;
 
+/**
+ * Meta description that describes data component
+ * (like <code>collection</code> or <code>instance</code>).
+ */
 public @interface StudioDataComponent {
 
+    /**
+     * @see StudioComponent#name
+     */
     String name() default "";
 
+    /**
+     * @see StudioComponent#classFqn
+     */
     String classFqn() default "";
 
+    /**
+     * @see StudioComponent#category
+     */
     String category() default "";
 
+    /**
+     * @see StudioComponent#icon
+     */
     String icon() default "";
 
+    /**
+     * @see StudioComponent#xmlElement
+     */
     String xmlElement() default "";
 
+    /**
+     * @see StudioComponent#xmlns
+     */
     String xmlns() default "";
 
+    /**
+     * @see StudioComponent#xmlnsAlias
+     */
     String xmlnsAlias() default "";
 
     /**
@@ -38,10 +63,13 @@ public @interface StudioDataComponent {
      */
     String availablePlaceRegExp() default "^((mainView)|(view)|(fragment))?(/data)$";
 
+    /**
+     * @see StudioComponent#properties
+     */
     StudioProperty[] properties() default {};
 
     /**
-     * @see StudioComponent#documentationLink()
+     * @see StudioComponent#documentationLink
      */
     String documentationLink() default "";
 }

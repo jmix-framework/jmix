@@ -22,10 +22,16 @@ import java.lang.annotation.Target;
 
 import com.vaadin.flow.component.HasComponents;
 
+/**
+ * Meta description that describes component.
+ */
 @Target(ElementType.METHOD)
 @Inherited
 public @interface StudioComponent {
 
+    /**
+     * Presentable name that Studio will use in palette.
+     */
     String name() default "";
 
     /**
@@ -40,34 +46,59 @@ public @interface StudioComponent {
     String category() default "";
 
     /**
-     * Icon for Component Palette and Component Inspector.
+     * Path to the icon that Studio will use in palette and inspector.
      */
     String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";
 
     /**
-     * Xml tag name.
+     * Xml tag local name.
      */
     String xmlElement() default "";
 
+    /**
+     * FQN of xml namespace schema.
+     */
     String xmlns() default "";
 
+    /**
+     * Xml namespace alias.
+     */
     String xmlnsAlias() default "";
 
     /**
      * Describes the available place in the Component Hierarchy.
-     * By default, components can be located inside layout (or fragment content) or inside a component inherited from {@link HasComponents}
+     * By default, components can be located inside layout (or fragment content)
+     * or inside a component inherited from {@link HasComponents}
      */
     String availablePlaceRegExp() default "((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/initialLayout)))$)|(^view/layout$)|(^fragment/content)" +
             "|((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar)|(/initialLayout))|(^view/layout)|(^fragment/content))?(/hasComponents)*$)";
 
+    /**
+     * Descriptions of the xml attributes.
+     */
     StudioProperty[] properties() default {};
 
+    /**
+     * Descriptions of the xml attributes relationship.
+     * For example <code>property</code> and <code>dataContainer</code>
+     */
     StudioPropertiesBinding[] propertiesBindings() default {};
 
+    /**
+     * Additional non-standard handlers.
+     */
     StudioSupplyHandler[] supplyHandlers() default {};
 
+    /**
+     * Describes the available children information.
+     * @see StudioAvailableChildrenInfo
+     */
     StudioAvailableChildrenInfo availableChildren() default @StudioAvailableChildrenInfo();
 
+    /**
+     * Describes the conversion information.
+     * @see StudioConvertStrategy
+     */
     StudioConvertStrategy convertStrategy() default @StudioConvertStrategy();
 
     /**

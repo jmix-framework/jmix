@@ -20,20 +20,46 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
 
+/**
+ * Meta description that describes group of actions.
+ */
 @Target(ElementType.METHOD)
 @Inherited
 public @interface StudioActionsGroup {
 
+    /**
+     * @see StudioComponent#name
+     */
     String name() default "";
 
+    /**
+     * FQN of action class that should be added to the group.
+     */
     String actionClassFqn() default "";
 
-    String icon() default "";
+    /**
+     * Specifies that group actions should use the same xml namespace as the group.
+     */
+    boolean useGroupXmlns() default true;
 
+    /**
+     * @see StudioComponent#icon
+     */
+    String icon() default "io/jmix/flowui/kit/meta/icon/actionsgroup/actions.svg";
+
+    /**
+     * @see StudioComponent#xmlElement
+     */
     String xmlElement() default "";
 
+    /**
+     * @see StudioComponent#xmlns
+     */
     String xmlns() default "";
 
+    /**
+     * @see StudioComponent#xmlnsAlias
+     */
     String xmlnsAlias() default "";
 
     /**
@@ -41,12 +67,18 @@ public @interface StudioActionsGroup {
      */
     String[] target() default {};
 
+    /**
+     * FQNs of unsupported target component class or component tag (e.g.: <code>tag:button</code>)
+     */
     String[] unsupportedTarget() default {};
 
+    /**
+     * @see StudioComponent#properties
+     */
     StudioProperty[] properties() default {};
 
     /**
-     * @see StudioComponent#documentationLink()
+     * @see StudioComponent#documentationLink
      */
     String documentationLink() default "";
 }

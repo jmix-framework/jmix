@@ -33,6 +33,10 @@ public @interface StudioProperty {
      */
     String classFqn() default "";
 
+    /**
+     * Property category.
+     * @see StudioProperty.Category
+     */
     String category() default Category.OTHER;
 
     boolean required() default false;

@@ -20,35 +20,62 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
 
+/**
+ * Meta description that describes action.
+ */
 @Target(ElementType.METHOD)
 @Inherited
 public @interface StudioAction {
 
+    /**
+     * Action type. Should be related to {@code io.jmix.flowui.action.ActionType}.
+     */
     String type() default "";
 
+    /**
+     * @see StudioComponent#classFqn
+     */
     String classFqn() default "";
 
+    /**
+     * @see StudioComponent#classFqn
+     */
     String icon() default "";
 
+    /**
+     * Action description.
+     * Studio will use the description in wizards.
+     */
     String description() default "";
 
-    String defaultProperty() default "";
-
     /**
-     * FQN of target component class or component tag (e.g.: <code>tag:button</code>)
+     * @see StudioActionsGroup#target
      */
     String[] target() default {};
 
+    /**
+     * @see StudioActionsGroup#unsupportedTarget
+     */
     String[] unsupportedTarget() default {};
 
+    /**
+     * Specifies whether the action should be displayed in the view creation wizard.
+     */
     boolean availableInViewWizard() default false;
 
+    /**
+     * @see StudioComponent#properties
+     */
     StudioProperty[] properties() default {};
 
+    /**
+     * Properties that should be wrapped into <code>property</code> tag
+     * and added to the <code>properties</code> tag.
+     */
     StudioPropertiesItem[] items() default {};
 
     /**
-     * @see StudioComponent#documentationLink()
+     * @see StudioComponent#documentationLink
      */
     String documentationLink() default "";
 }

@@ -20,22 +20,46 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
 
+/**
+ * Meta description that describes facet.
+ */
 @Target(ElementType.METHOD)
 @Inherited
 public @interface StudioFacet {
 
+    /**
+     * @see StudioComponent#name
+     */
     String name() default "";
 
+    /**
+     * @see StudioComponent#classFqn
+     */
     String classFqn() default "";
 
+    /**
+     * @see StudioComponent#category
+     */
     String category() default "";
 
+    /**
+     * @see StudioComponent#icon
+     */
     String icon() default "";
 
+    /**
+     * @see StudioComponent#xmlElement
+     */
     String xmlElement() default "";
 
+    /**
+     * @see StudioComponent#xmlns
+     */
     String xmlns() default "";
 
+    /**
+     * @see StudioComponent#xmlnsAlias
+     */
     String xmlnsAlias() default "";
 
     /**
@@ -44,10 +68,13 @@ public @interface StudioFacet {
      */
     String availablePlaceRegExp() default "^((mainView)|(view))?(/facets)$";
 
+    /**
+     * @see StudioComponent#properties
+     */
     StudioProperty[] properties() default {};
 
     /**
-     * @see StudioComponent#documentationLink()
+     * @see StudioComponent#documentationLink
      */
     String documentationLink() default "";
 }

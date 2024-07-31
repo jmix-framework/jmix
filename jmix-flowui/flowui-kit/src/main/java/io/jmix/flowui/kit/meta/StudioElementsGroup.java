@@ -20,31 +20,61 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
 
+/**
+ * Meta description that describes group of elements.
+ */
 @Target(ElementType.METHOD)
 @Inherited
 public @interface StudioElementsGroup {
 
+    /**
+     * @see StudioComponent#name
+     */
     String name() default "";
 
+    /**
+     * FQN of element class that should be added into group.
+     */
     String elementClassFqn() default "";
 
-    String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";
-
-    String xmlElement() default "";
-
-    String xmlns() default "";
-
-    String xmlnsAlias() default "";
-
-    String defaultProperty() default "";
+    /**
+     * Specifies that elements should use the same xml namespace as the group.
+     */
+    boolean useGroupXmlns() default true;
 
     /**
-     * FQN of target component class or component tag (e.g.: <code>tag:button</code>)
+     * @see StudioComponent#icon
+     */
+    String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";
+
+    /**
+     * @see StudioComponent#xmlElement
+     */
+    String xmlElement() default "";
+
+    /**
+     * @see StudioComponent#xmlns
+     */
+    String xmlns() default "";
+
+    /**
+     * @see StudioComponent#xmlnsAlias
+     */
+    String xmlnsAlias() default "";
+
+    /**
+     * FQNs of target component class or component tag (e.g.: <code>tag:button</code>)
      */
     String[] target() default {};
 
+    /**
+     * FQNs of unsupported target component class or component tag (e.g.: <code>tag:button</code>)
+     */
     String[] unsupportedTarget() default {};
 
+    /**
+     * Specifies that group should be visible in Studio preview.
+     */
     boolean visible() default false;
 
     /**
@@ -55,10 +85,13 @@ public @interface StudioElementsGroup {
      */
     boolean unlimitedCount() default false;
 
+    /**
+     * @see StudioComponent#properties
+     */
     StudioProperty[] properties() default {};
 
     /**
-     * @see StudioComponent#documentationLink()
+     * @see StudioComponent#documentationLink
      */
     String documentationLink() default "";
 }

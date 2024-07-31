@@ -16,31 +16,68 @@
 
 package io.jmix.flowui.kit.meta;
 
+/**
+ * Meta description that describes available component conversions.
+ */
 public @interface StudioConvertStrategy {
 
+    /**
+     * List of tags available for conversion.
+     */
     TagInfo[] tagsToConvertInto() default {};
 
+    /**
+     * List of components classes available for conversion.
+     */
     ClassInfo[] classesToConvertInto() default {};
 
     @interface ClassInfo {
+        /**
+         * Component class FQN.
+         */
         String qualifiedName();
 
+        /**
+         * @see AttributeConvertStrategy
+         */
         AttributeConvertStrategy[] attributeConvertStrategy() default {};
     }
 
     @interface TagInfo {
+
+        /**
+         * Xml tag FQN.
+         */
         String qualifiedName();
 
+        /**
+         * @see AttributeConvertStrategy
+         */
         AttributeConvertStrategy[] attributeConvertStrategy() default {};
     }
 
+    /**
+     * Meta description for attribute conversion.
+     */
     @interface AttributeConvertStrategy {
+        /**
+         * Xml attribute FQN.
+         */
         String qualifiedName();
 
+        /**
+         * Xml attribute type.
+         */
         StudioPropertyType type();
 
+        /**
+         * Xml attribute new value.
+         */
         String value();
 
+        /**
+         * Related xml attribute from which to take a new value.
+         */
         String valueFrom() default "";
     }
 }

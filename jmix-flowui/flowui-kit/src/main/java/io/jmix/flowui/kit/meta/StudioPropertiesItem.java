@@ -28,8 +28,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE_PARAMETER)
 public @interface StudioPropertiesItem {
 
+    /**
+     * Xml attribute name.
+     */
     String xmlAttribute();
 
+    /**
+     * Xml attribute type.
+     */
     StudioPropertyType type();
 
     /**
@@ -37,6 +43,10 @@ public @interface StudioPropertiesItem {
      */
     String classFqn() default "";
 
+    /**
+     * Property category.
+     * @see StudioProperty.Category
+     */
     String category() default StudioProperty.Category.ADDITIONAL;
 
     boolean required() default false;

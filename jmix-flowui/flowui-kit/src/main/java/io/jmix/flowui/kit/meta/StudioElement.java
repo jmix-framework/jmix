@@ -20,44 +20,85 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
 
+/**
+ * Meta description that describes specific element for component.
+ */
 @Target(ElementType.METHOD)
 @Inherited
 public @interface StudioElement {
-    String name() default "";
-
-    String classFqn() default "";
-
-    String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";
-
-    String xmlElement() default "";
-
-    String xmlns() default "";
-
-    String xmlnsAlias() default "";
-
-    String defaultProperty() default "";
 
     /**
-     * FQN of target component class or component tag (e.g.: <code>tag:button</code>)
+     * @see StudioComponent#name
+     */
+    String name() default "";
+
+    /**
+     * @see StudioComponent#classFqn
+     */
+    String classFqn() default "";
+
+    /**
+     * @see StudioComponent#icon
+     */
+    String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";
+
+    /**
+     * @see StudioComponent#xmlElement
+     */
+    String xmlElement() default "";
+
+    /**
+     * @see StudioComponent#xmlns
+     */
+    String xmlns() default "";
+
+    /**
+     * @see StudioComponent#xmlnsAlias
+     */
+    String xmlnsAlias() default "";
+
+    /**
+     * @see StudioElementsGroup#target
      */
     String[] target() default {};
 
+    /**
+     * @see StudioElementsGroup#unsupportedTarget
+     */
     String[] unsupportedTarget() default {};
 
+    /**
+     * @see StudioElementsGroup#visible
+     */
     boolean visible() default false;
 
+    /**
+     * @see StudioElementsGroup#unlimitedCount
+     */
     boolean unlimitedCount() default true;
 
+    /**
+     * @see StudioComponent#properties
+     */
     StudioProperty[] properties() default {};
 
+    /**
+     * @see StudioComponent#propertiesBindings
+     */
     StudioPropertiesBinding[] propertiesBindings() default {};
 
+    /**
+     * @see StudioComponent#supplyHandlers
+     */
     StudioSupplyHandler[] supplyHandlers() default {};
 
+    /**
+     * @see StudioComponent#availableChildren
+     */
     StudioAvailableChildrenInfo availableChildren() default @StudioAvailableChildrenInfo();
 
     /**
-     * @see StudioComponent#documentationLink()
+     * @see StudioComponent#documentationLink
      */
     String documentationLink() default "";
 }

@@ -32,6 +32,10 @@ public enum IndexSchemaManagementStrategy {
      */
     CREATE_ONLY("create-only"),
     /**
+     * Creates missing but skips existent indexes. Updates index(updates mapping or configuration) if it is possible.
+     */
+    CREATE_OR_UPDATE("create-or-update"),
+    /**
      * Creates missing and recreates irrelevant indexes.
      */
     CREATE_OR_RECREATE("create-or-recreate");

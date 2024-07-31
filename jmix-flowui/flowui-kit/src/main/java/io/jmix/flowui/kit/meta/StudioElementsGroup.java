@@ -22,6 +22,11 @@ import java.lang.annotation.Target;
 
 /**
  * Meta description that describes group of elements.
+ * <p></p>
+ * You can override an already existing {@link StudioElementsGroup} for your component
+ * by specifying the same {@link StudioElementsGroup#xmlElement}
+ * and defining your {@link StudioElementsGroup#xmlns}
+ * or defining a more specific {@link StudioElementsGroup#target} (usually the FQN of your component).
  */
 @Target(ElementType.METHOD)
 @Inherited

@@ -22,6 +22,11 @@ import java.lang.annotation.Target;
 
 /**
  * Meta description that describes group of actions.
+ *  * <p></p>
+ *  * You can override an already existing {@link StudioActionsGroup} for your component
+ *  * by specifying the same {@link StudioActionsGroup#xmlElement}
+ *  * and defining your {@link StudioActionsGroup#xmlns}
+ *  * or defining a more specific {@link StudioActionsGroup#target} (usually the FQN of your component).
  */
 @Target(ElementType.METHOD)
 @Inherited

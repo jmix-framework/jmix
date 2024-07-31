@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  * <p>
  * Usage example:
  * <pre>{@code
- * uiAsyncTasks.supplyAsyncBuilder(() -> customerService.loadCustomers())
+ * uiAsyncTasks.supplierConfigurer(() -> customerService.loadCustomers())
  *      .withResultHandler(customers -> {
  *          customersDc.getMutableItems().addAll(customers);
  *          notifications.create("Customers loaded: " + customers.size()).show();
@@ -42,10 +42,13 @@ import java.util.function.Supplier;
  * <p>
  * By default, asynchronous tasks are executed with the default timeout configured by the
  * {@link UiAsyncTaskProperties#defaultTimeoutSec}. After this timeout, the {@link TimeoutException} is thrown.
+ * <p>
+ * If asynchronous task doesn't return any result, use the {@link #runnableConfigurer(Runnable)} builder for configuring
+ * and running the task.
  *
  * @see UiAsyncTaskProperties
- * @see #supplyAsyncBuilder(Supplier)
- * @see #runAsyncBuilder(Runnable)
+ * @see #supplierConfigurer(Supplier)
+ * @see #runnableConfigurer(Runnable)
  */
 @Component("flowui_UiAsyncTasks")
 public class UiAsyncTasks {
@@ -75,57 +78,42 @@ public class UiAsyncTasks {
         executorService.shutdownNow();
     }
 
-    protected ExecutorService createExecutorService() {
-        int maximumPoolSize = uiAsyncTaskProperties.getExecutorService().getMaximumPoolSize();
-        executorService = new ThreadPoolExecutor(
-                maximumPoolSize,
-                maximumPoolSize,
-                10L, TimeUnit.MINUTES,
-                new LinkedBlockingQueue<>(),
-                new ThreadFactoryBuilder()
-                        .setNameFormat(THREAD_NAME_PREFIX + "%d")
-                        .build()
-        );
-        ((ThreadPoolExecutor) executorService).allowCoreThreadTimeOut(true);
-        return executorService;
-    }
-
     /**
      * Creates a builder for an asynchronous task that returns a result. The task is executed on a separate thread. The
      * result can be handled with a {@link Consumer} that is set using the
-     * {@link SupplyAsyncBuilder#withResultHandler(Consumer)} or left unhandled to get the result using the
+     * {@link SupplierConfigurer#withResultHandler(Consumer)} or left unhandled to get the result using the
      * {@link CompletableFuture} API.
      *
      * @param asyncTask the task to execute
      * @param <T>       the result type
      * @return a builder for an asynchronous task that returns a result
      */
-    public <T> SupplyAsyncBuilder<T> supplyAsyncBuilder(Supplier<T> asyncTask) {
-        return new SupplyAsyncBuilder<>(asyncTask);
+    public <T> SupplierConfigurer<T> supplierConfigurer(Supplier<T> asyncTask) {
+        return new SupplierConfigurer<>(asyncTask);
     }
 
     /**
      * Creates a builder for an asynchronous task that does not return a result. The task is executed on a separate
      * thread. The action that must be performed after the asynchronous task is completed may be set using the
-     * {@link RunAsyncBuilder#withResultHandler(Runnable) method.
+     * {@link RunnableConfigurer#withResultHandler(Runnable) method.
      *
      * @param asyncTask the task to execute
      * @return a builder for an asynchronous task that does not return a result
      */
-    public RunAsyncBuilder runAsyncBuilder(Runnable asyncTask) {
-        return new RunAsyncBuilder(asyncTask);
+    public RunnableConfigurer runnableConfigurer(Runnable asyncTask) {
+        return new RunnableConfigurer(asyncTask);
     }
 
     /**
      * Abstract base class for asynchronous task builders.
      */
-    protected abstract class AbstractAsyncTaskBuilder {
+    protected abstract class AbstractAsyncTaskConfigurer {
         protected Consumer<Throwable> exceptionHandler;
         protected UI ui;
         protected int timeout;
         protected TimeUnit timeoutUnit;
 
-        public AbstractAsyncTaskBuilder() {
+        public AbstractAsyncTaskConfigurer() {
             this.ui = UI.getCurrent();
         }
 
@@ -152,11 +140,16 @@ public class UiAsyncTasks {
         }
     }
 
-    public class SupplyAsyncBuilder<T> extends AbstractAsyncTaskBuilder {
+    /**
+     * A builder class for configuring and executing asynchronous tasks that return a result.
+     *
+     * @param <T> the result type of the asynchronous task
+     */
+    public class SupplierConfigurer<T> extends AbstractAsyncTaskConfigurer {
         private Supplier<T> asyncTask;
         private Consumer<? super T> resultHandler;
 
-        public SupplyAsyncBuilder(Supplier<T> asyncTask) {
+        public SupplierConfigurer(Supplier<T> asyncTask) {
             super();
             this.asyncTask = asyncTask;
         }
@@ -165,7 +158,7 @@ public class UiAsyncTasks {
          * Sets a handler that is called when the asynchronous task completes successfully. The handler can safely
          * update Vaadin UI components.
          */
-        public SupplyAsyncBuilder<T> withResultHandler(Consumer<? super T> resultHandler) {
+        public SupplierConfigurer<T> withResultHandler(Consumer<? super T> resultHandler) {
             this.resultHandler = resultHandler;
             return this;
         }
@@ -174,7 +167,7 @@ public class UiAsyncTasks {
          * Sets a handler that is called when the asynchronous task throws an exception. The handler can safely update
          * Vaadin UI components. If not set, then the default exception handler will be used.
          */
-        public SupplyAsyncBuilder<T> withExceptionHandler(Consumer<Throwable> exceptionHandler) {
+        public SupplierConfigurer<T> withExceptionHandler(Consumer<Throwable> exceptionHandler) {
             this.exceptionHandler = exceptionHandler;
             return this;
         }
@@ -183,7 +176,7 @@ public class UiAsyncTasks {
          * Sets the timeout for the asynchronous task. If the task is not completed within the specified timeout, a
          * {@link TimeoutException} is thrown.
          */
-        public SupplyAsyncBuilder<T> withTimeout(int timeout, TimeUnit timeoutUnit) {
+        public SupplierConfigurer<T> withTimeout(int timeout, TimeUnit timeoutUnit) {
             this.timeout = timeout;
             this.timeoutUnit = timeoutUnit;
             return this;
@@ -211,12 +204,15 @@ public class UiAsyncTasks {
         }
     }
 
-    public class RunAsyncBuilder extends AbstractAsyncTaskBuilder {
+    /**
+     * A builder class for configuring and executing asynchronous tasks that do not return a result.
+     */
+    public class RunnableConfigurer extends AbstractAsyncTaskConfigurer {
 
         private Runnable asyncTask;
         private Runnable resultHandler;
 
-        public RunAsyncBuilder(Runnable asyncTask) {
+        public RunnableConfigurer(Runnable asyncTask) {
             super();
             this.asyncTask = asyncTask;
         }
@@ -225,7 +221,7 @@ public class UiAsyncTasks {
          * Sets a handler that is called when the asynchronous task completes successfully. The handler can safely
          * update Vaadin UI components.
          */
-        public RunAsyncBuilder withResultHandler(Runnable resultHandler) {
+        public RunnableConfigurer withResultHandler(Runnable resultHandler) {
             this.resultHandler = resultHandler;
             return this;
         }
@@ -234,7 +230,7 @@ public class UiAsyncTasks {
          * Sets a handler that is called when the asynchronous task throws an exception. The handler can safely update
          * Vaadin UI components. If not set, then the default exception handler will be used.
          */
-        public RunAsyncBuilder withExceptionHandler(Consumer<Throwable> exceptionHandler) {
+        public RunnableConfigurer withExceptionHandler(Consumer<Throwable> exceptionHandler) {
             this.exceptionHandler = exceptionHandler;
             return this;
         }
@@ -243,7 +239,7 @@ public class UiAsyncTasks {
          * Sets the timeout for the asynchronous task. If the task is not completed within the specified timeout, a
          * {@link TimeoutException} is thrown.
          */
-        public RunAsyncBuilder withTimeout(int timeout, TimeUnit timeoutUnit) {
+        public RunnableConfigurer withTimeout(int timeout, TimeUnit timeoutUnit) {
             this.timeout = timeout;
             this.timeoutUnit = timeoutUnit;
             return this;
@@ -262,6 +258,21 @@ public class UiAsyncTasks {
             configureTimeout(completableFuture);
             return completableFuture;
         }
+    }
+
+    protected ExecutorService createExecutorService() {
+        int maximumPoolSize = uiAsyncTaskProperties.getExecutorService().getMaximumPoolSize();
+        executorService = new ThreadPoolExecutor(
+                maximumPoolSize,
+                maximumPoolSize,
+                10L, TimeUnit.MINUTES,
+                new LinkedBlockingQueue<>(),
+                new ThreadFactoryBuilder()
+                        .setNameFormat(THREAD_NAME_PREFIX + "%d")
+                        .build()
+        );
+        ((ThreadPoolExecutor) executorService).allowCoreThreadTimeOut(true);
+        return executorService;
     }
 
     protected Function<Throwable, Void> createDefaultExceptionHandler() {

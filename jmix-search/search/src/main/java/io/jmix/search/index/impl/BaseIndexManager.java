@@ -1,5 +1,6 @@
 package io.jmix.search.index.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,9 +9,12 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -243,5 +247,16 @@ public abstract class BaseIndexManager implements IndexManager {
         }
         log.trace("Structures are the same. TRUE");
         return true;
+    }
+
+    protected InputStream getMappingAsStream(String indexName, IndexMappingConfiguration mapping) {
+        InputStream mappingBodyStream;
+        try {
+            String mappingBody = objectMapper.writeValueAsString(mapping);
+            mappingBodyStream = new ByteArrayInputStream(mappingBody.getBytes());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Unable to update index mapping'" + indexName + "': Failed to parse index mapping.", e);
+        }
+        return mappingBodyStream;
     }
 }

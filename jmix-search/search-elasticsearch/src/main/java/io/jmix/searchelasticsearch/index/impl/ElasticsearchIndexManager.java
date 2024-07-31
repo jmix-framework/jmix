@@ -30,6 +30,7 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.BaseIndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonGenerator;
@@ -38,9 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Collections;
 import java.util.Map;
 
@@ -126,6 +125,21 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
             return objectMapper.createObjectNode();
         }
         return toObjectNode(indexState);
+    }
+
+    @Override
+    public boolean putMapping(String indexName, IndexMappingConfiguration mapping) {
+        InputStream mappingBodyStream = getMappingAsStream(indexName, mapping);
+
+        PutMappingRequest request = PutMappingRequest.of(
+                builder -> builder.index(indexName).withJson(mappingBodyStream)
+        );
+
+        try {
+            return client.indices().putMapping(request).acknowledged();
+        } catch (IOException e) {
+            throw new RuntimeException("Problem with sending request to elastic search server.", e);
+        }
     }
 
     @Override

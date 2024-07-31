@@ -73,11 +73,13 @@ public class StartupIndexSynchronizer {
                     case MISSING:
                         unavailable.add(config);
                         break;
+                    case UPDATED:
                     default:
                         available.add(config);
                 }
             });
 
+            //TODO duplicating marking indexes that already performed in ESIndexManager
             available.forEach(config -> indexStateRegistry.markIndexAsAvailable(config.getEntityName()));
             unavailable.forEach(config -> indexStateRegistry.markIndexAsUnavailable(config.getEntityName()));
 

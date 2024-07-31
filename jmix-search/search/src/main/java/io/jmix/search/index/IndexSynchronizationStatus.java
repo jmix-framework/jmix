@@ -21,5 +21,6 @@ public enum IndexSynchronizationStatus {
     IRRELEVANT,
     CREATED,
     RECREATED,
+    UPDATED,
     ACTUAL
 }

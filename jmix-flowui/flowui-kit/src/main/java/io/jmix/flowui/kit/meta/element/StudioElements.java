@@ -635,7 +635,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "columns", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER, required = true),
                     @StudioProperty(xmlAttribute = "labelsPosition", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.formlayout.FormLayout$ResponsiveStep$LabelsPosition",
-                            options = {"ASIDE", "TOP"})
+                            options = {"ASIDE", "TOP"}, defaultValue = "TOP")
             }
     )
     FormLayout.ResponsiveStep formLayoutResponsiveStep();
@@ -676,7 +676,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "columns", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER, required = true),
                     @StudioProperty(xmlAttribute = "labelsPosition", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps$ResponsiveStep$LabelsPosition",
-                            options = {"ASIDE", "TOP"})
+                            options = {"ASIDE", "TOP"}, defaultValue = "TOP")
             }
     )
     void responsiveStep();

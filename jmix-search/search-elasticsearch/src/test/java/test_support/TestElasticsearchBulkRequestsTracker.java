@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
+ */
 
 
 package test_support;
@@ -27,9 +27,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-public class TestBulkRequestsTracker implements Consumer<BulkRequest> {
+public class TestElasticsearchBulkRequestsTracker implements Consumer<BulkRequest> {
 
-    private static final Logger log = LoggerFactory.getLogger(TestBulkRequestsTracker.class);
+    private static final Logger log = LoggerFactory.getLogger(TestElasticsearchBulkRequestsTracker.class);
 
     private Set<BulkRequest> registry = ConcurrentHashMap.newKeySet();
 
@@ -47,4 +47,4 @@ public class TestBulkRequestsTracker implements Consumer<BulkRequest> {
         registry = ConcurrentHashMap.newKeySet();
     }
 }
-*/
+

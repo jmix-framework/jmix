@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,12 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
+ */
 
 
 package test_support;
 
-import org.elasticsearch.action.DocWriteRequest;
 
 public class TestBulkRequestDeleteActionValidationData extends TestAbstractBulkRequestActionValidationData { //platform specific
 
@@ -25,9 +24,5 @@ public class TestBulkRequestDeleteActionValidationData extends TestAbstractBulkR
         super(index, id);
     }
 
-    @Override
-    public DocWriteRequest.OpType getOperationType() {
-        return DocWriteRequest.OpType.DELETE;
-    }
 }
-*/
+

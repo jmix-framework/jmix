@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
+ */
 
 
 package test_support;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.mock;
 @PropertySource("classpath:/test_support/test-entity-indexing-app.properties")
 @EnableWebSecurity
 @MessageSourceBasenames({"test_support/messages"})
-public class IndexingTestConfiguration { //todo
+public class ElasticsearchIndexingTestConfiguration { //todo
 
     @Autowired
     protected AutowireCapableBeanFactory beanFactory;
@@ -60,8 +60,8 @@ public class IndexingTestConfiguration { //todo
     }
 
     @Bean
-    public TestBulkRequestsTracker bulkRequestsTracker() {
-        return new TestBulkRequestsTracker();
+    public TestElasticsearchBulkRequestsTracker bulkRequestsTracker() {
+        return new TestElasticsearchBulkRequestsTracker();
     }
 
     @Bean
@@ -89,4 +89,4 @@ public class IndexingTestConfiguration { //todo
         return new TestFileStorage();
     }
 }
-*/
+

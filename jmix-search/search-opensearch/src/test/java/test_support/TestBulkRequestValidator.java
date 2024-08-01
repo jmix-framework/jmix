@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,16 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
+ */
 
 
 package test_support;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
+import org.opensearch.client.opensearch.core.BulkRequest;
+import org.opensearch.client.opensearch.core.bulk.DeleteOperation;
+import org.opensearch.client.opensearch.core.bulk.IndexOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +29,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+
 import static test_support.TestBulkRequestValidationResult.Failure.create;
 
-public class TestBulkRequestValidator { //todo platform specific
+public class TestBulkRequestValidator {
 
     private static final Logger log = LoggerFactory.getLogger(TestBulkRequestValidator.class);
 
@@ -146,32 +147,33 @@ public class TestBulkRequestValidator { //todo platform specific
         List<TestBulkRequestIndexActionValidationData> indexActions = new ArrayList<>();
         List<TestBulkRequestDeleteActionValidationData> deleteActions = new ArrayList<>();
 
-        bulkRequest.requests().forEach(request -> {
-            switch (request.opType()) {
-                case INDEX:
-                    indexActions.add(convertIndexRequest((IndexRequest) request));
+        bulkRequest.operations().forEach(operation -> {
+            switch (operation._kind()) {
+                case Index:
+                    indexActions.add(convertIndexOperation(operation.index()));
                     break;
-                case DELETE:
-                    deleteActions.add(convertDeleteRequest((DeleteRequest) request));
+                case Delete:
+                    deleteActions.add(convertDeleteOperation(operation.delete()));
                     break;
                 default:
             }
         });
 
+
         return new TestBulkRequestValidationData(indexActions, deleteActions);
     }
 
-    private static TestBulkRequestIndexActionValidationData convertIndexRequest(IndexRequest indexRequest) {
-        String id = indexRequest.id();
-        String index = indexRequest.index();
-        JsonNode source = objectMapper.convertValue(indexRequest.sourceAsMap(), JsonNode.class);
+    private static TestBulkRequestIndexActionValidationData convertIndexOperation(IndexOperation operation) {
+        String id = operation.id();
+        String index = operation.index();
+        JsonNode source = objectMapper.convertValue(operation.document(), JsonNode.class);
         return new TestBulkRequestIndexActionValidationData(index, id, source);
     }
 
-    private static TestBulkRequestDeleteActionValidationData convertDeleteRequest(DeleteRequest deleteRequest) {
-        String id = deleteRequest.id();
-        String index = deleteRequest.index();
+    private static TestBulkRequestDeleteActionValidationData convertDeleteOperation(DeleteOperation operation) {
+        String id = operation.id();
+        String index = operation.index();
         return new TestBulkRequestDeleteActionValidationData(index, id);
     }
 }
-*/
+

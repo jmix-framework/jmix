@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
+ */
 
 
 package indexing;
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.core.*;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.search.index.EntityIndexer;
-import org.elasticsearch.action.bulk.BulkRequest;
+import org.opensearch.client.opensearch.core.BulkRequest;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,9 +45,9 @@ import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-        classes = {IndexingTestConfiguration.class}
+        classes = {OpenSearchIndexingTestConfiguration.class}
 )
-public class EntityIndexingTest { //todo
+public class OpenSearchEntityIndexingTest { //todo
 
     @Autowired
     protected EntityIndexer entityIndexer;
@@ -609,4 +609,4 @@ public class EntityIndexingTest { //todo
         Assert.assertTrue(bulkRequests.isEmpty());
     }
 }
-*/
+

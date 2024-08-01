@@ -30,11 +30,12 @@ fetchPlanProperty.subProperties.each {p ->
 }
 
 def isManyToMany = attribute.hasAnnotation('ManyToMany')
+def isOneToMany = attribute.hasAnnotation('OneToMany')
 def isComposition = attribute.hasAnnotation('Composition')
 def oneToOneAnn = attribute.getAnnotation('OneToOne')
 def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim()) || attribute.hasAnnotation('JoinTable')
 %>
-<% if (isOwnerAttr) {%>
+<% if (!isManyToMany || isOwnerAttr) {%>
 <h4 text="msg://${ownerEntity.packageName}/${ownerEntity.className}.${nestedDcProperty}"/>
 <hbox id="buttonsPanel" classNames="buttons-panel">
     <% if (isManyToMany) {%>
@@ -42,7 +43,7 @@ def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim(
     <button action="${nestedDcProperty}DataGrid.exclude"/>
     <%} else {%>
     <button action="${nestedDcProperty}DataGrid.create"/>
-    <% if (attribute.hasAnnotation('OneToMany')) {%>
+    <% if (isOneToMany) {%>
     <button action="${nestedDcProperty}DataGrid.edit"/>
     <%}%>
     <button action="${nestedDcProperty}DataGrid.remove"/>
@@ -55,14 +56,14 @@ def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim(
         <action id="add" type="list_add"/>
         <action id="exclude" type="list_exclude"/>
     </actions>
-<%} else if (isOwnerAttr) {%>
+<%} else if (!isManyToMany || isOwnerAttr) {%>
     <actions>
         <action id="create" type="list_create">
             <properties>
                 <property name="openMode" value="DIALOG"/>
             </properties>
         </action>
-        <% if (attribute.hasAnnotation('OneToMany')) {%>
+        <% if (isOneToMany) {%>
         <action id="edit" type="list_edit">
             <properties>
                 <property name="openMode" value="DIALOG"/>

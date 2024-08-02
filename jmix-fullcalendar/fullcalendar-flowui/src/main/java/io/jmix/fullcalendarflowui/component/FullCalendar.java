@@ -1,42 +1,49 @@
 package io.jmix.fullcalendarflowui.component;
 
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.data.provider.KeyMapper;
+import com.vaadin.flow.internal.ExecutionContext;
+import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
+import elemental.json.JsonValue;
+import elemental.json.impl.JreJsonFactory;
 import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.fullcalendarflowui.component.data.ItemEventProviderManager;
-import io.jmix.fullcalendarflowui.component.data.LazyEventProviderManager;
+import io.jmix.fullcalendarflowui.component.data.*;
 import io.jmix.fullcalendarflowui.component.event.*;
 import io.jmix.fullcalendarflowui.component.model.BusinessHours;
 import io.jmix.fullcalendarflowui.component.model.option.FullCalendarOptions;
 import io.jmix.fullcalendarflowui.component.serialization.serializer.CalendarEventSerializer;
 import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
-import io.jmix.fullcalendarflowui.kit.component.data.*;
 import io.jmix.fullcalendarflowui.kit.component.event.dom.*;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
 import io.jmix.fullcalendarflowui.kit.component.serialization.model.*;
 import io.jmix.fullcalendarflowui.kit.component.serialization.serializer.JmixFullCalendarSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.function.Function;
 
 public class FullCalendar extends JmixFullCalendar implements ApplicationContextAware, InitializingBean {
+    private static final Logger log = LoggerFactory.getLogger(FullCalendar.class);
 
     protected ApplicationContext applicationContext;
     protected DateTimeTransformations dateTimeTransformations;
     protected FullCalendarDelegate calendarDelegate;
+
+    protected Map<String, AbstractEventProviderManager> eventProvidersMap = new HashMap<>(2);
+    protected KeyMapper<Object> crossEventProviderKeyMapper = new KeyMapper<>();
 
     protected Function<MoreLinkClassNamesContext, List<String>> linkMoreClassNamesGenerator;
 
@@ -57,6 +64,78 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    public List<BaseCalendarEventProvider> getEventProviders() {
+        return eventProvidersMap != null && !eventProvidersMap.isEmpty()
+                ? eventProvidersMap.values().stream().map(AbstractEventProviderManager::getEventProvider).toList()
+                : Collections.emptyList();
+    }
+
+    @Nullable
+    public BaseCalendarEventProvider getEventProvider(String id) {
+        AbstractEventProviderManager eventProviderManager = eventProvidersMap.get(id);
+
+        if (eventProviderManager != null) {
+            return eventProviderManager.getEventProvider();
+        }
+        return null;
+    }
+
+    public void addEventProvider(LazyCalendarEventProvider eventProvider) {
+        if (eventProvidersMap.containsKey(eventProvider.getId())) {
+            log.warn("Lazy event provider with the same '{}' ID already added", eventProvider.getId());
+            return;
+        }
+
+        LazyEventProviderManager eventProviderManager = createLazyEventProviderManager(eventProvider);
+        eventProviderManager.setCrossEventProviderKeyMapper(crossEventProviderKeyMapper);
+
+        eventProvidersMap.put(eventProvider.getId(), eventProviderManager);
+
+        if (initialized) {
+            addEventProviderInternal(eventProviderManager);
+        }
+    }
+
+    public void addEventProvider(CalendarEventProvider eventProvider) {
+        if (eventProvidersMap.containsKey(eventProvider.getId())) {
+            log.warn("Item event provider with the same '{}' ID already added", eventProvider.getId());
+            return;
+        }
+
+        EventProviderManager eventProviderManager = createEventProviderManager(eventProvider);
+        eventProviderManager.setItemSetChangeListener(this::onItemSetChangeListener);
+        eventProviderManager.setCrossEventProviderKeyMapper(crossEventProviderKeyMapper);
+
+        eventProvidersMap.put(eventProvider.getId(), eventProviderManager);
+
+        if (initialized) {
+            addEventProviderInternal(eventProviderManager);
+
+            if (eventProvider.getItems() != null && eventProvider.getItems().isEmpty()) {
+                requestUpdateItemEventProvider(eventProvider.getId());
+            }
+        }
+    }
+
+    public void removeEventProvider(BaseCalendarEventProvider eventProvider) {
+        removeEventProvider(eventProvider.getId());
+    }
+
+    public void removeEventProvider(String id) {
+        AbstractEventProviderManager epManager = eventProvidersMap.get(id);
+        if (epManager != null) {
+            if (epManager instanceof EventProviderManager itemProvider) {
+                itemProvider.setItemSetChangeListener(null);
+            }
+            getElement().callJsFunction("_removeEventSource", epManager.getSourceId());
+        }
+        eventProvidersMap.remove(id);
+    }
+
+    public void removeAllEventProviders() {
+        getEventProviders().forEach(this::removeEventProvider);
     }
 
     @Nullable
@@ -121,7 +200,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return getOptions().getEventConstraint().getBusinessHours();
     }
 
-    public void setEventConstraintBusinessHours(@jakarta.annotation.Nullable List<BusinessHours> businessHoursEventConstraint) {
+    public void setEventConstraintBusinessHours(@Nullable List<BusinessHours> businessHoursEventConstraint) {
         getOptions().setEventConstraint(
                 getOptions().getEventConstraint().isEnabled(),
                 getOptions().getEventConstraint().getGroupId(),
@@ -143,7 +222,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return getOptions().getSelectConstraint().getBusinessHours();
     }
 
-    public void setSelectConstraintBusinessHours(@jakarta.annotation.Nullable List<BusinessHours> businessHoursSelectConstraint) {
+    public void setSelectConstraintBusinessHours(@Nullable List<BusinessHours> businessHoursSelectConstraint) {
         getOptions().setSelectConstraint(
                 getOptions().getSelectConstraint().isEnabled(),
                 getOptions().getSelectConstraint().getGroupId(),
@@ -336,6 +415,79 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return calendarDelegate.fetchCalendarItems(sourceId, start, end);
     }
 
+    protected void addEventProviderInternal(AbstractEventProviderManager epManager) {
+        getElement().callJsFunction(epManager.getJsFunctionName(), epManager.getSourceId());
+    }
+
+    protected void onItemSetChangeListener(CalendarEventProvider.ItemSetChangeEvent event) {
+        String providerId = event.getSource().getId();
+        EventProviderManager eventProviderManager =
+                (EventProviderManager) eventProvidersMap.get(providerId);
+
+        switch (event.getOperation()) {
+            case ADD, REMOVE, UPDATE -> {
+                eventProviderManager.addIncrementalChange(event.getOperation(), event.getItems());
+                requestIncrementalDataUpdate();
+            }
+            default -> requestUpdateItemEventProvider(providerId);
+        }
+    }
+
+    protected void requestIncrementalDataUpdate() {
+        if (incrementalUpdateExecution != null) {
+            return;
+        }
+
+        getUI().ifPresent(ui -> incrementalUpdateExecution =
+                ui.beforeClientResponse(this, this::performIncrementalDataUpdate));
+    }
+
+    protected void performIncrementalDataUpdate(ExecutionContext context) {
+        List<EventProviderManager> eventProviders = eventProvidersMap.values().stream()
+                .filter(ep -> ep instanceof EventProviderManager)
+                .map(ep -> (EventProviderManager) ep)
+                .toList();
+
+        List<JsonValue> jsonValues = new ArrayList<>();
+        for (EventProviderManager epManger : eventProviders) {
+            jsonValues.addAll(epManger.serializeIncrementalData());
+            epManger.clearIncrementalData();
+        }
+
+        getElement().callJsFunction("_updateSourcesWithIncrementalData",
+                serializer.toJsonArrayFromJsonValue(jsonValues));
+
+        incrementalUpdateExecution = null;
+    }
+
+    protected void requestUpdateItemEventProvider(String eventProviderId) {
+        // Do not call if it's still updating
+        if (itemsEventProvidersExecutionMap.containsKey(eventProviderId)) {
+            return;
+        }
+        getUI().ifPresent(ui -> {
+            StateTree.ExecutionRegistration executionRegistration = ui.beforeClientResponse(this,
+                    (context) -> performUpdateItemEventProvider(eventProviderId));
+            itemsEventProvidersExecutionMap.put(eventProviderId, executionRegistration);
+        });
+    }
+
+    protected void performUpdateItemEventProvider(String eventProviderId) {
+        JsonObject resultJson = new JreJsonFactory().createObject();
+
+        EventProviderManager eventProviderManager =
+                (EventProviderManager) eventProvidersMap.get(eventProviderId);
+
+        JsonValue dataJson = eventProviderManager.serializeData();
+
+        resultJson.put("data", dataJson);
+        resultJson.put("sourceId", eventProviderManager.getSourceId());
+
+        getElement().callJsFunction("_updateSyncSourcesData", resultJson);
+
+        itemsEventProvidersExecutionMap.remove(eventProviderId);
+    }
+
     @Override
     @SuppressWarnings("UnnecessaryLocalVariable")
     protected JsonArray getMoreLinkClassNames(JsonObject jsonContext) {
@@ -449,13 +601,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getEventBus().fireEvent(unselectEvent);
     }
 
-    @Override
-    protected AbstractItemEventProviderManager createItemEventProviderManager(ItemCalendarEventProvider eventProvider) {
-        return new ItemEventProviderManager(eventProvider);
+    protected EventProviderManager createEventProviderManager(CalendarEventProvider eventProvider) {
+        return new EventProviderManager(eventProvider);
     }
 
-    @Override
-    protected AbstractLazyEventProviderManager createLazyEventProviderManager(LazyCalendarEventProvider eventProvider) {
+    protected LazyEventProviderManager createLazyEventProviderManager(LazyCalendarEventProvider eventProvider) {
         return new LazyEventProviderManager(eventProvider);
     }
 
@@ -484,7 +634,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
             return null;
         }
 
-        String rawValue = CalendarEventSerializer.serializeGroupIdOrConstraint(value);
+        String rawValue = CalendarEventSerializer.getRawGroupIdOrConstraint(value);
 
         return rawValue != null ? rawValue : crossEventProviderKeyMapper.key(value);
     }
@@ -493,5 +643,31 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         TimeZone timeZone = applicationContext.getBean(CurrentAuthentication.class).getTimeZone();
 
         setTimeZone(timeZone);
+    }
+
+    @Override
+    protected void addEventProvidersOnAttach() {
+        // Add all event providers
+        eventProvidersMap.values().forEach(ep -> {
+            addEventProviderInternal(ep);
+            if (ep instanceof EventProviderManager) {
+                requestUpdateItemEventProvider(ep.getEventProvider().getId());
+            }
+        });
+    }
+
+    @Override
+    protected void clearEventProvidersOnDetach() {
+        // As DataHolder is a shared object between calendars on a page,
+        // we must remove event sources from it when component is detached.
+        if (!eventProvidersMap.values().isEmpty()) {
+            JsonArray sourceIds = serializer.toJsonArrayFromString(
+                    eventProvidersMap.values().stream()
+                            .map(AbstractEventProviderManager::getSourceId)
+                            .toList());
+            UI.getCurrent().getPage().executeJs(
+                    "window.Vaadin.Flow.jmixFullCalendarConnector.removeSources($0)", sourceIds);
+        }
+        crossEventProviderKeyMapper.removeAll();
     }
 }

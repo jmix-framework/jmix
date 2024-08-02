@@ -1,7 +1,7 @@
 package io.jmix.fullcalendarflowui.component.model;
 
 import io.jmix.fullcalendar.DayOfWeek;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalTime;

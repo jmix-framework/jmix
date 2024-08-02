@@ -24,7 +24,6 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 
 import java.io.IOException;
 
-@SuppressWarnings("unchecked")
 public class EnumClassSerializer extends StdSerializer<EnumClass> {
 
     public EnumClassSerializer() {

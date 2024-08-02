@@ -14,22 +14,35 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.data;
+package io.jmix.fullcalendarflowui.component.data;
 
-public abstract class SimpleLazyCalendarEventProvider implements LazyCalendarEventProvider {
+import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
+import org.springframework.lang.Nullable;
 
-    protected String id;
+public enum ItemChangeOperation implements HasEnumId<String> {
+    REFRESH("refresh"),
+    UPDATE("update"),
+    ADD("add"),
+    REMOVE("remove");
 
-    public SimpleLazyCalendarEventProvider() {
-        this(EventProviderUtils.generateId());
-    }
+    private final String id;
 
-    public SimpleLazyCalendarEventProvider(String id) {
+    ItemChangeOperation(String id) {
         this.id = id;
     }
 
     @Override
     public String getId() {
         return id;
+    }
+
+    @Nullable
+    public static ItemChangeOperation fromId(String id) {
+        for (ItemChangeOperation operation : values()) {
+            if (operation.getId().equals(id)) {
+                return operation;
+            }
+        }
+        return null;
     }
 }

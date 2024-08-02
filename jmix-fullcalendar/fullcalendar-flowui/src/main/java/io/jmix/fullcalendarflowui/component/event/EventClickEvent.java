@@ -1,21 +1,21 @@
 package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEvent;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
+import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 
 public class EventClickEvent extends AbstractClickEvent {
 
     protected final CalendarEvent calendarEvent;
-    protected final CalendarEventProvider eventProvider;
+    protected final BaseCalendarEventProvider eventProvider;
     protected final ViewInfo viewInfo;
 
     public EventClickEvent(FullCalendar source,
                            boolean fromClient,
                            MouseEventDetails mouseEventDetails,
                            CalendarEvent calendarEvent,
-                           CalendarEventProvider eventProvider,
+                           BaseCalendarEventProvider eventProvider,
                            ViewInfo viewInfo) {
         super(source, fromClient, mouseEventDetails);
 
@@ -28,7 +28,7 @@ public class EventClickEvent extends AbstractClickEvent {
         return calendarEvent;
     }
 
-    public CalendarEventProvider getEventProvider() {
+    public BaseCalendarEventProvider getEventProvider() {
         return eventProvider;
     }
 

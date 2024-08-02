@@ -12,18 +12,14 @@ import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEvent;
-import io.jmix.fullcalendarflowui.kit.component.data.EventProviderUtils;
-import io.jmix.fullcalendarflowui.kit.component.data.ItemCalendarEventProvider;
-import io.jmix.fullcalendarflowui.kit.component.data.ItemChangeOperation;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class ContainerCalendarItems<E> extends AbstractEntityCalendarItems<Void> implements EntityDataUnit,
-        ItemCalendarEventProvider {
+public class ContainerCalendarEventProvider<E> extends AbstractEntityEventProvider<Void> implements EntityDataUnit,
+        CalendarEventProvider {
 
     protected Set<CalendarEvent> itemsCache;
 
@@ -31,11 +27,11 @@ public class ContainerCalendarItems<E> extends AbstractEntityCalendarItems<Void>
 
     private EventBus eventBus;
 
-    public ContainerCalendarItems(InstanceContainer<E> container) {
+    public ContainerCalendarEventProvider(InstanceContainer<E> container) {
         this(EventProviderUtils.generateId(), container);
     }
 
-    public ContainerCalendarItems(String id, InstanceContainer<E> container) {
+    public ContainerCalendarEventProvider(String id, InstanceContainer<E> container) {
         super(id);
 
         Preconditions.checkNotNullArgument(container);

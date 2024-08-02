@@ -4,8 +4,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.vaadin.flow.data.provider.KeyMapper;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.EnumClass;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEvent;
+import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
 import org.springframework.lang.Nullable;
 
@@ -16,18 +17,20 @@ import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeTransform
 
 public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
 
-    protected KeyMapper<Object> groupAndConstraintKeyMapper = new KeyMapper<>();
-    protected KeyMapper<Object> crossEventProviderKeyMapper;
+    protected final KeyMapper<Object> crossEventProviderKeyMapper;
+    protected KeyMapper<Object> localGroupAndConstraintKeyMapper = new KeyMapper<>();
     protected KeyMapper<Object> idMapper;
     protected String sourceId;
 
-    public CalendarEventSerializer(KeyMapper<Object> idMapper,
-                                   String sourceId,
+    public CalendarEventSerializer(KeyMapper<Object> idMapper, String sourceId,
                                    @Nullable KeyMapper<Object> crossEventProviderKeyMapper) {
         super(CalendarEvent.class);
 
-        this.idMapper = Objects.requireNonNull(idMapper);
-        this.sourceId = Objects.requireNonNull(sourceId);
+        Preconditions.checkNotNullArgument(idMapper);
+        Preconditions.checkNotNullArgument(sourceId);
+
+        this.idMapper = idMapper;
+        this.sourceId = sourceId;
         this.crossEventProviderKeyMapper = crossEventProviderKeyMapper;
     }
 
@@ -93,7 +96,7 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
     protected String serializeCrossValue(Object value) {
         Objects.requireNonNull(value);
 
-        String rawValue = serializeGroupIdOrConstraint(value);
+        String rawValue = getRawGroupIdOrConstraint(value);
         // todo leave this code?
         if (rawValue != null) {
             return crossEventProviderKeyMapper == null
@@ -101,7 +104,7 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
                     : rawValue;
         }
         return crossEventProviderKeyMapper == null
-                ? groupAndConstraintKeyMapper.key(value) + "-" + extractEventProviderId(sourceId)
+                ? localGroupAndConstraintKeyMapper.key(value) + "-" + extractEventProviderId(sourceId)
                 : crossEventProviderKeyMapper.key(value);
     }
 
@@ -109,9 +112,10 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         return sourceId.split("-")[0];
     }
 
+    // todo
     @Nullable
-    public static String serializeGroupIdOrConstraint(Object value) {
-        Objects.requireNonNull(value);
+    public static String getRawGroupIdOrConstraint(Object value) {
+        Preconditions.checkNotNullArgument(value);
 
         if (value instanceof String stringValue) {
             return stringValue;

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.data;
+package io.jmix.fullcalendar;
 
 
-import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import jakarta.annotation.Nullable;
 
-// todo RP move to fullcalendar module
-public enum Display implements HasEnumId<String> {
+// todo RP messages
+public enum Display implements EnumClass<String> {
 
     AUTO("auto"),
     BLOCK("block"),

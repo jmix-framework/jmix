@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.data;
+package io.jmix.fullcalendarflowui.component.data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TimeZone;
 
-public interface LazyCalendarEventProvider extends CalendarEventProvider {
+public interface LazyCalendarEventProvider extends BaseCalendarEventProvider {
 
     List<CalendarEvent> onItemsFetch(ItemsFetchContext context);
 

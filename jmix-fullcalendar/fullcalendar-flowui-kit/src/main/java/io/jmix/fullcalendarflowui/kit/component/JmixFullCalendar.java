@@ -20,15 +20,11 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.data.provider.KeyMapper;
-import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
-import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
-import io.jmix.fullcalendarflowui.kit.component.data.*;
 import io.jmix.fullcalendarflowui.kit.component.event.dom.*;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
 import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOptions;
@@ -63,8 +59,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     protected CalendarView calendarView;
 
-    protected KeyMapper<Object> crossEventProviderKeyMapper = new KeyMapper<>();
-    protected Map<String, AbstractEventProviderManager> eventProvidersMap = new HashMap<>(2);
 
     protected Map<String, StateTree.ExecutionRegistration> itemsEventProvidersExecutionMap = new HashMap<>(2);
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
@@ -94,78 +88,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         // todo
         registerAvailableCalendarViews();
         attachMoreLinkClickDomEventListener();
-    }
-
-    public List<CalendarEventProvider> getEventProviders() {
-        return eventProvidersMap != null && !eventProvidersMap.isEmpty()
-                ? eventProvidersMap.values().stream().map(AbstractEventProviderManager::getEventProvider).toList()
-                : Collections.emptyList();
-    }
-
-    @Nullable
-    public CalendarEventProvider getEventProvider(String id) {
-        AbstractEventProviderManager eventProviderManager = eventProvidersMap.get(id);
-
-        if (eventProviderManager != null) {
-            return eventProviderManager.getEventProvider();
-        }
-        return null;
-    }
-
-    public void addEventProvider(LazyCalendarEventProvider eventProvider) {
-        if (eventProvidersMap.containsKey(eventProvider.getId())) {
-            log.warn("Lazy event provider with the same '{}' ID already added", eventProvider.getId());
-            return;
-        }
-
-        AbstractLazyEventProviderManager eventProviderManager = createLazyEventProviderManager(eventProvider);
-        eventProviderManager.setCrossEventProviderKeyMapper(crossEventProviderKeyMapper);
-
-        eventProvidersMap.put(eventProvider.getId(), eventProviderManager);
-
-        if (initialized) {
-            addEventProviderInternal(eventProviderManager);
-        }
-    }
-
-    public void addEventProvider(ItemCalendarEventProvider eventProvider) {
-        if (eventProvidersMap.containsKey(eventProvider.getId())) {
-            log.warn("Item event provider with the same '{}' ID already added", eventProvider.getId());
-            return;
-        }
-
-        AbstractItemEventProviderManager eventProviderManager = createItemEventProviderManager(eventProvider);
-        eventProviderManager.setItemSetChangeListener(this::onItemSetChangeListener);
-        eventProviderManager.setCrossEventProviderKeyMapper(crossEventProviderKeyMapper);
-
-        eventProvidersMap.put(eventProvider.getId(), eventProviderManager);
-
-        if (initialized) {
-            addEventProviderInternal(eventProviderManager);
-
-            if (eventProvider.getItems() != null && eventProvider.getItems().isEmpty()) {
-                requestUpdateItemEventProvider(eventProvider.getId());
-            }
-        }
-    }
-
-    public void removeEventProvider(CalendarEventProvider eventProvider) {
-        removeEventProvider(eventProvider.getId());
-    }
-
-    public void removeEventProvider(String id) {
-        AbstractEventProviderManager epManager = eventProvidersMap.get(id);
-        if (epManager != null) {
-            if (epManager instanceof AbstractItemEventProviderManager itemProvider) {
-                itemProvider.setItemSetChangeListener(null);
-            }
-            getElement().callJsFunction("_removeEventSource", epManager.getSourceId());
-        }
-        eventProvidersMap.remove(id);
-    }
-
-    public void removeAllEventProviders() {
-        getEventProviders().forEach(this::removeEventProvider);
     }
 
     public CalendarView getInitialCalendarView() {
@@ -492,7 +414,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * <a href="https://fullcalendar.io/docs/event-object">FullCalendar docs</a>
      * <p>
      * Note that JavaScript function takes precedence over the {@link #setEventOverlapEnabled(boolean)}. And
-     * JavaScript function can be overrided by {@link CalendarEvent#getOverlap()} value.
+     * JavaScript function can be overrided by calendar event's "overlap" property value.
      *
      * @param jsFunction JavaScript function
      */
@@ -607,85 +529,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
                 .minusMilliseconds(duration.getMilliseconds());
     }
 
-    protected AbstractItemEventProviderManager createItemEventProviderManager(ItemCalendarEventProvider eventProvider) {
-        return new AbstractItemEventProviderManager(eventProvider) {
-        };
-    }
-
-    protected AbstractLazyEventProviderManager createLazyEventProviderManager(LazyCalendarEventProvider eventProvider) {
-        return new AbstractLazyEventProviderManager(eventProvider) {
-        };
-    }
-
-    protected void onItemSetChangeListener(ItemCalendarEventProvider.ItemSetChangeEvent event) {
-        String providerId = event.getSource().getId();
-        AbstractItemEventProviderManager eventProviderManager =
-                (AbstractItemEventProviderManager) eventProvidersMap.get(providerId);
-
-        switch (event.getOperation()) {
-            case ADD, REMOVE, UPDATE -> {
-                eventProviderManager.addIncrementalChange(event.getOperation(), event.getItems());
-                requestIncrementalDataUpdate();
-            }
-            default -> requestUpdateItemEventProvider(providerId);
-        }
-    }
-
-    protected void requestIncrementalDataUpdate() {
-        if (incrementalUpdateExecution != null) {
-            return;
-        }
-
-        getUI().ifPresent(ui -> incrementalUpdateExecution =
-                ui.beforeClientResponse(this, this::performIncrementalDataUpdate));
-    }
-
-    protected void performIncrementalDataUpdate(ExecutionContext context) {
-        List<AbstractItemEventProviderManager> eventProviders = eventProvidersMap.values().stream()
-                .filter(ep -> ep instanceof AbstractItemEventProviderManager)
-                .map(ep -> (AbstractItemEventProviderManager) ep)
-                .toList();
-
-        List<JsonValue> jsonValues = new ArrayList<>();
-        for (AbstractItemEventProviderManager epManger : eventProviders) {
-            jsonValues.addAll(epManger.serializeIncrementalData());
-            epManger.clearIncrementalData();
-        }
-
-        getElement().callJsFunction("_updateSourcesWithIncrementalData",
-                serializer.toJsonArrayFromJsonValue(jsonValues));
-
-        incrementalUpdateExecution = null;
-    }
-
-    protected void requestUpdateItemEventProvider(String eventProviderId) {
-        // Do not call if it's still updating
-        if (itemsEventProvidersExecutionMap.containsKey(eventProviderId)) {
-            return;
-        }
-        getUI().ifPresent(ui -> {
-            StateTree.ExecutionRegistration executionRegistration = ui.beforeClientResponse(this,
-                    (context) -> performUpdateItemEventProvider(eventProviderId));
-            itemsEventProvidersExecutionMap.put(eventProviderId, executionRegistration);
-        });
-    }
-
-    protected void performUpdateItemEventProvider(String eventProviderId) {
-        JsonObject resultJson = new JreJsonFactory().createObject();
-
-        AbstractItemEventProviderManager eventProviderManager =
-                (AbstractItemEventProviderManager) eventProvidersMap.get(eventProviderId);
-
-        JsonValue dataJson = eventProviderManager.serializeData();
-
-        resultJson.put("data", dataJson);
-        resultJson.put("sourceId", eventProviderManager.getSourceId());
-
-        getElement().callJsFunction("_updateSyncSourcesData", resultJson);
-
-        itemsEventProvidersExecutionMap.remove(eventProviderId);
-    }
-
     protected void requestUpdateOptions(boolean onlyDirty) {
         // Do not call if it's still updating
         if (synchronizeOptionsExecution != null) {
@@ -714,10 +557,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected void updateInitialOptions() {
         JsonObject json = serializer.serializeOptions(options.getInitialOptions());
         getElement().setPropertyJson("initialOptions", json);
-    }
-
-    protected void addEventProviderInternal(AbstractEventProviderManager epManager) {
-        getElement().callJsFunction(epManager.getJsFunctionName(), epManager.getSourceId());
     }
 
     protected void attachCalendarOptionChangeListener() {
@@ -912,6 +751,14 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         return new JreJsonFactory().createArray();
     }
 
+    protected void addEventProvidersOnAttach() {
+        // Stub, is used in inheritors
+    }
+
+    protected void clearEventProvidersOnDetach() {
+        // Stub, is used in inheritors
+    }
+
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         // All request-update methods do not register JS function call,
@@ -921,13 +768,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         // on a client-side, so we should restore it.
         requestUpdateOptions(false);
 
-        // Add all event providers
-        eventProvidersMap.values().forEach(ep -> {
-            addEventProviderInternal(ep);
-            if (ep instanceof AbstractItemEventProviderManager) {
-                requestUpdateItemEventProvider(ep.getEventProvider().getId());
-            }
-        });
+        addEventProvidersOnAttach();
 
         performCompleteInit();
     }
@@ -936,14 +777,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected void onDetach(DetachEvent detachEvent) {
         // As DataHolder is a shared object between calendars on a page,
         // we must remove event sources from it when component is detached.
-        if (!eventProvidersMap.values().isEmpty()) {
-            JsonArray sourceIds = serializer.toJsonArrayFromString(
-                    eventProvidersMap.values().stream()
-                            .map(AbstractEventProviderManager::getSourceId)
-                            .toList());
-            UI.getCurrent().getPage().executeJs(
-                    "window.Vaadin.Flow.jmixFullCalendarConnector.removeSources($0)", sourceIds);
-        }
-        crossEventProviderKeyMapper.removeAll();
+        clearEventProvidersOnDetach();
     }
 }

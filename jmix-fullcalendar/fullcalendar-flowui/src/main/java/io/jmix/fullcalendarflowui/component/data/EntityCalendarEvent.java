@@ -3,11 +3,10 @@ package io.jmix.fullcalendarflowui.component.data;
 import com.google.common.base.Strings;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.fullcalendarflowui.kit.component.data.Display;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEvent;
-import jakarta.annotation.Nullable;
+import io.jmix.fullcalendar.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -21,9 +20,9 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     protected final E entity;
     protected final Object id;
-    protected AbstractEntityCalendarItems<?> eventProvider;
+    protected AbstractEntityEventProvider<?> eventProvider;
 
-    public EntityCalendarEvent(E entity, AbstractEntityCalendarItems<?> eventProvider) {
+    public EntityCalendarEvent(E entity, AbstractEntityEventProvider<?> eventProvider) {
         Preconditions.checkNotNullArgument(entity);
         Preconditions.checkNotNullArgument(eventProvider);
         this.entity = entity;

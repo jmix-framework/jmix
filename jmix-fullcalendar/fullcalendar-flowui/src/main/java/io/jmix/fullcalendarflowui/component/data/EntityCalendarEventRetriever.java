@@ -6,9 +6,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEvent;
-import io.jmix.fullcalendarflowui.kit.component.data.LazyCalendarEventProvider;
-import io.jmix.fullcalendarflowui.kit.component.data.LazyCalendarEventProvider.ItemsFetchContext;
+import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider.ItemsFetchContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -25,7 +23,7 @@ import java.util.stream.Stream;
 
 @Component("fclndr_LazyCalendarItems")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class LazyCalendarItems extends AbstractEntityCalendarItems<ItemsFetchContext>
+public class EntityCalendarEventRetriever extends AbstractEntityEventProvider<ItemsFetchContext>
         implements LazyCalendarEventProvider, ApplicationContextAware {
 
     protected static final String START_DATE_PARAMETER = "fetchStartDate";
@@ -41,10 +39,10 @@ public class LazyCalendarItems extends AbstractEntityCalendarItems<ItemsFetchCon
 
     protected Function<ItemsFetchContext, List<CalendarEvent>> loadDelegate;
 
-    public LazyCalendarItems() {
+    public EntityCalendarEventRetriever() {
     }
 
-    public LazyCalendarItems(String id) {
+    public EntityCalendarEventRetriever(String id) {
         super(id);
     }
 

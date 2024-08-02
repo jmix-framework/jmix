@@ -1,8 +1,8 @@
 package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEvent;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
+import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 
 import java.time.LocalDateTime;
@@ -52,11 +52,11 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
     }
 
     public static class EventProviderContext {
-        protected final CalendarEventProvider eventProvider;
+        protected final BaseCalendarEventProvider eventProvider;
         protected final List<CalendarEvent> visibleEvents;
         protected final List<CalendarEvent> hiddenEvents;
 
-        public EventProviderContext(CalendarEventProvider eventProvider,
+        public EventProviderContext(BaseCalendarEventProvider eventProvider,
                                     List<CalendarEvent> visibleEvents,
                                     List<CalendarEvent> hiddenEvents) {
             this.eventProvider = eventProvider;
@@ -64,7 +64,7 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
             this.hiddenEvents = hiddenEvents;
         }
 
-        public CalendarEventProvider getEventProvider() {
+        public BaseCalendarEventProvider getEventProvider() {
             return eventProvider;
         }
 

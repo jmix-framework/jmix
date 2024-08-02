@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.data;
+package io.jmix.fullcalendarflowui.component.data;
 
+import io.jmix.fullcalendar.Display;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

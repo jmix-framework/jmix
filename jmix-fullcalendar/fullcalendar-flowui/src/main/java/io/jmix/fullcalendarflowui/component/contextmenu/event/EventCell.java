@@ -1,7 +1,7 @@
 package io.jmix.fullcalendarflowui.component.contextmenu.event;
 
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEvent;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
+import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 
 public class EventCell {
 
@@ -10,10 +10,10 @@ public class EventCell {
     protected boolean isPast;
     protected boolean isToday;
     protected CalendarEvent event;
-    protected CalendarEventProvider eventProvider;
+    protected BaseCalendarEventProvider eventProvider;
 
     public EventCell(boolean isFuture, boolean isMirror, boolean isPast, boolean isToday, CalendarEvent event,
-                     CalendarEventProvider eventProvider) {
+                     BaseCalendarEventProvider eventProvider) {
         this.isFuture = isFuture;
         this.isMirror = isMirror;
         this.isPast = isPast;
@@ -42,7 +42,7 @@ public class EventCell {
         return event;
     }
 
-    public CalendarEventProvider getEventProvider() {
+    public BaseCalendarEventProvider getEventProvider() {
         return eventProvider;
     }
 }

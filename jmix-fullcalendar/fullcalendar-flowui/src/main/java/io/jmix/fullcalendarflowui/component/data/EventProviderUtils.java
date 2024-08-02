@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.data;
+package io.jmix.fullcalendarflowui.component.data;
 
 import org.apache.commons.lang3.RandomStringUtils;
 

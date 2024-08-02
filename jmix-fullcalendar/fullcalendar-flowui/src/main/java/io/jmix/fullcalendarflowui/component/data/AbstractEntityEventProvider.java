@@ -2,8 +2,6 @@ package io.jmix.fullcalendarflowui.component.data;
 
 import com.vaadin.flow.data.provider.AbstractDataProvider;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEvent;
-import io.jmix.fullcalendarflowui.kit.component.data.EventProviderUtils;
 import org.springframework.lang.Nullable;
 
 import java.util.Objects;
@@ -12,7 +10,7 @@ import java.util.Objects;
  *
  * @param <F> type of filter object
  */
-public abstract class AbstractEntityCalendarItems<F> extends AbstractDataProvider<CalendarEvent, F>
+public abstract class AbstractEntityEventProvider<F> extends AbstractDataProvider<CalendarEvent, F>
         implements EntityCalendarEventProvider {
 
     protected String id;
@@ -33,11 +31,11 @@ public abstract class AbstractEntityCalendarItems<F> extends AbstractDataProvide
     protected String borderColorProperty;
     protected String textColorProperty;
 
-    public AbstractEntityCalendarItems() {
+    public AbstractEntityEventProvider() {
         this(EventProviderUtils.generateId());
     }
 
-    public AbstractEntityCalendarItems(String id) {
+    public AbstractEntityEventProvider(String id) {
         Preconditions.checkNotEmptyString(id);
         this.id = id;
     }

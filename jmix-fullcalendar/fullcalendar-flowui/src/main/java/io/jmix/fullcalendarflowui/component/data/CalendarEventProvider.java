@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.data;
+package io.jmix.fullcalendarflowui.component.data;
 
 import com.vaadin.flow.shared.Registration;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface ItemCalendarEventProvider extends CalendarEventProvider {
+public interface CalendarEventProvider extends BaseCalendarEventProvider {
 
     List<CalendarEvent> getItems();
 
@@ -41,7 +41,7 @@ public interface ItemCalendarEventProvider extends CalendarEventProvider {
         protected final ItemChangeOperation operation;
         protected final Collection<CalendarEvent> items;
 
-        public ItemSetChangeEvent(CalendarEventProvider source, ItemChangeOperation operation,
+        public ItemSetChangeEvent(BaseCalendarEventProvider source, ItemChangeOperation operation,
                                   Collection<CalendarEvent> items) {
             super(source);
 
@@ -50,8 +50,8 @@ public interface ItemCalendarEventProvider extends CalendarEventProvider {
         }
 
         @Override
-        public CalendarEventProvider getSource() {
-            return (CalendarEventProvider) super.getSource();
+        public BaseCalendarEventProvider getSource() {
+            return (BaseCalendarEventProvider) super.getSource();
         }
 
         /**

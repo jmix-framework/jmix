@@ -1,6 +1,6 @@
 package io.jmix.fullcalendarflowui.component;
 
-import io.jmix.fullcalendarflowui.kit.component.data.AbstractEventProviderManager;
+import io.jmix.fullcalendarflowui.component.data.AbstractEventProviderManager;
 import org.springframework.lang.Nullable;
 
 public final class FullCalendarUtils {

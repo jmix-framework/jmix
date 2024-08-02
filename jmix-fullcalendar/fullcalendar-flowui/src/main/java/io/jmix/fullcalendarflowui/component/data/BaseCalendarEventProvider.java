@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.data;
+package io.jmix.fullcalendarflowui.component.data;
 
-public interface CalendarEventProvider {
+public interface BaseCalendarEventProvider {
 
     String getId();
 }

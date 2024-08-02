@@ -1,10 +1,9 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.fullcalendarflowui.kit.component.data.CalendarEventProvider;
 import org.springframework.lang.Nullable;
 
-public interface EntityCalendarEventProvider extends CalendarEventProvider {
+public interface EntityCalendarEventProvider extends BaseCalendarEventProvider {
 
     @Nullable
     String getGroupIdProperty();

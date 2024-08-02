@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.data;
+package io.jmix.fullcalendarflowui.component.data;
 
 import com.vaadin.flow.data.provider.AbstractDataProvider;
 import com.vaadin.flow.data.provider.Query;
@@ -27,27 +27,27 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class ListCalendarItems extends AbstractDataProvider<CalendarEvent, Void>
-        implements ItemCalendarEventProvider {
+public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEvent, Void>
+        implements CalendarEventProvider {
 
     protected final String id;
     protected List<CalendarEvent> items = new ArrayList<>();
 
     protected EventBus eventBus = new EventBus();
 
-    public ListCalendarItems() {
+    public ListCalendarEventProvider() {
         this.id = EventProviderUtils.generateId();
     }
 
-    public ListCalendarItems(String id) {
+    public ListCalendarEventProvider(String id) {
         this.id = id;
     }
 
-    public ListCalendarItems(List<CalendarEvent> items) {
+    public ListCalendarEventProvider(List<CalendarEvent> items) {
         this(EventProviderUtils.generateId(), items);
     }
 
-    public ListCalendarItems(String id, List<CalendarEvent> items) {
+    public ListCalendarEventProvider(String id, List<CalendarEvent> items) {
         this.id = id;
         this.items = new ArrayList<>(items);
     }

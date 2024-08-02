@@ -1,24 +1,9 @@
-/*
- * Copyright 2024 Haulmont.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package io.jmix.fullcalendarflowui.component.data;
 
-package io.jmix.fullcalendarflowui.kit.component.data;
-
+import com.vaadin.flow.data.provider.KeyMapper;
 import elemental.json.JsonValue;
-import io.jmix.fullcalendarflowui.kit.component.serialization.model.IncrementalData;
-import jakarta.annotation.Nullable;
+import io.jmix.fullcalendarflowui.component.serialization.IncrementalData;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,30 +11,37 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class AbstractItemEventProviderManager extends AbstractEventProviderManager {
+public class EventProviderManager extends AbstractEventProviderManager {
 
-    protected Consumer<ItemCalendarEventProvider.ItemSetChangeEvent> itemSetChangeListener;
+    protected Consumer<CalendarEventProvider.ItemSetChangeEvent> itemSetChangeListener;
     protected List<Pair<ItemChangeOperation, Collection<?>>> pendingIncrementalChanges = new ArrayList<>();
 
-    public AbstractItemEventProviderManager(ItemCalendarEventProvider eventProvider) {
+    public EventProviderManager(CalendarEventProvider eventProvider) {
         super(eventProvider, "_addItemEventSource");
 
         eventProvider.addItemSetChangeListener(this::onItemSetChangeListener);
     }
 
     @Override
-    public ItemCalendarEventProvider getEventProvider() {
-        return (ItemCalendarEventProvider) super.getEventProvider();
+    public void setCrossEventProviderKeyMapper(@Nullable KeyMapper<Object> crossEventProviderKeyMapper) {
+        super.setCrossEventProviderKeyMapper(crossEventProviderKeyMapper);
+
+        dataSerializer = createDataSerializer(sourceId, eventKeyMapper, crossEventProviderKeyMapper);
+    }
+
+    @Override
+    public CalendarEventProvider getEventProvider() {
+        return (CalendarEventProvider) super.getEventProvider();
     }
 
     @Override
     public CalendarEvent getCalendarEvent(String clientId) {
-        Object itemId = keyMapper.get(clientId);
+        Object itemId = eventKeyMapper.get(clientId);
         return itemId == null ? null : getEventProvider().getItem(itemId);
     }
 
     public JsonValue serializeData() {
-        return dataSerializer.serializeData(((ItemCalendarEventProvider) eventProvider).getItems());
+        return dataSerializer.serializeData(((CalendarEventProvider) eventProvider).getItems());
     }
 
     public List<JsonValue> serializeIncrementalData() {
@@ -71,15 +63,15 @@ public abstract class AbstractItemEventProviderManager extends AbstractEventProv
     }
 
     @Nullable
-    public Consumer<ItemCalendarEventProvider.ItemSetChangeEvent> getItemSetChangeListener() {
+    public Consumer<CalendarEventProvider.ItemSetChangeEvent> getItemSetChangeListener() {
         return itemSetChangeListener;
     }
 
-    public void setItemSetChangeListener(@Nullable Consumer<ItemCalendarEventProvider.ItemSetChangeEvent> itemSetChangeListener) {
+    public void setItemSetChangeListener(@Nullable Consumer<CalendarEventProvider.ItemSetChangeEvent> itemSetChangeListener) {
         this.itemSetChangeListener = itemSetChangeListener;
     }
 
-    protected void onItemSetChangeListener(ItemCalendarEventProvider.ItemSetChangeEvent event) {
+    protected void onItemSetChangeListener(CalendarEventProvider.ItemSetChangeEvent event) {
         if (itemSetChangeListener != null) {
             itemSetChangeListener.accept(event);
         }

@@ -14,32 +14,33 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.data;
+package io.jmix.fullcalendarflowui.component.data;
 
 import com.vaadin.flow.data.provider.KeyMapper;
-import io.jmix.fullcalendarflowui.kit.component.serialization.serializer.JmixEventProviderDataSerializer;
-import jakarta.annotation.Nullable;
+import io.jmix.fullcalendarflowui.component.serialization.serializer.EventProviderDataSerializer;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.lang.Nullable;
 
 public abstract class AbstractEventProviderManager {
 
+    protected final BaseCalendarEventProvider eventProvider;
     protected final String sourceId;
+
     protected final String jsFunctionName;
-    protected final CalendarEventProvider eventProvider;
-    protected final KeyMapper<Object> keyMapper = new KeyMapper<>();
+    protected final KeyMapper<Object> eventKeyMapper = new KeyMapper<>();
 
     protected KeyMapper<Object> crossEventProviderKeyMapper;
-    protected JmixEventProviderDataSerializer dataSerializer;
+    protected EventProviderDataSerializer dataSerializer;
 
-    public AbstractEventProviderManager(CalendarEventProvider eventProvider, String jsFunctionName) {
+    public AbstractEventProviderManager(BaseCalendarEventProvider eventProvider, String jsFunctionName) {
         this.eventProvider = eventProvider;
 
         this.jsFunctionName = jsFunctionName;
         this.sourceId = generateSourceId(eventProvider);
-        this.dataSerializer = createDataSerializer(keyMapper, sourceId, crossEventProviderKeyMapper);
+        this.dataSerializer = createDataSerializer(sourceId, eventKeyMapper, crossEventProviderKeyMapper);
     }
 
-    public CalendarEventProvider getEventProvider() {
+    public BaseCalendarEventProvider getEventProvider() {
         return eventProvider;
     }
 
@@ -63,12 +64,13 @@ public abstract class AbstractEventProviderManager {
     @Nullable
     public abstract CalendarEvent getCalendarEvent(String clientId);
 
-    protected String generateSourceId(CalendarEventProvider eventProvider) {
+    protected String generateSourceId(BaseCalendarEventProvider eventProvider) {
         return eventProvider.getId() + "-" + RandomStringUtils.randomAlphabetic(5);
     }
 
-    protected JmixEventProviderDataSerializer createDataSerializer(KeyMapper<Object> keyMapper, String sourceId,
-                                                                   @Nullable KeyMapper<Object> crossEventProviderKeyMapper) {
-        return new JmixEventProviderDataSerializer(keyMapper, sourceId);
+    protected EventProviderDataSerializer createDataSerializer(String sourceId,
+                                                               KeyMapper<Object> keyMapper,
+                                                               @Nullable KeyMapper<Object> crossEventProviderKeyMapper) {
+        return new EventProviderDataSerializer(sourceId, keyMapper, crossEventProviderKeyMapper);
     }
 }

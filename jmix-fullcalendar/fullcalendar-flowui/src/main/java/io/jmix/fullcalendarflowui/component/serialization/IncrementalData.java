@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.serialization.model;
+package io.jmix.fullcalendarflowui.component.serialization;
 
-import io.jmix.fullcalendarflowui.kit.component.data.ItemChangeOperation;
+import io.jmix.fullcalendarflowui.component.data.ItemChangeOperation;
 
 import java.io.Serializable;
 import java.util.Collection;

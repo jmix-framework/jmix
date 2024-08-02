@@ -108,7 +108,6 @@ public abstract class BaseLoaderConfig {
         loaders.put("horizontalMenu", HorizontalMenuLoader.class);
         loaders.put("richTextEditor", RichTextEditorLoader.class);
         loaders.put("twinColumn", TwinColumnLoader.class);
-        loaders.put("pivotTable", PivotTableLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

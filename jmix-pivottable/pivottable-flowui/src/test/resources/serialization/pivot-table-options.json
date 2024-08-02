@@ -1,0 +1,58 @@
+{
+  "properties": [
+    "name",
+    "department",
+    "age",
+    "sex",
+    "activity"
+  ],
+  "renderers": {
+    "renderers": [
+      "TABLE",
+      "LINE_CHART",
+      "BAR_CHART"
+    ],
+    "default": "LINE_CHART"
+  },
+  "aggregations": {
+    "aggregations": [
+      "COUNT",
+      "SUM_OVER_SUM",
+      "OVERAGE"
+    ],
+    "default": "OVERAGE"
+  },
+  "aggregationProperties": [
+    "name",
+    "activity"
+  ],
+  "rows": [
+    "name",
+    "department"
+  ],
+  "cols": [
+    "age",
+    "activity"
+  ],
+  "vals": [
+    "sex"
+  ],
+  "rowOrder": "value_a_to_z",
+  "colOrder": "value_z_to_a",
+  "inclusions": ["name"],
+  "exclusions": ["department"],
+  "hiddenAttributes": ["age", "sex"],
+  "hiddenFromDragDrop": ["name"],
+  "autoSortUnusedAttrs": true,
+  "unusedAttrsVertical": 25,
+  "rendererOptions": {
+    "size": {
+      "width": 100,
+      "height": 200
+    }
+  },
+  "menuLimit": 75,
+  "showUI": "true",
+  "showRowTotals": "false",
+  "showColTotals": "false"
+}

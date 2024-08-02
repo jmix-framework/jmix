@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.fullcalendarflowui.kit.component.data;
 
+public abstract class SimpleLazyCalendarEventProvider implements LazyCalendarEventProvider {
 
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
+    protected String id;
 
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar')
-    api project(':fullcalendar-flowui-kit')
+    public SimpleLazyCalendarEventProvider() {
+        this(EventProviderUtils.generateId());
+    }
+
+    public SimpleLazyCalendarEventProvider(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
 }

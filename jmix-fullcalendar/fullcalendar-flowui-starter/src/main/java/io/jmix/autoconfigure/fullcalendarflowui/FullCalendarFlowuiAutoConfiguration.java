@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.autoconfigure.fullcalendarflowui;
 
+import io.jmix.core.CoreConfiguration;
+import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.fullcalendar.FullCalendarConfiguration;
+import io.jmix.fullcalendarflowui.FullCalendarFlowuiConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.context.annotation.Import;
 
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
-
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar')
-    api project(':fullcalendar-flowui-kit')
+@AutoConfiguration
+@Import({CoreConfiguration.class, FlowuiConfiguration.class, FullCalendarConfiguration.class, FullCalendarFlowuiConfiguration.class})
+public class FullCalendarFlowuiAutoConfiguration {
 }

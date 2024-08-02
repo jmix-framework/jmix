@@ -1,0 +1,10 @@
+/* Workaround cause the fixed issue is not really fixed?
+   https://github.com/fullcalendar/fullcalendar/issues/5532 */
+.fc-more-popover {
+    max-height: 95%;
+    overflow-y: auto;
+}
+
+jmix-full-calendar a:not(:any-link) {
+    color: inherit;
+}

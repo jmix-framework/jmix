@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.fullcalendarflowui.kit.component.model;
 
-
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
-
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar')
-    api project(':fullcalendar-flowui-kit')
+public interface CalendarView extends HasEnumId<String> {
 }

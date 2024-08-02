@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.fullcalendarflowui.kit.component.serialization.model;
 
+public class DomEventResize extends AbstractEventDropResize {
 
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
+    protected DomCalendarDuration startDelta;
+    protected DomCalendarDuration endDelta;
 
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar')
-    api project(':fullcalendar-flowui-kit')
+    public DomCalendarDuration getStartDelta() {
+        return startDelta;
+    }
+
+    public void setStartDelta(DomCalendarDuration startDelta) {
+        this.startDelta = startDelta;
+    }
+
+    public DomCalendarDuration getEndDelta() {
+        return endDelta;
+    }
+
+    public void setEndDelta(DomCalendarDuration endDelta) {
+        this.endDelta = endDelta;
+    }
 }

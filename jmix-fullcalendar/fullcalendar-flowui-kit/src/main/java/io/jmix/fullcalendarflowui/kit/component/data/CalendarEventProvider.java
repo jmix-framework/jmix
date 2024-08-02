@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.fullcalendarflowui.kit.component.data;
 
+public interface CalendarEventProvider {
 
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
-
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar')
-    api project(':fullcalendar-flowui-kit')
+    String getId();
 }

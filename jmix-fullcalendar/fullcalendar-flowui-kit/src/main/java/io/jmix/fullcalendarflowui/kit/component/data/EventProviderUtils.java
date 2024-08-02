@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.fullcalendarflowui.kit.component.data;
 
+import org.apache.commons.lang3.RandomStringUtils;
 
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
+public final class EventProviderUtils {
 
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar')
-    api project(':fullcalendar-flowui-kit')
+    private EventProviderUtils() {
+    }
+
+    public static String generateId() {
+        return RandomStringUtils.randomAlphabetic(6);
+    }
 }

@@ -1,0 +1,211 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema targetNamespace="http://jmix.io/schema/fullcalendar/ui"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:layout="http://jmix.io/schema/flowui/layout"
+           xmlns="http://jmix.io/schema/fullcalendar/ui"
+           elementFormDefault="qualified">
+    <xs:element name="calendar">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="layout:baseComponent">
+                    <xs:all>
+                        <xs:element name="eventProviders" type="eventProvidersType"/>
+                        <xs:element name="businessHours" type="businessHoursType"/>
+                        <!--todo rp enable default toolbar and make it flexible?-->
+                    </xs:all>
+
+                    <xs:attribute name="initialView" type="calendarViewType"/>
+
+                    <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
+                    <xs:attribute name="navigationLinksEnabled" type="xs:boolean"/>
+
+                    <xs:attribute name="dayMaxEventRowsEnabled" type="xs:boolean"/>
+                    <xs:attribute name="dayMaxEventRows" type="xs:integer"/>
+
+                    <xs:attribute name="dayMaxEventsEnabled" type="xs:boolean"/>
+                    <xs:attribute name="dayMaxEvents" type="xs:integer"/>
+
+                    <xs:attribute name="eventMaxStack " type="xs:integer"/>
+                    
+                    <xs:attribute name="moreLinkView" type="calendarViewType"/>
+                    <xs:attribute name="moreLinkClassNames" type="xs:string"/>
+
+                    <xs:attribute name="eventStartEditable" type="xs:boolean"/>
+                    <xs:attribute name="eventDurationEditable" type="xs:boolean"/>
+                    <xs:attribute name="eventResizableFromStart" type="xs:boolean"/>
+                    <xs:attribute name="eventDragMinDistance" type="xs:integer"/>
+                    <xs:attribute name="eventOverlapEnabled" type="xs:boolean"/>
+                    <xs:attribute name="eventConstraintEnabled" type="xs:boolean"/>
+                    <xs:attribute name="eventConstraintGroupId" type="xs:string"/>
+
+                    <xs:attribute name="dragRevertDuration" type="xs:integer"/>
+                    <xs:attribute name="dragScrollEnabled" type="xs:boolean"/> <!--todo bad works-->
+
+                    <xs:attribute name="snapDuration" type="xs:string"/>
+
+                    <xs:attribute name="allDayMaintainDurationEnabled" type="xs:boolean"/>
+
+                    <xs:attribute name="businessHoursEnabled" type="xs:boolean"/>
+
+                    <xs:attribute name="selectionEnabled" type="xs:boolean"/>
+                    <xs:attribute name="selectMirrorEnabled" type="xs:boolean"/>
+                    <xs:attribute name="unselectAutoEnabled" type="xs:boolean"/>
+                    <xs:attribute name="unselectCancelClassName" type="xs:string"/>
+                    <xs:attribute name="selectOverlapEnabled" type="xs:boolean"/>
+                    <xs:attribute name="selectConstraintEnabled" type="xs:boolean"/>
+                    <xs:attribute name="selectConstraintGroupId" type="xs:string"/>
+                    <xs:attribute name="selectMinDistance" type="xs:integer"/>
+
+                    <xs:attributeGroup ref="layout:hasClassNames"/>
+                    <xs:attributeGroup ref="layout:hasSize"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="businessHoursType">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="entry" type="businessHoursEntryType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="businessHoursEntryType">
+        <xs:choice maxOccurs="7">
+            <xs:element name="day" type="businessHoursDayType"/>
+        </xs:choice>
+        <xs:attribute name="startTime" type="xs:string"/>
+        <xs:attribute name="endTime" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="businessHoursDayType">
+        <xs:attribute name="name" use="required" type="dayOfWeekType"/>
+    </xs:complexType>
+    
+    <xs:simpleType name="dayOfWeekType">
+        <xs:restriction>
+            <xs:enumeration value="MONDAY"/>
+            <xs:enumeration value="TUESDAY"/>
+            <xs:enumeration value="WEDNESDAY"/>
+            <xs:enumeration value="THURSDAY"/>
+            <xs:enumeration value="FRIDAY"/>
+            <xs:enumeration value="SATURDAY"/>
+            <xs:enumeration value="SUNDAY"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="eventProvidersType">
+        <xs:all minOccurs="0">
+            <xs:element name="containerEventProvider" type="containerProviderType"/>
+            <xs:element name="lazyEventProvider" type="lazyProviderType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="baseProviderType">
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="groupIdProperty" type="xs:string"/>
+        <xs:attribute name="allDayProperty" type="xs:string"/>
+        <xs:attribute name="startDateTimeProperty" type="xs:string"/>
+        <xs:attribute name="endDateTimeProperty" type="xs:string"/>
+        <xs:attribute name="titleProperty" type="xs:string"/>
+        <xs:attribute name="descriptionProperty" type="xs:string"/>
+        <xs:attribute name="classNamesProperty" type="xs:string"/>
+        <xs:attribute name="startEditableProperty" type="xs:string"/>
+        <xs:attribute name="durationEditableProperty" type="xs:string"/>
+        <xs:attribute name="displayProperty" type="xs:string"/>
+        <xs:attribute name="overlapProperty" type="xs:string"/>
+        <xs:attribute name="constraintProperty" type="xs:string"/>
+        <xs:attribute name="backgroundColorProperty" type="xs:string"/>
+        <xs:attribute name="borderColorProperty" type="xs:string"/>
+        <xs:attribute name="textColorProperty" type="xs:string"/>
+
+        <xs:attribute name="recurrenceDaysOfWeek" type="xs:string"/>
+        <xs:attribute name="recurrenceStartTime" type="xs:string"/>
+        <xs:attribute name="recurrenceEndTime" type="xs:string"/>
+        <xs:attribute name="recurrenceStartRecur" type="xs:string"/>
+        <xs:attribute name="recurrenceEndRecur" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="containerProviderType">
+        <xs:complexContent>
+            <xs:extension base="baseProviderType">
+                <xs:attribute name="dataContainer" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="lazyProviderType">
+        <xs:complexContent>
+            <xs:extension base="baseProviderType">
+                <xs:sequence>
+                    <xs:element name="itemsQuery" type="itemsQueryType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="itemsQueryType">
+        <xs:sequence>
+            <xs:element name="fetchPlan" type="itemsQueryFetchPlanType" minOccurs="0"/>
+            <xs:element name="query"/>
+        </xs:sequence>
+        <xs:attribute name="class" type="xs:string" use="required"/>
+        <xs:attribute name="fetchPlan" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="itemsQueryFetchPlanType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="itemsQueryFetchPlanPropertyType"/>
+        </xs:sequence>
+        <xs:attribute name="extends"/>
+    </xs:complexType>
+
+    <xs:complexType name="itemsQueryFetchPlanPropertyType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="itemsQueryFetchPlanPropertyType"/>
+        </xs:sequence>
+        <xs:attribute name="name"/>
+        <xs:attribute name="fetchPlan"/>
+        <xs:attribute name="fetch" type="itemsQueryFetchPlanFetchMode"/>
+    </xs:complexType>
+
+    <xs:simpleType name="itemsQueryFetchPlanFetchMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="UNDEFINED"/>
+            <xs:enumeration value="JOIN"/>
+            <xs:enumeration value="BATCH"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="calendarViewType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DAY_GRID_DAY"/>
+            <xs:enumeration value="DAY_GRID_WEEK"/>
+            <xs:enumeration value="DAY_GRID_MONTH"/>
+            <xs:enumeration value="DAY_GRID_YEAR"/>
+
+            <xs:enumeration value="TIME_GRID_DAY"/>
+            <xs:enumeration value="TIME_GRID_WEEK"/>
+
+            <xs:enumeration value="LIST_DAY"/>
+            <xs:enumeration value="LIST_WEEK"/>
+            <xs:enumeration value="LIST_MONTH"/>
+            <xs:enumeration value="LIST_YEAR"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

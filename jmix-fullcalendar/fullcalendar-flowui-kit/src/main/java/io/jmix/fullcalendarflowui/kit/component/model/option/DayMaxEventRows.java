@@ -14,15 +14,34 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.fullcalendarflowui.kit.component.model.option;
 
+public class DayMaxEventRows {
 
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
+    protected boolean enabled = false;
+    protected Integer max;
 
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar')
-    api project(':fullcalendar-flowui-kit')
+    public DayMaxEventRows() {
+    }
+
+    public DayMaxEventRows(boolean enabled, Integer max) {
+        this.enabled = enabled;
+        this.max = max;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Integer getMax() {
+        return max;
+    }
+
+    public void setMax(Integer max) {
+        this.max = max;
+    }
 }

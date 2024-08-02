@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+@NonNullApi
+package io.jmix.fullcalendarflowui.component;
 
-
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
-
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar')
-    api project(':fullcalendar-flowui-kit')
-}
+import org.springframework.lang.NonNullApi;

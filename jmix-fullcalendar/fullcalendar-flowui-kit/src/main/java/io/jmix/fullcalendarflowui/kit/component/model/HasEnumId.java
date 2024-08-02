@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2024 Haulmont.
  *
@@ -14,15 +15,12 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.fullcalendarflowui.kit.component.model;
 
+/**
+ * @param <T> id type, {@link String} or {@link Integer}
+ */
+public interface HasEnumId<T> {
 
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
-
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar')
-    api project(':fullcalendar-flowui-kit')
+    T getId();
 }

@@ -30,7 +30,7 @@ public class FragmentElementLoader extends AbstractComponentLoader<Fragment<?>> 
     protected Fragment<?> createComponent() {
         String fragmentClass = loadString(element, "class")
                 .orElseThrow(() ->
-                        new GuiDevelopmentException("Missing required 'fragmentClass' attribute", context));
+                        new GuiDevelopmentException("Missing required 'class' attribute", context));
 
         Class<?> aClass = applicationContext.getBean(ClassManager.class).loadClass(fragmentClass);
         if (!Fragment.class.isAssignableFrom(aClass)) {

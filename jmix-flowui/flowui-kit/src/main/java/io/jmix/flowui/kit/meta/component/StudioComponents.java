@@ -1377,7 +1377,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF,
                             required = true, typeParameter = "E"),
                     @StudioProperty(xmlAttribute = "detailsVisibleOnClick", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
+                            defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "dropMode", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.grid.dnd.GridDropMode", options = {"BETWEEN", "ON_TOP",
                             "ON_TOP_OR_BETWEEN", "ON_GRID"}),

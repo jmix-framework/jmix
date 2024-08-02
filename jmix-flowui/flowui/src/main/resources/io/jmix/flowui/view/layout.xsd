@@ -2389,6 +2389,7 @@
 
                 <xs:attributeGroup ref="hasText"/>
                 <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

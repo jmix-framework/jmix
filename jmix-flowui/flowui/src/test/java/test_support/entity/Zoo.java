@@ -33,6 +33,10 @@ public class Zoo extends TestBaseEntity {
     @NotNull
     private String name;
 
+    @Column(name = "CITY", nullable = false)
+    @NotNull
+    private String city;
+
     @JoinTable(name = "TEST_ZOO_ANIMAL_LINK",
             joinColumns = @JoinColumn(name = "ZOO_ID"),
             inverseJoinColumns = @JoinColumn(name = "ANIMAL_ID"))
@@ -45,6 +49,14 @@ public class Zoo extends TestBaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public List<Animal> getAnimals() {

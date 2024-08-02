@@ -16,10 +16,17 @@
 
 package io.jmix.flowui.xml.layout.loader.html;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.HtmlContainer;
+import io.jmix.flowui.data.binding.HtmlContainerReadonlyDataBinding;
 import io.jmix.flowui.xml.layout.loader.container.AbstractContainerLoader;
+import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
+import org.dom4j.Element;
 
 public abstract class AbstractHtmlContainerLoader<T extends HtmlContainer> extends AbstractContainerLoader<T> {
+
+    protected DataLoaderSupport dataLoaderSupport;
+    protected HtmlContainerReadonlyDataBinding htmlComponentReadonlyDataBinding;
 
     @Override
     public void initComponent() {
@@ -40,5 +47,29 @@ public abstract class AbstractHtmlContainerLoader<T extends HtmlContainer> exten
         componentLoader().loadWhiteSpace(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadThemeList(resultComponent, element);
+
+        loadData(resultComponent, element);
+    }
+
+    protected void loadData(T resultComponent, Element element) {
+        String property = element.attributeValue("property");
+        if (!Strings.isNullOrEmpty(property)) {
+            getDataLoaderSupport().loadContainer(element, property)
+                    .ifPresent(container -> getHtmlDataBinding().bind(resultComponent, container, property));
+        }
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
+    }
+
+    protected HtmlContainerReadonlyDataBinding getHtmlDataBinding() {
+        if (htmlComponentReadonlyDataBinding == null) {
+            htmlComponentReadonlyDataBinding = applicationContext.getBean(HtmlContainerReadonlyDataBinding.class);
+        }
+        return htmlComponentReadonlyDataBinding;
     }
 }

@@ -14,29 +14,7 @@
  * limitations under the License.
  */
 
-package test_support;
+package io.jmix.restds.impl;
 
-// TODO use testcontainers
-public class SampleServiceConnection {
-
-    public static final String CLIENT_ID = "myclient";
-    public static final String CLIENT_SECRET = "mysecret";
-
-    private static SampleServiceConnection INSTANCE = new SampleServiceConnection();
-
-    public static SampleServiceConnection getInstance() {
-        return INSTANCE;
-    }
-
-    public String getHost() {
-        return "localhost";
-    }
-
-    public int getPort() {
-        return 18080;
-    }
-
-    public String getBaseUrl() {
-        return "http://" + getHost() + ":" + getPort();
-    }
+public record RestConnectionParams(String baseUrl, String clientId, String clientSecret) {
 }

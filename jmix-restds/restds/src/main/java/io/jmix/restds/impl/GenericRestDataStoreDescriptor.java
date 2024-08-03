@@ -14,29 +14,21 @@
  * limitations under the License.
  */
 
-package test_support;
+package io.jmix.restds.impl;
 
-// TODO use testcontainers
-public class SampleServiceConnection {
+import io.jmix.core.metamodel.model.StoreDescriptor;
+import org.springframework.stereotype.Component;
 
-    public static final String CLIENT_ID = "myclient";
-    public static final String CLIENT_SECRET = "mysecret";
+@Component
+public class GenericRestDataStoreDescriptor implements StoreDescriptor {
 
-    private static SampleServiceConnection INSTANCE = new SampleServiceConnection();
-
-    public static SampleServiceConnection getInstance() {
-        return INSTANCE;
+    @Override
+    public String getBeanName() {
+        return "genericRestDataStore";
     }
 
-    public String getHost() {
-        return "localhost";
-    }
-
-    public int getPort() {
-        return 18080;
-    }
-
-    public String getBaseUrl() {
-        return "http://" + getHost() + ":" + getPort();
+    @Override
+    public boolean isJpa() {
+        return false;
     }
 }

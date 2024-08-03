@@ -36,7 +36,7 @@ class GenericRestFilterBuilderTest {
     }
 
     @Test
-    void test() throws JsonProcessingException {
+    void testCondition() throws JsonProcessingException {
         GenericRestFilterBuilder builder = new GenericRestFilterBuilder();
 
         LogicalCondition condition = LogicalCondition.and(
@@ -65,7 +65,7 @@ class GenericRestFilterBuilderTest {
     }
 
     @Test
-    void testSkipNull() throws JsonProcessingException {
+    void testConditionSkipNull() throws JsonProcessingException {
         GenericRestFilterBuilder builder = new GenericRestFilterBuilder();
 
         PropertyCondition firstCondition = PropertyCondition.equal("name", "alpha")
@@ -97,7 +97,7 @@ class GenericRestFilterBuilderTest {
     }
 
     @Test
-    void testString() throws JsonProcessingException {
+    void testQuery() throws JsonProcessingException {
         GenericRestFilterBuilder builder = new GenericRestFilterBuilder();
 
         String result = builder.build("""
@@ -187,7 +187,7 @@ class GenericRestFilterBuilderTest {
     }
 
     @Test
-    void testStringAndCondition() throws JsonProcessingException {
+    void testQueryAndCondition() throws JsonProcessingException {
         GenericRestFilterBuilder builder = new GenericRestFilterBuilder();
 
         String jsonConditions = """
@@ -228,4 +228,28 @@ class GenericRestFilterBuilderTest {
 
     }
 
+    @Test
+    void testQueryWithParameters() throws JsonProcessingException {
+        GenericRestFilterBuilder builder = new GenericRestFilterBuilder();
+
+        String query = """
+                {
+                  "property": "field1",
+                  "operator": "=",
+                  "parameterName": "param1"
+                }""";
+
+        String result = builder.build(query, null, Map.of("param1", "value1"));
+
+        assertThatJsonEquals(result, """
+                {
+                  "conditions": [
+                    {
+                      "property": "field1",
+                      "operator": "=",
+                      "value": "value1"
+                    }
+                  ]
+                }""");
+    }
 }

@@ -37,90 +37,85 @@ public class GenericRestFilterBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(GenericRestFilterBuilder.class);
 
+    public static final String PARAMETER_FIELD = "parameterName";
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Nullable
-    public String build(@Nullable String jsonConditions,
-                        Condition rootCondition,
-                        Map<String,Object> parameters) {
+    public String build(@Nullable String query,
+                        @Nullable Condition condition,
+                        @Nullable Map<String,Object> parameters) {
 
         ObjectNode rootNode = null;
         try {
-
-        if (jsonConditions != null && !jsonConditions.isBlank()) {
-            JsonNode inputNode = objectMapper.readTree(jsonConditions);
-            JsonNode conditionsNode = inputNode.get("conditions");
-            if (conditionsNode != null && conditionsNode.isArray()) {
-                rootNode = (ObjectNode) inputNode;
-            } else {
-                rootNode = objectMapper.createObjectNode();
-                if (inputNode.isArray()) {
-                    rootNode.set("conditions", inputNode);
+            if (query != null && !query.isBlank()) {
+                JsonNode inputNode = objectMapper.readTree(query);
+                JsonNode conditionsNode = inputNode.get("conditions");
+                if (conditionsNode != null && conditionsNode.isArray()) {
+                    rootNode = (ObjectNode) inputNode;
                 } else {
-                    ArrayNode arrayNode = objectMapper.createArrayNode();
-                    arrayNode.add(inputNode);
-                    rootNode.set("conditions", arrayNode);
+                    rootNode = objectMapper.createObjectNode();
+                    if (inputNode.isArray()) {
+                        rootNode.set("conditions", inputNode);
+                    } else {
+                        ArrayNode arrayNode = objectMapper.createArrayNode();
+                        arrayNode.add(inputNode);
+                        rootNode.set("conditions", arrayNode);
+                    }
+                }
+                if (parameters != null) {
+                    substituteParameters(rootNode, parameters);
                 }
             }
-        }
 
-        Condition condition = rootCondition.actualize(Collections.emptySet(), false);
-        if (condition == null)
-            return rootNode == null ? null : objectMapper.writeValueAsString(rootNode);;
-
-        // If the actualized condition does not have AND on top, wrap it again to have the required JSON in the end
-        if (!(condition instanceof LogicalCondition logicalCondition) || logicalCondition.getType() != LogicalCondition.Type.AND) {
-            condition = LogicalCondition.and(condition);
-        }
-
-        buildJsonNode(rootNode, condition);
-        return objectMapper.writeValueAsString(rootNode);
+            Condition actualCondition = condition == null ? null : condition.actualize(Collections.emptySet(), false);
+            if (actualCondition != null) {
+                // If the actualized condition does not have AND on top, wrap it again to have the required JSON in the end
+                if (!(actualCondition instanceof LogicalCondition logicalCondition) || logicalCondition.getType() != LogicalCondition.Type.AND) {
+                    actualCondition = LogicalCondition.and(actualCondition);
+                }
+                if (rootNode == null) {
+                    rootNode = objectMapper.createObjectNode();
+                }
+                buildJsonNode(rootNode, actualCondition);
+                return objectMapper.writeValueAsString(rootNode);
+            } else {
+                return rootNode == null ? null : objectMapper.writeValueAsString(rootNode);
+            }
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String build(String jsonConditions) {
-        try {
-            JsonNode inputNode = objectMapper.readTree(jsonConditions);
-            JsonNode conditionsNode = inputNode.get("conditions");
-            if (conditionsNode != null && conditionsNode.isArray()) {
-                return objectMapper.writeValueAsString(inputNode);
-            } else {
-                ObjectNode rootNode = objectMapper.createObjectNode();
-                if (inputNode.isArray()) {
-                    rootNode.set("conditions", inputNode);
-                } else {
-                    ArrayNode arrayNode = objectMapper.createArrayNode();
-                    arrayNode.add(inputNode);
-                    rootNode.set("conditions", arrayNode);
+    private void substituteParameters(JsonNode node, Map<String, Object> parameters) throws JsonProcessingException {
+        // traverse the JSON tree and substitute parameters
+        if (node.has(PARAMETER_FIELD)) {
+            String parameterName = node.get(PARAMETER_FIELD).asText();
+            if (parameters.containsKey(parameterName)) {
+                // put the parameter value as a string without quotes
+                String parameterValue = objectMapper.writeValueAsString(parameters.get(parameterName));
+                if (parameterValue.startsWith("\"") && parameterValue.endsWith("\"")) {
+                    parameterValue = parameterValue.substring(1, parameterValue.length() - 1);
                 }
-                return objectMapper.writeValueAsString(rootNode);
+                ((ObjectNode) node).put("value", parameterValue);
+                // remove the parameter node
+                ((ObjectNode) node).remove(PARAMETER_FIELD);
             }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        }
+        for (JsonNode childNode : node) {
+            substituteParameters(childNode, parameters);
         }
     }
 
     @Nullable
-    public String build(Condition rootCondition) {
-        Condition condition = rootCondition.actualize(Collections.emptySet(), false);
-        if (condition == null)
-            return null;
+    public String build(String query) {
+        return build(query, null, null);
+    }
 
-        // If the actualized condition does not have AND on top, wrap it again to have the required JSON in the end
-        if (!(condition instanceof LogicalCondition logicalCondition) || logicalCondition.getType() != LogicalCondition.Type.AND) {
-            condition = LogicalCondition.and(condition);
-        }
-
-        ObjectNode rootNode = objectMapper.createObjectNode();
-        buildJsonNode(rootNode, condition);
-        try {
-            return objectMapper.writeValueAsString(rootNode);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    @Nullable
+    public String build(Condition condition) {
+        return build(null, condition, null);
     }
 
     private void buildJsonNode(ObjectNode node, Condition condition) {

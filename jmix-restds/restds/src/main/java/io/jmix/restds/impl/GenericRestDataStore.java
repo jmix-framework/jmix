@@ -80,10 +80,10 @@ public class GenericRestDataStore extends AbstractDataStore {
 
     @Nullable
     private String createRestFilter(@Nullable LoadContext.Query query) {
-        if (query == null || query.getCondition() == null)
+        if (query == null || (query.getQueryString() == null && query.getCondition() == null))
             return null;
         else
-            return restFilterBuilder.build(query.getCondition());
+            return restFilterBuilder.build(query.getQueryString(), query.getCondition(), query.getParameters());
     }
 
     @Nullable

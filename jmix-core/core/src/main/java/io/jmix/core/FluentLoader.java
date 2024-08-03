@@ -25,6 +25,7 @@ import io.jmix.core.querycondition.LogicalCondition;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TemporalType;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -57,6 +58,9 @@ public class FluentLoader<E> {
     private Metadata metadata;
 
     @Autowired
+    private MetadataTools metadataTools;
+
+    @Autowired
     private FetchPlanRepository fetchPlanRepository;
 
     @Autowired
@@ -86,8 +90,8 @@ public class FluentLoader<E> {
         LoadContext<E> loadContext = instantiateLoadContext(metaClass);
         initCommonLoadContextParameters(loadContext);
 
-        String entityName = metaClass.getName();
-        String queryString = String.format("select e from %s e", entityName);
+        String queryString = metadataTools.isJpaEntity(metaClass) ?
+                String.format("select e from %s e", metaClass.getName()) : null;
         loadContext.setQuery(new LoadContext.Query(queryString));
 
         return loadContext;
@@ -221,7 +225,7 @@ public class FluentLoader<E> {
      */
     public ByCondition<E> condition(Condition condition) {
         MetaClass metaClass = metadata.getClass(entityClass);
-        return new ByCondition<>(this, metaClass.getName(), condition);
+        return new ByCondition<>(this, metaClass.getName(), metadataTools.isJpaEntity(metaClass),condition);
     }
 
     /**
@@ -768,9 +772,9 @@ public class FluentLoader<E> {
         private boolean cacheable;
         private Condition condition;
 
-        protected ByCondition(FluentLoader<E> loader, String entityName, Condition condition) {
+        protected ByCondition(FluentLoader<E> loader, String entityName, boolean jpaEntity, Condition condition) {
             this.loader = loader;
-            this.queryString = String.format("select e from %s e", entityName);
+            this.queryString = jpaEntity ? String.format("select e from %s e", entityName) : null;
             this.condition = condition;
         }
 
@@ -786,13 +790,14 @@ public class FluentLoader<E> {
         }
 
         LoadContext<E> createLoadContext() {
-            Preconditions.checkNotEmptyString(queryString, "query is empty");
-
             LoadContext<E> loadContext = loader.instantiateLoadContext(loader.metaClass);
             loader.initCommonLoadContextParameters(loadContext);
 
-            Collection<QueryStringProcessor> processors = loader.applicationContext.getBeansOfType(QueryStringProcessor.class).values();
-            String processedQuery = QueryUtils.applyQueryStringProcessors(processors, queryString, loader.entityClass);
+            String processedQuery = queryString;
+            if (StringUtils.isNotEmpty(queryString)) {
+                Collection<QueryStringProcessor> processors = loader.applicationContext.getBeansOfType(QueryStringProcessor.class).values();
+                processedQuery = QueryUtils.applyQueryStringProcessors(processors, queryString, loader.entityClass);
+            }
 
             LoadContext.Query query = new LoadContext.Query(processedQuery);
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {

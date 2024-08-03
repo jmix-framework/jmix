@@ -22,6 +22,7 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.restds.RestDsConfiguration;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,13 @@ public class GenericRestDataStoreTest {
     DataManager dataManager;
     @Autowired
     Metadata metadata;
+    
+    LocalDateTime now;
+
+    @BeforeEach
+    void setUp() {
+        now = LocalDateTime.now();
+    }
 
     @Test
     void testLoad() {
@@ -85,12 +93,7 @@ public class GenericRestDataStoreTest {
 
     @Test
     void testCount() {
-        Customer customer = dataManager.create(Customer.class);
-        String newName = "new-cust-" + LocalDateTime.now();
-        customer.setLastName(newName);
-        customer.setEmail("test@mail.com");
-
-        dataManager.save(customer);
+        Customer customer = createCustomer(null, "new-cust-1-" + now);
 
         LoadContext<Object> loadContext = new LoadContext<>(metadata.getClass(Customer.class)).setQuery(
                 new LoadContext.Query("")
@@ -103,24 +106,108 @@ public class GenericRestDataStoreTest {
     }
 
     @Test
-    void testSearch() {
-        Customer customer1 = metadata.create(Customer.class);
-        String newName1 = "new-cust-1-" + LocalDateTime.now();
-        customer1.setLastName(newName1);
-        customer1.setEmail("test@mail.com");
-        dataManager.save(customer1);
-
-        Customer customer2 = metadata.create(Customer.class);
-        String newName2 = "new-cust-2-" + LocalDateTime.now();
-        customer2.setLastName(newName2);
-        customer2.setEmail("test@mail.com");
-        dataManager.save(customer2);
+    void testCondition() {
+        Customer customer1 = createCustomer(null, "testCondition-cust-1-" + now);
+        Customer customer2 = createCustomer(null, "testCondition-cust-2-" + now);
 
         List<Customer> customers = dataManager.load(Customer.class)
-                .condition(PropertyCondition.equal("lastName", newName2))
+                .condition(PropertyCondition.equal("lastName", customer2.getLastName()))
                 .list();
 
         assertThat(customers).size().isEqualTo(1);
         assertThat(customers.get(0)).isEqualTo(customer2);
+    }
+
+    @Test
+    void testQuery() {
+        String firstName = "testQuery-firstName-" + now;
+        Customer customer1 = createCustomer(firstName, "testQuery-cust-1-" + now);
+        Customer customer2 = createCustomer(firstName, "testQuery-cust-2-" + now);
+
+        String query = """
+                {
+                  "property": "firstName",
+                  "operator": "=",
+                  "value": "%s"
+                }
+                """.formatted(firstName);
+
+        // test query only
+        List<Customer> customers = dataManager.load(Customer.class).query(query).list();
+
+        assertThat(customers).size().isEqualTo(2);
+
+        // test query and condition
+        customers = dataManager.load(Customer.class)
+                .query(query)
+                .condition(PropertyCondition.equal("lastName", customer1.getLastName()))
+                .list();
+
+        assertThat(customers).size().isEqualTo(1);
+        assertThat(customers.get(0)).isEqualTo(customer1);
+    }
+
+    @Test
+    void testQueryWithParameters() {
+        String firstName = "testQuery-firstName-" + now;
+        Customer customer1 = createCustomer(firstName, "testQuery-cust-1-" + now);
+        Customer customer2 = createCustomer(firstName, "testQuery-cust-2-" + now);
+
+        String query = """
+                {
+                  "property": "firstName",
+                  "operator": "=",
+                  "parameterName": "name"
+                }
+                """;
+
+        List<Customer> customers = dataManager.load(Customer.class)
+                .query(query)
+                .parameter("name", firstName)
+                .list();
+
+        assertThat(customers).size().isEqualTo(2);
+    }
+
+    @Test
+    void testQueryAndConditionWithParameters() {
+        String firstName = "testQuery-firstName-" + now;
+        Customer customer1 = createCustomer(firstName, "testQuery-cust-1-" + now);
+        Customer customer2 = createCustomer(firstName, "testQuery-cust-2-" + now);
+
+        PropertyCondition condition = PropertyCondition.createWithParameterName("firstName", PropertyCondition.Operation.EQUAL, "name");
+        condition.setParameterValue(firstName);
+
+        List<Customer> customers = dataManager.load(Customer.class)
+                .condition(condition)
+                .list();
+
+        assertThat(customers).size().isEqualTo(2);
+
+        String query = """
+                {
+                  "property": "lastName",
+                  "operator": "startsWith",
+                  "parameterName": "last_name"
+                }
+                """;
+
+        customers = dataManager.load(Customer.class)
+                .query(query)
+                .parameter("last_name", customer1.getLastName())
+                .condition(condition)
+                .list();
+
+        assertThat(customers).size().isEqualTo(1);
+        assertThat(customers.get(0)).isEqualTo(customer1);
+    }
+
+    private Customer createCustomer(String firstName, String lastName) {
+        Customer customer = metadata.create(Customer.class);
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        customer.setEmail("test@mail.com");
+        dataManager.save(customer);
+        return customer;
     }
 }

@@ -19,6 +19,8 @@ package io.jmix.core;
 import io.jmix.core.querycondition.Condition;
 
 import jakarta.persistence.TemporalType;
+import org.springframework.lang.Nullable;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -37,6 +39,7 @@ public interface DataLoadContextQuery {
     int getMaxResults();
     DataLoadContextQuery setMaxResults(int maxResults);
 
+    @Nullable
     Condition getCondition();
     DataLoadContextQuery setCondition(Condition condition);
 }

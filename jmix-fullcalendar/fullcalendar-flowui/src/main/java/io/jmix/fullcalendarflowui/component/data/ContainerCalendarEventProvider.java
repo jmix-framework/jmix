@@ -52,7 +52,7 @@ public class ContainerCalendarEventProvider<E> extends AbstractEntityEventProvid
     protected void containerItemChanged(InstanceContainer.ItemChangeEvent<E> event) {
         if (!(container instanceof CollectionContainer)) {
             refreshCache();
-            getEventBus().fireEvent(new ItemSetChangeEvent(this, ItemChangeOperation.REFRESH, getItems()));
+            fireItemSetChangeEvent(DataChangeOperation.REFRESH, getItems());
         }
     }
 
@@ -61,15 +61,15 @@ public class ContainerCalendarEventProvider<E> extends AbstractEntityEventProvid
         switch (event.getChangeType()) {
             case ADD_ITEMS -> {
                 List<CalendarEvent> addedItems = addToCache((Collection<E>) event.getChanges());
-                getEventBus().fireEvent(new ItemSetChangeEvent(this, ItemChangeOperation.ADD, addedItems));
+                fireItemSetChangeEvent(DataChangeOperation.ADD, addedItems);
             }
             case REMOVE_ITEMS -> {
                 List<CalendarEvent> removedItems = removeFromCache((Collection<E>) event.getChanges());
-                getEventBus().fireEvent(new ItemSetChangeEvent(this, ItemChangeOperation.REMOVE, removedItems));
+                fireItemSetChangeEvent(DataChangeOperation.REMOVE, removedItems);
             }
             case REFRESH -> {
                 refreshCache();
-                getEventBus().fireEvent(new ItemSetChangeEvent(this, ItemChangeOperation.REFRESH, getItems()));
+                fireItemSetChangeEvent(DataChangeOperation.REFRESH, getItems());
             }
         }
     }
@@ -84,9 +84,7 @@ public class ContainerCalendarEventProvider<E> extends AbstractEntityEventProvid
                 return;
             }
 
-            getEventBus().fireEvent(
-                    new ItemSetChangeEvent(this, ItemChangeOperation.UPDATE,
-                            Collections.singletonList(getItem(itemId))));
+            fireItemSetChangeEvent(DataChangeOperation.UPDATE, Collections.singletonList(getItem(itemId)));
         }
     }
 
@@ -237,5 +235,9 @@ public class ContainerCalendarEventProvider<E> extends AbstractEntityEventProvid
                     ? Collections.singletonList(item)
                     : Collections.emptyList();
         }
+    }
+
+    protected void fireItemSetChangeEvent(DataChangeOperation operation, List<CalendarEvent> items) {
+        getEventBus().fireEvent(new ItemSetChangeEvent(this, operation, items));
     }
 }

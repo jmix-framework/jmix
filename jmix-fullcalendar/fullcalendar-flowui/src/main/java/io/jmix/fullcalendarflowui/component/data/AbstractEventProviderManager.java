@@ -17,8 +17,8 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import com.vaadin.flow.data.provider.KeyMapper;
-import io.jmix.fullcalendarflowui.component.serialization.serializer.EventProviderDataSerializer;
-import org.apache.commons.lang3.RandomStringUtils;
+import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
+import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer.FullCalendarDataSerializer;
 import org.springframework.lang.Nullable;
 
 public abstract class AbstractEventProviderManager {
@@ -29,15 +29,18 @@ public abstract class AbstractEventProviderManager {
     protected final String jsFunctionName;
     protected final KeyMapper<Object> eventKeyMapper = new KeyMapper<>();
 
-    protected KeyMapper<Object> crossEventProviderKeyMapper;
-    protected EventProviderDataSerializer dataSerializer;
+    protected FullCalendarDataSerializer dataSerializer;
+    protected FullCalendarSerializer serializer;
 
-    public AbstractEventProviderManager(BaseCalendarEventProvider eventProvider, String jsFunctionName) {
+    public AbstractEventProviderManager(BaseCalendarEventProvider eventProvider,
+                                        FullCalendarSerializer serializer,
+                                        String jsFunctionName) {
         this.eventProvider = eventProvider;
-
+        this.serializer = serializer;
         this.jsFunctionName = jsFunctionName;
+
         this.sourceId = generateSourceId(eventProvider);
-        this.dataSerializer = createDataSerializer(sourceId, eventKeyMapper, crossEventProviderKeyMapper);
+        this.dataSerializer = serializer.createDataSerializer(sourceId, eventKeyMapper);
     }
 
     public BaseCalendarEventProvider getEventProvider() {
@@ -53,24 +56,9 @@ public abstract class AbstractEventProviderManager {
     }
 
     @Nullable
-    public KeyMapper<Object> getCrossEventProviderKeyMapper() {
-        return crossEventProviderKeyMapper;
-    }
-
-    public void setCrossEventProviderKeyMapper(@Nullable KeyMapper<Object> crossEventProviderKeyMapper) {
-        this.crossEventProviderKeyMapper = crossEventProviderKeyMapper;
-    }
-
-    @Nullable
     public abstract CalendarEvent getCalendarEvent(String clientId);
 
     protected String generateSourceId(BaseCalendarEventProvider eventProvider) {
-        return eventProvider.getId() + "-" + RandomStringUtils.randomAlphabetic(5);
-    }
-
-    protected EventProviderDataSerializer createDataSerializer(String sourceId,
-                                                               KeyMapper<Object> keyMapper,
-                                                               @Nullable KeyMapper<Object> crossEventProviderKeyMapper) {
-        return new EventProviderDataSerializer(sourceId, keyMapper, crossEventProviderKeyMapper);
+        return eventProvider.getId() + "-" + EventProviderUtils.generateId();
     }
 }

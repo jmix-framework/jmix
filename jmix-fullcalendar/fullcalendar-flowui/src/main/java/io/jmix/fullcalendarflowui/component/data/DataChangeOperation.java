@@ -19,7 +19,7 @@ package io.jmix.fullcalendarflowui.component.data;
 import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
 import org.springframework.lang.Nullable;
 
-public enum ItemChangeOperation implements HasEnumId<String> {
+public enum DataChangeOperation implements HasEnumId<String> {
     REFRESH("refresh"),
     UPDATE("update"),
     ADD("add"),
@@ -27,7 +27,7 @@ public enum ItemChangeOperation implements HasEnumId<String> {
 
     private final String id;
 
-    ItemChangeOperation(String id) {
+    DataChangeOperation(String id) {
         this.id = id;
     }
 
@@ -37,8 +37,8 @@ public enum ItemChangeOperation implements HasEnumId<String> {
     }
 
     @Nullable
-    public static ItemChangeOperation fromId(String id) {
-        for (ItemChangeOperation operation : values()) {
+    public static DataChangeOperation fromId(String id) {
+        for (DataChangeOperation operation : values()) {
             if (operation.getId().equals(id)) {
                 return operation;
             }

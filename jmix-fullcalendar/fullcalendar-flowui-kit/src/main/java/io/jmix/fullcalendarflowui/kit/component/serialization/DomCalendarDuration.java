@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.serialization.model;
+package io.jmix.fullcalendarflowui.kit.component.serialization;
 
 import java.io.Serializable;
 

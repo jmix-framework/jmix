@@ -10,8 +10,8 @@ import io.jmix.fullcalendarflowui.component.data.AbstractEventProviderManager;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.serialization.deserializer.JmixFullCalendarDeserializer;
-import io.jmix.fullcalendarflowui.kit.component.serialization.model.DomCalendarEvent;
-import io.jmix.fullcalendarflowui.kit.component.serialization.model.DomMouseEventDetails;
+import io.jmix.fullcalendarflowui.kit.component.serialization.DomCalendarEvent;
+import io.jmix.fullcalendarflowui.kit.component.serialization.DomMouseEventDetails;
 
 import java.time.ZoneId;
 

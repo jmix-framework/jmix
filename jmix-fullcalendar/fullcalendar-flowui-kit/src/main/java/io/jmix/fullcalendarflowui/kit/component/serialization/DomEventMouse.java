@@ -14,17 +14,33 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.serialization.model;
-
-import jakarta.annotation.Nullable;
+package io.jmix.fullcalendarflowui.kit.component.serialization;
 
 import java.io.Serializable;
 
-public class DomUnselect implements Serializable {
+public class DomEventMouse implements Serializable {
+
+    protected DomCalendarEvent event;
+
+    protected DomMouseEventDetails mouseDetails;
 
     protected DomViewInfo view;
 
-    protected DomMouseEventDetails mouseDetails;
+    public DomCalendarEvent getEvent() {
+        return event;
+    }
+
+    public void setEvent(DomCalendarEvent event) {
+        this.event = event;
+    }
+
+    public DomMouseEventDetails getMouseDetails() {
+        return mouseDetails;
+    }
+
+    public void setMouseDetails(DomMouseEventDetails mouseDetails) {
+        this.mouseDetails = mouseDetails;
+    }
 
     public DomViewInfo getView() {
         return view;
@@ -32,14 +48,5 @@ public class DomUnselect implements Serializable {
 
     public void setView(DomViewInfo view) {
         this.view = view;
-    }
-
-    @Nullable
-    public DomMouseEventDetails getMouseDetails() {
-        return mouseDetails;
-    }
-
-    public void setMouseDetails(@Nullable DomMouseEventDetails mouseDetails) {
-        this.mouseDetails = mouseDetails;
     }
 }

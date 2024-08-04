@@ -1,32 +1,26 @@
 package io.jmix.fullcalendarflowui.component.data;
 
-import com.vaadin.flow.data.provider.KeyMapper;
 import elemental.json.JsonValue;
+import io.jmix.fullcalendarflowui.component.data.CalendarEventProvider.ItemSetChangeEvent;
 import io.jmix.fullcalendarflowui.component.serialization.IncrementalData;
+import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class EventProviderManager extends AbstractEventProviderManager {
 
-    protected Consumer<CalendarEventProvider.ItemSetChangeEvent> itemSetChangeListener;
-    protected List<Pair<ItemChangeOperation, Collection<?>>> pendingIncrementalChanges = new ArrayList<>();
+    protected Consumer<ItemSetChangeEvent> itemSetChangeListener;
+    protected List<ItemSetChangeEvent> pendingIncrementalChanges = new ArrayList<>();
 
-    public EventProviderManager(CalendarEventProvider eventProvider) {
-        super(eventProvider, "_addItemEventSource");
+    public EventProviderManager(CalendarEventProvider eventProvider,
+                                FullCalendarSerializer serializer) {
+        super(eventProvider, serializer, "_addItemEventSource");
 
         eventProvider.addItemSetChangeListener(this::onItemSetChangeListener);
-    }
-
-    @Override
-    public void setCrossEventProviderKeyMapper(@Nullable KeyMapper<Object> crossEventProviderKeyMapper) {
-        super.setCrossEventProviderKeyMapper(crossEventProviderKeyMapper);
-
-        dataSerializer = createDataSerializer(sourceId, eventKeyMapper, crossEventProviderKeyMapper);
     }
 
     @Override
@@ -45,17 +39,17 @@ public class EventProviderManager extends AbstractEventProviderManager {
     }
 
     public List<JsonValue> serializeIncrementalData() {
-        if (pendingIncrementalChanges== null || pendingIncrementalChanges.isEmpty()) {
+        if (pendingIncrementalChanges == null || pendingIncrementalChanges.isEmpty()) {
             return Collections.emptyList();
         }
         return pendingIncrementalChanges.stream()
                 .map(change -> dataSerializer.serializeIncrementalData(
-                        new IncrementalData(sourceId, change.getFirst(), change.getSecond())))
+                        new IncrementalData(sourceId, change.getOperation(), change.getItems())))
                 .toList();
     }
 
-    public void addIncrementalChange(ItemChangeOperation operation, Collection<?> items) {
-        pendingIncrementalChanges.add(new Pair<>(operation, items));
+    public void addIncrementalChange(ItemSetChangeEvent event) {
+        pendingIncrementalChanges.add(event);
     }
 
     public void clearIncrementalData() {
@@ -63,36 +57,17 @@ public class EventProviderManager extends AbstractEventProviderManager {
     }
 
     @Nullable
-    public Consumer<CalendarEventProvider.ItemSetChangeEvent> getItemSetChangeListener() {
+    public Consumer<ItemSetChangeEvent> getItemSetChangeListener() {
         return itemSetChangeListener;
     }
 
-    public void setItemSetChangeListener(@Nullable Consumer<CalendarEventProvider.ItemSetChangeEvent> itemSetChangeListener) {
+    public void setItemSetChangeListener(@Nullable Consumer<ItemSetChangeEvent> itemSetChangeListener) {
         this.itemSetChangeListener = itemSetChangeListener;
     }
 
-    protected void onItemSetChangeListener(CalendarEventProvider.ItemSetChangeEvent event) {
+    protected void onItemSetChangeListener(ItemSetChangeEvent event) {
         if (itemSetChangeListener != null) {
             itemSetChangeListener.accept(event);
-        }
-    }
-
-    // todo rp rework
-    protected static class Pair<F, S> {
-        protected F first;
-        protected S second;
-
-        public Pair(F first, S second) {
-            this.first = first;
-            this.second = second;
-        }
-
-        public F getFirst() {
-            return first;
-        }
-
-        public S getSecond() {
-            return second;
         }
     }
 }

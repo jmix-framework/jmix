@@ -1,8 +1,7 @@
 package io.jmix.fullcalendarflowui.component.data;
 
-import com.vaadin.flow.data.provider.KeyMapper;
 import elemental.json.JsonArray;
-import org.springframework.lang.Nullable;
+import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
 
 import java.util.List;
 
@@ -10,15 +9,9 @@ public class LazyEventProviderManager extends AbstractEventProviderManager {
 
     protected List<CalendarEvent> lastFetchedEvents;
 
-    public LazyEventProviderManager(LazyCalendarEventProvider eventProvider) {
-        super(eventProvider, "_addLazyEventSource");
-    }
-
-    @Override
-    public void setCrossEventProviderKeyMapper(@Nullable KeyMapper<Object> crossEventProviderKeyMapper) {
-        super.setCrossEventProviderKeyMapper(crossEventProviderKeyMapper);
-
-        dataSerializer = createDataSerializer(sourceId, eventKeyMapper, crossEventProviderKeyMapper);
+    public LazyEventProviderManager(LazyCalendarEventProvider eventProvider,
+                                    FullCalendarSerializer serializer) {
+        super(eventProvider, serializer, "_addLazyEventSource");
     }
 
     @Override

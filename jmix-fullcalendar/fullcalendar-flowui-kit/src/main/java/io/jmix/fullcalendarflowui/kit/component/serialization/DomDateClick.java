@@ -14,24 +14,32 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.serialization.model;
+package io.jmix.fullcalendarflowui.kit.component.serialization;
 
 import java.io.Serializable;
 
-public class DomEventMouse implements Serializable {
+public class DomDateClick implements Serializable {
 
-    protected DomCalendarEvent event;
+    protected String date;
+    protected boolean allDay;
 
     protected DomMouseEventDetails mouseDetails;
-
     protected DomViewInfo view;
 
-    public DomCalendarEvent getEvent() {
-        return event;
+    public String getDate() {
+        return date;
     }
 
-    public void setEvent(DomCalendarEvent event) {
-        this.event = event;
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public boolean isAllDay() {
+        return allDay;
+    }
+
+    public void setAllDay(boolean allDay) {
+        this.allDay = allDay;
     }
 
     public DomMouseEventDetails getMouseDetails() {

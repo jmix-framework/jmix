@@ -14,31 +14,39 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.serialization.model;
+package io.jmix.fullcalendarflowui.kit.component.serialization;
 
 import java.io.Serializable;
 
-public class DomDatesSet implements Serializable {
+public class DomMoreLinkClassNames implements Serializable {
 
-    protected String startDateTime;
-    protected String endDateTime;
-
+    protected Integer eventsCount;
+    protected String shortText;
+    protected String text;
     protected DomViewInfo view;
 
-    public String getStartDateTime() {
-        return startDateTime;
+    public Integer getEventsCount() {
+        return eventsCount;
     }
 
-    public void setStartDateTime(String startDateTime) {
-        this.startDateTime = startDateTime;
+    public void setEventsCount(Integer eventsCount) {
+        this.eventsCount = eventsCount;
     }
 
-    public String getEndDateTime() {
-        return endDateTime;
+    public String getShortText() {
+        return shortText;
     }
 
-    public void setEndDateTime(String endDateTime) {
-        this.endDateTime = endDateTime;
+    public void setShortText(String shortText) {
+        this.shortText = shortText;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public DomViewInfo getView() {

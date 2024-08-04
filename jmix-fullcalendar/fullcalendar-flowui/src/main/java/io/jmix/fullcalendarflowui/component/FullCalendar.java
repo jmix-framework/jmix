@@ -2,7 +2,6 @@ package io.jmix.fullcalendarflowui.component;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.data.provider.KeyMapper;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
@@ -17,12 +16,11 @@ import io.jmix.fullcalendarflowui.component.data.*;
 import io.jmix.fullcalendarflowui.component.event.*;
 import io.jmix.fullcalendarflowui.component.model.BusinessHours;
 import io.jmix.fullcalendarflowui.component.model.option.FullCalendarOptions;
-import io.jmix.fullcalendarflowui.component.serialization.serializer.CalendarEventSerializer;
 import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.event.dom.*;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
-import io.jmix.fullcalendarflowui.kit.component.serialization.model.*;
+import io.jmix.fullcalendarflowui.kit.component.serialization.*;
 import io.jmix.fullcalendarflowui.kit.component.serialization.serializer.JmixFullCalendarSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +41,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected FullCalendarDelegate calendarDelegate;
 
     protected Map<String, AbstractEventProviderManager> eventProvidersMap = new HashMap<>(2);
-    protected KeyMapper<Object> crossEventProviderKeyMapper = new KeyMapper<>();
 
     protected Function<MoreLinkClassNamesContext, List<String>> linkMoreClassNamesGenerator;
 
@@ -89,7 +86,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         }
 
         LazyEventProviderManager eventProviderManager = createLazyEventProviderManager(eventProvider);
-        eventProviderManager.setCrossEventProviderKeyMapper(crossEventProviderKeyMapper);
 
         eventProvidersMap.put(eventProvider.getId(), eventProviderManager);
 
@@ -106,14 +102,13 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         EventProviderManager eventProviderManager = createEventProviderManager(eventProvider);
         eventProviderManager.setItemSetChangeListener(this::onItemSetChangeListener);
-        eventProviderManager.setCrossEventProviderKeyMapper(crossEventProviderKeyMapper);
 
         eventProvidersMap.put(eventProvider.getId(), eventProviderManager);
 
         if (initialized) {
             addEventProviderInternal(eventProviderManager);
 
-            if (eventProvider.getItems() != null && eventProvider.getItems().isEmpty()) {
+            if (eventProvider.getItems().isEmpty()) {
                 requestUpdateItemEventProvider(eventProvider.getId());
             }
         }
@@ -146,7 +141,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     public void setEventConstraintGroupId(@Nullable Object groupId) {
         this.eventConstraintGroupId = groupId;
 
-        String serializedGroupId = serializeGroupIdOrConstraint(groupId);
+        String serializedGroupId = getSerializer().serializeGroupIdOrConstraint(groupId);
 
         getOptions().setEventConstraint(
                 getOptions().getEventConstraint().isEnabled(),
@@ -162,7 +157,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     public void setSelectConstraintGroupId(@Nullable Object groupId) {
         this.selectConstraintGroupId = groupId;
 
-        String serializedGroupId = serializeGroupIdOrConstraint(groupId);
+        String serializedGroupId = getSerializer().serializeGroupIdOrConstraint(groupId);
 
         getOptions().setSelectConstraint(
                 getOptions().getSelectConstraint().isEnabled(),
@@ -410,6 +405,10 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return (FullCalendarOptions) options;
     }
 
+    protected FullCalendarSerializer getSerializer() {
+        return (FullCalendarSerializer) serializer;
+    }
+
     @Override
     protected JsonArray fetchCalendarItems(String sourceId, String start, String end) {
         return calendarDelegate.fetchCalendarItems(sourceId, start, end);
@@ -426,7 +425,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         switch (event.getOperation()) {
             case ADD, REMOVE, UPDATE -> {
-                eventProviderManager.addIncrementalChange(event.getOperation(), event.getItems());
+                eventProviderManager.addIncrementalChange(event);
                 requestIncrementalDataUpdate();
             }
             default -> requestUpdateItemEventProvider(providerId);
@@ -602,11 +601,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected EventProviderManager createEventProviderManager(CalendarEventProvider eventProvider) {
-        return new EventProviderManager(eventProvider);
+        return new EventProviderManager(eventProvider, getSerializer());
     }
 
     protected LazyEventProviderManager createLazyEventProviderManager(LazyCalendarEventProvider eventProvider) {
-        return new LazyEventProviderManager(eventProvider);
+        return new LazyEventProviderManager(eventProvider, getSerializer());
     }
 
     /**
@@ -626,17 +625,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     @Override
     protected CalendarView getCalendarView(String id) {
         return super.getCalendarView(id);
-    }
-
-    @Nullable
-    protected String serializeGroupIdOrConstraint(@Nullable Object value) {
-        if (value == null) {
-            return null;
-        }
-
-        String rawValue = CalendarEventSerializer.getRawGroupIdOrConstraint(value);
-
-        return rawValue != null ? rawValue : crossEventProviderKeyMapper.key(value);
     }
 
     protected void initTimeZone() {
@@ -668,6 +656,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
             UI.getCurrent().getPage().executeJs(
                     "window.Vaadin.Flow.jmixFullCalendarConnector.removeSources($0)", sourceIds);
         }
-        crossEventProviderKeyMapper.removeAll();
+        getSerializer().clearData();
     }
 }

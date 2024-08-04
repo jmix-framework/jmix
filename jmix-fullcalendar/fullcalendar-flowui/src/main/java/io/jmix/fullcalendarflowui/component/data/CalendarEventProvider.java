@@ -38,10 +38,11 @@ public interface CalendarEventProvider extends BaseCalendarEventProvider {
      */
     class ItemSetChangeEvent extends EventObject {
 
-        protected final ItemChangeOperation operation;
+        protected final DataChangeOperation operation;
         protected final Collection<CalendarEvent> items;
 
-        public ItemSetChangeEvent(BaseCalendarEventProvider source, ItemChangeOperation operation,
+        public ItemSetChangeEvent(BaseCalendarEventProvider source,
+                                  DataChangeOperation operation,
                                   Collection<CalendarEvent> items) {
             super(source);
 
@@ -57,7 +58,7 @@ public interface CalendarEventProvider extends BaseCalendarEventProvider {
         /**
          * @return operation which caused the data provider change
          */
-        public ItemChangeOperation getOperation() {
+        public DataChangeOperation getOperation() {
             return operation;
         }
 

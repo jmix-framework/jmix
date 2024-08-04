@@ -73,10 +73,9 @@ public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEven
     public void addItem(CalendarEvent item) {
         items.add(item);
 
-        fireItemSetChangeEvent(ItemChangeOperation.ADD, Collections.singletonList(item));
+        fireItemSetChangeEvent(DataChangeOperation.ADD, Collections.singletonList(item));
     }
 
-    @SafeVarargs
     public final void addItems(CalendarEvent... items) {
         addItems(List.of(items));
     }
@@ -84,13 +83,13 @@ public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEven
     public void addItems(List<CalendarEvent> items) {
         this.items.addAll(items);
 
-        fireItemSetChangeEvent(ItemChangeOperation.ADD, items);
+        fireItemSetChangeEvent(DataChangeOperation.ADD, items);
     }
 
     public void updateItem(CalendarEvent item) {
         if (items.contains(item)) {
             items.set(items.indexOf(item), item);
-            fireItemSetChangeEvent(ItemChangeOperation.UPDATE, Collections.singletonList(item));
+            fireItemSetChangeEvent(DataChangeOperation.UPDATE, Collections.singletonList(item));
         } else {
             throw new IllegalArgumentException("No such element");
         }
@@ -99,7 +98,7 @@ public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEven
     public void removeItem(CalendarEvent item) {
         items.remove(item);
 
-        fireItemSetChangeEvent(ItemChangeOperation.REMOVE, Collections.singletonList(item));
+        fireItemSetChangeEvent(DataChangeOperation.REMOVE, Collections.singletonList(item));
     }
 
     public void removeAllItems() {
@@ -107,7 +106,7 @@ public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEven
         List<CalendarEvent> removedItems = new ArrayList<>(items);
         items.clear();
 
-        fireItemSetChangeEvent(ItemChangeOperation.REMOVE, removedItems);
+        fireItemSetChangeEvent(DataChangeOperation.REMOVE, removedItems);
     }
 
     @Override
@@ -132,7 +131,7 @@ public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEven
                 .limit(query.getLimit());
     }
 
-    protected void fireItemSetChangeEvent(ItemChangeOperation operation, List<CalendarEvent> items) {
+    protected void fireItemSetChangeEvent(DataChangeOperation operation, List<CalendarEvent> items) {
         eventBus.fireEvent(new ItemSetChangeEvent(this, operation, items));
     }
 }

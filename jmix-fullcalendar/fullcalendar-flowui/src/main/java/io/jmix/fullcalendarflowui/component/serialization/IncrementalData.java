@@ -16,7 +16,7 @@
 
 package io.jmix.fullcalendarflowui.component.serialization;
 
-import io.jmix.fullcalendarflowui.component.data.ItemChangeOperation;
+import io.jmix.fullcalendarflowui.component.data.DataChangeOperation;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -24,13 +24,13 @@ import java.util.Collection;
 public class IncrementalData implements Serializable {
 
     protected String sourceId;
-    protected ItemChangeOperation operation;
+    protected DataChangeOperation operation;
     protected Collection<?> items;
 
     public IncrementalData() {
     }
 
-    public IncrementalData(String sourceId, ItemChangeOperation operation, Collection<?> items) {
+    public IncrementalData(String sourceId, DataChangeOperation operation, Collection<?> items) {
         this.sourceId = sourceId;
         this.operation = operation;
         this.items = items;
@@ -44,11 +44,11 @@ public class IncrementalData implements Serializable {
         this.sourceId = sourceId;
     }
 
-    public ItemChangeOperation getOperation() {
+    public DataChangeOperation getOperation() {
         return operation;
     }
 
-    public void setOperation(ItemChangeOperation operation) {
+    public void setOperation(DataChangeOperation operation) {
         this.operation = operation;
     }
 

@@ -16,7 +16,7 @@
 
 package io.jmix.fullcalendarflowui.kit.component.event;
 
-import io.jmix.fullcalendarflowui.kit.component.serialization.model.DomMouseEventDetails;
+import io.jmix.fullcalendarflowui.kit.component.serialization.DomMouseEventDetails;
 
 /**
  * Class contains mouse details when the user clicks in a map component.

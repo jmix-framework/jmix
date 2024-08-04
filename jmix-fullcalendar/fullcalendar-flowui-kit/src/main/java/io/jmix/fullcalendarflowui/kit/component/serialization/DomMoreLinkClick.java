@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.serialization.model;
+package io.jmix.fullcalendarflowui.kit.component.serialization;
 
 import java.io.Serializable;
+import java.util.List;
 
-public class DomDateClick implements Serializable {
+public class DomMoreLinkClick implements Serializable {
 
-    protected String date;
     protected boolean allDay;
-
-    protected DomMouseEventDetails mouseDetails;
+    protected String date;
     protected DomViewInfo view;
+    protected DomMouseEventDetails mouseDetails;
+    protected List<DomSegment> allData;
+    protected List<DomSegment> hiddenData;
+
+    public boolean isAllDay() {
+        return allDay;
+    }
+
+    public void setAllDay(boolean allDay) {
+        this.allDay = allDay;
+    }
 
     public String getDate() {
         return date;
@@ -34,12 +44,12 @@ public class DomDateClick implements Serializable {
         this.date = date;
     }
 
-    public boolean isAllDay() {
-        return allDay;
+    public DomViewInfo getView() {
+        return view;
     }
 
-    public void setAllDay(boolean allDay) {
-        this.allDay = allDay;
+    public void setView(DomViewInfo view) {
+        this.view = view;
     }
 
     public DomMouseEventDetails getMouseDetails() {
@@ -50,11 +60,19 @@ public class DomDateClick implements Serializable {
         this.mouseDetails = mouseDetails;
     }
 
-    public DomViewInfo getView() {
-        return view;
+    public List<DomSegment> getAllData() {
+        return allData;
     }
 
-    public void setView(DomViewInfo view) {
-        this.view = view;
+    public void setAllData(List<DomSegment> allData) {
+        this.allData = allData;
+    }
+
+    public List<DomSegment> getHiddenData() {
+        return hiddenData;
+    }
+
+    public void setHiddenData(List<DomSegment> hiddenData) {
+        this.hiddenData = hiddenData;
     }
 }

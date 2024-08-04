@@ -14,26 +14,32 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.serialization.model;
+package io.jmix.fullcalendarflowui.kit.component.serialization;
 
-public class DomEventResize extends AbstractEventDropResize {
+import jakarta.annotation.Nullable;
 
-    protected DomCalendarDuration startDelta;
-    protected DomCalendarDuration endDelta;
+import java.io.Serializable;
 
-    public DomCalendarDuration getStartDelta() {
-        return startDelta;
+public class DomUnselect implements Serializable {
+
+    protected DomViewInfo view;
+
+    protected DomMouseEventDetails mouseDetails;
+
+    public DomViewInfo getView() {
+        return view;
     }
 
-    public void setStartDelta(DomCalendarDuration startDelta) {
-        this.startDelta = startDelta;
+    public void setView(DomViewInfo view) {
+        this.view = view;
     }
 
-    public DomCalendarDuration getEndDelta() {
-        return endDelta;
+    @Nullable
+    public DomMouseEventDetails getMouseDetails() {
+        return mouseDetails;
     }
 
-    public void setEndDelta(DomCalendarDuration endDelta) {
-        this.endDelta = endDelta;
+    public void setMouseDetails(@Nullable DomMouseEventDetails mouseDetails) {
+        this.mouseDetails = mouseDetails;
     }
 }

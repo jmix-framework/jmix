@@ -13,7 +13,7 @@ import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
-import io.jmix.fullcalendarflowui.kit.component.serialization.model.*;
+import io.jmix.fullcalendarflowui.kit.component.serialization.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;

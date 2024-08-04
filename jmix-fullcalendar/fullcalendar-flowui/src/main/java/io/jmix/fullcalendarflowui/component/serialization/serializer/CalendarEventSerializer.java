@@ -11,23 +11,23 @@ import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeTransformations.transformToZDT;
 
 public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
 
     protected final KeyMapper<Object> crossEventProviderKeyMapper;
-    protected KeyMapper<Object> localGroupAndConstraintKeyMapper = new KeyMapper<>();
     protected KeyMapper<Object> idMapper;
     protected String sourceId;
 
-    public CalendarEventSerializer(KeyMapper<Object> idMapper, String sourceId,
-                                   @Nullable KeyMapper<Object> crossEventProviderKeyMapper) {
+    public CalendarEventSerializer(String sourceId,
+                                   KeyMapper<Object> idMapper,
+                                   KeyMapper<Object> crossEventProviderKeyMapper) {
         super(CalendarEvent.class);
 
         Preconditions.checkNotNullArgument(idMapper);
         Preconditions.checkNotNullArgument(sourceId);
+        Preconditions.checkNotNullArgument(crossEventProviderKeyMapper);
 
         this.idMapper = idMapper;
         this.sourceId = sourceId;
@@ -38,9 +38,9 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
     public void serialize(CalendarEvent value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
 
-        gen.writeObjectField("id", serializeId(value));
-        writeCrossEventProviderField("groupId", value.getGroupId(), gen, provider);
-        writeCrossEventProviderField("constraint", value.getConstraint(), gen, provider);
+        gen.writeObjectField("id", idMapper.key(value.getId()));
+        serializeCrossEventProviderField("groupId", value.getGroupId(), gen, provider);
+        serializeCrossEventProviderField("constraint", value.getConstraint(), gen, provider);
 
         serializeNullableValue("allDay", value.getAllDay(), gen, provider);
 
@@ -73,6 +73,18 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         gen.writeEndObject();
     }
 
+    protected void serializeCrossEventProviderField(String property, @Nullable Object value, JsonGenerator gen,
+                                                    SerializerProvider provider) throws IOException {
+        if (value == null) {
+            return;
+        }
+
+        String rawValue = getRawGroupIdOrConstraint(value);
+        rawValue = rawValue == null ? crossEventProviderKeyMapper.key(value) : rawValue;
+
+        serializeNullableValue(property, rawValue, gen, provider);
+    }
+
     protected void serializeNullableValue(String property, @Nullable Object value, JsonGenerator gen,
                                           SerializerProvider provider) throws IOException {
         if (value == null) {
@@ -81,38 +93,6 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         provider.defaultSerializeField(property, value, gen);
     }
 
-    protected String serializeId(CalendarEvent value) {
-        return idMapper.key(value.getId());
-    }
-
-    protected void writeCrossEventProviderField(String property, @Nullable Object value, JsonGenerator gen,
-                                                SerializerProvider provider) throws IOException {
-        if (value == null) {
-            return;
-        }
-        serializeNullableValue(property, serializeCrossValue(value), gen, provider);
-    }
-
-    protected String serializeCrossValue(Object value) {
-        Objects.requireNonNull(value);
-
-        String rawValue = getRawGroupIdOrConstraint(value);
-        // todo leave this code?
-        if (rawValue != null) {
-            return crossEventProviderKeyMapper == null
-                    ? rawValue + "-" + extractEventProviderId(sourceId)
-                    : rawValue;
-        }
-        return crossEventProviderKeyMapper == null
-                ? localGroupAndConstraintKeyMapper.key(value) + "-" + extractEventProviderId(sourceId)
-                : crossEventProviderKeyMapper.key(value);
-    }
-
-    protected String extractEventProviderId(String sourceId) {
-        return sourceId.split("-")[0];
-    }
-
-    // todo
     @Nullable
     public static String getRawGroupIdOrConstraint(Object value) {
         Preconditions.checkNotNullArgument(value);

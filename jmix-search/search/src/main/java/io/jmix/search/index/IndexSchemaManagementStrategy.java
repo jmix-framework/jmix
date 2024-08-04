@@ -77,4 +77,16 @@ public enum IndexSchemaManagementStrategy {
     public static IndexSchemaManagementStrategy getByKeyOrNull(String key) {
         return ENUM_MAP.get(key.toLowerCase());
     }
+
+    public boolean isConfigurationUpdateSupported(){
+        return this == CREATE_OR_UPDATE || this == CREATE_OR_RECREATE;
+    }
+
+    public boolean isIndexCreationSupported(){
+        return this != NONE;
+    }
+
+    public boolean isIndexRecreationSupported(){
+        return this == CREATE_OR_RECREATE;
+    }
 }

@@ -36,6 +36,8 @@ public class Customer {
 
     private String email;
 
+    private CustomerRegion region;
+
     public String getEmail() {
         return email;
     }
@@ -60,7 +62,15 @@ public class Customer {
         this.firstName = firstName;
     }
 
-//    public OffsetDateTime getLastModifiedDate() {
+    public CustomerRegion getRegion() {
+        return region;
+    }
+
+    public void setRegion(CustomerRegion region) {
+        this.region = region;
+    }
+
+    //    public OffsetDateTime getLastModifiedDate() {
 //        return lastModifiedDate;
 //    }
 //

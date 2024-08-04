@@ -55,9 +55,16 @@ public class GenericRestDataStore extends AbstractDataStore {
     @Nullable
     protected Object loadOne(LoadContext<?> context) {
         Object id = context.getId();
+        if (id == null) {
+            throw new IllegalArgumentException("Id is null");
+        }
         String entityName = context.getEntityMetaClass().getName();
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
-        Object entity = client.load(entityName, entityClass, id);
+        String fetchPlan = context.getFetchPlan() == null ? null : context.getFetchPlan().getName();
+
+        GenericRestClient.LoadParams params = new GenericRestClient.LoadParams(entityName, id, fetchPlan);
+        Object entity = client.load(entityClass, params);
+
         if (entity != null) {
             entityStates.setNew(entity, false);
         }
@@ -66,12 +73,20 @@ public class GenericRestDataStore extends AbstractDataStore {
 
     @Override
     protected List<Object> loadAll(LoadContext<?> context) {
+        if (context.getQuery() == null) {
+            throw new IllegalArgumentException("LoadContext.Query is null");
+        }
         String entityName = context.getEntityMetaClass().getName();
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
-        List<Object> entities = client.loadList(entityName, entityClass,
-                context.getQuery().getMaxResults(), context.getQuery().getFirstResult(),
+
+        GenericRestClient.LoadListParams params = new GenericRestClient.LoadListParams(entityName,
+                context.getQuery().getMaxResults(),
+                context.getQuery().getFirstResult(),
                 createRestSort(context.getQuery().getSort()),
-                createRestFilter(context.getQuery()));
+                createRestFilter(context.getQuery()),
+                context.getFetchPlan() == null ? null : context.getFetchPlan().getName());
+        List<Object> entities = client.loadList(entityClass, params);
+
         for (Object entity : entities) {
             entityStates.setNew(entity, false);
         }

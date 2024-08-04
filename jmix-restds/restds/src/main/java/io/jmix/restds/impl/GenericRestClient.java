@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.entity.EntityValues;
-import jakarta.validation.constraints.Null;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
@@ -30,7 +29,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriBuilder;
 
 import java.lang.reflect.ParameterizedType;
@@ -49,6 +47,27 @@ public class GenericRestClient {
     private RestClient restClient;
 
     private String authToken;
+
+    public record LoadParams(String entityName,
+                                 Object id,
+                                 @Nullable String fetchPlanName) {
+
+        public LoadParams(String entityName, Object id) {
+            this(entityName, id, null);
+        }
+    }
+
+    public record LoadListParams(String entityName,
+                                 int limit,
+                                 int offset,
+                                 @Nullable String sort,
+                                 @Nullable String filter,
+                                 @Nullable String fetchPlanName) {
+
+        public LoadListParams(String entityName, @Nullable String filter) {
+            this(entityName, 1, 0, null, filter, null);
+        }
+    }
 
     public GenericRestClient(RestConnectionParams connectionParams) {
         this(connectionParams.baseUrl(), connectionParams.clientId(), connectionParams.clientSecret());
@@ -80,10 +99,11 @@ public class GenericRestClient {
     }
 
     @Nullable
-    public <E> E load(String entityName, Class<E> entityClass, Object id) {
+    public <E> E load(Class<E> entityClass, LoadParams params) {
         try {
             E entity = restClient.get()
-                    .uri("/rest/entities/{entityName}/{id}", entityName, id)
+                    .uri(uriBuilder ->
+                            createLoadUri(uriBuilder, params))
                     .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
                     .body(entityClass);
@@ -93,41 +113,48 @@ public class GenericRestClient {
         }
     }
 
-    public <E> List<E> loadList(String entityName, Class<E> entityClass,
-                                int limit, int offset,
-                                @Nullable String sort,
-                                @Nullable String filter) {
+    private URI createLoadUri(UriBuilder uriBuilder, LoadParams params) {
+        uriBuilder.path("/rest/entities/{entityName}/{id}");
+        if (params.fetchPlanName() != null) {
+            uriBuilder.queryParam("fetchPlan", params.fetchPlanName());
+        }
+        return uriBuilder.build(params.entityName(), params.id());
+    }
+
+    public <E> List<E> loadList(Class<E> entityClass, LoadListParams params) {
         List<E> list;
-        if (filter == null) {
+        if (params.filter() == null) {
             list = restClient.get()
                     .uri(uriBuilder ->
-                            createLoadListUri(uriBuilder, entityName, limit, offset, sort, false))
+                            createLoadListUri(uriBuilder, params, false))
                     .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
                     .body(getEntityListTypeRef(entityClass));
         } else {
             list = restClient.post()
-                    .uri("/rest/entities/{entityName}/search", entityName)
-                    .body(createSearchPostBody(limit, offset, sort, filter, false))
+                    .uri("/rest/entities/{entityName}/search", params.entityName())
+                    .body(createSearchPostBody(params, false))
                     .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
                     .body(getEntityListTypeRef(entityClass));
         }
-
         return list;
     }
 
-    private String createSearchPostBody(int limit, int offset, @Nullable String sort, String filter, boolean returnCount) {
+    private String createSearchPostBody(LoadListParams params, boolean returnCount) {
         try {
             ObjectNode rootNode = objectMapper.createObjectNode();
-            rootNode.set("filter", objectMapper.readTree(filter));
-            if (sort != null) {
-                rootNode.put("sort", sort);
+            rootNode.set("filter", objectMapper.readTree(params.filter()));
+            if (params.sort() != null) {
+                rootNode.put("sort", params.sort());
             }
-            if (limit > 0) {
-                rootNode.put("limit", limit);
+            if (params.limit() > 0) {
+                rootNode.put("limit", params.limit());
             }
-            rootNode.put("offset", offset);
+            rootNode.put("offset", params.offset());
+            if (params.fetchPlanName() != null) {
+                rootNode.put("fetchPlan", params.fetchPlanName());
+            }
             if (returnCount) {
                 rootNode.put("returnCount", true);
             }
@@ -138,20 +165,22 @@ public class GenericRestClient {
         }
     }
 
-    private URI createLoadListUri(UriBuilder uriBuilder, String entityName,
-                                  int limit, int offset, @Nullable String sort, boolean returnCount) {
+    private URI createLoadListUri(UriBuilder uriBuilder, LoadListParams params, boolean returnCount) {
         uriBuilder.path("/rest/entities/{entityName}");
-        if (sort != null) {
-            uriBuilder.queryParam("sort", sort);
+        if (params.sort() != null) {
+            uriBuilder.queryParam("sort", params.sort());
         }
-        if (limit > 0) {
-            uriBuilder.queryParam("limit", limit);
+        if (params.limit() > 0) {
+            uriBuilder.queryParam("limit", params.limit());
         }
-        uriBuilder.queryParam("offset", offset);
+        uriBuilder.queryParam("offset", params.offset());
+        if (params.fetchPlanName() != null) {
+            uriBuilder.queryParam("fetchPlan", params.fetchPlanName());
+        }
         if (returnCount) {
             uriBuilder.queryParam("returnCount", true);
         }
-        return uriBuilder.build(entityName);
+        return uriBuilder.build(params.entityName());
     }
 
     public long count(String entityName, @Nullable String filter) {
@@ -159,14 +188,14 @@ public class GenericRestClient {
         if (filter == null) {
             response = restClient.get()
                     .uri(uriBuilder ->
-                            createLoadListUri(uriBuilder, entityName, 1, 0, null, true))
+                            createLoadListUri(uriBuilder, new LoadListParams(entityName, null), true))
                     .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
                     .toBodilessEntity();
         } else {
             response = restClient.post()
                     .uri("/rest/entities/{entityName}/search", entityName)
-                    .body(createSearchPostBody(1, 0, null, filter, true))
+                    .body(createSearchPostBody(new LoadListParams(entityName, filter), true))
                     .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
                     .toBodilessEntity();

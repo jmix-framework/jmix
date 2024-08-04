@@ -3,6 +3,7 @@ package io.jmix.samples.restservice.app;
 import io.jmix.core.DataManager;
 import io.jmix.core.security.Authenticated;
 import io.jmix.samples.restservice.entity.Customer;
+import io.jmix.samples.restservice.entity.CustomerRegion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -30,15 +31,26 @@ public class SampleDataInitializer {
             return;
         }
 
-        createCustomers();
+        List<CustomerRegion> regions = createRegions();
+        createCustomers(regions);
     }
 
-    public void createCustomers() {
+    private List<CustomerRegion> createRegions() {
+        log.info("Creating regions");
+        CustomerRegion region = dataManager.create(CustomerRegion.class);
+        region.setName("North America");
+        CustomerRegion saved = dataManager.save(region);
+        log.info("Regions created");
+        return List.of(saved);
+    }
+
+    public void createCustomers(List<CustomerRegion> regions) {
         log.info("Creating customers");
         Customer customer = dataManager.create(Customer.class);
         customer.setFirstName("Robert");
         customer.setLastName("Taylor");
         customer.setEmail("robert@example.com");
+        customer.setRegion(regions.get(0));
         dataManager.save(customer);
         log.info("Customers created");
     }

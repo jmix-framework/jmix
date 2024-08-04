@@ -16,7 +16,9 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "CUSTOMER")
+@Table(name = "CUSTOMER", indexes = {
+        @Index(name = "IDX_CUSTOMER_REGION", columnList = "REGION_ID")
+})
 @Entity
 public class Customer {
     @JmixGeneratedValue
@@ -53,6 +55,18 @@ public class Customer {
 
     @Column(name = "EMAIL")
     private String email;
+
+    @JoinColumn(name = "REGION_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CustomerRegion region;
+
+    public CustomerRegion getRegion() {
+        return region;
+    }
+
+    public void setRegion(CustomerRegion region) {
+        this.region = region;
+    }
 
     public String getEmail() {
         return email;

@@ -59,11 +59,13 @@ class GenericRestClientTest {
 
     @Test
     void testLoad() {
-        List<Customer> customers = client.loadList("Customer", Customer.class, 0, 0, null, null);
+        var loadListParams = new GenericRestClient.LoadListParams("Customer", 0, 0, null, null, null);
+        List<Customer> customers = client.loadList(Customer.class, loadListParams);
 
         assertThat(customers).isNotEmpty();
 
-        Customer customer = client.load("Customer", Customer.class, customers.get(0).getId());
+        var loadParams = new GenericRestClient.LoadParams("Customer", customers.get(0).getId());
+        Customer customer = client.load(Customer.class, loadParams);
 
         assertThat(customer).isEqualTo(customers.get(0));
     }
@@ -91,7 +93,7 @@ class GenericRestClientTest {
 
         client.delete("Customer", updatedCustomer);
 
-        Customer deletedCustomer = client.load("Customer", Customer.class, updatedCustomer.getId());
+        Customer deletedCustomer = client.load(Customer.class, new GenericRestClient.LoadParams("Customer", updatedCustomer.getId()));
 
         assertThat(deletedCustomer).isNull();
     }
@@ -153,7 +155,8 @@ class GenericRestClientTest {
                 """.formatted(newName2);
 
 
-        List<Customer> customers = client.loadList("Customer", Customer.class, 0, 0, null, filter);
+        var loadListParams = new GenericRestClient.LoadListParams("Customer", 0, 0, null, filter, null);
+        List<Customer> customers = client.loadList(Customer.class, loadListParams);
 
         assertThat(customers).size().isEqualTo(1);
         assertThat(customers.get(0)).isEqualTo(customer2);

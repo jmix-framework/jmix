@@ -20,14 +20,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.restds.impl.GenericRestFilterBuilder;
+import io.jmix.restds.impl.RestFilterBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GenericRestFilterBuilderTest {
+class RestFilterBuilderTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -37,7 +37,7 @@ class GenericRestFilterBuilderTest {
 
     @Test
     void testCondition() throws JsonProcessingException {
-        GenericRestFilterBuilder builder = new GenericRestFilterBuilder();
+        RestFilterBuilder builder = new RestFilterBuilder();
 
         LogicalCondition condition = LogicalCondition.and(
                 PropertyCondition.equal("name", "alpha").skipNullOrEmpty(),
@@ -66,7 +66,7 @@ class GenericRestFilterBuilderTest {
 
     @Test
     void testConditionSkipNull() throws JsonProcessingException {
-        GenericRestFilterBuilder builder = new GenericRestFilterBuilder();
+        RestFilterBuilder builder = new RestFilterBuilder();
 
         PropertyCondition firstCondition = PropertyCondition.equal("name", "alpha")
                 .skipNullOrEmpty();
@@ -98,7 +98,7 @@ class GenericRestFilterBuilderTest {
 
     @Test
     void testQuery() throws JsonProcessingException {
-        GenericRestFilterBuilder builder = new GenericRestFilterBuilder();
+        RestFilterBuilder builder = new RestFilterBuilder();
 
         String result = builder.build("""
                 {
@@ -188,7 +188,7 @@ class GenericRestFilterBuilderTest {
 
     @Test
     void testQueryAndCondition() throws JsonProcessingException {
-        GenericRestFilterBuilder builder = new GenericRestFilterBuilder();
+        RestFilterBuilder builder = new RestFilterBuilder();
 
         String jsonConditions = """
                 {
@@ -230,7 +230,7 @@ class GenericRestFilterBuilderTest {
 
     @Test
     void testQueryWithParameters() throws JsonProcessingException {
-        GenericRestFilterBuilder builder = new GenericRestFilterBuilder();
+        RestFilterBuilder builder = new RestFilterBuilder();
 
         String query = """
                 {

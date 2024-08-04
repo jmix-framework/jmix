@@ -32,10 +32,10 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.Map;
 
-@Component
-public class GenericRestFilterBuilder {
+@Component("restds_RestFilterBuilder")
+public class RestFilterBuilder {
 
-    private static final Logger log = LoggerFactory.getLogger(GenericRestFilterBuilder.class);
+    private static final Logger log = LoggerFactory.getLogger(RestFilterBuilder.class);
 
     public static final String PARAMETER_FIELD = "parameterName";
 

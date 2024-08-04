@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package rest_client;
+package rest_invoker;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.Metadata;
 import io.jmix.restds.RestDsConfiguration;
-import io.jmix.restds.impl.GenericRestClient;
+import io.jmix.restds.impl.RestInvoker;
 import io.jmix.restds.impl.RestConnectionParams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,19 +39,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ContextConfiguration(classes = {CoreConfiguration.class, RestDsConfiguration.class, TestRestDsConfiguration.class})
 @ExtendWith(SpringExtension.class)
-class GenericRestClientTest {
+class RestInvokerTest {
 
     @Autowired
     ApplicationContext applicationContext;
     @Autowired
     Metadata metadata;
 
-    GenericRestClient client;
+    RestInvoker restInvoker;
 
     @BeforeEach
     void setUp() {
-        client = applicationContext.getBean(
-                GenericRestClient.class,
+        restInvoker = applicationContext.getBean(
+                RestInvoker.class,
                 new RestConnectionParams(SampleServiceConnection.getInstance().getBaseUrl(),
                         SampleServiceConnection.CLIENT_ID,
                         SampleServiceConnection.CLIENT_SECRET));
@@ -59,13 +59,13 @@ class GenericRestClientTest {
 
     @Test
     void testLoad() {
-        var loadListParams = new GenericRestClient.LoadListParams("Customer", 0, 0, null, null, null);
-        List<Customer> customers = client.loadList(Customer.class, loadListParams);
+        var loadListParams = new RestInvoker.LoadListParams("Customer", 0, 0, null, null, null);
+        List<Customer> customers = restInvoker.loadList(Customer.class, loadListParams);
 
         assertThat(customers).isNotEmpty();
 
-        var loadParams = new GenericRestClient.LoadParams("Customer", customers.get(0).getId());
-        Customer customer = client.load(Customer.class, loadParams);
+        var loadParams = new RestInvoker.LoadParams("Customer", customers.get(0).getId());
+        Customer customer = restInvoker.load(Customer.class, loadParams);
 
         assertThat(customer).isEqualTo(customers.get(0));
     }
@@ -77,7 +77,7 @@ class GenericRestClientTest {
         customer.setLastName(newName);
         customer.setEmail("test@mail.com");
 
-        Customer createdCustomer = client.create("Customer", customer);
+        Customer createdCustomer = restInvoker.create("Customer", customer);
 
         assertThat(createdCustomer).isNotNull();
         assertThat(createdCustomer.getLastName()).isEqualTo(newName);
@@ -85,15 +85,15 @@ class GenericRestClientTest {
 
         createdCustomer.setLastName("updated-cust-" + LocalDateTime.now());
 
-        Customer updatedCustomer = client.update("Customer", createdCustomer);
+        Customer updatedCustomer = restInvoker.update("Customer", createdCustomer);
 
         assertThat(updatedCustomer).isNotNull();
         assertThat(updatedCustomer.getLastName()).isEqualTo(createdCustomer.getLastName());
         assertThat(updatedCustomer.getEmail()).isEqualTo(createdCustomer.getEmail());
 
-        client.delete("Customer", updatedCustomer);
+        restInvoker.delete("Customer", updatedCustomer);
 
-        Customer deletedCustomer = client.load(Customer.class, new GenericRestClient.LoadParams("Customer", updatedCustomer.getId()));
+        Customer deletedCustomer = restInvoker.load(Customer.class, new RestInvoker.LoadParams("Customer", updatedCustomer.getId()));
 
         assertThat(deletedCustomer).isNull();
     }
@@ -105,9 +105,9 @@ class GenericRestClientTest {
         customer.setLastName(newName);
         customer.setEmail("test@mail.com");
 
-        client.create("Customer", customer);
+        restInvoker.create("Customer", customer);
 
-        long customerCount = client.count("Customer", null);
+        long customerCount = restInvoker.count("Customer", null);
 
         assertThat(customerCount).isGreaterThan(0);
 
@@ -123,7 +123,7 @@ class GenericRestClientTest {
                 }
                 """.formatted(customer.getId().toString());
 
-        customerCount = client.count("Customer", filter);
+        customerCount = restInvoker.count("Customer", filter);
 
         assertThat(customerCount).isEqualTo(1);
     }
@@ -134,13 +134,13 @@ class GenericRestClientTest {
         String newName1 = "new-cust-1-" + LocalDateTime.now();
         customer1.setLastName(newName1);
         customer1.setEmail("test@mail.com");
-        client.create("Customer", customer1);
+        restInvoker.create("Customer", customer1);
 
         Customer customer2 = metadata.create(Customer.class);
         String newName2 = "new-cust-2-" + LocalDateTime.now();
         customer2.setLastName(newName2);
         customer2.setEmail("test@mail.com");
-        client.create("Customer", customer2);
+        restInvoker.create("Customer", customer2);
 
         String filter = """
                 {
@@ -155,8 +155,8 @@ class GenericRestClientTest {
                 """.formatted(newName2);
 
 
-        var loadListParams = new GenericRestClient.LoadListParams("Customer", 0, 0, null, filter, null);
-        List<Customer> customers = client.loadList(Customer.class, loadListParams);
+        var loadListParams = new RestInvoker.LoadListParams("Customer", 0, 0, null, filter, null);
+        List<Customer> customers = restInvoker.loadList(Customer.class, loadListParams);
 
         assertThat(customers).size().isEqualTo(1);
         assertThat(customers.get(0)).isEqualTo(customer2);

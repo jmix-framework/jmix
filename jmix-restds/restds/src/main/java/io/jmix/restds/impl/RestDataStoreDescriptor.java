@@ -19,12 +19,12 @@ package io.jmix.restds.impl;
 import io.jmix.core.metamodel.model.StoreDescriptor;
 import org.springframework.stereotype.Component;
 
-@Component
-public class GenericRestDataStoreDescriptor implements StoreDescriptor {
+@Component("restds_RestDataStoreDescriptor")
+public class RestDataStoreDescriptor implements StoreDescriptor {
 
     @Override
     public String getBeanName() {
-        return "genericRestDataStore";
+        return "restds_RestDataStore";
     }
 
     @Override

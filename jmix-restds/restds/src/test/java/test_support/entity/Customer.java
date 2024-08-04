@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Store(name = "sampleRest1")
+@Store(name = "restService1")
 @JmixEntity
 public class Customer {
     @JmixGeneratedValue

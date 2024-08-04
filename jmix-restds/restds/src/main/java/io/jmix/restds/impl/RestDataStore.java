@@ -35,18 +35,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("UnnecessaryLocalVariable")
-@Component
+@Component("restds_RestDataStore")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class GenericRestDataStore extends AbstractDataStore {
+public class RestDataStore extends AbstractDataStore {
 
     private final ApplicationContext applicationContext;
-    private final GenericRestFilterBuilder restFilterBuilder;
+    private final RestFilterBuilder restFilterBuilder;
 
     protected String storeName;
 
-    private GenericRestClient client;
+    private RestInvoker restInvoker;
 
-    public GenericRestDataStore(ApplicationContext applicationContext, GenericRestFilterBuilder restFilterBuilder) {
+    public RestDataStore(ApplicationContext applicationContext, RestFilterBuilder restFilterBuilder) {
         this.applicationContext = applicationContext;
         this.restFilterBuilder = restFilterBuilder;
     }
@@ -62,8 +62,8 @@ public class GenericRestDataStore extends AbstractDataStore {
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
         String fetchPlan = context.getFetchPlan() == null ? null : context.getFetchPlan().getName();
 
-        GenericRestClient.LoadParams params = new GenericRestClient.LoadParams(entityName, id, fetchPlan);
-        Object entity = client.load(entityClass, params);
+        RestInvoker.LoadParams params = new RestInvoker.LoadParams(entityName, id, fetchPlan);
+        Object entity = restInvoker.load(entityClass, params);
 
         if (entity != null) {
             entityStates.setNew(entity, false);
@@ -79,13 +79,13 @@ public class GenericRestDataStore extends AbstractDataStore {
         String entityName = context.getEntityMetaClass().getName();
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
 
-        GenericRestClient.LoadListParams params = new GenericRestClient.LoadListParams(entityName,
+        RestInvoker.LoadListParams params = new RestInvoker.LoadListParams(entityName,
                 context.getQuery().getMaxResults(),
                 context.getQuery().getFirstResult(),
                 createRestSort(context.getQuery().getSort()),
                 createRestFilter(context.getQuery()),
                 context.getFetchPlan() == null ? null : context.getFetchPlan().getName());
-        List<Object> entities = client.loadList(entityClass, params);
+        List<Object> entities = restInvoker.loadList(entityClass, params);
 
         for (Object entity : entities) {
             entityStates.setNew(entity, false);
@@ -117,7 +117,7 @@ public class GenericRestDataStore extends AbstractDataStore {
     @Override
     protected long countAll(LoadContext<?> context) {
         String entityName = context.getEntityMetaClass().getName();
-        long count = client.count(entityName, createRestFilter(context.getQuery()));
+        long count = restInvoker.count(entityName, createRestFilter(context.getQuery()));
         return count;
     }
 
@@ -128,9 +128,9 @@ public class GenericRestDataStore extends AbstractDataStore {
             MetaClass metaClass = metadata.getClass(entity);
             Object savedEntity;
             if (entityStates.isNew(entity)) {
-                savedEntity = client.create(metaClass.getName(), entity);
+                savedEntity = restInvoker.create(metaClass.getName(), entity);
             } else {
-                savedEntity = client.update(metaClass.getName(), entity);
+                savedEntity = restInvoker.update(metaClass.getName(), entity);
             }
             entityStates.setNew(savedEntity, false);
             saved.add(savedEntity);
@@ -143,7 +143,7 @@ public class GenericRestDataStore extends AbstractDataStore {
         Set<Object> saved = new HashSet<>();
         for (Object entity : context.getEntitiesToRemove()) {
             MetaClass metaClass = metadata.getClass(entity);
-            client.delete(metaClass.getName(), entity);
+            restInvoker.delete(metaClass.getName(), entity);
             saved.add(entity);
         }
         return saved;
@@ -198,7 +198,7 @@ public class GenericRestDataStore extends AbstractDataStore {
         String clientId = environment.getRequiredProperty(storeName + ".clientId");
         String clientSecret = environment.getRequiredProperty(storeName + ".clientSecret");
 
-        this.client = applicationContext.getBean(GenericRestClient.class, new RestConnectionParams(baseUrl, clientId, clientSecret));
+        this.restInvoker = applicationContext.getBean(RestInvoker.class, new RestConnectionParams(baseUrl, clientId, clientSecret));
     }
 
     protected static class DummyTransactionContextState implements TransactionContextState {

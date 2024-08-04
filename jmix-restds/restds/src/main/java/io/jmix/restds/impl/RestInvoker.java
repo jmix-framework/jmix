@@ -38,9 +38,9 @@ import java.util.Base64;
 import java.util.List;
 
 @SuppressWarnings("UnnecessaryLocalVariable")
-@Component
+@Component("restds_RestInvoker")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class GenericRestClient {
+public class RestInvoker {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -69,11 +69,11 @@ public class GenericRestClient {
         }
     }
 
-    public GenericRestClient(RestConnectionParams connectionParams) {
+    public RestInvoker(RestConnectionParams connectionParams) {
         this(connectionParams.baseUrl(), connectionParams.clientId(), connectionParams.clientSecret());
     }
 
-    public GenericRestClient(String baseUrl, String clientId, String clientSecret) {
+    public RestInvoker(String baseUrl, String clientId, String clientSecret) {
         restClient = RestClient.builder()
                 .baseUrl(baseUrl)
                 .build();

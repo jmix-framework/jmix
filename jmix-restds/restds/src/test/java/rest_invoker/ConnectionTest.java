@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package rest_client;
+package rest_invoker;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

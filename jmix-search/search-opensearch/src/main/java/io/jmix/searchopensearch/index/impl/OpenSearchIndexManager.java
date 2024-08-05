@@ -26,6 +26,7 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.BaseIndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonGenerator;
@@ -48,7 +49,7 @@ import java.util.Map;
 /**
  * Implementation for OpenSearch
  */
-public class OpenSearchIndexManager extends BaseIndexManager {
+public class OpenSearchIndexManager extends BaseIndexManager<IndexState, TypeMapping, IndexSettings> {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchIndexManager.class);
 
@@ -61,8 +62,9 @@ public class OpenSearchIndexManager extends BaseIndexManager {
                                   IndexStateRegistry indexStateRegistry,
                                   IndexConfigurationManager indexConfigurationManager,
                                   SearchProperties searchProperties,
-                                  OpenSearchIndexSettingsProvider indexSettingsProcessor) {
-        super(indexConfigurationManager, indexStateRegistry, searchProperties);
+                                  OpenSearchIndexSettingsProvider indexSettingsProcessor,
+                                  OpenSearchIndexConfigurationComparator configurationComparator) {
+        super(indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator);
         this.client = client;
         this.indexSettingsProcessor = indexSettingsProcessor;
     }
@@ -132,17 +134,13 @@ public class OpenSearchIndexManager extends BaseIndexManager {
     }
 
     @Override
-    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
-        IndexState indexState = getIndexMetadataInternal(indexConfiguration.getIndexName());
-        if (indexState == null) {
-            return false;
+    public boolean putMapping(String indexName, IndexMappingConfiguration mapping) {
+        PutMappingRequest request = buildPutMappingRequest(mapping);
+        try {
+            return client.indices().putMapping(builder -> builder.index(indexName).properties(request.properties())).acknowledged();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexState);
-        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexState);
-
-        return indexMappingActual && indexSettingsActual;
     }
 
     protected TypeMapping buildMapping(IndexConfiguration indexConfiguration) {
@@ -157,6 +155,21 @@ public class OpenSearchIndexManager extends BaseIndexManager {
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Unable to parse mapping of index '" + indexConfiguration.getIndexName() + "'", e);
+        }
+    }
+
+    protected PutMappingRequest buildPutMappingRequest(IndexMappingConfiguration mappingConfiguration) {
+        String mappingBody;
+        try {
+            mappingBody = objectMapper.writeValueAsString(mappingConfiguration);
+            JsonpMapper mapper = client._transport().jsonpMapper();
+            JsonProvider jsonProvider = mapper.jsonProvider();
+            try (StringReader reader = new StringReader(mappingBody)) {
+                JsonParser parser = jsonProvider.createParser(reader);
+                return PutMappingRequest._DESERIALIZER.deserialize(parser, mapper);
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Unable to parse mapping of index", e);
         }
     }
 
@@ -200,43 +213,5 @@ public class OpenSearchIndexManager extends BaseIndexManager {
     @Nullable
     protected IndexState getIndexMetadataInternal(String indexName) {
         return getIndexMetadataMapInternal(indexName).get(indexName);
-    }
-
-    protected boolean isIndexMappingActual(IndexConfiguration indexConfiguration, IndexState currentIndexState) {
-        Map<String, Object> currentMapping;
-        TypeMapping typeMapping = currentIndexState.mappings();
-        if (typeMapping == null) {
-            currentMapping = Collections.emptyMap();
-        } else {
-            ObjectNode currentMappingNode = toObjectNode(typeMapping);
-            currentMapping = objectMapper.convertValue(currentMappingNode, MAP_TYPE_REF);
-        }
-        Map<String, Object> actualMapping = objectMapper.convertValue(indexConfiguration.getMapping(), MAP_TYPE_REF);
-        log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
-                indexConfiguration.getIndexName(), currentMapping, actualMapping);
-        return actualMapping.equals(currentMapping);
-    }
-
-    protected boolean isIndexSettingsActual(IndexConfiguration indexConfiguration, IndexState currentIndexState) {
-        IndexSettings expectedSettings = indexSettingsProcessor.getSettingsForIndex(indexConfiguration);
-        IndexSettings allAppliedSettings = currentIndexState.settings();
-
-        if (allAppliedSettings == null) {
-            throw new IllegalArgumentException(
-                    "No info about all applied settings for index '" + indexConfiguration.getIndexName() + "'"
-            );
-        }
-
-        IndexSettings appliedSettings = allAppliedSettings.index();
-        if (appliedSettings == null) {
-            throw new IllegalArgumentException(
-                    "No info about applied index settings for index '" + indexConfiguration.getIndexName() + "'"
-            );
-        }
-
-        ObjectNode expectedSettingsNode = toObjectNode(expectedSettings);
-        ObjectNode currentSettingsNode = toObjectNode(appliedSettings);
-
-        return nodeContains(currentSettingsNode, expectedSettingsNode);
     }
 }

@@ -19,6 +19,7 @@ package io.jmix.searchelasticsearch.index.impl;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
 import co.elastic.clients.elasticsearch.indices.*;
+import co.elastic.clients.elasticsearch.transform.Settings;
 import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.json.JsonpSerializable;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,7 +47,7 @@ import java.util.Map;
 /**
  * Implementation for Elasticsearch
  */
-public class ElasticsearchIndexManager extends BaseIndexManager {
+public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, TypeMapping, Settings> {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchIndexManager.class);
 
@@ -57,8 +58,9 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
                                      IndexStateRegistry indexStateRegistry,
                                      IndexConfigurationManager indexConfigurationManager,
                                      SearchProperties searchProperties,
-                                     ElasticsearchIndexSettingsProvider indexSettingsProcessor) {
-        super(indexConfigurationManager, indexStateRegistry, searchProperties);
+                                     ElasticsearchIndexSettingsProvider indexSettingsProcessor,
+                                     ElasticsearchIndexConfigurationComparator configurationComparator) {
+        super(indexConfigurationManager, indexStateRegistry, searchProperties,  configurationComparator);
         this.client = client;
         this.indexSettingsProcessor = indexSettingsProcessor;
     }
@@ -142,20 +144,6 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
         }
     }
 
-    @Override
-    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
-        IndexState indexState = getIndexMetadataInternal(indexConfiguration.getIndexName());
-        if (indexState == null) {
-            return false;
-        }
-        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexState);
-        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexState);
-
-        return indexMappingActual && indexSettingsActual;
-    }
-
     protected TypeMapping buildMapping(IndexConfiguration indexConfiguration) {
         String mappingBody;
         try {
@@ -211,46 +199,5 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
     @Nullable
     protected IndexState getIndexMetadataInternal(String indexName) {
         return getIndexMetadataMapInternal(indexName).get(indexName);
-    }
-
-    protected boolean isIndexMappingActual(IndexConfiguration indexConfiguration, IndexState currentIndexState) {
-        Map<String, Object> currentMapping;
-        TypeMapping typeMapping = currentIndexState.mappings();
-        if (typeMapping == null) {
-            currentMapping = Collections.emptyMap();
-        } else {
-            ObjectNode currentMappingNode = toObjectNode(typeMapping);
-            currentMapping = objectMapper.convertValue(currentMappingNode, MAP_TYPE_REF);
-        }
-        Map<String, Object> actualMapping = objectMapper.convertValue(indexConfiguration.getMapping(), MAP_TYPE_REF);
-        log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
-                indexConfiguration.getIndexName(), currentMapping, actualMapping);
-        return actualMapping.equals(currentMapping);
-    }
-
-    protected boolean isIndexSettingsActual(IndexConfiguration indexConfiguration, IndexState currentIndexState) {
-        IndexSettings expectedIndexSettings = indexSettingsProcessor.getSettingsForIndex(indexConfiguration);
-        IndexSettings allAppliedSettings = currentIndexState.settings();
-
-        if (allAppliedSettings == null) {
-            throw new IllegalArgumentException(
-                    "No info about all applied settings for index '" + indexConfiguration.getIndexName() + "'"
-            );
-        }
-
-        IndexSettings appliedIndexSettings = allAppliedSettings.index();
-        if (appliedIndexSettings == null) {
-            throw new IllegalArgumentException(
-                    "No info about applied index settings for index '" + indexConfiguration.getIndexName() + "'"
-            );
-        }
-
-        ObjectNode expectedSettingsNode = toObjectNode(expectedIndexSettings);
-        ObjectNode appliedSettingsNode = toObjectNode(appliedIndexSettings);
-
-        log.debug("Settings of index '{}':\nExpected: {}\nApplied: {}",
-                indexConfiguration.getIndexName(), expectedSettingsNode, appliedSettingsNode);
-
-        return nodeContains(appliedSettingsNode, expectedSettingsNode);
     }
 }

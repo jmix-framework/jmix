@@ -173,7 +173,7 @@ public interface StudioDataElements {
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "likeClause", type = StudioPropertyType.ENUMERATION,
                             options = {"NONE", "CASE_SENSITIVE", "CASE_INSENSITIVE"}, defaultValue = "NONE"),
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.STRING, required = true)
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true)
             }
     )
     void onComponentValueChangedLoadTrigger();
@@ -184,8 +184,8 @@ public interface StudioDataElements {
             xmlElement = "onContainerItemChanged",
             icon = "io/jmix/flowui/kit/meta/icon/element/onContainerItemChangedLoadTrigger.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "container", type = StudioPropertyType.STRING, required = true)
+                    @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.PROPERTY_REF),
+                    @StudioProperty(xmlAttribute = "container", type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF, required = true)
             }
     )
     void onContainerItemChangedLoadTrigger();

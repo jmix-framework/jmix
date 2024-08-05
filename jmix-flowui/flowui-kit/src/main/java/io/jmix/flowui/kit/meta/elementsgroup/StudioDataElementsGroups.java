@@ -32,7 +32,7 @@ public interface StudioDataElementsGroups {
             target = {"io.jmix.flowui.facet.DataLoadCoordinator"},
             unlimitedCount = true,
             properties = {
-                    @StudioProperty(xmlAttribute = "loader", type = StudioPropertyType.STRING, required = true)
+                    @StudioProperty(xmlAttribute = "loader", type = StudioPropertyType.DATA_LOADER_REF, required = true)
             }
     )
     void refresh();

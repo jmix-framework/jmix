@@ -24,7 +24,7 @@ import java.util.Map;
  * Contains non-platform-specific operations.
  * Interaction with indexes is performed in platform-specific implementations.
  */
-public abstract class BaseIndexManager implements IndexManager {
+public abstract class BaseIndexManager<IndexStateType, TypeMappingType, IndexSettingsType> implements IndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(BaseIndexManager.class);
 
@@ -34,15 +34,19 @@ public abstract class BaseIndexManager implements IndexManager {
 
     protected final ObjectMapper objectMapper;
 
+    protected final IndexConfigurationComparator<IndexStateType, TypeMappingType, IndexSettingsType> indexConfigurationComparator;
+
     protected final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
     };
 
     protected BaseIndexManager(IndexConfigurationManager indexConfigurationManager,
                                IndexStateRegistry indexStateRegistry,
-                               SearchProperties searchProperties) {
+                               SearchProperties searchProperties,
+                               IndexConfigurationComparator<IndexStateType, TypeMappingType, IndexSettingsType> indexConfigurationComparator) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.indexStateRegistry = indexStateRegistry;
         this.searchProperties = searchProperties;
+        this.indexConfigurationComparator = indexConfigurationComparator;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -102,12 +106,13 @@ public abstract class BaseIndexManager implements IndexManager {
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            if (isIndexActual(indexConfiguration)) {
-                status = IndexValidationStatus.ACTUAL;
-                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-            } else {
+            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
+            if (result.isIndexRecreatingRequired()) {
                 status = IndexValidationStatus.IRRELEVANT;
                 indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+            } else {
+                status = IndexValidationStatus.ACTUAL;
+                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             }
         } else {
             status = IndexValidationStatus.MISSING;
@@ -145,7 +150,7 @@ public abstract class BaseIndexManager implements IndexManager {
         return synchronizeIndexSchema(indexConfiguration, strategy);
     }
 
-    protected abstract boolean isIndexActual(IndexConfiguration indexConfiguration);
+    //protected abstract boolean isIndexActual(IndexConfiguration indexConfiguration);
 
     protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         log.info("Synchronize search index '{}' (entity '{}') according to strategy '{}'",
@@ -153,12 +158,17 @@ public abstract class BaseIndexManager implements IndexManager {
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            boolean indexActual = isIndexActual(indexConfiguration);
-            if (indexActual) {
-                status = IndexSynchronizationStatus.ACTUAL;
-                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-            } else {
+            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
+            if (result.isIndexRecreatingRequired()) {
                 status = handleIrrelevantIndex(indexConfiguration, strategy);
+            } else {
+                if (result.isConfigurationUpdateRequired()){
+                    status = updateIndexConfiguration(indexConfiguration, strategy, result);
+                }else {
+                    status = IndexSynchronizationStatus.ACTUAL;
+                    indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
+                }
+
             }
         } else {
             status = handleMissingIndex(indexConfiguration, strategy);
@@ -170,7 +180,7 @@ public abstract class BaseIndexManager implements IndexManager {
 
     protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
-        if (IndexSchemaManagementStrategy.CREATE_OR_RECREATE.equals(strategy)) {
+        if (strategy.isIndexRecreationSupported()) {
             boolean created = recreateIndex(indexConfiguration);
             if (created) {
                 status = IndexSynchronizationStatus.RECREATED;
@@ -189,7 +199,7 @@ public abstract class BaseIndexManager implements IndexManager {
     protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
 
-        if (IndexSchemaManagementStrategy.NONE.equals(strategy)) {
+        if (strategy.isIndexCreationSupported()) {
             status = IndexSynchronizationStatus.MISSING;
         } else {
             boolean created = createIndex(indexConfiguration);
@@ -258,5 +268,25 @@ public abstract class BaseIndexManager implements IndexManager {
             throw new RuntimeException("Unable to update index mapping'" + indexName + "': Failed to parse index mapping.", e);
         }
         return mappingBodyStream;
+    }
+
+    protected IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
+        if(strategy.isConfigurationUpdateSupported()) {
+            if(result.isMappingUpdateRequired()){
+                boolean mappingSavingResult = putMapping(indexConfiguration.getIndexName(), indexConfiguration.getMapping());
+                if (mappingSavingResult) {
+                    indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
+                    return IndexSynchronizationStatus.UPDATED;
+                }else{
+                    log.error("Problem with index mapping saving.");
+                    indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+                    return IndexSynchronizationStatus.IRRELEVANT;
+                }
+            }
+            throw new IllegalStateException("Only index mapping update is supported currently");
+        } else {
+            indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+            return IndexSynchronizationStatus.IRRELEVANT;
+        }
     }
 }

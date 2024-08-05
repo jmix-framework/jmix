@@ -33,7 +33,7 @@ public class IndexSettingsComparator {
         return unmatchedSettings == 0 ? SettingsComparingResult.EQUAL : SettingsComparingResult.NOT_COMPATIBLE;
     }
 
-    enum SettingsComparingResult implements ConfigurationPartComparingResult{
+    public enum SettingsComparingResult implements ConfigurationPartComparingResult{
         EQUAL,
         NOT_COMPATIBLE;
 

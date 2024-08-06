@@ -21,7 +21,7 @@ import io.jmix.search.index.IndexConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class IndexSettingsComparator<IndexStateType, ClientType, JsonpSerializableType> {
+public abstract class IndexSettingsComparator<IndexStateType, IndexSettingsType, ClientType, JsonpSerializableType> {
     private static final Logger log = LoggerFactory.getLogger(IndexSettingsComparator.class);
 
     private final JsonpSerializer<JsonpSerializableType, ClientType> jsonpSerializer;
@@ -43,7 +43,28 @@ public abstract class IndexSettingsComparator<IndexStateType, ClientType, JsonpS
         return jsonNodesComparator.nodeContains(appliedSettingsNode, expectedSettingsNode)? SettingsComparingResult.EQUAL: SettingsComparingResult.NOT_COMPATIBLE;
     }
 
-    protected abstract JsonpSerializableType getAppliedIndexSettings(IndexStateType indexConfiguration, String indexName);
+    protected JsonpSerializableType getAppliedIndexSettings(IndexStateType currentIndexState, String indexName) {
+        IndexSettingsType allAppliedSettings = extractAllAppliedIndexSettings(currentIndexState);
+
+        if (allAppliedSettings == null) {
+            throw new IllegalArgumentException(
+                    "No info about all applied settings for index '" + indexName + "'"
+            );
+        }
+
+        IndexSettingsType appliedIndexSettings = extractAppliedIndexSettings(allAppliedSettings);
+        if (appliedIndexSettings == null) {
+            throw new IllegalArgumentException(
+                    "No info about applied index settings for index '" + indexName + "'"
+            );
+        }
+
+        //TODO cast check
+        return (JsonpSerializableType) appliedIndexSettings;
+    }
+
+    protected abstract IndexSettingsType extractAllAppliedIndexSettings(IndexStateType currentIndexState);
+    protected abstract   IndexSettingsType extractAppliedIndexSettings(IndexSettingsType allAppliedSettings);
 
     protected abstract JsonpSerializableType getExpectedIndexSettings(IndexConfiguration indexConfiguration);
 

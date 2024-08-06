@@ -2,6 +2,7 @@ package io.jmix.samples.restservice.entity;
 
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -13,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.OffsetDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @JmixEntity
@@ -59,6 +61,18 @@ public class Customer {
     @JoinColumn(name = "REGION_ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private CustomerRegion region;
+
+    @Composition
+    @OneToMany(mappedBy = "customer")
+    private Set<CustomerContact> contacts;
+
+    public void setContacts(Set<CustomerContact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public Set<CustomerContact> getContacts() {
+        return contacts;
+    }
 
     public CustomerRegion getRegion() {
         return region;

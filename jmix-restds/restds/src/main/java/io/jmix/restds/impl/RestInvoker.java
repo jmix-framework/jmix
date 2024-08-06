@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.entity.EntityValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -31,11 +30,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriBuilder;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.Base64;
-import java.util.List;
 
 @SuppressWarnings("UnnecessaryLocalVariable")
 @Component("restds_RestInvoker")
@@ -78,6 +74,7 @@ public class RestInvoker {
                 .baseUrl(baseUrl)
                 .build();
 
+        // TODO: authenticate on first request
         ResponseEntity<String> authResponse = restClient.post()
                 .uri("/oauth2/token")
                 .header("Authorization", "Basic " + getBasicAuthCredentials(clientId, clientSecret))
@@ -99,15 +96,15 @@ public class RestInvoker {
     }
 
     @Nullable
-    public <E> E load(Class<E> entityClass, LoadParams params) {
+    public String load(LoadParams params) {
         try {
-            E entity = restClient.get()
+            String resultJson = restClient.get()
                     .uri(uriBuilder ->
                             createLoadUri(uriBuilder, params))
                     .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
-                    .body(entityClass);
-            return entity;
+                    .body(String.class);
+            return resultJson;
         } catch (HttpClientErrorException.NotFound e) {
             return null;
         }
@@ -121,24 +118,27 @@ public class RestInvoker {
         return uriBuilder.build(params.entityName(), params.id());
     }
 
-    public <E> List<E> loadList(Class<E> entityClass, LoadListParams params) {
-        List<E> list;
+    public String loadList(LoadListParams params) {
+        String resultJson;
         if (params.filter() == null) {
-            list = restClient.get()
+            resultJson = restClient.get()
                     .uri(uriBuilder ->
                             createLoadListUri(uriBuilder, params, false))
                     .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
-                    .body(getEntityListTypeRef(entityClass));
+                    .body(String.class);
         } else {
-            list = restClient.post()
+            resultJson = restClient.post()
                     .uri("/rest/entities/{entityName}/search", params.entityName())
                     .body(createSearchPostBody(params, false))
                     .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
-                    .body(getEntityListTypeRef(entityClass));
+                    .body(String.class);
         }
-        return list;
+        if (resultJson == null) {
+            throw new IllegalStateException("Result JSON is null");
+        }
+        return resultJson;
     }
 
     private String createSearchPostBody(LoadListParams params, boolean returnCount) {
@@ -205,26 +205,26 @@ public class RestInvoker {
         return countStr == null ? 0 : Long.parseLong(countStr);
     }
 
-    public <E> E create(String entityName, E entity) {
-        Object savedEntity = restClient.post()
+    public String create(String entityName, String entityJson) {
+        String resultJson = restClient.post()
                 .uri("/rest/entities/{entityName}?responseFetchPlan=_base", entityName)
                 .header("Authorization", "Bearer " + getAuthenticationToken())
-                .body(entity)
+                .body(entityJson)
                 .retrieve()
-                .body(entity.getClass());
+                .body(String.class);
 
-        return (E) savedEntity;
+        return resultJson;
     }
 
-    public <E> E update(String entityName, E entity) {
-        Object savedEntity = restClient.put()
-                .uri("/rest/entities/{entityName}/{id}?responseFetchPlan=_base", entityName, EntityValues.getId(entity))
+    public String update(String entityName, String entityId, String entityJson) {
+        String resultJson = restClient.put()
+                .uri("/rest/entities/{entityName}/{id}?responseFetchPlan=_base", entityName, entityId)
                 .header("Authorization", "Bearer " + getAuthenticationToken())
-                .body(entity)
+                .body(entityJson)
                 .retrieve()
-                .body(entity.getClass());
+                .body(String.class);
 
-        return (E) savedEntity;
+        return resultJson;
     }
 
     public void delete(String entityName, Object entity) {
@@ -237,29 +237,5 @@ public class RestInvoker {
 
     private String getAuthenticationToken() {
         return authToken;
-    }
-
-    private static <E> ParameterizedTypeReference<List<E>> getEntityListTypeRef(Class<E> entityClass) {
-        return new ParameterizedTypeReference<>() {
-            @Override
-            public Type getType() {
-                return new ParameterizedType() {
-                    @Override
-                    public Type getRawType() {
-                        return List.class;
-                    }
-
-                    @Override
-                    public Type getOwnerType() {
-                        return null;
-                    }
-
-                    @Override
-                    public Type[] getActualTypeArguments() {
-                        return new Type[]{entityClass};
-                    }
-                };
-            }
-        };
     }
 }

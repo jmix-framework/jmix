@@ -3,13 +3,10 @@ package test_support.entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
-import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.annotation.Store;
+import io.jmix.core.metamodel.annotation.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.OffsetDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Store(name = "restService1")
@@ -37,6 +34,9 @@ public class Customer {
     private String email;
 
     private CustomerRegion region;
+
+    @Composition
+    private Set<CustomerContact> contacts;
 
     public String getEmail() {
         return email;
@@ -68,6 +68,14 @@ public class Customer {
 
     public void setRegion(CustomerRegion region) {
         this.region = region;
+    }
+
+    public Set<CustomerContact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Set<CustomerContact> contacts) {
+        this.contacts = contacts;
     }
 
     //    public OffsetDateTime getLastModifiedDate() {

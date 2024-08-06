@@ -18,4 +18,7 @@
     <fetchPlan entity="Customer" name="customer-with-region" extends="_base">
         <property name="region" fetchPlan="_base"/>
     </fetchPlan>
+    <fetchPlan entity="Customer" name="customer-with-contacts" extends="_base">
+        <property name="contacts" fetchPlan="_base"/>
+    </fetchPlan>
 </fetchPlans>

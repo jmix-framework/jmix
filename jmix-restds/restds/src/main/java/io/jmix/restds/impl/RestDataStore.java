@@ -21,6 +21,7 @@ import io.jmix.core.SaveContext;
 import io.jmix.core.Sort;
 import io.jmix.core.ValueLoadContext;
 import io.jmix.core.datastore.AbstractDataStore;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -40,14 +41,16 @@ import java.util.stream.Collectors;
 public class RestDataStore extends AbstractDataStore {
 
     private final ApplicationContext applicationContext;
+    private final RestSerialization restSerialization;
     private final RestFilterBuilder restFilterBuilder;
 
     protected String storeName;
 
     private RestInvoker restInvoker;
 
-    public RestDataStore(ApplicationContext applicationContext, RestFilterBuilder restFilterBuilder) {
+    public RestDataStore(ApplicationContext applicationContext, RestSerialization restSerialization, RestFilterBuilder restFilterBuilder) {
         this.applicationContext = applicationContext;
+        this.restSerialization = restSerialization;
         this.restFilterBuilder = restFilterBuilder;
     }
 
@@ -63,7 +66,9 @@ public class RestDataStore extends AbstractDataStore {
         String fetchPlan = context.getFetchPlan() == null ? null : context.getFetchPlan().getName();
 
         RestInvoker.LoadParams params = new RestInvoker.LoadParams(entityName, id, fetchPlan);
-        Object entity = restInvoker.load(entityClass, params);
+        Object entity = restSerialization.fromJson(
+                restInvoker.load(params),
+                entityClass);
 
         if (entity != null) {
             entityStates.setNew(entity, false);
@@ -85,7 +90,9 @@ public class RestDataStore extends AbstractDataStore {
                 createRestSort(context.getQuery().getSort()),
                 createRestFilter(context.getQuery()),
                 context.getFetchPlan() == null ? null : context.getFetchPlan().getName());
-        List<Object> entities = restInvoker.loadList(entityClass, params);
+        List<Object> entities = restSerialization.fromJsonCollection(
+                restInvoker.loadList(params),
+                entityClass);
 
         for (Object entity : entities) {
             entityStates.setNew(entity, false);
@@ -126,12 +133,19 @@ public class RestDataStore extends AbstractDataStore {
         Set<Object> saved = new HashSet<>();
         for (Object entity : context.getEntitiesToSave()) {
             MetaClass metaClass = metadata.getClass(entity);
-            Object savedEntity;
+            String entityJson = restSerialization.toJson(entity);
+            String savedEntityJson;
             if (entityStates.isNew(entity)) {
-                savedEntity = restInvoker.create(metaClass.getName(), entity);
+                savedEntityJson = restInvoker.create(metaClass.getName(), entityJson);
             } else {
-                savedEntity = restInvoker.update(metaClass.getName(), entity);
+                Object id = EntityValues.getId(entity);
+                if (id == null) {
+                    throw new IllegalArgumentException("Entity id is null");
+                }
+                String entityId = id.toString();
+                savedEntityJson = restInvoker.update(metaClass.getName(), entityId, entityJson);
             }
+            Object savedEntity = restSerialization.fromJson(savedEntityJson, entity.getClass());
             entityStates.setNew(savedEntity, false);
             saved.add(savedEntity);
         }

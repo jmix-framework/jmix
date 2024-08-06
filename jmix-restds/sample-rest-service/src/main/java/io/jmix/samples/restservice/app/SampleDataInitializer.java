@@ -2,7 +2,9 @@ package io.jmix.samples.restservice.app;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.security.Authenticated;
+import io.jmix.samples.restservice.entity.ContactType;
 import io.jmix.samples.restservice.entity.Customer;
+import io.jmix.samples.restservice.entity.CustomerContact;
 import io.jmix.samples.restservice.entity.CustomerRegion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class SampleDataInitializer {
@@ -47,11 +50,26 @@ public class SampleDataInitializer {
     public void createCustomers(List<CustomerRegion> regions) {
         log.info("Creating customers");
         Customer customer = dataManager.create(Customer.class);
+        customer.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         customer.setFirstName("Robert");
         customer.setLastName("Taylor");
         customer.setEmail("robert@example.com");
         customer.setRegion(regions.get(0));
-        dataManager.save(customer);
+
+        // create and save two customer contacts
+        CustomerContact contact1 = dataManager.create(CustomerContact.class);
+        contact1.setCustomer(customer);
+        contact1.setContactType(ContactType.PHONE);
+        contact1.setContactValue("555-555-5555");
+        contact1.setPreferred(true);
+
+        CustomerContact contact2 = dataManager.create(CustomerContact.class);
+        contact2.setCustomer(customer);
+        contact2.setContactType(ContactType.EMAIL);
+        contact2.setContactValue("robert@example.com");
+
+        dataManager.save(customer, contact1, contact2);
+
         log.info("Customers created");
     }
 }

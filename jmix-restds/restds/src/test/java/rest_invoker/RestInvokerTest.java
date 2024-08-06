@@ -21,6 +21,7 @@ import io.jmix.core.Metadata;
 import io.jmix.restds.RestDsConfiguration;
 import io.jmix.restds.impl.RestInvoker;
 import io.jmix.restds.impl.RestConnectionParams;
+import io.jmix.restds.impl.RestSerialization;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +46,8 @@ class RestInvokerTest {
     ApplicationContext applicationContext;
     @Autowired
     Metadata metadata;
+    @Autowired
+    RestSerialization restSerialization;
 
     RestInvoker restInvoker;
 
@@ -60,12 +63,16 @@ class RestInvokerTest {
     @Test
     void testLoad() {
         var loadListParams = new RestInvoker.LoadListParams("Customer", 0, 0, null, null, null);
-        List<Customer> customers = restInvoker.loadList(Customer.class, loadListParams);
+        List<Customer> customers = restSerialization.fromJsonCollection(
+                restInvoker.loadList(loadListParams),
+                Customer.class);
 
         assertThat(customers).isNotEmpty();
 
         var loadParams = new RestInvoker.LoadParams("Customer", customers.get(0).getId());
-        Customer customer = restInvoker.load(Customer.class, loadParams);
+        Customer customer = restSerialization.fromJson(
+                restInvoker.load(loadParams),
+                Customer.class);
 
         assertThat(customer).isEqualTo(customers.get(0));
     }
@@ -77,7 +84,9 @@ class RestInvokerTest {
         customer.setLastName(newName);
         customer.setEmail("test@mail.com");
 
-        Customer createdCustomer = restInvoker.create("Customer", customer);
+        Customer createdCustomer = restSerialization.fromJson(
+                restInvoker.create("Customer", restSerialization.toJson(customer)),
+                Customer.class);
 
         assertThat(createdCustomer).isNotNull();
         assertThat(createdCustomer.getLastName()).isEqualTo(newName);
@@ -85,7 +94,9 @@ class RestInvokerTest {
 
         createdCustomer.setLastName("updated-cust-" + LocalDateTime.now());
 
-        Customer updatedCustomer = restInvoker.update("Customer", createdCustomer);
+        Customer updatedCustomer = restSerialization.fromJson(
+                restInvoker.update("Customer", createdCustomer.getId().toString(), restSerialization.toJson(createdCustomer)),
+                Customer.class);
 
         assertThat(updatedCustomer).isNotNull();
         assertThat(updatedCustomer.getLastName()).isEqualTo(createdCustomer.getLastName());
@@ -93,9 +104,30 @@ class RestInvokerTest {
 
         restInvoker.delete("Customer", updatedCustomer);
 
-        Customer deletedCustomer = restInvoker.load(Customer.class, new RestInvoker.LoadParams("Customer", updatedCustomer.getId()));
+        Customer deletedCustomer = restSerialization.fromJson(
+                restInvoker.load(new RestInvoker.LoadParams("Customer", updatedCustomer.getId())),
+                Customer.class);
 
         assertThat(deletedCustomer).isNull();
+    }
+
+    @Test
+    void testCreate() {
+        Customer customer = metadata.create(Customer.class);
+        String newName = "new-cust-" + LocalDateTime.now();
+        customer.setLastName(newName);
+        customer.setEmail("test@mail.com");
+
+        String entityJson = restSerialization.toJson(customer);
+        String createdJson = restInvoker.create("Customer", entityJson);
+
+        assertThat(createdJson).isNotNull();
+
+        Customer createdCustomer = restSerialization.fromJson(createdJson, Customer.class);
+
+        assertThat(createdCustomer).isNotNull();
+        assertThat(createdCustomer.getLastName()).isEqualTo(newName);
+        assertThat(createdCustomer.getEmail()).isEqualTo(customer.getEmail());
     }
 
     @Test
@@ -105,7 +137,7 @@ class RestInvokerTest {
         customer.setLastName(newName);
         customer.setEmail("test@mail.com");
 
-        restInvoker.create("Customer", customer);
+        restInvoker.create("Customer", restSerialization.toJson(customer));
 
         long customerCount = restInvoker.count("Customer", null);
 
@@ -134,13 +166,13 @@ class RestInvokerTest {
         String newName1 = "new-cust-1-" + LocalDateTime.now();
         customer1.setLastName(newName1);
         customer1.setEmail("test@mail.com");
-        restInvoker.create("Customer", customer1);
+        restInvoker.create("Customer", restSerialization.toJson(customer1));
 
         Customer customer2 = metadata.create(Customer.class);
         String newName2 = "new-cust-2-" + LocalDateTime.now();
         customer2.setLastName(newName2);
         customer2.setEmail("test@mail.com");
-        restInvoker.create("Customer", customer2);
+        restInvoker.create("Customer", restSerialization.toJson(customer2));
 
         String filter = """
                 {
@@ -156,7 +188,9 @@ class RestInvokerTest {
 
 
         var loadListParams = new RestInvoker.LoadListParams("Customer", 0, 0, null, filter, null);
-        List<Customer> customers = restInvoker.loadList(Customer.class, loadListParams);
+        List<Customer> customers = restSerialization.fromJsonCollection(
+                restInvoker.loadList(loadListParams),
+                Customer.class);
 
         assertThat(customers).size().isEqualTo(1);
         assertThat(customers.get(0)).isEqualTo(customer2);

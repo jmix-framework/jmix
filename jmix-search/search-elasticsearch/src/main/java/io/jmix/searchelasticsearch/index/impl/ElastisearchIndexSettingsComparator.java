@@ -27,7 +27,7 @@ import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ElastisearchIndexSettingsComparator extends IndexSettingsComparator<IndexState, ElasticsearchClient, JsonpSerializable> {
+public class ElastisearchIndexSettingsComparator extends IndexSettingsComparator<IndexState, IndexSettings, ElasticsearchClient, JsonpSerializable> {
     private final ElasticsearchIndexSettingsProvider settingsProvider;
 
     public ElastisearchIndexSettingsComparator(ElasticsearchJsonpSerializer jsonpSerializer,
@@ -38,22 +38,13 @@ public class ElastisearchIndexSettingsComparator extends IndexSettingsComparator
     }
 
     @Override
-    protected JsonpSerializable getAppliedIndexSettings(IndexState currentIndexState, String indexName) {
-        IndexSettings allAppliedSettings = currentIndexState.settings();
+    protected IndexSettings extractAllAppliedIndexSettings(IndexState currentIndexState) {
+        return currentIndexState.settings();
+    }
 
-        if (allAppliedSettings == null) {
-            throw new IllegalArgumentException(
-                    "No info about all applied settings for index '" + indexName + "'"
-            );
-        }
-
-        IndexSettings appliedIndexSettings = allAppliedSettings.index();
-        if (appliedIndexSettings == null) {
-            throw new IllegalArgumentException(
-                    "No info about applied index settings for index '" + indexName + "'"
-            );
-        }
-        return appliedIndexSettings;
+    @Override
+    protected IndexSettings extractAppliedIndexSettings(IndexSettings allAppliedSettings) {
+        return allAppliedSettings.index();
     }
 
     @Override

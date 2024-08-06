@@ -38,6 +38,9 @@ import java.util.function.Supplier;
  *          customersDc.getMutableItems().addAll(customers);
  *          notifications.create("Customers loaded: " + customers.size()).show();
  *      })
+ *      .withExceptionHandler(ex -> {
+ *          errorTextField.setValue(ex.getMessage());
+ *      })
  *      .supplyAsync();}</pre>
  * <p>
  * By default, asynchronous tasks are executed with the default timeout configured by the

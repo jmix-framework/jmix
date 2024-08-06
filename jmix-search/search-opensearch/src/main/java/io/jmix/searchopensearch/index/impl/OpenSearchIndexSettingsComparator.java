@@ -1,0 +1,61 @@
+/*
+ * Copyright 2024 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.searchopensearch.index.impl;
+
+import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.impl.IndexSettingsComparator;
+import io.jmix.search.index.impl.JsonNodesComparator;
+import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
+import org.opensearch.client.json.JsonpSerializable;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch.indices.IndexSettings;
+import org.opensearch.client.opensearch.indices.IndexState;
+import org.springframework.stereotype.Component;
+
+@Component
+public class OpenSearchIndexSettingsComparator extends IndexSettingsComparator<IndexState, OpenSearchClient, JsonpSerializable> {
+
+    private final OpenSearchIndexSettingsProvider settingsProvider;
+    public OpenSearchIndexSettingsComparator(OpenSearchJsonpSerializer jsonpSerializer, JsonNodesComparator jsonNodesComparator, OpenSearchIndexSettingsProvider settingsProvider) {
+        super(jsonpSerializer, jsonNodesComparator);
+        this.settingsProvider = settingsProvider;
+    }
+
+    @Override
+    protected JsonpSerializable getAppliedIndexSettings(IndexState currentIndexState, String indexName) {
+        IndexSettings allAppliedSettings = currentIndexState.settings();
+
+        if (allAppliedSettings == null) {
+            throw new IllegalArgumentException(
+                    "No info about all applied settings for index '" + indexName + "'"
+            );
+        }
+
+        IndexSettings appliedIndexSettings = allAppliedSettings.index();
+        if (appliedIndexSettings == null) {
+            throw new IllegalArgumentException(
+                    "No info about applied index settings for index '" + indexName + "'"
+            );
+        }
+        return appliedIndexSettings;
+    }
+
+    @Override
+    protected JsonpSerializable getExpectedIndexSettings(IndexConfiguration indexConfiguration) {
+        return settingsProvider.getSettingsForIndex(indexConfiguration);
+    }
+}

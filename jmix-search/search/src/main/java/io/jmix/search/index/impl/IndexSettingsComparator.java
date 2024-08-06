@@ -16,22 +16,36 @@
 
 package io.jmix.search.index.impl;
 
-import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.search.index.IndexConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+public abstract class IndexSettingsComparator<IndexStateType, ClientType, JsonpSerializableType> {
+    private static final Logger log = LoggerFactory.getLogger(IndexSettingsComparator.class);
 
-@Component("search_SearchSettingsComparator")
-public class IndexSettingsComparator {
-    public SettingsComparingResult compare(Map<String, String> searchServerSettings, Map<String, String> applicationSettings) {
+    private final JsonpSerializer<JsonpSerializableType, ClientType> jsonpSerializer;
+    private final JsonNodesComparator jsonNodesComparator;
 
-        long unmatchedSettings = applicationSettings.keySet().stream().filter(key -> {
-            String actualValue = applicationSettings.get(key);
-            String currentValue = searchServerSettings.get(key);
-            return !actualValue.equals(currentValue);
-        }).count();
-
-        return unmatchedSettings == 0 ? SettingsComparingResult.EQUAL : SettingsComparingResult.NOT_COMPATIBLE;
+    public IndexSettingsComparator(JsonpSerializer<JsonpSerializableType, ClientType> jsonpSerializer, JsonNodesComparator jsonNodesComparator) {
+        this.jsonpSerializer = jsonpSerializer;
+        this.jsonNodesComparator = jsonNodesComparator;
     }
+
+    public  SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, IndexStateType currentIndexState, ClientType client) {
+
+        ObjectNode expectedSettingsNode = jsonpSerializer.toObjectNode(getExpectedIndexSettings(indexConfiguration), client);
+        ObjectNode appliedSettingsNode = jsonpSerializer.toObjectNode(getAppliedIndexSettings(currentIndexState, indexConfiguration.getIndexName()), client);
+
+        log.debug("Settings of index '{}':\nExpected: {}\nApplied: {}",
+                indexConfiguration.getIndexName(), expectedSettingsNode, appliedSettingsNode);
+
+        return jsonNodesComparator.nodeContains(appliedSettingsNode, expectedSettingsNode)? SettingsComparingResult.EQUAL: SettingsComparingResult.NOT_COMPATIBLE;
+    }
+
+    protected abstract JsonpSerializableType getAppliedIndexSettings(IndexStateType indexConfiguration, String indexName);
+
+    protected abstract JsonpSerializableType getExpectedIndexSettings(IndexConfiguration indexConfiguration);
 
     public enum SettingsComparingResult implements ConfigurationPartComparingResult{
         EQUAL,

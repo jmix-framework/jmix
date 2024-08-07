@@ -48,6 +48,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
 
         def zoo = dataManager.create(Zoo)
         zoo.name = "Zoo"
+        zoo.city = "City"
         zoo.animals = new LinkedList<>()
         List<Animal> animals = new LinkedList<>()
         for (int i = 1; i <= 10; i++) {

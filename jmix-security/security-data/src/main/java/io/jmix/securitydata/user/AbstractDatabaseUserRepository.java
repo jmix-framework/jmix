@@ -40,6 +40,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -255,6 +256,8 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
             authority = roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(roleAssignment.getRoleCode());
         } else if (RoleAssignmentRoleType.ROW_LEVEL.equals(roleAssignment.getRoleType())) {
             authority = roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(roleAssignment.getRoleCode());
+        } else {
+            authority = new SimpleGrantedAuthority(roleAssignment.getRoleType().toUpperCase() + "_" + roleAssignment.getRoleCode());
         }
         return authority;
     }

@@ -113,8 +113,14 @@ public class ResourcePolicyViewUtils {
     }
 
     public Map<String, String> getViewsOptionsMap() {
+        return getViewsOptionsMap(true);
+    }
+
+    public Map<String, String> getViewsOptionsMap(boolean includeWildcard) {
         Map<String, String> result = new LinkedHashMap<>();
-        result.put("*", messages.getMessage(ResourcePolicyViewUtils.class, "allViews"));
+        if (includeWildcard) {
+            result.put("*", messages.getMessage(ResourcePolicyViewUtils.class, "allViews"));
+        }
         TreeMap<String, String> map = viewRegistry.getViewInfos().stream()
                 .collect(Collectors.toMap(
                         ViewInfo::getId,

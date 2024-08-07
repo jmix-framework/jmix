@@ -18,6 +18,7 @@ package io.jmix.securityflowui.view.resourcerole;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
@@ -29,20 +30,21 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
-import io.jmix.security.model.ResourcePolicy;
-import io.jmix.security.model.ResourcePolicyEffect;
-import io.jmix.security.model.ResourceRole;
-import io.jmix.security.model.SecurityScope;
+import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.securitydata.entity.ResourcePolicyEntity;
 import io.jmix.securitydata.entity.ResourceRoleEntity;
+import io.jmix.securityflowui.model.RoleSource;
 import io.jmix.securityflowui.model.*;
 import io.jmix.securityflowui.view.resourcepolicy.*;
+import jakarta.annotation.Nullable;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +99,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     private ResourceRoleRepository roleRepository;
     @Autowired
     private UrlParamSerializer urlParamSerializer;
+    @Autowired(required = false)
+    private List<ResourcePolicyTypeProvider> resourcePolicyTypeProviders;
 
     private boolean openedByCreateAction = false;
     private final Set<UUID> forRemove = new HashSet<>();
@@ -152,6 +156,35 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         if (createGraphQLPolicyAction != null) {
             createGraphQLPolicyAction.setVisible(isGraphQLEnabled());
         }
+
+        initAdditionalResourcePolicyTypes();
+    }
+
+    private void initAdditionalResourcePolicyTypes() {
+        if (resourcePolicyTypeProviders != null) {
+            for (ResourcePolicyTypeProvider resourcePolicyTypeProvider : resourcePolicyTypeProviders) {
+                BaseAction action = getCreatePolicyAction(resourcePolicyTypeProvider);
+                createDropdownButton.addItem(action.getId(), action);
+            }
+        }
+    }
+
+    private BaseAction getCreatePolicyAction(ResourcePolicyTypeProvider resourcePolicyTypeProvider) {
+        BaseAction action = new BaseAction(RandomStringUtils.randomAlphabetic(5)) {
+            @Override
+            public void actionPerform(Component component) {
+                dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicyTypeProvider.getCreatePolicyViewClass())
+                        .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)
+                        .open();
+            }
+
+            @Nullable
+            @Override
+            public String getText() {
+                return resourcePolicyTypeProvider.getLocalizedPolicyName();
+            }
+        };
+        return action;
     }
 
     private void setupRoleReadOnlyMode(boolean isDatabaseSource) {
@@ -214,6 +247,21 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 .setKey("action")
                 .setHeader(messageTools.getPropertyCaption(resourcePoliciesDc.getEntityMetaClass(), "action"))
                 .setSortable(true);
+        if (isEffectColumnVisible()) {
+            resourcePoliciesTable.addColumn((ValueProvider<ResourcePolicyModel, String>) resourcePolicyModel ->
+                            messageBundle.getMessage("roleEffect." + resourcePolicyModel.getEffect()))
+                    .setKey("effect")
+                    .setHeader(messageTools.getPropertyCaption(resourcePoliciesDc.getEntityMetaClass(), "effect"))
+                    .setSortable(true);
+        }
+    }
+
+    private boolean isEffectColumnVisible() {
+        if (resourcePolicyTypeProviders != null) {
+            return resourcePolicyTypeProviders.stream()
+                    .anyMatch(ResourcePolicyTypeProvider::isEffectColumnVisible);
+        }
+        return false;
     }
 
     private void initScopesField() {
@@ -359,21 +407,30 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     private Class<? extends StandardDetailView<ResourcePolicyModel>> getResourcePolicyDetailViewClass(
             ResourcePolicyModel resourcePolicyModel) {
         switch (resourcePolicyModel.getType()) {
-            case MENU:
+            case ResourcePolicyType.MENU:
                 return MenuResourcePolicyModelDetailView.class;
-            case VIEW:
+            case ResourcePolicyType.SCREEN:
                 return ViewResourcePolicyModelDetailView.class;
-            case ENTITY:
+            case ResourcePolicyType.ENTITY:
                 return EntityResourcePolicyModelDetailView.class;
-            case ENTITY_ATTRIBUTE:
+            case ResourcePolicyType.ENTITY_ATTRIBUTE:
                 return EntityAttributeResourcePolicyModelDetailView.class;
-            case GRAPHQL:
+            case ResourcePolicyType.GRAPHQL:
                 return GraphQLResourcePolicyModelDetailView.class;
-            case SPECIFIC:
+            case ResourcePolicyType.SPECIFIC:
                 return SpecificResourcePolicyModelDetailView.class;
-            default:
-                return ResourcePolicyModelDetailView.class;
         }
+
+        if (resourcePolicyTypeProviders != null) {
+            for (ResourcePolicyTypeProvider resourcePolicyTypeProvider : resourcePolicyTypeProviders) {
+                if (resourcePolicyTypeProvider.supports(resourcePolicyModel.getType())) {
+                    return resourcePolicyTypeProvider.getEditPolicyViewClass();
+                }
+            }
+        }
+
+        return ResourcePolicyModelDetailView.class;
+
     }
 
     @Install(to = "resourcePoliciesTable.remove", subject = "afterActionPerformedHandler")
@@ -462,7 +519,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 policyEntity.setRole(roleEntity);
             }
             policyEntity = getDataContext().merge(policyEntity);
-            policyEntity.setType(policyModel.getTypeId());
+            policyEntity.setType(policyModel.getType());
             policyEntity.setResource(policyModel.getResource());
             policyEntity.setAction(policyModel.getAction());
             policyEntity.setEffect(policyModel.getEffect());

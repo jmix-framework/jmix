@@ -260,6 +260,9 @@ dependencies {
         api "io.jmix.translations:jmix-translations-es:$freeVersion"
         api "io.jmix.translations:jmix-translations-pt-br:$freeVersion"
 
+        api "io.jmix.uiconstraints:jmix-uiconstraints:$premiumVersion"
+        api "io.jmix.uiconstraints:jmix-uiconstraints-starter:$premiumVersion"
+
         api "io.jmix.webdav:jmix-webdav:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"
         api "io.jmix.webdav:jmix-webdav-starter:$premiumVersion"

@@ -137,7 +137,7 @@ public final class UiComponentUtils {
                 return getComponentRecursively(getOwnComponents(container), id, idComparator);
             } else {
                 Component innerComponent = innerComponentOpt.get();
-                if (isContainer(innerComponent)) {
+                if (isContainer(innerComponent) || innerComponent instanceof Fragment) {
                     String subPath = ValuePathHelper.pathSuffix(elements);
                     return findComponent(innerComponent, subPath);
                 }

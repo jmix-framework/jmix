@@ -101,8 +101,10 @@ public class ResourceRole extends BaseRole {
          */
         private final Map<String, Map<String, List<ResourcePolicy>>> policiesByTypeAndResource = new ConcurrentHashMap<>();
 
+        private final Map<String, List<ResourcePolicy>> policiesByType;
+
         ResourcePoliciesIndex(Collection<ResourcePolicy> policies) {
-            Map<String, List<ResourcePolicy>> policiesByType = policies.stream()
+            policiesByType = policies.stream()
                     .collect(Collectors.groupingBy(ResourcePolicy::getType));
             for (Map.Entry<String, List<ResourcePolicy>> entry : policiesByType.entrySet()) {
                 Map<String, List<ResourcePolicy>> policiesByResource = entry.getValue().stream()
@@ -118,6 +120,13 @@ public class ResourceRole extends BaseRole {
         public List<ResourcePolicy> getPoliciesByTypeAndResource(String policyType, String resource) {
             Map<String, List<ResourcePolicy>> policiesWithType = policiesByTypeAndResource.getOrDefault(policyType, new HashMap<>());
             return policiesWithType.getOrDefault(resource, new ArrayList<>());
+        }
+
+        /**
+         * Returns policies of the specified type.
+         */
+        public List<ResourcePolicy> getPoliciesByType(String policyType) {
+            return policiesByType.getOrDefault(policyType, new ArrayList<>());
         }
     }
 }

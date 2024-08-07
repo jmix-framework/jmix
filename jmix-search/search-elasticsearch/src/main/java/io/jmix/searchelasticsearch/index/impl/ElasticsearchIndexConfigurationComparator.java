@@ -17,19 +17,12 @@
 package io.jmix.searchelasticsearch.index.impl;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.elasticsearch.indices.IndexState;
-import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.json.JsonpSerializable;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.IndexConfigurationComparator;
-import io.jmix.search.index.impl.IndexMappingComparator;
-import io.jmix.search.index.impl.IndexSettingsComparator;
-import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 public class ElasticsearchIndexConfigurationComparator

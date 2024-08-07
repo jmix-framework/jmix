@@ -16,9 +16,9 @@
 
 package io.jmix.pivottableflowui.kit.component.model.meta;
 
-public interface DerivedProperty {
+public interface Property {
 
-    void setCaption(String caption);
+    void setName(String name);
 
-    void setFunction(String function);
+    void setLocalizedName(String localizedName);
 }

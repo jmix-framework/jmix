@@ -16,9 +16,6 @@
 
 package io.jmix.pivottableflowui.kit.component.model.meta;
 
-public interface DerivedProperty {
-
-    void setCaption(String caption);
-
-    void setFunction(String function);
+public interface Renderer {
+    void setType(io.jmix.pivottableflowui.kit.component.model.Renderer rendererType);
 }

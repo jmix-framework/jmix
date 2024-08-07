@@ -39,11 +39,15 @@ dependencies {
     implementation 'io.swagger.core.v3:swagger-models-jakarta'
     implementation 'io.swagger.core.v3:swagger-core-jakarta'
 
+    testImplementation project(':data')
+    testImplementation project(':eclipselink')
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testImplementation("org.assertj:assertj-core")
+    testImplementation 'org.assertj:assertj-core'
     testImplementation 'org.springframework:spring-test'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
+    testImplementation 'org.apache.commons:commons-dbcp2'
 }

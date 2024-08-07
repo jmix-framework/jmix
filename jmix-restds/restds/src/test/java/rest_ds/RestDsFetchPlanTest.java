@@ -29,7 +29,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.TestRestDsConfiguration;
 import test_support.entity.Customer;
+import test_support.entity.CustomerRegion;
+import test_support.entity.Order;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,4 +83,49 @@ public class RestDsFetchPlanTest {
 
         assertThat(customer.getRegion()).isNotNull();
     }
+
+    @Test
+    void testOrderCustomerBaseFetchPlan() {
+        Order order = dataManager.create(Order.class);
+        order.setDate(LocalDate.now());
+        order.setNum("111");
+
+        Customer customer = dataManager.create(Customer.class);
+        customer.setFirstName("John");
+        customer.setLastName("Doe");
+        order.setCustomer(customer);
+
+        dataManager.save(order, customer);
+
+        Order loadedOrder = dataManager.load(Order.class).id(order.getId()).fetchPlan("order-with-customer").one();
+
+        assertThat(loadedOrder.getCustomer()).isNotNull();
+        assertThat(loadedOrder.getCustomer().getLastName()).isEqualTo("Doe");
+    }
+
+    @Test
+    void testOrderCustomerWithRegionFetchPlan() {
+        Order order = dataManager.create(Order.class);
+        order.setDate(LocalDate.now());
+        order.setNum("111");
+
+        CustomerRegion region = dataManager.create(CustomerRegion.class);
+        region.setName("Region 1");
+        dataManager.save(region);
+
+        Customer customer = dataManager.create(Customer.class);
+        customer.setFirstName("John");
+        customer.setLastName("Doe");
+        customer.setRegion(region);
+
+        order.setCustomer(customer);
+        dataManager.save(order, customer);
+
+        Order loadedOrder = dataManager.load(Order.class).id(order.getId()).fetchPlan("order-with-customer-and-region").one();
+
+        assertThat(loadedOrder.getCustomer()).isNotNull();
+        assertThat(loadedOrder.getCustomer().getRegion()).isNotNull();
+        assertThat(loadedOrder.getCustomer().getRegion().getName()).isEqualTo("Region 1");
+    }
+
 }

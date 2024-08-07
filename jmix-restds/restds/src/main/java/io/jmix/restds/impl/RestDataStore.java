@@ -23,6 +23,7 @@ import io.jmix.core.ValueLoadContext;
 import io.jmix.core.datastore.AbstractDataStore;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -63,7 +64,7 @@ public class RestDataStore extends AbstractDataStore {
         }
         String entityName = context.getEntityMetaClass().getName();
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
-        String fetchPlan = context.getFetchPlan() == null ? null : context.getFetchPlan().getName();
+        String fetchPlan = extractFetchPlan(context);
 
         RestInvoker.LoadParams params = new RestInvoker.LoadParams(entityName, id, fetchPlan);
         Object entity = restSerialization.fromJson(
@@ -83,13 +84,14 @@ public class RestDataStore extends AbstractDataStore {
         }
         String entityName = context.getEntityMetaClass().getName();
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
+        String fetchPlan = extractFetchPlan(context);
 
         RestInvoker.LoadListParams params = new RestInvoker.LoadListParams(entityName,
                 context.getQuery().getMaxResults(),
                 context.getQuery().getFirstResult(),
                 createRestSort(context.getQuery().getSort()),
                 createRestFilter(context.getQuery()),
-                context.getFetchPlan() == null ? null : context.getFetchPlan().getName());
+                fetchPlan);
         List<Object> entities = restSerialization.fromJsonCollection(
                 restInvoker.loadList(params),
                 entityClass);
@@ -98,6 +100,13 @@ public class RestDataStore extends AbstractDataStore {
             entityStates.setNew(entity, false);
         }
         return entities;
+    }
+
+    @Nullable
+    private String extractFetchPlan(LoadContext<?> context) {
+        String fetchPlan = context.getFetchPlan() == null ?
+                null : StringUtils.defaultIfEmpty(context.getFetchPlan().getName(), null);
+        return fetchPlan;
     }
 
     @Nullable

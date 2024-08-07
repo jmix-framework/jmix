@@ -21,4 +21,10 @@
     <fetchPlan entity="Customer" name="customer-with-contacts" extends="_base">
         <property name="contacts" fetchPlan="_base"/>
     </fetchPlan>
+    <fetchPlan entity="Order_" name="order-with-customer" extends="_base">
+        <property name="customer" fetchPlan="_base"/>
+    </fetchPlan>
+    <fetchPlan entity="Order_" name="order-with-customer-and-region" extends="_base">
+        <property name="customer" fetchPlan="customer-with-region"/>
+    </fetchPlan>
 </fetchPlans>

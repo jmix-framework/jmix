@@ -16,68 +16,39 @@
 
 package io.jmix.search.index.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.mapping.IndexMappingConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+public abstract class IndexConfigurationComparator<
+        ClientType,
+        IndexStateType,
+        IndexSettingsType,
+        JsonpSerializableType> {
+    private final IndexSettingsComparator<IndexStateType, IndexSettingsType,ClientType, JsonpSerializableType> settingsComparator;
+    private final IndexMappingComparator<IndexStateType, JsonpSerializableType, ClientType> mappingComparator;
+    protected final MetadataResolver<ClientType, IndexStateType, JsonpSerializableType> metadataResolver;
 
-public abstract class IndexConfigurationComparator<IndexStateType, TypeMappingType, IndexSettingsType> {
-    private final IndexMappingComparator mappingComparator;
-    private final IndexSettingsComparator settingsComparator;
-
-    public IndexConfigurationComparator(IndexMappingComparator searchMappingChecker, IndexSettingsComparator settingsComparator) {
-        this.mappingComparator = searchMappingChecker;
+    public IndexConfigurationComparator(
+            IndexMappingComparator<IndexStateType, JsonpSerializableType, ClientType> mappingComparator,
+            IndexSettingsComparator<IndexStateType, IndexSettingsType,ClientType, JsonpSerializableType> settingsComparator, MetadataResolver<ClientType, IndexStateType, JsonpSerializableType> metadataResolver) {
+        this.mappingComparator = mappingComparator;
         this.settingsComparator = settingsComparator;
+        this.metadataResolver = metadataResolver;
     }
-
-    private static final Logger log = LoggerFactory.getLogger(IndexConfigurationComparator.class);
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
-    public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration) {
-        IndexStateType indexState  = getIndexState(indexConfiguration);
-        IndexMappingComparator.MappingComparingResult mappingState = compareMappings(indexConfiguration.getMapping(), extractMapping(indexState), indexConfiguration.getIndexName());
-        IndexSettingsComparator.SettingsComparingResult settingsState = compareSettings(indexConfiguration, extractSettings(indexState));
+    public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration, ClientType client) {
+        IndexStateType indexState  = getIndexState(indexConfiguration, client);
+        IndexMappingComparator.MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexState, client);
+        IndexSettingsComparator.SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexState, client);
         return new ConfigurationComparingResult(mappingState, settingsState);
     }
 
-    protected IndexMappingComparator.MappingComparingResult compareMappings(IndexMappingConfiguration indexMappingConfiguration, TypeMappingType typeMapping, String indexName) {
-
-        Map<String, Object> searchIndexMapping = convertInexMappingToMap(typeMapping);
-        Map<String, Object> applicationMapping = objectMapper.convertValue(
-                indexMappingConfiguration,
-                new TypeReference<Map<String, Object>>() {
-                }
-        );
-        log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
-                indexName, applicationMapping, searchIndexMapping);
-        return mappingComparator.compare(searchIndexMapping, applicationMapping);
-    }
-
-    protected IndexSettingsComparator.SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, IndexSettingsType serverIndexSettings) {
-        Map<String, String> applicationSettings = convertToMap(getApplicationSettings(indexConfiguration));
-        Map<String, String> actualSettings = convertToMap(serverIndexSettings);
-        return settingsComparator.compare(applicationSettings, actualSettings);
-    }
-
-    protected abstract IndexSettingsType getApplicationSettings(IndexConfiguration indexConfiguration);
-
-    protected abstract Map<String, String> convertToMap(IndexSettingsType serverIndexSettings);
-
-    protected abstract IndexSettingsType extractSettings(IndexStateType indexState);
-
-    protected abstract TypeMappingType extractMapping(IndexStateType indexState);
-
-    protected abstract IndexStateType getIndexState(IndexConfiguration indexConfiguration);
-
-    protected abstract Map<String, Object> convertInexMappingToMap(TypeMappingType typeMapping);
+    protected abstract IndexStateType getIndexState(IndexConfiguration indexConfiguration, ClientType client);
 
 
-    static class ConfigurationComparingResult {
+    public static class ConfigurationComparingResult {
         private final IndexMappingComparator.MappingComparingResult mappingComparingResult;
         private final IndexSettingsComparator.SettingsComparingResult settingsComparingResult;
 

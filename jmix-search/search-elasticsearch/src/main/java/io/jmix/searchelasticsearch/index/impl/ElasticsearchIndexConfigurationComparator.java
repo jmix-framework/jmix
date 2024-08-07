@@ -16,48 +16,34 @@
 
 package io.jmix.searchelasticsearch.index.impl;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
+import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.elasticsearch.indices.IndexState;
-import co.elastic.clients.elasticsearch.transform.Settings;
+import co.elastic.clients.json.JsonpMapper;
+import co.elastic.clients.json.JsonpSerializable;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.IndexConfigurationComparator;
 import io.jmix.search.index.impl.IndexMappingComparator;
 import io.jmix.search.index.impl.IndexSettingsComparator;
+import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-public class ElasticsearchIndexConfigurationComparator extends IndexConfigurationComparator<IndexState, TypeMapping, Settings> {
-    public ElasticsearchIndexConfigurationComparator(IndexMappingComparator searchMappingChecker, IndexSettingsComparator settingsComparator) {
-        super(searchMappingChecker, settingsComparator);
+@Component
+public class ElasticsearchIndexConfigurationComparator
+        extends IndexConfigurationComparator<ElasticsearchClient, IndexState, IndexSettings, JsonpSerializable> {
+
+    public ElasticsearchIndexConfigurationComparator(ElasticsearchIndexMappingComparator searchMappingChecker,
+                                                     ElastisearchIndexSettingsComparator settingsComparator,
+                                                     ElasticsearchMetadataResolver metadataResolver) {
+        super(searchMappingChecker, settingsComparator, metadataResolver);
     }
 
     @Override
-    protected Settings getApplicationSettings(IndexConfiguration indexConfiguration) {
-        return null;
+    protected IndexState getIndexState(IndexConfiguration indexConfiguration, ElasticsearchClient client) {
+        return metadataResolver.getIndexMetadataInternal(indexConfiguration.getIndexName(), client);
     }
 
-    @Override
-    protected Map<String, String> convertToMap(Settings serverIndexSettings) {
-        return null;
-    }
-
-    @Override
-    protected Settings extractSettings(IndexState indexState) {
-        return null;
-    }
-
-    @Override
-    protected TypeMapping extractMapping(IndexState indexState) {
-        return null;
-    }
-
-    @Override
-    protected IndexState getIndexState(IndexConfiguration indexConfiguration) {
-        return null;
-    }
-
-    @Override
-    protected Map<String, Object> convertInexMappingToMap(TypeMapping typeMapping) {
-        return null;
-    }
 }

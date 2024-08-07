@@ -1,10 +1,7 @@
 package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
@@ -17,14 +14,13 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
  * Contains non-platform-specific operations.
  * Interaction with indexes is performed in platform-specific implementations.
  */
-public abstract class BaseIndexManager<IndexStateType, TypeMappingType, IndexSettingsType> implements IndexManager {
+public abstract class BaseIndexManager<ClientType, IndexStateType, IndexSettingsType, JsonpSerializableType> implements IndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(BaseIndexManager.class);
 
@@ -34,19 +30,22 @@ public abstract class BaseIndexManager<IndexStateType, TypeMappingType, IndexSet
 
     protected final ObjectMapper objectMapper;
 
-    protected final IndexConfigurationComparator<IndexStateType, TypeMappingType, IndexSettingsType> indexConfigurationComparator;
+    protected final ClientType client;
 
-    protected final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
-    };
+    protected final IndexConfigurationComparator<ClientType, IndexStateType, IndexSettingsType, JsonpSerializableType> indexConfigurationComparator;
+    protected final MetadataResolver<ClientType, IndexStateType, JsonpSerializableType> metadataResolver;
 
-    protected BaseIndexManager(IndexConfigurationManager indexConfigurationManager,
+    protected BaseIndexManager(ClientType client, IndexConfigurationManager indexConfigurationManager,
                                IndexStateRegistry indexStateRegistry,
                                SearchProperties searchProperties,
-                               IndexConfigurationComparator<IndexStateType, TypeMappingType, IndexSettingsType> indexConfigurationComparator) {
+                               IndexConfigurationComparator<ClientType, IndexStateType, IndexSettingsType, JsonpSerializableType> indexConfigurationComparator,
+                               MetadataResolver<ClientType, IndexStateType, JsonpSerializableType> metadataResolver) {
+        this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.indexStateRegistry = indexStateRegistry;
         this.searchProperties = searchProperties;
         this.indexConfigurationComparator = indexConfigurationComparator;
+        this.metadataResolver = metadataResolver;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -106,7 +105,7 @@ public abstract class BaseIndexManager<IndexStateType, TypeMappingType, IndexSet
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
+            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration, client);
             if (result.isIndexRecreatingRequired()) {
                 status = IndexValidationStatus.IRRELEVANT;
                 indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
@@ -150,15 +149,13 @@ public abstract class BaseIndexManager<IndexStateType, TypeMappingType, IndexSet
         return synchronizeIndexSchema(indexConfiguration, strategy);
     }
 
-    //protected abstract boolean isIndexActual(IndexConfiguration indexConfiguration);
-
     protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         log.info("Synchronize search index '{}' (entity '{}') according to strategy '{}'",
                 indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), strategy);
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
+            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration, client);
             if (result.isIndexRecreatingRequired()) {
                 status = handleIrrelevantIndex(indexConfiguration, strategy);
             } else {
@@ -212,51 +209,6 @@ public abstract class BaseIndexManager<IndexStateType, TypeMappingType, IndexSet
             }
         }
         return status;
-    }
-
-    protected boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) {
-        log.trace("Check if node {} contains {}", containerNode, contentNode);
-        Iterator<Map.Entry<String, JsonNode>> fieldsIterator = contentNode.fields();
-        while (fieldsIterator.hasNext()) {
-            Map.Entry<String, JsonNode> entry = fieldsIterator.next();
-            String fieldName = entry.getKey();
-            log.trace("Check field '{}'", fieldName);
-            JsonNode contentFieldValue = entry.getValue();
-            JsonNode containerFieldValue;
-            if (containerNode.has(fieldName)) {
-                log.trace("Container has field '{}'", fieldName);
-                containerFieldValue = containerNode.get(fieldName);
-            } else {
-                log.trace("Container doesn't have field '{}'. STOP - FALSE", fieldName);
-                return false;
-            }
-
-            if (containerFieldValue == null) {
-                log.trace("Container has NULL field '{}'. STOP - FALSE", fieldName);
-                return false;
-            }
-
-            if (!contentFieldValue.getNodeType().equals(containerFieldValue.getNodeType())) {
-                log.trace("Type of container field ({}) doesn't match the type of content field ({}). STOP - FALSE",
-                        containerFieldValue.getNodeType(), contentFieldValue.getNodeType());
-                return false;
-            }
-
-            if (contentFieldValue.isObject() && containerFieldValue.isObject()) {
-                log.trace("Both container and content field is objects - check nested structure");
-                boolean nestedResult = nodeContains((ObjectNode) containerFieldValue, (ObjectNode) contentFieldValue);
-                if (!nestedResult) {
-                    log.trace("Structures of the nested objects ({}) are different. STOP - FALSE", fieldName);
-                    return false;
-                }
-            }
-
-            if (!containerFieldValue.equals(contentFieldValue)) {
-                return false;
-            }
-        }
-        log.trace("Structures are the same. TRUE");
-        return true;
     }
 
     protected InputStream getMappingAsStream(String indexName, IndexMappingConfiguration mapping) {

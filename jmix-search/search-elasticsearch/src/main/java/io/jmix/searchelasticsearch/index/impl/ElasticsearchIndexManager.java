@@ -19,11 +19,9 @@ package io.jmix.searchelasticsearch.index.impl;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
 import co.elastic.clients.elasticsearch.indices.*;
-import co.elastic.clients.elasticsearch.transform.Settings;
 import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.json.JsonpSerializable;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
@@ -34,24 +32,19 @@ import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
 import jakarta.json.spi.JsonProvider;
-import jakarta.json.stream.JsonGenerator;
 import jakarta.json.stream.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Implementation for Elasticsearch
  */
-public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, TypeMapping, Settings> {
+public class ElasticsearchIndexManager extends BaseIndexManager<ElasticsearchClient, IndexState, IndexSettings, JsonpSerializable>{
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchIndexManager.class);
 
-    protected final ElasticsearchClient client;
     protected final ElasticsearchIndexSettingsProvider indexSettingsProcessor;
 
     public ElasticsearchIndexManager(ElasticsearchClient client,
@@ -59,9 +52,9 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Type
                                      IndexConfigurationManager indexConfigurationManager,
                                      SearchProperties searchProperties,
                                      ElasticsearchIndexSettingsProvider indexSettingsProcessor,
-                                     ElasticsearchIndexConfigurationComparator configurationComparator) {
-        super(indexConfigurationManager, indexStateRegistry, searchProperties,  configurationComparator);
-        this.client = client;
+                                     ElasticsearchIndexConfigurationComparator configurationComparator,
+                                     ElasticsearchMetadataResolver metadataResolver) {
+        super(client, indexConfigurationManager, indexStateRegistry, searchProperties,  configurationComparator, metadataResolver);
         this.indexSettingsProcessor = indexSettingsProcessor;
     }
 
@@ -122,11 +115,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Type
 
     @Override
     public ObjectNode getIndexMetadata(String indexName) {
-        IndexState indexState = getIndexMetadataInternal(indexName);
-        if (indexState == null) {
-            return objectMapper.createObjectNode();
-        }
-        return toObjectNode(indexState);
+        return metadataResolver.getIndexMetadata(indexName, client);
     }
 
     @Override
@@ -161,43 +150,5 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Type
 
     protected IndexSettings buildSettings(IndexConfiguration indexConfiguration) {
         return indexSettingsProcessor.getSettingsForIndex(indexConfiguration);
-    }
-
-    protected JsonNode toJsonNode(JsonpSerializable object) {
-        StringWriter stringWriter = new StringWriter();
-        JsonpMapper mapper = client._transport().jsonpMapper();
-        JsonGenerator generator = mapper.jsonProvider().createGenerator(stringWriter);
-        object.serialize(generator, mapper);
-        generator.close();
-        String stringValue = stringWriter.toString();
-
-        try {
-            return objectMapper.readTree(stringValue);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to generate JsonNode", e);
-        }
-    }
-
-    protected ObjectNode toObjectNode(JsonpSerializable object) {
-        JsonNode jsonNode = toJsonNode(object);
-        if (jsonNode.isObject()) {
-            return (ObjectNode) jsonNode;
-        } else {
-            throw new RuntimeException("Unable to convert provided object to ObjectNode: JsonNode type is '" + jsonNode.getNodeType() + "'");
-        }
-    }
-
-    protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName) {
-        Preconditions.checkNotNullArgument(indexName);
-        try {
-            return client.indices().get(builder -> builder.index(indexName).includeDefaults(true)).result();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to load metadata of index '" + indexName + "'", e);
-        }
-    }
-
-    @Nullable
-    protected IndexState getIndexMetadataInternal(String indexName) {
-        return getIndexMetadataMapInternal(indexName).get(indexName);
     }
 }

@@ -18,54 +18,24 @@ package io.jmix.searchopensearch.index.impl;
 
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.IndexConfigurationComparator;
-import io.jmix.search.index.impl.IndexMappingComparator;
-import io.jmix.search.index.impl.IndexSettingsComparator;
-import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
-import org.opensearch.client.opensearch._types.mapping.TypeMapping;
+import org.opensearch.client.json.JsonpSerializable;
+import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.opensearch.client.opensearch.indices.IndexState;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 @Component
-public class OpenSearchIndexConfigurationComparator extends IndexConfigurationComparator<IndexState, TypeMapping, IndexSettings> {
-    private final OpenSearchIndexSettingsProvider indexSettingsProvider;
+public class OpenSearchIndexConfigurationComparator
+        extends IndexConfigurationComparator<OpenSearchClient, IndexState, IndexSettings, JsonpSerializable> {
 
-    public OpenSearchIndexConfigurationComparator(IndexMappingComparator searchMappingChecker,
-                                                  IndexSettingsComparator settingsComparator,
-                                                  OpenSearchIndexSettingsProvider indexSettingsProvider) {
-        super(searchMappingChecker, settingsComparator);
-        this.indexSettingsProvider = indexSettingsProvider;
+    public OpenSearchIndexConfigurationComparator(OpenSearchIndexMappingComparator mappingComparator,
+                                                  OpenSearchIndexSettingsComparator settingsComparator,
+                                                  OpenSearchMetadataResolver metadataResolver) {
+        super(mappingComparator, settingsComparator, metadataResolver);
     }
 
     @Override
-    protected IndexSettings getApplicationSettings(IndexConfiguration indexConfiguration) {
-        return indexSettingsProvider.getSettingsForIndex(indexConfiguration);
-    }
-
-    @Override
-    protected Map<String, String> convertToMap(IndexSettings serverIndexSettings) {
-        return null;
-    }
-
-    @Override
-    protected IndexSettings extractSettings(IndexState indexState) {
-        return null;
-    }
-
-    @Override
-    protected TypeMapping extractMapping(IndexState indexState) {
-        return null;
-    }
-
-    @Override
-    protected IndexState getIndexState(IndexConfiguration indexConfiguration) {
-        return null;
-    }
-
-    @Override
-    protected Map<String, Object> convertInexMappingToMap(TypeMapping typeMapping) {
-        return null;
+    protected IndexState getIndexState(IndexConfiguration indexConfiguration, OpenSearchClient client) {
+        return metadataResolver.getIndexMetadataInternal(indexConfiguration.getIndexName(), client);
     }
 }

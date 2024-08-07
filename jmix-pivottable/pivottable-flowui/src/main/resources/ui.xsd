@@ -14,10 +14,10 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://jmix.io/schema/pivot-table/ui"
+<xs:schema targetNamespace="http://jmix.io/schema/pivot/ui"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:layout="http://jmix.io/schema/flowui/layout"
-           xmlns="http://jmix.io/schema/pivot-table/ui"
+           xmlns="http://jmix.io/schema/pivot/ui"
            elementFormDefault="qualified">
 
     <xs:element name="pivotTable">
@@ -181,9 +181,7 @@
                     <xs:attribute name="showRowTotals" type="xs:boolean"/>
                     <xs:attribute name="showColTotals" type="xs:boolean"/>
 
-                    <xs:attributeGroup ref="layout:hasAriaLabel"/>
                     <xs:attributeGroup ref="layout:hasClassNames"/>
-                    <xs:attributeGroup ref="layout:hasDataContainer"/>
                     <xs:attributeGroup ref="layout:hasEnabled"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
                 </xs:extension>

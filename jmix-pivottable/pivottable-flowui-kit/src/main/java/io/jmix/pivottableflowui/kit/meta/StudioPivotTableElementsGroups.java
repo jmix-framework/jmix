@@ -16,5 +16,42 @@
 
 package io.jmix.pivottableflowui.kit.meta;
 
+import io.jmix.flowui.kit.meta.StudioElementsGroup;
+import io.jmix.flowui.kit.meta.StudioUiKit;
+
+@StudioUiKit
 public interface StudioPivotTableElementsGroups {
+
+    @StudioElementsGroup(
+            name = "Aggregations",
+            elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.Aggregation",
+            target = {"io.jmix.pivottableflowui.kit.component.model.Aggregations"},
+            xmlElement = "aggregations",
+            xmlns = "http://jmix.io/schema/pivot-table/ui",
+            xmlnsAlias = "pivot",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void aggregations();
+
+    @StudioElementsGroup(
+            name = "Renderers",
+            elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.Renderer",
+            target = {"io.jmix.pivottableflowui.kit.component.model.Renderers"},
+            xmlElement = "renderers",
+            xmlns = "http://jmix.io/schema/pivot-table/ui",
+            xmlnsAlias = "pivot",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void renderers();
+
+    @StudioElementsGroup(
+            name = "DerivedProperties",
+
+            target = {"io.jmix.pivottableflowui.kit.component.model.DerivedProperties"},
+            xmlElement = "derivedProperties",
+            xmlns = "http://jmix.io/schema/pivot-table/ui",
+            xmlnsAlias = "pivot",
+            icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
+    )
+    void derivedProperties();
 }

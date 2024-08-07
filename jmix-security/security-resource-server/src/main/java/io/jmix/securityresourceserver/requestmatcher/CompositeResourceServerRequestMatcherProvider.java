@@ -25,12 +25,12 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public interface CompositeResourceServerRequestMatcherProvider {
 
     /**
-     * Returns a {@link RequestMatcher} that matches only authenticated requests.
+     * Returns a {@link RequestMatcher} that matches authenticated requests.
      */
     RequestMatcher getAuthenticatedRequestMatcher();
 
     /**
-     * Returns a {@link RequestMatcher} that matches only anonymous requests.
+     * Returns a {@link RequestMatcher} that matches anonymous requests.
      */
     RequestMatcher getAnonymousRequestMatcher();
 }

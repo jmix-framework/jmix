@@ -20,11 +20,9 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ComponentScan
 @JmixModule(dependsOn = {CoreConfiguration.class})
-@PropertySource(name = "io.jmix.securityresourceserver", value = "classpath:/io/jmix/securityresourceserver/module.properties")
 public class SecurityResourceServerConfiguration {
 }

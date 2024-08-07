@@ -16,20 +16,59 @@
 
 package io.jmix.search.index.impl;
 
-import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.search.index.IndexConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.Map;
 
-@Component("search_SearchMappingComparator")
-public class IndexMappingComparator {
+public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableType, ClientType> {
+    protected final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
+    };
+    private static final Logger log = LoggerFactory.getLogger(IndexMappingComparator.class);
 
     private final MappingFieldComparator mappingFieldComparator;
+    protected final ObjectMapper objectMapper = new ObjectMapper();
+    private final JsonpSerializer<JsonpSerializableType, ClientType> jsonpSerializer;
 
-    public IndexMappingComparator(MappingFieldComparator mappingFieldComparator) {
+
+    public IndexMappingComparator(MappingFieldComparator mappingFieldComparator, JsonpSerializer<JsonpSerializableType, ClientType> jsonpSerializer) {
         this.mappingFieldComparator = mappingFieldComparator;
+        this.jsonpSerializer = jsonpSerializer;
     }
 
-    public MappingComparingResult compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
+    public MappingComparingResult compare(IndexConfiguration indexConfiguration, IndexStateType currentIndexState, ClientType client) {
+
+        Map<String, Object> appliedMapping = getAppliedMapping(currentIndexState, client);
+        Map<String, Object> expectedMapping = getExpectedMapping(indexConfiguration);
+        log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
+                indexConfiguration.getIndexName(), appliedMapping, expectedMapping);
+        return compare(appliedMapping, expectedMapping);
+    }
+
+    private Map<String, Object> getExpectedMapping(IndexConfiguration indexConfiguration) {
+        return objectMapper.convertValue(indexConfiguration.getMapping(), MAP_TYPE_REF);
+    }
+
+    private Map<String, Object> getAppliedMapping(IndexStateType currentIndexState, ClientType client) {
+        JsonpSerializableType typeMapping = extractTypeMapping(currentIndexState);
+        if (typeMapping == null) {
+            return Collections.emptyMap();
+        } else {
+            ObjectNode currentMappingNode = jsonpSerializer.toObjectNode(typeMapping, client);
+            return objectMapper.convertValue(currentMappingNode, MAP_TYPE_REF);
+        }
+    }
+
+    //TODO сделать строгую типизацию через TypeMapping
+    protected abstract JsonpSerializableType extractTypeMapping(IndexStateType currentIndexState);
+
+
+    MappingComparingResult compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
 
         if (!applicationMapping.keySet().containsAll(searchIndexMapping.keySet())) {
             return MappingComparingResult.NOT_COMPATIBLE;

@@ -17,7 +17,6 @@
 package io.jmix.searchopensearch.index.impl;
 
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.search.index.impl.JsonpSerializer;
 import io.jmix.search.index.impl.MetadataResolver;
 import org.opensearch.client.json.JsonpSerializable;
 import org.opensearch.client.opensearch.OpenSearchClient;

@@ -40,7 +40,7 @@ public abstract class MetadataResolver<ClientType, IndexStateType, JsonpSerializ
         return jsonpSerializer.toObjectNode((JsonpSerializableType) indexState, client);
     }
 
-    protected IndexStateType getIndexMetadataInternal(String indexName, ClientType client) {
+    public IndexStateType getIndexMetadataInternal(String indexName, ClientType client) {
         return getIndexMetadataMapInternal(indexName, client).get(indexName);
     }
 

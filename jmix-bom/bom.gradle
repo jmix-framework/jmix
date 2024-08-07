@@ -115,6 +115,10 @@ dependencies {
         api "io.jmix.businesscalendar:jmix-businesscalendar-flowui:$premiumVersion"
         api "io.jmix.businesscalendar:jmix-businesscalendar-flowui-starter:$premiumVersion"
 
+        api "io.jmix.kanban:jmix-kanban-flowui:$premiumVersion"
+        api "io.jmix.kanban:jmix-kanban-flowui-kit:$premiumVersion"
+        api "io.jmix.kanban:jmix-kanban-flowui-starter:$premiumVersion"
+
         api "io.jmix.core:jmix-core:$freeVersion"
         api "io.jmix.core:jmix-core-starter:$freeVersion"
 

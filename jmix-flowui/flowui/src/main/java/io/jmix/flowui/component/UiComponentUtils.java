@@ -21,6 +21,9 @@ import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
+import com.vaadin.flow.server.StreamResource;
+import io.jmix.core.FileRef;
+import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentUtils;
@@ -32,6 +35,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -637,6 +644,41 @@ public final class UiComponentUtils {
         } else {
             component.setValue(value);
         }
+    }
+
+    /**
+     * Creates a resources from the passed object.
+     *
+     * @param value              the object from which the resource will be created
+     * @param fileStorageLocator fileStorageLocator
+     * @param <V>                type of resource value
+     * @return created resource or {@code null} if the value is of an unsupported type
+     * @throws IllegalArgumentException if the URI resource can't be converted to URL
+     */
+    @Nullable
+    public static <V> Object createResource(@Nullable V value, FileStorageLocator fileStorageLocator) {
+        if (value == null) {
+            return new StreamResource(UUID.randomUUID().toString(), InputStream::nullInputStream);
+        }
+        if (value instanceof byte[] byteValue) {
+            return new StreamResource(UUID.randomUUID().toString(), () -> new ByteArrayInputStream(byteValue));
+        }
+        if (value instanceof FileRef fileRef) {
+            return new StreamResource(fileRef.getFileName(), () ->
+                    fileStorageLocator.getByName(fileRef.getStorageName()).openStream(fileRef));
+        }
+        if (value instanceof String) {
+            return value;
+        }
+        if (value instanceof URI uri) {
+            try {
+                return uri.toURL().toString();
+            } catch (MalformedURLException e) {
+                throw new IllegalArgumentException("Cannot convert provided URI `" + uri + "' to URL", e);
+            }
+        }
+
+        return null;
     }
 
     public static void walkComponents(View<?> view, Consumer<ViewChildrenVisitResult> viewChildrenVisitResultConsumer) {

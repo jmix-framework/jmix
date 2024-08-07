@@ -21,20 +21,20 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.UIDetachedException;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.TimeSource;
+import io.jmix.core.impl.session.ThreadLocalSessionData;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.flowui.event.BackgroundTaskUnhandledExceptionEvent;
 import io.jmix.flowui.backgroundtask.*;
-import io.jmix.flowui.backgroundtask.BackgroundTaskWatchDog;
+import io.jmix.flowui.event.BackgroundTaskUnhandledExceptionEvent;
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-import jakarta.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -161,6 +161,8 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
         private volatile boolean doneHandled = false;
 
         private Authentication authentication;
+        private final Map<String, Object> sessionAttributes;
+
         private String username;
 
         private Map<String, Object> params;
@@ -176,6 +178,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                     Collections.emptyMap();
 
             authentication = SecurityContextHelper.getAuthentication();
+            sessionAttributes = ThreadLocalSessionData.extractHttpSessionAttributes();
 
             this.username = currentAuthentication.getUser().getUsername();
 
@@ -185,6 +188,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                     Authentication previousAuth = SecurityContextHelper.getAuthentication();
 
                     SecurityContextHelper.setAuthentication(authentication);
+                    ThreadLocalSessionData.setAttributes(sessionAttributes);
                     try {
                         TaskExecutorImpl.this.ui.access(() ->
                                 handleDone()
@@ -195,6 +199,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                         cancelExecution();
                     } finally {
                         SecurityContextHelper.setAuthentication(previousAuth);
+                        ThreadLocalSessionData.clear();
                     }
                 }
             };
@@ -209,6 +214,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
             }
 
             SecurityContextHelper.setAuthentication(authentication);
+            ThreadLocalSessionData.setAttributes(sessionAttributes);
             try {
                 // do not run any activity if canceled before start
                 return runnableTask.run(new TaskLifeCycle<>() {
@@ -239,6 +245,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                 });
             } finally {
                 SecurityContextHelper.setAuthentication(null);
+                ThreadLocalSessionData.clear();
             }
         }
 

@@ -47,12 +47,12 @@ import java.util.List;
 @ContextConfiguration(
         classes = {ElasticsearchIndexingTestConfiguration.class}
 )
-public class ElasticsearchEntityIndexingTest { //todo
+public class ElasticsearchEntityIndexingTest {
 
     @Autowired
     protected EntityIndexer entityIndexer;
     @Autowired
-    protected TestElasticsearchBulkRequestsTracker bulkRequestsTracker;
+    protected ElasticsearchTestBulkRequestsTracker bulkRequestsTracker;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -96,7 +96,7 @@ public class ElasticsearchEntityIndexingTest { //todo
         entityIndexer.index(entity);
         List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
 
-        TestBulkRequestValidationResult result = TestElasticsearchBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        TestBulkRequestValidationResult result = ElasticsearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
 
@@ -121,7 +121,7 @@ public class ElasticsearchEntityIndexingTest { //todo
         entityIndexer.index(entity);
         List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
 
-        TestBulkRequestValidationResult result = TestElasticsearchBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        TestBulkRequestValidationResult result = ElasticsearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
 
@@ -144,7 +144,7 @@ public class ElasticsearchEntityIndexingTest { //todo
         entityIndexer.index(entity);
         List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
 
-        TestBulkRequestValidationResult result = TestElasticsearchBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        TestBulkRequestValidationResult result = ElasticsearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
 
@@ -170,7 +170,7 @@ public class ElasticsearchEntityIndexingTest { //todo
         entityIndexer.index(entity);
         List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
 
-        TestBulkRequestValidationResult result = TestElasticsearchBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        TestBulkRequestValidationResult result = ElasticsearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
 
@@ -253,7 +253,7 @@ public class ElasticsearchEntityIndexingTest { //todo
         entityIndexer.index(rootEntity);
         List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
 
-        TestBulkRequestValidationResult result = TestElasticsearchBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        TestBulkRequestValidationResult result = ElasticsearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
 
@@ -349,7 +349,7 @@ public class ElasticsearchEntityIndexingTest { //todo
         entityIndexer.index(rootEntity);
         List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
 
-        TestBulkRequestValidationResult result = TestElasticsearchBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        TestBulkRequestValidationResult result = ElasticsearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
 
@@ -448,7 +448,7 @@ public class ElasticsearchEntityIndexingTest { //todo
         entityIndexer.index(rootEntity);
         List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
 
-        TestBulkRequestValidationResult result = TestElasticsearchBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        TestBulkRequestValidationResult result = ElasticsearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
 
@@ -549,7 +549,7 @@ public class ElasticsearchEntityIndexingTest { //todo
         entityIndexer.index(rootEntity);
         List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
 
-        TestBulkRequestValidationResult result = TestElasticsearchBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        TestBulkRequestValidationResult result = ElasticsearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
 
@@ -577,7 +577,7 @@ public class ElasticsearchEntityIndexingTest { //todo
         entityIndexer.indexCollection(Arrays.asList(indexableInstance, notIndexableInstance));
         List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
 
-        TestBulkRequestValidationResult result = TestElasticsearchBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        TestBulkRequestValidationResult result = ElasticsearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
 

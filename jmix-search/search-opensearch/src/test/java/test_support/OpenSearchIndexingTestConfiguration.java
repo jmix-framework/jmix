@@ -41,7 +41,7 @@ import static org.mockito.Mockito.mock;
 @PropertySource("classpath:/test_support/test-entity-indexing-app.properties")
 @EnableWebSecurity
 @MessageSourceBasenames({"test_support/messages"})
-public class OpenSearchIndexingTestConfiguration { //todo
+public class OpenSearchIndexingTestConfiguration {
 
     @Autowired
     protected AutowireCapableBeanFactory beanFactory;
@@ -60,8 +60,8 @@ public class OpenSearchIndexingTestConfiguration { //todo
     }
 
     @Bean
-    public TestBulkRequestsTracker bulkRequestsTracker() {
-        return new TestBulkRequestsTracker();
+    public OpenSearchTestBulkRequestsTracker bulkRequestsTracker() {
+        return new OpenSearchTestBulkRequestsTracker();
     }
 
     @Bean
@@ -72,7 +72,7 @@ public class OpenSearchIndexingTestConfiguration { //todo
     @Bean
     @Primary
     public EntityIndexer testEntityIndexer() {
-        return beanFactory.createBean(TestOpenSearchEntityIndexer.class);
+        return beanFactory.createBean(OpenSearchTestEntityIndexer.class);
     }
 
     @Bean

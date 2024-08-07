@@ -38,11 +38,11 @@ import java.util.stream.Collectors;
 /**
  * Track incoming bulk requests via provided tracker instead of execution via ES client
  */
-public class TestElasticsearchEntityIndexer extends ElasticsearchEntityIndexer {
+public class ElasticsearchTestEntityIndexer extends ElasticsearchEntityIndexer {
 
-    protected final TestElasticsearchBulkRequestsTracker bulkRequestsTracker;
+    protected final ElasticsearchTestBulkRequestsTracker bulkRequestsTracker;
 
-    public TestElasticsearchEntityIndexer(UnconstrainedDataManager dataManager,
+    public ElasticsearchTestEntityIndexer(UnconstrainedDataManager dataManager,
                                           FetchPlans fetchPlans,
                                           IndexConfigurationManager indexConfigurationManager,
                                           Metadata metadata,
@@ -50,7 +50,7 @@ public class TestElasticsearchEntityIndexer extends ElasticsearchEntityIndexer {
                                           IndexStateRegistry indexStateRegistry,
                                           MetadataTools metadataTools,
                                           SearchProperties searchProperties,
-                                          TestElasticsearchBulkRequestsTracker bulkRequestsTracker) {
+                                          ElasticsearchTestBulkRequestsTracker bulkRequestsTracker) {
         super(dataManager, fetchPlans, indexConfigurationManager, metadata, idSerialization, indexStateRegistry, metadataTools, searchProperties, null);
         this.bulkRequestsTracker = bulkRequestsTracker;
     }

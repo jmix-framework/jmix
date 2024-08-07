@@ -25,5 +25,9 @@ public class TestBulkRequestIndexActionValidationData extends TestAbstractBulkRe
         super(index, id, source);
     }
 
+    @Override
+    public OpType getOperationType() {
+        return OpType.INDEX;
+    }
 }
 

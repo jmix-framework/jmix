@@ -20,7 +20,7 @@ package test_support;
 
 import java.util.Objects;
 
-public abstract class TestAbstractBulkRequestActionValidationData { //todo platform specific
+public abstract class TestAbstractBulkRequestActionValidationData {
 
     protected String index;
     protected String id;
@@ -29,6 +29,8 @@ public abstract class TestAbstractBulkRequestActionValidationData { //todo platf
         this.index = index;
         this.id = id;
     }
+
+    public abstract OpType getOperationType();
 
     public String getIndex() {
         return index;
@@ -54,7 +56,7 @@ public abstract class TestAbstractBulkRequestActionValidationData { //todo platf
 
     @Override
     public String toString() {
-        return String.format("Operation=Bulk Index=%s ID=%s", /*getOperationType(), */index, id);
+        return String.format("Operation=%s Index=%s ID=%s", getOperationType().getId(), index, id);
     }
 }
 

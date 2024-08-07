@@ -32,9 +32,9 @@ import java.util.List;
 
 import static test_support.TestBulkRequestValidationResult.Failure.create;
 
-public class TestBulkRequestValidator {
+public class OpenSearchTestBulkRequestValidator {
 
-    private static final Logger log = LoggerFactory.getLogger(TestBulkRequestValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(OpenSearchTestBulkRequestValidator.class);
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -60,7 +60,7 @@ public class TestBulkRequestValidator {
                 TestBulkRequestValidationResult localValidationResult;
                 boolean found = false;
                 for (BulkRequest bulkRequest : actualBulkRequests) {
-                    localValidationResult = TestBulkRequestValidator.validate(expectedData, bulkRequest);
+                    localValidationResult = OpenSearchTestBulkRequestValidator.validate(expectedData, bulkRequest);
                     if (!localValidationResult.hasFailures()) {
                         found = true;
                         break;

@@ -41,7 +41,7 @@ import static org.mockito.Mockito.mock;
 @PropertySource("classpath:/test_support/test-entity-indexing-app.properties")
 @EnableWebSecurity
 @MessageSourceBasenames({"test_support/messages"})
-public class ElasticsearchIndexingTestConfiguration { //todo
+public class ElasticsearchIndexingTestConfiguration {
 
     @Autowired
     protected AutowireCapableBeanFactory beanFactory;
@@ -60,8 +60,8 @@ public class ElasticsearchIndexingTestConfiguration { //todo
     }
 
     @Bean
-    public TestElasticsearchBulkRequestsTracker bulkRequestsTracker() {
-        return new TestElasticsearchBulkRequestsTracker();
+    public ElasticsearchTestBulkRequestsTracker bulkRequestsTracker() {
+        return new ElasticsearchTestBulkRequestsTracker();
     }
 
     @Bean
@@ -72,7 +72,7 @@ public class ElasticsearchIndexingTestConfiguration { //todo
     @Bean
     @Primary
     public EntityIndexer testEntityIndexer() {
-        return beanFactory.createBean(TestElasticsearchEntityIndexer.class);
+        return beanFactory.createBean(ElasticsearchTestEntityIndexer.class);
     }
 
     @Bean

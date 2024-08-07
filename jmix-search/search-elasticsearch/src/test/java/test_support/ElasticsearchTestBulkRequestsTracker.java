@@ -27,9 +27,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-public class TestElasticsearchBulkRequestsTracker implements Consumer<BulkRequest> {
+public class ElasticsearchTestBulkRequestsTracker implements Consumer<BulkRequest> {
 
-    private static final Logger log = LoggerFactory.getLogger(TestElasticsearchBulkRequestsTracker.class);
+    private static final Logger log = LoggerFactory.getLogger(ElasticsearchTestBulkRequestsTracker.class);
 
     private Set<BulkRequest> registry = ConcurrentHashMap.newKeySet();
 

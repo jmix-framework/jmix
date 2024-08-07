@@ -37,7 +37,7 @@ import test_support.*;
 @ContextConfiguration(
         classes = {ElasticsearchIndexingTestConfiguration.class, ElasticsearchIndexSettingsProvider.class, ElasticsearchAnalysisIndexSettingsConfigurer.class}
 )
-public class ElasticsearchAnalysisConfigurationTest { //todo
+public class ElasticsearchAnalysisConfigurationTest {
 
     @Autowired
     protected EntityIndexer entityIndexer;

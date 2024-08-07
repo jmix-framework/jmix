@@ -38,11 +38,11 @@ import java.util.stream.Collectors;
 /**
  * Track incoming bulk requests via provided tracker instead of execution via ES client
  */
-public class TestOpenSearchEntityIndexer extends OpenSearchEntityIndexer {
+public class OpenSearchTestEntityIndexer extends OpenSearchEntityIndexer {
 
-    protected final TestBulkRequestsTracker bulkRequestsTracker;
+    protected final OpenSearchTestBulkRequestsTracker bulkRequestsTracker;
 
-    public TestOpenSearchEntityIndexer(UnconstrainedDataManager dataManager,
+    public OpenSearchTestEntityIndexer(UnconstrainedDataManager dataManager,
                                        FetchPlans fetchPlans,
                                        IndexConfigurationManager indexConfigurationManager,
                                        Metadata metadata,
@@ -50,7 +50,7 @@ public class TestOpenSearchEntityIndexer extends OpenSearchEntityIndexer {
                                        IndexStateRegistry indexStateRegistry,
                                        MetadataTools metadataTools,
                                        SearchProperties searchProperties,
-                                       TestBulkRequestsTracker bulkRequestsTracker) {
+                                       OpenSearchTestBulkRequestsTracker bulkRequestsTracker) {
         super(dataManager, fetchPlans, indexConfigurationManager, metadata, idSerialization, indexStateRegistry, metadataTools, searchProperties, null);
         this.bulkRequestsTracker = bulkRequestsTracker;
     }
@@ -79,6 +79,6 @@ public class TestOpenSearchEntityIndexer extends OpenSearchEntityIndexer {
 
     @Override
     protected IndexResult deleteByGroupedDocIds(Map<IndexConfiguration, Collection<String>> groupedDocIds) {
-        return deleteByGroupedDocIds(groupedDocIds);
+        return super.deleteByGroupedDocIds(groupedDocIds);
     }
 }

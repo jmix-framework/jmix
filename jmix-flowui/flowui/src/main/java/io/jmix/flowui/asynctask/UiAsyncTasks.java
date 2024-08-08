@@ -98,7 +98,7 @@ public class UiAsyncTasks {
     /**
      * Creates a builder for an asynchronous task that does not return a result. The task is executed on a separate
      * thread. The action that must be performed after the asynchronous task is completed may be set using the
-     * {@link RunnableConfigurer#withResultHandler(Runnable) method.
+     * {@link RunnableConfigurer#withResultHandler(Runnable)} method.
      *
      * @param asyncTask the task to execute
      * @return a builder for an asynchronous task that does not return a result

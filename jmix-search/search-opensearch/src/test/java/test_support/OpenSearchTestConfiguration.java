@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,14 @@ import io.jmix.search.index.impl.StartupIndexSynchronizer;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import io.jmix.security.SecurityConfiguration;
+import jakarta.persistence.EntityManagerFactory;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.http.HttpHost;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.json.jackson.JacksonJsonpMapper;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.transport.OpenSearchTransport;
+import org.opensearch.client.transport.rest_client.RestClientTransport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -48,14 +55,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
+import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import org.springframework.lang.Nullable;
-import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
@@ -65,13 +71,12 @@ import javax.sql.DataSource;
         EclipselinkConfiguration.class,
         SecurityConfiguration.class,
         SearchConfiguration.class})
-public class BaseSearchTestConfiguration {
+public class OpenSearchTestConfiguration {
 
     @Autowired
     SearchProperties searchProperties;
 
     // Test Search beans
-
     @Bean("search_StartupIndexSynchronizer")
     @Primary
     public StartupIndexSynchronizer startupIndexSynchronizer() {
@@ -95,6 +100,19 @@ public class BaseSearchTestConfiguration {
     public IndexDefinitionDetector indexDefinitionDetector(@Nullable TestAutoDetectableIndexDefinitionScope testAutoDetectableIndexDefinitionScope) {
         return new TestIndexDefinitionDetector(testAutoDetectableIndexDefinitionScope);
     }
+
+    @Bean
+    public OpenSearchClient baseOpenSearchClient() {
+        String url = searchProperties.getServerUrl();
+
+        RestClient restClient = RestClient
+                .builder(HttpHost.create(url))
+                .build();
+
+        OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        return new OpenSearchClient(transport);
+    }
+
 
     // Test Common beans
 

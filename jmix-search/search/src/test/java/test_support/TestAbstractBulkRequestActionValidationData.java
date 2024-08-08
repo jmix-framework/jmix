@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,16 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
+ */
 
 
 package test_support;
 
-import org.elasticsearch.action.DocWriteRequest;
 
 import java.util.Objects;
 
-public abstract class TestAbstractBulkRequestActionValidationData { //todo platform specific
+public abstract class TestAbstractBulkRequestActionValidationData {
 
     protected String index;
     protected String id;
@@ -31,7 +30,7 @@ public abstract class TestAbstractBulkRequestActionValidationData { //todo platf
         this.id = id;
     }
 
-    public abstract DocWriteRequest.OpType getOperationType();
+    public abstract OpType getOperationType();
 
     public String getIndex() {
         return index;
@@ -57,7 +56,7 @@ public abstract class TestAbstractBulkRequestActionValidationData { //todo platf
 
     @Override
     public String toString() {
-        return String.format("Operation=%s Index=%s ID=%s", getOperationType(), index, id);
+        return String.format("Operation=%s Index=%s ID=%s", getOperationType().getId(), index, id);
     }
 }
-*/
+

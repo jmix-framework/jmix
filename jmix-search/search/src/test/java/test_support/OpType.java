@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-
 package test_support;
 
+public enum OpType {
 
-public class TestBulkRequestDeleteActionValidationData extends TestAbstractBulkRequestActionValidationData {
+    INDEX("Index"),
+    CREATE("Create"),
+    UPDATE("Update"),
+    DELETE("Delete");
 
-    public TestBulkRequestDeleteActionValidationData(String index, String id) {
-        super(index, id);
+    private String id;
+
+    OpType(String id) {
+        this.id = id;
     }
 
-    @Override
-    public OpType getOperationType() {
-        return OpType.DELETE;
+    public String getId() {
+        return id;
     }
-
 }
-

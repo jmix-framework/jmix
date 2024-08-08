@@ -23,22 +23,38 @@ package io.jmix.fullcalendarflowui.kit.component.model;
  * multiMonthPlugin: multiMonthYear, multiMonth
  */
 public enum CalendarViewType implements CalendarView {
+    /**
+     * A "generic" value, can be used as a type for {@link CalendarCustomView}, or with "visibleRange" option.
+     */
+    DAY_GRID("dayGrid"),
     DAY_GRID_DAY("dayGridDay"),
     DAY_GRID_WEEK("dayGridWeek"),
     DAY_GRID_MONTH("dayGridMonth"),
     DAY_GRID_YEAR("dayGridYear"),
 
+    /**
+     * A "generic" value, can be used as a type for {@link CalendarCustomView}, or with "visibleRange" option.
+     */
+    TIME_GRID("timeGrid"),
     TIME_GRID_DAY("timeGridDay"),
     TIME_GRID_WEEK("timeGridWeek"),
 
+    /**
+     * A "generic" value, can be used as a type for {@link CalendarCustomView}, or with "visibleRange" option.
+     */
+    LIST("list"),
     LIST_DAY("listDay"),
     LIST_WEEK("listWeek"),
     LIST_MONTH("listMonth"),
     LIST_YEAR("listYear"),
 
+    /**
+     * A "generic" value, can be used as a type for {@link CalendarCustomView}, or with "visibleRange" option.
+     */
+    MULTI_MONTH("multiMonth"),
     MULTI_MONTH_YEAR("multiMonthYear");
 
-    String id;
+    private final String id;
 
     CalendarViewType(String id) {
         this.id = id;

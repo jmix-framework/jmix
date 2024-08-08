@@ -49,7 +49,8 @@ public class JmixFullCalendarOptions {
     protected Option dragScroll = new Option("dragScroll", true);
     protected Option snapDuration = new Option("snapDuration", CalendarDuration.ofMinutes(30));
     protected Option allDayMaintainDuration = new Option("allDayMaintainDuration", false);
-
+    protected Option views = new Option("views", new ArrayList<>());
+    protected Option visibleRange = new Option("visibleRange", new EmptyRange());
 
     protected Option selectable = new Option("selectable", false);
     protected Option selectMirror = new Option("selectMirror", false);
@@ -74,9 +75,9 @@ public class JmixFullCalendarOptions {
                 moreLinkClassNames, eventStartEditable, eventDurationEditable, eventResizableFromStart,
                 eventDragMinDistance, eventOverlap, dragRevertDuration, dragScroll, snapDuration,
                 allDayMaintainDuration, selectable, selectMirror, unselectAuto,
-                unselectCancel, selectOverlap, selectAllow, selectMinDistance));
+                unselectCancel, selectOverlap, selectAllow, selectMinDistance, views, visibleRange));
 
-        initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance));
+        initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views));
     }
 
     public List<Option> getOptions() {
@@ -336,6 +337,50 @@ public class JmixFullCalendarOptions {
 
     public void setSelectMinDistance(int minDistance) {
         selectMinDistance.setValue(minDistance);
+    }
+
+    public void addCalendarCustomView(CalendarCustomView customView) {
+        List<CalendarCustomView> views = this.views.getValue();
+
+        if (!views.contains(customView)) {
+            views.add(customView);
+            this.views.markAsDirty(true);
+        }
+    }
+
+    public void removeCalendarCustomView(CalendarCustomView customView) {
+        List<CalendarCustomView> views = this.views.getValue();
+
+        if (views.contains(customView)) {
+            views.remove(customView);
+            this.views.markAsDirty(true);
+        }
+    }
+
+    @Nullable
+    public CalendarCustomView getCalendarCustomView(String viewId) {
+        List<CalendarCustomView> views = this.views.getValue();
+
+        return views.stream()
+                .filter(v -> v.getCalendarView().getId().equals(viewId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<CalendarCustomView> getCalendarCustomViews() {
+        return Collections.unmodifiableList(views.getValue());
+    }
+
+    public void setVisibleRange(LocalDate start, LocalDate end) {
+        visibleRange.setValue(new VisibleRange(start, end));
+    }
+
+    @Nullable
+    public VisibleRange getVisibleRange() {
+        if (visibleRange.getValue() instanceof EmptyRange) {
+            return null;
+        }
+        return visibleRange.getValue();
     }
 
     public boolean isInitial(Option option) {

@@ -26,6 +26,7 @@
                     <xs:all>
                         <xs:element name="eventProviders" type="eventProvidersType"/>
                         <xs:element name="businessHours" type="businessHoursType"/>
+                        <xs:element name="customViews" type="customViewsType"/>
                     </xs:all>
 
                     <xs:attribute name="initialView" type="calendarViewType"/>
@@ -76,6 +77,40 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+
+    <xs:complexType name="customViewsType">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="view" type="customViewType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="customViewType">
+        <xs:choice minOccurs="0">
+            <xs:element name="duration" type="calendarDurationType"/>
+        </xs:choice>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="customCalendarViewType"/>
+        <xs:attribute name="dayCount" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="calendarDurationType">
+        <xs:attribute name="years" type="xs:integer"/>
+        <xs:attribute name="months" type="xs:integer"/>
+        <xs:attribute name="weeks" type="xs:integer"/>
+        <xs:attribute name="days" type="xs:integer"/>
+        <xs:attribute name="hours" type="xs:integer"/>
+        <xs:attribute name="minutes" type="xs:integer"/>
+        <xs:attribute name="seconds" type="xs:integer"/>
+        <xs:attribute name="milliseconds" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:simpleType name="customCalendarViewType">
+        <xs:restriction>
+            <xs:enumeration value="DAY_GRID"/>
+            <xs:enumeration value="TIME_GRID"/>
+            <xs:enumeration value="LIST"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="businessHoursType">
         <xs:sequence maxOccurs="unbounded">
@@ -195,18 +230,24 @@
     
     <xs:simpleType name="calendarViewType">
         <xs:restriction base="xs:string">
+            <xs:enumeration value="DAY_GRID"/>
             <xs:enumeration value="DAY_GRID_DAY"/>
             <xs:enumeration value="DAY_GRID_WEEK"/>
             <xs:enumeration value="DAY_GRID_MONTH"/>
             <xs:enumeration value="DAY_GRID_YEAR"/>
 
+            <xs:enumeration value="TIME_GRID"/>
             <xs:enumeration value="TIME_GRID_DAY"/>
             <xs:enumeration value="TIME_GRID_WEEK"/>
 
+            <xs:enumeration value="LIST"/>
             <xs:enumeration value="LIST_DAY"/>
             <xs:enumeration value="LIST_WEEK"/>
             <xs:enumeration value="LIST_MONTH"/>
             <xs:enumeration value="LIST_YEAR"/>
+
+            <xs:enumeration value="MULTI_MONTH"/>
+            <xs:enumeration value="MULTI_MONTH_YEAR"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

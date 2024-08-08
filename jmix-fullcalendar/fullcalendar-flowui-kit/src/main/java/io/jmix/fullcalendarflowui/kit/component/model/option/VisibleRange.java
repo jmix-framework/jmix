@@ -17,14 +17,15 @@
 package io.jmix.fullcalendarflowui.kit.component.model.option;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
-public class ValidRange extends AbstractRange {
+public class VisibleRange extends AbstractRange {
 
-    public void setStart(LocalDate start) {
+    public VisibleRange(LocalDate start, LocalDate end) {
+        Objects.requireNonNull(start);
+        Objects.requireNonNull(end);
+
         this.start = start;
-    }
-
-    public void setEnd(LocalDate end) {
         this.end = end;
     }
 }

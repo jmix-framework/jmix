@@ -71,6 +71,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Nullable
     public BaseCalendarEventProvider getEventProvider(String id) {
+        Preconditions.checkNotEmptyString(id);
+
         AbstractEventProviderManager eventProviderManager = eventProvidersMap.get(id);
 
         if (eventProviderManager != null) {
@@ -80,6 +82,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     public void addEventProvider(LazyCalendarEventProvider eventProvider) {
+        Preconditions.checkNotNullArgument(eventProvider);
+
         if (eventProvidersMap.containsKey(eventProvider.getId())) {
             log.warn("Lazy event provider with the same '{}' ID already added", eventProvider.getId());
             return;
@@ -95,6 +99,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     public void addEventProvider(CalendarEventProvider eventProvider) {
+        Preconditions.checkNotNullArgument(eventProvider);
+
         if (eventProvidersMap.containsKey(eventProvider.getId())) {
             log.warn("Item event provider with the same '{}' ID already added", eventProvider.getId());
             return;
@@ -115,10 +121,14 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     public void removeEventProvider(BaseCalendarEventProvider eventProvider) {
+        Preconditions.checkNotNullArgument(eventProvider);
+
         removeEventProvider(eventProvider.getId());
     }
 
     public void removeEventProvider(String id) {
+        Preconditions.checkNotEmptyString(id);
+
         AbstractEventProviderManager epManager = eventProvidersMap.get(id);
         if (epManager != null) {
             if (epManager instanceof EventProviderManager itemProvider) {

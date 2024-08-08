@@ -59,12 +59,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     protected CalendarView calendarView;
 
-
     protected Map<String, StateTree.ExecutionRegistration> itemsEventProvidersExecutionMap = new HashMap<>(2);
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
     protected StateTree.ExecutionRegistration incrementalUpdateExecution;
 
-    protected List<CalendarView> calendarViews = new ArrayList<>(2);
     protected Registration datesSetDomRegistration;
     protected Registration moreLinkClickDomRegistration;
     protected Registration eventClickDomRegistration;
@@ -85,8 +83,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
         attachCalendarOptionChangeListener();
         attachDatesSetDomEventListener();
-        // todo
-        registerAvailableCalendarViews();
         attachMoreLinkClickDomEventListener();
     }
 
@@ -106,6 +102,38 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         Objects.requireNonNull(calendarView);
 
         getElement().executeJs("this.calendar.changeView($0)", calendarView.getId());
+    }
+
+    /**
+     * Adds calendar custom view.
+     * <p>
+     * Note that it is initial option and dynamically changing/adding/removing custom view will not apply after
+     * attaching component to UI.
+     *
+     * @param calendarCustomView calendar custom view to add
+     */
+    public void addCalendarCustomView(CalendarCustomView calendarCustomView) {
+        Objects.requireNonNull(calendarCustomView);
+
+        options.addCalendarCustomView(calendarCustomView);
+    }
+
+    /**
+     * Removes calendar custom view.
+     * <p>
+     * Note that it is initial option and dynamically changing/adding/removing custom view will not apply after
+     * attaching component to UI.
+     *
+     * @param calendarCustomView calendar custom view to remove
+     */
+    public void removeCalendarCustomView(CalendarCustomView calendarCustomView) {
+        Objects.requireNonNull(calendarCustomView);
+
+        options.removeCalendarCustomView(calendarCustomView);
+    }
+
+    public List<CalendarCustomView> getCalendarCustomViews() {
+        return options.getCalendarCustomViews();
     }
 
     public boolean isWeekNumbersVisible() {
@@ -134,6 +162,23 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     public void setValidRange(LocalDate start, LocalDate end) {
         options.setValidRange(start, end);
+    }
+
+    @Nullable
+    public LocalDate getVisibleRangeStart() {
+        return options.getVisibleRange() != null ? options.getVisibleRange().getStart() : null;
+    }
+
+    @Nullable
+    public LocalDate getVisibleRangeEnd() {
+        return options.getVisibleRange() != null ? options.getVisibleRange().getEnd() : null;
+    }
+
+    public void setVisibleRange(LocalDate start, LocalDate end) {
+        Objects.requireNonNull(start);
+        Objects.requireNonNull(end);
+
+        options.setVisibleRange(start, end);
     }
 
     public TimeZone getTimeZone() {
@@ -687,11 +732,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         }
     }
 
-    // todo rp implement custom view registering or remove
-    protected void registerAvailableCalendarViews() {
-        calendarViews.addAll(List.of(CalendarViewType.values()));
-    }
-
     protected void onEventClick(EventClickDomEvent event) {
         // Stub, is used in inheritors
     }
@@ -733,10 +773,18 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected CalendarView getCalendarView(String id) {
-        return calendarViews.stream()
+        CalendarViewType calendarViewType = Arrays.stream(CalendarViewType.values())
                 .filter(cv -> id.equals(cv.getId()))
                 .findFirst()
-                .orElse(() -> id);
+                .orElse(null);
+
+        if (calendarViewType != null) {
+            return calendarViewType;
+        }
+
+        CalendarCustomView customView = options.getCalendarCustomView(id);
+
+        return customView != null ? customView.getCalendarView() : () -> id;
     }
 
     @ClientCallable

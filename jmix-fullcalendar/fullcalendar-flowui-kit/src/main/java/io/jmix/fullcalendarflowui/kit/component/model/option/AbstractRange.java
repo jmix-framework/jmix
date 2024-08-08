@@ -16,15 +16,37 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model.option;
 
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
-public class ValidRange extends AbstractRange {
+public abstract class AbstractRange implements Serializable {
 
-    public void setStart(LocalDate start) {
-        this.start = start;
+    protected LocalDate start;
+    protected LocalDate end;
+
+    public LocalDate getStart() {
+        return start;
     }
 
-    public void setEnd(LocalDate end) {
-        this.end = end;
+    public LocalDate getEnd() {
+        return end;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof AbstractRange aObj) {
+            return Objects.equals(start, aObj.start)
+                    && Objects.equals(end, aObj.end);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end);
     }
 }

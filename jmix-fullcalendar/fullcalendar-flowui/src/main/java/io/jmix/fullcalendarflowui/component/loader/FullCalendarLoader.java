@@ -19,6 +19,7 @@ import io.jmix.fullcalendarflowui.component.model.BusinessHours;
 import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarCustomView;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
@@ -47,7 +48,9 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         componentLoaderSupport.loadSizeAttributes(resultComponent, element);
         componentLoaderSupport.loadClassNames(resultComponent, element);
 
-        loadEnum(element, CalendarViewType.class, "initialView", resultComponent::setInitialCalendarView);
+        loadCalendarCustomViews(element, resultComponent);
+        loadInitialView(element, resultComponent);
+
         loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
         loadBoolean(element, "dayMaxEventRowsEnabled", resultComponent::setDayMaxEventRowsEnabled);
@@ -295,5 +298,63 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
             return null;
         }
         return BusinessHours.of(startTime, endTime, businessDays.toArray(new DayOfWeek[0]));
+    }
+
+    protected void loadInitialView(Element element, FullCalendar resultComponent) {
+        loadString(element, "initialView", (view) -> {
+            try {
+                resultComponent.setInitialCalendarView(CalendarViewType.valueOf(view));
+                return;
+            } catch (IllegalArgumentException e) {
+                // ignore
+            }
+
+            for (CalendarCustomView customView : resultComponent.getCalendarCustomViews()) {
+                if (customView.getCalendarView().getId().equals(view)) {
+                    resultComponent.setInitialCalendarView(customView.getCalendarView());
+                    return;
+                }
+            }
+
+            resultComponent.setInitialCalendarView(() -> view);
+        });
+    }
+
+    protected void loadCalendarCustomViews(Element element, FullCalendar resultComponent) {
+        Element customViewsElement = element.element("customViews");
+        if (customViewsElement != null) {
+            List<Element> views = customViewsElement.elements("view");
+
+            views.forEach(e -> resultComponent.addCalendarCustomView(loadCustomView(e)));
+        }
+    }
+
+    protected CalendarCustomView loadCustomView(Element element) {
+        String id = loadString(element, "id")
+                .orElseThrow(() -> new IllegalStateException("Calendar custom view must have an ID"));
+        CalendarViewType type = loadEnum(element, CalendarViewType.class, "type")
+                .orElse(null);
+        Integer dayCount = loadInteger(element, "dayCount").orElse(null);
+        CalendarDuration calendarDuration = null;
+
+        Element durartionElement = element.element("duration");
+        if (durartionElement != null) {
+            calendarDuration = loadCalendarDuration(durartionElement);
+        }
+
+        return new CalendarCustomView(id, type)
+                .withDayCount(dayCount)
+                .withDuration(calendarDuration);
+    }
+
+    protected CalendarDuration loadCalendarDuration(Element element) {
+        return CalendarDuration.ofYears(loadInteger(element, "years").orElse(0))
+                .plusMonths(loadInteger(element, "months").orElse(0))
+                .plusWeeks(loadInteger(element, "weeks").orElse(0))
+                .plusDays(loadInteger(element, "days").orElse(0))
+                .plusHours(loadInteger(element, "hours").orElse(0))
+                .plusMinutes(loadInteger(element, "minutes").orElse(0))
+                .plusSeconds(loadInteger(element, "seconds").orElse(0))
+                .plusMilliseconds(loadInteger(element, "milliseconds").orElse(0));
     }
 }

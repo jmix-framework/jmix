@@ -1,3 +1,5 @@
+import * as modelConverter from "./jmix-full-calendar-model-converter";
+
 const NO_VIEW_MORE_LINK_CLICK = 'NO_VIEW';
 
 export const MORE_LINK_CLICK_FUNCTION = 'moreLinkClickFunction';
@@ -12,6 +14,7 @@ const EVENT_CONSTRAINT = 'eventConstraint';
 const BUSINESS_HOURS = 'businessHours';
 const SELECT_CONSTRAINT = 'selectConstraint';
 const SELECT_ALLOW = 'selectAllow';
+const VIEWS = 'views';
 
 export function processInitialOptions(serverOptions) {
     const options = {};
@@ -32,7 +35,24 @@ export function processInitialOptions(serverOptions) {
     if (unselectCancel) {
         options[UNSELECT_CANCEL] = unselectCancel;
     }
+    const views = serverOptions[VIEWS];
+    if (views) {
+        options[VIEWS] = convertToViewsObject(views);
+    }
     return options;
+}
+
+function convertToViewsObject(customViews) {
+    const views = {};
+    for (const customView of customViews) {
+        views[customView.calendarView] = {
+            type: customView.type,
+            duration: customView.duration,
+            dayCount: customView.dayCount,
+        }
+    }
+
+    return views;
 }
 
 class Options {

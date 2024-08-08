@@ -29,10 +29,11 @@ import io.jmix.oidc.userinfo.JmixOidcUserService;
 import io.jmix.oidc.usermapper.DefaultOidcUserMapper;
 import io.jmix.oidc.usermapper.OidcUserMapper;
 import io.jmix.security.SecurityConfigurers;
-import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.security.util.JmixHttpSecurityUtils;
+import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,6 +47,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @AutoConfiguration
 @Import({OidcConfiguration.class})
@@ -100,18 +103,26 @@ public class OidcAutoConfiguration {
         @Order(JmixSecurityFilterChainOrder.OIDC_RESOURCE_SERVER)
         public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                        JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter,
-                                                       ApplicationEventPublisher applicationEventPublisher) throws Exception {
-            http.oauth2ResourceServer(resourceServer -> {
+                                                       ApplicationEventPublisher applicationEventPublisher,
+                                                       CompositeResourceServerRequestMatcherProvider securityMatcherProvider) throws Exception {
+            RequestMatcher authenticatedRequestMatcher = securityMatcherProvider.getAuthenticatedRequestMatcher();
+            RequestMatcher anonymousRequestMatcher = securityMatcherProvider.getAnonymousRequestMatcher();
+            RequestMatcher securityMatcher = new OrRequestMatcher(authenticatedRequestMatcher, anonymousRequestMatcher);
+            http
+                    .securityMatcher(securityMatcher)
+                    .authorizeHttpRequests(authorize -> {
+                        authorize
+                                .requestMatchers(anonymousRequestMatcher).permitAll()
+                                .requestMatchers(authenticatedRequestMatcher).authenticated();
+                    })
+                    .oauth2ResourceServer(resourceServer -> {
                         resourceServer.jwt(jwt -> {
                             jwt.jwtAuthenticationConverter(jmixJwtAuthenticationConverter);
                         });
                     })
                     .csrf(csrf -> csrf.disable())
                     .cors(Customizer.withDefaults());
-
             JmixHttpSecurityUtils.configureAnonymous(http);
-            JmixHttpSecurityUtils.configureAuthorizedUrls(http);
-
             OidcResourceServerEventSecurityFilter resourceServerEventSecurityFilter =
                     new OidcResourceServerEventSecurityFilter(applicationEventPublisher);
             http.addFilterBefore(resourceServerEventSecurityFilter, AuthorizationFilter.class);

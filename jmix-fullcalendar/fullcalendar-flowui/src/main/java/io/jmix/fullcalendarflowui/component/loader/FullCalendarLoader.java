@@ -138,6 +138,14 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadString(eventProviderElement, "backgroundColorProperty", calendarItems::setBackgroundColorProperty);
         loadString(eventProviderElement, "borderColorProperty", calendarItems::setBorderColorProperty);
         loadString(eventProviderElement, "textColorProperty", calendarItems::setTextColorProperty);
+
+        loadStringList(eventProviderElement, "additionalProperties", calendarItems::setAdditionalProperties);
+
+        loadString(eventProviderElement, "recurringDaysOfWeek", calendarItems::setRecurringDaysOfWeekProperty);
+        loadString(eventProviderElement, "recurringStartDate", calendarItems::setRecurringStartDateProperty);
+        loadString(eventProviderElement, "recurringEndDate", calendarItems::setRecurringEndDateProperty);
+        loadString(eventProviderElement, "recurringStartTime", calendarItems::setRecurringStartTimeProperty);
+        loadString(eventProviderElement, "recurringEndTime", calendarItems::setRecurringEndTimeProperty);
     }
 
     protected AbstractEntityEventProvider<?> createCalendarItems(Element eventProviderElement,

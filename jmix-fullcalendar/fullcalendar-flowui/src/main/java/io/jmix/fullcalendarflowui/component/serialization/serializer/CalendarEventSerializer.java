@@ -11,11 +11,14 @@ import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
+import java.util.TimeZone;
+import java.util.function.Supplier;
 
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeTransformations.transformToZDT;
 
 public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
 
+    protected Supplier<TimeZone> timeZoneSupplier = TimeZone::getDefault;
     protected final KeyMapper<Object> crossEventProviderKeyMapper;
     protected KeyMapper<Object> idMapper;
     protected String sourceId;
@@ -32,6 +35,11 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         this.idMapper = idMapper;
         this.sourceId = sourceId;
         this.crossEventProviderKeyMapper = crossEventProviderKeyMapper;
+    }
+
+    public void setTimeZoneSupplier(Supplier<TimeZone> timeZoneSupplier) {
+        Preconditions.checkNotNullArgument(timeZoneSupplier);
+        this.timeZoneSupplier = timeZoneSupplier;
     }
 
     @Override
@@ -58,9 +66,7 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         serializeNullableValue("startEditable", value.getStartEditable(), gen, provider);
         serializeNullableValue("durationEditable", value.getDurationEditable(), gen, provider);
 
-        serializeNullableValue("display", value.getDisplay() != null
-                ? value.getDisplay().getId()
-                : null, gen, provider);
+        serializeNullableValue("display", value.getDisplay(), gen, provider);
         serializeNullableValue("overlap", value.getOverlap(), gen, provider);
 
         serializeNullableValue("backgroundColor", value.getBackgroundColor(), gen, provider);
@@ -68,6 +74,14 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         serializeNullableValue("textColor", value.getTextColor(), gen, provider);
 
         serializeNullableValue("extendedProps", value.getAdditionalProperties(), gen, provider);
+        serializeNullableValue("daysOfWeek", value.getRecurringDaysOfWeek(), gen, provider);
+
+        serializeNullableValue("startRecur", value.getRecurringStarDate(), gen, provider);
+        serializeNullableValue("endRecur", value.getRecurringEndDate(), gen, provider);
+
+        serializeNullableValue("startTime", value.getRecurringStarTime(), gen, provider);
+        serializeNullableValue("endTime", value.getRecurringEndTime(), gen, provider);
+
         gen.writeObjectField("jmixSourceId", sourceId);
 
         gen.writeEndObject();

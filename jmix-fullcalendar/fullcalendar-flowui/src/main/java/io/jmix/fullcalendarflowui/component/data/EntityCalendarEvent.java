@@ -3,17 +3,23 @@ package io.jmix.fullcalendarflowui.component.data;
 import com.google.common.base.Strings;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.fullcalendar.DaysOfWeek;
 import io.jmix.fullcalendar.Display;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
-import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeTransformations.transformToType;
+import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeTransformations.*;
 
 public class EntityCalendarEvent<E> implements CalendarEvent {
     private static final Logger log = LoggerFactory.getLogger(EntityCalendarEvent.class);
@@ -159,16 +165,61 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
     }
 
     @Override
-    public Map<String, Serializable> getAdditionalProperties() {
-        // todo rp make a property that contains a list of additional properties
-        //  and collect them here to map
-        return Map.of();
+    public Map<String, Object> getAdditionalProperties() {
+        List<String> additionalProperties = eventProvider.getAdditionalProperties();
+        if (CollectionUtils.isEmpty(eventProvider.getAdditionalProperties())) {
+            return Map.of();
+        }
+
+        @SuppressWarnings("DataFlowIssue")
+        Map<String, Object> properties = additionalProperties.stream()
+                .filter(p -> getValue(p) != null)
+                .collect(Collectors.toMap(Function.identity(), this::getValue)); // getValue() cannot return null as we filter by non-null values
+
+        return properties;
+    }
+
+    @Override
+    public DaysOfWeek getRecurringDaysOfWeek() {
+        return getValue(eventProvider.getRecurringDaysOfWeekProperty());
+    }
+
+    @Override
+    public LocalDate getRecurringStarDate() {
+        Object value = getValue(eventProvider.getRecurringStartDateProperty());
+
+        return value != null
+                ? (LocalDate) transformToType(value, LocalDate.class, null)
+                : null;
+    }
+
+    @Override
+    public LocalDate getRecurringEndDate() {
+        Object value = getValue(eventProvider.getRecurringEndDateProperty());
+
+        return value != null
+                ? (LocalDate) transformToType(value, LocalDate.class, null)
+                : null;
+    }
+
+    @Override
+    public LocalTime getRecurringStarTime() {
+        Object value = getValue(eventProvider.getRecurringStartTimeProperty());
+
+        return value != null ? transformToLocalTime(value) : null;
+    }
+
+    @Override
+    public LocalTime getRecurringEndTime() {
+        Object value = getValue(eventProvider.getRecurringEndTimeProperty());
+
+        return value != null ? transformToLocalTime(value) : null;
     }
 
     @Nullable
     protected <T> T getValue(@Nullable String property) {
         return !Strings.isNullOrEmpty(property)
-                ? EntityValues.getValue(entity, property)
+                ? EntityValues.getValueEx(entity, property)
                 : null;
     }
 

@@ -16,11 +16,13 @@
 
 package io.jmix.fullcalendarflowui.component.data;
 
+import io.jmix.fullcalendar.DaysOfWeek;
 import io.jmix.fullcalendar.Display;
 import org.springframework.lang.Nullable;
 
-import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -47,7 +49,13 @@ public class SimpleCalendarEvent implements CalendarEvent {
     protected String borderColor;
     protected String textColor;
 
-    protected Map<String, Serializable> additionalProperties;
+    protected Map<String, Object> additionalProperties;
+
+    protected DaysOfWeek recurringDaysOfWeek;
+    protected LocalDate recurringStartDate;
+    protected LocalDate recurringEndDate;
+    protected LocalTime recurringStartTime;
+    protected LocalTime recurringEndTime;
 
     public SimpleCalendarEvent() {
         this(UUID.randomUUID());
@@ -164,14 +172,18 @@ public class SimpleCalendarEvent implements CalendarEvent {
         return overlap;
     }
 
+    public void setOverlap(Boolean overlap) {
+        this.overlap = overlap;
+    }
+
     @Nullable
     @Override
     public Object getConstraint() {
         return constraint;
     }
 
-    public void setOverlap(Boolean overlap) {
-        this.overlap = overlap;
+    public void setConstraint(@Nullable Object constraint) {
+        this.constraint = constraint;
     }
 
     @Override
@@ -203,12 +215,57 @@ public class SimpleCalendarEvent implements CalendarEvent {
 
     @Nullable
     @Override
-    public Map<String, Serializable> getAdditionalProperties() {
+    public Map<String, Object> getAdditionalProperties() {
         return additionalProperties;
     }
 
-    public void setAdditionalProperties(@Nullable Map<String, Serializable> additionalProperties) {
+    public void setAdditionalProperties(@Nullable Map<String, Object> additionalProperties) {
         this.additionalProperties = additionalProperties;
+    }
+
+    @Override
+    public DaysOfWeek getRecurringDaysOfWeek() {
+        return recurringDaysOfWeek;
+    }
+
+    public void setRecurringDaysOfWeek(@Nullable DaysOfWeek recurringDaysOfWeek) {
+        this.recurringDaysOfWeek = recurringDaysOfWeek;
+    }
+
+    @Override
+    public LocalDate getRecurringStarDate() {
+        return recurringStartDate;
+    }
+
+    public void setRecurringStartDate(@Nullable LocalDate recurringStartDate) {
+        this.recurringStartDate = recurringStartDate;
+    }
+
+    @Override
+    public LocalDate getRecurringEndDate() {
+        return recurringEndDate;
+    }
+
+    public void setRecurringEndDate(@Nullable LocalDate recurringEndDate) {
+        this.recurringEndDate = recurringEndDate;
+    }
+
+    @Override
+    public LocalTime getRecurringStarTime() {
+        return recurringStartTime;
+    }
+
+    public void setRecurringStartTime(@Nullable LocalTime recurringStartTime) {
+        this.recurringStartTime = recurringStartTime;
+    }
+
+    @Override
+    public LocalTime getRecurringEndTime() {
+        return recurringEndTime;
+    }
+
+    public void setRecurringEndTime(@Nullable LocalTime recurringEndTime) {
+        this.recurringEndTime = recurringEndTime;
     }
 
     public static Builder create() {
@@ -322,8 +379,33 @@ public class SimpleCalendarEvent implements CalendarEvent {
             return this;
         }
 
-        public Builder withAdditionalProperties(Map<String, Serializable> additionalProperties) {
+        public Builder withAdditionalProperties(Map<String, Object> additionalProperties) {
             event.additionalProperties = additionalProperties;
+            return this;
+        }
+
+        public Builder withRecurringDaysOfWeek(@Nullable DaysOfWeek daysOfWeek) {
+            event.recurringDaysOfWeek = daysOfWeek;
+            return this;
+        }
+
+        public Builder withRecurringStartDate(@Nullable LocalDate recurringStartDate) {
+            event.recurringStartDate = recurringStartDate;
+            return this;
+        }
+
+        public Builder withRecurringEndDate(@Nullable LocalDate recurringEndDate) {
+            event.recurringEndDate = recurringEndDate;
+            return this;
+        }
+
+        public Builder withRecurringStartTime(@Nullable LocalTime recurringStartTime) {
+            event.recurringStartTime = recurringStartTime;
+            return this;
+        }
+
+        public Builder withRecurringEndTime(@Nullable LocalTime recurringEndTime) {
+            event.recurringEndTime = recurringEndTime;
             return this;
         }
 

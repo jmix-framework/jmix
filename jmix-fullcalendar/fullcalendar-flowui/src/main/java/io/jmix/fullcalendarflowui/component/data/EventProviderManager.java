@@ -1,9 +1,9 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import elemental.json.JsonValue;
+import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.data.CalendarEventProvider.ItemSetChangeEvent;
 import io.jmix.fullcalendarflowui.component.serialization.IncrementalData;
-import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -17,8 +17,8 @@ public class EventProviderManager extends AbstractEventProviderManager {
     protected List<ItemSetChangeEvent> pendingIncrementalChanges = new ArrayList<>();
 
     public EventProviderManager(CalendarEventProvider eventProvider,
-                                FullCalendarSerializer serializer) {
-        super(eventProvider, serializer, "_addItemEventSource");
+                                FullCalendar fullCalendar) {
+        super(eventProvider, fullCalendar, "_addItemEventSource");
 
         eventProvider.addItemSetChangeListener(this::onItemSetChangeListener);
     }

@@ -31,11 +31,6 @@ public class BusinessHoursOptionSerializer extends StdSerializer<BusinessHoursOp
 
     @Override
     public void serialize(BusinessHoursOption value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if (value == null) {
-            gen.writeNull();
-            return;
-        }
-
         if (value.getBusinessHours() != null && !value.getBusinessHours().isEmpty()) {
             gen.writeStartObject();
             gen.writeObjectField("businessHours", value.getBusinessHours());

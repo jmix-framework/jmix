@@ -20,7 +20,6 @@ package io.jmix.fullcalendar;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import jakarta.annotation.Nullable;
 
-// todo RP messages
 public enum Display implements EnumClass<String> {
 
     AUTO("auto"),

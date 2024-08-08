@@ -16,6 +16,7 @@
 
 package io.jmix.fullcalendarflowui.kit.component;
 
+import com.google.common.base.Preconditions;
 import jakarta.annotation.Nullable;
 
 import java.time.*;
@@ -29,6 +30,7 @@ public final class CalendarDateTimeTransformations {
 
     /**
      * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToType()
+     *
      * @param date
      * @param javaType
      * @param zoneId
@@ -44,6 +46,7 @@ public final class CalendarDateTimeTransformations {
 
     /**
      * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToZDT()
+     *
      * @param date
      * @param fromZoneId
      * @return
@@ -67,6 +70,7 @@ public final class CalendarDateTimeTransformations {
 
     /**
      * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformFromZdtInternal()
+     *
      * @param zonedDateTime
      * @param javaType
      * @return
@@ -88,6 +92,25 @@ public final class CalendarDateTimeTransformations {
             return zonedDateTime.toOffsetDateTime().toOffsetTime();
         }
         throw newUnsupportedTypeException(javaType);
+    }
+
+    /**
+     * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToLocalTime()
+     */
+    public static LocalTime transformToLocalTime(Object date) {
+        Preconditions.checkNotNull(date);
+        if (date instanceof java.sql.Time) {
+            return ((java.sql.Time) date).toLocalTime();
+        } else if (date instanceof Date) {
+            return ((Date) date).toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalTime();
+        } else if (date instanceof LocalTime) {
+            return (LocalTime) date;
+        } else if (date instanceof OffsetTime) {
+            return ((OffsetTime) date).toLocalTime();
+        }
+        throw newUnsupportedTypeException(date.getClass());
     }
 
     private static RuntimeException newUnsupportedTypeException(Class javaType) {

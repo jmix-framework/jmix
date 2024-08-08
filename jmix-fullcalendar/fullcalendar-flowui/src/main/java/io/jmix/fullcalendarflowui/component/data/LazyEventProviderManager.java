@@ -1,7 +1,7 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import elemental.json.JsonArray;
-import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
+import io.jmix.fullcalendarflowui.component.FullCalendar;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ public class LazyEventProviderManager extends AbstractEventProviderManager {
     protected List<CalendarEvent> lastFetchedEvents;
 
     public LazyEventProviderManager(LazyCalendarEventProvider eventProvider,
-                                    FullCalendarSerializer serializer) {
-        super(eventProvider, serializer, "_addLazyEventSource");
+                                    FullCalendar fullCalendar) {
+        super(eventProvider, fullCalendar, "_addLazyEventSource");
     }
 
     @Override

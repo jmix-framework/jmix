@@ -33,4 +33,18 @@ public enum DayOfWeek implements EnumClass<Integer> {
         }
         return null;
     }
+
+    public static DayOfWeek fromDayOfWeek(java.time.DayOfWeek dayOfWeek) {
+        DayOfWeek result = SUNDAY;
+        switch (dayOfWeek) {
+            case MONDAY -> result = MONDAY;
+            case TUESDAY -> result = TUESDAY;
+            case WEDNESDAY -> result = WEDNESDAY;
+            case THURSDAY -> result = THURSDAY;
+            case FRIDAY -> result = FRIDAY;
+            case SATURDAY -> result = SATURDAY;
+        }
+        return result;
+
+    }
 }

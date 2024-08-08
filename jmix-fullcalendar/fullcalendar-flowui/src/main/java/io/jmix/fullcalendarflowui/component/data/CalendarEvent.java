@@ -16,13 +16,17 @@
 
 package io.jmix.fullcalendarflowui.component.data;
 
+import io.jmix.fullcalendar.DaysOfWeek;
 import io.jmix.fullcalendar.Display;
+import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
 import org.springframework.lang.Nullable;
 
-import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -145,5 +149,52 @@ public interface CalendarEvent {
     String getTextColor();
 
     @Nullable
-    Map<String, Serializable> getAdditionalProperties();
+    Map<String, Object> getAdditionalProperties();
+
+    @Nullable
+    DaysOfWeek getRecurringDaysOfWeek();
+
+    /**
+     * Returns the date when recurrences of this event start. If it is not specified, recurrences will extend
+     * infinitely into the past.
+     *
+     * @return the start date of recurring event
+     */
+    @Nullable
+    LocalDate getRecurringStarDate();
+
+    /**
+     * Returns the date when recurrences of this event end. If it is not specified, recurrences will extend
+     * infinitely into the future.
+     * <p>
+     * Note that this value is <strong>exclusive</strong>. For all day recurring events, make end date the day
+     * after you want your last recurrence.
+     *
+     * @return the end date of recurring event
+     */
+    @Nullable
+    LocalDate getRecurringEndDate();
+
+    /**
+     * Returns the start time of recurring event. If it is not defined, the event considered as all day event.
+     * <p>
+     * Note that calendar does not apply TimeZone conversion for this property. If {@link OffsetTime} type is used in
+     * entity it will be transformed to system default time zone.
+     *
+     * @return the start time of recurring event
+     */
+    @Nullable
+    LocalTime getRecurringStarTime();
+
+    /**
+     * Returns the end time of recurring event. If it is not defined, the event will appear to have the default
+     * duration as configured in {@link FullCalendar} component.
+     * <p>
+     * Note that calendar does not apply TimeZone conversion for this property. If {@link OffsetTime} type is used in
+     * entity it will be transformed to system default time zone.
+     *
+     * @return the end time of recurring event
+     */
+    @Nullable
+    LocalTime getRecurringEndTime();
 }

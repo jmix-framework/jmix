@@ -26,7 +26,6 @@
                     <xs:all>
                         <xs:element name="eventProviders" type="eventProvidersType"/>
                         <xs:element name="businessHours" type="businessHoursType"/>
-                        <!--todo rp enable default toolbar and make it flexible?-->
                     </xs:all>
 
                     <xs:attribute name="initialView" type="calendarViewType"/>
@@ -133,11 +132,13 @@
         <xs:attribute name="borderColorProperty" type="xs:string"/>
         <xs:attribute name="textColorProperty" type="xs:string"/>
 
-        <xs:attribute name="recurrenceDaysOfWeek" type="xs:string"/>
-        <xs:attribute name="recurrenceStartTime" type="xs:string"/>
-        <xs:attribute name="recurrenceEndTime" type="xs:string"/>
-        <xs:attribute name="recurrenceStartRecur" type="xs:string"/>
-        <xs:attribute name="recurrenceEndRecur" type="xs:string"/>
+        <xs:attribute name="additionalProperties" type="xs:string"/>
+
+        <xs:attribute name="recurringDaysOfWeek" type="xs:string"/>
+        <xs:attribute name="recurringStartTime" type="xs:string"/>
+        <xs:attribute name="recurringEndTime" type="xs:string"/>
+        <xs:attribute name="recurringStartDate" type="xs:string"/>
+        <xs:attribute name="recurringEndDate" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="containerProviderType">

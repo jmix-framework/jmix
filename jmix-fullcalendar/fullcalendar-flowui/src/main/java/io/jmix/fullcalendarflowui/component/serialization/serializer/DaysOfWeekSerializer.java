@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 
-
 package io.jmix.fullcalendarflowui.component.serialization.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import io.jmix.core.metamodel.datatype.EnumClass;
+import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendar.DaysOfWeek;
 
 import java.io.IOException;
 
-public class EnumClassSerializer extends StdSerializer<EnumClass> {
+public class DaysOfWeekSerializer extends StdSerializer<DaysOfWeek> {
 
-    public EnumClassSerializer() {
-        super(EnumClass.class);
+    public DaysOfWeekSerializer() {
+        super(DaysOfWeek.class);
     }
 
     @Override
-    public void serialize(EnumClass value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if (value.getId() instanceof String id) {
-            gen.writeString(id);
-        } else if (value.getId() instanceof Integer id) {
-            gen.writeNumber(id);
+    public void serialize(DaysOfWeek value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        if (value.getDaysOfWeek().isEmpty()) {
+            return;
         }
+        int[] days = value.getDaysOfWeek().stream()
+                .mapToInt(DayOfWeek::getId)
+                .toArray();
+        gen.writeArray(days, 0, days.length);
     }
 }

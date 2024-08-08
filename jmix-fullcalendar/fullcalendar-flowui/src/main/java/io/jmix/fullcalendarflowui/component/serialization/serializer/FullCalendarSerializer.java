@@ -24,6 +24,7 @@ import com.vaadin.flow.data.provider.KeyMapper;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.component.serialization.IncrementalData;
 import io.jmix.fullcalendarflowui.kit.component.serialization.serializer.JmixFullCalendarSerializer;
@@ -32,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.TimeZone;
+import java.util.function.Supplier;
 
 public class FullCalendarSerializer extends JmixFullCalendarSerializer {
 
@@ -44,6 +47,7 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
         serializers.add(new EventConstraintSerializer());
         serializers.add(new BusinessHoursOptionSerializer());
         serializers.add(new SelectConstraintSerializer());
+        serializers.add(new DaysOfWeekSerializer());
         return serializers;
     }
 
@@ -62,22 +66,29 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
         crossEventProviderKeyMapper.removeAll();
     }
 
-    public FullCalendarDataSerializer createDataSerializer(String sourceId, KeyMapper<Object> eventKeyMapper) {
+    public FullCalendarDataSerializer createDataSerializer(String sourceId,
+                                                           KeyMapper<Object> eventKeyMapper) {
         return new FullCalendarDataSerializer(sourceId, eventKeyMapper);
     }
 
     public class FullCalendarDataSerializer extends FullCalendarSerializer {
         private static final Logger log = LoggerFactory.getLogger(FullCalendarDataSerializer.class);
 
+        protected CalendarEventSerializer eventSerializer;
         protected KeyMapper<Object> eventKeyMapper;
         protected String sourceId;
 
-        public FullCalendarDataSerializer(String sourceId,
-                                          KeyMapper<Object> eventKeyMapper) {
+        public FullCalendarDataSerializer(String sourceId, KeyMapper<Object> eventKeyMapper) {
             this.eventKeyMapper = eventKeyMapper;
             this.sourceId = sourceId;
 
-            setupCalendarEventSerializer(objectMapper);
+            eventSerializer = createCalendarEventSerializer();
+            setupCalendarEventSerializer(objectMapper, eventSerializer);
+        }
+
+        public void setTimeZoneSupplier(Supplier<TimeZone> timeZoneSupplier) {
+            Preconditions.checkNotNullArgument(timeZoneSupplier);
+            eventSerializer.setTimeZoneSupplier(timeZoneSupplier);
         }
 
         public JsonValue serializeIncrementalData(IncrementalData incrementalData) {
@@ -113,10 +124,15 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
             return json;
         }
 
-        protected void setupCalendarEventSerializer(ObjectMapper objectMapper) {
+        protected CalendarEventSerializer createCalendarEventSerializer() {
+            return new CalendarEventSerializer(sourceId, eventKeyMapper,
+                    FullCalendarSerializer.this.crossEventProviderKeyMapper);
+        }
+
+        protected void setupCalendarEventSerializer(ObjectMapper objectMapper,
+                                                    CalendarEventSerializer eventSerializer) {
             SimpleModule module = new SimpleModule();
-            module.addSerializer(new CalendarEventSerializer(sourceId, eventKeyMapper,
-                    FullCalendarSerializer.this.crossEventProviderKeyMapper));
+            module.addSerializer(eventSerializer);
             objectMapper.registerModule(module);
         }
     }

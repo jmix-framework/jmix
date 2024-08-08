@@ -601,11 +601,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected EventProviderManager createEventProviderManager(CalendarEventProvider eventProvider) {
-        return new EventProviderManager(eventProvider, getSerializer());
+        return new EventProviderManager(eventProvider, this);
     }
 
     protected LazyEventProviderManager createLazyEventProviderManager(LazyCalendarEventProvider eventProvider) {
-        return new LazyEventProviderManager(eventProvider, getSerializer());
+        return new LazyEventProviderManager(eventProvider, this);
     }
 
     /**

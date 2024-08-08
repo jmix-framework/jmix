@@ -140,8 +140,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         return options.getTimeZone();
     }
 
-    public void setTimeZone(TimeZone timeZone) {
-        options.setTimeZone(timeZone);
+    public void setTimeZone(@Nullable TimeZone timeZone) {
+        options.setTimeZone(timeZone != null ? timeZone : TimeZone.getDefault());
     }
 
     public void navigateToNext() {

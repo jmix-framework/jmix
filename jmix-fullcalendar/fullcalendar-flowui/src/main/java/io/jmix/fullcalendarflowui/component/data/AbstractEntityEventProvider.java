@@ -2,8 +2,11 @@ package io.jmix.fullcalendarflowui.component.data;
 
 import com.vaadin.flow.data.provider.AbstractDataProvider;
 import io.jmix.core.common.util.Preconditions;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.lang.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -30,6 +33,14 @@ public abstract class AbstractEntityEventProvider<F> extends AbstractDataProvide
     protected String backgroundColorProperty;
     protected String borderColorProperty;
     protected String textColorProperty;
+
+    protected List<String> additionalProperties;
+
+    protected String recurringDaysOfWeekProperty;
+    protected String recurringStartDateProperty;
+    protected String recurringEndDateProperty;
+    protected String recurringStartTimeProperty;
+    protected String recurringEndTimeProperty;
 
     public AbstractEntityEventProvider() {
         this(EventProviderUtils.generateId());
@@ -195,8 +206,73 @@ public abstract class AbstractEntityEventProvider<F> extends AbstractDataProvide
         this.textColorProperty = textColorProperty;
     }
 
+    @Override
+    public List<String> getAdditionalProperties() {
+        return CollectionUtils.isEmpty(additionalProperties) ? Collections.emptyList() : additionalProperties;
+    }
+
+    @Override
+    public void setAdditionalProperties(@Nullable List<String> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    @Override
+    public String getRecurringDaysOfWeekProperty() {
+        return recurringDaysOfWeekProperty;
+    }
+
+    @Override
+    public void setRecurringDaysOfWeekProperty(@Nullable String recurringDaysOfWeekProperty) {
+        this.recurringDaysOfWeekProperty = recurringDaysOfWeekProperty;
+    }
+
+    @Override
+    public String getRecurringStartDateProperty() {
+        return recurringStartDateProperty;
+    }
+
+    @Override
+    public void setRecurringStartDateProperty(@Nullable String recurringStartDateProperty) {
+        this.recurringStartDateProperty = recurringStartDateProperty;
+    }
+
+    @Override
+    public String getRecurringEndDateProperty() {
+        return recurringEndDateProperty;
+    }
+
+    @Override
+    public void setRecurringEndDateProperty(@Nullable String recurringEndDateProperty) {
+        this.recurringEndDateProperty = recurringEndDateProperty;
+    }
+
+    @Override
+    public String getRecurringStartTimeProperty() {
+        return recurringStartTimeProperty;
+    }
+
+    @Override
+    public void setRecurringStartTimeProperty(@Nullable String recurringStartTimeProperty) {
+        this.recurringStartTimeProperty = recurringStartTimeProperty;
+    }
+
+    @Override
+    public String getRecurringEndTimeProperty() {
+        return recurringEndTimeProperty;
+    }
+
+    @Override
+    public void setRecurringEndTimeProperty(@Nullable String recurringEndTimeProperty) {
+        this.recurringEndTimeProperty = recurringEndTimeProperty;
+    }
+
+    protected boolean isAdditionalProperty(String property) {
+        return CollectionUtils.isNotEmpty(additionalProperties)
+                && additionalProperties.contains(property);
+    }
+
     protected boolean isEventPropertyChanged(String property) {
-        return Objects.equals(groupIdProperty, property)
+        boolean isProperty = Objects.equals(groupIdProperty, property)
                 || Objects.equals(allDayProperty, property)
                 || Objects.equals(startDateTimeProperty, property)
                 || Objects.equals(endDateTimeProperty, property)
@@ -210,6 +286,12 @@ public abstract class AbstractEntityEventProvider<F> extends AbstractDataProvide
                 || Objects.equals(constraintProperty, property)
                 || Objects.equals(backgroundColorProperty, property)
                 || Objects.equals(borderColorProperty, property)
-                || Objects.equals(textColorProperty, property);
+                || Objects.equals(textColorProperty, property)
+                || Objects.equals(recurringDaysOfWeekProperty, property)
+                || Objects.equals(recurringStartDateProperty, property)
+                || Objects.equals(recurringEndDateProperty, property)
+                || Objects.equals(recurringStartTimeProperty, property)
+                || Objects.equals(recurringEndTimeProperty, property);
+        return isProperty || isAdditionalProperty(property);
     }
 }

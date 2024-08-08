@@ -31,10 +31,6 @@ public class EventConstraintSerializer extends StdSerializer<EventConstraint> {
 
     @Override
     public void serialize(EventConstraint value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if (value == null) {
-            gen.writeNull();
-            return;
-        }
         // todo rp discuss priority?
         //  make the same behavior with maxRows and maxRowsEnabled
         if (value.getBusinessHours() != null && !value.getBusinessHours().isEmpty()) {

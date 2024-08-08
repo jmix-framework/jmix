@@ -12,7 +12,13 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.*;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.ExtendedEntities;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.Stores;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
@@ -38,13 +44,37 @@ import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
-import io.jmix.flowui.model.*;
-import io.jmix.flowui.view.*;
+import io.jmix.flowui.model.CollectionChangeType;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionPropertyContainer;
+import io.jmix.flowui.model.DataContext;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.view.ChangeTrackerCloseAction;
+import io.jmix.flowui.view.CloseAction;
+import io.jmix.flowui.view.DefaultMainViewParent;
+import io.jmix.flowui.view.DialogMode;
+import io.jmix.flowui.view.DialogWindow;
+import io.jmix.flowui.view.Install;
+import io.jmix.flowui.view.MessageBundle;
+import io.jmix.flowui.view.StandardOutcome;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.Subscribe;
+import io.jmix.flowui.view.Target;
+import io.jmix.flowui.view.ViewComponent;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
+import io.jmix.flowui.view.ViewValidation;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
-import io.jmix.reports.entity.wizard.*;
+import io.jmix.reports.entity.wizard.EntityTreeNode;
+import io.jmix.reports.entity.wizard.QueryParameter;
+import io.jmix.reports.entity.wizard.RegionProperty;
+import io.jmix.reports.entity.wizard.ReportData;
+import io.jmix.reports.entity.wizard.ReportRegion;
+import io.jmix.reports.entity.wizard.ReportTypeGenerate;
+import io.jmix.reports.entity.wizard.TemplateFileType;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsClientProperties;
@@ -62,8 +92,19 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 @Route(value = "reports/wizard", layout = DefaultMainViewParent.class)
 @DialogMode(draggable = false, width = "45em")
@@ -289,7 +330,7 @@ public class ReportWizardCreatorView extends StandardView {
                     getReportTypeGenerate()));
         }
         if ("templateFileType".equals(event.getProperty())
-            && reportDataDc.getItem().getTemplateFileType() != null) {
+                && reportDataDc.getItem().getTemplateFileType() != null) {
             updateCorrectReportOutputType((TemplateFileType) event.getValue());
             updateDownloadTemplateFile();
             outputFileName.setTypedValue(generateOutputFileName(reportDataDc.getItem().getTemplateFileType().toString(),
@@ -453,10 +494,10 @@ public class ReportWizardCreatorView extends StandardView {
     public void onBeforeClose(BeforeCloseEvent event) {
         CloseAction closeAction = event.getCloseAction();
         boolean checkUnsavedChanges = closeAction instanceof ChangeTrackerCloseAction
-                                      && ((ChangeTrackerCloseAction) closeAction).isCheckForUnsavedChanges();
+                && ((ChangeTrackerCloseAction) closeAction).isCheckForUnsavedChanges();
 
         if (!event.closedWith(StandardOutcome.SAVE) && checkUnsavedChanges
-            && CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
+                && CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
             dialogs.createOptionDialog()
                     .withHeader(messageBundle.getMessage("dialogConfirmation.header"))
                     .withText(messageBundle.getMessage("beforeClose.interruptConfirm.text"))
@@ -471,7 +512,7 @@ public class ReportWizardCreatorView extends StandardView {
     }
 
     protected void initEntityLookupField() {
-        ComponentUtils.setItemsMap(entityField, MapUtils.invertMap(getAvailableEntities()));
+        ComponentUtils.setItemsMap(entityField, getAvailableEntities());
     }
 
     @Subscribe("reportTypeGenerateField")
@@ -522,8 +563,8 @@ public class ReportWizardCreatorView extends StandardView {
                     int index = oldName.lastIndexOf(prevEntityCaption);
                     if (index > -1) {
                         newName = StringUtils.substring(oldName, 0, index)
-                                  + messageTools.getEntityCaption(value)
-                                  + StringUtils.substring(oldName, index + prevEntityCaption.length(), oldName.length());
+                                + messageTools.getEntityCaption(value)
+                                + StringUtils.substring(oldName, index + prevEntityCaption.length(), oldName.length());
                     }
 
                     reportData.setName(newName);
@@ -584,18 +625,46 @@ public class ReportWizardCreatorView extends StandardView {
                 TemplateFileType.TABLE, messages.getMessage(TemplateFileType.TABLE));
     }
 
-    protected Map<String, MetaClass> getAvailableEntities() {
-        Map<String, MetaClass> result = new TreeMap<>(String::compareTo);
+    protected Map<MetaClass, String> getAvailableEntities() {
+        Map<MetaClass, String> result = new LinkedHashMap<>();
         Collection<MetaClass> classes = metadataTools.getAllJpaEntityMetaClasses();
-        for (MetaClass metaClass : classes) {
-            MetaClass effectiveMetaClass = extendedEntities.getEffectiveMetaClass(metaClass);
-            if (!reportWizardService.isEntityAllowedForReportWizard(effectiveMetaClass)) {
-                continue;
-            }
-            result.put(messageTools.getEntityCaption(effectiveMetaClass) + " (" + effectiveMetaClass.getName() + ")",
-                    effectiveMetaClass);
-        }
+        String projectPackagePrefix = getProjectPackagePrefix();
+
+        classes.stream()
+                .map(extendedEntities::getEffectiveMetaClass)
+                .filter(reportWizardService::isEntityAllowedForReportWizard)
+                .sorted(Comparator.comparing((MetaClass metaClass) -> {
+                    String packageName = metaClass.getJavaClass().getPackage().getName();
+                    return !packageName.contains(projectPackagePrefix);
+                }))
+                .forEach(metaClass -> {
+                    String key = messageTools.getEntityCaption(metaClass) + " (" + metaClass.getName() + ")";
+                    result.putIfAbsent(metaClass, key);
+                });
+
         return result;
+    }
+
+    public static Path getUsersProjectRootDirectory() {
+        String envRootDir = System.getProperty("user.dir");
+        Path rootDir = Paths.get(".").normalize().toAbsolutePath();
+        if (rootDir.startsWith(envRootDir)) {
+            return rootDir;
+        } else {
+            throw new RuntimeException("Root dir not found in user directory.");
+        }
+    }
+
+    public static String getProjectPackagePrefix() {
+        Path projectRoot = getUsersProjectRootDirectory();
+        String rootString = projectRoot.toString().replace(File.separator, ".");
+        int lastDotIndex = rootString.lastIndexOf('.');
+
+        if (lastDotIndex == -1) {
+            return null;
+        }
+
+        return rootString.substring(lastDotIndex + 1);
     }
 
     protected void clearQuery() {
@@ -762,7 +831,7 @@ public class ReportWizardCreatorView extends StandardView {
             List<ReportRegion> items = reportRegionsDc.getMutableItems();
             ReportRegion currentItem = regionDataGrid.getSingleSelectedItem();
             if ((up && currentItem.getOrderNum() != 1) ||
-                (!up && currentItem.getOrderNum() != items.size())) {
+                    (!up && currentItem.getOrderNum() != items.size())) {
                 ReportRegion itemToSwap = IterableUtils.find(items,
                         e -> e.getOrderNum().equals(currentItem.getOrderNum() - (up ? 1 : -1)));
                 long currentPosition = currentItem.getOrderNum();
@@ -800,7 +869,7 @@ public class ReportWizardCreatorView extends StandardView {
     @Subscribe("outputFileFormat")
     public void onOutputFileFormatComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixComboBox<ReportOutputType>, ReportOutputType> event) {
         if (event.getOldValue() != null && event.getValue() != null
-            && StringUtils.isNotBlank(outputFileName.getValue())) {
+                && StringUtils.isNotBlank(outputFileName.getValue())) {
             ReportOutputType prevValue = event.getOldValue();
             ReportOutputType value = event.getValue();
             String prevOutputFileName = outputFileName.getValue();

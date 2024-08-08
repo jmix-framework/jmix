@@ -37,6 +37,13 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 type: Object,
                 value: null,
             },
+            /**
+             * @private
+             */
+            _eventDescriptionPosition: {
+                type: String,
+                value: 'bottom-end'
+            }
         }
     }
 
@@ -412,6 +419,19 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
 
     _onEventDidMount(e) {
         const eventElement = e.el;
+
+        if (e.event.extendedProps.description) {
+            if (!eventElement.id) {
+                eventElement.id = window.crypto.randomUUID();
+            }
+
+            const tooltip = document.createElement('vaadin-tooltip');
+            tooltip.setAttribute("for", eventElement.id);
+            tooltip.setAttribute("text", e.event.extendedProps.description);
+            tooltip.setAttribute("position", this._eventDescriptionPosition)
+            eventElement.appendChild(tooltip);
+        }
+
         eventElement.addEventListener("contextmenu", (jsEvent) => {
             if (!this.contextMenuDetails) {
                 this.contextMenuDetails = {};

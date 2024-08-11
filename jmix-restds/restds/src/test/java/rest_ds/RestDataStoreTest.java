@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.AuthenticatedAsSystem;
+import test_support.SampleServiceConnection;
 import test_support.TestRestDsConfiguration;
 import test_support.entity.Customer;
 
@@ -76,6 +77,10 @@ public class RestDataStoreTest {
         assertThat(createdCustomer).isNotNull();
         assertThat(createdCustomer.getLastName()).isEqualTo(newName);
         assertThat(createdCustomer.getEmail()).isEqualTo(customer.getEmail());
+        assertThat(createdCustomer.getCreatedBy()).isEqualTo(SampleServiceConnection.CLIENT_ID);
+        assertThat(createdCustomer.getCreatedDate()).isNotNull();
+        assertThat(createdCustomer.getLastModifiedBy()).isNull();
+        assertThat(createdCustomer.getLastModifiedDate()).isNotNull();
 
         createdCustomer.setLastName("updated-cust-" + LocalDateTime.now());
 
@@ -84,6 +89,7 @@ public class RestDataStoreTest {
         assertThat(updatedCustomer).isNotNull();
         assertThat(updatedCustomer.getLastName()).isEqualTo(createdCustomer.getLastName());
         assertThat(updatedCustomer.getEmail()).isEqualTo(createdCustomer.getEmail());
+        assertThat(updatedCustomer.getLastModifiedBy()).isEqualTo(SampleServiceConnection.CLIENT_ID);
 
         dataManager.remove(updatedCustomer);
 

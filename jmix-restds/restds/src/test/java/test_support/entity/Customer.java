@@ -6,6 +6,7 @@ import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,13 +19,13 @@ public class Customer {
 
     private Integer version;
 
-//    private String createdBy;
-//
-//    private OffsetDateTime createdDate;
-//
-//    private String lastModifiedBy;
-//
-//    private OffsetDateTime lastModifiedDate;
+    private String createdBy;
+
+    private OffsetDateTime createdDate;
+
+    private String lastModifiedBy;
+
+    private OffsetDateTime lastModifiedDate;
 
     private String firstName;
 
@@ -88,37 +89,37 @@ public class Customer {
         this.address = address;
     }
 
-    //    public OffsetDateTime getLastModifiedDate() {
-//        return lastModifiedDate;
-//    }
-//
-//    public void setLastModifiedDate(OffsetDateTime lastModifiedDate) {
-//        this.lastModifiedDate = lastModifiedDate;
-//    }
-//
-//    public String getLastModifiedBy() {
-//        return lastModifiedBy;
-//    }
-//
-//    public void setLastModifiedBy(String lastModifiedBy) {
-//        this.lastModifiedBy = lastModifiedBy;
-//    }
-//
-//    public OffsetDateTime getCreatedDate() {
-//        return createdDate;
-//    }
-//
-//    public void setCreatedDate(OffsetDateTime createdDate) {
-//        this.createdDate = createdDate;
-//    }
-//
-//    public String getCreatedBy() {
-//        return createdBy;
-//    }
-//
-//    public void setCreatedBy(String createdBy) {
-//        this.createdBy = createdBy;
-//    }
+        public OffsetDateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(OffsetDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public OffsetDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(OffsetDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public Integer getVersion() {
         return version;

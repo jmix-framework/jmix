@@ -149,11 +149,10 @@ public class RestDataStore extends AbstractDataStore {
             MetaClass metaClass = metadata.getClass(entity);
             String entityJson = restSerialization.toJson(entity);
             String savedEntityJson;
-            boolean changeType;
-            if (entityStates.isNew(entity)) {
+            boolean isNew = entityStates.isNew(entity);
+            if (isNew) {
                 entityEventManager.publishEntitySavingEvent(entity, true);
                 savedEntityJson = restInvoker.create(metaClass.getName(), entityJson);
-                changeType = true;
             } else {
                 Object id = EntityValues.getId(entity);
                 if (id == null) {
@@ -162,14 +161,17 @@ public class RestDataStore extends AbstractDataStore {
                 entityEventManager.publishEntitySavingEvent(entity, false);
                 String entityId = id.toString();
                 savedEntityJson = restInvoker.update(metaClass.getName(), entityId, entityJson);
-                changeType = false;
             }
             Object savedEntity = restSerialization.fromJson(savedEntityJson, entity.getClass());
             if (savedEntity == null) {
                 throw new IllegalStateException("Saved entity is null");
             }
+            if (isNew && EntityValues.getId(entity) == null) {
+                // set new ID to the passed instance to let the framework match the saved instance with the original one
+                EntityValues.setId(entity, EntityValues.getId(savedEntity));
+            }
             entityStates.setNew(savedEntity, false);
-            entityEventManager.publishEntitySavedEvent(entity, savedEntity, changeType);
+            entityEventManager.publishEntitySavedEvent(entity, savedEntity, isNew);
             saved.add(savedEntity);
         }
         return saved;

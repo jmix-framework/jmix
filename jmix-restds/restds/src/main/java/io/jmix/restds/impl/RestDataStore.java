@@ -189,12 +189,12 @@ public class RestDataStore extends AbstractDataStore {
 
     @Override
     protected List<Object> loadAllValues(ValueLoadContext context) {
-        return List.of();
+        throw new UnsupportedOperationException("Loading scalar values is not supported");
     }
 
     @Override
     protected long countAllValues(ValueLoadContext context) {
-        return 0;
+        throw new UnsupportedOperationException("Loading scalar values is not supported");
     }
 
     @Override

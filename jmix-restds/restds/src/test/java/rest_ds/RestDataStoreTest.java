@@ -19,6 +19,7 @@ package rest_ds;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.querycondition.PropertyCondition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @ContextConfiguration(classes = TestRestDsConfiguration.class)
 @ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
@@ -199,6 +201,19 @@ public class RestDataStoreTest {
 
         assertThat(customers).size().isEqualTo(1);
         assertThat(customers.get(0)).isEqualTo(customer1);
+    }
+
+    @Test
+    void testLoadValues() {
+        try {
+            List<KeyValueEntity> keyValueEntities = dataManager.loadValues("select c.firstName from Customer c")
+                    .store("restService1")
+                    .property("firstName")
+                    .list();
+            fail("Should throw exception");
+        } catch (Throwable e) {
+            assertThat(e).isInstanceOf(UnsupportedOperationException.class);
+        }
     }
 
     private Customer createCustomer(String firstName, String lastName) {

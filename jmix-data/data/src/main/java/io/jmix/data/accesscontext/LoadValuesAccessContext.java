@@ -27,6 +27,9 @@ import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Defines an authorization point for entity attributes in a JPQL query loading scalar values.
+ */
 public class LoadValuesAccessContext implements AccessContext {
 
     protected String queryString;

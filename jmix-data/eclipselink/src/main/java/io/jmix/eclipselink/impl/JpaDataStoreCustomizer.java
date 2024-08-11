@@ -20,9 +20,9 @@ import io.jmix.core.DataStore;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.datastore.AbstractDataStore;
 import io.jmix.core.datastore.DataStoreCustomizer;
-import io.jmix.data.impl.DataStoreCrudListener;
+import io.jmix.core.datastore.security.DataStoreCrudListener;
 import io.jmix.data.impl.DataStoreCrudValuesListener;
-import io.jmix.data.impl.DataStoreInMemoryCrudListener;
+import io.jmix.data.impl.JpaDataStoreInMemoryCrudListener;
 import io.jmix.eclipselink.impl.lazyloading.JpaLazyLoadingListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -34,7 +34,7 @@ public class JpaDataStoreCustomizer implements DataStoreCustomizer {
     @Autowired
     protected DataStoreCrudListener crudListener;
     @Autowired
-    protected DataStoreInMemoryCrudListener inMemoryCrudListener;
+    protected JpaDataStoreInMemoryCrudListener inMemoryCrudListener;
     @Autowired
     protected JpaLazyLoadingListener lazyLoadingListener;
     @Autowired

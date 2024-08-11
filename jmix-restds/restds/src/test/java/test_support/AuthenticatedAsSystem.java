@@ -1,4 +1,4 @@
-package io.jmix.samples.restservice.test_support;
+package test_support;
 
 import io.jmix.core.security.SystemAuthenticator;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -11,11 +11,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  * JUnit extension for providing system authentication in integration tests.
  * Should be used in {@code @ExtendWith} annotation on the test class.
  */
-public class AuthenticatedAsAdmin implements BeforeEachCallback, AfterEachCallback {
+public class AuthenticatedAsSystem implements BeforeEachCallback, AfterEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext context) {
-        getSystemAuthenticator(context).begin("admin");
+        getSystemAuthenticator(context).begin();
     }
 
     @Override

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.core.datastore.security;
 
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
@@ -25,14 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component("data_DataStoreInMemoryCrudListener")
-public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
+public abstract class BaseDataStoreInMemoryCrudListener implements DataStoreEventListener {
 
-    private static final Logger log = LoggerFactory.getLogger(DataStoreInMemoryCrudListener.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseDataStoreInMemoryCrudListener.class);
 
     @Autowired
     protected AccessManager accessManager;
@@ -41,15 +39,11 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected FetchPlans fetchPlans;
-    @Autowired
-    protected FetchPlanRepository fetchPlanRepository;
-    @Autowired
-    protected EntityAttributesEraser entityAttributesEraser;
-    @Autowired
     protected EntityStates entityStates;
     @Autowired
     protected ApplicationContext applicationContext;
+
+    protected abstract EntityAttributesEraser getEntityAttributesEraser();
 
     public void beforeEntityLoad(DataStoreBeforeEntityLoadEvent event) {
         LoadContext<?> context = event.getLoadContext();
@@ -73,12 +67,12 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
 
         for (Object entity : context.getEntitiesToSave()) {
             if (!entityStates.isNew(entity)) {
-                entityAttributesEraser.restoreAttributes(entity);
+                getEntityAttributesEraser().restoreAttributes(entity);
             }
         }
 
         for (Object entity : context.getEntitiesToRemove()) {
-            entityAttributesEraser.restoreAttributes(entity);
+            getEntityAttributesEraser().restoreAttributes(entity);
         }
     }
 
@@ -101,7 +95,7 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
             }
         }
 
-        EntityAttributesEraser.ReferencesCollector references = entityAttributesEraser.collectErasingReferences(entities,
+        EntityAttributesEraser.ReferencesCollector references = getEntityAttributesEraser().collectErasingReferences(entities,
                 entity -> {
                     InMemoryCrudEntityContext childCrudContext =
                             new InMemoryCrudEntityContext(metadata.getClass(entity), applicationContext);
@@ -120,7 +114,7 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
         EntityAttributesEraser.ReferencesCollector references =
                 (EntityAttributesEraser.ReferencesCollector) event.getEventState().getValue("erasedReferences");
         if (references != null) {
-            entityAttributesEraser.eraseReferences(references);
+            getEntityAttributesEraser().eraseReferences(references);
         }
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.core.datastore.security;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -29,7 +29,7 @@ public interface EntityAttributesEraser {
 
     ReferencesCollector collectErasingReferences(Collection entityList, Predicate predicate);
 
-    void eraseReferences(EntityAttributesEraser.ReferencesCollector referencesCollector);
+    void eraseReferences(ReferencesCollector referencesCollector);
 
     void restoreAttributes(Object entity);
 

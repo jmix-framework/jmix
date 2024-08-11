@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.core.datastore.security;
 
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;

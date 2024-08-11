@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.springframework.lang.Nullable;
 
 /**
- * An access context to check permissions on entity attributes.
+ * Defines an authorization point for entity attributes.
  */
 public class EntityAttributeContext implements AccessContext {
     protected final MetaPropertyPath propertyPath;

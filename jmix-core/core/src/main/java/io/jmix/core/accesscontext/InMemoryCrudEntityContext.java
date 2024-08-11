@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 
 /**
- * An access context to check permissions on CRUD operations by testing predicates.
+ * Defines an authorization point for checking access to entity operations by testing predicates.
  */
 public class InMemoryCrudEntityContext implements AccessContext {
     protected final MetaClass entityClass;

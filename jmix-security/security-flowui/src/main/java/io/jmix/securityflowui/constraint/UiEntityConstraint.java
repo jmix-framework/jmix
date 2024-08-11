@@ -25,6 +25,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Checks access to entity operations based on resource policies.
+ */
 @Component("sec_UiEntityConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiEntityConstraint implements EntityOperationConstraint<UiEntityContext> {

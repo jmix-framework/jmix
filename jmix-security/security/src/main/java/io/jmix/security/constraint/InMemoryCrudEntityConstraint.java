@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.securitydata.constraint;
+package io.jmix.security.constraint;
 
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.constraint.InMemoryConstraint;
 import io.jmix.core.constraint.RowLevelConstraint;
-import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPolicyType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Checks access to entity operations based on row-level policies.
+ */
 @Component("sec_InMemoryCrudEntityConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InMemoryCrudEntityConstraint

@@ -41,6 +41,7 @@ dependencies {
 
     testImplementation project(':data')
     testImplementation project(':eclipselink')
+    testImplementation project(':security')
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.assertj:assertj-core'

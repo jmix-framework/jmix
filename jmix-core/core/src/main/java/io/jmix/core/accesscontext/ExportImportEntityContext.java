@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * An access context to check permissions on entity attributes when serializing entities to/from JSON.
+ * Defines an authorization point for entity attributes when serializing entities to/from JSON.
  */
 public class ExportImportEntityContext implements AccessContext {
     protected final MetaClass entityClass;

@@ -19,10 +19,12 @@ package test_support.entity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.Store;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
+@Store(name = "restService1")
 @JmixEntity
 public class CustomerContact {
     @JmixGeneratedValue
@@ -40,7 +42,7 @@ public class CustomerContact {
     @NotNull
     private String contactValue;
 
-    private Boolean preferred = false;
+    private Boolean preferred/* = false*/;
 
     public Boolean getPreferred() {
         return preferred;

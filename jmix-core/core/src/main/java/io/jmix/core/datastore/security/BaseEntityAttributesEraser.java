@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.core.datastore.security;
 
 import com.google.common.collect.Iterables;
 import io.jmix.core.*;
@@ -25,7 +25,6 @@ import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -34,8 +33,7 @@ import java.util.function.Predicate;
 
 import static java.lang.String.format;
 
-@Component("data_EntityAttributesEraser")
-public class EntityAttributesEraserImpl implements EntityAttributesEraser {
+public abstract class BaseEntityAttributesEraser implements EntityAttributesEraser {
 
     @Autowired
     protected Metadata metadata;
@@ -112,7 +110,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
         }
         for (Object id : ids) {
             MetaClass metaClass = metaProperty.getRange().asClass();
-            Object reference = dataManager.getReference(metaClass.getJavaClass(), id);
+            Object reference = getEntityReference(metaClass, id); //dataManager.getReference(metaClass.getJavaClass(), id);
             items.add(reference);
         }
     }
@@ -121,7 +119,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
     protected void restoreSingleAttribute(Object entity, MetaProperty metaProperty, Collection<Object> ids) {
         Object id = Iterables.getFirst(ids, null);
         assert id != null;
-        Object reference = dataManager.getReference((Class<?>) metaProperty.getJavaType(), id);
+        Object reference = getEntityReference(metaProperty.getRange().asClass(), id);
         EntityValues.setValue(entity, metaProperty.getName(), reference);
     }
 
@@ -133,7 +131,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
         visited.add(entity);
 
         for (MetaProperty property : metadata.getClass(entity).getProperties()) {
-            if (isPersistentEntityProperty(property) && entityStates.isLoaded(entity, property.getName())) {
+            if (isPropertyToCheck(property) && entityStates.isLoaded(entity, property.getName())) {
                 Object value = EntityValues.getValue(entity, property.getName());
                 if (value instanceof Collection<?>) {
                     //noinspection unchecked
@@ -151,9 +149,9 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
         }
     }
 
-    protected boolean isPersistentEntityProperty(MetaProperty metaProperty) {
-        return metaProperty.getRange().isClass() && metadataTools.isJpa(metaProperty);
-    }
+    protected abstract Object getEntityReference(MetaClass entityMetaClass, Object id);
+
+    protected abstract boolean isPropertyToCheck(MetaProperty metaProperty);
 
     protected interface Visitor {
         boolean visit(Object entity, Object reference, String propertyName);

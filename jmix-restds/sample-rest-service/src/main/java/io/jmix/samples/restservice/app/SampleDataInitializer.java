@@ -41,6 +41,7 @@ public class SampleDataInitializer {
     private List<CustomerRegion> createRegions() {
         log.info("Creating regions");
         CustomerRegion region = dataManager.create(CustomerRegion.class);
+        region.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         region.setName("North America");
         CustomerRegion saved = dataManager.save(region);
         log.info("Regions created");
@@ -58,12 +59,14 @@ public class SampleDataInitializer {
 
         // create and save two customer contacts
         CustomerContact contact1 = dataManager.create(CustomerContact.class);
+        contact1.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         contact1.setCustomer(customer);
         contact1.setContactType(ContactType.PHONE);
         contact1.setContactValue("555-555-5555");
         contact1.setPreferred(true);
 
         CustomerContact contact2 = dataManager.create(CustomerContact.class);
+        contact2.setId(UUID.fromString("00000000-0000-0000-0000-000000000002"));
         contact2.setCustomer(customer);
         contact2.setContactType(ContactType.EMAIL);
         contact2.setContactValue("robert@example.com");

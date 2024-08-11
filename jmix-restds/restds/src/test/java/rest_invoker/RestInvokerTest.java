@@ -16,11 +16,9 @@
 
 package rest_invoker;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.Metadata;
-import io.jmix.restds.RestDsConfiguration;
-import io.jmix.restds.impl.RestInvoker;
 import io.jmix.restds.impl.RestConnectionParams;
+import io.jmix.restds.impl.RestInvoker;
 import io.jmix.restds.impl.RestSerialization;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +36,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ContextConfiguration(classes = {CoreConfiguration.class, RestDsConfiguration.class, TestRestDsConfiguration.class})
+@ContextConfiguration(classes = TestRestDsConfiguration.class)
 @ExtendWith(SpringExtension.class)
 class RestInvokerTest {
 

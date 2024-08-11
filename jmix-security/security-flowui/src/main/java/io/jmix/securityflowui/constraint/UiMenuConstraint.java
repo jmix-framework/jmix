@@ -24,6 +24,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Checks access to UI menu items based on resource policies.
+ */
 @Component("sec_UiMenuConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiMenuConstraint implements AccessConstraint<UiMenuContext> {

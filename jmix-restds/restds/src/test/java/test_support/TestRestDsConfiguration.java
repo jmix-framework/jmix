@@ -23,12 +23,14 @@ import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
+import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.restds.RestDsConfiguration;
+import io.jmix.security.SecurityConfiguration;
 import jakarta.persistence.EntityManagerFactory;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
@@ -37,17 +39,20 @@ import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import test_support.security.TestInMemoryUserRepository;
 
 import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan
-@Import({RestDsConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class,
+@Import({RestDsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class,
         CoreConfiguration.class})
 @PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = {RestDsConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = {RestDsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class})
 public class TestRestDsConfiguration {
 
     @Bean
@@ -85,6 +90,16 @@ public class TestRestDsConfiguration {
     @Primary
     TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
         return new TransactionTemplate(transactionManager);
+    }
+
+    @Bean
+    public UserRepository userRepository() {
+        return new TestInMemoryUserRepository();
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean

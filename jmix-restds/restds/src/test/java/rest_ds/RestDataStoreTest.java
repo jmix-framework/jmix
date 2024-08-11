@@ -16,18 +16,17 @@
 
 package rest_ds;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.restds.RestDsConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import test_support.AuthenticatedAsSystem;
 import test_support.TestRestDsConfiguration;
 import test_support.entity.Customer;
 
@@ -36,8 +35,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ContextConfiguration(classes = {CoreConfiguration.class, RestDsConfiguration.class, TestRestDsConfiguration.class})
-@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = TestRestDsConfiguration.class)
+@ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
 public class RestDataStoreTest {
 
     @Autowired

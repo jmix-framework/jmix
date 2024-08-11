@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.securitydata.constraint;
+package io.jmix.security.constraint;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.core.accesscontext.CrudEntityContext;
-import io.jmix.security.constraint.PolicyStore;
-import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Checks access to entity operations based on resource policies.
+ */
 @Component("sec_CrudEntityConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CrudEntityConstraint implements EntityOperationConstraint<CrudEntityContext> {

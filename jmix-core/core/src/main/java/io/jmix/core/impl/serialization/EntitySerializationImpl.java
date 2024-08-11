@@ -32,14 +32,14 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -225,7 +225,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         protected JsonObject serializeEntity(Entity entity, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
             JsonObject jsonObject = new JsonObject();
             MetaClass metaClass = metadata.getClass(entity);
-            if (!metadataTools.isJpaEmbeddable(metaClass)) {
+            if (metadataTools.getPrimaryKeyName(metaClass) != null) {
                 jsonObject.addProperty(ENTITY_NAME_PROP, metaClass.getName());
                 if (serializeInstanceName) {
                     String instanceName = null;
@@ -266,9 +266,6 @@ public class EntitySerializationImpl implements EntitySerialization {
         protected void writeIdField(Entity entity, JsonObject jsonObject) {
             MetaClass metaClass = metadata.getClass(entity);
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
-            if (primaryKeyProperty == null) {
-                primaryKeyProperty = metaClass.getProperty("id");
-            }
             if (primaryKeyProperty == null)
                 throw new EntitySerializationException("Primary key property not found for entity " + metaClass);
             if (metadataTools.hasCompositePrimaryKey(metaClass)) {

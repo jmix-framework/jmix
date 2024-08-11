@@ -1,6 +1,7 @@
 package io.jmix.samples.restservice.entity;
 
 import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
@@ -65,6 +66,22 @@ public class Customer {
     @Composition
     @OneToMany(mappedBy = "customer")
     private Set<CustomerContact> contacts;
+
+    @EmbeddedParameters(nullAllowed = false)
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "zip", column = @Column(name = "ADDRESS_ZIP")),
+            @AttributeOverride(name = "addressLine", column = @Column(name = "ADDRESS_ADDRESS_LINE"))
+    })
+    private CustomerAddress address;
+
+    public CustomerAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(CustomerAddress address) {
+        this.address = address;
+    }
 
     public void setContacts(Set<CustomerContact> contacts) {
         this.contacts = contacts;

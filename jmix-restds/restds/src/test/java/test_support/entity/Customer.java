@@ -38,6 +38,8 @@ public class Customer {
     @Composition
     private Set<CustomerContact> contacts;
 
+    private CustomerAddress address;
+
     public String getEmail() {
         return email;
     }
@@ -76,6 +78,14 @@ public class Customer {
 
     public void setContacts(Set<CustomerContact> contacts) {
         this.contacts = contacts;
+    }
+
+    public CustomerAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(CustomerAddress address) {
+        this.address = address;
     }
 
     //    public OffsetDateTime getLastModifiedDate() {

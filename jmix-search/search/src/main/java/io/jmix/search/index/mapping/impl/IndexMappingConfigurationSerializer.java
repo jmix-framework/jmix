@@ -73,6 +73,7 @@ public class IndexMappingConfigurationSerializer extends StdSerializer<IndexMapp
         if (root.has(localFieldName)) {
             JsonNode localField = root.get(localFieldName);
             if (localField.isObject() && localField.has("properties")) {
+
                 ObjectNode nextRoot = (ObjectNode) localField.get("properties");
                 if (parts.length > 1) {
                     mergeField(nextRoot, parts[1], configValue);
@@ -86,7 +87,9 @@ public class IndexMappingConfigurationSerializer extends StdSerializer<IndexMapp
             }
         } else {
             if (parts.length > 1) {
-                ObjectNode nextRoot = root.putObject(localFieldName).putObject("properties");
+                ObjectNode newCreatedNode = root.putObject(localFieldName);
+                newCreatedNode.put("type", "object");
+                ObjectNode nextRoot = newCreatedNode.putObject("properties");
                 mergeField(nextRoot, parts[1], configValue);
             } else {
                 root.set(localFieldName, configValue);

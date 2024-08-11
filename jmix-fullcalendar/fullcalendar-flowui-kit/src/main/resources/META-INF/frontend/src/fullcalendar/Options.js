@@ -1,4 +1,4 @@
-import * as modelConverter from "./jmix-full-calendar-model-converter";
+import * as calendarUtils from "./jmix-full-calendar-utils";
 
 const NO_VIEW_MORE_LINK_CLICK = 'NO_VIEW';
 
@@ -60,6 +60,16 @@ class Options {
     constructor(calendar, context) {
         this.calendar = calendar;
         this.context = context;
+    }
+
+    addListener(optionName, listener) {
+        if (!this.listeners) {
+            this.listeners = {};
+        }
+        if (!this.listeners[optionName]) {
+            this.listeners[optionName] = [];
+        }
+        this.listeners[optionName].push(listener);
     }
 
     updateOptions(options) {
@@ -124,7 +134,7 @@ class Options {
             return;
         }
         if (eventOverlap.hasOwnProperty('jsFunction') && eventOverlap['jsFunction']) {
-            const jsFunction = this._parseJavaScriptFunction(eventOverlap['jsFunction']);
+            const jsFunction = calendarUtils.parseJavaScriptFunction(eventOverlap['jsFunction']);
             if (jsFunction) {
                 this.updateOption(EVENT_OVERLAP, jsFunction);
             }
@@ -165,7 +175,7 @@ class Options {
             return;
         }
         if (selectOverlap.hasOwnProperty("jsFunction") && selectOverlap['jsFunction']) {
-            const jsFunction = this._parseJavaScriptFunction(selectOverlap['jsFunction']);
+            const jsFunction = calendarUtils.parseJavaScriptFunction(selectOverlap['jsFunction']);
             if (jsFunction) {
                 this.updateOption(SELECT_OVERLAP, jsFunction);
             }
@@ -196,21 +206,11 @@ class Options {
         if (selectAllow === null) {
             this.updateOption(SELECT_ALLOW, selectAllow);
         } else {
-            const jsFunction = this._parseJavaScriptFunction(selectAllow);
+            const jsFunction = calendarUtils.parseJavaScriptFunction(selectAllow);
             if (jsFunction) {
                 this.updateOption(SELECT_ALLOW, jsFunction);
             }
         }
-    }
-
-    addListener(optionName, listener) {
-        if (!this.listeners) {
-            this.listeners = {};
-        }
-        if (!this.listeners[optionName]) {
-            this.listeners[optionName] = [];
-        }
-        this.listeners[optionName].push(listener);
     }
 
     _onMoreLinkClick(e) {
@@ -225,26 +225,6 @@ class Options {
             this.listeners[MORE_LINK_CLASS_NAMES].forEach((listener) => listener(e));
         }
         return [];
-    }
-
-    _parseJavaScriptFunction(stringFunction) {
-        let startArgsIndex = stringFunction.indexOf('(');
-        let endArgsIndex = stringFunction.indexOf(')');
-
-        let startBodyIndex = stringFunction.indexOf('{');
-        let endBodyIndex = stringFunction.lastIndexOf('}');
-
-        if (startArgsIndex === -1 || endArgsIndex === -1 || startBodyIndex === -1 || endBodyIndex === -1) {
-            console.warn('Unparsable native JavaScript function: ' + stringFunction);
-            return;
-        }
-
-        let args = stringFunction.slice(startArgsIndex + 1, endArgsIndex)
-            .split(',')
-            .map(element => element.trim());
-        let body = stringFunction.slice(startBodyIndex + 1, endBodyIndex).trim();
-
-        return new Function(args, body);
     }
 }
 

@@ -1,4 +1,4 @@
-import dataHolder from './DataHolder.js'
+import {dataHolder} from './DataHolder.js';
 
 (function () {
     function removeSources(sourceIds) {

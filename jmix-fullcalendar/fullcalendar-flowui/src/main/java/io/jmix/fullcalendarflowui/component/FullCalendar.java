@@ -10,6 +10,7 @@ import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.core.DateTimeTransformations;
+import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.fullcalendarflowui.component.data.*;
@@ -37,6 +38,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     private static final Logger log = LoggerFactory.getLogger(FullCalendar.class);
 
     protected ApplicationContext applicationContext;
+    protected CurrentAuthentication currentAuthentication;
     protected DateTimeTransformations dateTimeTransformations;
     protected FullCalendarDelegate calendarDelegate;
 
@@ -47,13 +49,18 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected Object eventConstraintGroupId;
     protected Object selectConstraintGroupId;
 
+    protected FullCalendarI18n defaultI18n;
+    protected FullCalendarI18n explicitI18n;
+
     @Override
     public void afterPropertiesSet() {
+        currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
         dateTimeTransformations = applicationContext.getBean(DateTimeTransformations.class);
-        calendarDelegate = applicationContext.getBean(FullCalendarDelegate.class, this);
+        calendarDelegate = applicationContext.getBean(FullCalendarDelegate.class, this,
+                applicationContext.getBean(Messages.class));
 
-        Locale locale = applicationContext.getBean(CurrentAuthentication.class).getLocale();
-        options.setLocale(locale);
+        defaultI18n = calendarDelegate.createDefaultI18n();
+        setI18nInternal(defaultI18n);
 
         initTimeZone();
     }
@@ -232,6 +239,17 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 getOptions().getSelectConstraint().isEnabled(),
                 getOptions().getSelectConstraint().getGroupId(),
                 businessHoursSelectConstraint);
+    }
+
+    @Nullable
+    public FullCalendarI18n getI18n() {
+        return explicitI18n;
+    }
+
+    public void setI18n(@Nullable FullCalendarI18n i18n) {
+        this.explicitI18n = i18n;
+
+        setI18nInternal(defaultI18n.combine(explicitI18n));
     }
 
     public Registration addDatesSetListener(ComponentEventListener<DatesSetEvent> listener) {
@@ -417,6 +435,14 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     protected FullCalendarSerializer getSerializer() {
         return (FullCalendarSerializer) serializer;
+    }
+
+    protected void setI18nInternal(FullCalendarI18n i18n) {
+        JsonObject json = serializer.serializeObject(i18n);
+
+        json.put("locale", serializer.serializeValue(currentAuthentication.getLocale()));
+
+        getElement().setPropertyJson("i18n", json);
     }
 
     @Override

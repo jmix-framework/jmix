@@ -47,6 +47,7 @@ import java.util.*;
 @NpmPackage(value = "@fullcalendar/list", version = "6.1.14")
 @NpmPackage(value = "@fullcalendar/multimonth", version = "6.1.14")
 @NpmPackage(value = "@fullcalendar/moment-timezone", version = "6.1.14")
+@NpmPackage(value = "@fullcalendar/moment", version = "6.1.14")
 @JsModule("./src/fullcalendar/jmix-full-calendar.js")
 @JsModule("./src/fullcalendar/jmix-full-calendar-connector.js")
 @CssImport("./src/fullcalendar/jmix-full-calendar.css")

@@ -8,15 +8,17 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import interactionPlugin from '@fullcalendar/interaction';
+import momentPlugin from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
+import localesAll from '@fullcalendar/core/locales-all.js';
 
-import * as modelConverter from './jmix-full-calendar-model-converter.js';
-import dataHolder from './DataHolder.js'
+import * as calendarUtils from './jmix-full-calendar-utils.js';
+import {dataHolder} from './DataHolder.js';
 import Options, {
     processInitialOptions,
     MORE_LINK_CLASS_NAMES,
     MORE_LINK_CLICK_FUNCTION,
-} from './Options.js'
+} from './Options.js';
 
 const FC_LINK_CLASS_NAME = 'fc-more-link';
 
@@ -43,6 +45,11 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             _eventDescriptionPosition: {
                 type: String,
                 value: 'bottom-end'
+            },
+            i18n: {
+                type: Object,
+                value: null,
+                observer: '_onI18nChange',
             }
         }
     }
@@ -65,7 +72,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.jmixOptions.addListener(MORE_LINK_CLICK_FUNCTION, this._onMoreLinkClick.bind(this));
         this.jmixOptions.addListener(MORE_LINK_CLASS_NAMES, this._onMoreLinkClassNames.bind(this));
 
-        this.updateOptions();
+        this._onI18nChange(this.i18n);
 
         // Rerender calendar since after page refresh component layout is broken
         this.render();
@@ -85,7 +92,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             headerToolbar: false,
             height: "100%",
             plugins: [dayGridPlugin, timeGridPlugin, listPlugin, multiMonthPlugin, interactionPlugin,
-                momentTimezonePlugin],
+                momentTimezonePlugin, momentPlugin],
             timeZone: 'UTC',
             eventClick: (e) => this._onEventClick(e),
             eventMouseEnter: (e) => this._onEventMouseEnter(e),
@@ -197,6 +204,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     _removeEventSource(sourceId) {
         const eventSource = this.calendar.getEventSourceById(sourceId);
         if (eventSource) {
+            dataHolder.delete(sourceId);
             eventSource.remove();
         }
     }
@@ -242,7 +250,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             eventsCount: e.num,
             shortText: e.shortText,
             text: e.text,
-            view: modelConverter.viewToServerObject(e.view, this.calendar.formatIso.bind(this.calendar))
+            view: calendarUtils.viewToServerObject(e.view, this.calendar.formatIso.bind(this.calendar))
         }
         const classNamesPromise = this.$server.getMoreLinkClassNames(context);
         classNamesPromise.then((classNames) => {
@@ -263,10 +271,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 context: {
                     allDay: e.allDay,
                     date: this.calendar.formatIso(e.date),
-                    view: modelConverter.viewToServerObject(e.view, dateFormatter),
-                    mouseDetails: modelConverter.mouseInfoToServerObject(e.jsEvent),
-                    allData: modelConverter.segmentsToServerData(e.allSegs, dateFormatter),
-                    hiddenData: modelConverter.segmentsToServerData(e.hiddenSegs, dateFormatter),
+                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
+                    allData: calendarUtils.segmentsToServerData(e.allSegs, dateFormatter),
+                    hiddenData: calendarUtils.segmentsToServerData(e.hiddenSegs, dateFormatter),
                 }
             }
         }))
@@ -277,9 +285,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.dispatchEvent(new CustomEvent("jmix-event-click", {
             detail: {
                 context: {
-                    event: modelConverter.eventToServerData(e.event),
-                    mouseDetails: modelConverter.mouseInfoToServerObject(e.jsEvent),
-                    view: modelConverter.viewToServerObject(e.view, dateFormatter),
+                    event: calendarUtils.eventToServerData(e.event),
+                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
+                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
                 }
             }
         }))
@@ -290,9 +298,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.dispatchEvent(new CustomEvent("jmix-event-mouse-enter", {
             detail: {
                 context: {
-                    event: modelConverter.eventToServerData(e.event),
-                    mouseDetails: modelConverter.mouseInfoToServerObject(e.jsEvent),
-                    view: modelConverter.viewToServerObject(e.view, dateFormatter),
+                    event: calendarUtils.eventToServerData(e.event),
+                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
+                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
                 }
             }
         }))
@@ -303,9 +311,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.dispatchEvent(new CustomEvent("jmix-event-mouse-leave", {
             detail: {
                 context: {
-                    event: modelConverter.eventToServerData(e.event),
-                    mouseDetails: modelConverter.mouseInfoToServerObject(e.jsEvent),
-                    view: modelConverter.viewToServerObject(e.view, dateFormatter),
+                    event: calendarUtils.eventToServerData(e.event),
+                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
+                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
                 }
             }
         }))
@@ -317,11 +325,11 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             detail: {
                 context: {
                     delta: e.delta,
-                    event: modelConverter.eventToServerData(e.event),
-                    oldEvent: modelConverter.eventToServerData(e.oldEvent),
-                    mouseDetails: modelConverter.mouseInfoToServerObject(e.jsEvent),
-                    view: modelConverter.viewToServerObject(e.view, dateFormatter),
-                    relatedEvents: modelConverter.eventsToServerData(e.relatedEvents),
+                    event: calendarUtils.eventToServerData(e.event),
+                    oldEvent: calendarUtils.eventToServerData(e.oldEvent),
+                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
+                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+                    relatedEvents: calendarUtils.eventsToServerData(e.relatedEvents),
                 }
             }
         }));
@@ -334,11 +342,11 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 context: {
                     startDelta: e.startDelta,
                     endDelta: e.endDelta,
-                    event: modelConverter.eventToServerData(e.event),
-                    oldEvent: modelConverter.eventToServerData(e.oldEvent),
-                    mouseDetails: modelConverter.mouseInfoToServerObject(e.jsEvent),
-                    view: modelConverter.viewToServerObject(e.view, dateFormatter),
-                    relatedEvents: modelConverter.eventsToServerData(e.relatedEvents),
+                    event: calendarUtils.eventToServerData(e.event),
+                    oldEvent: calendarUtils.eventToServerData(e.oldEvent),
+                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
+                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+                    relatedEvents: calendarUtils.eventsToServerData(e.relatedEvents),
                 }
             }
         }));
@@ -351,7 +359,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 context: {
                     startDateTime: e.startStr,
                     endDateTime: e.endStr,
-                    view: modelConverter.viewToServerObject(e.view, dateFormatter),
+                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
                     viewType: e.view.type,
                 }
             }
@@ -365,8 +373,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 context: {
                     date: e.dateStr,
                     allDay: e.allDay,
-                    mouseDetails: modelConverter.mouseInfoToServerObject(e.jsEvent),
-                    view: modelConverter.viewToServerObject(e.view, dateFormatter),
+                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
+                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
                 }
             }
         }));
@@ -380,8 +388,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                     start: e.startStr,
                     end: e.endStr,
                     allDay: e.allDay,
-                    view: modelConverter.viewToServerObject(e.view, dateFormatter),
-                    ...(e.jsEvent) && {mouseDetails: modelConverter.mouseInfoToServerObject(e.jsEvent)},
+                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+                    ...(e.jsEvent) && {mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent)},
                 }
             }
         }));
@@ -391,8 +399,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         const dateFormatter = this.calendar.formatIso.bind(this.calendar);
 
         const context = {
-            view: modelConverter.viewToServerObject(e.view, dateFormatter),
-            ...(e.jsEvent) && {mouseDetails: modelConverter.mouseInfoToServerObject(e.jsEvent)},
+            view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+            ...(e.jsEvent) && {mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent)},
         }
 
         this.dispatchEvent(new CustomEvent('jmix-unselect', {detail: {context: context}}));
@@ -410,9 +418,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 if (!this.contextMenuDetails) {
                     this.contextMenuDetails = {};
                 }
-                this.contextMenuDetails['dayCell'] = modelConverter.createCalendarCellDetails(
+                this.contextMenuDetails['dayCell'] = calendarUtils.createCalendarCellDetails(
                     {dayEvent: e, jsEvent: jsEvent, calendar: this.calendar});
-                this.contextMenuDetails['mouseDetails'] = modelConverter.mouseInfoToServerObject(jsEvent);
+                this.contextMenuDetails['mouseDetails'] = calendarUtils.mouseInfoToServerObject(jsEvent);
             }
         });
     }
@@ -436,17 +444,38 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             if (!this.contextMenuDetails) {
                 this.contextMenuDetails = {};
             }
-            this.contextMenuDetails['mouseDetails'] = modelConverter.mouseInfoToServerObject(jsEvent);
+            this.contextMenuDetails['mouseDetails'] = calendarUtils.mouseInfoToServerObject(jsEvent);
             this.contextMenuDetails['eventCell'] = {
                 isFuture: e.isFuture,
                 isMirror: e.isMirror,
                 isPast: e.isPast,
                 isToday: e.isToday,
-                event: modelConverter.eventToServerData(e.event),
+                event: calendarUtils.eventToServerData(e.event),
             };
         });
     }
 
+    _onI18nChange(i18n) {
+        if (!this.jmixOptions) {
+            return;
+        }
+
+        // todo move to Options?
+        const calendarI18nArray = localesAll.filter((item) => item.code === i18n.locale);
+        if (calendarI18nArray.length <= 0) {
+            return;
+        }
+
+        const calendarI18n = calendarI18nArray[0];
+
+        calendarUtils.assignI18n(calendarI18n, i18n);
+
+        this.jmixOptions.updateOption("locale", calendarI18n);
+
+        const formatOptions = calendarUtils.convertToLocaleDependedOptions(i18n);
+
+        this.jmixOptions.updateOptions(formatOptions);
+    }
     /**
      * Is required by Vaadin contextMenuTargetConnector.js. It returns
      * details for 'vaadin-context-menu-before-open' event that will be
@@ -517,7 +546,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
      * Server callable function.
      */
     scrollToTimeMs(timeInMs) {
-        this.calendar.scrollToTime({milliseconds: new Number(timeInMs)});
+        this.calendar.scrollToTime({milliseconds: Number(timeInMs)});
     }
 
     /**

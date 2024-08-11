@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import elemental.json.JsonArray;
 import elemental.json.JsonFactory;
 import elemental.json.impl.JreJsonFactory;
+import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.fullcalendarflowui.component.data.LazyEventProviderManager;
 import io.jmix.fullcalendarflowui.component.event.*;
@@ -25,10 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Internal
 @Component("fcaldr_FullCalendarHelper")
@@ -37,9 +35,11 @@ public class FullCalendarDelegate {
 
     protected FullCalendar fullCalendar;
     protected JsonFactory jsonFactory;
+    protected Messages messages;
 
-    public FullCalendarDelegate(FullCalendar fullCalendar) {
+    public FullCalendarDelegate(FullCalendar fullCalendar, Messages messages) {
         this.fullCalendar = fullCalendar;
+        this.messages = messages;
 
         jsonFactory = createJsonFactory();
     }
@@ -212,6 +212,39 @@ public class FullCalendarDelegate {
         }
 
         return result;
+    }
+
+    public FullCalendarI18n createDefaultI18n() {
+        FullCalendarI18n i18n = new FullCalendarI18n();
+
+        getMessage("i18n.direction")
+                .ifPresent(d -> i18n.setDirection(FullCalendarI18n.Direction.valueOf(d.toUpperCase())));
+        getMessage("i18n.dayOfWeek").ifPresent(d -> i18n.setDayOfWeek(Integer.parseInt(d)));
+        getMessage("i18n.dayOfYear").ifPresent(d -> i18n.setDayOfYear(Integer.parseInt(d)));
+
+        getMessage("i18n.weekText").ifPresent(i18n::setWeekText);
+        getMessage("i18n.weekTextLong").ifPresent(i18n::setWeekTextLong);
+        getMessage("i18n.allDayText").ifPresent(i18n::setAllDayText);
+        getMessage("i18n.moreLinkText").ifPresent(i18n::setMoreLinkText);
+        getMessage("i18n.noEventsText").ifPresent(i18n::setNoEventsText);
+        getMessage("i18n.closeHint").ifPresent(i18n::setCloseHint);
+        getMessage("i18n.eventHint").ifPresent(i18n::setEventHint);
+        getMessage("i18n.timeHint").ifPresent(i18n::setTimeHint);
+        getMessage("i18n.navLinkHint").ifPresent(i18n::setNavLinkHint);
+        getMessage("i18n.moreLinkHint").ifPresent(i18n::setMoreLinkHint);
+
+        getMessage("i18n.dayPopoverFormat").ifPresent(i18n::setDayPopoverFormat);
+        getMessage("i18n.dayHeaderFormat").ifPresent(i18n::setDayHeaderFormat);
+        getMessage("i18n.weekNumberFormat").ifPresent(i18n::setWeekNumberFormat);
+        getMessage("i18n.slotLabelFormat").ifPresent(i18n::setSlotLabelFormat);
+        getMessage("i18n.eventTimeFormat").ifPresent(i18n::setEventTimeFormat);
+        getMessage("i18n.monthStartFormat").ifPresent(i18n::setMonthStartFormat);
+        return i18n;
+    }
+
+    protected Optional<String> getMessage(String key) {
+        String message = messages.getMessage("io.jmix.fullcalendarflowui.component", key);
+        return Optional.ofNullable(message.equals(key) ? null : message);
     }
 
     protected AbstractEventProviderManager getEventProviderManager(String sourceId) {

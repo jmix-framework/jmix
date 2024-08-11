@@ -18,6 +18,4 @@ class DataHolder {
     }
 }
 
-const dataHolder = new DataHolder();
-
-export default dataHolder;
+export const dataHolder = new DataHolder();

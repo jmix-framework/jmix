@@ -35,6 +35,40 @@ import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeTransform
 public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
     private static final Logger log = LoggerFactory.getLogger(JmixFullCalendarSerializer.class);
 
+    public JsonObject serializeObject(Object value) {
+        log.debug("Starting object: {}", value.getClass());
+
+        String rawJson;
+        try {
+            rawJson = objectMapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Cannot serialize object", e);
+        }
+
+        JsonObject json = jsonFactory.parse(rawJson);
+
+        log.debug("Serialized object: {}", json);
+
+        return json;
+    }
+
+    public JsonValue serializeValue(Object value) {
+        log.debug("Starting value: {}", value.getClass());
+
+        String rawJson;
+        try {
+            rawJson = objectMapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Cannot serialize object", e);
+        }
+
+        JsonValue json = jsonFactory.parse(rawJson);
+
+        log.debug("Serialized value: {}", json);
+
+        return json;
+    }
+
     public JsonObject serializeOptions(List<Option> options) {
         Map<String, Object> optionsMap = options.stream()
                 .collect(Collectors.toMap(Option::getName, Option::getValue));

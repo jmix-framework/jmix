@@ -28,7 +28,6 @@ public class JmixFullCalendarOptions {
 
     private static final JsFunction NULL_FUNCTION = new JsFunction("");
 
-    protected Option locale = new Option("locale", Locale.ENGLISH);
     protected Option weekNumbers = new Option("weekNumbers", false);
     protected Option validRangeDates = new Option("validRange", new ValidRange());
     protected Option timeZone = new Option("timeZone", TimeZone.getDefault().getID());
@@ -70,7 +69,7 @@ public class JmixFullCalendarOptions {
     protected Consumer<OptionChangeEvent> optionChangeListener;
 
     public JmixFullCalendarOptions() {
-        options.addAll(List.of(locale, weekNumbers, validRangeDates, timeZone, initialView,
+        options.addAll(List.of(weekNumbers, validRangeDates, timeZone, initialView,
                 navLinks, dayMaxEventRows, eventMaxStack, dayMaxEvents, moreLinkClick, moreLinkClickFunction,
                 moreLinkClassNames, eventStartEditable, eventDurationEditable, eventResizableFromStart,
                 eventDragMinDistance, eventOverlap, dragRevertDuration, dragScroll, snapDuration,
@@ -96,14 +95,6 @@ public class JmixFullCalendarOptions {
 
     public void markAllAsDirty(boolean dirty) {
         options.forEach(o -> o.markAsDirty(dirty));
-    }
-
-    public Locale getLocale() {
-        return locale.getValue();
-    }
-
-    public void setLocale(Locale locale) {
-        this.locale.setValue(locale);
     }
 
     public boolean isWeekNumbers() {

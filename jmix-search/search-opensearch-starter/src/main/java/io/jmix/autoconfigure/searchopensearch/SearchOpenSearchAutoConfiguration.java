@@ -32,6 +32,7 @@ import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
 import io.jmix.searchopensearch.index.impl.OpenSearchEntityIndexer;
 import io.jmix.searchopensearch.index.impl.OpenSearchIndexConfigurationComparator;
 import io.jmix.searchopensearch.index.impl.OpenSearchIndexManager;
+import io.jmix.searchopensearch.index.impl.OpenSearchMetadataResolver;
 import io.jmix.searchopensearch.searching.impl.OpenSearchEntitySearcher;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyProvider;
@@ -98,8 +99,9 @@ public class SearchOpenSearchAutoConfiguration {
                                                   IndexConfigurationManager indexConfigurationManager,
                                                   SearchProperties searchProperties,
                                                   OpenSearchIndexSettingsProvider indexSettingsProcessor,
-                                                  OpenSearchIndexConfigurationComparator configurationComparator) {
-        return new OpenSearchIndexManager(client, indexStateRegistry, indexConfigurationManager, searchProperties, indexSettingsProcessor, configurationComparator);
+                                                  OpenSearchIndexConfigurationComparator configurationComparator,
+                                                  OpenSearchMetadataResolver metadataResolver) {
+        return new OpenSearchIndexManager(client, indexStateRegistry, indexConfigurationManager, searchProperties, indexSettingsProcessor, configurationComparator, metadataResolver);
     }
 
     @Bean("search_OpenSearchEntityIndexer")

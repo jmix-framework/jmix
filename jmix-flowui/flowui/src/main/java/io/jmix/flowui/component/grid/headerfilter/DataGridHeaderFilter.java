@@ -111,6 +111,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
         root.setPadding(false);
         root.setSpacing(false);
+        root.addClassName(LumoUtility.Display.INLINE_FLEX);
         root.getThemeList().add("spacing-xs");
         // Padding for filterButton's focus-ring
         root.getStyle().set("padding-inline-end", "2px");

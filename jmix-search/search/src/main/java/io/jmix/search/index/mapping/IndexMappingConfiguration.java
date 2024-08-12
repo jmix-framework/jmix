@@ -21,6 +21,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.mapping.impl.IndexMappingConfigurationSerializer;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Contains details about all fields
@@ -34,10 +35,13 @@ public class IndexMappingConfiguration {
 
     protected final DisplayedNameDescriptor displayedNameDescriptor;
 
-    public IndexMappingConfiguration(MetaClass entityMetaClass, Map<String, MappingFieldDescriptor> fields, DisplayedNameDescriptor displayedNameDescriptor) {
+    protected final Set<String> includedFieldNames;
+
+    public IndexMappingConfiguration(MetaClass entityMetaClass, Map<String, MappingFieldDescriptor> fields, DisplayedNameDescriptor displayedNameDescriptor, Set<String> includedFieldNames) {
         this.entityMetaClass = entityMetaClass;
         this.fields = fields;
         this.displayedNameDescriptor = displayedNameDescriptor;
+        this.includedFieldNames = includedFieldNames;
     }
 
     public Map<String, MappingFieldDescriptor> getFields() {
@@ -50,5 +54,9 @@ public class IndexMappingConfiguration {
 
     public DisplayedNameDescriptor getDisplayedNameDescriptor() {
         return displayedNameDescriptor;
+    }
+
+    public Set<String> getIncludedFieldNames() {
+        return includedFieldNames;
     }
 }

@@ -29,6 +29,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.annotation.AutoMappedField;
 import io.jmix.search.index.annotation.FieldMappingAnnotation;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
@@ -199,11 +200,19 @@ public class AnnotatedIndexDefinitionProcessor {
         DisplayedNameDescriptor displayedNameDescriptor = createDisplayedNameDescriptor(parsedIndexDefinition.getMetaClass());
         MappingDefinition mappingDefinition;
         Method mappingDefinitionImplementationMethod = parsedIndexDefinition.getMappingDefinitionImplementationMethod();
+        final Set<String> includedFields = new HashSet<>();
         if (mappingDefinitionImplementationMethod == null) {
-            MappingDefinitionBuilder builder = MappingDefinition.builder();
-            parsedIndexDefinition.getFieldAnnotations().forEach(annotation -> processAnnotation(
-                    builder, annotation, parsedIndexDefinition.getMetaClass()
-            ));
+            MappingDefinitionBuilder
+                    builder = MappingDefinition.builder();
+            parsedIndexDefinition.getFieldAnnotations().forEach(annotation -> {
+                processAnnotation(
+                        builder, annotation, parsedIndexDefinition.getMetaClass()
+                );
+                if (annotation instanceof AutoMappedField autoMappedField) {
+                    includedFields.addAll(Arrays.stream(autoMappedField.includeProperties())
+                            .filter(n -> !n.equals("*")).collect(Collectors.toSet()));
+                }
+            });
             mappingDefinition = builder.build();
         } else {
             Class<?> returnType = mappingDefinitionImplementationMethod.getReturnType();
@@ -220,7 +229,7 @@ public class AnnotatedIndexDefinitionProcessor {
                 parsedIndexDefinition.getMetaClass(), mappingDefinition
         );
         indexMappingConfiguration = new IndexMappingConfiguration(
-                parsedIndexDefinition.getMetaClass(), fieldDescriptors, displayedNameDescriptor
+                parsedIndexDefinition.getMetaClass(), fieldDescriptors, displayedNameDescriptor, includedFields
         );
         return indexMappingConfiguration;
     }

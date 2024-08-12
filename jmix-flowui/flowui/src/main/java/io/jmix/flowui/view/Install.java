@@ -25,13 +25,12 @@ import java.lang.annotation.RetentionPolicy;
  * Annotation for declarative handler methods in UI controllers.
  * <br>
  * Example:
- * <pre>
- *    &#64;Install(to = "label", subject = "formatter")
- *    protected String formatValue(Integer value) {
- *        // the method used as Label formatter
- *        return "1.0";
- *    }
- * </pre>
+ * <pre>{@code
+ * @Install(to = "textField", subject = "validator")
+ * private void textFieldValidator(final String value) {
+ *     // validate value...
+ * }
+ * }</pre>
  *
  * @see View
  */

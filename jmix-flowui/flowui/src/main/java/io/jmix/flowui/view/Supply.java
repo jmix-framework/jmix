@@ -32,12 +32,12 @@ import java.lang.annotation.RetentionPolicy;
  * <p>
  * In the example below, the returned {@link TextRenderer} instance is used as an input
  * parameter for {@link Column#setRenderer(Renderer)}:
- * <pre>
- * &#64;Provide(to = "fooDataGrid.name", subject = "renderer")
- * private Renderer&lt;Foo&gt; nameRenderer() {
- *     return new TextRenderer&lt;&gt;(Foo::getName);
+ * <pre>{@code
+ * @Supply(to = "fooDataGrid.name", subject = "renderer")
+ * private Renderer<Foo> nameRenderer() {
+ *     return new TextRenderer<>(Foo::getName);
  * }
- * </pre>
+ * }</pre>
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

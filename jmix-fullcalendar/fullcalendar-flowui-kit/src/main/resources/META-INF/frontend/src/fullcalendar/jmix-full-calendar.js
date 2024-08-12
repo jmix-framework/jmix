@@ -12,7 +12,10 @@ import momentPlugin from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 import localesAll from '@fullcalendar/core/locales-all.js';
 
+import moment from 'moment';
+
 import * as calendarUtils from './jmix-full-calendar-utils.js';
+import {RAW_EN_LOCALE} from "./jmix-full-calendar-utils.js";
 import {dataHolder} from './DataHolder.js';
 import Options, {
     processInitialOptions,
@@ -201,6 +204,11 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.calendar.addEventSource(this._createEventSource(sourceId, lazySource));
     }
 
+    /**
+     * Server callable function.
+     * @param sourceId
+     * @private
+     */
     _removeEventSource(sourceId) {
         const eventSource = this.calendar.getEventSourceById(sourceId);
         if (eventSource) {
@@ -462,11 +470,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
 
         // todo move to Options?
         const calendarI18nArray = localesAll.filter((item) => item.code === i18n.locale);
-        if (calendarI18nArray.length <= 0) {
-            return;
-        }
 
-        const calendarI18n = calendarI18nArray[0];
+        const calendarI18n = calendarI18nArray.length > 0 ? calendarI18nArray[0] : RAW_EN_LOCALE;
 
         calendarUtils.assignI18n(calendarI18n, i18n);
 
@@ -475,6 +480,15 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         const formatOptions = calendarUtils.convertToLocaleDependedOptions(i18n);
 
         this.jmixOptions.updateOptions(formatOptions);
+    }
+
+    /**
+     * Server callable function.
+     * @param localizedNames
+     * @private
+     */
+    _defineMomentJsLocale(localizedNames) {
+        moment.defineLocale(localizedNames.locale, localizedNames);
     }
     /**
      * Is required by Vaadin contextMenuTargetConnector.js. It returns

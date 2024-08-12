@@ -1,8 +1,10 @@
 package io.jmix.fullcalendarflowui.component;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import elemental.json.JsonArray;
 import elemental.json.JsonFactory;
+import elemental.json.JsonObject;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
@@ -12,6 +14,7 @@ import io.jmix.fullcalendarflowui.component.event.MoreLinkClickEvent.EventProvid
 import io.jmix.fullcalendarflowui.component.data.AbstractEventProviderManager;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
 import io.jmix.fullcalendarflowui.kit.component.serialization.*;
@@ -239,12 +242,38 @@ public class FullCalendarDelegate {
         getMessage("i18n.slotLabelFormat").ifPresent(i18n::setSlotLabelFormat);
         getMessage("i18n.eventTimeFormat").ifPresent(i18n::setEventTimeFormat);
         getMessage("i18n.monthStartFormat").ifPresent(i18n::setMonthStartFormat);
+
         return i18n;
+    }
+
+    public JsonObject getCalendarLocalizedUnitNames() {
+        JsonObject result = jsonFactory.createObject();
+        FullCalendarSerializer serializer = fullCalendar.getSerializer();
+
+        getListMessage("months").ifPresent(s -> result.put("months", serializer.toJsonArrayFromString(s)));
+        getListMessage("monthsShort").ifPresent(s -> result.put("monthsShort", serializer.toJsonArrayFromString(s)));
+        getListMessage("weekdays").ifPresent(s -> result.put("weekdays", serializer.toJsonArrayFromString(s)));
+        getListMessage("weekdaysShort").ifPresent(s -> result.put("weekdaysShort", serializer.toJsonArrayFromString(s)));
+        getListMessage("weekdaysMin").ifPresent(s -> result.put("weekdaysMin", serializer.toJsonArrayFromString(s)));
+
+        return result;
     }
 
     protected Optional<String> getMessage(String key) {
         String message = messages.getMessage("io.jmix.fullcalendarflowui.component", key);
         return Optional.ofNullable(message.equals(key) ? null : message);
+    }
+
+    protected Optional<List<String>> getListMessage(String key) {
+        String message = getMessage(key).orElse(null);
+        if (message != null) {
+            List<String> messages = Splitter.on(",")
+                    .trimResults()
+                    .omitEmptyStrings()
+                    .splitToList(message);
+            return Optional.of(messages);
+        }
+        return Optional.empty();
     }
 
     protected AbstractEventProviderManager getEventProviderManager(String sourceId) {

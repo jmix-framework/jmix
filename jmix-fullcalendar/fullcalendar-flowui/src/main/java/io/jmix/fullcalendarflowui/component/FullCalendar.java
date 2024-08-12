@@ -61,6 +61,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         defaultI18n = calendarDelegate.createDefaultI18n();
         setI18nInternal(defaultI18n);
+        setupCalendarLocalizedUnitNames();
 
         initTimeZone();
     }
@@ -443,6 +444,14 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         json.put("locale", serializer.serializeValue(currentAuthentication.getLocale()));
 
         getElement().setPropertyJson("i18n", json);
+    }
+
+    protected void setupCalendarLocalizedUnitNames() {
+        JsonObject json = calendarDelegate.getCalendarLocalizedUnitNames();
+
+        json.put("locale", serializer.serializeValue(currentAuthentication.getLocale()));
+
+        getElement().callJsFunction("_defineMomentJsLocale", json);
     }
 
     @Override

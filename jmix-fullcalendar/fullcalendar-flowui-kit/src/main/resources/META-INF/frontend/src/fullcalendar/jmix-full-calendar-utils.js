@@ -1,5 +1,57 @@
 import moment from 'moment';
 
+/**
+ * CAUTION! Copied from @fullcalendar/core/index.js
+ * @type {{}}
+ */
+const MINIMAL_RAW_EN_LOCALE = {
+    code: 'en',
+    week: {
+        dow: 0,
+        doy: 4, // 4 days need to be within the year to be considered the first week
+    },
+    direction: 'ltr',
+    buttonText: {
+        prev: 'prev',
+        next: 'next',
+        prevYear: 'prev year',
+        nextYear: 'next year',
+        year: 'year',
+        today: 'today',
+        month: 'month',
+        week: 'week',
+        day: 'day',
+        list: 'list',
+    },
+    weekText: 'W',
+    weekTextLong: 'Week',
+    closeHint: 'Close',
+    timeHint: 'Time',
+    eventHint: 'Event',
+    allDayText: 'all-day',
+    moreLinkText: 'more',
+    noEventsText: 'No events to display',
+}
+
+/**
+ * CAUTION! Copied from @fullcalendar/core/index.js
+ * @type {{}}
+ */
+export const RAW_EN_LOCALE = Object.assign(Object.assign({}, MINIMAL_RAW_EN_LOCALE), {
+    // Includes things we don't want other locales to inherit,
+    // things that derive from other translatable strings.
+    buttonHints: {
+        prev: 'Previous $0',
+        next: 'Next $0',
+        today(buttonText, unit) {
+            return (unit === 'day')
+                ? 'Today'
+                : `This ${buttonText}`;
+        },
+    }, viewHint: '$0 view', navLinkHint: 'Go to $0', moreLinkHint(eventCnt) {
+        return `Show ${eventCnt} more event${eventCnt === 1 ? '' : 's'}`;
+    } });
+
 export function viewToServerObject(calendarView, dateFormatter) {
     return {
         activeEnd: dateFormatter(calendarView.activeEnd),

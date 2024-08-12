@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 
 class IndexMappingConfigurationSerializerTest {
 
-    public static final String JSON_TEXT = "{\"properties\":{\"customer\":{\"type\":\"Object\",\"properties\":{\"status\":{\"type\":\"text\"},\"lastName\":{\"type\":\"text\"}}},\"number\":{\"type\":\"text\"},\"product\":{\"type\":\"text\"},\"_instance_name\":{\"type\":\"text\"}}}";
+    public static final String JSON_TEXT = "{\"properties\":{\"customer\":{\"type\":\"object\",\"properties\":{\"status\":{\"type\":\"text\"},\"lastName\":{\"type\":\"text\"}}},\"number\":{\"type\":\"text\"},\"product\":{\"type\":\"text\"},\"_instance_name\":{\"type\":\"text\"}}}";
 
     @Test
     void mergeFields() {
@@ -73,7 +73,6 @@ class IndexMappingConfigurationSerializerTest {
     private static FieldConfiguration createFieldConfiguration() {
         ObjectNode fieldConfig = JsonNodeFactory.instance.objectNode();
         fieldConfig.put("type", "text");
-        FieldConfiguration configuration = FieldConfiguration.create(fieldConfig);
-        return configuration;
+        return FieldConfiguration.create(fieldConfig);
     }
 }

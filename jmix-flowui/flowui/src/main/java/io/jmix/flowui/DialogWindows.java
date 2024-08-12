@@ -213,11 +213,30 @@ public class DialogWindows {
         LookupWindowBuilder<E, V> builder =
                 new LookupWindowBuilder<>(origin, beanType, lookupBuilderProcessor::build);
 
-        if (picker instanceof EntityMultiPickerComponent) {
-            builder.withMultiValueField(((HasValue<?, Collection<E>>) picker));
-        } else {
-            builder.withField(((HasValue<?, E>) picker));
-        }
+        builder.withField(((HasValue<?, E>) picker));
+
+        return builder;
+    }
+
+    /**
+     * Creates a lookup view builder to select an entities and set it to the multi-value picker component.
+     *
+     * @param picker the multi-value picker component
+     * @see #detail(View, Class)
+     */
+    @SuppressWarnings("unchecked")
+    public <E, V extends View<?>> LookupWindowBuilder<E, V> lookup(EntityMultiPickerComponent<E> picker) {
+        checkNotNullArgument(picker);
+        checkState(picker instanceof HasValue,
+                "A component must implement " + HasValue.class.getSimpleName());
+
+        View<?> origin = UiComponentUtils.getView((Component) picker);
+        Class<E> beanType = getBeanType(picker);
+
+        LookupWindowBuilder<E, V> builder =
+                new LookupWindowBuilder<>(origin, beanType, lookupBuilderProcessor::build);
+
+        builder.withMultiValueField(((HasValue<?, Collection<E>>) picker));
 
         return builder;
     }
@@ -265,6 +284,16 @@ public class DialogWindows {
     }
 
     protected <E> Class<E> getBeanType(EntityPickerComponent<E> picker) {
+        MetaClass metaClass = picker.getMetaClass();
+        if (metaClass == null) {
+            throw new IllegalStateException(String.format("Component '%s' is not bound to data " +
+                    "or unable to determine type of items", picker));
+        }
+
+        return metaClass.getJavaClass();
+    }
+
+    protected <E> Class<E> getBeanType(EntityMultiPickerComponent<E> picker) {
         MetaClass metaClass = picker.getMetaClass();
         if (metaClass == null) {
             throw new IllegalStateException(String.format("Component '%s' is not bound to data " +

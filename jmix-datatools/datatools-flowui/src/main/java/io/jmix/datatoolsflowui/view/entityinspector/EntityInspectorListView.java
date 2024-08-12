@@ -23,6 +23,7 @@ import com.google.gson.JsonParser;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -111,7 +112,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
     );
 
     @ViewComponent
-    protected HorizontalLayout lookupBox;
+    protected FormLayout lookupBox;
     @ViewComponent
     protected JmixComboBox<MetaClass> entitiesLookup;
     @ViewComponent

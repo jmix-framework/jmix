@@ -404,7 +404,7 @@ dependencies {
         api 'io.vavr:vavr:0.9.3'
         api 'org.jetbrains:annotations:22.0.0'
 
-        api 'org.opensearch.client:opensearch-java:2.10.3'
+        api 'org.opensearch.client:opensearch-java:2.13.0'
         api 'org.opensearch.client:opensearch-rest-client:2.14.0'
     }
 }

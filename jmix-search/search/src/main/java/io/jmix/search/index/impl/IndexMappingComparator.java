@@ -102,7 +102,7 @@ public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableTy
         return result;
     }
 
-    enum MappingComparingResult implements ConfigurationPartComparingResult{
+    public enum MappingComparingResult implements ConfigurationPartComparingResult{
         EQUAL,
         CAN_BE_UPDATED,
         NOT_COMPATIBLE;

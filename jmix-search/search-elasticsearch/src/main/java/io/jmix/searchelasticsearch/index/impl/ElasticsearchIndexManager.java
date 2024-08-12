@@ -46,6 +46,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<ElasticsearchCli
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchIndexManager.class);
 
     protected final ElasticsearchIndexSettingsProvider indexSettingsProcessor;
+    private final ElasticsearchPutMappingService putMappingService;
 
     public ElasticsearchIndexManager(ElasticsearchClient client,
                                      IndexStateRegistry indexStateRegistry,
@@ -53,9 +54,11 @@ public class ElasticsearchIndexManager extends BaseIndexManager<ElasticsearchCli
                                      SearchProperties searchProperties,
                                      ElasticsearchIndexSettingsProvider indexSettingsProcessor,
                                      ElasticsearchIndexConfigurationComparator configurationComparator,
-                                     ElasticsearchMetadataResolver metadataResolver) {
+                                     ElasticsearchMetadataResolver metadataResolver,
+                                     ElasticsearchPutMappingService putMappingService) {
         super(client, indexConfigurationManager, indexStateRegistry, searchProperties,  configurationComparator, metadataResolver);
         this.indexSettingsProcessor = indexSettingsProcessor;
+        this.putMappingService = putMappingService;
     }
 
     @Override
@@ -120,14 +123,8 @@ public class ElasticsearchIndexManager extends BaseIndexManager<ElasticsearchCli
 
     @Override
     public boolean putMapping(String indexName, IndexMappingConfiguration mapping) {
-        InputStream mappingBodyStream = getMappingAsStream(indexName, mapping);
-
-        PutMappingRequest request = PutMappingRequest.of(
-                builder -> builder.index(indexName).withJson(mappingBodyStream)
-        );
-
         try {
-            return client.indices().putMapping(request).acknowledged();
+            return client.indices().putMapping(putMappingService.buildRequest(mapping, indexName, null)).acknowledged();
         } catch (IOException e) {
             throw new RuntimeException("Problem with sending request to elastic search server.", e);
         }

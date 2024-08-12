@@ -48,6 +48,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<OpenSearchClient, I
     private static final Logger log = LoggerFactory.getLogger(OpenSearchIndexManager.class);
 
     protected final OpenSearchIndexSettingsProvider indexSettingsProcessor;
+    private final OpenSearchPutMappingRequestService putMappingRequestService;
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -57,9 +58,11 @@ public class OpenSearchIndexManager extends BaseIndexManager<OpenSearchClient, I
                                   SearchProperties searchProperties,
                                   OpenSearchIndexSettingsProvider indexSettingsProcessor,
                                   OpenSearchIndexConfigurationComparator configurationComparator,
-                                  OpenSearchMetadataResolver metadataResolver) {
+                                  OpenSearchMetadataResolver metadataResolver,
+                                  OpenSearchPutMappingRequestService putMappingRequestService) {
         super(client, indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, metadataResolver);
         this.indexSettingsProcessor = indexSettingsProcessor;
+        this.putMappingRequestService = putMappingRequestService;
     }
 
     @Override
@@ -124,13 +127,19 @@ public class OpenSearchIndexManager extends BaseIndexManager<OpenSearchClient, I
     }
 
     @Override
-    public boolean putMapping(String indexName, IndexMappingConfiguration mapping) {
-        PutMappingRequest request = buildPutMappingRequest(mapping);
+    public boolean putMapping(String indexName, IndexMappingConfiguration mappingConfiguration) {
+        PutMappingRequest request = getPutMappingRequest(indexName, mappingConfiguration);
         try {
-            return client.indices().putMapping(builder -> builder.index(indexName).properties(request.properties())).acknowledged();
+            return client.indices().putMapping(request).acknowledged();
         } catch (IOException e) {
+            //TODO
             throw new RuntimeException(e);
         }
+    }
+
+    //TODO move to abstract class with generics???
+    private PutMappingRequest getPutMappingRequest(String indexName, IndexMappingConfiguration mappingConfiguration) {
+        return putMappingRequestService.buildRequest(mappingConfiguration, indexName, client._transport().jsonpMapper());
     }
 
     protected TypeMapping buildMapping(IndexConfiguration indexConfiguration) {
@@ -145,21 +154,6 @@ public class OpenSearchIndexManager extends BaseIndexManager<OpenSearchClient, I
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Unable to parse mapping of index '" + indexConfiguration.getIndexName() + "'", e);
-        }
-    }
-
-    protected PutMappingRequest buildPutMappingRequest(IndexMappingConfiguration mappingConfiguration) {
-        String mappingBody;
-        try {
-            mappingBody = objectMapper.writeValueAsString(mappingConfiguration);
-            JsonpMapper mapper = client._transport().jsonpMapper();
-            JsonProvider jsonProvider = mapper.jsonProvider();
-            try (StringReader reader = new StringReader(mappingBody)) {
-                JsonParser parser = jsonProvider.createParser(reader);
-                return PutMappingRequest._DESERIALIZER.deserialize(parser, mapper);
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to parse mapping of index", e);
         }
     }
 

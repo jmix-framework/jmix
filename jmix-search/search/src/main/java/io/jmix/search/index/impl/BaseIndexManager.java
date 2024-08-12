@@ -211,17 +211,6 @@ public abstract class BaseIndexManager<ClientType, IndexStateType, IndexSettings
         return status;
     }
 
-    protected InputStream getMappingAsStream(String indexName, IndexMappingConfiguration mapping) {
-        InputStream mappingBodyStream;
-        try {
-            String mappingBody = objectMapper.writeValueAsString(mapping);
-            mappingBodyStream = new ByteArrayInputStream(mappingBody.getBytes());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to update index mapping'" + indexName + "': Failed to parse index mapping.", e);
-        }
-        return mappingBodyStream;
-    }
-
     protected IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
         if(strategy.isConfigurationUpdateSupported()) {
             if(result.isMappingUpdateRequired()){

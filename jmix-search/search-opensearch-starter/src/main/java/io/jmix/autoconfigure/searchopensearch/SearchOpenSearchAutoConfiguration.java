@@ -29,10 +29,7 @@ import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.utils.SslConfigurer;
 import io.jmix.searchopensearch.SearchOpenSearchConfiguration;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
-import io.jmix.searchopensearch.index.impl.OpenSearchEntityIndexer;
-import io.jmix.searchopensearch.index.impl.OpenSearchIndexConfigurationComparator;
-import io.jmix.searchopensearch.index.impl.OpenSearchIndexManager;
-import io.jmix.searchopensearch.index.impl.OpenSearchMetadataResolver;
+import io.jmix.searchopensearch.index.impl.*;
 import io.jmix.searchopensearch.searching.impl.OpenSearchEntitySearcher;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyProvider;
@@ -100,8 +97,17 @@ public class SearchOpenSearchAutoConfiguration {
                                                   SearchProperties searchProperties,
                                                   OpenSearchIndexSettingsProvider indexSettingsProcessor,
                                                   OpenSearchIndexConfigurationComparator configurationComparator,
-                                                  OpenSearchMetadataResolver metadataResolver) {
-        return new OpenSearchIndexManager(client, indexStateRegistry, indexConfigurationManager, searchProperties, indexSettingsProcessor, configurationComparator, metadataResolver);
+                                                  OpenSearchMetadataResolver metadataResolver,
+                                                  OpenSearchPutMappingRequestService putMappingRequestService) {
+        return new OpenSearchIndexManager(
+                client,
+                indexStateRegistry,
+                indexConfigurationManager,
+                searchProperties,
+                indexSettingsProcessor,
+                configurationComparator,
+                metadataResolver,
+                putMappingRequestService);
     }
 
     @Bean("search_OpenSearchEntityIndexer")

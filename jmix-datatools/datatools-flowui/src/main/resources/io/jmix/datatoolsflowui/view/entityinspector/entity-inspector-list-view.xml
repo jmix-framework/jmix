@@ -20,12 +20,14 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <hbox id="lookupBox" classNames="flex-wrap">
-            <comboBox id="entitiesLookup" width="20em"
+        <formLayout id="lookupBox" maxWidth="60em">
+            <comboBox id="entitiesLookup"
                       label="msg://entityType"/>
-            <select id="showMode" itemsEnum="io.jmix.datatoolsflowui.view.entityinspector.ShowMode"
-                    emptySelectionAllowed="false" label="msg://ShowMode"/>
-        </hbox>
+            <select id="showMode"
+                    label="msg://ShowMode"
+                    itemsEnum="io.jmix.datatoolsflowui.view.entityinspector.ShowMode"
+                    emptySelectionAllowed="false"/>
+        </formLayout>
         <hbox id="buttonsPanel" classNames="buttons-panel" visible="false"/>
         <hbox id="lookupActions" visible="false">
             <button id="selectButton"/>

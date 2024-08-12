@@ -61,6 +61,9 @@ public class OpenSearchEntityIndexer extends BaseEntityIndexer {
 
     @Override
     protected IndexResult indexDocuments(List<IndexDocumentData> documents) {
+        if (documents.isEmpty()) {
+            return new IndexResult(0, Collections.emptyList());
+        }
         BulkRequest.Builder requestBuilder = new BulkRequest.Builder();
         documents.forEach(doc ->
                 requestBuilder.operations(operationsBuilder ->

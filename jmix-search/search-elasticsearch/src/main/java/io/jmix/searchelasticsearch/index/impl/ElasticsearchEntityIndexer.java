@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,9 @@ public class ElasticsearchEntityIndexer extends BaseEntityIndexer {
 
     @Override
     protected IndexResult indexDocuments(List<IndexDocumentData> documents) {
+        if (documents.isEmpty()) {
+            return new IndexResult(0, Collections.emptyList());
+        }
         BulkRequest.Builder requestBuilder = new BulkRequest.Builder();
         documents.forEach(doc ->
                 requestBuilder.operations(operationsBuilder ->

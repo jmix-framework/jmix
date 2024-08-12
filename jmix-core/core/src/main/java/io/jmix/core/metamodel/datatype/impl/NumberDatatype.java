@@ -33,11 +33,6 @@ public abstract class NumberDatatype implements ParameterizedDatatype {
     protected String decimalSeparator;
     protected String groupingSeparator;
 
-    @Autowired
-    public void setMessages(Messages messages) {
-        this.messages = messages;
-    }
-
     protected NumberDatatype(String formatPattern, String decimalSeparator, String groupingSeparator) {
         this.formatPattern = formatPattern;
         this.decimalSeparator = decimalSeparator;
@@ -52,6 +47,11 @@ public abstract class NumberDatatype implements ParameterizedDatatype {
             decimalSeparator = numberFormat.decimalSeparator();
             groupingSeparator = numberFormat.groupingSeparator();
         }
+    }
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
     }
 
     @Override

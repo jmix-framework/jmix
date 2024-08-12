@@ -659,7 +659,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         Datatype datatype;
         if (!Strings.isNullOrEmpty(formatPattern)) {
             datatype = new AdaptiveNumberDatatype(BigDecimal.class, formatPattern, "", "",
-                    formatStringsRegistry);
+                    formatStringsRegistry, messages);
         } else {
             datatype = datatypeRegistry.find(BigDecimal.class);
         }

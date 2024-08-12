@@ -121,14 +121,14 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         } else if (type.equals(Boolean.class)) {
             return createBooleanField(context);
         } else if (type.equals(java.sql.Date.class)
-                || type.equals(Date.class)
                 || type.equals(LocalDate.class)) {
             return createDatePicker(context);
         } else if (type.equals(Time.class)
                 || type.equals(LocalTime.class)
                 || type.equals(OffsetTime.class)) {
             return createTimePicker(context);
-        } else if (type.equals(LocalDateTime.class)
+        } else if (type.equals(Date.class)
+                || type.equals(LocalDateTime.class)
                 || type.equals(OffsetDateTime.class)) {
             return createDateTimePicker(context);
         } else if (Number.class.isAssignableFrom(type)) {

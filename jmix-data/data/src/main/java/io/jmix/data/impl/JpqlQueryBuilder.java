@@ -232,8 +232,8 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         }
         applyFiltering();
         applySorting();
-        applyCount();
         applyDistinct();
+        applyCount();
         restrictByPreviousResults();
     }
 

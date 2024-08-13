@@ -28,10 +28,70 @@ class JsonNodesComparatorTest {
             "  \"aField\": \"1234\",\n" +
             "  \"bField\": \"some text\"\n" +
             "}";
+
+    static String JSON_STRING_WITH_NULL = "{\n" +
+            "  \"aField\": \"1234\",\n" +
+            "  \"bField\": null\n" +
+            "}";
     static String JSON_STRING_THREE_PARAMETERS = "{\n" +
             "  \"aField\": \"1234\",\n" +
             "  \"bField\": \"some text\",\n" +
             "  \"cField\": \"some text 2\"\n" +
+            "}";
+
+    static String BIGGER_JSON = "{\n" +
+            "  \"mappings\": {\n" +
+            "    \"properties\": {\n" +
+            "      \"_instance_name\": {\n" +
+            "        \"type\": \"text\"\n" +
+            "      },\n" +
+            "      \"customer\": {\n" +
+            "        \"properties\": {\n" +
+            "          \"lastName\": {\n" +
+            "            \"type\": \"text\"\n" +
+            "          },\n" +
+            "          \"status\": {\n" +
+            "            \"type\": \"text\"\n" +
+            "          }\n" +
+            "        }\n" +
+            "      },\n" +
+            "      \"description\": {\n" +
+            "        \"type\": \"text\"\n" +
+            "      },\n" +
+            "      \"number\": {\n" +
+            "        \"type\": \"text\"\n" +
+            "      },\n" +
+            "      \"product\": {\n" +
+            "        \"type\": \"text\"\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+
+    static String SMALLER_JSON = "{\n" +
+            "  \"mappings\": {\n" +
+            "    \"properties\": {\n" +
+            "      \"_instance_name\": {\n" +
+            "        \"type\": \"text\"\n" +
+            "      },\n" +
+            "      \"customer\": {\n" +
+            "        \"properties\": {\n" +
+            "          \"lastName\": {\n" +
+            "            \"type\": \"text\"\n" +
+            "          },\n" +
+            "          \"status\": {\n" +
+            "            \"type\": \"text\"\n" +
+            "          }\n" +
+            "        }\n" +
+            "      },\n" +
+            "      \"number\": {\n" +
+            "        \"type\": \"text\"\n" +
+            "      },\n" +
+            "      \"product\": {\n" +
+            "        \"type\": \"text\"\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }\n" +
             "}";
 
     @Test
@@ -40,6 +100,57 @@ class JsonNodesComparatorTest {
         JsonNodesComparator comparator = new JsonNodesComparator();
         assertTrue(comparator.nodeContains(toObjectNode(JSON_STRING_TWO_PARAMETERS), toObjectNode(JSON_STRING_TWO_PARAMETERS)));
     }
+
+    @Test
+    void nodeContains_2() {
+
+        JsonNodesComparator comparator = new JsonNodesComparator();
+        assertTrue(comparator.nodeContains(toObjectNode(JSON_STRING_THREE_PARAMETERS), toObjectNode(JSON_STRING_TWO_PARAMETERS)));
+    }
+
+    @Test
+    void nodeContains_3() {
+
+        JsonNodesComparator comparator = new JsonNodesComparator();
+        assertFalse(comparator.nodeContains(toObjectNode(JSON_STRING_TWO_PARAMETERS), toObjectNode(JSON_STRING_THREE_PARAMETERS)));
+    }
+
+    @Test
+    void nodeContains_4() {
+        JsonNodesComparator comparator = new JsonNodesComparator();
+        assertTrue(comparator.nodeContains(toObjectNode(BIGGER_JSON), toObjectNode(BIGGER_JSON)));
+    }
+
+    @Test
+    void nodeContains_5() {
+        JsonNodesComparator comparator = new JsonNodesComparator();
+        assertTrue(comparator.nodeContains(toObjectNode(BIGGER_JSON), toObjectNode(SMALLER_JSON)));
+    }
+
+    @Test
+    void nodeContains_6() {
+        JsonNodesComparator comparator = new JsonNodesComparator();
+        assertFalse(comparator.nodeContains(toObjectNode(SMALLER_JSON), toObjectNode(BIGGER_JSON)));
+    }
+
+    @Test
+    void nodeContains_7() {
+        JsonNodesComparator comparator = new JsonNodesComparator();
+        assertTrue(comparator.nodeContains(toObjectNode(JSON_STRING_WITH_NULL), toObjectNode(JSON_STRING_WITH_NULL)));
+    }
+
+    @Test
+    void nodeContains_8() {
+        JsonNodesComparator comparator = new JsonNodesComparator();
+        assertFalse(comparator.nodeContains(toObjectNode(JSON_STRING_WITH_NULL), toObjectNode(JSON_STRING_TWO_PARAMETERS)));
+    }
+
+    @Test
+    void nodeContains_9() {
+        JsonNodesComparator comparator = new JsonNodesComparator();
+        assertFalse(comparator.nodeContains(toObjectNode(JSON_STRING_TWO_PARAMETERS), toObjectNode(JSON_STRING_WITH_NULL)));
+    }
+
 
     static ObjectNode toObjectNode(String json) {
         try {

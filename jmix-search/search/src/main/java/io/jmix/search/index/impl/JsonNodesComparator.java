@@ -25,12 +25,9 @@ import org.springframework.stereotype.Component;
 import java.util.Iterator;
 import java.util.Map;
 
-@Component
-//TODO test
+@Component("search_JsonNodesComparator")
 public class JsonNodesComparator {
-
     private static final Logger log = LoggerFactory.getLogger(JsonNodesComparator.class);
-
 
     protected boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) {
         log.trace("Check if node {} contains {}", containerNode, contentNode);
@@ -49,14 +46,8 @@ public class JsonNodesComparator {
                 return false;
             }
 
-            if (containerFieldValue == null) {
-                log.trace("Container has NULL field '{}'. STOP - FALSE", fieldName);
-                return false;
-            }
-
             if (!contentFieldValue.getNodeType().equals(containerFieldValue.getNodeType())) {
-                log.trace("Type of container field ({}) doesn't match the type of content field ({}). STOP - FALSE",
-                        containerFieldValue.getNodeType(), contentFieldValue.getNodeType());
+                log.trace("Type of container field ({}) doesn't match the type of content field ({}). STOP - FALSE", containerFieldValue.getNodeType(), contentFieldValue.getNodeType());
                 return false;
             }
 
@@ -67,9 +58,8 @@ public class JsonNodesComparator {
                     log.trace("Structures of the nested objects ({}) are different. STOP - FALSE", fieldName);
                     return false;
                 }
-            }
-
-            if (!containerFieldValue.equals(contentFieldValue)) {
+            } else if (!containerFieldValue.equals(contentFieldValue)) {
+                log.trace("Content of nodes ({}) is different. STOP - FALSE", fieldName);
                 return false;
             }
         }

@@ -21,28 +21,45 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.entity.EntityValues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriBuilder;
 
+import java.io.IOException;
 import java.net.URI;
-import java.util.Base64;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @SuppressWarnings("UnnecessaryLocalVariable")
 @Component("restds_RestInvoker")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class RestInvoker {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private static final Logger log = LoggerFactory.getLogger(RestInvoker.class);
 
-    private RestClient restClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final RestClient restClient;
+    private final RestClient authClient;
+
+    private final String clientId;
+    private final String clientSecret;
 
     private String authToken;
+
+    private final ReadWriteLock authLock = new ReentrantReadWriteLock();
 
     public record LoadParams(String entityName,
                                  Object id,
@@ -51,8 +68,8 @@ public class RestInvoker {
         public LoadParams(String entityName, Object id) {
             this(entityName, id, null);
         }
-    }
 
+    }
     public record LoadListParams(String entityName,
                                  int limit,
                                  int offset,
@@ -70,29 +87,86 @@ public class RestInvoker {
     }
 
     public RestInvoker(String baseUrl, String clientId, String clientSecret) {
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+
         restClient = RestClient.builder()
                 .baseUrl(baseUrl)
+                .requestInterceptor(new RetryingClientHttpRequestInterceptor())
                 .build();
 
-        // TODO: authenticate on first request
-        ResponseEntity<String> authResponse = restClient.post()
+        authClient = RestClient.builder()
+                .baseUrl(baseUrl)
+                .build();
+    }
+
+    public String getAuthenticationToken() {
+        authLock.readLock().lock();
+        try {
+            if (authToken != null) {
+                return authToken;
+            }
+        } finally {
+            authLock.readLock().unlock();
+        }
+
+        authLock.writeLock().lock();
+        try {
+            if (authToken == null) {
+                authToken = obtainAuthToken(clientId, clientSecret);
+            }
+            return authToken;
+        } finally {
+            authLock.writeLock().unlock();
+        }
+    }
+
+    public void resetAuthToken() {
+        authLock.writeLock().lock();
+        try {
+            authToken = null;
+        } finally {
+            authLock.writeLock().unlock();
+        }
+    }
+
+    private String obtainAuthToken(String clientId, String clientSecret) {
+        ResponseEntity<String> authResponse = authClient.post()
                 .uri("/oauth2/token")
-                .header("Authorization", "Basic " + getBasicAuthCredentials(clientId, clientSecret))
-                .header("Content-Type", "application/x-www-form-urlencoded")
+                .headers(httpHeaders -> {
+                    httpHeaders.setBasicAuth(clientId, clientSecret);
+                    httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                })
                 .body("grant_type=client_credentials")
                 .retrieve()
                 .toEntity(String.class);
-
         try {
             JsonNode rootNode = objectMapper.readTree(authResponse.getBody());
-            authToken = rootNode.get("access_token").asText();
+            return rootNode.get("access_token").asText();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String getBasicAuthCredentials(String clientId, String clientSecret) {
-        return Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
+    public void revokeAuthenticationToken() {
+        authLock.readLock().lock();
+        try {
+            if (authToken == null) {
+                log.warn("No auth token in use");
+                return;
+            }
+            authClient.post()
+                    .uri("/oauth2/revoke")
+                    .headers(httpHeaders -> {
+                        httpHeaders.setBasicAuth(clientId, clientSecret);
+                        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                    })
+                    .body("token=" + authToken)
+                    .retrieve()
+                    .toBodilessEntity();
+        } finally {
+            authLock.readLock().unlock();
+        }
     }
 
     @Nullable
@@ -101,7 +175,6 @@ public class RestInvoker {
             String resultJson = restClient.get()
                     .uri(uriBuilder ->
                             createLoadUri(uriBuilder, params))
-                    .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
                     .body(String.class);
             return resultJson;
@@ -124,14 +197,12 @@ public class RestInvoker {
             resultJson = restClient.get()
                     .uri(uriBuilder ->
                             createLoadListUri(uriBuilder, params, false))
-                    .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
                     .body(String.class);
         } else {
             resultJson = restClient.post()
                     .uri("/rest/entities/{entityName}/search", params.entityName())
                     .body(createSearchPostBody(params, false))
-                    .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
                     .body(String.class);
         }
@@ -189,14 +260,12 @@ public class RestInvoker {
             response = restClient.get()
                     .uri(uriBuilder ->
                             createLoadListUri(uriBuilder, new LoadListParams(entityName, null), true))
-                    .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
                     .toBodilessEntity();
         } else {
             response = restClient.post()
                     .uri("/rest/entities/{entityName}/search", entityName)
                     .body(createSearchPostBody(new LoadListParams(entityName, filter), true))
-                    .header("Authorization", "Bearer " + getAuthenticationToken())
                     .retrieve()
                     .toBodilessEntity();
         }
@@ -208,7 +277,6 @@ public class RestInvoker {
     public String create(String entityName, String entityJson) {
         String resultJson = restClient.post()
                 .uri("/rest/entities/{entityName}?responseFetchPlan=_base", entityName)
-                .header("Authorization", "Bearer " + getAuthenticationToken())
                 .body(entityJson)
                 .retrieve()
                 .body(String.class);
@@ -219,7 +287,6 @@ public class RestInvoker {
     public String update(String entityName, String entityId, String entityJson) {
         String resultJson = restClient.put()
                 .uri("/rest/entities/{entityName}/{id}?responseFetchPlan=_base", entityName, entityId)
-                .header("Authorization", "Bearer " + getAuthenticationToken())
                 .body(entityJson)
                 .retrieve()
                 .body(String.class);
@@ -230,12 +297,21 @@ public class RestInvoker {
     public void delete(String entityName, Object entity) {
         restClient.delete()
                 .uri("/rest/entities/{entityName}/{id}", entityName, EntityValues.getId(entity))
-                .header("Authorization", "Bearer " + getAuthenticationToken())
                 .retrieve()
                 .toBodilessEntity();
     }
 
-    private String getAuthenticationToken() {
-        return authToken;
+    private class RetryingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+        @Override
+        public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+            request.getHeaders().setBearerAuth(getAuthenticationToken());
+            ClientHttpResponse response = execution.execute(request, body);
+            if (response.getStatusCode().is4xxClientError() && response.getStatusCode().value() == 401) {
+                resetAuthToken();
+                request.getHeaders().setBearerAuth(getAuthenticationToken());
+                response = execution.execute(request, body);
+            }
+            return response;
+        }
     }
 }

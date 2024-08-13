@@ -58,6 +58,10 @@ public class RestDataStore extends AbstractDataStore {
         this.entityEventManager = entityEventManager;
     }
 
+    public RestInvoker getRestInvoker() {
+        return restInvoker;
+    }
+
     @Override
     @Nullable
     protected Object loadOne(LoadContext<?> context) {

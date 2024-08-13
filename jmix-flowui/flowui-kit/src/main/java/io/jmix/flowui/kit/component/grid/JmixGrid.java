@@ -17,11 +17,13 @@
 package io.jmix.flowui.kit.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.function.SerializableFunction;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 
+import io.jmix.flowui.kit.meta.StudioIgnore;
 import jakarta.annotation.Nullable;
 import java.util.Collection;
 
@@ -59,6 +61,12 @@ public class JmixGrid<T> extends Grid<T> implements SelectionChangeNotifier<Grid
     @Override
     public Object getSubPart(String name) {
         return getColumnByKey(name);
+    }
+
+    @Override
+    @StudioIgnore
+    public void setClassNameGenerator(SerializableFunction<T, String> classNameGenerator) {
+        super.setClassNameGenerator(classNameGenerator);
     }
 
     public GridActionsSupport<JmixGrid<T>, T> getActionsSupport() {

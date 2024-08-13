@@ -42,7 +42,7 @@ class UserUiTest {
         var userListView = UiTestUtils.getCurrentView<UserListView>()
 
         // click "Create" button
-        val createBtn = UiTestUtils.getComponent<JmixButton>(userListView, "createBtn")
+        val createBtn = UiTestUtils.getComponent<JmixButton>(userListView, "createButton")
         createBtn.click()
 
         // Get detail view
@@ -60,7 +60,7 @@ class UserUiTest {
         confirmPasswordField.value = "test-passwd"
 
         // Click "OK"
-        val commitAndCloseBtn = UiTestUtils.getComponent<JmixButton>(userDetailView, "saveAndCloseBtn")
+        val commitAndCloseBtn = UiTestUtils.getComponent<JmixButton>(userDetailView, "saveAndCloseButton")
         commitAndCloseBtn.click()
 
         // Get navigated user list view

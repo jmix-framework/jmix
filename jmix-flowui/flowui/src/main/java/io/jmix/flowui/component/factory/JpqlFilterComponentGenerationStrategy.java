@@ -214,7 +214,7 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
     @Override
     protected Component createBooleanField(ComponentGenerationContext context) {
         JmixSelect<Boolean> component = uiComponents.create(JmixSelect.class);
-        // TODO: gg, style or theme?
+        component.setEmptySelectionAllowed(true);
         component.addClassName(UNARY_FIELD_CLASS_NAME);
 
         ComponentUtils.setItemsMap(component, ImmutableMap.of(
@@ -226,8 +226,6 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
     }
 
     protected Component createVoidField(ComponentGenerationContext context) {
-        // TODO: gg, check box, really?
-        //  kd, by now - select with yes/no seems much better
         return createBooleanField(context);
     }
 

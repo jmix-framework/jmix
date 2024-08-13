@@ -58,8 +58,8 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
             ${table}
         <%}%>
         <hbox id="detailActions">
-            <button id="saveAndCloseBtn" action="saveAction"/>
-            <button id="closeBtn" action="closeAction"/>
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
         </hbox>
     </layout>
 </view>

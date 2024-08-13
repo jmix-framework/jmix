@@ -85,7 +85,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         updateControls(true);
     }
 
-    @Subscribe("saveBtn")
+    @Subscribe("saveButton")
     public void onSaveButtonClick(final ClickEvent<JmixButton> event) {
         ${entity.className} item = ${detailDc}.getItem();
         ValidationErrors validationErrors = validateView(item);
@@ -100,7 +100,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         updateControls(false);
     }
 
-    @Subscribe("cancelBtn")
+    @Subscribe("cancelButton")
     public void onCancelButtonClick(final ClickEvent<JmixButton> event) {
         dataContext.clear();
         ${detailDl}.load();

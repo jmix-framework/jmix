@@ -132,6 +132,13 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     }
 
     protected void updateQueryParameters() {
+        ImmutableMap<String, List<String>> parametersMap = serializeQueryParameters();
+
+        QueryParameters queryParameters = new QueryParameters(parametersMap);
+        fireQueryParametersChanged(new UrlQueryParametersChangeEvent(this, queryParameters));
+    }
+
+    public ImmutableMap<String, List<String>> serializeQueryParameters() {
         Configuration currentConfiguration = filter.getCurrentConfiguration();
         LogicalCondition queryCondition = currentConfiguration.getQueryCondition();
 
@@ -151,14 +158,10 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
             }
         }
 
-        ImmutableMap<String, List<String>> parametersMap = ImmutableMap.of(
+        return ImmutableMap.of(
                 getConfigurationParam(), configurationParam,
                 getConditionParam(), conditionParams
         );
-
-        QueryParameters queryParameters =
-                new QueryParameters(parametersMap);
-        fireQueryParametersChanged(new UrlQueryParametersChangeEvent(this, queryParameters));
     }
 
     protected String serializeConfigurationId(Configuration configuration) {

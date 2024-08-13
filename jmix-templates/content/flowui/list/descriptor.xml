@@ -62,8 +62,8 @@ def tableXml = api.processSnippet('table.xml',
         </genericFilter><%}%>
         ${tableXml}
         <hbox id="lookupActions" visible="false">
-            <button id="selectBtn" action="selectAction"/>
-            <button id="discardBtn" action="discardAction"/>
+            <button id="selectButton" action="selectAction"/>
+            <button id="discardButton" action="discardAction"/>
         </hbox>
     </layout>
 </view>

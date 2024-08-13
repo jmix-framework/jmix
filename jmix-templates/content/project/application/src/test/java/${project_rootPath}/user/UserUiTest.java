@@ -43,7 +43,7 @@ public class UserUiTest {
         UserListView userListView = UiTestUtils.getCurrentView();
 
         // click "Create" button
-        JmixButton createBtn = UiTestUtils.getComponent(userListView, "createBtn");
+        JmixButton createBtn = UiTestUtils.getComponent(userListView, "createButton");
         createBtn.click();
 
         // Get detail view
@@ -61,7 +61,7 @@ public class UserUiTest {
         confirmPasswordField.setValue("test-passwd");
 
         // Click "OK"
-        JmixButton commitAndCloseBtn = UiTestUtils.getComponent(userDetailView, "saveAndCloseBtn");
+        JmixButton commitAndCloseBtn = UiTestUtils.getComponent(userDetailView, "saveAndCloseButton");
         commitAndCloseBtn.click();
 
         // Get navigated user list view

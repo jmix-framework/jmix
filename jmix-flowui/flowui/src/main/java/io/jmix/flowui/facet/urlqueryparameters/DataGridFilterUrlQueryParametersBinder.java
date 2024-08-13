@@ -19,7 +19,6 @@ package io.jmix.flowui.facet.urlqueryparameters;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
@@ -90,17 +89,7 @@ public class DataGridFilterUrlQueryParametersBinder<T extends Grid<?> & Enhanced
 
     protected void setupColumn(DataGridColumn<?> column) {
         DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) column.getHeaderComponent();
-
-        Registration applyRegistration = headerFilter.addApplyListener(__ -> updateQueryParameters());
-        headerFilter.addDetachListener(__ -> {
-            applyRegistration.remove();
-
-            // To avoid changing URL query parameters of another view
-            // E.g.: detach during routing
-            if (UiComponentUtils.getView(grid) == UI.getCurrent().getCurrentView()) {
-                updateQueryParameters();
-            }
-        });
+        headerFilter.addApplyListener(__ -> updateQueryParameters());
     }
 
     protected void updateQueryParameters() {

@@ -26,7 +26,7 @@ import io.jmix.search.index.impl.JsonNodesComparator;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("search_ElastisearchIndexSettingsComparator")
 public class ElastisearchIndexSettingsComparator extends IndexSettingsComparator<IndexState, IndexSettings, ElasticsearchClient, JsonpSerializable> {
     private final ElasticsearchIndexSettingsProvider settingsProvider;
 

@@ -23,7 +23,7 @@ import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.indices.IndexState;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("search_OpenSearchIndexMappingComparator")
 public class OpenSearchIndexMappingComparator extends IndexMappingComparator<IndexState, JsonpSerializable, OpenSearchClient> {
     public OpenSearchIndexMappingComparator(MappingFieldComparator mappingFieldComparator, OpenSearchJsonpSerializer jsonpSerializer) {
         super(mappingFieldComparator, jsonpSerializer);

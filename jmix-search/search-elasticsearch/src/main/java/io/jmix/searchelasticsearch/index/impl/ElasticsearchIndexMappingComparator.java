@@ -23,7 +23,7 @@ import io.jmix.search.index.impl.IndexMappingComparator;
 import io.jmix.search.index.impl.MappingFieldComparator;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("search_ElasticsearchIndexMappingComparator")
 public class ElasticsearchIndexMappingComparator extends IndexMappingComparator<IndexState, JsonpSerializable, ElasticsearchClient> {
     public ElasticsearchIndexMappingComparator(MappingFieldComparator mappingFieldComparator, ElasticsearchJsonpSerializer jsonpSerializer) {
         super(mappingFieldComparator, jsonpSerializer);

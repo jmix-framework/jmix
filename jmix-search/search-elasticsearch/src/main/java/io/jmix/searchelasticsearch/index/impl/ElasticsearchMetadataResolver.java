@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Map;
 
-@Component
+@Component("search_ElasticsearchMetadataResolver")
 public class ElasticsearchMetadataResolver extends MetadataResolver<ElasticsearchClient, IndexState, JsonpSerializable> {
     protected ElasticsearchMetadataResolver(ElasticsearchJsonpSerializer jsonpSerializer) {
         super(jsonpSerializer);

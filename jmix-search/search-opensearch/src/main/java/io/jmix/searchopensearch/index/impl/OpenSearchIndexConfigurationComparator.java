@@ -24,7 +24,7 @@ import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.opensearch.client.opensearch.indices.IndexState;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("search_OpenSearchIndexConfigurationComparator")
 public class OpenSearchIndexConfigurationComparator
         extends IndexConfigurationComparator<OpenSearchClient, IndexState, IndexSettings, JsonpSerializable> {
 

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Map;
 
-@Component
+@Component("search_OpenSearchMetadataResolver")
 public class OpenSearchMetadataResolver extends MetadataResolver<OpenSearchClient, IndexState, JsonpSerializable> {
     protected OpenSearchMetadataResolver(OpenSearchJsonpSerializer jsonpSerializer) {
         super(jsonpSerializer);

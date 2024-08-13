@@ -24,7 +24,7 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.IndexConfigurationComparator;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("search_ElasticsearchIndexConfigurationComparator")
 public class ElasticsearchIndexConfigurationComparator
         extends IndexConfigurationComparator<ElasticsearchClient, IndexState, IndexSettings, JsonpSerializable> {
 

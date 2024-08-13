@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.StringWriter;
 
-@Component
+@Component("search_OpenSearchJsonpSerializer")
 public class OpenSearchJsonpSerializer extends BaseJsonpSerializer<JsonpSerializable, OpenSearchClient> {
 
     @Override

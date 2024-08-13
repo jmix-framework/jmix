@@ -16,13 +16,14 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.Messages;
 import io.jmix.core.metamodel.annotation.NumberFormat;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.apache.commons.lang3.StringUtils;
-
 import org.springframework.lang.Nullable;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -38,16 +39,20 @@ public class AdaptiveNumberDatatype extends NumberDatatype implements Datatype<N
 
     protected FormatStringsRegistry formatStringsRegistry;
 
-    public AdaptiveNumberDatatype(Class<?> type, NumberFormat numberFormat, FormatStringsRegistry formatStringsRegistry) {
+    public AdaptiveNumberDatatype(Class<?> type, NumberFormat numberFormat, FormatStringsRegistry formatStringsRegistry,
+                                  Messages messages) {
         super(numberFormat.pattern(), numberFormat.decimalSeparator(), numberFormat.groupingSeparator());
         this.type = type;
         this.formatStringsRegistry = formatStringsRegistry;
+        setMessages(messages);
     }
 
-    public AdaptiveNumberDatatype(Class<?> type, String pattern, String decimalSeparator, String groupingSeparator, FormatStringsRegistry formatStringsRegistry) {
+    public AdaptiveNumberDatatype(Class<?> type, String pattern, String decimalSeparator, String groupingSeparator,
+                                  FormatStringsRegistry formatStringsRegistry, Messages messages) {
         super(pattern, decimalSeparator, groupingSeparator);
         this.type = type;
         this.formatStringsRegistry = formatStringsRegistry;
+        setMessages(messages);
     }
 
     @Override

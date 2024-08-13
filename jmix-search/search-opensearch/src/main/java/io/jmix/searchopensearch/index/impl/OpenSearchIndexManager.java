@@ -132,12 +132,11 @@ public class OpenSearchIndexManager extends BaseIndexManager<OpenSearchClient, I
         try {
             return client.indices().putMapping(request).acknowledged();
         } catch (IOException e) {
-            //TODO
+            //TODO specify correct exception message
             throw new RuntimeException(e);
         }
     }
 
-    //TODO move to abstract class with generics???
     private PutMappingRequest getPutMappingRequest(String indexName, IndexMappingConfiguration mappingConfiguration) {
         return putMappingRequestService.buildRequest(mappingConfiguration, indexName, client._transport().jsonpMapper());
     }

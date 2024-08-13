@@ -36,7 +36,9 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.*;
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -57,12 +59,16 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.pagination.SimplePagination;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
+import io.jmix.flowui.data.pagination.PaginationDataLoaderImpl;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder;
+import io.jmix.flowui.facet.urlqueryparameters.PaginationUrlQueryParametersBinder;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -79,11 +85,14 @@ import io.jmix.gridexportflowui.action.ExcelExportAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.flowui.download.DownloadFormat.JSON;
@@ -171,7 +180,9 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     protected DataGrid<Object> entitiesDataGrid;
     protected GenericFilter entitiesGenericFilter;
-    protected Registration queryParametersChangeRegistration;
+
+    protected Pair<UrlQueryParametersFacet.Binder, Registration> filterQueryParametersChange;
+    protected Pair<UrlQueryParametersFacet.Binder, Registration> paginationQueryParametersChange;
     protected QueryParameters initialParameters;
 
     protected MetaClass selectedMeta;
@@ -289,6 +300,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         );
 
         entitiesDataGrid.addSelectionListener(this::entitiesDataGridSelectionListener);
+        initialParameters = null;
     }
 
     protected GenericFilter createGenericFilter() {
@@ -296,60 +308,86 @@ public class EntityInspectorListView extends StandardListView<Object> {
         genericFilter.setId("genericFilter");
         genericFilter.setDataLoader(entitiesDl);
 
-        initQueryParametersBinder(genericFilter);
+        filterQueryParametersChange = initQueryParametersBinder(
+                filterQueryParametersChange,
+                () -> new GenericFilterUrlQueryParametersBinder(
+                        genericFilter, urlParamSerializer, getApplicationContext()
+                )
+        );
 
         return genericFilter;
     }
 
-    protected void initQueryParametersBinder(GenericFilter genericFilter) {
-        GenericFilterUrlQueryParametersBinder genericFilterBinder = createQueryParametersBinder(genericFilter);
+    protected SimplePagination createPagination() {
+        SimplePagination pagination = uiComponents.create(SimplePagination.class);
+        pagination.addClassName(LumoUtility.Margin.Start.AUTO);
 
-        if (queryParametersChangeRegistration != null) {
-            queryParametersChangeRegistration.remove();
-            queryParametersChangeRegistration = null;
+        PaginationDataLoaderImpl paginationLoader =
+                getApplicationContext().getBean(PaginationDataLoaderImpl.class, entitiesDl);
+        pagination.setPaginationLoader(paginationLoader);
+
+        paginationQueryParametersChange = initQueryParametersBinder(
+                paginationQueryParametersChange,
+                () -> new PaginationUrlQueryParametersBinder(pagination, urlParamSerializer)
+        );
+
+        return pagination;
+    }
+
+    protected Pair<UrlQueryParametersFacet.Binder, Registration> initQueryParametersBinder(
+            @Nullable Pair<UrlQueryParametersFacet.Binder, Registration> parameterChangeRegistration,
+            Supplier<UrlQueryParametersFacet.Binder> binderFactory) {
+        UrlQueryParametersFacet.Binder binder = createQueryParametersBinder(binderFactory);
+
+        if (parameterChangeRegistration != null) {
+            parameterChangeRegistration.getSecond().remove();
         }
 
-        queryParametersChangeRegistration =
+        parameterChangeRegistration = new Pair<>(
+                binder,
                 ViewControllerUtils.addQueryParametersChangeListener(this, event -> {
                     if (UiComponentUtils.isComponentAttachedToDialog(this)) {
                         return;
                     }
 
-                    genericFilterBinder.updateState(event.getQueryParameters());
-                });
+                    binder.updateState(event.getQueryParameters());
+                })
+        );
 
         // Lazy update of query parameters for backward navigation
         if (initialParameters != null) {
-            genericFilterBinder.updateState(initialParameters);
-            initialParameters = null;
+            binder.updateState(initialParameters);
         }
+
+        return parameterChangeRegistration;
     }
 
-    private GenericFilterUrlQueryParametersBinder createQueryParametersBinder(GenericFilter genericFilter) {
-        GenericFilterUrlQueryParametersBinder genericFilterBinder =
-                new GenericFilterUrlQueryParametersBinder(genericFilter, urlParamSerializer, getApplicationContext());
+    protected UrlQueryParametersFacet.Binder createQueryParametersBinder(
+            Supplier<UrlQueryParametersFacet.Binder> binderFactory) {
+        UrlQueryParametersFacet.Binder binder = binderFactory.get();
+        binder.addUrlQueryParametersChangeListener(this::onUrlQueryParametersChange);
 
-        genericFilterBinder.addUrlQueryParametersChangeListener(event -> {
-            if (UiComponentUtils.isComponentAttachedToDialog(this)) {
-                return;
-            }
+        return binder;
+    }
 
-            getUI().ifPresent(ui -> {
-                // Required to collect query parameters from fields, since the current
-                // listener is called immediately after changing any query parameters by the
-                // field (see entityChangeListener, showModeChangeListener).
-                // At this point, the previous state is not pushed to the UI, and fields query parameters is not
-                // applied to the URL
-                QueryParameters queryParameters = routeSupport.mergeQueryParameters(
-                        collectFieldsQueryParameters(),
-                        event.getQueryParameters()
-                );
+    protected void onUrlQueryParametersChange(UrlQueryParametersFacet.UrlQueryParametersChangeEvent event) {
+        if (UiComponentUtils.isComponentAttachedToDialog(this)) {
+            return;
+        }
 
-                routeSupport.setQueryParameters(ui, queryParameters);
-            });
+        getUI().ifPresent(ui -> {
+            // Required to collect query parameters from fields, since the current
+            // listener is called immediately after changing any query parameters by the
+            // field (see entityChangeListener, showModeChangeListener).
+            // At this point, the previous state is not pushed to the UI, and fields query parameters is not
+            // applied to the URL
+            QueryParameters queryParameters = routeSupport.mergeQueryParameters(
+                    collectQueryParameters(event.getSource()),
+                    event.getQueryParameters()
+            );
+
+            routeSupport.setQueryParameters(ui, queryParameters);
         });
-
-        return genericFilterBinder;
     }
 
     protected void showEntities() {
@@ -539,6 +577,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
             buttonsPanel.add(restoreButton, wipeOutButton);
         }
 
+        SimplePagination pagination = createPagination();
+        buttonsPanel.add(pagination);
     }
 
     protected void updateSelectAction(DataGrid<Object> dataGrid) {
@@ -767,17 +807,49 @@ public class EntityInspectorListView extends StandardListView<Object> {
         });
     }
 
-    protected QueryParameters collectFieldsQueryParameters() {
+    protected QueryParameters collectQueryParameters(UrlQueryParametersFacet.Binder source) {
         Map<String, List<String>> parametersMap = new HashMap<>();
 
+        collectFieldQueryParameters(parametersMap);
+
+        if (source instanceof GenericFilterUrlQueryParametersBinder
+                && paginationQueryParametersChange.getFirst() instanceof PaginationUrlQueryParametersBinder
+                paginationBinder
+                && paginationBinder.getComponent() instanceof SimplePagination pagination) {
+            collectPaginationQueryParameters(parametersMap, paginationBinder, pagination);
+
+        } else if (filterQueryParametersChange.getFirst() instanceof GenericFilterUrlQueryParametersBinder
+                filterBinder) {
+            collectFilterQueryParameters(parametersMap, filterBinder);
+        }
+
+        return new QueryParameters(parametersMap);
+    }
+
+    protected void collectFieldQueryParameters(Map<String, List<String>> parametersMap) {
         MetaClass value = entitiesLookup.getValue();
         if (value != null) {
             parametersMap.put(QUERY_PARAM_ENTITY, Collections.singletonList(value.getName()));
         }
 
         parametersMap.put(QUERY_PARAM_MODE, Collections.singletonList(showMode.getValue().getId()));
+    }
 
-        return new QueryParameters(parametersMap);
+    protected void collectPaginationQueryParameters(Map<String, List<String>> parametersMap,
+                                                    PaginationUrlQueryParametersBinder paginationBinder,
+                                                    SimplePagination pagination) {
+        Optional.ofNullable(pagination.getPaginationLoader()).ifPresent(paginationLoader -> {
+            Map<String, List<String>> map = paginationBinder.serializeQueryParameters(paginationLoader)
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> Collections.singletonList(entry.getValue())));
+            parametersMap.putAll(map);
+        });
+    }
+
+    protected void collectFilterQueryParameters(Map<String, List<String>> parametersMap,
+                                                GenericFilterUrlQueryParametersBinder filterBinder) {
+        parametersMap.putAll(filterBinder.serializeQueryParameters());
     }
 
     protected void showNotification(String message) {

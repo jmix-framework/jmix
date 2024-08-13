@@ -24,8 +24,8 @@ import io.jmix.flowui.component.PaginationComponent;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
-
 import org.springframework.lang.Nullable;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,13 +58,17 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
 
     protected void onAfterRefresh(PaginationComponent.AfterRefreshEvent<?> event) {
         getPaginationLoader().ifPresent(paginationLoader -> {
-            QueryParameters queryParameters = QueryParameters.simple(ImmutableMap.of(
-                    getFirstResultParam(), urlParamSerializer.serialize(paginationLoader.getFirstResult()),
-                    getMaxResultsParam(), urlParamSerializer.serialize(paginationLoader.getMaxResults())
-            ));
+            QueryParameters queryParameters = QueryParameters.simple(serializeQueryParameters(paginationLoader));
 
             fireQueryParametersChanged(new UrlQueryParametersChangeEvent(this, queryParameters));
         });
+    }
+
+    public ImmutableMap<String, String> serializeQueryParameters(PaginationDataLoader paginationLoader) {
+        return ImmutableMap.of(
+                getFirstResultParam(), urlParamSerializer.serialize(paginationLoader.getFirstResult()),
+                getMaxResultsParam(), urlParamSerializer.serialize(paginationLoader.getMaxResults())
+        );
     }
 
     @Override

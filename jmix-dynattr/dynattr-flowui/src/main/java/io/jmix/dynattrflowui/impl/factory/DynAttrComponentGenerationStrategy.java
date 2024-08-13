@@ -417,7 +417,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         String formatPattern = attribute.getConfiguration().getNumberFormatPattern();
         if (!Strings.isNullOrEmpty(formatPattern)) {
             Class<?> type = attribute.getDataType() == DECIMAL ? BigDecimal.class : Number.class;
-            field.setDatatype(new AdaptiveNumberDatatype(type, formatPattern, "", "", formatStringsRegistry));
+            field.setDatatype(new AdaptiveNumberDatatype(type, formatPattern, "", "", formatStringsRegistry, messages));
         }
     }
 

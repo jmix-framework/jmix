@@ -20,6 +20,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import io.jmix.core.Entity;
+import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.DeletedBy;
@@ -98,13 +99,17 @@ public class MetaModelLoader {
 
     protected FormatStringsRegistry formatStringsRegistry;
 
+    protected Messages messages;
+
     private static final Logger log = LoggerFactory.getLogger(MetaModelLoader.class);
 
     @Autowired
-    public MetaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry) {
+    public MetaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry,
+                           Messages messages) {
         this.datatypes = datatypes;
         this.stores = stores;
         this.formatStringsRegistry = formatStringsRegistry;
+        this.messages = messages;
     }
 
     public void loadModel(Session session, Set<String> classNames) {
@@ -995,7 +1000,7 @@ public class MetaModelLoader {
         NumberFormat numberFormat = metaProperty.getAnnotatedElement().getAnnotation(NumberFormat.class);
         if (numberFormat != null) {
             if (Number.class.isAssignableFrom(type)) {
-                return new AdaptiveNumberDatatype(type, numberFormat, formatStringsRegistry);
+                return new AdaptiveNumberDatatype(type, numberFormat, formatStringsRegistry, messages);
             } else {
                 log.warn("NumberFormat annotation is ignored because " + metaProperty + " is not a Number");
             }

@@ -14,12 +14,7 @@ public class TestNoopIndexManager extends BaseIndexManager {
     protected TestNoopIndexManager(IndexConfigurationManager indexConfigurationManager,
                                    IndexStateRegistry indexStateRegistry,
                                    SearchProperties searchProperties) {
-        super(indexConfigurationManager, indexStateRegistry, searchProperties);
-    }
-
-    @Override
-    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
-        return true;
+        super(indexConfigurationManager, null, null, null, null, null);
     }
 
     @Override

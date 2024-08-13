@@ -97,6 +97,9 @@ public class TabSheetLoader extends AbstractTabsLoader<JmixTabSheet> {
             applySettingsToTabContent(
                     getResultComponent(),
                     selectedChangeEvent.getSelectedTab());
+
+            //Bind grid actions and buttons
+            getContext().executeInitTasks();
         }
         if (lazyTabs.isEmpty()) {
             selectedChangeEvent.unregisterListener();

@@ -50,7 +50,7 @@ import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowuidata.action.genericfilter.*;
 import io.jmix.flowuidata.component.genericfilter.configuration.UiDataFilterConfigurationDetail;
 import io.jmix.flowuidata.entity.FilterConfiguration;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.event.TransactionPhase;

@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.data;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * An object having a ValueSourceProvider.

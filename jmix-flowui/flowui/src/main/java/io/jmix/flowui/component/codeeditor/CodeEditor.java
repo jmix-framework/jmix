@@ -27,7 +27,7 @@ import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;

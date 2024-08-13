@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.component.genericfilter.configuration;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 

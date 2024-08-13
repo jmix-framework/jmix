@@ -22,10 +22,10 @@ class ${viewControllerName} : StandardListView<${entity.className}>() {
         // Here you can load entities from an external store.
         // Set the loaded entities to the not-new state using EntityStates.setNew(entity, false).
         return mutableListOf()
-    }
+    }<%if (tableActions.contains("remove")) {%>
 
     @Install(to = "${tableId}.remove", subject = "delegate")
     fun ${tableId}RemoveDelegate(entities: Collection<${entity.className}>) {
         // Here you can remove entities from an external storage
-    }
+    }<%}%>
 }

@@ -30,11 +30,11 @@
             <properties include=".*"/>
         </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createBtn" action="usersDataGrid.create"/>
-            <button id="editBtn" action="usersDataGrid.edit"/>
-            <button id="removeBtn" action="usersDataGrid.remove"/>
-            <button id="showRoleAssignmentsBtn" action="usersDataGrid.showRoleAssignments"/>
-            <dropdownButton id="additionalBtn" text="msg://additionalMenu" icon="COG">
+            <button id="createButton" action="usersDataGrid.create"/>
+            <button id="editButton" action="usersDataGrid.edit"/>
+            <button id="removeButton" action="usersDataGrid.remove"/>
+            <button id="showRoleAssignmentsButton" action="usersDataGrid.showRoleAssignments"/>
+            <dropdownButton id="additionalButton" text="msg://additionalMenu" icon="COG">
                 <items>
                     <actionItem id="changePasswordItem" ref="usersDataGrid.changePassword"/>
                     <actionItem id="resetPasswordItem" ref="usersDataGrid.resetPassword"/>
@@ -67,8 +67,8 @@
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">
-            <button id="selectBtn" action="selectAction"/>
-            <button id="discardBtn" action="discardAction"/>
+            <button id="selectButton" action="selectAction"/>
+            <button id="discardButton" action="discardAction"/>
         </hbox>
     </layout>
 </view>

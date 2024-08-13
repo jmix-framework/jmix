@@ -98,15 +98,15 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
                 </genericFilter><%}%>
                 ${tableXml}
                 <hbox id="lookupActions" visible="false">
-                    <button id="selectBtn" action="selectAction"/>
-                    <button id="discardBtn" action="discardAction"/>
+                    <button id="selectButton" action="selectAction"/>
+                    <button id="discardButton" action="discardAction"/>
                 </hbox>
             </vbox>
             <vbox id="detailsLayout" height="100%">
                 ${formXml}
                 <hbox id="detailActions">
-                    <button id="saveBtn" text="msg:///actions.Save" icon="CHECK" themeNames="primary"/>
-                    <button id="cancelBtn" text="msg:///actions.Cancel" icon="BAN"/>
+                    <button id="saveButton" text="msg:///actions.Save" icon="CHECK" themeNames="primary"/>
+                    <button id="cancelButton" text="msg:///actions.Cancel" icon="BAN"/>
                 </hbox>
             </vbox>
         </formLayout>

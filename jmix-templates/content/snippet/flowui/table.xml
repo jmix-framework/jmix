@@ -32,7 +32,7 @@ fetchPlan.orderedRootProperties.each { property ->
 %>
 <hbox id="buttonsPanel" classNames="buttons-panel">
 <%tableActions.each { actionId ->%>
-<button id="${actionId}Btn" action="${tableId}.${actionId}"/>
+<button id="${actionId}Button" action="${tableId}.${actionId}"/>
 <%}%>
 <simplePagination id="pagination" dataLoader="${tableDl}"/>
 </hbox>

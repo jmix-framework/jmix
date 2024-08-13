@@ -47,8 +47,8 @@ def tableXml = api.processSnippet('dto_table.xml',
     <layout>
         ${tableXml}
         <hbox id="lookupActions" visible="false">
-            <button id="selectBtn" action="selectAction"/>
-            <button id="discardBtn" action="discardAction"/>
+            <button id="selectButton" action="selectAction"/>
+            <button id="discardButton" action="discardAction"/>
         </hbox>
     </layout>
 </view>

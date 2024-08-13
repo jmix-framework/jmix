@@ -74,7 +74,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         updateControls(true)
     }
 
-    @Subscribe("saveBtn")
+    @Subscribe("saveButton")
     fun onSaveButtonClick(event: ClickEvent<JmixButton>) {
         val item = ${detailDc}.item
         val validationErrors = validateView(item)
@@ -89,7 +89,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         updateControls(false)
     }
 
-    @Subscribe("cancelBtn")
+    @Subscribe("cancelButton")
     fun onCancelButtonClick(event: ClickEvent<JmixButton>) {
         dataContext.clear()
         ${detailDl}.load()

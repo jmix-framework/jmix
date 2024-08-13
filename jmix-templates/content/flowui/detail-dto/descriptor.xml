@@ -28,8 +28,8 @@ def formXml = api.processSnippet('dto_form.xml',
     <layout>
         ${formXml}
         <hbox id="detailActions">
-            <button id="saveAndCloseBtn" action="saveAction"/>
-            <button id="closeBtn" action="closeAction"/>
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
         </hbox>
     </layout>
 </view>

@@ -23,8 +23,11 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGridColumn;
+import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
@@ -42,13 +45,14 @@ import java.util.Objects;
 
 import static io.jmix.flowui.facet.urlqueryparameters.FilterUrlQueryParametersSupport.SEPARATOR;
 
-public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+public class DataGridFilterUrlQueryParametersBinder<T extends Grid<?> & EnhancedDataGrid<?>>
+        extends AbstractUrlQueryParametersBinder {
 
     private static final Logger log = LoggerFactory.getLogger(DataGridFilterUrlQueryParametersBinder.class);
 
     public static final String NAME = "dataGridFilter";
 
-    protected Grid<?> grid;
+    protected T grid;
 
     protected String parameter;
 
@@ -56,8 +60,9 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     protected UrlParamSerializer urlParamSerializer;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
     protected RouteSupport routeSupport;
+    protected MetadataTools metadataTools;
 
-    public DataGridFilterUrlQueryParametersBinder(Grid<?> grid,
+    public DataGridFilterUrlQueryParametersBinder(T grid,
                                                   UrlParamSerializer urlParamSerializer,
                                                   ApplicationContext applicationContext) {
         this.grid = grid;
@@ -71,9 +76,10 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     protected void autowireDependencies() {
         filterUrlQueryParametersSupport = applicationContext.getBean(FilterUrlQueryParametersSupport.class);
         routeSupport = applicationContext.getBean(RouteSupport.class);
+        metadataTools = applicationContext.getBean(MetadataTools.class);
     }
 
-    protected void initComponent(Grid<?> grid) {
+    protected void initComponent(T grid) {
         for (Grid.Column<?> column : grid.getColumns()) {
             if (column instanceof DataGridColumn<?> dataGridColumn
                     && dataGridColumn.isFilterable()) {
@@ -147,8 +153,12 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
             String propertyString = parameterString.substring(0, separatorIndex);
             String property = urlParamSerializer.deserialize(String.class,
                     filterUrlQueryParametersSupport.restoreSeparatorValue(propertyString));
+            MetaClass entityMetaClass = ((ContainerDataGridItems<?>) grid.getDataProvider()).getEntityMetaClass();
 
-            DataGridColumn<?> column = (DataGridColumn<?>) grid.getColumnByKey(property);
+            DataGridColumn<?> column = grid.getColumnByMetaPropertyPath(metadataTools.resolveMetaPropertyPath(
+                    entityMetaClass,
+                    property
+            ));
             if (column == null) {
                 throw new IllegalStateException("Can't find column with property: " + property);
             }
@@ -175,8 +185,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
             if (!Strings.isNullOrEmpty(valueString)) {
                 try {
                     Object parsedValue = filterUrlQueryParametersSupport
-                            .parseValue(((ContainerDataGridItems<?>) grid.getDataProvider()).getEntityMetaClass(),
-                                    property, operation.getType(), valueString);
+                            .parseValue(entityMetaClass, property, operation.getType(), valueString);
                     propertyFilter.setValue(parsedValue);
                 } catch (Exception e) {
                     log.info("Cannot parse URL parameter. {}", e.toString());

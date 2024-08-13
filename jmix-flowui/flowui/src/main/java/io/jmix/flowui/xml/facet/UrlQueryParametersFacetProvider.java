@@ -22,6 +22,7 @@ import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.component.PaginationComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
@@ -241,13 +242,14 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
                     UrlQueryParametersFacet.NAME);
 
             Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
-            if (!(component instanceof Grid<?>)) {
-                throw new IllegalStateException(String.format("'%s' is not a %s component", componentId,
-                        Grid.class.getSimpleName()));
+            if (!(component instanceof Grid<?>) || !(component instanceof EnhancedDataGrid<?>)) {
+                throw new IllegalStateException(String.format("'%s' should be a %s component and implements %s component",
+                        componentId,
+                        Grid.class.getSimpleName(), EnhancedDataGrid.class.getSimpleName()));
             }
 
-            DataGridFilterUrlQueryParametersBinder binder =
-                    new DataGridFilterUrlQueryParametersBinder(((Grid<?>) component),
+            DataGridFilterUrlQueryParametersBinder<?> binder =
+                    new DataGridFilterUrlQueryParametersBinder<>(((Grid<?> & EnhancedDataGrid<?>) component),
                             urlParamSerializer, applicationContext);
 
             binder.setId(binderId);

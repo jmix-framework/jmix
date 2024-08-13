@@ -267,6 +267,12 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         return gridDelegate.getColumnByKey(columnKey);
     }
 
+    @Nullable
+    @Override
+    public DataGridColumn<E> getColumnByMetaPropertyPath(MetaPropertyPath metaPropertyPath) {
+        return gridDelegate.getColumnByMetaPropertyPath(metaPropertyPath);
+    }
+
     @Override
     public DataGridColumn<E> addHierarchyColumn(ValueProvider<E, ?> valueProvider) {
         return (DataGridColumn<E>) super.addHierarchyColumn(valueProvider);

@@ -28,13 +28,16 @@ import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonObject;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.SupportsStatusChangeHandler.StatusContext;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
+import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.kit.component.HasTitle;
@@ -47,8 +50,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -412,7 +415,15 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
     @Override
     public void setColumnEditorComponent(String property,
                                          Function<EditComponentGenerationContext<T>, Component> generator) {
-        Grid.Column<T> column = getGrid().getColumnByKey(property);
+        if (!(getGrid() instanceof EnhancedDataGrid)) {
+            throw new IllegalStateException(getGrid().getClass().getSimpleName() +
+                    " items is null or does not implement " + EntityDataUnit.class.getSimpleName());
+        }
+
+        MetadataTools metadataTools = applicationContext.getBean(MetadataTools.class);
+        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(getEntityMetaClass(), property);
+        //noinspection unchecked
+        Grid.Column<T> column = ((EnhancedDataGrid<T>) getGrid()).getColumnByMetaPropertyPath(metaPropertyPath);
         setColumnEditorComponent(column, property, generator);
     }
 
@@ -422,7 +433,7 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
     }
 
     @Override
-    public void setColumnEditorComponent(Grid.Column<T> column, String property,
+    public void setColumnEditorComponent(@Nullable Grid.Column<T> column, String property,
                                          Function<EditComponentGenerationContext<T>, Component> generator) {
         Preconditions.checkNotNullArgument(column);
         column.setEditorComponent(item -> {

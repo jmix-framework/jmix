@@ -323,6 +323,12 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return gridDelegate.getColumnByKey(columnKey);
     }
 
+    @Nullable
+    @Override
+    public DataGridColumn<E> getColumnByMetaPropertyPath(MetaPropertyPath metaPropertyPath) {
+        return gridDelegate.getColumnByMetaPropertyPath(metaPropertyPath);
+    }
+
     @Override
     public void removeColumn(Column<E> column) {
         gridDelegate.removeColumn(column);

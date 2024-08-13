@@ -29,6 +29,16 @@ public interface EnhancedDataGrid<T> {
     @Nullable
     MetaPropertyPath getColumnMetaPropertyPath(Grid.Column<T> column);
 
+    /**
+     * Gets a {@link DataGridColumn} of this grid by its {@link MetaPropertyPath}.
+     *
+     * @param metaPropertyPath the meta property math of the column to get
+     * @return the column corresponding to the given column meta property path, or {@code null} if no column mapped
+     * to passed meta property path
+     */
+    @Nullable
+    DataGridColumn<T> getColumnByMetaPropertyPath(MetaPropertyPath metaPropertyPath);
+
     DataGridColumn<T> addColumn(MetaPropertyPath metaPropertyPath);
 
     DataGridColumn<T> addColumn(String key, MetaPropertyPath metaPropertyPath);

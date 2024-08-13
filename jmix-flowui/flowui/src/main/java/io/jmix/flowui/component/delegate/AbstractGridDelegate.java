@@ -737,6 +737,15 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                 .orElse(null);
     }
 
+    @Nullable
+    public DataGridColumn<E> getColumnByMetaPropertyPath(MetaPropertyPath mpp) {
+        return (DataGridColumn<E>) propertyColumns.entrySet().stream()
+                .filter(c -> mpp.equals(c.getValue()))
+                .map(Map.Entry::getKey)
+                .findAny()
+                .orElse(null);
+    }
+
     public void removeColumn(Grid.Column<E> column) {
         columns.remove(column);
 

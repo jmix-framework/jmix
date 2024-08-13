@@ -64,7 +64,7 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
 
     /**
      * Component manually handles Vaadin value change event: when programmatically sets value
-     * (see {@link #setValueInternal(Collection, Set, boolean)}) and client-side sets value
+     * (see {@link #setValueInternal(Set, boolean)}) and client-side sets value
      * (see {@link #onValueChange(ComponentValueChangeEvent)}). Therefore, any Vaadin value change listener has a
      * wrapper and disabled for handling event.
      */
@@ -238,12 +238,12 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
 
     @Override
     public void setTypedValue(@Nullable Collection<V> value) {
-        setValueInternal(value, fieldDelegate.convertToPresentation(value), false);
+        setValueInternal(fieldDelegate.convertToPresentation(value), false);
     }
 
     @Override
     public void setValue(@Nullable Set<V> value) {
-        setValueInternal(null, value, false);
+        setValueInternal(value, false);
     }
 
     @Override
@@ -251,14 +251,13 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
         setTypedValue(vs);
     }
 
-    protected void setValueInternal(@Nullable Collection<V> modelValue, @Nullable Set<V> presentationValue,
-                                    boolean fromClient) {
+    protected void setValueInternal(@Nullable Set<V> value, boolean fromClient) {
         try {
-            if (modelValue == null && presentationValue != null) {
-                modelValue = convertToModel(presentationValue);
-            }
+            Collection<V> modelValue = value != null ? convertToModel(value) : null;
+            // The fieldDelegate can be null, since value can be set from constructor
+            Set<V> presValue = value != null ? fieldDelegate.convertToPresentation(modelValue) : null;
 
-            super.setValue(presentationValue);
+            super.setValue(presValue);
 
             Collection<V> oldValue = internalValue;
             this.internalValue = modelValue;
@@ -273,10 +272,11 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
 
     protected Collection<V> convertToModel(Set<V> presentationValue) {
         if (getDataProvider() != null && getDataProvider().isInMemory()) {
-            return fieldDelegate.convertToModel(presentationValue, getDataProvider().fetch(new Query<>()));
-        } else {
-            return fieldDelegate.convertToModel(presentationValue);
+            if (!getDataProvider().fetch(new Query<>()).toList().isEmpty()) {
+                return fieldDelegate.convertToModel(presentationValue, getDataProvider().fetch(new Query<>()));
+            }
         }
+        return fieldDelegate.convertToModel(presentationValue);
     }
 
     @Override
@@ -364,8 +364,7 @@ public class JmixMultiSelectComboBox<V> extends MultiSelectComboBox<V>
         if (event.isFromClient()) {
             Set<V> presValue = event.getValue();
 
-            Collection<V> value = convertToModel(presValue);
-            setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
+            setValueInternal(presValue, true);
         }
     }
 

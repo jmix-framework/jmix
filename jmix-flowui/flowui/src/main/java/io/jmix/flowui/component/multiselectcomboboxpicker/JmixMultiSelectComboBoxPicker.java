@@ -281,8 +281,9 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
     protected Collection<V> convertToModel(Set<V> presentationValue) {
         if (getDataProvider() != null && getDataProvider().isInMemory()) {
-            if (!getDataProvider().fetch(new Query<>()).toList().isEmpty()) {
-                return fieldDelegate.convertToModel(presentationValue, getDataProvider().fetch(new Query<>()));
+            List<V> items = getDataProvider().fetch(new Query<>()).toList();
+            if (!items.isEmpty()) {
+                return fieldDelegate.convertToModel(presentationValue, items.stream());
             }
         }
         return fieldDelegate.convertToModel(presentationValue);

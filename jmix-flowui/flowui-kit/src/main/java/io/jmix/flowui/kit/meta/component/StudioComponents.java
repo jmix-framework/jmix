@@ -54,7 +54,6 @@ import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.multiselectcomboboxpicker.MultiSelectComboBoxPicker;
 import io.jmix.flowui.kit.component.pagination.JmixSimplePagination;
-import io.jmix.flowui.kit.component.pivottable.JmixPivotTable;
 import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
 import io.jmix.flowui.kit.component.twincolumn.JmixTwinColumn;
 import io.jmix.flowui.kit.component.upload.JmixFileStorageUploadField;

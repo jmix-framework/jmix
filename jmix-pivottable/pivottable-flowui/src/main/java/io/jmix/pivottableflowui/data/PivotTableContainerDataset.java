@@ -27,7 +27,7 @@ import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.pivottableflowui.component.PivotTable;
 import io.jmix.pivottableflowui.data.item.EntityDataItem;
-import io.jmix.pivottableflowui.kit.data.PivotTableDataItems;
+import io.jmix.pivottableflowui.kit.data.PivotTableDataSet;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
@@ -38,14 +38,14 @@ import java.util.stream.Stream;
 /**
  * Data provider bound to the {@link CollectionContainer} for a {@link PivotTable} component.
  */
-public class ContainerPivotTableItems<T> extends AbstractDataProvider<EntityDataItem, Void>
-        implements ContainerDataUnit<T>, PivotTableDataItems<EntityDataItem> {
+public class PivotTableContainerDataset<T> extends AbstractDataProvider<EntityDataItem, Void>
+        implements ContainerDataUnit<T>, PivotTableDataSet<EntityDataItem> {
 
     protected CollectionContainer<T> container;
 
     private EventBus eventBus;
 
-    public ContainerPivotTableItems(CollectionContainer<T> container) {
+    public PivotTableContainerDataset(CollectionContainer<T> container) {
         Preconditions.checkNotNullArgument(container);
 
         this.container = container;

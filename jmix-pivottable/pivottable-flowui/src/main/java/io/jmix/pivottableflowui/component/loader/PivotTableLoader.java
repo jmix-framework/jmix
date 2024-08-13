@@ -25,9 +25,8 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
-import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 import io.jmix.pivottableflowui.component.PivotTable;
-import io.jmix.pivottableflowui.data.ContainerPivotTableItems;
+import io.jmix.pivottableflowui.data.PivotTableContainerDataset;
 import io.jmix.pivottableflowui.kit.component.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -70,7 +69,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
                     InstanceContainer container = context.getDataHolder().getContainer(dataContainerId);
 
                     if (container instanceof CollectionContainer collectionContainer) {
-                        resultComponent.setDataProvider(new ContainerPivotTableItems<>(collectionContainer));
+                        resultComponent.setDataProvider(new PivotTableContainerDataset<>(collectionContainer));
                     } else {
                         throw new GuiDevelopmentException("Not a CollectionContainer: " + container, context);
                     }
@@ -80,13 +79,14 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
     protected List<String> loadListOfStrings(Element itemsElement, String elementName, String attributeName, boolean resource) {
         List<String> items = new ArrayList<>();
         for (Element itemElement : itemsElement.elements(elementName)) {
-            Optional<String> valueOptional = loadString(itemElement, attributeName);
-            if (valueOptional.isPresent() && StringUtils.isNotEmpty(valueOptional.get())) {
-                if (resource) {
-                    loadResourceString(itemElement, attributeName, context.getMessageGroup(), items::add);
-                } else {
-                    items.add(valueOptional.get());
-                }
+            if (resource) {
+                loadResourceString(itemElement, attributeName, context.getMessageGroup(), items::add);
+            } else {
+                loadString(itemElement, attributeName, value -> {
+                    if (StringUtils.isNotEmpty(value)) {
+                        items.add(value);
+                    }
+                });
             }
         }
         return items;

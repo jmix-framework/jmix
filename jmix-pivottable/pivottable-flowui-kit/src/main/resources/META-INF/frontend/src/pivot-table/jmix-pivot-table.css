@@ -12,7 +12,7 @@ jmix-pivot-table {
     table.pvtTable thead tr th,
     table.pvtTable tbody tr th {
         background-color: #e6EEEE;
-        border: 1px solid #CDCDCD;
+        border: 1px solid var(--lumo-contrast-20pct);
         font-size: 8pt;
         padding: 5px;
     }
@@ -26,10 +26,10 @@ jmix-pivot-table {
     }
 
     table.pvtTable tbody tr td {
+        border: 1px solid var(--lumo-contrast-20pct);
         color: #3D3D3D;
         padding: 5px;
-        background-color: #FFF;
-        border: 1px solid #CDCDCD;
+        background-color: var(--lumo-base-color);
         vertical-align: top;
         text-align: right;
     }
@@ -230,16 +230,15 @@ jmix-pivot-table {
     .pvtTriangle::after {
         font-family: 'Vaadin-Icons';
         color: var(--lumo-primary-text-color);
-        content: '\e62e';
+        content: '\e7bc';
         width: 0.3em;
         height: 0.3em;
         position: relative;
         visibility: visible;
     }
 
-    .pvtFilteredAttribute .pvtTriangle::after {
-        font-family: 'Vaadin-Icons';
-        content: '\e73d';
+    .pvtFilteredAttribute {
+        font-style: italic
     }
 
     .pvtFilterBox button {
@@ -292,7 +291,7 @@ jmix-pivot-table {
     .pvtSearch {
         appearance: none;
         -webkit-appearance: none;
-        background: var(--lumo-contrast-10pct);
+        background-color: var(--lumo-contrast-10pct);
         border-radius: var(--lumo-border-radius-m);
         border-color: transparent;
         height: var(--lumo-size-m);
@@ -374,5 +373,27 @@ jmix-pivot-table {
 
     a.pvtColOrder.value-z-to-a::before {
         content: '\e753';
+    }
+
+    .pvtRenderer {
+        width: 100%;
+    }
+}
+
+html[theme~="dark"] jmix-pivot-table {
+    .c3-axis-y text, .c3-axis-x text {
+        fill: white;
+    }
+
+    select {
+        background-image: url('angle-down.svg');
+    }
+
+    select:hover {
+        background-image: url('angle-down-hover.svg');
+    }
+
+    select {
+      background-color: #36485F;
     }
 }

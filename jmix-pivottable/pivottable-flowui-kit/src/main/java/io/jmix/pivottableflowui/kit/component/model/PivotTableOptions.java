@@ -48,6 +48,8 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     protected Boolean rowTotals;                                  // pivot() and pivotUI()
     protected Boolean colTotals;                                  // pivot() and pivotUI()
     protected String emptyDataMessage;
+    protected Map<String, Object> localizedStrings;
+
 
     @Override
     public void setPivotTableObjectChangeListener(Consumer<ObjectChangeEvent> listener) {
@@ -711,19 +713,19 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
         markAsChanged();
     }
 
-    /**
-     * @return a locale code
-     */
-    public String getLocaleCode() {
-        return localeCode;
+    public String getEmptyDataMessage() {
+        return emptyDataMessage;
     }
 
     public void setEmptyDataMessage(String emptyDataMessage) {
         this.emptyDataMessage = emptyDataMessage;
     }
 
-    public String getEmptyDataMessage() {
-        return emptyDataMessage;
+    /**
+     * @return whether to show UI
+     */
+    public Boolean isShowUI() {
+        return showUI;
     }
 
     /**
@@ -739,10 +741,10 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     }
 
     /**
-     * @return whether to show UI
+     * @return whether to show row totals
      */
-    public Boolean isShowUI() {
-        return showUI;
+    public Boolean isShowRowTotals() {
+        return rowTotals;
     }
 
     /**
@@ -756,10 +758,10 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     }
 
     /**
-     * @return whether to show row totals
+     * @return whether to show col totals is shown
      */
-    public Boolean isShowRowTotals() {
-        return rowTotals;
+    public Boolean isShowColTotals() {
+        return colTotals;
     }
 
     /**
@@ -773,10 +775,10 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     }
 
     /**
-     * @return whether to show col totals is shown
+     * @return a locale code
      */
-    public Boolean isShowColTotals() {
-        return colTotals;
+    public String getLocaleCode() {
+        return localeCode;
     }
 
     /**
@@ -789,12 +791,11 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
         markAsChanged();
     }
 
-    /*
-    public List<String> getWiredFields() {
-        List<String> fields = new ArrayList<>();
-        if (MapUtils.isNotEmpty(getProperties())) {
-            fields.addAll(properties.keySet());
-        }
-        return fields;
-    }*/
+    public Map<String, Object> getLocalizedStrings() {
+        return localizedStrings;
+    }
+
+    public void setLocalizedStrings(Map<String, Object> localizedStrings) {
+        this.localizedStrings = localizedStrings;
+    }
 }

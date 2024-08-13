@@ -32,7 +32,7 @@ import elemental.json.impl.JreJsonFactory;
 import io.jmix.pivottableflowui.kit.component.model.*;
 import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer;
 import io.jmix.pivottableflowui.kit.data.DataItem;
-import io.jmix.pivottableflowui.kit.data.PivotTableListDataItems;
+import io.jmix.pivottableflowui.kit.data.PivotTableListDataSet;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -86,7 +86,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
     }
 
     public void setItems(List<DataItem> items) {
-        setDataProvider(new PivotTableListDataItems<>(items));
+        setDataProvider(new PivotTableListDataSet<>(items));
     }
 
     protected void initComponent() {

@@ -28,22 +28,22 @@ import java.util.stream.Stream;
 /**
  * Data provider for a Chart component in which all items are stored in {@link List}.
  */
-public class PivotTableListDataItems<T extends DataItem> extends AbstractDataProvider<T, Void>
-        implements PivotTableDataItems<T> {
+public class PivotTableListDataSet<T extends DataItem> extends AbstractDataProvider<T, Void>
+        implements PivotTableDataSet<T> {
 
     private EventBus eventBus;
 
     protected final List<T> items = new ArrayList<>();
 
-    public PivotTableListDataItems() {
+    public PivotTableListDataSet() {
     }
 
     @SafeVarargs
-    public PivotTableListDataItems(T... items) {
+    public PivotTableListDataSet(T... items) {
         this.items.addAll(List.of(items));
     }
 
-    public PivotTableListDataItems(Collection<T> items) {
+    public PivotTableListDataSet(Collection<T> items) {
         this.items.addAll(items);
     }
 

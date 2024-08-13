@@ -23,7 +23,7 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface PivotTableDataItems<T extends DataItem> {
+public interface PivotTableDataSet<T extends DataItem> {
 
     /**
      * @return unmodifiable collection of items
@@ -51,7 +51,7 @@ public interface PivotTableDataItems<T extends DataItem> {
 
         protected final Collection<T> items;
 
-        public DataSetChangeEvent(PivotTableDataItems<T> source, List<T> items) {
+        public DataSetChangeEvent(PivotTableDataSet<T> source, List<T> items) {
             super(source);
 
             this.items = items;
@@ -59,8 +59,8 @@ public interface PivotTableDataItems<T extends DataItem> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public PivotTableDataItems<T> getSource() {
-            return (PivotTableDataItems<T>) super.getSource();
+        public PivotTableDataSet<T> getSource() {
+            return (PivotTableDataSet<T>) super.getSource();
         }
 
         /**

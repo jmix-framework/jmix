@@ -632,7 +632,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private boolean doNotReloadEditedEntity() {
         if (isEntityModifiedInParentContext()) {
             InstanceContainer<T> container = getEditedEntityContainer();
-            return getEntityStates().isLoadedWithFetchPlan(entityToEdit, container.getFetchPlan());
+            FetchPlan fetchPlan = container.getFetchPlan();
+            if (fetchPlan == null) {
+                // DTO entities don't have fetch plan - unable to proceed
+                return true;
+            }
+            return getEntityStates().isLoadedWithFetchPlan(entityToEdit, fetchPlan);
         }
 
         return !isReloadEdited();

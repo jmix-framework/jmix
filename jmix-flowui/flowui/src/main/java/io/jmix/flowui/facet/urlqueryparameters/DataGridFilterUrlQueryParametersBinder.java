@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -90,8 +91,10 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
                         && dataGridColumn.isFilterable()
                         && dataGridColumn.getHeaderComponent() instanceof DataGridHeaderFilter headerFilter
                         && headerFilter.isFilterApplied())
-                .map(column -> ((DataGridHeaderFilter) column.getHeaderComponent()).getPropertyFilter())
-                .map(this::serializePropertyFilter)
+                .map(column -> serializePropertyFilter(
+                        column.getKey(),
+                        ((DataGridHeaderFilter) column.getHeaderComponent()).getPropertyFilter())
+                )
                 .toList();
 
         QueryParameters queryParameters = new QueryParameters(ImmutableMap.of(getParameter(), parameters));
@@ -99,7 +102,10 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
         fireQueryParametersChanged(new UrlQueryParametersFacet.UrlQueryParametersChangeEvent(this, queryParameters));
     }
 
-    protected String serializePropertyFilter(PropertyFilter<?> propertyFilter) {
+    protected String serializePropertyFilter(String columnKey, PropertyFilter<?> propertyFilter) {
+        String key = urlParamSerializer
+                .serialize(filterUrlQueryParametersSupport.replaceSeparatorValue(
+                        Objects.requireNonNull(columnKey)));
         String property = urlParamSerializer
                 .serialize(filterUrlQueryParametersSupport.replaceSeparatorValue(
                         Objects.requireNonNull(propertyFilter.getProperty())));
@@ -109,7 +115,8 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
         Object parameterValue = urlParamSerializer
                 .serialize(filterUrlQueryParametersSupport.getSerializableValue(propertyFilter.getValue()));
 
-        return property + SEPARATOR +
+        return key + SEPARATOR +
+                property + SEPARATOR +
                 operation + SEPARATOR +
                 parameterValue;
     }
@@ -122,57 +129,129 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void applyPropertyFilterParameters(List<String> params) {
         for (String parameterString : params) {
-            int separatorIndex = parameterString.indexOf(SEPARATOR);
-
-            if (separatorIndex == -1) {
-                throw new IllegalStateException("Can't parse property condition: " + parameterString);
+            if (StringUtils.countOccurrencesOf(parameterString, SEPARATOR) == 3) {
+                applyPropertyFilterParameter(parameterString);
+            } else {
+                // use legacy api
+                _applyPropertyFilterParameter(parameterString);
             }
-
-            String propertyString = parameterString.substring(0, separatorIndex);
-            String property = urlParamSerializer.deserialize(String.class,
-                    filterUrlQueryParametersSupport.restoreSeparatorValue(propertyString));
-
-            DataGridColumn<?> column = (DataGridColumn<?>) grid.getColumnByKey(property);
-            if (column == null) {
-                throw new IllegalStateException("Can't find column with property: " + property);
-            }
-            if (!column.isFilterable()) {
-                throw new IllegalStateException("Column must be filterable");
-            }
-
-            parameterString = parameterString.substring(separatorIndex + 1);
-            separatorIndex = parameterString.indexOf(SEPARATOR);
-            if (separatorIndex == -1) {
-                throw new IllegalStateException("Can't parse property condition: " + parameterString);
-            }
-
-            String operationString = parameterString.substring(0, separatorIndex);
-            PropertyFilter.Operation operation = urlParamSerializer
-                    .deserialize(PropertyFilter.Operation.class,
-                            filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
-
-            DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) column.getHeaderComponent();
-            PropertyFilter propertyFilter = headerFilter.getPropertyFilter();
-            propertyFilter.setOperation(operation);
-
-            String valueString = parameterString.substring(separatorIndex + 1);
-            if (!Strings.isNullOrEmpty(valueString)) {
-                try {
-                    Object parsedValue = filterUrlQueryParametersSupport
-                            .parseValue(((ContainerDataGridItems<?>) grid.getDataProvider()).getEntityMetaClass(),
-                                    property, operation.getType(), valueString);
-                    propertyFilter.setValue(parsedValue);
-                } catch (Exception e) {
-                    log.info("Cannot parse URL parameter. {}", e.toString());
-                    propertyFilter.setValue(null);
-                }
-            }
-
-            headerFilter.apply();
         }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void applyPropertyFilterParameter(String parameterString) {
+        int separatorIndex = parameterString.indexOf(SEPARATOR);
+
+        if (separatorIndex == -1) {
+            throw new IllegalStateException("Can't parse property condition: " + parameterString);
+        }
+
+        String keyString = parameterString.substring(0, separatorIndex);
+
+        parameterString = parameterString.substring(separatorIndex + 1);
+        separatorIndex = parameterString.indexOf(SEPARATOR);
+        if (separatorIndex == -1) {
+            throw new IllegalStateException("Can't parse property condition: " + parameterString);
+        }
+
+        String propertyString = parameterString.substring(0, separatorIndex);
+        String property = urlParamSerializer.deserialize(String.class,
+                filterUrlQueryParametersSupport.restoreSeparatorValue(propertyString));
+
+        DataGridColumn<?> column = (DataGridColumn<?>) grid.getColumnByKey(keyString);
+        if (column == null) {
+            throw new IllegalStateException("Can't find column with property: " + property);
+        }
+        if (!column.isFilterable()) {
+            throw new IllegalStateException("Column must be filterable");
+        }
+
+        parameterString = parameterString.substring(separatorIndex + 1);
+        separatorIndex = parameterString.indexOf(SEPARATOR);
+        if (separatorIndex == -1) {
+            throw new IllegalStateException("Can't parse property condition: " + parameterString);
+        }
+
+        String operationString = parameterString.substring(0, separatorIndex);
+        PropertyFilter.Operation operation = urlParamSerializer
+                .deserialize(PropertyFilter.Operation.class,
+                        filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
+
+        DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) column.getHeaderComponent();
+        PropertyFilter propertyFilter = headerFilter.getPropertyFilter();
+        propertyFilter.setOperation(operation);
+
+        String valueString = parameterString.substring(separatorIndex + 1);
+        if (!Strings.isNullOrEmpty(valueString)) {
+            try {
+                Object parsedValue = filterUrlQueryParametersSupport
+                        .parseValue(((ContainerDataGridItems<?>) grid.getDataProvider()).getEntityMetaClass(),
+                                property, operation.getType(), valueString);
+                propertyFilter.setValue(parsedValue);
+            } catch (Exception e) {
+                log.info("Cannot parse URL parameter. {}", e.toString());
+                propertyFilter.setValue(null);
+            }
+        }
+
+        headerFilter.apply();
+    }
+
+    /**
+     * @deprecated use {@link #applyPropertyFilterParameter(String)} instead
+     */
+    @Deprecated(since = "2.3", forRemoval = true)
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void _applyPropertyFilterParameter(String parameterString) {
+        int separatorIndex = parameterString.indexOf(SEPARATOR);
+
+        if (separatorIndex == -1) {
+            throw new IllegalStateException("Can't parse property condition: " + parameterString);
+        }
+
+        String propertyString = parameterString.substring(0, separatorIndex);
+        String property = urlParamSerializer.deserialize(String.class,
+                filterUrlQueryParametersSupport.restoreSeparatorValue(propertyString));
+
+        DataGridColumn<?> column = (DataGridColumn<?>) grid.getColumnByKey(property);
+        if (column == null) {
+            throw new IllegalStateException("Can't find column with property: " + property);
+        }
+        if (!column.isFilterable()) {
+            throw new IllegalStateException("Column must be filterable");
+        }
+
+        parameterString = parameterString.substring(separatorIndex + 1);
+        separatorIndex = parameterString.indexOf(SEPARATOR);
+        if (separatorIndex == -1) {
+            throw new IllegalStateException("Can't parse property condition: " + parameterString);
+        }
+
+        String operationString = parameterString.substring(0, separatorIndex);
+        PropertyFilter.Operation operation = urlParamSerializer
+                .deserialize(PropertyFilter.Operation.class,
+                        filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
+
+        DataGridHeaderFilter headerFilter = (DataGridHeaderFilter) column.getHeaderComponent();
+        PropertyFilter propertyFilter = headerFilter.getPropertyFilter();
+        propertyFilter.setOperation(operation);
+
+        String valueString = parameterString.substring(separatorIndex + 1);
+        if (!Strings.isNullOrEmpty(valueString)) {
+            try {
+                Object parsedValue = filterUrlQueryParametersSupport
+                        .parseValue(((ContainerDataGridItems<?>) grid.getDataProvider()).getEntityMetaClass(),
+                                property, operation.getType(), valueString);
+                propertyFilter.setValue(parsedValue);
+            } catch (Exception e) {
+                log.info("Cannot parse URL parameter. {}", e.toString());
+                propertyFilter.setValue(null);
+            }
+        }
+
+        headerFilter.apply();
     }
 
     public String getParameter() {

@@ -214,6 +214,12 @@ class JmixChart extends ResizeMixin(ElementMixin(PolymerElement)) {
     }
 
     _updateChartDataset(changes) {
+        if (this._root == null) {
+            const chart = this.shadowRoot.querySelector('[part="root"]');
+            this._root = echarts.init(chart, this.theme, {renderer: this.renderer});
+            this._forwardEvents();
+        }
+
         this._dataset = changes.dataset
 
         this._resetDataSet();

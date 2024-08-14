@@ -113,10 +113,11 @@ public class ReportSecurityManager {
      * @param screenId            - id of the screen
      * @param user                - caller user
      * @param inputValueMetaClass - meta class of report input parameter
-     *
+     * @param sort                - sorting type for the reports list
      * @return list of available reports
      */
-    public List<Report> getAvailableReports(@Nullable String screenId, @Nullable UserDetails user, @Nullable MetaClass inputValueMetaClass) {
+    public List<Report> getAvailableReports(@Nullable String screenId, @Nullable UserDetails user,
+                                            @Nullable MetaClass inputValueMetaClass, @Nullable Sort sort) {
         MetaClass metaClass = metadata.getClass(Report.class);
         LoadContext<Report> lc = new LoadContext<>(metaClass);
         lc.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
@@ -130,7 +131,10 @@ public class ReportSecurityManager {
                 .build();
 
         lc.setFetchPlan(fetchPlan);
-        lc.setQueryString("select r from report_Report r where r.system <> true");
+        LoadContext.Query query = lc.setQueryString("select r from report_Report r where r.system <> true");
+        if (sort != null) {
+            query.setSort(sort);
+        }
         applySecurityPolicies(lc, screenId, user);
         applyPoliciesByEntityParameters(lc, inputValueMetaClass);
         return dataManager.loadList(lc);

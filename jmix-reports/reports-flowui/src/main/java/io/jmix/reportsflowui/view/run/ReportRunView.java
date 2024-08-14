@@ -18,14 +18,12 @@ package io.jmix.reportsflowui.view.run;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.DataManager;
-import io.jmix.core.Id;
-import io.jmix.core.LoadContext;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.component.combobox.EntityComboBox;
@@ -47,7 +45,6 @@ import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -107,8 +104,9 @@ public class ReportRunView extends StandardListView<Report> {
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
     private List<Report> reportsDlLoadDelegate(LoadContext loadContext) {
+        //Pass current grid sort to support settings facet
         return reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(),
-                metaClassParameter);
+                metaClassParameter, getReportGridSort());
     }
 
     @Supply(to = "reportDataGrid.name", subject = "renderer")
@@ -162,9 +160,8 @@ public class ReportRunView extends StandardListView<Report> {
         String codeFilterValue = StringUtils.lowerCase(codeFilter.getTypedValue());
         ReportGroup groupFilterValue = groupFilter.getValue();
         Date dateFilterValue = updatedDateFilter.getTypedValue();
-
         List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
-                        currentUserSubstitution.getEffectiveUser(), metaClassParameter)
+                        currentUserSubstitution.getEffectiveUser(), metaClassParameter, getReportGridSort())
                 .stream()
                 .filter(report ->
                         isCandidateReport(nameFilterValue, codeFilterValue, groupFilterValue, dateFilterValue, report)
@@ -172,6 +169,18 @@ public class ReportRunView extends StandardListView<Report> {
                 .toList();
 
         reportsDc.setItems(reports);
+    }
+
+    protected @Nullable Sort getReportGridSort() {
+        if (reportDataGrid.getSortOrder().isEmpty()) {
+            return null;
+        }
+
+        GridSortOrder<Report> reportGridSortOrder = reportDataGrid.getSortOrder().get(0);
+        return Sort.by(SortDirection.ASCENDING == reportGridSortOrder.getDirection()
+                        ? Sort.Direction.ASC
+                        : Sort.Direction.DESC,
+                reportGridSortOrder.getSorted().getKey());
     }
 
     protected boolean isCandidateReport(@Nullable String nameFilterValue, @Nullable String codeFilterValue,

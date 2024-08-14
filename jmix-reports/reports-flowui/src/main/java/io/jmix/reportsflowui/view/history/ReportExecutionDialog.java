@@ -92,7 +92,7 @@ public class ReportExecutionDialog extends StandardListView<Report> {
     protected List<Report> reportsDlLoadDelegate(LoadContext<Report> loadContext) {
         return reportSecurityManager.getAvailableReports(screenParameter,
                 currentUserSubstitution.getEffectiveUser(),
-                metaClassParameter);
+                metaClassParameter, null);
     }
 
     @Subscribe("clearFilterBtn")
@@ -112,7 +112,7 @@ public class ReportExecutionDialog extends StandardListView<Report> {
     protected void filterReports() {
         List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
                         currentUserSubstitution.getEffectiveUser(),
-                        metaClassParameter)
+                        metaClassParameter, null)
                 .stream()
                 .filter(this::filterReport)
                 .collect(Collectors.toList());

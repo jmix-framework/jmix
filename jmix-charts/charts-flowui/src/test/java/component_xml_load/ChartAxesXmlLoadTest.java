@@ -45,6 +45,8 @@ public class ChartAxesXmlLoadTest extends AbstractXmlLoadTest {
     @DisplayName("Load XAxis from XML")
     public void loadXAxisFromXmlTest() {
         Chart chart = navigateTo(ChartOptionXAxisTestView.class).xAxisChartId;
+
+        assertNotNull(chart.getXAxes());
         XAxis xAxis = chart.getXAxes().get(0);
 
         assertEquals("xAxis", xAxis.getId());
@@ -242,6 +244,8 @@ public class ChartAxesXmlLoadTest extends AbstractXmlLoadTest {
     @DisplayName("Load YAxis from XML")
     public void loadYAxisFromXmlTest() {
         Chart chart = navigateTo(ChartOptionYAxisTestView.class).yAxisChartId;
+
+        assertNotNull(chart.getYAxes());
         YAxis yAxis = chart.getYAxes().get(0);
 
         assertEquals("yAxis", yAxis.getId());
@@ -438,6 +442,7 @@ public class ChartAxesXmlLoadTest extends AbstractXmlLoadTest {
         Chart chart = navigateTo(ChartOptionRadiusAxisTestView.class).radiusAxisChartId;
 
         RadiusAxis radiusAxis = chart.getRadiusAxis();
+        assertNotNull(radiusAxis);
         assertEquals("radiusAxis", radiusAxis.getId());
         assertEquals("radiusAxis", radiusAxis.getName());
         assertFalse(radiusAxis.getInverse());
@@ -503,6 +508,7 @@ public class ChartAxesXmlLoadTest extends AbstractXmlLoadTest {
         Chart chart = navigateTo(ChartOptionAngleAxisTestView.class).angleAxisChartId;
 
         AngleAxis angleAxis = chart.getAngleAxis();
+        assertNotNull(angleAxis);
         assertEquals("angleAxis", angleAxis.getId());
         assertFalse(angleAxis.getClockwise());
         assertEquals(0, angleAxis.getStartAngle());

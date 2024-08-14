@@ -43,7 +43,10 @@ public class ChartDataSetXmlLoadTest extends AbstractXmlLoadTest {
     public void loadDataSetFromXmlTest() {
         ChartDataSetTestView view = navigateTo(ChartDataSetTestView.class);
         Chart chart = view.dataSetChartId;
-        DataSet.Source<?> source = chart.getDataSet().getSource();
+        DataSet dataSet = chart.getDataSet();
+
+        assertNotNull(dataSet);
+        DataSet.Source<?> source = dataSet.getSource();
 
         assertNotNull(source);
         assertInstanceOf(ContainerChartItems.class, source.getDataProvider());

@@ -68,7 +68,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         assertEquals("red", chart.getStyle().get("color"));
         assertIterableEquals(List.of(RED, GREEN, BLUE), chart.getColorPalette());
         assertEquals(BLUE, chart.getBackgroundColor());
-        assertTrue(chart.getAnimation());
+        assertEquals(Boolean.TRUE, chart.getAnimation());
         assertEquals(1501, chart.getAnimationThreshold());
         assertEquals(1500, chart.getAnimationDuration());
         assertEquals("backOut", chart.getAnimationEasing());
@@ -79,7 +79,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         assertEquals(LIGHTER, chart.getBlendMode());
         assertEquals(6000, chart.getHoverLayerThreshold());
         assertEquals(ChartRenderer.SVG, chart.getRenderer());
-        assertTrue(chart.getUseUtc());
+        assertEquals(Boolean.TRUE, chart.getUseUtc());
         assertEquals("50px", chart.getHeight());
         assertEquals("55px", chart.getMaxHeight());
         assertEquals("120px", chart.getMaxWidth());
@@ -120,6 +120,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
                 ).matches(chart.getTextStyle())
         );
 
+        assertNotNull(chart.getAria());
         assertTrue(chart.getAria().getEnabled());
     }
 
@@ -130,6 +131,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
 
         Title title = chart.getTitle();
 
+        assertNotNull(title);
         assertEquals("title", title.getId());
         assertFalse(title.isShow());
         assertEquals("Title text", title.getText());
@@ -252,6 +254,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
 
         AbstractLegend<?> legend = chart.getLegend();
 
+        assertNotNull(legend);
         assertEquals("legend", legend.getId());
         assertEquals(LegendType.PLAIN, legend.getType());
         assertTrue(legend.getShow());
@@ -390,6 +393,8 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
     @DisplayName("Load Grid from XML")
     public void loadGridFromXmlTest() {
         Chart chart = navigateTo(ChartOptionGridTestView.class).gridChartId;
+
+        assertNotNull(chart.getGrids());
         Grid grid = chart.getGrids().stream().findAny().orElseThrow();
 
         assertEquals("grid", grid.getId());
@@ -422,6 +427,8 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
 
         assertEquals("polarChartId", chart.getId().orElse(null));
         Polar polar = chart.getPolar();
+
+        assertNotNull(polar);
         assertEquals("polar", polar.getId());
         assertEquals(0, polar.getZ());
         assertEquals(0, polar.getZLevel());
@@ -435,6 +442,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         Chart chart = navigateTo(ChartOptionRadarTestView.class).radarChartId;
 
         Radar radar = chart.getRadar();
+        assertNotNull(radar);
 
         List<Radar.Indicator> indicators = radar.getIndicators();
         assertEquals(2, indicators.size());
@@ -492,6 +500,8 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         Chart chart = navigateTo(ChartOptionDataZoomTestView.class).dataZoomChartId;
         List<AbstractDataZoom<?>> dataZooms = (List<AbstractDataZoom<?>>) chart.getDataZoom();
 
+        assertNotNull(dataZooms);
+
         InsideDataZoom insideDataZoom = (InsideDataZoom) dataZooms.get(0);
         assertEquals("insideDataZoom", insideDataZoom.getId());
         assertEquals(Orientation.HORIZONTAL, insideDataZoom.getOrientation());
@@ -545,6 +555,8 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
     public void loadVisualMapOptionsFromXmlTest() {
         Chart chart = navigateTo(ChartOptionVisualMapTestView.class).visualMapChartId;
         List<AbstractVisualMap<?>> visualMaps = chart.getVisualMap();
+
+        assertNotNull(visualMaps);
 
         //noinspection unchecked
         AbstractVisualMap<ContinuousVisualMap> continuousVisualMap =
@@ -614,6 +626,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         Chart chart = navigateTo(ChartOptionTooltipTestView.class).tooltipChartId;
         Tooltip tooltip = chart.getTooltip();
 
+        assertNotNull(tooltip);
         assertTrue(tooltip.getShow());
         assertEquals(AbstractTooltip.Trigger.ITEM, tooltip.getTrigger());
         assertEquals(10, tooltip.getPadding().getLeft());
@@ -652,6 +665,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         Chart chart = navigateTo(ChartOptionAxisPointerTestView.class).axisPointerChartId;
         AxisPointer axisPointer = chart.getAxisPointer();
 
+        assertNotNull(axisPointer);
         assertEquals("axisPointer", axisPointer.getId());
         assertTrue(axisPointer.getShow());
         assertEquals(AbstractAxisPointer.IndicatorType.LINE, axisPointer.getType());
@@ -684,6 +698,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         Chart chart = navigateTo(ChartOptionToolboxTestView.class).toolboxChartId;
         Toolbox toolbox = chart.getToolbox();
 
+        assertNotNull(toolbox);
         assertEquals("toolbox", toolbox.getId());
         assertTrue(toolbox.getShow());
         assertEquals(5, toolbox.getItemGap());
@@ -724,6 +739,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         Chart chart = navigateTo(ChartOptionBrushTestView.class).brushChartId;
         Brush brush = chart.getBrush();
 
+        assertNotNull(brush);
         assertEquals("brush", brush.getId());
         assertEquals(Brush.SeriesIndex.ALL, brush.getSeriesIndex());
         assertEquals(5, brush.getXAxisIndex().getIndexes()[1]);

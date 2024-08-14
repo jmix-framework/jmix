@@ -29,11 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
-import static io.jmix.core.repository.JmixDataRepositoryUtils.*;
-<%}%>
-
-
-
+import static io.jmix.core.repository.JmixDataRepositoryUtils.*;<%}%>
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = "${listRoute}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent.class <%} else {%>${routeLayout.getControllerClassName()}.class<%}%>)
@@ -70,7 +66,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Subscribe
     public void onInit(final InitEvent event) {
         updateControls(false);
-    }
+    }<%if (tableActions.contains("create")) {%>
 
     @Subscribe("${tableId}.create")
     public void on${tableId.capitalize()}Create(final ActionPerformedEvent event) {
@@ -78,12 +74,12 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         ${entity.className} entity = dataContext.create(${entity.className}.class);
         ${detailDc}.setItem(entity);
         updateControls(true);
-    }
+    }<%}%><%if (tableActions.contains("edit")) {%>
 
     @Subscribe("${tableId}.edit")
     public void on${tableId.capitalize()}Edit(final ActionPerformedEvent event) {
         updateControls(true);
-    }
+    }<%}%>
 
     @Subscribe("saveBtn")
     public void onSaveButtonClick(final ClickEvent<JmixButton> event) {

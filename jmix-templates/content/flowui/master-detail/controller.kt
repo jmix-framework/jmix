@@ -25,7 +25,6 @@ import io.jmix.flowui.view.Target
 import io.jmix.core.SaveContext
 import ${repository.getQualifiedName()}
 import io.jmix.core.repository.JmixDataRepositoryUtils.*<%}%>
-
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = "${listRoute}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent::class <%} else {%>${routeLayout.getControllerClassName()}::class<%}%>)
@@ -59,7 +58,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     @Subscribe
     fun onInit(event: InitEvent) {
         updateControls(false)
-    }
+    }<%if (tableActions.contains("create")) {%>
 
     @Subscribe("${tableId}.create")
     fun on${tableId.capitalize()}Create(event: ActionPerformedEvent) {
@@ -67,12 +66,12 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         val entity: ${entity.className} = dataContext.create(${entity.className}::class.java)
         ${detailDc}.item = entity
         updateControls(true)
-    }
+    }<%}%><%if (tableActions.contains("edit")) {%>
 
     @Subscribe("${tableId}.edit")
     fun on${tableId.capitalize()}Edit(event: ActionPerformedEvent) {
         updateControls(true)
-    }
+    }<%}%>
 
     @Subscribe("saveBtn")
     fun onSaveButtonClick(event: ClickEvent<JmixButton>) {

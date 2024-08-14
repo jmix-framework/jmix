@@ -61,7 +61,7 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
 
     /**
      * Component manually handles Vaadin value change event: when programmatically sets value
-     * (see {@link #setValueInternal(Collection, Set, boolean)}) and client-side sets value
+     * (see {@link #setValueInternal(Set, boolean)}) and client-side sets value
      * (see {@link #onValueChange(ComponentValueChangeEvent)}). Therefore, any Vaadin value change listener has a
      * wrapper and disabled for handling event.
      */
@@ -216,21 +216,20 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
 
     @Override
     public void setTypedValue(@Nullable Collection<V> value) {
-        setValueInternal(value, fieldDelegate.convertToPresentation(value), false);
+        setValueInternal(fieldDelegate.convertToPresentation(value), false);
     }
 
     @Override
-    public void setValue(Set<V> value) {
-        setValueInternal(null, value, false);
+    public void setValue(@Nullable Set<V> value) {
+        setValueInternal(value, false);
     }
 
-    protected void setValueInternal(@Nullable Collection<V> modelValue, Set<V> presentationValue, boolean fromClient) {
+    protected void setValueInternal(@Nullable Set<V> value, boolean fromClient) {
         try {
-            if (modelValue == null) {
-                modelValue = fieldDelegate.convertToModel(presentationValue, getDataProvider().fetch(new Query<>()));
-            }
+            Collection<V> modelValue = value != null ? convertToModel(value) : null;
+            Set<V> presValue = value != null ? fieldDelegate.convertToPresentation(modelValue) : null;
 
-            super.setValue(presentationValue);
+            super.setValue(presValue);
 
             Collection<V> oldValue = internalValue;
             internalValue = modelValue;
@@ -271,8 +270,7 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
         if (event.isFromClient()) {
             Set<V> presValue = event.getValue();
 
-            Collection<V> value = fieldDelegate.convertToModel(presValue, getDataProvider().fetch(new Query<>()));
-            setValueInternal(value, fieldDelegate.convertToPresentation(value), true);
+            setValueInternal(presValue, true);
         }
     }
 
@@ -309,5 +307,15 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V>
     @SuppressWarnings("unchecked")
     protected DataViewDelegate<JmixCheckboxGroup<V>, V> createDataViewDelegate() {
         return applicationContext.getBean(DataViewDelegate.class, this);
+    }
+
+    protected Collection<V> convertToModel(Set<V> presentationValue) {
+        if (getDataProvider() != null && getDataProvider().isInMemory()) {
+            List<V> items = getDataProvider().fetch(new Query<>()).toList();
+            if (!items.isEmpty()) {
+                return fieldDelegate.convertToModel(presentationValue, items.stream());
+            }
+        }
+        return fieldDelegate.convertToModel(presentationValue);
     }
 }

@@ -191,10 +191,12 @@ public class JmixHtmlFormatter extends HtmlFormatter {
         model.put("bands", bands);
         Map<String, Object> data = new HashMap<>();
         for (String key : band.getData().keySet()) {
-            if (band.getData().get(key) instanceof Enum)
+            if (band.getData().get(key) instanceof Enum) {
                 data.put(key, defaultFormat(band.getData().get(key)));
-            else
-                data.put(key, band.getData().get(key));
+            } else {
+                String valueStr = formatValue(band.getData().get(key), key, getFullParameterName(band, key));
+                data.put(key, valueStr);
+            }
         }
         model.put("fields", data);
 

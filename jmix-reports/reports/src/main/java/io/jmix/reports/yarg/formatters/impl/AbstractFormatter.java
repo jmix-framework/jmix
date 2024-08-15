@@ -227,11 +227,14 @@ public abstract class AbstractFormatter implements ReportFormatter {
         }
         for (String parameterName : parametersToInsert) {
             Object value = bandData.getData().get(parameterName);
-            String fullParameterName = bandData.getName() + "." + parameterName;
-            String valueStr = formatValue(value, parameterName, fullParameterName);
+            String valueStr = formatValue(value, parameterName, getFullParameterName(bandData, parameterName));
             resultStr = inlineParameterValue(resultStr, parameterName, valueStr);
         }
         return resultStr;
+    }
+
+    protected String getFullParameterName(BandData bandData, String parameterName) {
+        return bandData.getName() + "." + parameterName;
     }
 
     protected String inlineParameterValue(String template, String parameterName, String value) {

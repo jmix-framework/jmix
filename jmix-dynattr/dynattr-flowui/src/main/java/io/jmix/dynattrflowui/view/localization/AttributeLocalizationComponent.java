@@ -41,8 +41,8 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.DataContext;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class AttributeLocalizationComponent extends Composite<VerticalLayout> {

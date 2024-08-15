@@ -26,7 +26,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.entity.*
 
-import javax.annotation.Nullable
+import org.springframework.lang.Nullable
 
 @ContextConfiguration(classes = [DataImportTestConfiguration])
 class DataImportSpec extends Specification {

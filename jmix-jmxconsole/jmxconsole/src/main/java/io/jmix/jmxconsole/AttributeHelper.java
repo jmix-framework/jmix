@@ -16,7 +16,8 @@
 
 package io.jmix.jmxconsole;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;

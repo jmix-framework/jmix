@@ -26,8 +26,7 @@ import io.jmix.flowui.action.view.ViewAction;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @ActionType(RunSingleEntityReportAction.ID)
 public class RunSingleEntityReportAction<E> extends ViewAction<DetailCloseAction<E>, StandardDetailView<E>> {

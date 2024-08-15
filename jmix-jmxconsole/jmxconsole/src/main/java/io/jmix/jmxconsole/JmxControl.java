@@ -20,8 +20,8 @@ import io.jmix.jmxconsole.model.ManagedBeanAttribute;
 import io.jmix.jmxconsole.model.ManagedBeanDomain;
 import io.jmix.jmxconsole.model.ManagedBeanInfo;
 import io.jmix.jmxconsole.model.ManagedBeanOperation;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**

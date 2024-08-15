@@ -19,8 +19,8 @@ package io.jmix.bulkeditor.view;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.component.validation.Validator;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

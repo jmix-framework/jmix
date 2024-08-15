@@ -28,8 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import javax.management.*;
 import java.io.IOException;
 import java.io.Serializable;

@@ -2,7 +2,7 @@ package test_support.entity;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public enum CarType implements EnumClass<String> {
 

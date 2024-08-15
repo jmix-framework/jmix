@@ -17,7 +17,8 @@
 
 package io.jmix.graphql.schema.permission;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
+
 import java.util.List;
 
 public class PermissionConfig {

@@ -23,7 +23,7 @@ import io.jmix.flowui.exception.ComponentValidationException;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reportsflowui.view.ReportParameterValidator;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 

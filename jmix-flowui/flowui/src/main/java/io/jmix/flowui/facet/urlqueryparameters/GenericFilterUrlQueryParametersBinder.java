@@ -23,6 +23,7 @@ import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.AccessManager;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -76,6 +77,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected String conditionParam;
 
     protected ApplicationContext applicationContext;
+    private final MetadataTools metadataTools;
     protected UrlParamSerializer urlParamSerializer;
     protected UiComponents uiComponents;
     protected SingleFilterSupport singleFilterSupport;
@@ -86,10 +88,12 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     public GenericFilterUrlQueryParametersBinder(GenericFilter filter,
                                                  UrlParamSerializer urlParamSerializer,
-                                                 ApplicationContext applicationContext) {
+                                                 ApplicationContext applicationContext,
+                                                 MetadataTools metadataTools) {
         this.filter = filter;
         this.urlParamSerializer = urlParamSerializer;
         this.applicationContext = applicationContext;
+        this.metadataTools = metadataTools;
 
         autowireDependencies();
         initComponent(filter);
@@ -243,7 +247,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected boolean isPermitted(DataLoader dataLoader, FilterComponent filterComponent) {
         if (filterComponent instanceof PropertyFilter<?> propertyFilter && propertyFilter.getProperty() != null) {
             MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
-            MetaPropertyPath propertyPath = entityMetaClass.getPropertyPath(propertyFilter.getProperty());
+            MetaPropertyPath propertyPath = metadataTools.resolveMetaPropertyPathOrNull(entityMetaClass, propertyFilter.getProperty());
 
             Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
             if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {

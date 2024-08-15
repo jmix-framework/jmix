@@ -69,6 +69,10 @@ public interface MetaClass extends MetadataObject {
 
     /**
      * Returns MetaPropertyPath object, representing path to the property from the current class
+     * Note that this method don't take into account extensions(e.g. Dynamic Attributes add-on) and it returns null
+     * in case of not static attributes(attributes from extension).
+     * For getting all attributes (including attributes from extensions) use {@link io.jmix.core.MetadataTools#resolveMetaPropertyPath(MetaClass, String)}
+     * or {@link io.jmix.core.MetadataTools#resolveMetaPropertyPathOrNull(MetaClass, String)} methods.
      * @param propertyPath dot-separated string
      * @return MetaPropertyPath instance, or null if the input parameter doesn't represent a valid path.
      */

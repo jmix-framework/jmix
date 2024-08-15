@@ -97,6 +97,15 @@ public abstract class AbstractGridSettingsBinder<V extends Grid<?>, S extends Da
                         SortDirection.valueOf(sSortOrder.getSortDirection())))
                 .toList();
 
+        // Do not sort if columns in sort order do not exist in Grid anymore
+        for (GridSortOrder sortOrderItem : (List<GridSortOrder>) sortOrder) {
+            if (sortOrderItem.getSorted() == null) {
+                log.warn("{} does not contain column(s) saved in sort-order settings. The sort will not be applied.",
+                        Grid.class.getSimpleName());
+                return;
+            }
+        }
+
         DataGridItems<?> gridItems = getGridItems(component);
         if (gridItems instanceof DataGridItems.Sortable) {
             ((DataGridItems.Sortable<?>) gridItems).suppressSorting();

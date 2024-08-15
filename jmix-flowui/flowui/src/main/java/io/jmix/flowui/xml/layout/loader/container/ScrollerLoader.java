@@ -41,6 +41,7 @@ public class ScrollerLoader extends AbstractContainerLoader<JmixScroller> {
         loadEnum(element, Scroller.ScrollDirection.class, "scrollBarsDirection", resultComponent::setScrollDirection);
 
         componentLoader().loadClassNames(resultComponent, element);
+        componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
 
         loadSubComponents();

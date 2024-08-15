@@ -179,6 +179,7 @@
         <scroller id="scrollerId"
                   classNames="cssClassName1, cssClassName2"
                   css="color: red;"
+                  enabled="true"
                   height="50px"
                   maxHeight="55px"
                   maxWidth="120px"

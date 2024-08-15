@@ -3680,6 +3680,7 @@
                 <xs:attribute name="scrollBarsDirection" type="scrollDirection"/>
 
                 <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>

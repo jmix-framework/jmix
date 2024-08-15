@@ -18,6 +18,8 @@ package io.jmix.reportsflowui.view.run;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
@@ -108,8 +110,9 @@ public class ReportRunView extends StandardListView<Report> {
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
     private List<Report> reportsDlLoadDelegate(LoadContext loadContext) {
+        //Pass current grid sort to support settings facet
         return reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(),
-                metaClassParameter);
+                metaClassParameter, getReportGridSort());
     }
 
     @Supply(to = "reportDataGrid.name", subject = "renderer")
@@ -173,7 +176,7 @@ public class ReportRunView extends StandardListView<Report> {
         Date dateFilterValue = updatedDateFilter.getTypedValue();
 
         List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
-                        currentUserSubstitution.getEffectiveUser(), metaClassParameter)
+                        currentUserSubstitution.getEffectiveUser(), metaClassParameter, getReportGridSort())
                 .stream()
                 .filter(report ->
                         isCandidateReport(nameFilterValue, codeFilterValue, groupFilterValue, dateFilterValue, report)
@@ -181,6 +184,19 @@ public class ReportRunView extends StandardListView<Report> {
                 .toList();
 
         reportsDc.setItems(reports);
+    }
+
+    @Nullable
+    protected Sort getReportGridSort() {
+        if (reportDataGrid.getSortOrder().isEmpty()) {
+            return null;
+        }
+
+        GridSortOrder<Report> reportGridSortOrder = reportDataGrid.getSortOrder().get(0);
+        return Sort.by(SortDirection.ASCENDING == reportGridSortOrder.getDirection()
+                        ? Sort.Direction.ASC
+                        : Sort.Direction.DESC,
+                reportGridSortOrder.getSorted().getKey());
     }
 
     protected boolean isCandidateReport(@Nullable String nameFilterValue, @Nullable String codeFilterValue,

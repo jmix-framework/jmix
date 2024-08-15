@@ -1392,7 +1392,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "metaClass", type = StudioPropertyType.ENTITY_NAME,
                             typeParameter = "E"),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE,  initialValue = "100px"),
                     @StudioProperty(xmlAttribute = "multiSort", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "multiSortOnShiftClickOnly", type = StudioPropertyType.BOOLEAN,

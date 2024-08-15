@@ -106,7 +106,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
      * @return query definition object
      */
     @Override
-    public Query setQueryString(String queryString) {
+    public Query setQueryString(@Nullable String queryString) {
         final Query query = new Query(queryString);
         setQuery(query);
         return query;

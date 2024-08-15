@@ -17,6 +17,7 @@
 package rest_ds;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.EntityStates;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
@@ -42,6 +43,9 @@ public class RestDsFetchPlanTest {
 
     @Autowired
     DataManager dataManager;
+
+    @Autowired
+    EntityStates entityStates;
 
     @Test
     void testWithoutFetchPlan() {
@@ -74,6 +78,7 @@ public class RestDsFetchPlanTest {
         Customer customer = customers.get(0);
 
         assertThat(customer.getRegion()).isNotNull();
+        assertThat(entityStates.isNew(customer.getRegion())).isFalse();
 
         customer = dataManager.load(Customer.class)
                 .id(customer.getId())
@@ -81,6 +86,7 @@ public class RestDsFetchPlanTest {
                 .one();
 
         assertThat(customer.getRegion()).isNotNull();
+        assertThat(entityStates.isNew(customer.getRegion())).isFalse();
     }
 
     @Test

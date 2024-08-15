@@ -294,9 +294,9 @@ public class RestInvoker {
         return resultJson;
     }
 
-    public void delete(String entityName, Object entity) {
+    public void delete(String entityName, String entityId) {
         restClient.delete()
-                .uri("/rest/entities/{entityName}/{id}", entityName, EntityValues.getId(entity))
+                .uri("/rest/entities/{entityName}/{id}", entityName, entityId)
                 .retrieve()
                 .toBodilessEntity();
     }

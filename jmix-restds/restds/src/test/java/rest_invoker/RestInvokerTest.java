@@ -100,7 +100,7 @@ class RestInvokerTest {
         assertThat(updatedCustomer.getLastName()).isEqualTo(createdCustomer.getLastName());
         assertThat(updatedCustomer.getEmail()).isEqualTo(createdCustomer.getEmail());
 
-        restInvoker.delete("Customer", updatedCustomer);
+        restInvoker.delete("Customer", updatedCustomer.getId().toString());
 
         Customer deletedCustomer = restSerialization.fromJson(
                 restInvoker.load(new RestInvoker.LoadParams("Customer", updatedCustomer.getId())),

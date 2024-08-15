@@ -16,13 +16,11 @@
 
 package io.jmix.restds.impl;
 
-import io.jmix.core.LoadContext;
-import io.jmix.core.SaveContext;
-import io.jmix.core.Sort;
-import io.jmix.core.ValueLoadContext;
+import io.jmix.core.*;
 import io.jmix.core.datastore.AbstractDataStore;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +29,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,17 +44,19 @@ public class RestDataStore extends AbstractDataStore {
     private final RestSerialization restSerialization;
     private final RestFilterBuilder restFilterBuilder;
     private final RestEntityEventManager entityEventManager;
+    private final RestSaveContextProcessor saveContextProcessor;
 
     protected String storeName;
 
     private RestInvoker restInvoker;
 
     public RestDataStore(ApplicationContext applicationContext, RestSerialization restSerialization, RestFilterBuilder restFilterBuilder,
-                         RestEntityEventManager entityEventManager) {
+                         RestEntityEventManager entityEventManager, RestSaveContextProcessor saveContextProcessor) {
         this.applicationContext = applicationContext;
         this.restSerialization = restSerialization;
         this.restFilterBuilder = restFilterBuilder;
         this.entityEventManager = entityEventManager;
+        this.saveContextProcessor = saveContextProcessor;
     }
 
     public RestInvoker getRestInvoker() {
@@ -79,7 +80,7 @@ public class RestDataStore extends AbstractDataStore {
                 entityClass);
 
         if (entity != null) {
-            entityStates.setNew(entity, false);
+            setNotNew(entity);
             entityEventManager.publishEntityLoadingEvent(entity);
         }
         return entity;
@@ -105,10 +106,37 @@ public class RestDataStore extends AbstractDataStore {
                 entityClass);
 
         for (Object entity : entities) {
-            entityStates.setNew(entity, false);
+            setNotNew(entity);
             entityEventManager.publishEntityLoadingEvent(entity);
         }
         return entities;
+    }
+
+    private void setNotNew(Object entity) {
+        setNotNewRecursive(entity, new HashSet<>());
+    }
+
+    private void setNotNewRecursive(Object entity, Set<Object> visited) {
+        if (visited.contains(entity))
+            return;
+        visited.add(entity);
+
+        entityStates.setNew(entity, false);
+
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
+            if (property.getRange().isClass()) {
+                Object value = EntityValues.getValue(entity, property.getName());
+                if (value != null) {
+                    if (value instanceof Collection) {
+                        for (Object item : ((Collection<?>) value)) {
+                            setNotNewRecursive(item, visited);
+                        }
+                    } else {
+                        setNotNewRecursive(value, visited);
+                    }
+                }
+            }
+        }
     }
 
     @Nullable
@@ -149,6 +177,7 @@ public class RestDataStore extends AbstractDataStore {
     @Override
     protected Set<Object> saveAll(SaveContext context) {
         Set<Object> saved = new HashSet<>();
+        saveContextProcessor.normalizeCompositionItems(context);
         for (Object entity : context.getEntitiesToSave()) {
             MetaClass metaClass = metadata.getClass(entity);
             String entityJson = restSerialization.toJson(entity);
@@ -160,11 +189,10 @@ public class RestDataStore extends AbstractDataStore {
             } else {
                 Object id = EntityValues.getId(entity);
                 if (id == null) {
-                    throw new IllegalArgumentException("Entity id is null");
+                    throw new IllegalArgumentException("Entity id is null for " + entity);
                 }
                 entityEventManager.publishEntitySavingEvent(entity, false);
-                String entityId = id.toString();
-                savedEntityJson = restInvoker.update(metaClass.getName(), entityId, entityJson);
+                savedEntityJson = restInvoker.update(metaClass.getName(), id.toString(), entityJson);
             }
             Object savedEntity = restSerialization.fromJson(savedEntityJson, entity.getClass());
             if (savedEntity == null) {
@@ -174,7 +202,7 @@ public class RestDataStore extends AbstractDataStore {
                 // set new ID to the passed instance to let the framework match the saved instance with the original one
                 EntityValues.setId(entity, EntityValues.getId(savedEntity));
             }
-            entityStates.setNew(savedEntity, false);
+            setNotNew(savedEntity);
             entityEventManager.publishEntitySavedEvent(entity, savedEntity, isNew);
             saved.add(savedEntity);
         }
@@ -186,7 +214,11 @@ public class RestDataStore extends AbstractDataStore {
         Set<Object> saved = new HashSet<>();
         for (Object entity : context.getEntitiesToRemove()) {
             MetaClass metaClass = metadata.getClass(entity);
-            restInvoker.delete(metaClass.getName(), entity);
+            Object id = EntityValues.getId(entity);
+            if (id == null) {
+                throw new IllegalArgumentException("Entity id is null for " + entity);
+            }
+            restInvoker.delete(metaClass.getName(), id.toString());
             entityEventManager.publishEntityRemovedEvent(entity);
             saved.add(entity);
         }

@@ -217,6 +217,9 @@ dependencies {
         api "io.jmix.rest:jmix-rest:$freeVersion"
         api "io.jmix.rest:jmix-rest-starter:$freeVersion"
 
+        api "io.jmix.restds:jmix-restds:$freeVersion"
+        api "io.jmix.restds:jmix-restds-starter:$freeVersion"
+
         api "io.jmix.search:jmix-search:$freeVersion"
         api "io.jmix.search:jmix-search-starter:$freeVersion"
         //api "io.jmix.search:jmix-search-aws-starter:$freeVersion"

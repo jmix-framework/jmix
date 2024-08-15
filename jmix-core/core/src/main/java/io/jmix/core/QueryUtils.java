@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 
 public class QueryUtils {
@@ -58,8 +60,9 @@ public class QueryUtils {
      * @param entityClass queried entity
      * @return result of the processing
      */
+    @Nullable
     public static String applyQueryStringProcessors(Collection<QueryStringProcessor> processors,
-                                                    String query,
+                                                    @Nullable String query,
                                                     Class<?> entityClass) {
         String result = query;
         for (QueryStringProcessor processor : processors) {

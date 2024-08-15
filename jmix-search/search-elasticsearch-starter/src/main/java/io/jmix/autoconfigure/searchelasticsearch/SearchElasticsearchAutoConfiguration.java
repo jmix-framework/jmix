@@ -52,8 +52,8 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
 import java.util.Collection;
 

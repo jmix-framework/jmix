@@ -49,7 +49,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowuidata.component.genericfilter.configuration.UiDataFilterConfigurationDetail;
 import io.jmix.flowuidata.entity.FilterConfiguration;
 import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;

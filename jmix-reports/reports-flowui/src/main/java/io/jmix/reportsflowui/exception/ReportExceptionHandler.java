@@ -24,8 +24,7 @@ import io.jmix.reports.exception.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Handles reporting exceptions.

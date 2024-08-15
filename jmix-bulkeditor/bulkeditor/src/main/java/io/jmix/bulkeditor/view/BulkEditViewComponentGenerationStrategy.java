@@ -38,8 +38,8 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import org.springframework.core.Ordered;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 
 @org.springframework.stereotype.Component("bulked_BulkEditViewComponentGenerationStrategy")

@@ -23,7 +23,7 @@ import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.LockStatus;
 import io.jmix.flowui.view.StandardDetailView;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ActionType(DetailSaveAction.ID)

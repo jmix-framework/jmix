@@ -19,7 +19,7 @@ package io.jmix.reportsflowui.view.validators;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.validation.AbstractValidator;
 import io.jmix.reports.exception.ValidationException;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

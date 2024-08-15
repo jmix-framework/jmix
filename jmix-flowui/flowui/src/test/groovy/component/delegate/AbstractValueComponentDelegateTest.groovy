@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
-import javax.annotation.Nullable
+import org.springframework.lang.Nullable
 import java.util.function.Consumer
 
 @SpringBootTest

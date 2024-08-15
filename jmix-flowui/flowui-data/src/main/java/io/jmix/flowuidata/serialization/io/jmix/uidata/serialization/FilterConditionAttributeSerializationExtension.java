@@ -26,7 +26,7 @@ import io.jmix.flowuidata.entity.FilterConditionConverter;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.persistence.Convert;
 
 @Component("flowui_FilterConditionAttributeSerializationExtension")

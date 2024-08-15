@@ -20,7 +20,7 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.view.View;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 

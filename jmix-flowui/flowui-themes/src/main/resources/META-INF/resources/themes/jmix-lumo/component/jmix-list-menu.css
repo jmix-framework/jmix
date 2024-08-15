@@ -112,3 +112,11 @@
   order: 1;
   margin-inline-end: 0;
 }
+
+@supports selector(:focus-visible) {
+  .jmix-list-menu .jmix-menu-item-link:focus-visible {
+    border-radius: var(--lumo-border-radius-m);
+    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+    outline: 0;
+  }
+}

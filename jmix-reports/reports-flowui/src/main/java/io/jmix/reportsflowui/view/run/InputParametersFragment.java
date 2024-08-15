@@ -128,7 +128,7 @@ public class InputParametersFragment extends Composite<FormLayout>
         templateComboBox = uiComponents.create(EntityComboBox.class);
         templateComboBox.setVisible(false);
         templateComboBox.setMetaClass(metadata.getClass(ReportTemplate.class));
-        templateComboBox.setItems(report.getTemplates());
+        templateComboBox.setItems(CollectionUtils.emptyIfNull(report.getTemplates()));
         templateComboBox.setLabel(messages.getMessage(getClass(), "reportTemplate.label"));
         templateComboBox.addValueChangeListener(e -> updateOutputTypes());
 

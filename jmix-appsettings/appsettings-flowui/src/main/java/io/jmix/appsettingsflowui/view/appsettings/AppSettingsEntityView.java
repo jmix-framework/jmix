@@ -368,7 +368,7 @@ public class AppSettingsEntityView extends StandardView {
             defaultValueField.setValue(appSettingsTools.getDefaultPropertyValue(metaClass.getJavaClass(),
                     metaProperty.getName()));
         }
-        defaultValueField.setEnabled(false);
+        defaultValueField.setReadOnly(true);
         formLayout.add(defaultValueField);
 
         Hr hr = uiComponents.create(Hr.class);

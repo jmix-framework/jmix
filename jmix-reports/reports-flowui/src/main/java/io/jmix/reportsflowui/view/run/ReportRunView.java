@@ -18,16 +18,13 @@ package io.jmix.reportsflowui.view.run;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
-import io.jmix.core.DataManager;
-import io.jmix.core.Id;
-import io.jmix.core.LoadContext;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -39,6 +36,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
+import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
@@ -47,7 +45,6 @@ import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -88,6 +85,10 @@ public class ReportRunView extends StandardListView<Report> {
     protected UiReportRunner uiReportRunner;
     @Autowired
     protected ReportsClientProperties reportsClientProperties;
+    @Autowired
+    protected Notifications notifications;
+    @Autowired
+    protected Messages messages;
 
     protected List<Report> reports;
     protected MetaClass metaClassParameter;
@@ -136,10 +137,18 @@ public class ReportRunView extends StandardListView<Report> {
                 .one();
         FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
                 .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-        if (reportsClientProperties.getUseBackgroundReportProcessing()) {
-            fluentRunner.inBackground(ReportRunView.this);
+        try {
+            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
+                fluentRunner.inBackground(ReportRunView.this);
+            }
+            fluentRunner.runAndShow();
+        } catch (MissingDefaultTemplateException e) {
+            notifications.create(
+                            messages.getMessage("runningReportError.title"),
+                            messages.getMessage("missingDefaultTemplateError.description"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
         }
-        fluentRunner.runAndShow();
     }
 
     @Subscribe("searchBtn")

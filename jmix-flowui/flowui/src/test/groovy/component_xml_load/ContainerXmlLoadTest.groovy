@@ -171,6 +171,7 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "scrollerId"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
+            enabled
             height == "50px"
             maxHeight == "55px"
             maxWidth == "120px"

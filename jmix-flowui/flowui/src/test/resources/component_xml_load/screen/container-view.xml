@@ -180,6 +180,7 @@
                   classNames="cssClassName1, cssClassName2"
                   css="color: red;"
                   height="50px"
+                  enabled="true"
                   maxHeight="55px"
                   maxWidth="120px"
                   minHeight="40px"

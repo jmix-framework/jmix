@@ -48,8 +48,8 @@ import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;

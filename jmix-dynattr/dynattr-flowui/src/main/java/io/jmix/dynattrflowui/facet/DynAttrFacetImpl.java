@@ -24,7 +24,7 @@ import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 
 @Internal

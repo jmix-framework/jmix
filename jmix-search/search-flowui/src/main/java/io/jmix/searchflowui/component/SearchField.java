@@ -39,7 +39,7 @@ import io.jmix.flowui.view.OpenMode;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.*;
 import io.jmix.searchflowui.view.result.SearchResultsView;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;

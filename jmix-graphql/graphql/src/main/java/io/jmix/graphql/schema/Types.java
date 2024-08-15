@@ -3,8 +3,8 @@ package io.jmix.graphql.schema;
 import com.google.common.collect.ImmutableList;
 import graphql.schema.GraphQLScalarType;
 import io.jmix.core.querycondition.PropertyCondition;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 

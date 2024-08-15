@@ -20,8 +20,8 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.reports.entity.wizard.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -35,8 +35,8 @@ import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.ReportParameterValidator;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 

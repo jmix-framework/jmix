@@ -31,8 +31,8 @@ import org.docx4j.openpackaging.parts.SpreadsheetML.Styles;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.springframework.stereotype.Component;
 import org.xlsx4j.sml.*;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 @Component("report_XlsxGenerator")

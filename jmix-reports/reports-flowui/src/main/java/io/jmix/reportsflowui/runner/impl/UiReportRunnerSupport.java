@@ -27,8 +27,8 @@ import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reportsflowui.runner.UiReportRunContext;
 import io.jmix.reportsflowui.view.run.ReportTableView;
 import org.springframework.stereotype.Component;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;

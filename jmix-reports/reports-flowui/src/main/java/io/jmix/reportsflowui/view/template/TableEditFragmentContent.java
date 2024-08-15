@@ -40,8 +40,8 @@ import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.reports.entity.table.TemplateTableBand;
 import io.jmix.reports.entity.table.TemplateTableColumn;
 import io.jmix.reportsflowui.constant.ReportStyleConstants;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;

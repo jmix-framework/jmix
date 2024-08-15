@@ -21,8 +21,8 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.runner.ReportRunContext;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 /**

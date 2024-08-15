@@ -1121,8 +1121,7 @@ public class XlsxFormatter extends AbstractFormatter {
             BandPathAndParameterName bandPathAndParameterName = separateBandNameAndParameterName(parameterName);
             BandData bandData = findBandByPath(bandPathAndParameterName.getBandPath());
             Object value = bandData.getData().get(bandPathAndParameterName.getParameterName());
-            String fullParameterName = bandData.getName() + "." + parameterName;
-            String valueStr = formatValue(value, parameterName, fullParameterName);
+            String valueStr = formatValue(value, parameterName, getFullParameterName(bandData, parameterName));
             resultStr = inlineParameterValue(resultStr, parameterName, valueStr);
         }
         return resultStr;

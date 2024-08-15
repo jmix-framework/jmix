@@ -194,8 +194,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
             if (band.getData().get(key) instanceof Enum) {
                 data.put(key, defaultFormat(band.getData().get(key)));
             } else {
-                String fullParameterName = band.getName() + "." + key;
-                String valueStr = formatValue(band.getData().get(key), key, fullParameterName);
+                String valueStr = formatValue(band.getData().get(key), key, getFullParameterName(band, key));
                 data.put(key, valueStr);
             }
         }

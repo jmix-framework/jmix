@@ -17,6 +17,7 @@
 package io.jmix.reports.yarg.reporting;
 
 
+import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.yarg.reporting.extraction.DefaultExtractionContextFactory;
 import io.jmix.reports.yarg.reporting.extraction.DefaultExtractionControllerFactory;
 import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
@@ -66,7 +67,8 @@ public class DataExtractorImpl implements DataExtractor {
             rootBand.getData().putAll(rootBandData.get(0));
         }
 
-        List<ReportBand> firstLevelBands = report.getRootBand().getChildren();
+        List<ReportBand> firstLevelBands = report.getRootBand().getChildren().stream()
+                .sorted((b1, b2) -> b1.getPosition() - b2.getPosition()).toList();
         if (firstLevelBands != null) {
             for (ReportBand definition : firstLevelBands) {
                 List<BandData> bands = createBands(definition, rootBand, params);

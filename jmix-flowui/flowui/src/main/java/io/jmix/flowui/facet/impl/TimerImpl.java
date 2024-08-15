@@ -135,6 +135,11 @@ public class TimerImpl extends AbstractFacet implements Timer {
 
     protected void detachTimer(View<?> owner) {
         owner.getContent().getElement().removeChild(timerImpl.getElement());
+
+        // If view is annotated with @PreserveOnRefresh and user refreshes a page,
+        // Vaadin creates new UI and move the same server side objects there.
+        // But Timer isn't a server side component, so we need to remove it from the node tree manually
+        timerImpl.getElement().removeFromTree();
     }
 
     protected void unregisterInView(View<?> owner) {

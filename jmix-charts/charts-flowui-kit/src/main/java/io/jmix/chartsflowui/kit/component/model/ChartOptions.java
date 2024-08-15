@@ -90,10 +90,12 @@ public class ChartOptions extends ChartObservableObject {
         this.chart = chart;
     }
 
+    @Nullable
     public JsonValue getNativeJson() {
         return nativeJson;
     }
 
+    @Nullable
     protected String getNativeJsonString() {
         return this.nativeJson == null ? null : this.nativeJson.toJson();
     }
@@ -135,6 +137,7 @@ public class ChartOptions extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public List<AbstractSeries<?>> getSeries() {
         return seriesList == null ? null : Collections.unmodifiableList(seriesList);
     }
@@ -158,6 +161,7 @@ public class ChartOptions extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public List<XAxis> getXAxes() {
         return xAxes == null ? null : Collections.unmodifiableList(xAxes);
     }
@@ -181,6 +185,7 @@ public class ChartOptions extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public List<YAxis> getYAxes() {
         return yAxes == null ? null : Collections.unmodifiableList(yAxes);
     }
@@ -194,6 +199,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(axis);
     }
 
+    @Nullable
     public RadiusAxis getRadiusAxis() {
         return radiusAxis;
     }
@@ -207,6 +213,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(axis);
     }
 
+    @Nullable
     public AngleAxis getAngleAxis() {
         return angleAxis;
     }
@@ -230,6 +237,7 @@ public class ChartOptions extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public List<Grid> getGrids() {
         return grids == null ? null : Collections.unmodifiableList(grids);
     }
@@ -253,10 +261,12 @@ public class ChartOptions extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public List<AbstractDataZoom<?>> getDataZoom() {
         return dataZoom == null ? null : Collections.unmodifiableList(dataZoom);
     }
 
+    @Nullable
     public Title getTitle() {
         return title;
     }
@@ -270,6 +280,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(title);
     }
 
+    @Nullable
     public AbstractLegend<?> getLegend() {
         return legend;
     }
@@ -283,6 +294,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(legend);
     }
 
+    @Nullable
     public Tooltip getTooltip() {
         return tooltip;
     }
@@ -296,6 +308,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(tooltip);
     }
 
+    @Nullable
     public Toolbox getToolbox() {
         return toolbox;
     }
@@ -309,6 +322,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(toolbox);
     }
 
+    @Nullable
     public AxisPointer getAxisPointer() {
         return axisPointer;
     }
@@ -322,6 +336,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(axisPointer);
     }
 
+    @Nullable
     public Polar getPolar() {
         return polar;
     }
@@ -335,6 +350,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(polar);
     }
 
+    @Nullable
     public Radar getRadar() {
         return radar;
     }
@@ -348,6 +364,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(radar);
     }
 
+    @Nullable
     public DataSet getDataSet() {
         return dataSet;
     }
@@ -369,6 +386,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(dataSet);
     }
 
+    @Nullable
     public Aria getAria() {
         return aria;
     }
@@ -382,6 +400,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(aria);
     }
 
+    @Nullable
     public Brush getBrush() {
         return brush;
     }
@@ -414,10 +433,12 @@ public class ChartOptions extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public List<AbstractVisualMap<?>> getVisualMap() {
         return visualMap == null ? null : Collections.unmodifiableList(visualMap);
     }
 
+    @Nullable
     public List<Color> getColorPalette() {
         return colorPalette == null ? null : Collections.unmodifiableList(colorPalette);
     }
@@ -428,6 +449,7 @@ public class ChartOptions extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -451,6 +473,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public TextStyle getTextStyle() {
         return textStyle;
     }
@@ -464,6 +487,7 @@ public class ChartOptions extends ChartObservableObject {
         addChild(textStyle);
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -473,6 +497,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationThreshold() {
         return animationThreshold;
     }
@@ -482,6 +507,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDuration() {
         return animationDuration;
     }
@@ -491,6 +517,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasing() {
         return animationEasing;
     }
@@ -500,6 +527,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelay() {
         return animationDelay;
     }
@@ -509,6 +537,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }
@@ -518,6 +547,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasingUpdate() {
         return animationEasingUpdate;
     }
@@ -527,6 +557,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return animationDelayUpdate;
     }
@@ -536,6 +567,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public StateAnimation getStateAnimation() {
         return stateAnimation;
     }
@@ -545,6 +577,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public BlendMode getBlendMode() {
         return blendMode;
     }
@@ -554,6 +587,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getHoverLayerThreshold() {
         return hoverLayerThreshold;
     }
@@ -563,6 +597,7 @@ public class ChartOptions extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getUseUtc() {
         return useUtc;
     }

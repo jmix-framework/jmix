@@ -120,6 +120,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return additional JSON options as a {@link JsonValue}
      */
+    @Nullable
     public JsonValue getNativeJson() {
         return options.getNativeJson();
     }
@@ -146,6 +147,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return immutable list of added series
      */
+    @Nullable
     public List<AbstractSeries<?>> getSeries() {
         return options.getSeries();
     }
@@ -157,7 +159,7 @@ public class JmixChart extends Component implements HasSize {
      */
     @Nullable
     public <S extends AbstractSeries<S>> S getSeriesOrNull(String seriesId) {
-        if (Strings.isNullOrEmpty(seriesId)) {
+        if (Strings.isNullOrEmpty(seriesId) || options.getSeries() == null) {
             return null;
         }
 
@@ -205,6 +207,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return immutable list of added XAxes
      */
+    @Nullable
     public List<XAxis> getXAxes() {
         return options.getXAxes();
     }
@@ -230,6 +233,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return immutable list of added YAxes
      */
+    @Nullable
     public List<YAxis> getYAxes() {
         return options.getYAxes();
     }
@@ -246,6 +250,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return current {@link RadiusAxis}
      */
+    @Nullable
     public RadiusAxis getRadiusAxis() {
         return options.getRadiusAxis();
     }
@@ -262,6 +267,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return current {@link AngleAxis}
      */
+    @Nullable
     public AngleAxis getAngleAxis() {
         return options.getAngleAxis();
     }
@@ -289,6 +295,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return immutable list of added grids
      */
+    @Nullable
     public Collection<Grid> getGrids() {
         return options.getGrids();
     }
@@ -296,6 +303,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return immutable list of added data zooms
      */
+    @Nullable
     public Collection<AbstractDataZoom<?>> getDataZoom() {
         return options.getDataZoom();
     }
@@ -323,6 +331,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return title component of the chart
      */
+    @Nullable
     public Title getTitle() {
         return options.getTitle();
     }
@@ -339,6 +348,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return legend component of the chart
      */
+    @Nullable
     public AbstractLegend<?> getLegend() {
         return options.getLegend();
     }
@@ -359,6 +369,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return global tooltip component of the chart
      */
+    @Nullable
     public Tooltip getTooltip() {
         return options.getTooltip();
     }
@@ -378,6 +389,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return toolbox of the chart
      */
+    @Nullable
     public Toolbox getToolbox() {
         return options.getToolbox();
     }
@@ -395,6 +407,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return global axis pointer of the chart
      */
+    @Nullable
     public AxisPointer getAxisPointer() {
         return options.getAxisPointer();
     }
@@ -412,6 +425,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return polar options of the chart
      */
+    @Nullable
     public Polar getPolar() {
         return options.getPolar();
     }
@@ -430,6 +444,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return radar options of the chart
      */
+    @Nullable
     public Radar getRadar() {
         return options.getRadar();
     }
@@ -449,6 +464,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return data set of the chart
      */
+    @Nullable
     public DataSet getDataSet() {
         return options.getDataSet();
     }
@@ -467,6 +483,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return aria of the chart
      */
+    @Nullable
     public Aria getAria() {
         return options.getAria();
     }
@@ -485,6 +502,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return brush of the chart
      */
+    @Nullable
     public Brush getBrush() {
         return options.getBrush();
     }
@@ -502,6 +520,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return immutable list of added visual maps
      */
+    @Nullable
     public List<AbstractVisualMap<?>> getVisualMap() {
         return options.getVisualMap();
     }
@@ -530,6 +549,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return immutable list of colors in the charts color palette
      */
+    @Nullable
     public List<Color> getColorPalette() {
         return options.getColorPalette();
     }
@@ -562,6 +582,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return background color of the chart
      */
+    @Nullable
     public Color getBackgroundColor() {
         return options.getBackgroundColor();
     }
@@ -578,6 +599,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return global font style of the chart
      */
+    @Nullable
     public TextStyle getTextStyle() {
         return options.getTextStyle();
     }
@@ -595,6 +617,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return {@code true} if animation if enabled, {@code false} otherwise
      */
+    @Nullable
     public Boolean getAnimation() {
         return options.getAnimation();
     }
@@ -611,6 +634,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return graphic number threshold to animation
      */
+    @Nullable
     public Integer getAnimationThreshold() {
         return options.getAnimationThreshold();
     }
@@ -628,6 +652,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return duration of the first draw animation in milliseconds
      */
+    @Nullable
     public Integer getAnimationDuration() {
         return options.getAnimationDuration();
     }
@@ -644,6 +669,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return easing method used for the first draw animation
      */
+    @Nullable
     public String getAnimationEasing() {
         return options.getAnimationEasing();
     }
@@ -661,6 +687,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return delay before updating the first draw animation in milliseconds
      */
+    @Nullable
     public Integer getAnimationDelay() {
         return options.getAnimationDelay();
     }
@@ -677,6 +704,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return time for animation to complete in milliseconds
      */
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return options.getAnimationDurationUpdate();
     }
@@ -693,6 +721,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return easing method used for update animation
      */
+    @Nullable
     public String getAnimationEasingUpdate() {
         return options.getAnimationEasingUpdate();
     }
@@ -710,6 +739,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return delay before updating animation in milliseconds
      */
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return options.getAnimationDelayUpdate();
     }
@@ -726,6 +756,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return state switching animation configurations
      */
+    @Nullable
     public ChartOptions.StateAnimation getStateAnimation() {
         return options.getStateAnimation();
     }
@@ -742,6 +773,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return the type of compositing operation to apply when drawing a new shape
      */
+    @Nullable
     public ChartOptions.BlendMode getBlendMode() {
         return options.getBlendMode();
     }
@@ -760,6 +792,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return the number of elements when exceeded, a separate hover layer is used to render hovered elements
      */
+    @Nullable
     public Integer getHoverLayerThreshold() {
         return options.getHoverLayerThreshold();
     }
@@ -776,6 +809,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return {@code true} if UTC is used in display, {@code false} otherwise
      */
+    @Nullable
     public Boolean getUseUtc() {
         return options.getUseUtc();
     }
@@ -978,7 +1012,8 @@ public class JmixChart extends Component implements HasSize {
                 (ChartIncrementalChanges<T>) changedItems.computeIfAbsent(getDataSet(),
                         k -> new ChartIncrementalChanges<>());
 
-        dataSetChanges.setSource(getDataSet().getSource());
+        // dataset can't be null
+        dataSetChanges.setSource(Objects.requireNonNull(getDataSet()).getSource());
 
         switch (operation) {
             case ADD -> dataSetChanges.addAddedItems(items);

@@ -70,6 +70,17 @@ public class RouteSupport {
     }
 
     /**
+     * Gets the {@link Location} of the currently shown view. The location is relative
+     * the servlet mapping used for serving the related UI.
+     *
+     * @param ui UI instance for which to get active view location
+     * @return the view {@link Location}, not {@code null}
+     */
+    public Location getActiveViewLocation(UI ui) {
+        return ui.getInternals().getActiveViewLocation();
+    }
+
+    /**
      * Updates the current url by adding the value of the given query parameter.
      * If a query parameter with the same name already exists, the new value is
      * added excluding duplicates, otherwise the query parameter is added.

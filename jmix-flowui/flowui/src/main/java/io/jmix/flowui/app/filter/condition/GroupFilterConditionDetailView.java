@@ -125,7 +125,7 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
                 refreshMoveButtonsState(itemChangeEvent.getItem()));
         operationField.addValueChangeListener(valueChangeEvent -> {
             if (valueChangeEvent.getValue() != null) {
-                getEditedEntity().setLocalizedLabel(valueChangeEvent.getValue().getId());
+                getEditedEntity().setLocalizedLabel(logicalFilterSupport.getOperationText(valueChangeEvent.getValue()));
             }
         });
 

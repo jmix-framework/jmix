@@ -68,7 +68,7 @@ public class DataExtractorImpl implements DataExtractor {
         }
 
         List<ReportBand> firstLevelBands = report.getRootBand().getChildren().stream()
-                .sorted((b1, b2) -> ((BandDefinition) b1).getPosition() - ((BandDefinition) b2).getPosition()).toList();
+                .sorted((b1, b2) -> b1.getPosition() - b2.getPosition()).toList();
         if (firstLevelBands != null) {
             for (ReportBand definition : firstLevelBands) {
                 List<BandData> bands = createBands(definition, rootBand, params);

@@ -27,6 +27,8 @@ public interface ReportBand extends Serializable {
 
     ReportBand getParent();
 
+    Integer getPosition();
+
     List<ReportBand> getChildren();
 
     List<ReportQuery> getReportQueries();

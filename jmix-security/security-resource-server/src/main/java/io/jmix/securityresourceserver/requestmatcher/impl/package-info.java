@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.authserver'
-archivesBaseName = 'jmix-authserver-starter'
+@NonNullApi
+package io.jmix.securityresourceserver.requestmatcher.impl;
 
-dependencies {
-    api project(':authserver')
-    api project(':security-resource-server')
-
-    implementation project(':core-starter')
-    implementation project(':security-starter')
-    implementation project(':security-resource-server-starter')
-
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
-}
+import org.springframework.lang.NonNullApi;

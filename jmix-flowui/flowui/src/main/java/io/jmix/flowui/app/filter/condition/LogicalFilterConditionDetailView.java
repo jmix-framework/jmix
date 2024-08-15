@@ -87,7 +87,7 @@ public abstract class LogicalFilterConditionDetailView<E extends LogicalFilterCo
     protected void prepareEditedEntity() {
         String localizedLabel = getEditedEntity().getOperation() == null
                 ? messageBundle.getMessage("logicalFilterConditionDetailView.emptyOperationTreeLabel")
-                : getEditedEntity().getOperation().getId();
+                : logicalFilterSupport.getOperationText(getEditedEntity().getOperation());
 
         getEditedEntity().setLocalizedLabel(localizedLabel);
 

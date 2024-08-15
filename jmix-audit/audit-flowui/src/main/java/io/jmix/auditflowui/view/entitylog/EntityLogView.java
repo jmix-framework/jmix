@@ -29,7 +29,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
@@ -144,10 +143,6 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected VerticalLayout loggedEntityTableBox;
     @ViewComponent
-    protected Tabs tabsheet;
-    @ViewComponent
-    protected VerticalLayout viewWrapper;
-    @ViewComponent
     protected FormLayout setupWrapper;
     @ViewComponent
     protected VerticalLayout loggedEntityMiscBox;
@@ -193,30 +188,10 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     @Autowired
     protected PolicyStore policyStore;
 
-
     protected Object selectedEntity;
 
     // allow or not selectAllCheckBox to change values of other checkboxes
     protected boolean canSelectAllCheckboxGenerateEvents = true;
-
-    protected void onSelectedTabChange(Tabs.SelectedChangeEvent event) {
-        String tabId = event.getSelectedTab().getId()
-                .orElse("<no_id>");
-
-        switch (tabId) {
-            case "view":
-                viewWrapper.setVisible(true);
-                setupWrapper.setVisible(false);
-                break;
-            case "setup":
-                viewWrapper.setVisible(false);
-                setupWrapper.setVisible(true);
-                break;
-            default:
-                viewWrapper.setVisible(false);
-                setupWrapper.setVisible(false);
-        }
-    }
 
     protected LocalDateTime getTillDateTime() {
         LocalDateTime tillDateTime = null;
@@ -245,8 +220,6 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
 
     @Subscribe
     protected void onInit(View.InitEvent event) {
-        tabsheet.addSelectedChangeListener(this::onSelectedTabChange);
-
         Map<String, String> changeTypeMap = new LinkedHashMap<>();
         changeTypeMap.put("C", messages.getMessage(EntityLogView.class, "createField"));
         changeTypeMap.put("M", messages.getMessage(EntityLogView.class, "modifyField"));
@@ -909,7 +882,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                         .map(entity -> (LoggedEntity) entity)
                         .toList();
 
-                if(loggedEntityImportedList.size() == 1) {
+                if (loggedEntityImportedList.size() == 1) {
                     LoggedEntity entity = loggedEntityImportedList.get(0);
                     loggedAttrDl.setParameter("entityId", entity.getId());
                     loggedAttrDl.load();

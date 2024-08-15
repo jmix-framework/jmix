@@ -101,7 +101,7 @@ public class ReportActionSupport {
         List<Report> reports = reportSecurityManager.getAvailableReports(
                 view.getId().orElse(null),
                 currentUserSubstitution.getEffectiveUser(),
-                inputValueMetaClass, null);
+                inputValueMetaClass);
 
         if (reports.size() > 1) {
             DialogWindow<ReportRunView> reportRunScreenDialogWindow = dialogWindows.lookup(view, Report.class)

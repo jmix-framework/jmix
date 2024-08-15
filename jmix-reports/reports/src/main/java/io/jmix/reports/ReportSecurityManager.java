@@ -113,6 +113,19 @@ public class ReportSecurityManager {
      * @param screenId            - id of the screen
      * @param user                - caller user
      * @param inputValueMetaClass - meta class of report input parameter
+     * @return list of available reports
+     */
+    public List<Report> getAvailableReports(@Nullable String screenId, @Nullable UserDetails user,
+                                            @Nullable MetaClass inputValueMetaClass) {
+        return getAvailableReports(screenId, user, inputValueMetaClass, null);
+    }
+
+    /**
+     * Returns a sorted list of reports, available for certain screen, user and input parameter
+     *
+     * @param screenId            - id of the screen
+     * @param user                - caller user
+     * @param inputValueMetaClass - meta class of report input parameter
      * @param sort                - sorting type for the reports list
      * @return list of available reports
      */

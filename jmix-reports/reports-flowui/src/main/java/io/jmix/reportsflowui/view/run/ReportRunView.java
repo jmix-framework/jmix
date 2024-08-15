@@ -171,7 +171,8 @@ public class ReportRunView extends StandardListView<Report> {
         reportsDc.setItems(reports);
     }
 
-    protected @Nullable Sort getReportGridSort() {
+    @Nullable
+    protected Sort getReportGridSort() {
         if (reportDataGrid.getSortOrder().isEmpty()) {
             return null;
         }

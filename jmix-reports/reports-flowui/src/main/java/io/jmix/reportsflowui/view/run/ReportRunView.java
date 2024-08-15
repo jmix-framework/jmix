@@ -174,7 +174,6 @@ public class ReportRunView extends StandardListView<Report> {
         String codeFilterValue = StringUtils.lowerCase(codeFilter.getTypedValue());
         ReportGroup groupFilterValue = groupFilter.getValue();
         Date dateFilterValue = updatedDateFilter.getTypedValue();
-
         List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
                         currentUserSubstitution.getEffectiveUser(), metaClassParameter, getReportGridSort())
                 .stream()

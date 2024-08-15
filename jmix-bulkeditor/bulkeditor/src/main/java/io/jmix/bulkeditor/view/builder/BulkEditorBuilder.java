@@ -23,8 +23,8 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

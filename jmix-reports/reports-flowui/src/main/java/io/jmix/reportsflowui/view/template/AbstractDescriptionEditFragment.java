@@ -22,8 +22,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public abstract class AbstractDescriptionEditFragment<C extends Component> extends Composite<C> {
 

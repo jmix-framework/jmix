@@ -33,7 +33,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.util.Collections;
 import java.util.List;

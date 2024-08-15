@@ -18,7 +18,7 @@ package io.jmix.quartz.model;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Represents predefined scenarios of trigger execution repeating

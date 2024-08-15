@@ -40,7 +40,7 @@ import io.jmix.flowui.entity.filter.JpqlFilterCondition;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

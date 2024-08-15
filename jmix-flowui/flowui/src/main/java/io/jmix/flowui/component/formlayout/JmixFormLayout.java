@@ -6,7 +6,7 @@ import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.data.HasValueSourceProvider;
 import io.jmix.flowui.data.ValueSourceProvider;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;

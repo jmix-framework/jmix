@@ -22,9 +22,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nullable;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Component("bulked_BulkEditViewBeanPropertyValidator")

@@ -25,7 +25,7 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.model.DataLoader;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 import java.util.Objects;

@@ -21,7 +21,7 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 @Component
 public class FileNotExistsExceptionHandler extends AbstractUiExceptionHandler {

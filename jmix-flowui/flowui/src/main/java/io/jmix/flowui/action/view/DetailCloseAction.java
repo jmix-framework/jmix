@@ -25,7 +25,7 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.ViewControllerUtils;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ActionType(DetailCloseAction.ID)

@@ -25,6 +25,8 @@ import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
@@ -39,6 +41,8 @@ import java.util.stream.Stream;
 
 @Component("sec_AuthenticationPolicyStore")
 public class AuthenticationPolicyStore implements PolicyStore {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationPolicyStore.class);
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
@@ -146,7 +150,11 @@ public class AuthenticationPolicyStore implements PolicyStore {
                 String defaultRolePrefix = roleGrantedAuthorityUtils.getDefaultRolePrefix();
                 if (roleCode.startsWith(defaultRolePrefix)) {
                     roleCode = roleCode.substring(defaultRolePrefix.length());
-                    ResourceRole resourceRole = resourceRoleRepository.getRoleByCode(roleCode);
+                    ResourceRole resourceRole = resourceRoleRepository.findRoleByCode(roleCode);
+                    if (resourceRole == null) {
+                        log.trace("ResourceRole '{}' not found", roleCode);
+                        continue;
+                    }
                     if (isAppliedForScope(resourceRole, scope)) {
                         Stream<ResourcePolicy> extractedStream = extractor.apply(resourceRole);
                         if (extractedStream != null) {
@@ -170,7 +178,11 @@ public class AuthenticationPolicyStore implements PolicyStore {
                 String defaultRowLevelRolePrefix = roleGrantedAuthorityUtils.getDefaultRowLevelRolePrefix();
                 if (roleName.startsWith(defaultRowLevelRolePrefix)) {
                     roleName = roleName.substring(defaultRowLevelRolePrefix.length());
-                    RowLevelRole rowLevelRole = rowLevelRoleRepository.getRoleByCode(roleName);
+                    RowLevelRole rowLevelRole = rowLevelRoleRepository.findRoleByCode(roleName);
+                    if (rowLevelRole == null) {
+                        log.trace("RowLevelRole '{}' not found", roleName);
+                        continue;
+                    }
                     Stream<RowLevelPolicy> extractedStream = extractor.apply(rowLevelRole);
                     if (extractedStream != null) {
                         stream = Stream.concat(stream, extractedStream);

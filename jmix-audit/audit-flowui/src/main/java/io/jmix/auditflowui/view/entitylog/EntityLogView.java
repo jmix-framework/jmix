@@ -891,6 +891,8 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                 notifications.create(messages.getMessage(EntityLogView.class, "importSuccessful"))
                         .withType(Notifications.Type.SUCCESS)
                         .show();
+
+                entityLog.invalidateCache();
             }
         } catch (Exception e) {
             log.warn("Unable to import logged entity", e);

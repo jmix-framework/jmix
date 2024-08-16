@@ -46,7 +46,7 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
-    protected SearchStrategyProvider<SearchStrategy> searchStrategyProvider;
+    protected SearchStrategyProvider<? extends SearchStrategy> searchStrategyProvider;
 
     @Override
     public InstanceContainer<FullTextFilterCondition> getInstanceContainer() {
@@ -78,7 +78,7 @@ public class FullTextFilterConditionDetailView extends FilterConditionDetailView
     }
 
     private void initSearchStrategyNameItems() {
-        Collection<SearchStrategy> searchStrategies = searchStrategyProvider.getAllSearchStrategies();
+        Collection<? extends SearchStrategy> searchStrategies = searchStrategyProvider.getAllSearchStrategies();
         List<String> searchStrategyNames = searchStrategies.stream()
                 .map(SearchStrategy::getName)
                 .collect(Collectors.toList());

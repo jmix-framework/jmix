@@ -19,6 +19,11 @@ public class DefaultOidcUserMapper extends BaseOidcUserMapper<DefaultJmixOidcUse
         this.claimsRolesMapper = claimsRolesMapper;
     }
 
+    @Override
+    protected String getOidcUserUsername(OidcUser oidcUser) {
+        return oidcUser.getName();
+    }
+
     protected DefaultJmixOidcUser initJmixUser(OidcUser oidcUser) {
         return new DefaultJmixOidcUser();
     }

@@ -11,13 +11,28 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
  */
 public abstract class BaseOidcUserMapper<T extends JmixOidcUser> implements OidcUserMapper<T> {
 
+    /**
+     * Extracts username from the {@code oidcUser}
+     *
+     * @return username
+     */
+    protected abstract String getOidcUserUsername(OidcUser oidcUser);
+
+    /**
+     * Method returns an instance of Jmix user, which is enriched with additional data.
+     *
+     * @param oidcUser OpenID user
+     * @return Jmix user instance
+     */
     @Override
     public T toJmixUser(OidcUser oidcUser) {
-        T jmixUser = initJmixUser(oidcUser);
-        populateUserAttributes(oidcUser, jmixUser);
-        populateUserAuthorities(oidcUser, jmixUser);
-        performAdditionalModifications(oidcUser, jmixUser);
-        return jmixUser;
+        synchronized (getOidcUserUsername(oidcUser)) {
+            T jmixUser = initJmixUser(oidcUser);
+            populateUserAttributes(oidcUser, jmixUser);
+            populateUserAuthorities(oidcUser, jmixUser);
+            performAdditionalModifications(oidcUser, jmixUser);
+            return jmixUser;
+        }
     }
 
     /**

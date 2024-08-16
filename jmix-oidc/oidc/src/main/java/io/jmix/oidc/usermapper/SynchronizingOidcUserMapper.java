@@ -59,6 +59,7 @@ public abstract class SynchronizingOidcUserMapper<T extends JmixOidcUser> extend
     /**
      * Extracts username from the {@code oidcUser}
      */
+    @Override
     protected String getOidcUserUsername(OidcUser oidcUser) {
         return oidcUser.getName();
     }

@@ -311,7 +311,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         filterQueryParametersChange = initQueryParametersBinder(
                 filterQueryParametersChange,
                 () -> new GenericFilterUrlQueryParametersBinder(
-                        genericFilter, urlParamSerializer, getApplicationContext(), metadataTools
+                        genericFilter, urlParamSerializer, getApplicationContext()
                 )
         );
 

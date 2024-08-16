@@ -19,7 +19,6 @@ package io.jmix.flowui.xml.facet;
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
-import io.jmix.core.MetadataTools;
 import io.jmix.flowui.component.PaginationComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
@@ -46,7 +45,6 @@ import org.springframework.lang.Nullable;
 @org.springframework.stereotype.Component("flowui_UrlQueryParametersFacetProvider")
 public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryParametersFacet>, ApplicationContextAware {
 
-    private final MetadataTools metadataTools;
     protected LoaderSupport loaderSupport;
     protected RouteSupport routeSupport;
     protected UrlParamSerializer urlParamSerializer;
@@ -54,11 +52,10 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
 
     public UrlQueryParametersFacetProvider(LoaderSupport loaderSupport,
                                            RouteSupport routeSupport,
-                                           UrlParamSerializer urlParamSerializer, MetadataTools metadataTools) {
+                                           UrlParamSerializer urlParamSerializer) {
         this.loaderSupport = loaderSupport;
         this.routeSupport = routeSupport;
         this.urlParamSerializer = urlParamSerializer;
-        this.metadataTools = metadataTools;
     }
 
     @Override
@@ -144,7 +141,7 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         String conditionParam = loadAttribute(element, "conditionParam");
 
         context.addPreInitTask(new GenericFilterQueryParametersBinderInitTask(
-                facet, componentId, binderId, configurationParam, conditionParam, urlParamSerializer, applicationContext, metadataTools
+                facet, componentId, binderId, configurationParam, conditionParam, urlParamSerializer, applicationContext
         ));
     }
 
@@ -312,7 +309,6 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         protected final String conditionParam;
         protected final UrlParamSerializer urlParamSerializer;
         protected final ApplicationContext applicationContext;
-        private final MetadataTools _metadataTools;
 
         public GenericFilterQueryParametersBinderInitTask(UrlQueryParametersFacet facet,
                                                           String componentId,
@@ -320,7 +316,7 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
                                                           @Nullable String configurationParam,
                                                           @Nullable String conditionParam,
                                                           UrlParamSerializer urlParamSerializer,
-                                                          ApplicationContext applicationContext, MetadataTools metadataTools) {
+                                                          ApplicationContext applicationContext) {
             this.facet = facet;
             this.binderId = binderId;
             this.componentId = componentId;
@@ -328,7 +324,6 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
             this.conditionParam = conditionParam;
             this.urlParamSerializer = urlParamSerializer;
             this.applicationContext = applicationContext;
-            _metadataTools = metadataTools;
         }
 
         @Override
@@ -342,7 +337,7 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
 
             GenericFilterUrlQueryParametersBinder binder =
                     new GenericFilterUrlQueryParametersBinder(((GenericFilter) component),
-                            urlParamSerializer, applicationContext, _metadataTools);
+                            urlParamSerializer, applicationContext);
 
             binder.setId(binderId);
             binder.setConfigurationParam(configurationParam);

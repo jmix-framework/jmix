@@ -77,7 +77,6 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected String conditionParam;
 
     protected ApplicationContext applicationContext;
-    private final MetadataTools metadataTools;
     protected UrlParamSerializer urlParamSerializer;
     protected UiComponents uiComponents;
     protected SingleFilterSupport singleFilterSupport;
@@ -88,12 +87,10 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     public GenericFilterUrlQueryParametersBinder(GenericFilter filter,
                                                  UrlParamSerializer urlParamSerializer,
-                                                 ApplicationContext applicationContext,
-                                                 MetadataTools metadataTools) {
+                                                 ApplicationContext applicationContext) {
         this.filter = filter;
         this.urlParamSerializer = urlParamSerializer;
         this.applicationContext = applicationContext;
-        this.metadataTools = metadataTools;
 
         autowireDependencies();
         initComponent(filter);
@@ -247,7 +244,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected boolean isPermitted(DataLoader dataLoader, FilterComponent filterComponent) {
         if (filterComponent instanceof PropertyFilter<?> propertyFilter && propertyFilter.getProperty() != null) {
             MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
-            MetaPropertyPath propertyPath = metadataTools.resolveMetaPropertyPathOrNull(entityMetaClass, propertyFilter.getProperty());
+            MetaPropertyPath propertyPath = recieveMetadataTools().resolveMetaPropertyPathOrNull(entityMetaClass, propertyFilter.getProperty());
 
             Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
             if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {
@@ -264,6 +261,10 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
                     !propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class);
         }
         return true;
+    }
+
+    private MetadataTools recieveMetadataTools() {
+        return applicationContext.getBean(MetadataTools.class);
     }
 
     protected void updateConfigurationConditions(Configuration currentConfiguration, List<String> conditionParams) {

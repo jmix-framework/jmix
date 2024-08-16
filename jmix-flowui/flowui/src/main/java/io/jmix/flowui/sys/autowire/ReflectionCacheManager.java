@@ -336,6 +336,52 @@ public class ReflectionCacheManager {
     }
 
     /**
+     * Creates or gets from cache a method factory for any event listener methods.
+     *
+     * @param ownerClass          owner class for target event listener method handle
+     * @param annotatedMethod     annotated method
+     * @param interfaceMethodName name of the target interface method
+     * @param listenerClass       listener class
+     * @param eventClass          event class
+     * @return a factory to create event listener method handle
+     */
+    public MethodHandle getEventListenerMethodFactory(Class<?> ownerClass,
+                                                      AnnotatedMethod<Subscribe> annotatedMethod,
+                                                      String interfaceMethodName,
+                                                      Class<?> listenerClass,
+                                                      Class<?> eventClass) {
+        MethodHandle lambdaMethodFactory;
+        MethodHandle methodHandle = annotatedMethod.getMethodHandle();
+
+        try {
+            lambdaMethodFactory = lambdaMethodsCache.get(methodHandle, () -> {
+                MethodType type = MethodType.methodType(void.class, eventClass);
+                MethodType listenerType = MethodType.methodType(listenerClass, ownerClass);
+
+                Class<?> callerClass = Modifier.isPrivate(annotatedMethod.getMethod().getModifiers())
+                        ? annotatedMethod.getMethod().getDeclaringClass()
+                        : ownerClass;
+
+                MethodHandles.Lookup caller = lambdaLookupProvider.apply(callerClass);
+                CallSite site;
+                try {
+                    site = LambdaMetafactory.metafactory(
+                            caller, interfaceMethodName, listenerType,
+                            type, methodHandle, type);
+                } catch (LambdaConversionException e) {
+                    throw new RuntimeException("Unable to build lambda consumer " + methodHandle, e);
+                }
+
+                return site.getTarget();
+            });
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Unable to get lambda factory", e);
+        }
+
+        return lambdaMethodFactory;
+    }
+
+    /**
      * Clear underlying reflection caches.
      */
     public void clearCache() {

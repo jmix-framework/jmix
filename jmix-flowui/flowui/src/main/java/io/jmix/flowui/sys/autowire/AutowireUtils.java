@@ -34,6 +34,7 @@ import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.kit.component.dropdownbutton.ActionItem;
 import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem;
 import io.jmix.flowui.model.InstallSubject;
+import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager.AnnotatedMethod;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager.AutowireElement;
 import io.jmix.flowui.sys.delegate.*;
@@ -195,6 +196,39 @@ public final class AutowireUtils {
             case DATA_LOADER -> ViewControllerUtils.getViewData(view).getLoader(targetId);
             case DATA_CONTAINER -> ViewControllerUtils.getViewData(view).getContainer(targetId);
             default -> findMethodTarget(view, targetId, UiComponentUtils::findComponent);
+        };
+    }
+
+    /**
+     * Find the target fot the {@link Subscribe} annotated method in passed view by targetType and targetId.
+     *
+     * @param view       view for search
+     * @param targetId   target ID
+     * @param targetType type of the target
+     * @return found target object or {@code null} if target not found
+     * @throws UnsupportedOperationException if the targetId is {@code null} and the targetType
+     *                                       is not {@link Target#COMPONENT}, {@link Target#CONTROLLER}
+     *                                       or {@link Target#DATA_CONTEXT}
+     */
+    @Nullable
+    public static Object getViewSubscribeTargetInstance(View<?> view, @Nullable String targetId, Target targetType) {
+        ViewData viewData = ViewControllerUtils.getViewData(view);
+
+        return Strings.isNullOrEmpty(targetId) ? switch (targetType) {
+            case COMPONENT, CONTROLLER -> view;
+            case DATA_CONTEXT -> viewData.getDataContext();
+            default -> throw new UnsupportedOperationException(String.format("Unsupported @%s targetId %s",
+                    Subscribe.class.getSimpleName(), targetType));
+        } : switch (targetType) {
+            case COMPONENT -> AutowireUtils.findMethodTarget(view, targetId, UiComponentUtils::findComponent);
+            case DATA_LOADER -> viewData.getLoaderIds().contains(targetId)
+                    ? viewData.getLoader(targetId)
+                    : null;
+            case DATA_CONTAINER -> viewData.getContainerIds().contains(targetId)
+                    ? viewData.getContainer(targetId)
+                    : null;
+            default -> throw new UnsupportedOperationException(String.format("Unsupported @%s targetId %s",
+                    Subscribe.class.getSimpleName(), targetType));
         };
     }
 

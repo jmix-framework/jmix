@@ -634,8 +634,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             InstanceContainer<T> container = getEditedEntityContainer();
             FetchPlan fetchPlan = container.getFetchPlan();
             if (fetchPlan == null) {
-                // DTO entities don't have fetch plan - unable to proceed
-                return true;
+                MetadataTools metadataTools = getMetadataTools();
+                MetaClass entityMetaClass = container.getEntityMetaClass();
+                if (!metadataTools.isJpaEntity(entityMetaClass)) {
+                    // DTO entity doesn't have fetch plan - unable to proceed
+                    return true;
+                }
             }
             return getEntityStates().isLoadedWithFetchPlan(entityToEdit, fetchPlan);
         }

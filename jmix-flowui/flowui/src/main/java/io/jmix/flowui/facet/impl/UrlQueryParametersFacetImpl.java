@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.facet.impl;
 
+import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
@@ -24,8 +25,8 @@ import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.navigation.RouteSupport;
-
 import org.springframework.lang.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -81,14 +82,19 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
         }
 
         owner.getUI().ifPresent(ui ->
-                routeSupport.fetchCurrentLocation(ui, location -> {
+                ui.beforeClientResponse(owner, __ -> {
+                    // must be executed immediately before the client responds,
+                    // otherwise the server-side location will be the previous one
+                    Location location = routeSupport.getActiveViewLocation(ui);
+
                     QueryParameters queryParameters = routeSupport.mergeQueryParameters(
                             location.getQueryParameters(),
                             event.getQueryParameters()
                     );
 
                     routeSupport.setQueryParameters(ui, queryParameters);
-                }));
+                })
+        );
     }
 
     @Override

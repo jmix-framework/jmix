@@ -26,7 +26,7 @@ import java.lang.annotation.*;
 @Documented
 @Constraint(validatedBy = JavaFieldNameSupportedSymbolsValidator.class)
 public @interface JavaFieldNameSupportedSymbols {
-    String message() default "The field can only contain latin letters or digits. First letter have to be a latin letter.";
+    String message() default "The field can contain only Latin letters, digits and \"_\" symbol. First letter have to be a lowercase Latin letter.";
 
     Class<?>[] groups() default {};
 

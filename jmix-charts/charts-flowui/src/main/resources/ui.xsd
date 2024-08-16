@@ -1463,7 +1463,7 @@
             </xs:element>
 
             <xs:element name="inBrush" type="visualEffectType"/>
-            <xs:element name="outBrush" type="visualEffectType"/>
+            <xs:element name="outOfBrush" type="visualEffectType"/>
         </xs:sequence>
 
         <xs:attribute name="id" type="xs:string"/>

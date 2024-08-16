@@ -861,10 +861,10 @@ public interface StudioChartsElements {
     VisualEffect inBrush();
 
     @StudioElement(
-            name = "OutBrush",
+            name = "OutOfBrush",
             classFqn = "io.jmix.chartsflowui.kit.component.model.shared.VisualEffect",
             target = {"io.jmix.chartsflowui.kit.component.model.Brush"},
-            xmlElement = "outBrush",
+            xmlElement = "outOfBrush",
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             unlimitedCount = false,
@@ -904,7 +904,7 @@ public interface StudioChartsElements {
                     @StudioProperty(xmlAttribute = "colorHue", type = StudioPropertyType.VALUES_LIST)
             }
     )
-    VisualEffect outBrush();
+    VisualEffect outOfBrush();
 
     @StudioElement(
             name = "InRange",

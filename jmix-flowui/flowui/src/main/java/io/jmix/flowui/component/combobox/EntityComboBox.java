@@ -93,7 +93,12 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
     @Override
     public void setValueFromClient(@Nullable V value) {
         checkValueType(value);
+
+        getDataProvider().refreshItem(value);
+
         setModelValue(value, true);
+
+        refreshValue();
     }
 
     protected void checkValueType(@Nullable V value) {

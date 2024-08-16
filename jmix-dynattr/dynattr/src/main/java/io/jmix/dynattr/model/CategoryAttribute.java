@@ -95,6 +95,7 @@ public class CategoryAttribute implements Serializable {
     @Column(name = "NAME", nullable = false)
     private String name;
 
+    @JavaFieldNameSupportedSymbols(message = "{msg://io.jmix.dynattr.model/CategoryAttribute.wrongCodeValueFormat.message}")
     @Column(name = "CODE", nullable = false)
     private String code;
 

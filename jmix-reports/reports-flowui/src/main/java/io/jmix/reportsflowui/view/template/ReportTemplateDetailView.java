@@ -18,10 +18,9 @@ package io.jmix.reportsflowui.view.template;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -36,10 +35,8 @@ import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
 import io.jmix.flowui.component.select.JmixSelect;
-import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.upload.FileUploadField;
-import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.upload.event.FileUploadFailedEvent;
@@ -268,14 +265,14 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     }
 
     protected void openCustomDefinitionHelpDialog() {
-        if ( hasScriptCustomDefinedBy(getEditedEntity().getCustomDefinedBy())) {
+        if (hasScriptCustomDefinedBy(getEditedEntity().getCustomDefinedBy())) {
             dialogs.createMessageDialog()
-                .withHeader(messageBundle.getMessage("customDefinitionField.helpIcon.dialog.header"))
-                .withContent(new Html(messageBundle.getMessage("customDefinitionField.helpIcon.dialog.content")))
-                .withResizable(true)
-                .withModal(false)
-                .withWidth("50em")
-                .open();
+                    .withHeader(messageBundle.getMessage("customDefinitionField.helpIcon.dialog.header"))
+                    .withContent(new Html(messageBundle.getMessage("customDefinitionField.helpIcon.dialog.content")))
+                    .withResizable(true)
+                    .withModal(false)
+                    .withWidth("50em")
+                    .open();
         }
     }
 
@@ -331,6 +328,9 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                             .withText(messageBundle.getMessage("reportTemplateDetailView.clearTemplateWarning.text"))
                             .open();
                 }
+                if (newOutputType != null && prevOutputType != null && StringUtils.isNotBlank(reportTemplate.getOutputNamePattern())) {
+                    updateOutputNamePattern(newOutputType, prevOutputType);
+                }
                 break;
             }
             case CUSTOM_PROPERTY: {
@@ -384,11 +384,12 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         String extension = FilenameUtils.getExtension(templateUploadField.getFileName());
         ReportOutputType outputType = ReportOutputType.getTypeFromExtension(extension.toUpperCase());
         reportScriptEditor.create(this)
-                .withTitle( messageBundle.getMessage("templateFileEditorFullScreen.title"))
+                .withTitle(messageBundle.getMessage("templateFileEditorFullScreen.title"))
                 .withValue(new String(reportTemplateDc.getItem().getContent(), StandardCharsets.UTF_8))
                 .withEditorMode(outputType == ReportOutputType.HTML ? CodeEditorMode.HTML : CodeEditorMode.TEXT)
                 .withCloseOnClick(value -> reportTemplateDc.getItem().setContent(value.getBytes(StandardCharsets.UTF_8)))
-                .withHelpOnClick(() -> {})
+                .withHelpOnClick(() -> {
+                })
                 .open();
     }
 
@@ -502,6 +503,34 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 outputTypeField.setValue(reportOutputType);
             }
         }
+    }
+
+    protected void updateOutputNamePattern(ReportOutputType value, ReportOutputType prevValue) {
+        if (!hasSupportedFileExtension(value)) {
+            return;
+        }
+
+        String prevOutputFileName = getEditedEntity().getOutputNamePattern();
+
+        String extensionToReplace = null;
+        if (!hasSupportedFileExtension(prevValue)) {
+            String prevFileExtension = FilenameUtils.getExtension(prevOutputFileName);
+            ReportOutputType reportOutputType = ReportOutputType.getTypeFromExtension(prevFileExtension);
+            if (reportOutputType != null && hasSupportedFileExtension(reportOutputType)) {
+                extensionToReplace = prevFileExtension;
+            }
+        } else if (StringUtils.endsWith(prevOutputFileName, "." + prevValue.name())) {
+            extensionToReplace = prevValue.name();
+        }
+
+        if (extensionToReplace != null) {
+            String newOutputFileName = prevOutputFileName.replace(extensionToReplace, value.name());
+            getEditedEntity().setOutputNamePattern(newOutputFileName);
+        }
+    }
+
+    protected boolean hasSupportedFileExtension(ReportOutputType reportOutputType) {
+        return reportOutputType != ReportOutputType.CUSTOM && hasTemplateOutput(reportOutputType);
     }
 
     protected boolean hasTemplateOutput(ReportOutputType reportOutputType) {

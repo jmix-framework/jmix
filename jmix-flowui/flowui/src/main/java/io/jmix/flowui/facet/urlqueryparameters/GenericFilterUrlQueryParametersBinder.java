@@ -23,6 +23,7 @@ import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.AccessManager;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -79,6 +80,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected UrlParamSerializer urlParamSerializer;
     protected UiComponents uiComponents;
     protected SingleFilterSupport singleFilterSupport;
+    protected MetadataTools metadataTools;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
     protected AccessManager accessManager;
 
@@ -243,7 +245,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected boolean isPermitted(DataLoader dataLoader, FilterComponent filterComponent) {
         if (filterComponent instanceof PropertyFilter<?> propertyFilter && propertyFilter.getProperty() != null) {
             MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
-            MetaPropertyPath propertyPath = entityMetaClass.getPropertyPath(propertyFilter.getProperty());
+            MetaPropertyPath propertyPath = getMetadataTools().resolveMetaPropertyPathOrNull(entityMetaClass, propertyFilter.getProperty());
 
             Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
             if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {
@@ -429,6 +431,13 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     protected boolean isOperationMatched(PropertyFilter<?> propertyFilter, PropertyFilter<?> anotherPropertyFilter) {
         return Objects.equals(propertyFilter.getOperation(), anotherPropertyFilter.getOperation());
+    }
+
+    protected MetadataTools getMetadataTools() {
+        if (metadataTools == null) {
+            metadataTools = applicationContext.getBean(MetadataTools.class);
+        }
+        return metadataTools;
     }
 
     protected SingleFilterSupport getSingleFilterSupport() {

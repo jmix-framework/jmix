@@ -481,7 +481,10 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         screenField.setVisible(isEntity);
         enumerationField.setVisible(isEnum);
         predefinedTransformationBox.setVisible(isText);
-        UiComponentUtils.setValue(isPredefinedTransformationField, isText);
+
+        if (!isText) {
+            UiComponentUtils.setValue(isPredefinedTransformationField, false);
+        }
 
         initDefaultValueField();
         initCurrentDateTimeField();

@@ -80,6 +80,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected UrlParamSerializer urlParamSerializer;
     protected UiComponents uiComponents;
     protected SingleFilterSupport singleFilterSupport;
+    protected MetadataTools metadataTools;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
     protected AccessManager accessManager;
 
@@ -244,7 +245,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected boolean isPermitted(DataLoader dataLoader, FilterComponent filterComponent) {
         if (filterComponent instanceof PropertyFilter<?> propertyFilter && propertyFilter.getProperty() != null) {
             MetaClass entityMetaClass = dataLoader.getContainer().getEntityMetaClass();
-            MetaPropertyPath propertyPath = recieveMetadataTools().resolveMetaPropertyPathOrNull(entityMetaClass, propertyFilter.getProperty());
+            MetaPropertyPath propertyPath = getMetadataTools().resolveMetaPropertyPathOrNull(entityMetaClass, propertyFilter.getProperty());
 
             Predicate<MetaPropertyPath> propertyFiltersPredicate = filter.getPropertyFiltersPredicate();
             if (propertyFiltersPredicate != null && !propertyFiltersPredicate.test(propertyPath)) {
@@ -261,10 +262,6 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
                     !propertyPath.getMetaProperty().getAnnotatedElement().isAnnotationPresent(SystemLevel.class);
         }
         return true;
-    }
-
-    private MetadataTools recieveMetadataTools() {
-        return applicationContext.getBean(MetadataTools.class);
     }
 
     protected void updateConfigurationConditions(Configuration currentConfiguration, List<String> conditionParams) {
@@ -434,6 +431,13 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     protected boolean isOperationMatched(PropertyFilter<?> propertyFilter, PropertyFilter<?> anotherPropertyFilter) {
         return Objects.equals(propertyFilter.getOperation(), anotherPropertyFilter.getOperation());
+    }
+
+    protected MetadataTools getMetadataTools() {
+        if (metadataTools == null) {
+            metadataTools = applicationContext.getBean(MetadataTools.class);
+        }
+        return metadataTools;
     }
 
     protected SingleFilterSupport getSingleFilterSupport() {

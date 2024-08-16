@@ -17,18 +17,17 @@
 package io.jmix.core.metamodel.model;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Metadata object representing an entity.
- *
  */
 public interface MetaClass extends MetadataObject {
 
     /**
      * @return containing MetaModel instance. Null signifies a temporary metaclass, not associated with an entity class.
-     *
      */
     @Nullable
     Session getSession();
@@ -56,6 +55,7 @@ public interface MetaClass extends MetadataObject {
 
     /**
      * Get MetaProperty by its name.
+     *
      * @return MetaProperty instance, or null if no such property found
      */
     @Nullable
@@ -63,6 +63,7 @@ public interface MetaClass extends MetadataObject {
 
     /**
      * Get MetaProperty by its name.
+     *
      * @return MetaProperty instance. Throws exception if not found.
      */
     MetaProperty getProperty(String name);
@@ -71,8 +72,10 @@ public interface MetaClass extends MetadataObject {
      * Returns MetaPropertyPath object, representing path to the property from the current class
      * Note that this method don't take into account extensions(e.g. Dynamic Attributes add-on) and it returns null
      * in case of not static attributes(attributes from extension).
-     * For getting all attributes (including attributes from extensions) use {@link io.jmix.core.MetadataTools#resolveMetaPropertyPath(MetaClass, String)}
+     * For getting all attributes (including attributes from extensions)
+     * use {@link io.jmix.core.MetadataTools#resolveMetaPropertyPath(MetaClass, String)}
      * or {@link io.jmix.core.MetadataTools#resolveMetaPropertyPathOrNull(MetaClass, String)} methods.
+     *
      * @param propertyPath dot-separated string
      * @return MetaPropertyPath instance, or null if the input parameter doesn't represent a valid path.
      */

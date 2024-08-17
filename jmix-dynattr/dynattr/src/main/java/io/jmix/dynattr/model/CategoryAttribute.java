@@ -21,7 +21,6 @@ import io.jmix.core.Metadata;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
@@ -33,6 +32,7 @@ import io.jmix.dynattr.impl.CategoryAttributeConfigurationConvertor;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -52,8 +52,10 @@ import java.util.*;
 public class CategoryAttribute implements Serializable {
     private static final long serialVersionUID = -6959392628534815752L;
 
+    static final String CODE_FIELD_REGEXP = "^[a-z]\\w*$";
+
     @Id
-    @Column(name = "ID")
+    @Column(name = "ID", nullable = false)
     @JmixGeneratedValue
     private UUID id;
 
@@ -86,7 +88,7 @@ public class CategoryAttribute implements Serializable {
     private String deletedBy;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "CATEGORY_ID")
+    @JoinColumn(name = "CATEGORY_ID", nullable = false)
     private Category category;
 
     @Column(name = "CATEGORY_ENTITY_TYPE")
@@ -95,7 +97,8 @@ public class CategoryAttribute implements Serializable {
     @Column(name = "NAME", nullable = false)
     private String name;
 
-    @JavaFieldNameSupportedSymbols(message = "{msg://io.jmix.dynattr.model/CategoryAttribute.wrongCodeValueFormat.message}")
+    @NotNull(message = "{msg://io.jmix.dynattr.model/CategoryAttribute.code.validation.NotNull}")
+    @Pattern(message = "{msg://io.jmix.dynattr.model/CategoryAttribute.code.validation.wrongCodeValueFormat}", regexp = "^[a-z]\\w*$")
     @Column(name = "CODE", nullable = false)
     private String code;
 
@@ -118,7 +121,6 @@ public class CategoryAttribute implements Serializable {
             @AttributeOverride(name = "intEntityId", column = @Column(name = "DEFAULT_INT_ENTITY_VALUE")),
             @AttributeOverride(name = "longEntityId", column = @Column(name = "DEFAULT_LONG_ENTITY_VALUE"))
     })
-    @EmbeddedParameters(nullAllowed = true)
     private ReferenceToEntity defaultEntity;
 
     @Column(name = "ORDER_NO")
@@ -187,7 +189,6 @@ public class CategoryAttribute implements Serializable {
     @Column(name = "ENUMERATION_LOCALES")
     protected String enumerationLocales;
 
-    @Column(name = "ATTRIBUTE_CONFIGURATION_JSON")
     @Convert(converter = CategoryAttributeConfigurationConvertor.class)
     protected CategoryAttributeConfiguration configuration;
 

@@ -18,9 +18,7 @@ package io.jmix.datatoolsflowui.view.entityinspector.assistant;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import io.jmix.core.AccessManager;
-import io.jmix.core.EntityStates;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -60,13 +58,9 @@ public class InspectorFormLayoutBuilder {
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
-    protected EntityStates entityStates;
-    @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
     @Autowired
     protected Actions actions;
-    @Autowired
-    protected Messages messages;
     @Autowired
     protected MessageTools messageTools;
     @Autowired
@@ -77,15 +71,17 @@ public class InspectorFormLayoutBuilder {
     protected com.vaadin.flow.component.Component ownerComponent;
 
     protected List<String> disabledProperties;
+    protected boolean isNewEntity;
 
     public static InspectorFormLayoutBuilder from(
             ApplicationContext applicationContext,
-            InstanceContainer container) {
-        return applicationContext.getBean(InspectorFormLayoutBuilder.class, container);
+            InstanceContainer container, boolean isNewEntity) {
+        return applicationContext.getBean(InspectorFormLayoutBuilder.class, container, isNewEntity);
     }
 
-    protected InspectorFormLayoutBuilder(InstanceContainer container) {
+    protected InspectorFormLayoutBuilder(InstanceContainer container, boolean isNewEntity) {
         this.container = container;
+        this.isNewEntity = isNewEntity;
     }
 
     public InspectorFormLayoutBuilder withOwnerComponent(com.vaadin.flow.component.Component component) {
@@ -100,7 +96,6 @@ public class InspectorFormLayoutBuilder {
 
     public FormLayout build() {
         MetaClass metaClass = container.getEntityMetaClass();
-        Object item = getItem();
 
         FormLayout form = uiComponents.create(FormLayout.class);
         form.setResponsiveSteps(
@@ -135,13 +130,13 @@ public class InspectorFormLayoutBuilder {
                     }
                     if (metadataTools.isJpa(metaProperty)
                             && metadataTools.isAnnotationPresent(
-                            item,
+                            metaClass.getJavaClass(),
                             metaProperty.getName(),
                             Convert.class)) {
                         continue;
                     }
 
-                    if (includeId && !entityStates.isNew(item)) {
+                    if (includeId && !isNewEntity) {
                         isReadonly = true;
                     }
 
@@ -158,10 +153,6 @@ public class InspectorFormLayoutBuilder {
             }
         }
         return form;
-    }
-
-    private Object getItem() {
-        return container.getItem();
     }
 
     /**

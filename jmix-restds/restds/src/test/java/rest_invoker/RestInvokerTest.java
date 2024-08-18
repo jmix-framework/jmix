@@ -83,7 +83,7 @@ class RestInvokerTest {
         customer.setEmail("test@mail.com");
 
         Customer createdCustomer = restSerialization.fromJson(
-                restInvoker.create("Customer", restSerialization.toJson(customer)),
+                restInvoker.create("Customer", restSerialization.toJson(customer, true)),
                 Customer.class);
 
         assertThat(createdCustomer).isNotNull();
@@ -93,7 +93,7 @@ class RestInvokerTest {
         createdCustomer.setLastName("updated-cust-" + LocalDateTime.now());
 
         Customer updatedCustomer = restSerialization.fromJson(
-                restInvoker.update("Customer", createdCustomer.getId().toString(), restSerialization.toJson(createdCustomer)),
+                restInvoker.update("Customer", createdCustomer.getId().toString(), restSerialization.toJson(createdCustomer, true)),
                 Customer.class);
 
         assertThat(updatedCustomer).isNotNull();
@@ -116,7 +116,7 @@ class RestInvokerTest {
         customer.setLastName(newName);
         customer.setEmail("test@mail.com");
 
-        String entityJson = restSerialization.toJson(customer);
+        String entityJson = restSerialization.toJson(customer, true);
         String createdJson = restInvoker.create("Customer", entityJson);
 
         assertThat(createdJson).isNotNull();
@@ -135,7 +135,7 @@ class RestInvokerTest {
         customer.setLastName(newName);
         customer.setEmail("test@mail.com");
 
-        restInvoker.create("Customer", restSerialization.toJson(customer));
+        restInvoker.create("Customer", restSerialization.toJson(customer, true));
 
         long customerCount = restInvoker.count("Customer", null);
 
@@ -164,13 +164,13 @@ class RestInvokerTest {
         String newName1 = "new-cust-1-" + LocalDateTime.now();
         customer1.setLastName(newName1);
         customer1.setEmail("test@mail.com");
-        restInvoker.create("Customer", restSerialization.toJson(customer1));
+        restInvoker.create("Customer", restSerialization.toJson(customer1, true));
 
         Customer customer2 = metadata.create(Customer.class);
         String newName2 = "new-cust-2-" + LocalDateTime.now();
         customer2.setLastName(newName2);
         customer2.setEmail("test@mail.com");
-        restInvoker.create("Customer", restSerialization.toJson(customer2));
+        restInvoker.create("Customer", restSerialization.toJson(customer2, true));
 
         String filter = """
                 {

@@ -45,8 +45,10 @@ import java.util.function.BiConsumer;
 public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     protected byte state = NEW;
     protected SecurityState securityState = new SecurityState();
-    protected transient Collection<WeakReference<EntityPropertyChangeListener>> propertyChangeListeners;
+    protected transient Collection<WeakReference<EntityPropertyChangeListener>> weakPropertyChangeListeners;
+    protected Collection<EntityPropertyChangeListener> propertyChangeListeners;
     protected Entity source;
+    protected Set<String> loadedProperties;
     protected Map<Class<?>, EntityEntryExtraState> extraStateMap;
     protected Map<Class<?>, EntityValuesProvider> entityValuesProviders;
 
@@ -55,7 +57,8 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     public static final int MANAGED = 4;
     public static final int REMOVED = 8;
 
-    protected static final int PROPERTY_CHANGE_LISTENERS_INITIAL_CAPACITY = 4;
+    protected static final int PROPERTY_CHANGE_LISTENERS_INITIAL_CAPACITY = 1;
+    protected static final int WEAK_PROPERTY_CHANGE_LISTENERS_INITIAL_CAPACITY = 4;
 
     public BaseEntityEntry(Entity source) {
         this.source = source;
@@ -146,6 +149,16 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
         state = (byte) (removed ? state | REMOVED : state & ~REMOVED);
     }
 
+    @Nullable
+    @Override
+    public Set<String> getLoadedProperties() {
+        return loadedProperties;
+    }
+
+    public void setLoadedProperties(@Nullable Set<String> loadedProperties) {
+        this.loadedProperties = loadedProperties;
+    }
+
     @NonNull
     @Override
     public SecurityState getSecurityState() {
@@ -160,16 +173,31 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
 
     @Override
     public void addPropertyChangeListener(@NonNull EntityPropertyChangeListener listener) {
-        if (propertyChangeListeners == null) {
-            propertyChangeListeners = new ArrayList<>(PROPERTY_CHANGE_LISTENERS_INITIAL_CAPACITY);
+        addPropertyChangeListener(listener, true);
+    }
+
+    @Override
+    public void addPropertyChangeListener(EntityPropertyChangeListener listener, boolean weakReference) {
+        if (weakReference) {
+            if (weakPropertyChangeListeners == null) {
+                weakPropertyChangeListeners = new ArrayList<>(WEAK_PROPERTY_CHANGE_LISTENERS_INITIAL_CAPACITY);
+            }
+            weakPropertyChangeListeners.add(new WeakReference<>(listener));
+        } else {
+            if (propertyChangeListeners == null) {
+                propertyChangeListeners = new ArrayList<>(PROPERTY_CHANGE_LISTENERS_INITIAL_CAPACITY);
+            }
+            propertyChangeListeners.add(listener);
         }
-        propertyChangeListeners.add(new WeakReference<>(listener));
     }
 
     @Override
     public void removePropertyChangeListener(@NonNull EntityPropertyChangeListener listener) {
         if (propertyChangeListeners != null) {
-            for (Iterator<WeakReference<EntityPropertyChangeListener>> it = propertyChangeListeners.iterator(); it.hasNext(); ) {
+            propertyChangeListeners.remove(listener);
+        }
+        if (weakPropertyChangeListeners != null) {
+            for (Iterator<WeakReference<EntityPropertyChangeListener>> it = weakPropertyChangeListeners.iterator(); it.hasNext(); ) {
                 EntityPropertyChangeListener iteratorListener = it.next().get();
                 if (iteratorListener == null || iteratorListener.equals(listener)) {
                     it.remove();
@@ -182,18 +210,35 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
         if (propertyChangeListeners != null) {
             propertyChangeListeners.clear();
         }
+        if (weakPropertyChangeListeners != null) {
+            weakPropertyChangeListeners.clear();
+        }
     }
 
     public void firePropertyChanged(String propertyName, Object prev, Object curr) {
         if (propertyChangeListeners != null) {
+            for (EntityPropertyChangeListener listener : propertyChangeListeners) {
+                listener.propertyChanged(new EntityPropertyChangeEvent(getSource(), propertyName, prev, curr));
 
-            for (Object referenceObject : propertyChangeListeners.toArray()) {
+                Collection<String> related = RelatedPropertiesCache.getOrCreate(getSource().getClass())
+                        .getRelatedReadOnlyProperties(propertyName);
+                if (related != null) {
+                    for (String property : related) {
+                        listener.propertyChanged(
+                                new EntityPropertyChangeEvent(getSource(), property, null, getAttributeValue(property)));
+                    }
+                }
+            }
+        }
+        if (weakPropertyChangeListeners != null) {
+
+            for (Object referenceObject : weakPropertyChangeListeners.toArray()) {
                 @SuppressWarnings("unchecked")
                 WeakReference<EntityPropertyChangeListener> reference = (WeakReference<EntityPropertyChangeListener>) referenceObject;
 
                 EntityPropertyChangeListener listener = reference.get();
                 if (listener == null) {
-                    propertyChangeListeners.remove(reference);
+                    weakPropertyChangeListeners.remove(reference);
                 } else {
                     listener.propertyChanged(new EntityPropertyChangeEvent(getSource(), propertyName, prev, curr));
 
@@ -217,6 +262,14 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
             setDetached(entry.isDetached());
             setManaged(entry.isManaged());
             setRemoved(entry.isRemoved());
+
+            loadedProperties = entry.getLoadedProperties();
+
+            if (entry instanceof BaseEntityEntry baseEntityEntry && baseEntityEntry.propertyChangeListeners != null) {
+                for (EntityPropertyChangeListener listener : baseEntityEntry.propertyChangeListeners) {
+                    addPropertyChangeListener(listener, false);
+                }
+            }
 
             setSecurityState(entry.getSecurityState());
 

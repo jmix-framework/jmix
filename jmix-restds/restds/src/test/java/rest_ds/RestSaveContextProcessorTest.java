@@ -67,7 +67,10 @@ public class RestSaveContextProcessorTest {
         processor.normalizeCompositionItems(saveContext);
 
         assertThat(saveContext.getEntitiesToSave()).hasSize(1);
-        assertThat(saveContext.getEntitiesToSave()).first().isEqualTo(customer);
+        assertThat(saveContext.getEntitiesToSave()).first().isSameAs(customer);
+
+        assertThat(contact1.getCustomer()).isSameAs(customer);
+        assertThat(contact2.getCustomer()).isSameAs(customer);
     }
 
     @Test

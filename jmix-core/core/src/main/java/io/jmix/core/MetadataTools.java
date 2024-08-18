@@ -429,16 +429,17 @@ public class MetadataTools {
     }
 
     /**
+     * @deprecated Use {@code metaProperty.getType() == MetaProperty.Type.EMBEDDED}
+     *
      * Determine whether the given property denotes an embedded object.
      *
      * @see Embedded
      * @see EmbeddedId
      */
+    @Deprecated
     public boolean isEmbedded(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
-        return metaProperty.getAnnotatedElement() != null
-                && (metaProperty.getAnnotatedElement().isAnnotationPresent(Embedded.class) ||
-                metaProperty.getAnnotatedElement().isAnnotationPresent(EmbeddedId.class));
+        return metaProperty.getType() == MetaProperty.Type.EMBEDDED;
     }
 
     /**

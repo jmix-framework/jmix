@@ -17,7 +17,7 @@
 package io.jmix.restds.impl;
 
 import io.jmix.core.EntitySerialization;
-import io.jmix.core.FetchPlan;
+import io.jmix.core.EntitySerializationOption;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.lang.Nullable;
@@ -37,12 +37,11 @@ public class RestSerialization {
         this.metadata = metadata;
     }
 
-    public String toJson(Object entity) {
-        return entitySerialization.toJson(entity);
-    }
-
-    public String toJson(Object entity, FetchPlan fetchPlan) {
-        return entitySerialization.toJson(entity, fetchPlan);
+    public String toJson(Object entity, boolean isNew) {
+        EntitySerializationOption[] options = !isNew ?
+                new EntitySerializationOption[]{EntitySerializationOption.SERIALIZE_NULLS} :
+                new EntitySerializationOption[0];
+        return entitySerialization.toJson(entity, null, options);
     }
 
     @Nullable

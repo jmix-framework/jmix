@@ -378,8 +378,11 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     protected void mergeLazyLoadingState(Object srcEntity, Object dstEntity) {
-        boolean srcNew = entityStates.isNew(srcEntity);
         MetaClass metaClass = getEntityMetaClass(srcEntity);
+        if (!metadataTools.isJpaEntity(metaClass))
+            return;
+
+        boolean srcNew = entityStates.isNew(srcEntity);
 
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();

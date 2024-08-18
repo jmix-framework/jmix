@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.core.metamodel.annotation;
+package io.jmix.core.entity.annotation;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a reference as composition.
- * Composition implies ownership, that is the referenced object exists only as part of the owning entity.
- * <p>An attribute marked with this annotation yields the {@link io.jmix.core.metamodel.model.MetaProperty}
- * of type {@link io.jmix.core.metamodel.model.MetaProperty.Type#COMPOSITION}</p>
+ * Should be used on an embedded attribute of a DTO entity instead of {@link jakarta.persistence.Embedded}).
  */
-@Target({java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.FIELD})
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Composition {
-
-    /**
-     * Inverse property name.
-     */
-    String inverse() default "";
+@MetaAnnotation
+public @interface JmixEmbedded {
 }

@@ -1,6 +1,7 @@
 package test_support.entity;
 
 import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.annotation.JmixEmbedded;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.*;
@@ -36,9 +37,10 @@ public class Customer {
 
     private CustomerRegion region;
 
-    @Composition
+    @Composition(inverse = "customer")
     private Set<CustomerContact> contacts;
 
+    @JmixEmbedded
     private CustomerAddress address;
 
     public String getEmail() {

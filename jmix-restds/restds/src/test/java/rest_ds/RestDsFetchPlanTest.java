@@ -16,8 +16,7 @@
 
 package rest_ds;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.EntityStates;
+import io.jmix.core.*;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
@@ -46,6 +45,9 @@ public class RestDsFetchPlanTest {
 
     @Autowired
     EntityStates entityStates;
+
+    @Autowired
+    FetchPlanRepository fetchPlanRepository;
 
     @Test
     void testWithoutFetchPlan() {
@@ -87,6 +89,59 @@ public class RestDsFetchPlanTest {
 
         assertThat(customer.getRegion()).isNotNull();
         assertThat(entityStates.isNew(customer.getRegion())).isFalse();
+    }
+
+    @Test
+    void testUpdateManyToOneReference() {
+        CustomerRegion region1 = dataManager.create(CustomerRegion.class);
+        region1.setName("Region 1");
+        dataManager.save(region1);
+
+        Customer customer = dataManager.create(Customer.class);
+        customer.setFirstName("John");
+        customer.setLastName("Doe");
+        customer.setRegion(region1);
+
+        dataManager.save(customer);
+
+        customer = dataManager.load(Customer.class)
+                .id(customer.getId())
+                .fetchPlan("customer-with-region")
+                .one();
+
+        assertThat(customer.getRegion()).isEqualTo(region1);
+
+        // change region
+
+        CustomerRegion region2 = dataManager.create(CustomerRegion.class);
+        region2.setName("Region 2");
+        dataManager.save(region2);
+
+        customer.setRegion(region2);
+
+        dataManager.save(customer);
+
+        customer = dataManager.load(Customer.class)
+                .id(customer.getId())
+                .fetchPlan("customer-with-region")
+                .one();
+
+        assertThat(customer.getRegion()).isEqualTo(region2);
+
+        // set region to null
+
+        customer.setRegion(null);
+
+        SaveContext saveContext = new SaveContext()
+                .saving(customer, fetchPlanRepository.getFetchPlan(Customer.class, "customer-with-region"));
+        dataManager.save(saveContext);
+
+        customer = dataManager.load(Customer.class)
+                .id(customer.getId())
+                .fetchPlan("customer-with-region")
+                .one();
+
+        assertThat(customer.getRegion()).isNull();
     }
 
     @Test

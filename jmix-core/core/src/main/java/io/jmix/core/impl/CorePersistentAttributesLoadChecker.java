@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Component("core_PersistentAttributesLoadChecker")
 public class CorePersistentAttributesLoadChecker implements PersistentAttributesLoadChecker {
@@ -52,6 +53,14 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
             KeyValueEntity keyValue = (KeyValueEntity) entity;
             return keyValue.getInstanceMetaClass() != null && keyValue.getInstanceMetaClass().findProperty(property) != null;
         }
+
+        if (entity instanceof Entity e) {
+            Set<String> loadedProperties = e.__getEntityEntry().getLoadedProperties();
+            if (loadedProperties != null) {
+                return loadedProperties.contains(property);
+            }
+        }
+
         MetaClass metaClass = metadata.getClass(entity);
 
         if (ObjectPathUtils.isSpecialPath(property)) {

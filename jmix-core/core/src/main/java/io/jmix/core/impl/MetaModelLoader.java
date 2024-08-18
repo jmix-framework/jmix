@@ -26,6 +26,7 @@ import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.entity.annotation.JmixEmbedded;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.MetaAnnotation;
@@ -693,6 +694,10 @@ public class MetaModelLoader {
 
     @Nullable
     protected String getInverseField(Field field) {
+        Composition compositionAnnotation = field.getAnnotation(Composition.class);
+        if (compositionAnnotation != null && !isBlank(compositionAnnotation.inverse()))
+            return compositionAnnotation.inverse();
+
         OneToMany oneToManyAnnotation = field.getAnnotation(OneToMany.class);
         if (oneToManyAnnotation != null)
             return isBlank(oneToManyAnnotation.mappedBy()) ? null : oneToManyAnnotation.mappedBy();
@@ -937,7 +942,8 @@ public class MetaModelLoader {
             Composition composition = field.getAnnotation(Composition.class);
             Embedded embedded = field.getAnnotation(Embedded.class);
             EmbeddedId embeddedId = field.getAnnotation(EmbeddedId.class);
-            if (embedded != null || embeddedId != null) {
+            JmixEmbedded jmixEmbedded = field.getAnnotation(JmixEmbedded.class);
+            if (embedded != null || embeddedId != null || jmixEmbedded != null) {
                 ((MetaPropertyImpl) property).setType(MetaProperty.Type.EMBEDDED);
             } else if (composition != null) {
                 ((MetaPropertyImpl) property).setType(MetaProperty.Type.COMPOSITION);

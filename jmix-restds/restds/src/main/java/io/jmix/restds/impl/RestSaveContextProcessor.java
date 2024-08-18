@@ -21,16 +21,18 @@ import io.jmix.core.SaveContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component("restds_RestSaveContextProcessor")
 public class RestSaveContextProcessor {
 
+    private static final Logger log = LoggerFactory.getLogger(RestSaveContextProcessor.class);
     private final Metadata metadata;
 
     public RestSaveContextProcessor(Metadata metadata) {
@@ -40,59 +42,55 @@ public class RestSaveContextProcessor {
     /**
      * Cleans up entitiesToSave and entitiesToRemove collections so they don't contain composition items that are
      * managed by the aggregate root entities also present in entitiesToSave.
+     * <p>
+     * Assigns root entity to inverse properties of composition items.
      */
     public void normalizeCompositionItems(SaveContext saveContext) {
-        Set<Object> entitiesToSave = saveContext.getEntitiesToSave().stream()
-                .filter(entity ->
-                        !isContainedInCompositions(saveContext.getEntitiesToSave(), entity))
-                .collect(Collectors.toSet());
+        Set<Object> compositionItems = new HashSet<>();
 
-        Set<Object> entitiesToRemove = saveContext.getEntitiesToRemove().stream()
-                .filter(entity ->
-                        !isClassContainedInCompositions(entitiesToSave, entity))
-                .collect(Collectors.toSet());
-
-        saveContext.getEntitiesToSave().retainAll(entitiesToSave);
-        saveContext.getEntitiesToRemove().retainAll(entitiesToRemove);
-    }
-
-    private boolean isContainedInCompositions(Set<?> rootEntities, Object entity) {
-        for (Object rootEntity : rootEntities) {
-            if (rootEntity.equals(entity))
-                continue;
-            if (isContainedInCompositionsRecursive(rootEntity, entity, new HashSet<>()))
-                return true;
+        for (Object rootEntity : saveContext.getEntitiesToSave()) {
+            findAndUpdateCompositionItems(rootEntity, compositionItems, new HashSet<>());
         }
-        return false;
+
+        saveContext.getEntitiesToSave().removeAll(compositionItems);
+
+        saveContext.getEntitiesToRemove().removeIf(entity ->
+                isClassContainedInCompositions(saveContext.getEntitiesToSave(), entity));
     }
 
-    private boolean isContainedInCompositionsRecursive(Object rootEntity, Object entity, Set<Object> visited) {
+    private void findAndUpdateCompositionItems(Object entity, Set<Object> compositionItems, HashSet<Object> visited) {
         if (visited.contains(entity))
-            return false;
+            return;
         visited.add(entity);
 
-        for (MetaProperty property : metadata.getClass(rootEntity).getProperties()) {
-            if (property.getRange().isClass()) {
-                Object value = EntityValues.getValue(rootEntity, property.getName());
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
+            if (property.getRange().isClass() && property.getType() == MetaProperty.Type.COMPOSITION) {
+                Object value = EntityValues.getValue(entity, property.getName());
                 if (value != null) {
                     if (value instanceof Collection) {
                         for (Object item : ((Collection<?>) value)) {
-                            if (property.getType() == MetaProperty.Type.COMPOSITION && item.equals(entity))
-                                return true;
-                            else if (isContainedInCompositionsRecursive(item, entity, visited))
-                                return true;
+                            updateInverseProperty(entity, property, item);
+                            compositionItems.add(item);
+                            findAndUpdateCompositionItems(item, compositionItems, visited);
                         }
                     } else {
-                        if (property.getType() == MetaProperty.Type.COMPOSITION && value.equals(entity))
-                            return true;
-                        else if (isContainedInCompositionsRecursive(value, entity, visited))
-                            return true;
+                        updateInverseProperty(entity, property, value);
+                        compositionItems.add(value);
+                        findAndUpdateCompositionItems(value, compositionItems, visited);
                     }
                 }
             }
         }
+    }
 
-        return false;
+    private void updateInverseProperty(Object entity, MetaProperty compositionProperty, Object compositionItem) {
+        MetaProperty inverseProperty = compositionProperty.getInverse();
+        if (inverseProperty != null) {
+            EntityValues.setValue(compositionItem, inverseProperty.getName(), entity);
+        } else {
+            log.warn("Cannot update inverse property for composition {}.{}. Use @Composition(inverse = \"foo\") to define inverse property",
+                    entity.getClass().getName(), compositionProperty.getName());
+        }
     }
 
     private boolean isClassContainedInCompositions(Set<Object> rootEntities, Object entity) {

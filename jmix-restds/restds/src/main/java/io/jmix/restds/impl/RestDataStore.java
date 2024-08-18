@@ -18,6 +18,9 @@ package io.jmix.restds.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.datastore.AbstractDataStore;
+import io.jmix.core.entity.EntityPropertyChangeEvent;
+import io.jmix.core.entity.EntityPropertyChangeListener;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -29,6 +32,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -45,18 +49,20 @@ public class RestDataStore extends AbstractDataStore {
     private final RestFilterBuilder restFilterBuilder;
     private final RestEntityEventManager entityEventManager;
     private final RestSaveContextProcessor saveContextProcessor;
+    private final FetchPlanRepository fetchPlanRepository;
 
     protected String storeName;
 
     private RestInvoker restInvoker;
 
     public RestDataStore(ApplicationContext applicationContext, RestSerialization restSerialization, RestFilterBuilder restFilterBuilder,
-                         RestEntityEventManager entityEventManager, RestSaveContextProcessor saveContextProcessor) {
+                         RestEntityEventManager entityEventManager, RestSaveContextProcessor saveContextProcessor, FetchPlanRepository fetchPlanRepository) {
         this.applicationContext = applicationContext;
         this.restSerialization = restSerialization;
         this.restFilterBuilder = restFilterBuilder;
         this.entityEventManager = entityEventManager;
         this.saveContextProcessor = saveContextProcessor;
+        this.fetchPlanRepository = fetchPlanRepository;
     }
 
     public RestInvoker getRestInvoker() {
@@ -80,7 +86,7 @@ public class RestDataStore extends AbstractDataStore {
                 entityClass);
 
         if (entity != null) {
-            setNotNew(entity);
+            updateEntityState(entity, fetchPlan);
             entityEventManager.publishEntityLoadingEvent(entity);
         }
         return entity;
@@ -106,33 +112,62 @@ public class RestDataStore extends AbstractDataStore {
                 entityClass);
 
         for (Object entity : entities) {
-            setNotNew(entity);
+            updateEntityState(entity, fetchPlan);
             entityEventManager.publishEntityLoadingEvent(entity);
         }
         return entities;
     }
 
-    private void setNotNew(Object entity) {
-        setNotNewRecursive(entity, new HashSet<>());
+    private void updateEntityState(Object entity, @Nullable String fetchPlanName) {
+        MetaClass metaClass = metadata.getClass(entity);
+        FetchPlan fetchPlan = fetchPlanName == null ?
+            fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE) :
+            fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName);
+
+        updateEntityStateRecursive(entity, fetchPlan, new HashSet<>());
     }
 
-    private void setNotNewRecursive(Object entity, Set<Object> visited) {
+    private void updateEntityState(Object entity, @Nullable FetchPlan fetchPlan) {
+        if (fetchPlan == null) {
+            fetchPlan = fetchPlanRepository.getFetchPlan(metadata.getClass(entity), FetchPlan.BASE);
+        }
+        updateEntityStateRecursive(entity, fetchPlan, new HashSet<>());
+    }
+
+    private void updateEntityStateRecursive(Object entity, @Nullable FetchPlan fetchPlan, Set<Object> visited) {
         if (visited.contains(entity))
             return;
         visited.add(entity);
 
         entityStates.setNew(entity, false);
 
-        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
+        MetaClass metaClass = metadata.getClass(entity);
+
+        if (fetchPlan != null) {
+            Set<String> loadedProperties = fetchPlan.getProperties().stream()
+                    .map(FetchPlanProperty::getName)
+                    .collect(Collectors.toCollection(HashSet::new));
+            EntityEntry entityEntry = EntitySystemAccess.getEntityEntry(entity);
+            entityEntry.setLoadedProperties(loadedProperties);
+            entityEntry.addPropertyChangeListener(new UpdatingLoadedPropertiesListener(), false);
+        }
+
+        for (MetaProperty property : metaClass.getProperties()) {
             if (property.getRange().isClass()) {
                 Object value = EntityValues.getValue(entity, property.getName());
                 if (value != null) {
+                    FetchPlan valueFetchPlan = null;
+                    if (fetchPlan != null) {
+                        FetchPlanProperty valueFetchPlanProp = fetchPlan.getProperty(property.getName());
+                        valueFetchPlan = valueFetchPlanProp == null ? null : valueFetchPlanProp.getFetchPlan();
+                    }
+
                     if (value instanceof Collection) {
                         for (Object item : ((Collection<?>) value)) {
-                            setNotNewRecursive(item, visited);
+                            updateEntityStateRecursive(item, valueFetchPlan, visited);
                         }
                     } else {
-                        setNotNewRecursive(value, visited);
+                        updateEntityStateRecursive(value, valueFetchPlan, visited);
                     }
                 }
             }
@@ -180,11 +215,12 @@ public class RestDataStore extends AbstractDataStore {
         saveContextProcessor.normalizeCompositionItems(context);
         for (Object entity : context.getEntitiesToSave()) {
             MetaClass metaClass = metadata.getClass(entity);
-            String entityJson = restSerialization.toJson(entity);
+            FetchPlan fetchPlan = null;
             String savedEntityJson;
             boolean isNew = entityStates.isNew(entity);
             if (isNew) {
                 entityEventManager.publishEntitySavingEvent(entity, true);
+                String entityJson = restSerialization.toJson(entity, true);
                 savedEntityJson = restInvoker.create(metaClass.getName(), entityJson);
             } else {
                 Object id = EntityValues.getId(entity);
@@ -192,6 +228,8 @@ public class RestDataStore extends AbstractDataStore {
                     throw new IllegalArgumentException("Entity id is null for " + entity);
                 }
                 entityEventManager.publishEntitySavingEvent(entity, false);
+
+                String entityJson = restSerialization.toJson(entity, false);
                 savedEntityJson = restInvoker.update(metaClass.getName(), id.toString(), entityJson);
             }
             Object savedEntity = restSerialization.fromJson(savedEntityJson, entity.getClass());
@@ -202,7 +240,7 @@ public class RestDataStore extends AbstractDataStore {
                 // set new ID to the passed instance to let the framework match the saved instance with the original one
                 EntityValues.setId(entity, EntityValues.getId(savedEntity));
             }
-            setNotNew(savedEntity);
+            updateEntityState(savedEntity, fetchPlan);
             entityEventManager.publishEntitySavedEvent(entity, savedEntity, isNew);
             saved.add(savedEntity);
         }
@@ -278,5 +316,16 @@ public class RestDataStore extends AbstractDataStore {
     }
 
     protected static class DummyTransactionContextState implements TransactionContextState {
+    }
+
+    private static class UpdatingLoadedPropertiesListener implements EntityPropertyChangeListener, Serializable {
+        @Override
+        public void propertyChanged(EntityPropertyChangeEvent event) {
+            String property = event.getProperty();
+            Set<String> loadedProperties = EntitySystemAccess.getEntityEntry(event.getItem()).getLoadedProperties();
+            if (loadedProperties != null) {
+                loadedProperties.add(property);
+            }
+        }
     }
 }

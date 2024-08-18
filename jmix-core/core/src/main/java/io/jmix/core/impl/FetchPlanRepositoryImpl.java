@@ -34,9 +34,9 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -275,7 +275,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
     protected void addAttributesToLocalFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder) {
         for (MetaProperty property : metaClass.getProperties()) {
-            if (!property.getRange().isClass() && metadataTools.isJpa(property)) {
+            if (!property.getRange().isClass()) {
                 fetchPlanBuilder.add(property.getName());
             }
         }
@@ -285,7 +285,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                                                         FetchPlanBuilder fetchPlanBuilder,
                                                         FetchPlanLoader.FetchPlanInfo info,
                                                         Set<FetchPlanLoader.FetchPlanInfo> visited) {
-        for (MetaProperty metaProperty : getInstanceNamePersistentProperties(metaClass)) {
+        for (MetaProperty metaProperty : getInstanceNameProperties(metaClass)) {
             if (metaProperty.getRange().isClass()) {
                 addClassAttributeWithFetchPlan(metaProperty, FetchPlan.INSTANCE_NAME, fetchPlanBuilder, info, visited);
             } else {
@@ -299,16 +299,14 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                                                 FetchPlanLoader.FetchPlanInfo info,
                                                 Set<FetchPlanLoader.FetchPlanInfo> visited) {
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-            if (metadataTools.isJpa(metaProperty)) {
-                if (!metaProperty.getRange().isClass()) {
-                    fetchPlanBuilder.add(metaProperty.getName());
-                } else if (metadataTools.isEmbedded(metaProperty)) {
-                    addClassAttributeWithFetchPlan(metaProperty, FetchPlan.BASE, fetchPlanBuilder, info, visited);
-                }
+            if (!metaProperty.getRange().isClass()) {
+                fetchPlanBuilder.add(metaProperty.getName());
+            } else if (metadataTools.isEmbedded(metaProperty)) {
+                addClassAttributeWithFetchPlan(metaProperty, FetchPlan.BASE, fetchPlanBuilder, info, visited);
             }
         }
 
-        for (MetaProperty metaProperty : getInstanceNamePersistentProperties(metaClass)) {
+        for (MetaProperty metaProperty : getInstanceNameProperties(metaClass)) {
             if (metaProperty.getRange().isClass()) {
                 addClassAttributeWithFetchPlan(metaProperty, FetchPlan.BASE, fetchPlanBuilder, info, visited);
             }
@@ -337,18 +335,15 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         }
     }
 
-    protected Collection<MetaProperty> getInstanceNamePersistentProperties(MetaClass metaClass) {
+    protected Collection<MetaProperty> getInstanceNameProperties(MetaClass metaClass) {
         Collection<MetaProperty> metaProperties = new ArrayList<>();
         for (MetaProperty metaProperty : metadataTools.getInstanceNameRelatedProperties(metaClass, true)) {
-            if (metadataTools.isJpa(metaProperty)) {
+            List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
+            if (dependsOnProperties.isEmpty()) {
                 metaProperties.add(metaProperty);
             } else {
-                List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
                 for (String dependsOnPropertyName : dependsOnProperties) {
-                    MetaProperty relatedProperty = metaClass.getProperty(dependsOnPropertyName);
-                    if (metadataTools.isJpa(relatedProperty)) {
-                        metaProperties.add(relatedProperty);
-                    }
+                    metaProperties.add(metaClass.getProperty(dependsOnPropertyName));
                 }
             }
         }

@@ -28,12 +28,10 @@ dependencies {
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation project(':eclipselink')
     testImplementation project(':pessimisticlock')
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
 }

@@ -52,10 +52,8 @@ import java.util.*;
 public class CategoryAttribute implements Serializable {
     private static final long serialVersionUID = -6959392628534815752L;
 
-    static final String CODE_FIELD_REGEXP = "^[a-z]\\w*$";
-
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "ID")
     @JmixGeneratedValue
     private UUID id;
 
@@ -88,7 +86,7 @@ public class CategoryAttribute implements Serializable {
     private String deletedBy;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "CATEGORY_ID", nullable = false)
+    @JoinColumn(name = "CATEGORY_ID")
     private Category category;
 
     @Column(name = "CATEGORY_ENTITY_TYPE")
@@ -97,8 +95,7 @@ public class CategoryAttribute implements Serializable {
     @Column(name = "NAME", nullable = false)
     private String name;
 
-    @NotNull(message = "{msg://io.jmix.dynattr.model/CategoryAttribute.code.validation.NotNull}")
-    @Pattern(message = "{msg://io.jmix.dynattr.model/CategoryAttribute.code.validation.wrongCodeValueFormat}", regexp = "^[a-z]\\w*$")
+    @Pattern(message = "{msg://io.jmix.dynattr.model/CategoryAttribute.code.validation.wrongFormat}", regexp = "^[a-z]\\w*$")
     @Column(name = "CODE", nullable = false)
     private String code;
 
@@ -189,6 +186,7 @@ public class CategoryAttribute implements Serializable {
     @Column(name = "ENUMERATION_LOCALES")
     protected String enumerationLocales;
 
+    @Column(name = "ATTRIBUTE_CONFIGURATION_JSON")
     @Convert(converter = CategoryAttributeConfigurationConvertor.class)
     protected CategoryAttributeConfiguration configuration;
 

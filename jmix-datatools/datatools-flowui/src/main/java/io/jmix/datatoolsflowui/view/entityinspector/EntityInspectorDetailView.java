@@ -229,7 +229,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
         tabs.setWidthFull();
         getContent().addComponentAsFirst(tabs);
 
-        InspectorFormLayoutBuilder.from(getApplicationContext(), selectedContainer)
+        InspectorFormLayoutBuilder.from(getApplicationContext(), selectedContainer, isNew)
                 .withDisabledProperties(parentProperty)
                 .withOwnerComponent(getContent())
                 .build();
@@ -262,7 +262,8 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
                     embeddedContainer.setItem(propertyValue);
                     FormLayout embeddedForm = InspectorFormLayoutBuilder.from(
                                     getApplicationContext(),
-                                    embeddedContainer)
+                                    embeddedContainer,
+                                    isNew)
                             .build();
                     embeddedForm.setVisible(false);
                     Tab tab = uiComponents.create(Tab.class);

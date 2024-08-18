@@ -25,6 +25,7 @@ import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
+import io.jmix.flowui.component.EntityMultiPickerComponent;
 import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -37,6 +38,7 @@ import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -179,7 +181,10 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
                     "for the " + target.getClass().getSimpleName(), "action ID", getId());
         }
 
-        LookupWindowBuilder<E, View<?>> builder = dialogWindows.lookup(target);
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        LookupWindowBuilder<E, View<?>> builder = target instanceof EntityMultiPickerComponent
+                ? dialogWindows.lookup((EntityMultiPickerComponent) target)
+                : dialogWindows.lookup(target);
 
         builder = viewInitializer.initWindowBuilder(builder);
 

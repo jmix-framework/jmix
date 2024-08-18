@@ -16,19 +16,22 @@
 
 .jmix-list-menu {
   color: var(--lumo-secondary-text-color);
-  margin: 0 var(--lumo-space-s);
+  margin: 0;
   overflow: auto;
-  padding: 0;
+  padding: 0 var(--lumo-space-s);
 }
 
 .jmix-list-menu .jmix-menubar-item .menubar-list {
-  margin-inline-start: var(--lumo-space-m);
+  margin-inline-start: var(--lumo-space-l);
 }
 
 .jmix-list-menu .jmix-menubar-item {
-  padding: var(--lumo-space-s);
-  padding-inline-end: 0;
+  padding: var(--lumo-space-s) 0;
   margin: 0;
+}
+
+.jmix-list-menu .jmix-menubar-item vaadin-details-summary {
+  padding: var(--lumo-space-s);
 }
 
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container {
@@ -55,6 +58,12 @@
   height: var(--lumo-icon-size-s);
 }
 
+.jmix-list-menu .jmix-menu-item-link vaadin-icon.prefix-component[icon^='vaadin:'],
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container vaadin-icon.prefix-component[icon^='vaadin:'] {
+  padding: 0.125em;
+  box-sizing: border-box;
+}
+
 .jmix-list-menu .jmix-menubar-item .menubar-summary {
   white-space: nowrap;
   font-weight: bold;
@@ -66,10 +75,6 @@
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .suffix-component {
   margin-inline-start: auto;
   flex-shrink: 0;
-}
-
-.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container > :last-child {
-  margin-inline-end: var(--lumo-space-s);
 }
 
 .jmix-list-menu .jmix-menu-item-link {

@@ -17,13 +17,14 @@
 package io.jmix.fullcalendarflowui.component.model.option;
 
 import io.jmix.fullcalendarflowui.component.model.BusinessHours;
+import io.jmix.fullcalendarflowui.kit.component.model.option.CalendarOption;
 import org.springframework.lang.Nullable;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class EventConstraint implements Serializable {
+public class EventConstraint extends CalendarOption {
+    public static final String NAME = "eventConstraint";
 
     protected boolean enabled = false;
 
@@ -32,12 +33,7 @@ public class EventConstraint implements Serializable {
     protected List<BusinessHours> businessHours;
 
     public EventConstraint() {
-    }
-
-    public EventConstraint(boolean enabled, @Nullable String groupId, @Nullable List<BusinessHours> businessHours) {
-        this.enabled = enabled;
-        this.groupId = groupId;
-        this.businessHours = businessHours;
+        super(NAME);
     }
 
     public boolean isEnabled() {
@@ -46,6 +42,8 @@ public class EventConstraint implements Serializable {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+
+        markAsDirty();
     }
 
     @Nullable
@@ -55,13 +53,17 @@ public class EventConstraint implements Serializable {
 
     public void setGroupId(@Nullable String groupId) {
         this.groupId = groupId;
+
+        markAsDirty();
     }
 
     public List<BusinessHours> getBusinessHours() {
-        return businessHours == null ? Collections.emptyList() : businessHours;
+        return businessHours == null ? Collections.emptyList() : Collections.unmodifiableList(businessHours);
     }
 
     public void setBusinessHours(@Nullable List<BusinessHours> businessHours) {
         this.businessHours = businessHours;
+
+        markAsDirty();
     }
 }

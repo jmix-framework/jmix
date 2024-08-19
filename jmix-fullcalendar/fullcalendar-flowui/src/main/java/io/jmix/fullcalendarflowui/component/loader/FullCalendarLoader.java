@@ -53,9 +53,9 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
 
         loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
-        loadBoolean(element, "dayMaxEventRowsEnabled", resultComponent::setDayMaxEventRowsEnabled);
+        loadBoolean(element, "limitedDayMaxEventRows", resultComponent::setLimitedDayMaxEventRows);
         loadInteger(element, "dayMaxEventRows", resultComponent::setDayMaxEventRows);
-        loadBoolean(element, "dayMaxEventsEnabled", resultComponent::setDayMaxEventsEnabled);
+        loadBoolean(element, "limitedDayMaxEvents", resultComponent::setLimitedDayMaxEvents);
         loadInteger(element, "dayMaxEvents", resultComponent::setDayMaxEvents);
         loadInteger(element, "eventMaxStack", resultComponent::setEventMaxStack);
 

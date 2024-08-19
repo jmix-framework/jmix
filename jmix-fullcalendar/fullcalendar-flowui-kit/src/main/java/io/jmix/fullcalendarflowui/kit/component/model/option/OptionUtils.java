@@ -16,5 +16,28 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model.option;
 
-public class EmptyRange extends AbstractRange {
+import com.vaadin.flow.shared.Registration;
+
+import java.util.function.Consumer;
+
+/**
+ * INTERNAL.
+ */
+public final class OptionUtils {
+
+    private OptionUtils() {
+    }
+
+    public static String getName(CalendarOption option) {
+        return option.getName();
+    }
+
+    public static Object getValueToSerialize(CalendarOption option) {
+        return option.getValueToSerialize();
+    }
+
+    public static Registration addChangeListener(CalendarOption option,
+                                                 Consumer<CalendarOption.OptionChangeEvent> listener) {
+        return option.addChangeListener(listener);
+    }
 }

@@ -16,48 +16,34 @@
 
 package io.jmix.fullcalendarflowui.component.model.option;
 
-import io.jmix.fullcalendarflowui.component.model.BusinessHours;
 import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOptions;
-import org.springframework.lang.Nullable;
+import io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils;
 
 import java.util.List;
 
 public class FullCalendarOptions extends JmixFullCalendarOptions {
 
-    protected Option eventConstraint = new Option("eventConstraint", new EventConstraint());
-    protected Option businessHours = new Option("businessHours", new BusinessHoursOption());
-    protected Option selectConstraint = new Option("selectConstraint", new SelectConstraint());
+    protected EventConstraint eventConstraint = new EventConstraint();
+    protected BusinessHoursOption businessHours = new BusinessHoursOption();
+    protected SelectConstraint selectConstraint = new SelectConstraint();
 
     public FullCalendarOptions() {
         options.addAll(List.of(eventConstraint, businessHours, selectConstraint));
+
+        OptionUtils.addChangeListener(eventConstraint, this::onOptionChange);
+        OptionUtils.addChangeListener(businessHours, this::onOptionChange);
+        OptionUtils.addChangeListener(selectConstraint, this::onOptionChange);
     }
 
     public EventConstraint getEventConstraint() {
-        return eventConstraint.getValue();
-    }
-
-    public void setEventConstraint(boolean enabled,
-                                   @Nullable String groupId,
-                                   @Nullable List<BusinessHours> businessHours) {
-        eventConstraint.setValue(new EventConstraint(enabled, groupId, businessHours));
+        return eventConstraint;
     }
 
     public BusinessHoursOption getBusinessHours() {
-        return businessHours.getValue();
+        return businessHours;
     }
-
-    public void setBusinessHours(boolean enabled, @Nullable List<BusinessHours> businessHours) {
-        this.businessHours.setValue(new BusinessHoursOption(enabled, businessHours));
-    }
-
 
     public SelectConstraint getSelectConstraint() {
-        return selectConstraint.getValue();
-    }
-
-    public void setSelectConstraint(boolean enabled,
-                                    @Nullable String groupId,
-                                    @Nullable List<BusinessHours> businessHours) {
-        selectConstraint.setValue(new SelectConstraint(enabled, groupId, businessHours));
+        return selectConstraint;
     }
 }

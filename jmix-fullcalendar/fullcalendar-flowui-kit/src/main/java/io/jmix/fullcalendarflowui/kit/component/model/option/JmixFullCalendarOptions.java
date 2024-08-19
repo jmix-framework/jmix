@@ -19,285 +19,174 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
 import jakarta.annotation.Nullable;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unchecked")
 public class JmixFullCalendarOptions {
 
-    private static final JsFunction NULL_FUNCTION = new JsFunction("");
+    protected SimpleOption<Boolean> weekNumbers = new SimpleOption<>("weekNumbers", false);
+    protected ValidRange validRange = new ValidRange();
+    protected SimpleOption<TimeZone> timeZone = new SimpleOption<>("timeZone", TimeZone.getDefault());
+    protected SimpleOption<CalendarView> initialView = new SimpleOption<>("initialView", CalendarViewType.DAY_GRID_MONTH);
+    protected SimpleOption<Boolean> navLinks = new SimpleOption<>("navLinks", false);
+    protected DayMaxEventRows dayMaxEventRows = new DayMaxEventRows();
+    protected SimpleOption<Integer> eventMaxStack = new SimpleOption<>("eventMaxStack", -1);
+    protected DayMaxEvents dayMaxEvents = new DayMaxEvents();
+    protected MoreLinkClick moreLinkClick = new MoreLinkClick();
 
-    protected Option weekNumbers = new Option("weekNumbers", false);
-    protected Option validRangeDates = new Option("validRange", new ValidRange());
-    protected Option timeZone = new Option("timeZone", TimeZone.getDefault().getID());
-    protected Option initialView = new Option("initialView", CalendarViewType.DAY_GRID_MONTH);
-    protected Option navLinks = new Option("navLinks", false);
-    protected Option dayMaxEventRows = new Option("dayMaxEventRows", new DayMaxEventRows());
-    protected Option eventMaxStack = new Option("eventMaxStack", -1);
-    protected Option dayMaxEvents = new Option("dayMaxEvents", new DayMaxEvents());
-    protected Option moreLinkClick = new Option("moreLinkClick", (CalendarView) () -> "popover");
-    protected Option moreLinkClickFunction = new Option("moreLinkClickFunction", false);
-    protected Option moreLinkClassNames = new Option("moreLinkClassNames", new MoreLinkClassNames());
-    protected Option eventStartEditable = new Option("eventStartEditable", false);
-    protected Option eventDurationEditable = new Option("eventDurationEditable", false);
-    protected Option eventResizableFromStart = new Option("eventResizableFromStart", false);
-    protected Option eventDragMinDistance = new Option("eventDragMinDistance", 5);
-    protected Option eventOverlap = new Option("eventOverlap", new EventOverlap());
-    protected Option dragRevertDuration = new Option("dragRevertDuration", 500);
-    protected Option dragScroll = new Option("dragScroll", true);
-    protected Option snapDuration = new Option("snapDuration", CalendarDuration.ofMinutes(30));
-    protected Option allDayMaintainDuration = new Option("allDayMaintainDuration", false);
-    protected Option views = new Option("views", new ArrayList<>());
-    protected Option visibleRange = new Option("visibleRange", new EmptyRange());
+    protected MoreLinkClassNames moreLinkClassNames = new MoreLinkClassNames();
+    protected SimpleOption<Boolean> eventStartEditable = new SimpleOption<>("eventStartEditable", false);
+    protected SimpleOption<Boolean> eventDurationEditable = new SimpleOption<>("eventDurationEditable", false);
+    protected SimpleOption<Boolean> eventResizableFromStart = new SimpleOption<>("eventResizableFromStart", false);
+    protected SimpleOption<Integer> eventDragMinDistance = new SimpleOption<>("eventDragMinDistance", 5);
+    protected EventOverlap eventOverlap = new EventOverlap();
+    protected SimpleOption<Integer> dragRevertDuration = new SimpleOption<>("dragRevertDuration", 500);
+    protected SimpleOption<CalendarDuration> snapDuration = new SimpleOption<>("snapDuration", CalendarDuration.ofMinutes(30));
+    protected SimpleOption<Boolean> dragScroll = new SimpleOption<>("dragScroll", true);
+    protected SimpleOption<Boolean> allDayMaintainDuration = new SimpleOption<>("allDayMaintainDuration", false);
 
-    protected Option selectable = new Option("selectable", false);
-    protected Option selectMirror = new Option("selectMirror", false);
-    protected Option unselectAuto = new Option("unselectAuto", true);
-    protected Option unselectCancel = new Option("unselectCancel", "");
-    protected Option selectOverlap = new Option("selectOverlap", new SelectOverlap());
-    protected Option selectAllow = new Option("selectAllow", NULL_FUNCTION);
-    protected Option selectMinDistance = new Option("selectMinDistance", 0);
+    protected Views views = new Views();
+    protected VisibleRange visibleRange = new VisibleRange();
 
-    protected final List<Option> options = new ArrayList<>(28);
+    protected SimpleOption<Boolean> selectable = new SimpleOption<>("selectable", false);
+    protected SimpleOption<Boolean> selectMirror = new SimpleOption<>("selectMirror", false);
+    protected SimpleOption<Boolean> unselectAuto = new SimpleOption<>("unselectAuto", true);
+    protected SimpleOption<String> unselectCancel = new SimpleOption<>("unselectCancel", "");
+    protected SelectOverlap selectOverlap = new SelectOverlap();
+
+    protected SimpleOption<JsFunction> selectAllow = new SimpleOption<>("selectAllow");
+    protected SimpleOption<Integer> selectMinDistance = new SimpleOption<>("selectMinDistance", 0);
+
+    protected final List<CalendarOption> options = new ArrayList<>(28);
 
     /**
      * Options that applied only at creation time.
      */
-    protected final List<Option> initialOptions = new ArrayList<>(4);
+    protected final List<CalendarOption> initialOptions = new ArrayList<>(4);
 
     protected Consumer<OptionChangeEvent> optionChangeListener;
 
     public JmixFullCalendarOptions() {
-        options.addAll(List.of(weekNumbers, validRangeDates, timeZone, initialView,
-                navLinks, dayMaxEventRows, eventMaxStack, dayMaxEvents, moreLinkClick, moreLinkClickFunction,
+        options.addAll(List.of(weekNumbers, validRange, timeZone, initialView,
+                navLinks, dayMaxEventRows, eventMaxStack, dayMaxEvents, moreLinkClick, dragScroll,
                 moreLinkClassNames, eventStartEditable, eventDurationEditable, eventResizableFromStart,
-                eventDragMinDistance, eventOverlap, dragRevertDuration, dragScroll, snapDuration,
+                eventDragMinDistance, eventOverlap, dragRevertDuration, snapDuration,
                 allDayMaintainDuration, selectable, selectMirror, unselectAuto,
                 unselectCancel, selectOverlap, selectAllow, selectMinDistance, views, visibleRange));
 
-        initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views));
+        initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll));
+
+        options.forEach(o -> o.addChangeListener(this::onOptionChange));
     }
 
-    public List<Option> getOptions() {
+    public List<CalendarOption> getOptions() {
         return options;
     }
 
-    public List<Option> getInitialOptions() {
+    public List<CalendarOption> getInitialOptions() {
         return initialOptions;
     }
 
-    public List<Option> getDirtyOptions() {
+    public List<CalendarOption> getDirtyOptions() {
         return options.stream()
-                .filter(Option::isDirty)
+                .filter(CalendarOption::isDirty)
                 .toList();
     }
 
-    public void markAllAsDirty(boolean dirty) {
-        options.forEach(o -> o.markAsDirty(dirty));
+    public void unmarkAllAsDirty() {
+        options.forEach(CalendarOption::unmarkAsDirty);
     }
 
-    public boolean isWeekNumbers() {
-        return weekNumbers.getValue();
-    }
-
-    public void setWeekNumbers(boolean weekNumbers) {
-        this.weekNumbers.setValue(weekNumbers);
-    }
-
-    public void setValidRange(LocalDate start, LocalDate end) {
-        ValidRange value = new ValidRange();
-        value.setStart(start);
-        value.setEnd(end);
-
-        validRangeDates.setValue(value);
+    public SimpleOption<Boolean> getWeekNumbers() {
+        return weekNumbers;
     }
 
     public ValidRange getValidRange() {
-        return validRangeDates.getValue();
+        return validRange;
     }
 
-    public TimeZone getTimeZone() {
-        return TimeZone.getTimeZone((String) timeZone.getValue());
+    public SimpleOption<TimeZone> getTimeZone() {
+        return timeZone;
     }
 
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone.setValue(timeZone.getID());
+    public SimpleOption<CalendarView> getInitialCalendarView() {
+        return initialView;
     }
 
-    public CalendarView getInitialCalendarView() {
-        return initialView.getValue();
-    }
-
-    public void setInitialCalendarView(CalendarView calendarView) {
-        this.initialView.setValue(calendarView);
-    }
-
-    public boolean isNavLinks() {
-        return navLinks.getValue();
-    }
-
-    public void setNavLinks(boolean navLinks) {
-        this.navLinks.setValue(navLinks);
+    public SimpleOption<Boolean> getNavLinks() {
+        return navLinks;
     }
 
     public DayMaxEventRows getDayMaxEventRows() {
-        return dayMaxEventRows.getValue();
+        return dayMaxEventRows;
     }
 
-    public void setDayMaxEventRows(boolean enabled, Integer maxRows) {
-        this.dayMaxEventRows.setValue(new DayMaxEventRows(enabled, maxRows));
+    public SimpleOption<Integer> getEventMaxStack() {
+        return eventMaxStack;
     }
 
-    public Integer getEventMaxStack() {
-        return eventMaxStack.getValue();
+    public DayMaxEvents getDayMaxEvents() {
+        return dayMaxEvents;
     }
 
-    public void setEventMaxStack(Integer eventMaxStack) {
-        this.eventMaxStack.setValue(eventMaxStack);
-    }
-
-    public DayMaxEvents getDayMaxEvent() {
-        return dayMaxEvents.getValue();
-    }
-
-    public void setDayMaxEvent(boolean enabled, Integer maxRows) {
-        this.dayMaxEvents.setValue(new DayMaxEvents(enabled, maxRows));
-    }
-
-    @Nullable
-    public CalendarView getMoreLinkCalendarView() {
-        CalendarView calendarView = moreLinkClick.getValue();
-        return calendarView.getId().equals("popover") ? null : calendarView;
-    }
-
-    public void setMoreLinkCalendarView(@Nullable CalendarView moreLinkNavigationView) {
-        this.moreLinkClick.setValue(
-                moreLinkNavigationView == null
-                        ? (CalendarView) () -> "popover"
-                        : moreLinkNavigationView);
-
-        moreLinkClickFunction.markAsDirty(true);
-    }
-
-    public boolean getMoreLinkClickFunction() {
-        return moreLinkClickFunction.getValue();
-    }
-
-    public void setMoreLinkClickFunction(boolean function) {
-        moreLinkClickFunction.setValue(function);
-
-        moreLinkClick.markAsDirty(true);
+    public MoreLinkClick getMoreLinkClick() {
+        return moreLinkClick;
     }
 
     public MoreLinkClassNames getMoreLinkClassNames() {
-        return moreLinkClassNames.getValue();
+        return moreLinkClassNames;
     }
 
-    public void setMoreLinkClassNames(List<String> classNames, boolean function) {
-        moreLinkClassNames.setValue(new MoreLinkClassNames(classNames, function));
+    public SimpleOption<Boolean> getEventStartEditable() {
+        return eventStartEditable;
     }
 
-    public boolean isEventStartEditable() {
-        return eventStartEditable.getValue();
+    public SimpleOption<Boolean> getEventDurationEditable() {
+        return eventDurationEditable;
     }
 
-    public void setEventStartEditable(boolean editable) {
-        eventStartEditable.setValue(editable);
+    public SimpleOption<Boolean> getEventResizableFromStart() {
+        return eventResizableFromStart;
     }
 
-    public boolean isEventDurationEditable() {
-        return eventDurationEditable.getValue();
-    }
-
-    public void setEventDurationEditable(boolean editable) {
-        eventDurationEditable.setValue(editable);
-    }
-
-    public boolean isEventResizableFromStart() {
-        return eventResizableFromStart.getValue();
-    }
-
-    public void setEventResizableFromStart(boolean resizableFromStart) {
-        eventResizableFromStart.setValue(resizableFromStart);
-    }
-
-    public int getEventDragMinDistance() {
-        return eventDragMinDistance.getValue();
-    }
-
-    public void setEventDragMinDistance(int minDistance) {
-        eventDragMinDistance.setValue(minDistance);
+    public SimpleOption<Integer> getEventDragMinDistance() {
+        return eventDragMinDistance;
     }
 
     public EventOverlap getEventOverlap() {
-        return eventOverlap.getValue();
+        return eventOverlap;
     }
 
-    public void setEventOverlap(boolean overlap, @Nullable JsFunction jsFunction) {
-        eventOverlap.setValue(new EventOverlap(overlap, jsFunction));
+    public SimpleOption<Integer> getDragRevertDuration() {
+        return dragRevertDuration;
     }
 
-    public int getDragRevertDuration() {
-        return dragRevertDuration.getValue();
+    public SimpleOption<Boolean> getDragScroll() {
+        return dragScroll;
     }
 
-    public void setDragRevertDuration(int revertDuration) {
-        dragRevertDuration.setValue(revertDuration);
+    public SimpleOption<CalendarDuration> getSnapDuration() {
+        return snapDuration;
     }
 
-    public boolean isDragScroll() {
-        return dragScroll.getValue();
+    public SimpleOption<Boolean> getAllDayMaintainDuration() {
+        return allDayMaintainDuration;
     }
 
-    public void setDragScroll(boolean enabled) {
-        dragScroll.setValue(enabled);
+    public SimpleOption<Boolean> getSelectable() {
+        return selectable;
     }
 
-    public CalendarDuration getSnapDuration() {
-        return snapDuration.getValue();
+    public SimpleOption<Boolean> getSelectMirror() {
+        return selectMirror;
     }
 
-    public void setSnapDuration(CalendarDuration snapDuration) {
-        this.snapDuration.setValue(snapDuration);
+    public SimpleOption<Boolean> getUnselectAuto() {
+        return unselectAuto;
     }
 
-    public boolean isAllDayMaintainDuration() {
-        return allDayMaintainDuration.getValue();
-    }
-
-    public void setAllDayMaintainDuration(boolean allDayMaintainDuration) {
-        this.allDayMaintainDuration.setValue(allDayMaintainDuration);
-    }
-
-
-    public boolean isSelectable() {
-        return selectable.getValue();
-    }
-
-    public void setSelectable(boolean selectionEnabled) {
-        selectable.setValue(selectionEnabled);
-    }
-
-    public boolean isSelectMirror() {
-        return selectMirror.getValue();
-    }
-
-    public void setSelectMirror(boolean selectMirror) {
-        this.selectMirror.setValue(selectMirror);
-    }
-
-    public boolean isUnselectAuto() {
-        return unselectAuto.getValue();
-    }
-
-    public void setUnselectAuto(boolean unselectAuto) {
-        this.unselectAuto.setValue(unselectAuto);
-    }
-
-    @Nullable
-    public String getUnselectCancel() {
-        return ((String) unselectCancel.getValue()).isEmpty() ? null : unselectCancel.getValue();
+    public SimpleOption<String> getUnselectCancel() {
+        return unselectCancel;
     }
 
     public void setUnselectCancel(@Nullable String unselectCancel) {
@@ -305,76 +194,39 @@ public class JmixFullCalendarOptions {
     }
 
     public SelectOverlap getSelectOverlap() {
-        return selectOverlap.getValue();
+        return selectOverlap;
     }
 
-    public void setSelectOverlap(boolean enabled, @Nullable JsFunction jsFunction) {
-        selectOverlap.setValue(new SelectOverlap(enabled, jsFunction));
+    public SimpleOption<JsFunction> getSelectAllow() {
+        return selectAllow;
     }
 
-
-    @Nullable
-    public JsFunction getSelectAllow() {
-        return selectAllow.getValue().equals(NULL_FUNCTION) ? null : selectAllow.getValue();
-    }
-
-    public void setSelectAllow(@Nullable JsFunction jsFunction) {
-        selectAllow.setValue(jsFunction == null ? NULL_FUNCTION : jsFunction);
-    }
-
-    public int getSelectMinDistance() {
-        return selectMinDistance.getValue();
-    }
-
-    public void setSelectMinDistance(int minDistance) {
-        selectMinDistance.setValue(minDistance);
+    public SimpleOption<Integer> getSelectMinDistance() {
+        return selectMinDistance;
     }
 
     public void addCalendarCustomView(CalendarCustomView customView) {
-        List<CalendarCustomView> views = this.views.getValue();
-
-        if (!views.contains(customView)) {
-            views.add(customView);
-            this.views.markAsDirty(true);
-        }
+        this.views.addCustomView(customView);
     }
 
     public void removeCalendarCustomView(CalendarCustomView customView) {
-        List<CalendarCustomView> views = this.views.getValue();
-
-        if (views.contains(customView)) {
-            views.remove(customView);
-            this.views.markAsDirty(true);
-        }
+        this.views.removeCustomView(customView);
     }
 
     @Nullable
     public CalendarCustomView getCalendarCustomView(String viewId) {
-        List<CalendarCustomView> views = this.views.getValue();
-
-        return views.stream()
-                .filter(v -> v.getCalendarView().getId().equals(viewId))
-                .findFirst()
-                .orElse(null);
+        return this.views.getCustomView(viewId);
     }
 
     public List<CalendarCustomView> getCalendarCustomViews() {
-        return Collections.unmodifiableList(views.getValue());
+        return views.getCustomViews();
     }
 
-    public void setVisibleRange(LocalDate start, LocalDate end) {
-        visibleRange.setValue(new VisibleRange(start, end));
-    }
-
-    @Nullable
     public VisibleRange getVisibleRange() {
-        if (visibleRange.getValue() instanceof EmptyRange) {
-            return null;
-        }
-        return visibleRange.getValue();
+        return visibleRange;
     }
 
-    public boolean isInitial(Option option) {
+    public boolean isInitial(CalendarOption option) {
         return initialOptions.contains(option);
     }
 
@@ -382,55 +234,24 @@ public class JmixFullCalendarOptions {
         this.optionChangeListener = listener;
     }
 
-    protected void fireChangeEvent(Option option) {
+    protected void onOptionChange(CalendarOption.OptionChangeEvent event) {
+        fireChangeEvent(event.getSource());
+    }
+
+    protected void fireChangeEvent(CalendarOption option) {
         if (optionChangeListener != null) {
             optionChangeListener.accept(new OptionChangeEvent(option));
         }
     }
 
-    public class Option {
-        protected String name;
-        protected Object value;
-        protected boolean dirty = false;
-
-        public Option(String name, Object value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public <V> V getValue() {
-            return (V) value;
-        }
-
-        public <V> void setValue(V value) {
-            if (!Objects.equals(this.value, value)) {
-                this.value = value;
-                markAsDirty(true);
-                fireChangeEvent(this);
-            }
-        }
-
-        public void markAsDirty(boolean dirty) {
-            this.dirty = dirty;
-        }
-
-        public boolean isDirty() {
-            return dirty;
-        }
-    }
-
     public static class OptionChangeEvent extends EventObject {
 
-        public OptionChangeEvent(Option source) {
+        public OptionChangeEvent(CalendarOption source) {
             super(source);
         }
 
-        public Option getOption() {
-            return (Option) source;
+        public CalendarOption getOption() {
+            return (CalendarOption) source;
         }
     }
 }

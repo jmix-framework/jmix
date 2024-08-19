@@ -21,11 +21,19 @@ import java.util.Objects;
 
 public class VisibleRange extends AbstractRange {
 
-    public VisibleRange(LocalDate start, LocalDate end) {
+    public static final String NAME = "visibleRange";
+
+    public VisibleRange() {
+        super(NAME);
+    }
+
+    public void setRange(LocalDate start, LocalDate end) {
         Objects.requireNonNull(start);
         Objects.requireNonNull(end);
 
         this.start = start;
         this.end = end;
+
+        markAsDirty();
     }
 }

@@ -18,31 +18,40 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 
 import jakarta.annotation.Nullable;
 
-import java.time.LocalDate;
+import java.util.Objects;
 
-public class ValidRange extends AbstractRange {
-    public static final String NAME = "validRange";
+public class SimpleOption<V> extends CalendarOption {
 
-    public ValidRange() {
-        super(NAME);
+    protected V value;
+
+    public SimpleOption(String name) {
+        super(name);
     }
 
-    public void setStart(@Nullable LocalDate start) {
-        this.start = start;
+    public SimpleOption(String name, V defaultValue) {
+        super(name);
+
+        this.value = Objects.requireNonNull(defaultValue);
+    }
+
+    @Nullable
+    public V getValue() {
+        return value;
+    }
+
+    public V getNonNullValue() {
+        return Objects.requireNonNull(value);
+    }
+
+    public void setValue(@Nullable V value) {
+        this.value = value;
 
         markAsDirty();
     }
 
-    public void setEnd(@Nullable LocalDate end) {
-        this.end = end;
-
-        markAsDirty();
-    }
-
-    public void setRange(@Nullable LocalDate start, @Nullable LocalDate end) {
-        this.start = start;
-        this.end = end;
-
-        markAsDirty();
+    @Nullable
+    @Override
+    protected V getValueToSerialize() {
+        return getValue();
     }
 }

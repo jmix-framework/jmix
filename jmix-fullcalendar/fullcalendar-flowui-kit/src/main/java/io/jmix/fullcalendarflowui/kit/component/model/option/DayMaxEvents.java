@@ -16,32 +16,38 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model.option;
 
-public class DayMaxEvents {
+import jakarta.annotation.Nullable;
 
-    protected boolean enabled = false;
+import java.io.Serializable;
+
+public class DayMaxEvents extends CalendarOption implements Serializable {
+    public static final String NAME = "dayMaxEvents";
+
+    protected boolean limited = false;
     protected Integer max;
 
     public DayMaxEvents() {
+        super(NAME);
     }
 
-    public DayMaxEvents(boolean enabled, Integer max) {
-        this.enabled = enabled;
-        this.max = max;
+    public boolean isLimited() {
+        return limited;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public void setLimited(boolean limited) {
+        this.limited = limited;
+
+        markAsDirty();
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
+    @Nullable
     public Integer getMax() {
         return max;
     }
 
-    public void setMax(Integer max) {
+    public void setMax(@Nullable Integer max) {
         this.max = max;
+
+        markAsDirty();
     }
 }

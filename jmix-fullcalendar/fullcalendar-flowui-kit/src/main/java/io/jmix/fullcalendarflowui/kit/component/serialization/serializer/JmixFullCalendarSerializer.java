@@ -21,11 +21,13 @@ import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
-import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOptions.Option;
+import io.jmix.fullcalendarflowui.kit.component.model.option.CalendarOption;
+import io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -69,9 +71,13 @@ public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
         return json;
     }
 
-    public JsonObject serializeOptions(List<Option> options) {
-        Map<String, Object> optionsMap = options.stream()
-                .collect(Collectors.toMap(Option::getName, Option::getValue));
+    public JsonObject serializeOptions(List<CalendarOption> options) {
+        Map<String, Object> optionsMap = new HashMap<>(options.size());
+        for (CalendarOption option : options) {
+            optionsMap.put(
+                    OptionUtils.getName(option),
+                    OptionUtils.getValueToSerialize(option));
+        }
 
         log.debug("Starting serialize {} calendar options", optionsMap.size());
 

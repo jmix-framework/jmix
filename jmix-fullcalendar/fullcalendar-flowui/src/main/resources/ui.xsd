@@ -34,10 +34,10 @@
                     <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                     <xs:attribute name="navigationLinksEnabled" type="xs:boolean"/>
 
-                    <xs:attribute name="dayMaxEventRowsEnabled" type="xs:boolean"/>
+                    <xs:attribute name="limitedDayMaxEventRows" type="xs:boolean"/>
                     <xs:attribute name="dayMaxEventRows" type="xs:integer"/>
 
-                    <xs:attribute name="dayMaxEventsEnabled" type="xs:boolean"/>
+                    <xs:attribute name="limitedDayMaxEvents" type="xs:boolean"/>
                     <xs:attribute name="dayMaxEvents" type="xs:integer"/>
 
                     <xs:attribute name="eventMaxStack " type="xs:integer"/>
@@ -54,7 +54,7 @@
                     <xs:attribute name="eventConstraintGroupId" type="xs:string"/>
 
                     <xs:attribute name="dragRevertDuration" type="xs:integer"/>
-                    <xs:attribute name="dragScrollEnabled" type="xs:boolean"/> <!--todo bad works-->
+                    <xs:attribute name="dragScrollEnabled" type="xs:boolean"/>
 
                     <xs:attribute name="snapDuration" type="xs:string"/>
 

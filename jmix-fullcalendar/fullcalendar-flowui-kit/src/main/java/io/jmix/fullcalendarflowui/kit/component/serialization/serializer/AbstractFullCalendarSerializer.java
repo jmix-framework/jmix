@@ -59,12 +59,7 @@ public abstract class AbstractFullCalendarSerializer {
     protected List<JsonSerializer<?>> getSerializers() {
         List<JsonSerializer<?>> serializers = new ArrayList<>(11);
         serializers.add(new EnumIdSerializer());
-        serializers.add(new DayMaxEventRowsSerializer());
-        serializers.add(new DayMaxEventsSerializer());
         serializers.add(new JsFunctionSerializer());
-        serializers.add(new MoreLinkClassNamesSerializer());
-        serializers.add(new EventOverlapSerializer());
-        serializers.add(new SelectOverlapSerializer());
         return serializers;
     }
 }

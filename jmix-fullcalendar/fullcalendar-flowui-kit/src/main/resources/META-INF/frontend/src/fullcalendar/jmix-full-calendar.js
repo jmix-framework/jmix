@@ -20,7 +20,7 @@ import {dataHolder} from './DataHolder.js';
 import Options, {
     processInitialOptions,
     MORE_LINK_CLASS_NAMES,
-    MORE_LINK_CLICK_FUNCTION,
+    MORE_LINK_CLICK,
 } from './Options.js';
 
 const FC_LINK_CLASS_NAME = 'fc-more-link';
@@ -72,7 +72,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.calendar.render();
 
         this.jmixOptions = new Options(this.calendar, this);
-        this.jmixOptions.addListener(MORE_LINK_CLICK_FUNCTION, this._onMoreLinkClick.bind(this));
+        this.jmixOptions.addListener(MORE_LINK_CLICK, this._onMoreLinkClick.bind(this));
         this.jmixOptions.addListener(MORE_LINK_CLASS_NAMES, this._onMoreLinkClassNames.bind(this));
 
         this._onI18nChange(this.i18n);

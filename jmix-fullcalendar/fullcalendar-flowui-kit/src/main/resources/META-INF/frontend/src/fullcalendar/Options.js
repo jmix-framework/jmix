@@ -2,12 +2,9 @@ import * as calendarUtils from "./jmix-full-calendar-utils";
 
 const NO_VIEW_MORE_LINK_CLICK = 'NO_VIEW';
 
-export const MORE_LINK_CLICK_FUNCTION = 'moreLinkClickFunction';
+export const MORE_LINK_CLICK = 'moreLinkClick';
 export const MORE_LINK_CLASS_NAMES = 'moreLinkClassNames';
-export const INITIAL_VIEW = 'initialView';
-export const UNSELECT_AUTO = 'unselectAuto';
 export const UNSELECT_CANCEL = 'unselectCancel';
-export const SELECT_MIN_DISTANCE = 'selectMinDistance';
 const EVENT_OVERLAP = 'eventOverlap';
 const SELECT_OVERLAP = 'selectOverlap';
 const EVENT_CONSTRAINT = 'eventConstraint';
@@ -15,44 +12,53 @@ const BUSINESS_HOURS = 'businessHours';
 const SELECT_CONSTRAINT = 'selectConstraint';
 const SELECT_ALLOW = 'selectAllow';
 const VIEWS = 'views';
+const DAY_MAX_EVENT_ROWS = 'dayMaxEventRows';
+const DAY_MAX_EVENTS = 'dayMaxEvents';
 
 export function processInitialOptions(serverOptions) {
-    const options = {};
+    const options = serverOptions;
     if (!serverOptions) {
-        return options;
+        return {};
     }
-    options[SELECT_MIN_DISTANCE] = serverOptions[SELECT_MIN_DISTANCE];
 
-    const unselectAuto = serverOptions[UNSELECT_AUTO];
-    if (unselectAuto !== null && unselectAuto !== undefined) {
-        options[UNSELECT_AUTO] = unselectAuto;
-    }
-    const initialView = serverOptions[INITIAL_VIEW];
-    if (initialView !== null && initialView !== undefined) {
-        options[INITIAL_VIEW] = initialView;
-    }
-    const unselectCancel = serverOptions[UNSELECT_CANCEL];
-    if (unselectCancel) {
-        options[UNSELECT_CANCEL] = unselectCancel;
-    }
     const views = serverOptions[VIEWS];
     if (views) {
-        options[VIEWS] = convertToViewsObject(views);
+        options[VIEWS] = processViews(views);
     }
-    return options;
-}
+    const unselectCancel = serverOptions[UNSELECT_CANCEL];
+    if (!unselectCancel) {
+        delete options[UNSELECT_CANCEL];
+    }
 
-function convertToViewsObject(customViews) {
-    const views = {};
-    for (const customView of customViews) {
-        views[customView.calendarView] = {
-            type: customView.type,
-            duration: customView.duration,
-            dayCount: customView.dayCount,
+    for (const property in options) {
+        const value = options[property];
+        if (value === null || value === undefined) {
+            delete options[property];
         }
     }
 
-    return views;
+    return options;
+}
+
+function processViews(viewsObject) {
+    for (let view in viewsObject) {
+        if (view === 'customViews') {
+            continue;
+        }
+        viewsObject[view] = {...view, ...view.properties && {...view.properties}};
+    }
+
+    if (viewsObject.customViews) {
+        for (const view of viewsObject.customViews) {
+            viewsObject[view.calendarView] = {
+                type: view.type,
+                ...(view.dayCount) && {dayCount: view.dayCount},
+                ...(view.duration) && {duration: view.duration},
+                ...view.properties && {...view.properties}
+            };
+        }
+    }
+    return viewsObject;
 }
 
 class Options {
@@ -83,7 +89,7 @@ class Options {
                 }
             }
 
-            this._updateMoreLinkClickFunction(options);
+            this._updateMoreLinkClick(options);
             this._updateMoreLinkClassNames(options);
             this._updateEventOverlap(options);
             this._updateEventConstraint(options);
@@ -91,6 +97,9 @@ class Options {
             this._updateSelectOverlap(options);
             this._updateSelectConstraint(options);
             this._updateSelectAllow(options);
+
+            this._updateDayMaxEventRows(options);
+            this._updateDayMaxEvents(options);
         });
     }
 
@@ -99,7 +108,7 @@ class Options {
     }
 
     _skipOption(key) {
-        return MORE_LINK_CLICK_FUNCTION === key
+        return MORE_LINK_CLICK === key
             || MORE_LINK_CLASS_NAMES === key
             || EVENT_OVERLAP === key
             || EVENT_CONSTRAINT === key
@@ -107,94 +116,110 @@ class Options {
             || SELECT_OVERLAP === key
             || SELECT_CONSTRAINT === key
             || SELECT_ALLOW === key
+            || DAY_MAX_EVENT_ROWS === key
+            || DAY_MAX_EVENTS === key
     }
 
-    _updateMoreLinkClickFunction(options) {
-        const moreLinkClickFunction = options[MORE_LINK_CLICK_FUNCTION]
-        if (moreLinkClickFunction) {
-            this.updateOption('moreLinkClick', this._onMoreLinkClick.bind(this));
+    _updateMoreLinkClick(options) {
+        const moreLinkClick = options[MORE_LINK_CLICK]
+
+        if (moreLinkClick) {
+            this.updateOption('moreLinkClick', moreLinkClick.calendarView);
+
+            if (moreLinkClick.functionEnabled) {
+                this.updateOption('moreLinkClick', this._onMoreLinkClick.bind(this));
+            }
         }
     }
 
     _updateMoreLinkClassNames(options) {
         const moreLinkClassNames = options[MORE_LINK_CLASS_NAMES];
-        if (!moreLinkClassNames) {
-            return;
-        }
-        if (moreLinkClassNames.hasOwnProperty('function') && moreLinkClassNames['function']) {
-            this.updateOption(MORE_LINK_CLASS_NAMES, this._onMoreLinkClassNames.bind(this));
-        } else if (moreLinkClassNames.hasOwnProperty('classNames')) {
-            this.updateOption(MORE_LINK_CLASS_NAMES, moreLinkClassNames['classNames']);
+
+        if (moreLinkClassNames) {
+            this.updateOption(MORE_LINK_CLASS_NAMES, moreLinkClassNames.classNames);
+
+            if (moreLinkClassNames.functionEnabled) {
+                this.updateOption(MORE_LINK_CLASS_NAMES, this._onMoreLinkClassNames.bind(this));
+            }
         }
     }
 
     _updateEventOverlap(options) {
         const eventOverlap = options[EVENT_OVERLAP];
-        if (!eventOverlap) {
-            return;
-        }
-        if (eventOverlap.hasOwnProperty('jsFunction') && eventOverlap['jsFunction']) {
-            const jsFunction = calendarUtils.parseJavaScriptFunction(eventOverlap['jsFunction']);
-            if (jsFunction) {
-                this.updateOption(EVENT_OVERLAP, jsFunction);
+
+        if (eventOverlap) {
+            this.updateOption(EVENT_OVERLAP, eventOverlap.enabled);
+
+            if (eventOverlap.jsFunction) {
+                const jsFunction = calendarUtils.parseJavaScriptFunction(eventOverlap['jsFunction']);
+                if (jsFunction) {
+                    this.updateOption(EVENT_OVERLAP, jsFunction);
+                }
             }
-        } else if (eventOverlap.hasOwnProperty('enabled')) {
-            this.updateOption(EVENT_OVERLAP, eventOverlap['enabled']);
         }
     }
 
     _updateEventConstraint(options) {
         const eventConstraint = options[EVENT_CONSTRAINT];
-        if (!eventConstraint) {
-            return;
-        }
-        if (eventConstraint.hasOwnProperty('businessHours') && eventConstraint['businessHours']) {
-            this.updateOption(EVENT_CONSTRAINT, eventConstraint['businessHours']);
-        } else if (eventConstraint.hasOwnProperty('groupId') && eventConstraint['groupId']) {
-            this.updateOption(EVENT_CONSTRAINT, eventConstraint['groupId']);
-        } else if (eventConstraint.hasOwnProperty('enabled')) {
-            this.updateOption(EVENT_CONSTRAINT, eventConstraint['enabled'] ? "businessHours" : undefined);
+
+        if (eventConstraint) {
+            const bHours = eventConstraint.businessHours;
+            if (bHours && (Array.isArray(bHours) && bHours.length > 0)) {
+                this.updateOption(EVENT_CONSTRAINT, bHours);
+                return;
+            }
+            if (eventConstraint.groupId) {
+                this.updateOption(EVENT_CONSTRAINT, eventConstraint.groupId);
+                return;
+            }
+
+            this.updateOption(EVENT_CONSTRAINT, eventConstraint.enabled ? "businessHours" : undefined);
         }
     }
 
     _updateBusinessHours(options) {
         const businessHours = options[BUSINESS_HOURS];
-        if (!businessHours) {
-            return;
-        }
-        if (businessHours.hasOwnProperty('businessHours') && businessHours['businessHours']) {
-            this.updateOption(BUSINESS_HOURS, businessHours['businessHours']);
-        } else if (businessHours.hasOwnProperty('enabled')) {
-            this.updateOption(BUSINESS_HOURS, businessHours['enabled']);
+
+        if (businessHours) {
+            this.updateOption(BUSINESS_HOURS, businessHours.enabled);
+
+            const bHours = businessHours.businessHours;
+            if (bHours && (Array.isArray(bHours) && bHours.length > 0)) {
+                this.updateOption(BUSINESS_HOURS, bHours);
+            }
         }
     }
 
     _updateSelectOverlap(options) {
         const selectOverlap = options[SELECT_OVERLAP];
-        if (!selectOverlap) {
-            return;
-        }
-        if (selectOverlap.hasOwnProperty("jsFunction") && selectOverlap['jsFunction']) {
-            const jsFunction = calendarUtils.parseJavaScriptFunction(selectOverlap['jsFunction']);
-            if (jsFunction) {
-                this.updateOption(SELECT_OVERLAP, jsFunction);
+
+        if (selectOverlap) {
+            this.updateOption(SELECT_OVERLAP, selectOverlap.enabled);
+
+            if (selectOverlap.jsFunction) {
+                const jsFunction = calendarUtils.parseJavaScriptFunction(selectOverlap.jsFunction);
+                if (jsFunction) {
+                    this.updateOption(SELECT_OVERLAP, jsFunction);
+                }
             }
-        } else if (selectOverlap.hasOwnProperty('enabled')) {
-            this.updateOption(SELECT_OVERLAP, selectOverlap['enabled']);
         }
     }
 
     _updateSelectConstraint(options) {
         const selectConstraint = options[SELECT_CONSTRAINT];
-        if (!selectConstraint) {
-            return;
-        }
-        if (selectConstraint.hasOwnProperty('businessHours') && selectConstraint['businessHours']) {
-            this.updateOption(SELECT_CONSTRAINT, selectConstraint['businessHours']);
-        } else if (selectConstraint.hasOwnProperty('groupId') && selectConstraint['groupId']) {
-            this.updateOption(SELECT_CONSTRAINT, selectConstraint['groupId']);
-        } else if (selectConstraint.hasOwnProperty('enabled')) {
-            this.updateOption(SELECT_CONSTRAINT, selectConstraint['enabled'] ? "businessHours" : undefined);
+
+        if (selectConstraint) {
+            const bHours = selectConstraint.businessHours;
+            if (bHours && (Array.isArray(bHours) && bHours.length > 0)) {
+                this.updateOption(SELECT_CONSTRAINT, bHours);
+                return;
+            }
+            if (selectConstraint.groupId) {
+                this.updateOption(SELECT_CONSTRAINT, selectConstraint.groupId);
+                return;
+            }
+
+            this.updateOption(SELECT_CONSTRAINT, selectConstraint.enabled ? "businessHours" : undefined);
         }
     }
 
@@ -213,9 +238,33 @@ class Options {
         }
     }
 
+    _updateDayMaxEventRows(options) {
+        const dayMaxEventRows = options[DAY_MAX_EVENT_ROWS];
+
+        if (dayMaxEventRows) {
+            this.updateOption(DAY_MAX_EVENT_ROWS, dayMaxEventRows.limited);
+
+            if (dayMaxEventRows.max) {
+                this.updateOption(DAY_MAX_EVENT_ROWS, dayMaxEventRows.max);
+            }
+        }
+    }
+
+    _updateDayMaxEvents(options) {
+        const dayMaxEvents = options[DAY_MAX_EVENTS];
+
+        if (dayMaxEvents) {
+            this.updateOption(DAY_MAX_EVENTS, dayMaxEvents.limited);
+
+            if (dayMaxEvents.max) {
+                this.updateOption(DAY_MAX_EVENTS, dayMaxEvents.max);
+            }
+        }
+    }
+
     _onMoreLinkClick(e) {
-        if (this.listeners[MORE_LINK_CLICK_FUNCTION]) {
-            this.listeners[MORE_LINK_CLICK_FUNCTION].forEach((listener) => listener(e));
+        if (this.listeners[MORE_LINK_CLICK]) {
+            this.listeners[MORE_LINK_CLICK].forEach((listener) => listener(e));
         }
         return NO_VIEW_MORE_LINK_CLICK;
     }

@@ -32,22 +32,13 @@ public class CalendarCustomView implements Serializable {
     protected Integer dayCount;
 
     public CalendarCustomView(String id) {
-        this(() -> id);
-    }
-
-    public CalendarCustomView(CalendarView calendarView) {
-        this(calendarView, null);
+        this(id, null);
     }
 
     public CalendarCustomView(String id, @Nullable CalendarViewType type) {
-        this(() -> id, type);
-    }
+        Objects.requireNonNull(id);
 
-    public CalendarCustomView(CalendarView calendarView, @Nullable CalendarViewType type) {
-        Objects.requireNonNull(calendarView);
-        Objects.requireNonNull(calendarView.getId());
-
-        this.calendarView = calendarView;
+        this.calendarView = () -> id;
         this.type = type;
     }
 

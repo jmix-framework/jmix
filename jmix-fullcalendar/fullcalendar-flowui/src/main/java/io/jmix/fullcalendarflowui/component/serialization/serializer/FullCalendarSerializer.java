@@ -44,9 +44,6 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
     protected List<JsonSerializer<?>> getSerializers() {
         List<JsonSerializer<?>> serializers = super.getSerializers();
         serializers.add(new EnumClassSerializer());
-        serializers.add(new EventConstraintSerializer());
-        serializers.add(new BusinessHoursOptionSerializer());
-        serializers.add(new SelectConstraintSerializer());
         serializers.add(new DaysOfWeekSerializer());
         return serializers;
     }

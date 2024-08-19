@@ -17,13 +17,14 @@
 package io.jmix.fullcalendarflowui.component.model.option;
 
 import io.jmix.fullcalendarflowui.component.model.BusinessHours;
+import io.jmix.fullcalendarflowui.kit.component.model.option.CalendarOption;
 import org.springframework.lang.Nullable;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class SelectConstraint implements Serializable {
+public class SelectConstraint extends CalendarOption {
+    public static final String NAME = "selectConstraint";
 
     protected boolean enabled = false;
 
@@ -32,12 +33,7 @@ public class SelectConstraint implements Serializable {
     protected List<BusinessHours> businessHours;
 
     public SelectConstraint() {
-    }
-
-    public SelectConstraint(boolean enabled, @Nullable String groupId, @Nullable List<BusinessHours> businessHours) {
-        this.enabled = enabled;
-        this.businessHours = businessHours;
-        this.groupId = groupId;
+        super(NAME);
     }
 
     public boolean isEnabled() {
@@ -46,6 +42,8 @@ public class SelectConstraint implements Serializable {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+
+        markAsDirty();
     }
 
     @Nullable
@@ -55,6 +53,8 @@ public class SelectConstraint implements Serializable {
 
     public void setGroupId(@Nullable String groupId) {
         this.groupId = groupId;
+
+        markAsDirty();
     }
 
     public List<BusinessHours> getBusinessHours() {
@@ -63,5 +63,7 @@ public class SelectConstraint implements Serializable {
 
     public void setBusinessHours(@Nullable List<BusinessHours> businessHours) {
         this.businessHours = businessHours;
+
+        markAsDirty();
     }
 }

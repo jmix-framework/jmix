@@ -161,10 +161,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         String serializedGroupId = getSerializer().serializeGroupIdOrConstraint(groupId);
 
-        getOptions().setEventConstraint(
-                getOptions().getEventConstraint().isEnabled(),
-                serializedGroupId,
-                getOptions().getEventConstraint().getBusinessHours());
+        getOptions().getEventConstraint().setGroupId(serializedGroupId);
     }
 
     @Nullable
@@ -177,10 +174,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         String serializedGroupId = getSerializer().serializeGroupIdOrConstraint(groupId);
 
-        getOptions().setSelectConstraint(
-                getOptions().getSelectConstraint().isEnabled(),
-                serializedGroupId,
-                getOptions().getSelectConstraint().getBusinessHours());
+        getOptions().getSelectConstraint().setGroupId(serializedGroupId);
     }
 
     public boolean isBusinessHoursEnabled() {
@@ -188,7 +182,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     public void setBusinessHoursEnabled(boolean enabled) {
-        getOptions().setBusinessHours(enabled, getOptions().getBusinessHours().getBusinessHours());
+        getOptions().getBusinessHours().setEnabled(enabled);
     }
 
     public List<BusinessHours> getBusinessHours() {
@@ -196,7 +190,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     public void setBusinessHours(@Nullable List<BusinessHours> businessHours) {
-        getOptions().setBusinessHours(getOptions().getBusinessHours().isEnabled(), businessHours);
+        getOptions().getBusinessHours().setBusinessHours(businessHours);
     }
 
     public boolean isEventConstraintEnabled() {
@@ -204,9 +198,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     public void setEventConstraintEnabled(boolean enabled) {
-        getOptions().setEventConstraint(enabled,
-                getOptions().getEventConstraint().getGroupId(),
-                getOptions().getEventConstraint().getBusinessHours());
+        getOptions().getEventConstraint().setEnabled(enabled);
     }
 
     public List<BusinessHours> getEventConstraintBusinessHours() {
@@ -214,10 +206,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     public void setEventConstraintBusinessHours(@Nullable List<BusinessHours> businessHoursEventConstraint) {
-        getOptions().setEventConstraint(
-                getOptions().getEventConstraint().isEnabled(),
-                getOptions().getEventConstraint().getGroupId(),
-                businessHoursEventConstraint);
+        getOptions().getEventConstraint().setBusinessHours(businessHoursEventConstraint);
     }
 
     public boolean isSelectConstraintEnabled() {
@@ -225,10 +214,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     public void setSelectConstraintEnabled(boolean enabled) {
-        getOptions().setSelectConstraint(
-                enabled,
-                getOptions().getSelectConstraint().getGroupId(),
-                getOptions().getSelectConstraint().getBusinessHours());
+        getOptions().getSelectConstraint().setEnabled(enabled);
     }
 
     public List<BusinessHours> getSelectConstraintBusinessHours() {
@@ -236,10 +222,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     public void setSelectConstraintBusinessHours(@Nullable List<BusinessHours> businessHoursSelectConstraint) {
-        getOptions().setSelectConstraint(
-                getOptions().getSelectConstraint().isEnabled(),
-                getOptions().getSelectConstraint().getGroupId(),
-                businessHoursSelectConstraint);
+        getOptions().getSelectConstraint().setBusinessHours(businessHoursSelectConstraint);
     }
 
     @Nullable
@@ -271,12 +254,12 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         Registration registration = getEventBus().addListener(MoreLinkClickEvent.class, listener);
 
-        options.setMoreLinkClickFunction(true);
+        options.getMoreLinkClick().setFunctionEnabled(true);
 
         return () -> {
             registration.remove();
             if (!getEventBus().hasListener(MoreLinkClickEvent.class)) {
-                options.setMoreLinkClickFunction(false);
+                options.getMoreLinkClick().setFunctionEnabled(false);
             }
         };
     }
@@ -417,7 +400,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
             @Nullable Function<MoreLinkClassNamesContext, List<String>> classNamesGenerator) {
         this.linkMoreClassNamesGenerator = classNamesGenerator;
 
-        options.setMoreLinkClassNames(options.getMoreLinkClassNames().getClassNames(), classNamesGenerator != null);
+        options.getMoreLinkClassNames().setFunctionEnabled(classNamesGenerator != null);
     }
 
     @Override

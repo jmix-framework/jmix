@@ -16,48 +16,27 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model.option;
 
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
 import jakarta.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+public class MoreLinkClick extends CalendarOption {
+    public static final String NAME = "moreLinkClick";
 
-public class MoreLinkClassNames extends CalendarOption {
-    public static final String NAME = "moreLinkClassNames";
-
-    protected List<String> classNames = new ArrayList<>();
+    protected CalendarView calendarView;
 
     protected boolean functionEnabled = false;
 
-    public MoreLinkClassNames() {
+    public MoreLinkClick() {
         super(NAME);
     }
 
-    public List<String> getClassNames() {
-        return Collections.unmodifiableList(classNames);
+    @Nullable
+    public CalendarView getCalendarView() {
+        return calendarView ;
     }
 
-    public void setClassNames(@Nullable List<String> classNames) {
-        this.classNames = classNames == null
-                ? Collections.emptyList()
-                : new ArrayList<>(classNames);
-
-        markAsDirty();
-    }
-
-    public void addClassName(String className) {
-        Objects.requireNonNull(className);
-
-        classNames.add(className);
-
-        markAsDirty();
-    }
-
-    public void addClassNames(String... classNames) {
-        Objects.requireNonNull(classNames);
-
-        this.classNames.addAll(List.of(classNames));
+    public void setCalendarView(@Nullable CalendarView calendarView) {
+        this.calendarView = calendarView;
 
         markAsDirty();
     }

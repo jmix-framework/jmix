@@ -16,19 +16,26 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model.option;
 
-import java.io.Serializable;
+import jakarta.annotation.Nullable;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
-public abstract class AbstractRange implements Serializable {
+public abstract class AbstractRange extends CalendarOption {
 
     protected LocalDate start;
     protected LocalDate end;
 
+    public AbstractRange(String name) {
+        super(name);
+    }
+
+    @Nullable
     public LocalDate getStart() {
         return start;
     }
 
+    @Nullable
     public LocalDate getEnd() {
         return end;
     }

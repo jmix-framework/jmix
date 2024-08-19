@@ -19,21 +19,15 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 import io.jmix.fullcalendarflowui.kit.component.model.JsFunction;
 import jakarta.annotation.Nullable;
 
-import java.io.Serializable;
+public class EventOverlap extends CalendarOption {
+    public static final String NAME = "eventOverlap";
 
-public class EventOverlap implements Serializable {
-
-    protected boolean enabled;
+    protected boolean enabled = true;
 
     protected JsFunction jsFunction;
 
     public EventOverlap() {
-        enabled = true;
-    }
-
-    public EventOverlap(boolean enabled, JsFunction jsFunction) {
-        this.enabled = enabled;
-        this.jsFunction = jsFunction;
+        super(NAME);
     }
 
     public boolean isEnabled() {
@@ -42,6 +36,8 @@ public class EventOverlap implements Serializable {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+
+        markAsDirty();
     }
 
     @Nullable
@@ -51,5 +47,7 @@ public class EventOverlap implements Serializable {
 
     public void setJsFunction(@Nullable JsFunction jsFunction) {
         this.jsFunction = jsFunction;
+
+        markAsDirty();
     }
 }

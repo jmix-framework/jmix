@@ -236,8 +236,8 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
         setValidators(valuesPicker, attribute);
         setValueProvider(valuesPicker, attribute, context);
-        setValueSource(valuesPicker, context);
         setEnumValueSource(valuesPicker, attribute);
+        setValueSource(valuesPicker, context);
 
         MultiValueSelectAction<?> selectAction = actions.create(MultiValueSelectAction.ID);
         initValuesSelectActionByAttribute(selectAction, attribute);

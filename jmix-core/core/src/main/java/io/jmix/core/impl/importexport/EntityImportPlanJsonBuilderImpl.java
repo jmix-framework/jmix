@@ -73,6 +73,9 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
             if (metaProperty == null) {
                 continue;
             }
+            if (metaProperty.isReadOnly()) {
+                continue;
+            }
             Range propertyRange = metaProperty.getRange();
             Class<?> propertyType = metaProperty.getJavaType();
             if (propertyRange.isDatatype() || propertyRange.isEnum()) {

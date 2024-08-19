@@ -238,10 +238,8 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         disableControls();
         setDateFieldTime();
 
-        entityLogTable.addSelectionListener(this::onEntityLogTableSelect);
-        loggedEntityTable.addSelectionListener(this::onLoggedEntityTableSelectEvent);
-        entityLogTable.addColumn(this::generateEntityInstanceNameColumn
-                ).setHeader(messages.getMessage(this.getClass(), "entity"))
+        entityLogTable.addColumn(this::generateEntityInstanceNameColumn)
+                .setHeader(messages.getMessage(this.getClass(), "entity"))
                 .setSortable(true);
 
         entityLogTable.addColumn(this::generateEntityIdColumn)
@@ -373,6 +371,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         return null;
     }
 
+    @Subscribe("loggedEntityTable")
     protected void onLoggedEntityTableSelectEvent(SelectionEvent<Grid<LoggedEntity>, LoggedEntity> event) {
         LoggedEntity entity = event.getFirstSelectedItem().orElse(null);
         if (entity != null) {
@@ -398,6 +397,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
         instancePicker.clear();
     }
 
+    @Subscribe("entityLogTable")
     protected void onEntityLogTableSelect(SelectionEvent<Grid<EntityLogItem>, EntityLogItem> event1) {
         EntityLogItem entity = event1.getFirstSelectedItem().orElse(null);
         if (entity != null) {

@@ -54,8 +54,8 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -145,7 +145,6 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         categoryAttrsGrid
                 .addColumn(createCategoryAttrsGridDefaultValueRenderer())
                 .setHeader(messages.getMessage(getClass(), "categoryAttrsGrid.defaultValue"));
-        categoryAttrsGrid.addSelectionListener(e -> setGridActionsEnabled(!e.getAllSelectedItems().isEmpty()));
     }
 
     @Subscribe
@@ -388,7 +387,7 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     }
 
     private void refreshAttributesDc(CategoryAttribute attribute) {
-        if(categoryAttributesDc.getMutableItems().contains(attribute)) {
+        if (categoryAttributesDc.getMutableItems().contains(attribute)) {
             categoryAttributesDc.replaceItem(attribute);
         } else {
             categoryAttributesDc.getMutableItems().add(attribute);
@@ -404,8 +403,6 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         categoryAttrsGrid.getDataProvider().refreshAll();
     }
 
-
-    @Subscribe("categoryAttrsGrid")
     protected void onCategoryAttrsGridSelection(SelectionEvent<DataGrid<CategoryAttribute>, CategoryAttribute> event) {
         Set<CategoryAttribute> selected = categoryAttrsGrid.getSelectedItems();
         if (selected.isEmpty()) {
@@ -413,6 +410,11 @@ public class CategoryDetailView extends StandardDetailView<Category> {
         } else {
             refreshMoveButtonsEnabled(selected.iterator().next());
         }
+    }
+
+    @Subscribe("categoryAttrsGrid")
+    protected void onCategoryAttrsGridSelectionEvent(SelectionEvent<DataGrid<CategoryAttribute>, CategoryAttribute> event) {
+        setGridActionsEnabled(!event.getAllSelectedItems().isEmpty());
     }
 
     @Subscribe("categoryAttrsGrid.moveUp")

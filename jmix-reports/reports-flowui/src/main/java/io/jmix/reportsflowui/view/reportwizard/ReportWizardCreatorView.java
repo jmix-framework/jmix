@@ -11,6 +11,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
@@ -193,7 +194,6 @@ public class ReportWizardCreatorView extends StandardView {
         initReportTypeOptionGroup();
         initTemplateFormatLookupField();
         initEntityLookupField();
-        initRegionDataGrid();
         initReportParameterDataGrid();
         updateWizardDescription();
     }
@@ -774,6 +774,11 @@ public class ReportWizardCreatorView extends StandardView {
         }
     }
 
+    @Subscribe("regionDataGrid")
+    protected void onRegionDataGridSelection(SelectionEvent<DataGrid<ReportRegion>, ReportRegion> event) {
+        updateMoveButtons();
+    }
+
     @Subscribe("regionDataGrid.up")
     protected void onRegionDataGridUp(ActionPerformedEvent event) {
         swapItems(true);
@@ -1081,10 +1086,6 @@ public class ReportWizardCreatorView extends StandardView {
         Object value = jmixObjectToStringConverter.convertFromString(Class.forName(queryParameter.getJavaClassName()), queryParameter.getDefaultValueString());
         queryParameter.setDefaultValue(value);
         queryParametersDc.replaceItem(queryParameter);
-    }
-
-    protected void initRegionDataGrid() {
-        regionDataGrid.addSelectionListener(selectionEvent -> updateMoveButtons());
     }
 
     protected void initReportParameterDataGrid() {

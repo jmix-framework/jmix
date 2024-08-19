@@ -139,10 +139,8 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
 
     protected void performUpdateOptions(ExecutionContext context) {
         JsonObject resultJson = new JreJsonFactory().createObject();
-
         JsonValue optionsJson = serializer.serializeOptions(options);
         resultJson.put("options", optionsJson);
-
         callPendingJsFunction("_updateOptions", resultJson);
 
         synchronizeOptionsExecution = null;
@@ -150,9 +148,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
 
     protected void performUpdateItems(ExecutionContext context) {
         JsonObject resultJson = new JreJsonFactory().createObject();
-
         List<DataItem> dataItems = getDataProvider().fetch(new Query<>()).toList();
-        ;
         JsonValue dataJson = serializer.serializeItems(dataItems.stream()
                 .map(dataItem ->{
                         Map<String, Object> values = new HashMap<>();
@@ -163,8 +159,6 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
                 })
                 .collect(Collectors.toList()));
         resultJson.put("items", dataJson);
-
-
         callPendingJsFunction("_updateItems", resultJson);
 
         synchronizeItemsExecution = null;

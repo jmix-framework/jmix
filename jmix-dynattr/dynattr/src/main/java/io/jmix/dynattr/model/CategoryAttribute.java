@@ -33,6 +33,7 @@ import io.jmix.dynattr.impl.CategoryAttributeConfigurationConvertor;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -95,6 +96,7 @@ public class CategoryAttribute implements Serializable {
     @Column(name = "NAME", nullable = false)
     private String name;
 
+    @Pattern(message = "{msg://io.jmix.dynattr.model/CategoryAttribute.code.validation.wrongFormat}", regexp = "^[a-z]\\w*$")
     @Column(name = "CODE", nullable = false)
     private String code;
 

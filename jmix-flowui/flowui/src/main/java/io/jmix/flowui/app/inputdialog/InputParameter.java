@@ -25,11 +25,8 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.datatype.impl.OffsetDateTimeDatatype;
 
 import org.springframework.lang.Nullable;
-
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.time.*;
-import java.util.Date;
 import java.util.TimeZone;
 import java.util.function.Supplier;
 
@@ -390,29 +387,29 @@ public class InputParameter {
      */
     public static InputParameter dateTimeParameter(String id) {
         return new InputParameter(id)
-                .withDatatypeJavaClass(Date.class);
+                .withDatatypeJavaClass(LocalDateTime.class);
     }
 
     /**
-     * Creates parameter with {@link java.sql.Date} type.
+     * Creates parameter with Date type.
      *
      * @param id field id
      * @return input parameter
      */
     public static InputParameter dateParameter(String id) {
         return new InputParameter(id)
-                .withDatatypeJavaClass(java.sql.Date.class);
+                .withDatatypeJavaClass(LocalDate.class);
     }
 
     /**
-     * Creates parameter with {@link java.sql.Time} type.
+     * Creates parameter with Time type.
      *
      * @param id field id
      * @return input parameter
      */
     public static InputParameter timeParameter(String id) {
         return new InputParameter(id)
-                .withDatatypeJavaClass(Time.class);
+                .withDatatypeJavaClass(LocalTime.class);
     }
 
     /**

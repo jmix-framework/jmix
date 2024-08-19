@@ -28,20 +28,15 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
-import org.springframework.stereotype.Component;
-
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 /**
  * Class is used for getting default policy group for the {@link ResourcePolicy} instance.
  */
 @Component("sec_DefaultResourcePolicyGroupResolver")
 public class DefaultResourcePolicyGroupResolver {
-
-    private final static Logger log = LoggerFactory.getLogger(DefaultResourcePolicyGroupResolver.class);
 
     protected ViewRegistry viewRegistry;
     protected MenuConfig menuConfig;
@@ -137,11 +132,15 @@ public class DefaultResourcePolicyGroupResolver {
     }
 
     @Nullable
-    protected String resolvePolicyGroupForScreenPolicy(String viewId) {
-        return viewRegistry.findViewInfo(viewId).map(viewInfo -> {
-            Class<? extends View<?>> controllerClass = viewInfo.getControllerClass();
-            return resolvePolicyGroupByScreenControllerGenericType(controllerClass);
-        }).orElse(null);
+    protected String resolvePolicyGroupForScreenPolicy(@Nullable String viewId) {
+        return viewId == null
+                ? null
+                : viewRegistry.findViewInfo(viewId)
+                .map(viewInfo -> {
+                    Class<? extends View<?>> controllerClass = viewInfo.getControllerClass();
+                    return resolvePolicyGroupByScreenControllerGenericType(controllerClass);
+                })
+                .orElse(null);
     }
 
     @Nullable
@@ -166,7 +165,11 @@ public class DefaultResourcePolicyGroupResolver {
     }
 
     @Nullable
-    protected String resolvePolicyGroupForMenuPolicy(String menuId) {
+    protected String resolvePolicyGroupForMenuPolicy(@Nullable String menuId) {
+        if (menuId == null) {
+            return null;
+        }
+
         MenuItem item = null;
         for (MenuItem rootItem : menuConfig.getRootItems()) {
             item = menuConfig.findItem(menuId, rootItem);

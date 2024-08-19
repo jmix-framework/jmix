@@ -263,6 +263,11 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
     protected void setInvalidInternal(boolean invalid) {
         component.getElement().setProperty(PROPERTY_INVALID, invalid);
+        // It seems some components loose synchronization with client-side after attaching/reattaching
+        // with "invalid" state. The execution of JS code helps to update "invalid" state.
+        // This is temporal solution, wait for Vaadin issue: https://github.com/vaadin/flow/issues/18180
+        // and Jmix issue: https://github.com/jmix-framework/jmix/issues/3557
+        component.getElement().executeJs("this.invalid = $0", invalid);
     }
 
     protected boolean validatorsPassed() {

@@ -57,6 +57,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -93,6 +94,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
     protected CellStyle dateTimeFormatCellStyle;
     protected CellStyle integerFormatCellStyle;
     protected CellStyle doubleFormatCellStyle;
+    protected CellStyle decimalFormatCellStyle;
 
     protected ExcelAutoColumnSizer[] sizers;
 
@@ -371,10 +373,15 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
         String integerFormat = getMessage("excelExporter.integerFormat");
         integerFormatCellStyle.setDataFormat(getBuiltinFormat(integerFormat));
 
-        DataFormat format = wb.createDataFormat();
+        DataFormat doubleDataFormat = wb.createDataFormat();
         doubleFormatCellStyle = wb.createCellStyle();
         String doubleFormat = getMessage("excelExporter.doubleFormat");
-        doubleFormatCellStyle.setDataFormat(format.getFormat(doubleFormat));
+        doubleFormatCellStyle.setDataFormat(doubleDataFormat.getFormat(doubleFormat));
+
+        DataFormat decimalDataFormat = wb.createDataFormat();
+        decimalFormatCellStyle = wb.createCellStyle();
+        String decimalFormat = getMessage("excelExporter.decimalFormat");
+        decimalFormatCellStyle.setDataFormat(decimalDataFormat.getFormat(decimalFormat));
     }
 
     protected short getBuiltinFormat(String format) {
@@ -443,8 +450,10 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
                             cell.setCellValue(result.longValue());
                             cell.setCellStyle(integerFormatCellStyle);
                         } else {
-                            cell.setCellValue(result.doubleValue());
-                            cell.setCellStyle(doubleFormatCellStyle);
+                            cell.setCellValue(n.doubleValue());
+                            cell.setCellStyle(n instanceof BigDecimal
+                                    ? decimalFormatCellStyle
+                                    : doubleFormatCellStyle);
                         }
                     }
                 } catch (ParseException e) {

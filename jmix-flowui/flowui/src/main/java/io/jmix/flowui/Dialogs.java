@@ -30,8 +30,8 @@ import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
+
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -104,7 +104,7 @@ public interface Dialogs {
      * Creates background task dialog builder.
      * <br>
      * Example of showing a background task dialog:
-     * <pre>
+     * <pre>{@code
      * dialogs.createBackgroundTaskDialog(backgroundTask)
      *         .withHeader("Task")
      *         .withText("My Task is Running")
@@ -112,7 +112,7 @@ public interface Dialogs {
      *         .withShowProgressInPercentage(true)
      *         .withCancelAllowed(true)
      *         .open();
-     * </pre>
+     * }</pre>
      *
      * @param backgroundTask background task to run
      * @return builder
@@ -248,13 +248,15 @@ public interface Dialogs {
          *                         .withText("OK")
          *                         .withIcon(VaadinIcon.CHECK.create())
          *                         .withHandler(event -> {
-         *                             InputDialog inputDialog = event.getInputDialog();
+         *                             InputDialogAction inputDialogAction = ((InputDialogAction) event.getSource());
+         *                             InputDialog inputDialog = inputDialogAction.getInputDialog();
+         *
          *                             // do logic
          *                             inputDialog.close(InputDialog.INPUT_DIALOG_OK_ACTION);
          *                         }),
          *                 action("cancelAction")
          *                         .withText("Cancel")
-         *                         .withIcon(VaadinIcon.CANCEL.create())
+         *                         .withIcon(VaadinIcon.BAN.create())
          *                         .withValidationRequired(false)
          *                         .withHandler(event -> {
          *                             // do logic
@@ -289,12 +291,12 @@ public interface Dialogs {
          *         .withParameter(parameter("nameField").withLabel("Name"))
          *         .withActions(DialogActions.OK_CANCEL, result -> {
          *             switch (result.getCloseActionType()) {
-         *                 case OK:
+         *                 case OK -> {
          *                     // do logic
-         *                     break;
-         *                 case CANCEL:
-         *                     // do logic
-         *                     break;
+         *                 }
+         *                 case CANCEL -> {
+         *                     // do other logic
+         *                 }
          *             }
          *         })
          *         .open();
@@ -318,6 +320,7 @@ public interface Dialogs {
          *         .withValidator(context -> {
          *             String phone = context.getValue("phoneField");
          *             String address = context.getValue("addressField");
+         *
          *             if (Strings.isNullOrEmpty(phone) && Strings.isNullOrEmpty(address)) {
          *                 return ValidationErrors.of("Phone or Address should be filled");
          *             }

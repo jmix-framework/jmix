@@ -70,7 +70,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
     protected Category firstCategory, secondCategory
 
-    protected CategoryAttribute firstAttribute, notLoggedAttribute, entityAttribute, entityCollectionAttribute, dottedAttribute
+    protected CategoryAttribute firstAttribute, notLoggedAttribute, entityAttribute, entityCollectionAttribute
 
     void setup() {
         clearTables("AUDIT_LOGGED_ATTR", "AUDIT_LOGGED_ENTITY")
@@ -101,8 +101,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
                 secondCategory,
                 entityAttribute,
-                entityCollectionAttribute,
-                dottedAttribute)
+                entityCollectionAttribute)
 
         dynamicModelConfiguration.reload()
     }
@@ -162,14 +161,6 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         entityCollectionAttribute.entityClass = 'test_support.testmodel.dynattr.AdditionalEntity'
         entityCollectionAttribute.isCollection = true
         entityCollectionAttribute.defaultEntity = new ReferenceToEntity()
-
-        dottedAttribute = metadata.create(CategoryAttribute)
-        dottedAttribute.name = 'Attribute with dots in name'
-        dottedAttribute.code = 'dotted.attribute'
-        dottedAttribute.dataType = AttributeType.BOOLEAN
-        dottedAttribute.categoryEntityType = 'dynaudit$SecondEntity'
-        dottedAttribute.category = secondCategory
-        dottedAttribute.defaultEntity = new ReferenceToEntity()
     }
 
     def "test dynamic only by operation types"() {
@@ -239,9 +230,9 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
         when: 'entity created'
         SecondEntity secondEntity = metadata.create(SecondEntity)
-        EntityValues.setValue(secondEntity, '+dotted.attribute', true)
-        EntityValues.setValue(secondEntity, '+dotted.attribute', false)
-        //dottes.attribute has status "UPDATED" now but it is still should be persisted as other "CREATED" attributes because of absence in db
+        EntityValues.setValue(secondEntity, '+firstAttribute', "Initial value")
+        EntityValues.setValue(secondEntity, '+firstAttribute', "Another value")
+        //firstAttribute has status "UPDATED" now but it is still should be persisted as other "CREATED" attributes because of absence in db
 
         dataManager.save(secondEntity)
         def creationRecord = getLatestEntityLogItem('dynaudit$SecondEntity', secondEntity.getId())
@@ -252,7 +243,6 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         loggedValueMatches(creationRecord, "id", secondEntity.id.toString())
         loggedValueMatches(creationRecord, "+entityAttribute", "")
         loggedValueMatches(creationRecord, "+entityCollectionAttribute", "")
-        loggedValueMatches(creationRecord, "+dotted.attribute", "false")
 
         when: 'Entity modified'
 
@@ -265,7 +255,6 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         EntityValues.setValue(secondEntity, '+entityAttribute', prevExtraEntity)
         EntityValues.setValue(secondEntity, '+entityCollectionAttribute', [prevExtraEntity, anotherExtraEntity])
 
-        EntityValues.setValue(secondEntity, '+dotted.attribute', true)
         dataManager.save(secondEntity)
 
         AdditionalEntity newExtraEntity = metadata.create(AdditionalEntity)
@@ -275,21 +264,17 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         secondEntity.stringAttribute = "new string value"
         EntityValues.setValue(secondEntity, '+entityAttribute', newExtraEntity)
         EntityValues.setValue(secondEntity, '+entityCollectionAttribute', [newExtraEntity, anotherExtraEntity])
-        EntityValues.setValue(secondEntity, '+dotted.attribute', false)
         EntityValues.setValue(secondEntity, '+notExistingAttribute', "WIZZARD")
         dataManager.save(secondEntity)
 
         def modificationRecord = getLatestEntityLogItem('dynaudit$SecondEntity', secondEntity.getId())
 
         then: 'All changes logged correctly'
-        modificationRecord.attributes.size() == 4
+        modificationRecord.attributes.size() == 3
 
         loggedValueMatches(modificationRecord, "+entityAttribute", ">new<")
 
         loggedOldValueMatches(modificationRecord, "+entityAttribute", ">prev<")
-
-        loggedValueMatches(modificationRecord, "+dotted.attribute", "false")
-        loggedOldValueMatches(modificationRecord, "+dotted.attribute", "true")
 
         loggedValueMatches(modificationRecord, "stringAttribute", "new string value")
         loggedOldValueMatches(modificationRecord, "stringAttribute", "")

@@ -80,7 +80,8 @@ dependencies {
     constraints {
 
         // community add-ons
-
+        api 'com.glebfox.jmix.locstr:jmix-localized-string-datatype:1.0.0'
+        api 'com.glebfox.jmix.locstr:jmix-localized-string-datatype-starter:1.0.0'
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

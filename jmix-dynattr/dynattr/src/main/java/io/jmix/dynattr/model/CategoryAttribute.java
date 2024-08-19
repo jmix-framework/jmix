@@ -21,6 +21,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
@@ -118,6 +119,7 @@ public class CategoryAttribute implements Serializable {
             @AttributeOverride(name = "intEntityId", column = @Column(name = "DEFAULT_INT_ENTITY_VALUE")),
             @AttributeOverride(name = "longEntityId", column = @Column(name = "DEFAULT_LONG_ENTITY_VALUE"))
     })
+    @EmbeddedParameters(nullAllowed = true)
     private ReferenceToEntity defaultEntity;
 
     @Column(name = "ORDER_NO")

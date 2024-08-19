@@ -33,5 +33,4 @@ dependencies {
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
-
 }

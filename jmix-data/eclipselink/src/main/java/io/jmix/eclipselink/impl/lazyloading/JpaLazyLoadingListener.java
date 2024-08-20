@@ -27,7 +27,12 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.PersistenceHints;
 import jakarta.persistence.Basic;
 import jakarta.persistence.FetchType;
+import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
+import org.eclipse.persistence.internal.expressions.ExpressionIterator;
+import org.eclipse.persistence.internal.expressions.FieldExpression;
+import org.eclipse.persistence.internal.expressions.ParameterExpression;
+import org.eclipse.persistence.internal.expressions.RelationExpression;
 import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -155,7 +161,14 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
             if (metadataTools.isOwningSide(property)) {
                 QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(originalValueHolder);
                 if (queryBasedValueHolder != null) {
-                    Object entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
+                    Object entityId;
+
+                    MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(property.getRange().asClass());
+                    if (pkProperty != null && metadataTools.isEmbedded(pkProperty)) {
+                        entityId = buildEmbeddedIdByValueHolder(pkProperty, queryBasedValueHolder);
+                    } else {
+                        entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
+                    }
 
                     wrappedValueHolder =
                             new SingleValueOwningPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
@@ -181,7 +194,13 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
         if (originalValueHolder != null && !(originalValueHolder instanceof AbstractValueHolder)) {
             QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(originalValueHolder);
             if (queryBasedValueHolder != null) {
-                Object entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
+                Object entityId;
+                MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(property.getRange().asClass());
+                if (pkProperty != null && metadataTools.isEmbedded(pkProperty)) {
+                    entityId = buildEmbeddedIdByValueHolder(pkProperty, queryBasedValueHolder);
+                } else {
+                    entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
+                }
 
                 AbstractValueHolder wrappedValueHolder =
                         new SingleValueOwningPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
@@ -257,5 +276,51 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
         AnnotatedElement annotatedElement = metaProperty.getAnnotatedElement();
         Basic annotation = annotatedElement.getAnnotation(Basic.class);
         return annotation != null && annotation.fetch() == FetchType.LAZY;
+    }
+
+    /**
+     *
+     * @param pkProperty {@code @EmbeddedId} foreign key property
+     * @param queryBasedValueHolder - original Eclipselink value holder
+     * @return id of the entity to load
+     *
+     */
+    protected Object buildEmbeddedIdByValueHolder(MetaProperty pkProperty, QueryBasedValueHolder queryBasedValueHolder) {
+        MetaClass pkMetaclass = pkProperty.getRange().asClass();
+        Object primaryKey = metadata.create(pkMetaclass);
+
+        Map<String, String> fieldNamesByColumnNames = new HashMap<>();
+        for (MetaProperty property : pkMetaclass.getProperties()) {
+            String columnName = metadataTools.getDatabaseColumn(property);
+            if (columnName != null) {
+                fieldNamesByColumnNames.put(columnName, ((Field) property.getAnnotatedElement()).getName());
+            }
+        }
+
+        ExpressionIterator iterator = new ExpressionIterator() {
+            @Override
+            public void iterate(Expression each) {
+                if (each instanceof RelationExpression rel) {
+                    FieldExpression fieldExpression;
+                    ParameterExpression parameterExpression;
+                    if (rel.getFirstChild() instanceof FieldExpression fe && rel.getSecondChild() instanceof ParameterExpression p) {
+                        fieldExpression = fe;
+                        parameterExpression = p;
+                    } else if (rel.getSecondChild() instanceof FieldExpression fe && rel.getFirstChild() instanceof ParameterExpression p) {
+                        fieldExpression = fe;
+                        parameterExpression = p;
+                    } else {
+                        return;
+                    }
+                    EntityValues.setValue(primaryKey,
+                            fieldNamesByColumnNames.get(fieldExpression.getField().getName()),
+                            queryBasedValueHolder.getRow().get(parameterExpression.getField().getQualifiedName()));
+                }
+            }
+        };
+
+        iterator.iterateOn(queryBasedValueHolder.getQuery().getSelectionCriteria());
+
+        return primaryKey;
     }
 }

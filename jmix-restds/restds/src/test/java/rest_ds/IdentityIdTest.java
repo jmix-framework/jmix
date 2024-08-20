@@ -17,8 +17,6 @@
 package rest_ds;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.impl.DataStoreFactory;
-import io.jmix.restds.impl.RestDataStore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,37 +24,32 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.AuthenticatedAsSystem;
 import test_support.TestRestDsConfiguration;
-import test_support.TestSupport;
-import test_support.entity.Customer;
+import test_support.entity.CustomerPreference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 @ContextConfiguration(classes = TestRestDsConfiguration.class)
 @ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
-public class RestDsAuthTokenExpirationTest {
+public class IdentityIdTest {
 
     @Autowired
     DataManager dataManager;
 
-    @Autowired
-    DataStoreFactory dataStoreFactory;
-
     @Test
     void test() {
-        Customer customer = dataManager.load(Customer.class).id(TestSupport.UUID_1).one();
+        CustomerPreference preference = dataManager.create(CustomerPreference.class);
+        preference.setPreferenceType("test");
+        preference.setPreferenceValue("test");
 
-        assertThat(customer).isNotNull();
+        assertThat(preference.getId()).isNull();
 
-        RestDataStore restDataStore = (RestDataStore) dataStoreFactory.get("restService1");
-        restDataStore.getRestInvoker().revokeAuthenticationToken();
-        // not calling restDataStore.getRestInvoker().resetAuthToken() here to check retry
+        CustomerPreference savedPreference = dataManager.save(preference);
 
-        try {
-            customer = dataManager.load(Customer.class).id(TestSupport.UUID_1).one();
-            assertThat(customer).isNotNull();
-        } catch (Exception e) {
-            fail("Couldn't continue after revoking auth token", e);
-        }
+        assertThat(savedPreference).isNotNull();
+        assertThat(savedPreference.getId()).isNotNull();
+
+        CustomerPreference loadedPreference = dataManager.load(CustomerPreference.class).id(savedPreference.getId()).one();
+
+        assertThat(loadedPreference).isEqualTo(preference);
     }
 }

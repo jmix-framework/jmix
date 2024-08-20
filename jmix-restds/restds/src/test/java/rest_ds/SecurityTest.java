@@ -40,7 +40,7 @@ import static test_support.TestSupport.UUID_1;
 
 @ContextConfiguration(classes = TestRestDsConfiguration.class)
 @ExtendWith(SpringExtension.class)
-public class RestDataStoreSecurityTest {
+public class SecurityTest {
 
     @Autowired
     DataManager dataManager;

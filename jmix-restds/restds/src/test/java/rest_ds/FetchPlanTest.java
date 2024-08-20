@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ContextConfiguration(classes = TestRestDsConfiguration.class)
 @ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
-public class RestDsFetchPlanTest {
+public class FetchPlanTest {
 
     @Autowired
     DataManager dataManager;

@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ContextConfiguration(classes = TestRestDsConfiguration.class)
 @ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
-public class RestEntityEventsTest {
+public class EntityEventsTest {
 
     @Autowired
     ConfigurableApplicationContext applicationContext;

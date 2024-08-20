@@ -19,8 +19,8 @@ package io.jmix.core.event;
 import io.jmix.core.Id;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
-
 import org.springframework.lang.Nullable;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -85,7 +85,7 @@ public class AttributeChanges {
             if (attributeChanges != null) {
                 changes.addAll(attributeChanges.changes);
                 for (Map.Entry<String, AttributeChanges> entry : attributeChanges.embeddedChanges.entrySet()) {
-                    Builder builder = embeddedChanges.computeIfAbsent(entry.getKey(), key -> new Builder());
+                    Builder builder = embeddedChanges.computeIfAbsent(entry.getKey(), key -> create());
                     builder.mergeChanges(entry.getValue());
                 }
             }

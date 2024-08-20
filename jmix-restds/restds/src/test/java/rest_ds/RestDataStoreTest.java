@@ -212,6 +212,16 @@ public class RestDataStoreTest {
     }
 
     @Test
+    void testLoadByIds() {
+        Customer customer1 = createCustomer(null, "testLoadByIds-cust-1-" + now);
+        Customer customer2 = createCustomer(null, "testLoadByIds-cust-2-" + now);
+
+        List<Customer> customers = dataManager.load(Customer.class).ids(customer1.getId(), customer2.getId()).list();
+
+        assertThat(customers).size().isEqualTo(2);
+    }
+
+    @Test
     void testLoadValues() {
         try {
             List<KeyValueEntity> keyValueEntities = dataManager.loadValues("select c.firstName from Customer c")

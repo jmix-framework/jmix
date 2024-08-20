@@ -78,8 +78,8 @@ public class RestDataStore extends AbstractDataStore {
             throw new IllegalArgumentException("Id is null");
         }
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
-        String entityName = extractEntityName(context.getEntityMetaClass());
-        String fetchPlan = extractFetchPlan(context);
+        String entityName = getEntityName(context.getEntityMetaClass());
+        String fetchPlan = getFetchPlan(context);
 
         RestInvoker.LoadParams params = new RestInvoker.LoadParams(entityName, id, fetchPlan);
         String json = restInvoker.load(params);
@@ -94,18 +94,15 @@ public class RestDataStore extends AbstractDataStore {
 
     @Override
     protected List<Object> loadAll(LoadContext<?> context) {
-        if (context.getQuery() == null) {
-            throw new IllegalArgumentException("LoadContext.Query is null");
-        }
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
-        String entityName = extractEntityName(context.getEntityMetaClass());
-        String fetchPlan = extractFetchPlan(context);
+        String entityName = getEntityName(context.getEntityMetaClass());
+        String fetchPlan = getFetchPlan(context);
 
         RestInvoker.LoadListParams params = new RestInvoker.LoadListParams(entityName,
-                context.getQuery().getMaxResults(),
-                context.getQuery().getFirstResult(),
-                createRestSort(context.getQuery().getSort()),
-                createRestFilter(context.getQuery()),
+                getMaxResults(context.getQuery()),
+                getFirstResult(context.getQuery()),
+                createRestSort(context.getQuery()),
+                createRestFilter(context),
                 fetchPlan);
         String json = restInvoker.loadList(params);
         List<Object> entities = restSerialization.fromJsonCollection(json, entityClass);
@@ -173,32 +170,45 @@ public class RestDataStore extends AbstractDataStore {
         }
     }
 
-    private String extractEntityName(MetaClass localMetaClass) {
+    private String getEntityName(MetaClass localMetaClass) {
         String restEntityName = (String) metadataTools.getMetaAnnotationAttributes(localMetaClass.getAnnotations(), RestDataStoreEntity.class)
                 .get("remoteName");
         return restEntityName != null ? restEntityName : localMetaClass.getName();
     }
 
     @Nullable
-    private String extractFetchPlan(LoadContext<?> context) {
+    private String getFetchPlan(LoadContext<?> context) {
         String fetchPlan = context.getFetchPlan() == null ?
                 null : StringUtils.defaultIfEmpty(context.getFetchPlan().getName(), null);
         return fetchPlan;
     }
 
-    @Nullable
-    private String createRestFilter(@Nullable LoadContext.Query query) {
-        if (query == null || (query.getQueryString() == null && query.getCondition() == null))
-            return null;
-        else
-            return restFilterBuilder.build(query.getQueryString(), query.getCondition(), query.getParameters());
+    private int getMaxResults(@Nullable LoadContext.Query query) {
+        return query == null ? 0 : query.getMaxResults();
+    }
+
+    private int getFirstResult(@Nullable LoadContext.Query query) {
+        return query == null ? 0 : query.getFirstResult();
     }
 
     @Nullable
-    private String createRestSort(@Nullable Sort sort) {
-        if (sort == null)
+    private String createRestFilter(LoadContext<?> context) {
+        if (!context.getIds().isEmpty()) {
+            return restFilterBuilder.build(context.getEntityMetaClass(), context.getIds());
+        } else {
+            LoadContext.Query query = context.getQuery();
+            if (query == null || (query.getQueryString() == null && query.getCondition() == null))
+                return null;
+            else
+                return restFilterBuilder.build(query.getQueryString(), query.getCondition(), query.getParameters());
+        }
+    }
+
+    @Nullable
+    private String createRestSort(@Nullable LoadContext.Query query) {
+        if (query == null || query.getSort() == null)
             return null;
-        List<Sort.Order> sortOrders = sort.getOrders();
+        List<Sort.Order> sortOrders = query.getSort().getOrders();
         if (sortOrders.isEmpty())
             return null;
         return sortOrders.stream()
@@ -210,7 +220,7 @@ public class RestDataStore extends AbstractDataStore {
     @Override
     protected long countAll(LoadContext<?> context) {
         String entityName = context.getEntityMetaClass().getName();
-        long count = restInvoker.count(entityName, createRestFilter(context.getQuery()));
+        long count = restInvoker.count(entityName, createRestFilter(context));
         return count;
     }
 
@@ -219,7 +229,7 @@ public class RestDataStore extends AbstractDataStore {
         Set<Object> saved = new HashSet<>();
         saveContextProcessor.normalizeCompositionItems(context);
         for (Object entity : context.getEntitiesToSave()) {
-            String entityName = extractEntityName(metadata.getClass(entity));
+            String entityName = getEntityName(metadata.getClass(entity));
             FetchPlan fetchPlan = null;
             String savedEntityJson;
             boolean isNew = entityStates.isNew(entity);
@@ -256,7 +266,7 @@ public class RestDataStore extends AbstractDataStore {
     protected Set<Object> deleteAll(SaveContext context) {
         Set<Object> saved = new HashSet<>();
         for (Object entity : context.getEntitiesToRemove()) {
-            String entityName = extractEntityName(metadata.getClass(entity));
+            String entityName = getEntityName(metadata.getClass(entity));
             Object id = EntityValues.getId(entity);
             if (id == null) {
                 throw new IllegalArgumentException("Entity id is null for " + entity);

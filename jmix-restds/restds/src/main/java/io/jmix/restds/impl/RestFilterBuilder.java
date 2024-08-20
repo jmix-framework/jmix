@@ -21,16 +21,21 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component("restds_RestFilterBuilder")
 public class RestFilterBuilder {
@@ -40,6 +45,33 @@ public class RestFilterBuilder {
     public static final String PARAMETER_FIELD = "parameterName";
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    private MetadataTools metadataTools;
+
+    @Nullable
+    public String build(MetaClass metaClass, List<?> ids) {
+        if (ids.isEmpty())
+            return null;
+
+        ObjectNode rootNode = objectMapper.createObjectNode();
+        ArrayNode arrayNode = objectMapper.createArrayNode();
+        rootNode.set("conditions", arrayNode);
+
+        ObjectNode node = objectMapper.createObjectNode();
+        node.put("property", metadataTools.getPrimaryKeyName(metaClass));
+        node.put("operator", "in");
+
+        ArrayNode valueNode = objectMapper.createArrayNode();
+        for (Object id : ids) {
+            valueNode.add(id.toString());
+        }
+        node.set("value", valueNode);
+
+        arrayNode.add(node);
+        return rootNode.toString();
+    }
+
 
     @Nullable
     public String build(@Nullable String query,

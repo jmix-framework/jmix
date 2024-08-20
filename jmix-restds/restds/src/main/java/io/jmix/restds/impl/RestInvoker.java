@@ -334,8 +334,6 @@ public class RestInvoker {
             ClientHttpResponse response = execution.execute(request, body);
 
             log.debug("Response: {}", response.getStatusCode());
-            if (traceBody)
-                log.trace("Response body: {}", response.getBody());
             return response;
         }
     }

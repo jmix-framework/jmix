@@ -18,19 +18,12 @@ package lazy_loading
 
 import io.jmix.core.DataManager
 import io.jmix.core.FetchPlan
-import io.jmix.core.FetchPlanRepository
 import io.jmix.core.Id
 import io.jmix.core.Metadata
-import jakarta.persistence.EntityManager
-import jakarta.persistence.PersistenceContext
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.embedded_pk.Branch
 import test_support.entity.embedded_pk.Root
-import test_support.entity.embedded_pk.nested.MyKeyNested
-import test_support.entity.embedded_pk.nested.NeidOne
-import test_support.entity.embedded_pk.nested.NeidTwo
 
 class EmbeddedIdReferenceTest extends DataSpec {
 

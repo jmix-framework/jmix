@@ -465,7 +465,7 @@ public class MetadataTools {
             if (annotation instanceof ManyToOne)
                 return true;
             if (annotation instanceof OneToMany || annotation instanceof OneToOne)
-                return el.isAnnotationPresent(JoinColumn.class) || el.isAnnotationPresent(JoinTable.class);
+                return el.isAnnotationPresent(JoinColumn.class) || el.isAnnotationPresent(JoinColumns.class) || el.isAnnotationPresent(JoinTable.class);
             if (annotation instanceof ManyToMany)
                 return el.isAnnotationPresent(JoinTable.class);
         }

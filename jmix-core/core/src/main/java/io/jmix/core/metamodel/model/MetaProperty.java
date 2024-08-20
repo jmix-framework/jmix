@@ -77,7 +77,7 @@ public interface MetaProperty extends MetadataObject {
     Range getRange();
 
     /**
-     * @return property type (DATATYPE, ENUM, ASSOCIATION, COMPOSITION)
+     * @return property type (DATATYPE, ENUM, ASSOCIATION, COMPOSITION, EMBEDDED)
      */
     Type getType();
 

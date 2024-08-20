@@ -560,8 +560,14 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     protected boolean isEntityHaveAttribute(String propertyName, MetaClass metaClass, Set<LoggedAttribute> enabledAttr) {
-        if (enabledAttr != null && (metaClass.findProperty(propertyName) == null
-                || !metadataTools.isSystem(metaClass.getProperty(propertyName)))) {
+        if (enabledAttr == null) {
+            return false;
+        }
+
+        MetaProperty property = metaClass.findProperty(propertyName);
+        if (property == null
+                || !metadataTools.isSystem(property)
+                || isTenantIdProperty(property)) {
             for (LoggedAttribute logAttr : enabledAttr)
                 if (logAttr.getName().equals(propertyName))
                     return true;
@@ -708,9 +714,8 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     protected boolean allowLogProperty(MetaProperty metaProperty) {
-        if (metadataTools.isSystem(metaProperty)
-                //log system property tenantId
-                && !metadataTools.isAnnotationPresent(metaProperty.getDomain().getJavaClass(), metaProperty.getName(), TenantId.class)) {
+        if (metadataTools.isSystem(metaProperty) && !isTenantIdProperty(metaProperty)) {
+            // System property 'tenantId' is allowed to be logged
             return false;
         }
         Range range = metaProperty.getRange();
@@ -722,6 +727,12 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
             return false;
         }
         return true;
+    }
+
+    protected boolean isTenantIdProperty(MetaProperty metaProperty) {
+        return metadataTools.isAnnotationPresent(
+                metaProperty.getDomain().getJavaClass(), metaProperty.getName(), TenantId.class
+        );
     }
 
     private DataContext getDataContext() {

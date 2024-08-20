@@ -57,6 +57,7 @@ import io.jmix.dynattrflowui.view.localization.AttributeLocalizationComponent;
 import io.jmix.flowui.*;
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -85,6 +86,7 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -114,6 +116,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     protected static final Multimap<AttributeType, String> FIELDS_VISIBLE_FOR_TYPES = ArrayListMultimap.create();
     protected static final Set<AttributeType> SUPPORTED_OPTIONS_TYPES = ImmutableSet.of(STRING, DOUBLE, DECIMAL, INTEGER, ENTITY);
+
+    protected static Supplier<Boolean> DEFAULT_CHECK = () -> true;
 
     static {
         FIELDS_VISIBLE_FOR_TYPES.put(BOOLEAN, "defaultBooleanField");
@@ -264,9 +268,22 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     private MultiValueSelectAction<String> dependsOnAttributesFieldSelect;
     @ViewComponent
     private JmixButton editEnumerationBtn;
+    @ViewComponent
+    private JmixCheckbox isCollectionField;
     private boolean isRefreshing = false;
 
     private final List<String> defaultEnumValues = new ArrayList<>();
+    protected final Map<String, Supplier<Boolean>> DEFAULT_VALUE_COMPONENT_IDS = Map.of(
+            "defaultStringField", DEFAULT_CHECK,
+            "defaultIntField", DEFAULT_CHECK,
+            "defaultDoubleField", DEFAULT_CHECK,
+            "defaultDecimalField", DEFAULT_CHECK,
+            "defaultBooleanField", DEFAULT_CHECK,
+            "defaultEnumField", DEFAULT_CHECK,
+            "defaultDateField", DEFAULT_CHECK,
+            "defaultDateWithoutTimeField", DEFAULT_CHECK,
+            "defaultDateIsCurrentField", DEFAULT_CHECK,
+            "defaultEntityIdField", this::entityTypeRequiredFieldsAreFilled);
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -328,6 +345,7 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         tabSheet.addSelectedChangeListener(e -> refreshOnce());
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
+        setEnabledForDefaultValueControlsWithClearing(isScalar(), false);
     }
 
     @Install(to = "nameField", subject = "validator")
@@ -778,7 +796,15 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe("screenField")
     public void onScreenFieldValueChange(AbstractField.ComponentValueChangeEvent<ComboBox<String>, String> event) {
-        this.defaultEntityIdField.setEnabled(!Strings.isNullOrEmpty(screenField.getValue()));
+        this.defaultEntityIdField.setEnabled(entityTypeRequiredFieldsAreFilled() && isScalar() );
+    }
+
+    protected boolean entityTypeRequiredFieldsAreFilled() {
+        return isDropDownList() || !Strings.isNullOrEmpty(screenField.getValue());
+    }
+
+    protected boolean isDropDownList() {
+        return lookupField.getValue();
     }
 
     @Subscribe("defaultEntityIdField.lookup")
@@ -1135,6 +1161,34 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             if (configuration != null) {
                 attribute.setConfiguration((CategoryAttributeConfiguration) configuration.clone());
             }
+        }
+    }
+
+    @Subscribe("isCollectionField")
+    public void onIsCollectionFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixCheckbox, Boolean> event) {
+        setEnabledForDefaultValueControlsWithClearing(isScalar(), true);
+    }
+
+    @Subscribe("lookupField")
+    public void onLookupFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixCheckbox, ?> event) {
+        setEnabledForDefaultValueControlsWithClearing(isScalar(), true);
+    }
+
+    protected boolean isScalar() {
+        return !isCollectionField.getValue();
+    }
+
+    protected void setEnabledForDefaultValueControlsWithClearing(boolean isEnabled, boolean clearValues) {
+        DEFAULT_VALUE_COMPONENT_IDS
+                .forEach((key, value) -> setEnabledAndClear(key, isEnabled && value.get(), clearValues));
+    }
+
+    protected void setEnabledAndClear(String componentId, boolean isEnabled, boolean clearValues) {
+        Component component = UiComponentUtils.getComponent(this, componentId);
+        ((HasEnabled)component).setEnabled(isEnabled);
+        HasValue<?, ?> componentWithValue = (HasValue<?, ?>) component;
+        if(clearValues && !isEnabled && !componentWithValue.isEmpty()){
+            componentWithValue.clear();
         }
     }
 }

@@ -49,6 +49,7 @@ import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.libintegration.JmixObjectToStringConverter;
 import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.helper.PackageHelper;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
@@ -130,7 +131,7 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     protected JmixButton saveBtn;
     @ViewComponent
-    protected JmixComboBox entityField;
+    protected JmixComboBox<MetaClass> entityField;
 
     @Autowired
     protected Messages messages;
@@ -176,6 +177,8 @@ public class ReportWizardCreatorView extends StandardView {
     protected CurrentAuthentication currentAuthentication;
     @Autowired
     protected ViewValidation viewValidation;
+    @Autowired
+    private PackageHelper packageHelper;
 
     protected int currentFragmentIdx = 0;
     protected boolean regenerateQuery = false;
@@ -476,7 +479,7 @@ public class ReportWizardCreatorView extends StandardView {
     }
 
     protected void initEntityLookupField() {
-        ComponentUtils.setItemsMap(entityField, MapUtils.invertMap(getAvailableEntities()));
+        ComponentUtils.setItemsMap(entityField, getAvailableEntities());
     }
 
     @Subscribe("reportTypeGenerateField")
@@ -589,18 +592,39 @@ public class ReportWizardCreatorView extends StandardView {
                 TemplateFileType.TABLE, messages.getMessage(TemplateFileType.TABLE));
     }
 
-    protected Map<String, MetaClass> getAvailableEntities() {
-        Map<String, MetaClass> result = new TreeMap<>(String::compareTo);
+    protected Map<MetaClass, String> getAvailableEntities() {
+        Map<MetaClass, String> result = new LinkedHashMap<>();
+
+        Map<MetaClass, String> projectEntities = new TreeMap<>(Comparator.comparing(MetaClass::getName));
+        Map<MetaClass, String> externalEntities = new TreeMap<>(Comparator.comparing(MetaClass::getName));
+
+        Optional<String> basePackageOpt = packageHelper.getBasePackage();
+
         Collection<MetaClass> classes = metadataTools.getAllJpaEntityMetaClasses();
         for (MetaClass metaClass : classes) {
             MetaClass effectiveMetaClass = extendedEntities.getEffectiveMetaClass(metaClass);
             if (!reportWizardService.isEntityAllowedForReportWizard(effectiveMetaClass)) {
                 continue;
             }
-            result.put(messageTools.getEntityCaption(effectiveMetaClass) + " (" + effectiveMetaClass.getName() + ")",
-                    effectiveMetaClass);
+
+            String caption = getEntityCaption(effectiveMetaClass);
+            Package pack = metaClass.getJavaClass().getPackage();
+            if (basePackageOpt.isPresent() && pack.getName().startsWith(basePackageOpt.get())) {
+                projectEntities.put(effectiveMetaClass, caption);
+            } else {
+                externalEntities.put(effectiveMetaClass, caption);
+            }
         }
+
+        result.putAll(projectEntities);
+        result.putAll(externalEntities);
+
         return result;
+    }
+
+    private String getEntityCaption(MetaClass effectiveMetaClass) {
+        String entityCaption = messageTools.getEntityCaption(effectiveMetaClass);
+        return entityCaption + " (" + effectiveMetaClass.getName() + ")";
     }
 
     protected void clearQuery() {

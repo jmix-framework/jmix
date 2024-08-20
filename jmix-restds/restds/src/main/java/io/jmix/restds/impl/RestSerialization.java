@@ -39,8 +39,8 @@ public class RestSerialization {
 
     public String toJson(Object entity, boolean isNew) {
         EntitySerializationOption[] options = !isNew ?
-                new EntitySerializationOption[]{EntitySerializationOption.SERIALIZE_NULLS} :
-                new EntitySerializationOption[0];
+                new EntitySerializationOption[] { EntitySerializationOption.SERIALIZE_NULLS, EntitySerializationOption.IGNORE_ENTITY_NAME } :
+                new EntitySerializationOption[] { EntitySerializationOption.IGNORE_ENTITY_NAME };
         return entitySerialization.toJson(entity, null, options);
     }
 
@@ -50,11 +50,12 @@ public class RestSerialization {
             return null;
         }
         MetaClass metaClass = metadata.getClass(entityClass);
-        return entitySerialization.entityFromJson(json, metaClass);
+        return entitySerialization.entityFromJson(json, metaClass, EntitySerializationOption.IGNORE_ENTITY_NAME);
     }
 
+    @SuppressWarnings("unchecked")
     public <E> List<E> fromJsonCollection(String json, Class<E> entityClass) {
         MetaClass metaClass = metadata.getClass(entityClass);
-        return (List<E>) entitySerialization.entitiesCollectionFromJson(json, metaClass);
+        return (List<E>) entitySerialization.entitiesCollectionFromJson(json, metaClass, EntitySerializationOption.IGNORE_ENTITY_NAME);
     }
 }

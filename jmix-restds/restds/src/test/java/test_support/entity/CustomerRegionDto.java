@@ -21,13 +21,15 @@ import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.Store;
+import io.jmix.restds.annotation.RestDataStoreEntity;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 @Store(name = "restService1")
+@RestDataStoreEntity(remoteName = "CustomerRegion")
 @JmixEntity
-public class CustomerRegion {
+public class CustomerRegionDto {
     @JmixGeneratedValue
     @JmixId
     private UUID id;

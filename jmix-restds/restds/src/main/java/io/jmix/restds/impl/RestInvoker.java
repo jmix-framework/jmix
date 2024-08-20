@@ -93,10 +93,12 @@ public class RestInvoker {
         restClient = RestClient.builder()
                 .baseUrl(baseUrl)
                 .requestInterceptor(new RetryingClientHttpRequestInterceptor())
+                .requestInterceptor(new LoggingClientHttpRequestInterceptor(true))
                 .build();
 
         authClient = RestClient.builder()
                 .baseUrl(baseUrl)
+                .requestInterceptor(new LoggingClientHttpRequestInterceptor(false))
                 .build();
     }
 
@@ -311,6 +313,29 @@ public class RestInvoker {
                 request.getHeaders().setBearerAuth(getAuthenticationToken());
                 response = execution.execute(request, body);
             }
+            return response;
+        }
+    }
+
+    private static class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+
+        private final boolean traceBody;
+
+        public LoggingClientHttpRequestInterceptor(boolean traceBody) {
+            this.traceBody = traceBody;
+        }
+
+        @Override
+        public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+            log.debug("Request: {} {}", request.getMethod(), request.getURI());
+            if (traceBody)
+                log.trace("Request body: {}", new String(body));
+
+            ClientHttpResponse response = execution.execute(request, body);
+
+            log.debug("Response: {}", response.getStatusCode());
+            if (traceBody)
+                log.trace("Response body: {}", response.getBody());
             return response;
         }
     }

@@ -30,7 +30,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.AuthenticatedAsSystem;
 import test_support.SampleServiceConnection;
 import test_support.TestRestDsConfiguration;
+import test_support.TestSupport;
 import test_support.entity.Customer;
+import test_support.entity.CustomerRegionDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -220,6 +222,46 @@ public class RestDataStoreTest {
         } catch (Throwable e) {
             assertThat(e).isInstanceOf(UnsupportedOperationException.class);
         }
+    }
+
+    @Test
+    void testDifferentEntityName() {
+        // load one
+
+        CustomerRegionDto region = dataManager.load(CustomerRegionDto.class).id(TestSupport.UUID_1).one();
+
+        assertThat(region).isNotNull();
+
+        // load many
+
+        List<CustomerRegionDto> list = dataManager.load(CustomerRegionDto.class).all().list();
+
+        assertThat(list).isNotEmpty();
+
+        // create
+
+        region = dataManager.create(CustomerRegionDto.class);
+        region.setName("testDifferentEntityName-" + now);
+
+        CustomerRegionDto savedRegion = dataManager.save(region);
+
+        assertThat(savedRegion).isEqualTo(region);
+
+        // update
+
+        region.setName("testDifferentEntityName-updated-" + now);
+
+        CustomerRegionDto updatedRegion = dataManager.save(region);
+
+        assertThat(updatedRegion).isEqualTo(region);
+
+        // delete
+
+        dataManager.remove(region);
+
+        CustomerRegionDto deletedRegion = dataManager.load(CustomerRegionDto.class).id(region.getId()).optional().orElse(null);
+
+        assertThat(deletedRegion).isNull();
     }
 
     private Customer createCustomer(String firstName, String lastName) {

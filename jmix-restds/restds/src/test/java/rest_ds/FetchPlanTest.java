@@ -28,7 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.AuthenticatedAsSystem;
 import test_support.TestRestDsConfiguration;
 import test_support.entity.Customer;
-import test_support.entity.CustomerRegion;
+import test_support.entity.CustomerRegionDto;
 import test_support.entity.Order;
 
 import java.time.LocalDate;
@@ -93,7 +93,7 @@ public class FetchPlanTest {
 
     @Test
     void testUpdateManyToOneReference() {
-        CustomerRegion region1 = dataManager.create(CustomerRegion.class);
+        CustomerRegionDto region1 = dataManager.create(CustomerRegionDto.class);
         region1.setName("Region 1");
         dataManager.save(region1);
 
@@ -113,7 +113,7 @@ public class FetchPlanTest {
 
         // change region
 
-        CustomerRegion region2 = dataManager.create(CustomerRegion.class);
+        CustomerRegionDto region2 = dataManager.create(CustomerRegionDto.class);
         region2.setName("Region 2");
         dataManager.save(region2);
 
@@ -169,7 +169,7 @@ public class FetchPlanTest {
         order.setDate(LocalDate.now());
         order.setNum("111");
 
-        CustomerRegion region = dataManager.create(CustomerRegion.class);
+        CustomerRegionDto region = dataManager.create(CustomerRegionDto.class);
         region.setName("Region 1");
         dataManager.save(region);
 

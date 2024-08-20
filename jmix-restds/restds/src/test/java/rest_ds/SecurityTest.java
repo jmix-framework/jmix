@@ -28,7 +28,7 @@ import test_support.TestRestDsConfiguration;
 import test_support.entity.ContactType;
 import test_support.entity.Customer;
 import test_support.entity.CustomerContact;
-import test_support.entity.CustomerRegion;
+import test_support.entity.CustomerRegionDto;
 
 import java.util.HashSet;
 import java.util.List;
@@ -89,11 +89,11 @@ public class SecurityTest {
 
             // disallowed root entity is null or empty list
 
-            List<CustomerRegion> regions = dataManager.load(CustomerRegion.class).all().list();
+            List<CustomerRegionDto> regions = dataManager.load(CustomerRegionDto.class).all().list();
 
             assertThat(regions).isEmpty();
 
-            Optional<CustomerRegion> optionalRegion = dataManager.load(CustomerRegion.class)
+            Optional<CustomerRegionDto> optionalRegion = dataManager.load(CustomerRegionDto.class)
                     .id(UUID_1)
                     .optional();
 

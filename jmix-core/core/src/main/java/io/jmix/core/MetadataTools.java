@@ -502,6 +502,7 @@ public class MetadataTools {
      * @return meta-annotation value for specified metaClass and annotation
      */
     @SuppressWarnings("unchecked")
+    @Nullable
     public <T> T getMetaAnnotationValue(MetaClass metaClass, Class<?> metaAnnotationClass) {
         Map<String, Object> metaAnnotationAttributes = getMetaAnnotationAttributes(metaClass.getAnnotations(), metaAnnotationClass);
         return (T) metaAnnotationAttributes.get("value");
@@ -511,6 +512,7 @@ public class MetadataTools {
      * @return meta-annotation value for specified metaProperty and annotation
      */
     @SuppressWarnings("unchecked")
+    @Nullable
     public <T> T getMetaAnnotationValue(MetaProperty metaProperty, Class<?> metaAnnotationClass) {
         Map<String, Object> metaAnnotationAttributes = getMetaAnnotationAttributes(metaProperty.getAnnotations(), metaAnnotationClass);
         return (T) metaAnnotationAttributes.get("value");

@@ -31,7 +31,7 @@ import test_support.TestRestDsConfiguration;
 import test_support.TestSupport;
 import test_support.entity.Customer;
 import test_support.entity.CustomerContact;
-import test_support.entity.CustomerRegion;
+import test_support.entity.CustomerRegionDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -67,7 +67,7 @@ public class LoadedAttributesTest {
         assertThat(entityStates.isLoaded(customer, "region")).isTrue();
         assertThat(entityStates.isLoaded(customer, "contacts")).isFalse();
 
-        CustomerRegion region = customer.getRegion();
+        CustomerRegionDto region = customer.getRegion();
 
         assertThat(entityStates.isLoaded(region, "id")).isTrue();
         assertThat(entityStates.isLoaded(region, "version")).isTrue();
@@ -115,7 +115,7 @@ public class LoadedAttributesTest {
         // when reference is set but fetch plan does not include it, the reference is not returned from save
         customer = dataManager.create(Customer.class);
         customer.setLastName("cust-with-region-1-" + LocalDateTime.now());
-        customer.setRegion(dataManager.load(CustomerRegion.class).id(TestSupport.UUID_1).one());
+        customer.setRegion(dataManager.load(CustomerRegionDto.class).id(TestSupport.UUID_1).one());
 
         savedCustomer = dataManager.save(customer);
 
@@ -125,7 +125,7 @@ public class LoadedAttributesTest {
         // when reference is set and fetch plan includes it, the reference is returned from save
         customer = dataManager.create(Customer.class);
         customer.setLastName("cust-with-region-2-" + LocalDateTime.now());
-        customer.setRegion(dataManager.load(CustomerRegion.class).id(TestSupport.UUID_1).one());
+        customer.setRegion(dataManager.load(CustomerRegionDto.class).id(TestSupport.UUID_1).one());
 
         SaveContext saveContext = new SaveContext()
                 .saving(customer, fetchPlanRepository.getFetchPlan(Customer.class, "customer-with-region"));
@@ -151,7 +151,7 @@ public class LoadedAttributesTest {
 
         // when updating the reference without fetch plan, the reference is not returned from save, but it is saved
 
-        CustomerRegion region1 = dataManager.load(CustomerRegion.class).id(TestSupport.UUID_1).one();
+        CustomerRegionDto region1 = dataManager.load(CustomerRegionDto.class).id(TestSupport.UUID_1).one();
         customer.setRegion(region1);
         customer = dataManager.save(customer);
 
@@ -163,7 +163,7 @@ public class LoadedAttributesTest {
 
         // when changing reference in a not loaded attribute, the changed reference is saved
 
-        CustomerRegion region2 = dataManager.create(CustomerRegion.class);
+        CustomerRegionDto region2 = dataManager.create(CustomerRegionDto.class);
         region2.setName("region-" + LocalDateTime.now());
         dataManager.save(region2);
 

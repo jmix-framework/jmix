@@ -24,6 +24,7 @@ import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.restds.annotation.RestDataStoreEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -76,14 +77,13 @@ public class RestDataStore extends AbstractDataStore {
         if (id == null) {
             throw new IllegalArgumentException("Id is null");
         }
-        String entityName = context.getEntityMetaClass().getName();
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
+        String entityName = extractEntityName(context.getEntityMetaClass());
         String fetchPlan = extractFetchPlan(context);
 
         RestInvoker.LoadParams params = new RestInvoker.LoadParams(entityName, id, fetchPlan);
-        Object entity = restSerialization.fromJson(
-                restInvoker.load(params),
-                entityClass);
+        String json = restInvoker.load(params);
+        Object entity = restSerialization.fromJson(json, entityClass);
 
         if (entity != null) {
             updateEntityState(entity, fetchPlan);
@@ -97,8 +97,8 @@ public class RestDataStore extends AbstractDataStore {
         if (context.getQuery() == null) {
             throw new IllegalArgumentException("LoadContext.Query is null");
         }
-        String entityName = context.getEntityMetaClass().getName();
         Class<Object> entityClass = context.getEntityMetaClass().getJavaClass();
+        String entityName = extractEntityName(context.getEntityMetaClass());
         String fetchPlan = extractFetchPlan(context);
 
         RestInvoker.LoadListParams params = new RestInvoker.LoadListParams(entityName,
@@ -107,9 +107,8 @@ public class RestDataStore extends AbstractDataStore {
                 createRestSort(context.getQuery().getSort()),
                 createRestFilter(context.getQuery()),
                 fetchPlan);
-        List<Object> entities = restSerialization.fromJsonCollection(
-                restInvoker.loadList(params),
-                entityClass);
+        String json = restInvoker.loadList(params);
+        List<Object> entities = restSerialization.fromJsonCollection(json, entityClass);
 
         for (Object entity : entities) {
             updateEntityState(entity, fetchPlan);
@@ -174,6 +173,12 @@ public class RestDataStore extends AbstractDataStore {
         }
     }
 
+    private String extractEntityName(MetaClass localMetaClass) {
+        String restEntityName = (String) metadataTools.getMetaAnnotationAttributes(localMetaClass.getAnnotations(), RestDataStoreEntity.class)
+                .get("remoteName");
+        return restEntityName != null ? restEntityName : localMetaClass.getName();
+    }
+
     @Nullable
     private String extractFetchPlan(LoadContext<?> context) {
         String fetchPlan = context.getFetchPlan() == null ?
@@ -214,14 +219,14 @@ public class RestDataStore extends AbstractDataStore {
         Set<Object> saved = new HashSet<>();
         saveContextProcessor.normalizeCompositionItems(context);
         for (Object entity : context.getEntitiesToSave()) {
-            MetaClass metaClass = metadata.getClass(entity);
+            String entityName = extractEntityName(metadata.getClass(entity));
             FetchPlan fetchPlan = null;
             String savedEntityJson;
             boolean isNew = entityStates.isNew(entity);
             if (isNew) {
                 entityEventManager.publishEntitySavingEvent(entity, true);
                 String entityJson = restSerialization.toJson(entity, true);
-                savedEntityJson = restInvoker.create(metaClass.getName(), entityJson);
+                savedEntityJson = restInvoker.create(entityName, entityJson);
             } else {
                 Object id = EntityValues.getId(entity);
                 if (id == null) {
@@ -230,7 +235,7 @@ public class RestDataStore extends AbstractDataStore {
                 entityEventManager.publishEntitySavingEvent(entity, false);
 
                 String entityJson = restSerialization.toJson(entity, false);
-                savedEntityJson = restInvoker.update(metaClass.getName(), id.toString(), entityJson);
+                savedEntityJson = restInvoker.update(entityName, id.toString(), entityJson);
             }
             Object savedEntity = restSerialization.fromJson(savedEntityJson, entity.getClass());
             if (savedEntity == null) {
@@ -251,12 +256,12 @@ public class RestDataStore extends AbstractDataStore {
     protected Set<Object> deleteAll(SaveContext context) {
         Set<Object> saved = new HashSet<>();
         for (Object entity : context.getEntitiesToRemove()) {
-            MetaClass metaClass = metadata.getClass(entity);
+            String entityName = extractEntityName(metadata.getClass(entity));
             Object id = EntityValues.getId(entity);
             if (id == null) {
                 throw new IllegalArgumentException("Entity id is null for " + entity);
             }
-            restInvoker.delete(metaClass.getName(), id.toString());
+            restInvoker.delete(entityName, id.toString());
             entityEventManager.publishEntityRemovedEvent(entity);
             saved.add(entity);
         }

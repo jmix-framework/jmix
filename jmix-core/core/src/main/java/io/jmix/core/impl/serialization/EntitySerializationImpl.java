@@ -189,30 +189,24 @@ public class EntitySerializationImpl implements EntitySerialization {
 
     protected class EntitySerializer implements JsonSerializer<Entity> {
 
-        protected boolean compactRepeatedEntities = false;
+        protected boolean compactRepeatedEntities;
         protected boolean serializeInstanceName;
-        protected boolean doNotSerializeReadOnlyProperties = false;
-        protected boolean doNotSerializeDeniedProperties = false;
-        protected boolean serializeSecretFields = false;
+        protected boolean doNotSerializeReadOnlyProperties;
+        protected boolean doNotSerializeDeniedProperties;
+        protected boolean serializeSecretFields;
+        protected boolean ignoreEntityName;
         protected FetchPlan fetchPlan;
 
         public EntitySerializer(@Nullable FetchPlan fetchPlan, EntitySerializationOption... options) {
             this.fetchPlan = fetchPlan;
-            if (options != null) {
-                if (ArrayUtils.contains(options, EntitySerializationOption.COMPACT_REPEATED_ENTITIES)) {
-                    compactRepeatedEntities = true;
-                }
-                if (ArrayUtils.contains(options, EntitySerializationOption.SERIALIZE_INSTANCE_NAME)) {
-                    serializeInstanceName = true;
-                }
-                if (ArrayUtils.contains(options, EntitySerializationOption.DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES)) {
-                    doNotSerializeReadOnlyProperties = true;
-                }
-                if (ArrayUtils.contains(options, EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY)) {
-                    doNotSerializeDeniedProperties = true;
-                }
-                if (ArrayUtils.contains(options, EntitySerializationOption.SERIALIZE_SECRET_FIELDS)) {
-                    serializeSecretFields = true;
+            for (EntitySerializationOption option : options) {
+                switch (option) {
+                    case IGNORE_ENTITY_NAME -> ignoreEntityName = true;
+                    case COMPACT_REPEATED_ENTITIES -> compactRepeatedEntities = true;
+                    case SERIALIZE_INSTANCE_NAME -> serializeInstanceName = true;
+                    case DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES -> doNotSerializeReadOnlyProperties = true;
+                    case DO_NOT_SERIALIZE_DENIED_PROPERTY -> doNotSerializeDeniedProperties = true;
+                    case SERIALIZE_SECRET_FIELDS -> serializeSecretFields = true;
                 }
             }
         }
@@ -226,7 +220,9 @@ public class EntitySerializationImpl implements EntitySerialization {
             JsonObject jsonObject = new JsonObject();
             MetaClass metaClass = metadata.getClass(entity);
             if (metadataTools.getPrimaryKeyName(metaClass) != null) {
-                jsonObject.addProperty(ENTITY_NAME_PROP, metaClass.getName());
+                if (!ignoreEntityName) {
+                    jsonObject.addProperty(ENTITY_NAME_PROP, metaClass.getName());
+                }
                 if (serializeInstanceName) {
                     String instanceName = null;
                     try {
@@ -414,9 +410,11 @@ public class EntitySerializationImpl implements EntitySerialization {
     protected class EntityDeserializer implements JsonDeserializer<Entity> {
 
         protected MetaClass metaClass;
+        protected final boolean ignoreEntityName;
 
         public EntityDeserializer(@Nullable MetaClass metaClass, EntitySerializationOption... options) {
             this.metaClass = metaClass;
+            ignoreEntityName = Arrays.stream(options).anyMatch(o -> o == EntitySerializationOption.IGNORE_ENTITY_NAME);
         }
 
         @Override
@@ -429,12 +427,13 @@ public class EntitySerializationImpl implements EntitySerialization {
             MetaClass resultMetaClass = metaClass;
             JsonElement idJsonElement = jsonObject.get("id");
 
-            JsonPrimitive entityNameJsonPrimitive = jsonObject.getAsJsonPrimitive(ENTITY_NAME_PROP);
-            if (entityNameJsonPrimitive != null) {
-                String entityName = entityNameJsonPrimitive.getAsString();
-                resultMetaClass = metadata.getClass(entityName);
+            if (!ignoreEntityName) {
+                JsonPrimitive entityNameJsonPrimitive = jsonObject.getAsJsonPrimitive(ENTITY_NAME_PROP);
+                if (entityNameJsonPrimitive != null) {
+                    String entityName = entityNameJsonPrimitive.getAsString();
+                    resultMetaClass = metadata.getClass(entityName);
+                }
             }
-
 
             if (resultMetaClass == null) {
                 throw new EntitySerializationException("Cannot deserialize an entity. MetaClass is not defined");

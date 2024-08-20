@@ -35,7 +35,7 @@ public class Customer {
 
     private String email;
 
-    private CustomerRegion region;
+    private CustomerRegionDto region;
 
     @Composition(inverse = "customer")
     private Set<CustomerContact> contacts;
@@ -67,11 +67,11 @@ public class Customer {
         this.firstName = firstName;
     }
 
-    public CustomerRegion getRegion() {
+    public CustomerRegionDto getRegion() {
         return region;
     }
 
-    public void setRegion(CustomerRegion region) {
+    public void setRegion(CustomerRegionDto region) {
         this.region = region;
     }
 

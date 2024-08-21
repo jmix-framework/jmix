@@ -229,30 +229,37 @@ public class CommonAttributeDefinition implements AttributeDefinition, Serializa
     public Object getDefaultValue() {
         AttributeType dataType = attribute.getDataType();
         if (dataType != null) {
-            switch (dataType) {
-                case INTEGER:
-                    return attribute.getDefaultInt();
-                case DOUBLE:
-                    return attribute.getDefaultDouble();
-                case DECIMAL:
-                    return attribute.getDefaultDecimal();
-                case BOOLEAN:
-                    return attribute.getDefaultBoolean();
-                case DATE:
-                    return attribute.getDefaultDate();
-                case DATE_WITHOUT_TIME:
-                    return attribute.getDefaultDateWithoutTime();
-                case STRING:
-                case ENUMERATION:
-                    return attribute.getDefaultString();
-                case ENTITY:
-                    if(attribute.getDefaultEntity() == null) {
-                        return null;
-                    }
-                    return attribute.getDefaultEntity().getObjectEntityId();
+            Object singleDefaultValue = getSingleDefaultValue(dataType);
+            if(!attribute.getIsCollection()){
+                return singleDefaultValue;
+            }else {
+                if(singleDefaultValue == null){
+                    return Collections.emptyList();
+                }else {
+                    return List.of(singleDefaultValue);
+                }
             }
         }
         return null;
+    }
+
+    @Nullable
+    protected Object getSingleDefaultValue(AttributeType dataType) {
+        return switch (dataType) {
+            case INTEGER -> attribute.getDefaultInt();
+            case DOUBLE -> attribute.getDefaultDouble();
+            case DECIMAL -> attribute.getDefaultDecimal();
+            case BOOLEAN -> attribute.getDefaultBoolean();
+            case DATE -> attribute.getDefaultDate();
+            case DATE_WITHOUT_TIME -> attribute.getDefaultDateWithoutTime();
+            case STRING, ENUMERATION -> attribute.getDefaultString();
+            case ENTITY -> {
+                if (attribute.getDefaultEntity() == null) {
+                    yield null;
+                }
+                yield attribute.getDefaultEntity().getObjectEntityId();
+            }
+        };
     }
 
     @Override

@@ -21,7 +21,6 @@ import io.jmix.fullcalendarflowui.kit.component.model.*;
 import io.jmix.fullcalendarflowui.kit.component.serialization.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -37,7 +36,6 @@ import java.util.*;
 @Component("fcaldr_FullCalendarHelper")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FullCalendarDelegate {
-
     private static final String PACKAGE = "io.jmix.fullcalendarflowui.component";
 
     protected FullCalendar fullCalendar;
@@ -69,153 +67,7 @@ public class FullCalendarDelegate {
         setI18nInternal(defaultI18n.combine(explicitI18n));
     }
 
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    public JsonArray fetchCalendarItems(String sourceId, String start, String end) {
-        LazyEventProviderManager eventProviderWrapper = (LazyEventProviderManager) getEventProvidersMap().values().stream()
-                .filter(ep -> ep.getSourceId().equals(sourceId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Cannot fetch items for lazy event provider," +
-                        " since there is no event provider with client ID:" + sourceId));
-
-        JsonArray jsonEvents = eventProviderWrapper.fetchAndSerialize(
-                new LazyCalendarEventProvider.ItemsFetchContext(
-                        eventProviderWrapper.getEventProvider(),
-                        parseAndTransform(start, getComponentZoneId()),
-                        parseAndTransform(end, getComponentZoneId()),
-                        fullCalendar.getTimeZone()));
-        return jsonEvents;
-    }
-
-    public DatesSetEvent convertToDatesSetEvent(DomDatesSet domDatesSet, boolean fromClient) {
-        return new DatesSetEvent(
-                fullCalendar,
-                fromClient,
-                parseAndTransform(domDatesSet.getStartDateTime(), getComponentZoneId()),
-                parseAndTransform(domDatesSet.getEndDateTime(), getComponentZoneId()),
-                createViewInfo(domDatesSet.getView()));
-    }
-
-    public MoreLinkClickEvent convertToMoreLinkClickEvent(DomMoreLinkClick clientContext, boolean fromClient) {
-        List<EventProviderContext> eventProviderContexts = new ArrayList<>();
-        for (AbstractEventProviderManager epWrapper : getEventProvidersMap().values()) {
-            EventProviderContext eventProviderContext = createEventProviderContext(epWrapper,
-                    clientContext.getAllData(), clientContext.getHiddenData());
-            if (eventProviderContext != null) {
-                eventProviderContexts.add(eventProviderContext);
-            }
-        }
-        return new MoreLinkClickEvent(
-                fullCalendar,
-                fromClient,
-                clientContext.isAllDay(),
-                parseAndTransform(clientContext.getDate(), getComponentZoneId()),
-                createViewInfo(clientContext.getView()),
-                eventProviderContexts,
-                new MouseEventDetails(clientContext.getMouseDetails())
-        );
-    }
-
-    public EventClickEvent convertToEventClickEvent(DomEventMouse clientContext, boolean fromClient) {
-        AbstractEventProviderManager eventProviderManager = getEventProviderManager(clientContext.getEvent().getSourceId());
-        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), eventProviderManager);
-
-        return new EventClickEvent(
-                fullCalendar,
-                fromClient,
-                new MouseEventDetails(clientContext.getMouseDetails()),
-                calendarEvent,
-                eventProviderManager.getEventProvider(),
-                createViewInfo(clientContext.getView())
-        );
-    }
-
-    public EventMouseEnterEvent convertToEventMouseEnterEvent(DomEventMouse clientContext, boolean fromClient) {
-        AbstractEventProviderManager eventProviderManager = getEventProviderManager(clientContext.getEvent().getSourceId());
-        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), eventProviderManager);
-
-        return new EventMouseEnterEvent(
-                fullCalendar,
-                fromClient,
-                new MouseEventDetails(clientContext.getMouseDetails()),
-                calendarEvent,
-                eventProviderManager.getEventProvider(),
-                createViewInfo(clientContext.getView()));
-    }
-
-    public EventMouseLeaveEvent convertToEventMouseLeaveEvent(DomEventMouse clientContext, boolean fromClient) {
-        AbstractEventProviderManager eventProviderManager = getEventProviderManager(clientContext.getEvent().getSourceId());
-        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), eventProviderManager);
-
-        return new EventMouseLeaveEvent(
-                fullCalendar,
-                fromClient,
-                new MouseEventDetails(clientContext.getMouseDetails()),
-                calendarEvent,
-                eventProviderManager.getEventProvider(),
-                createViewInfo(clientContext.getView()));
-    }
-
-    public EventDropEvent convertToEventDropEvent(DomEventDrop clientEvent, boolean fromClient) {
-        AbstractEventProviderManager epManager = getEventProviderManager(clientEvent.getEvent().getSourceId());
-
-        CalendarEvent droppedEvent = getCalendarEvent(clientEvent.getEvent(), epManager);
-        applyChangesToCalendarEvent(droppedEvent, clientEvent.getEvent());
-
-        List<CalendarEvent> relatedEvents = getRelatedEvents(clientEvent.getRelatedEvents(), epManager);
-
-        return new EventDropEvent(fullCalendar, fromClient,
-                new MouseEventDetails(clientEvent.getMouseDetails()),
-                createOldValues(clientEvent.getOldEvent()),
-                droppedEvent,
-                relatedEvents,
-                createViewInfo(clientEvent.getView()),
-                createDelta(clientEvent.getDelta()));
-    }
-
-    public EventResizeEvent convertToEventResizeEvent(DomEventResize clientEvent, boolean fromClient) {
-        AbstractEventProviderManager epManager = getEventProviderManager(clientEvent.getEvent().getSourceId());
-
-        CalendarEvent resizedEvent = getCalendarEvent(clientEvent.getEvent(), epManager);
-        applyChangesToCalendarEvent(resizedEvent, clientEvent.getEvent());
-
-        List<CalendarEvent> relatedEvents = getRelatedEvents(clientEvent.getRelatedEvents(), epManager);
-
-        return new EventResizeEvent(fullCalendar, fromClient,
-                new MouseEventDetails(clientEvent.getMouseDetails()),
-                createOldValues(clientEvent.getOldEvent()),
-                resizedEvent,
-                relatedEvents,
-                createViewInfo(clientEvent.getView()),
-                createDelta(clientEvent.getStartDelta()),
-                createDelta(clientEvent.getEndDelta()));
-    }
-
-    public DateClickEvent convertToDateClickEvent(DomDateClick clientEvent, boolean fromClient) {
-        return new DateClickEvent(fullCalendar, fromClient,
-                new MouseEventDetails(clientEvent.getMouseDetails()),
-                parseAndTransform(clientEvent.getDate(), getComponentZoneId()),
-                clientEvent.isAllDay(),
-                createViewInfo(clientEvent.getView()));
-    }
-
-    public SelectEvent convertToSelectEvent(DomSelect clientEvent, boolean fromClient) {
-        return new SelectEvent(
-                fullCalendar, fromClient,
-                clientEvent.getMouseDetails() != null ? new MouseEventDetails(clientEvent.getMouseDetails()) : null,
-                parseAndTransform(clientEvent.getStart(), getComponentZoneId()),
-                parseAndTransform(clientEvent.getEnd(), getComponentZoneId()),
-                clientEvent.isAllDay(),
-                createViewInfo(clientEvent.getView()));
-    }
-
-    public UnselectEvent convertToUnselectEvent(DomUnselect clientEvent, boolean fromClient) {
-        return new UnselectEvent(
-                fullCalendar, fromClient,
-                createViewInfo(clientEvent.getView()),
-                clientEvent.getMouseDetails() != null ? new MouseEventDetails(clientEvent.getMouseDetails()) : null);
-    }
-
-    public JsonArray getMoreLinkClassNamesJson(DomMoreLinkClassNames clientContext) {
+    public JsonArray getMoreLinkClassNames(DomMoreLinkClassNames clientContext) {
         if (fullCalendar.getMoreLinkClassNamesGenerator() == null) {
             return jsonFactory.createArray();
         }
@@ -237,6 +89,150 @@ public class FullCalendarDelegate {
         }
 
         return result;
+    }
+
+    public JsonArray fetchCalendarItems(String sourceId, String start, String end) {
+        LazyEventProviderManager eventProviderWrapper = (LazyEventProviderManager) getEventProvidersMap().values().stream()
+                .filter(ep -> ep.getSourceId().equals(sourceId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Cannot fetch items for lazy event provider," +
+                        " since there is no event provider with client ID:" + sourceId));
+
+        return eventProviderWrapper.fetchAndSerialize(
+                new LazyCalendarEventProvider.ItemsFetchContext(
+                        eventProviderWrapper.getEventProvider(),
+                        parseAndTransform(start, getComponentZoneId()),
+                        parseAndTransform(end, getComponentZoneId()),
+                        getComponentTimeZone()));
+    }
+
+    public DatesSetEvent createDatesSetEvent(DomDatesSet domDatesSet, boolean fromClient) {
+        return new DatesSetEvent(
+                fullCalendar,
+                fromClient,
+                parseAndTransform(domDatesSet.getStartDateTime(), getComponentZoneId()),
+                parseAndTransform(domDatesSet.getEndDateTime(), getComponentZoneId()),
+                createViewInfo(domDatesSet.getView()));
+    }
+
+    public MoreLinkClickEvent createMoreLinkClickEvent(DomMoreLinkClick clientContext, boolean fromClient) {
+        List<EventProviderContext> eventProviderContexts = new ArrayList<>();
+        for (AbstractEventProviderManager epWrapper : getEventProvidersMap().values()) {
+            EventProviderContext eventProviderContext = createEventProviderContext(epWrapper,
+                    clientContext.getAllData(), clientContext.getHiddenData());
+            if (eventProviderContext != null) {
+                eventProviderContexts.add(eventProviderContext);
+            }
+        }
+        return new MoreLinkClickEvent(
+                fullCalendar,
+                fromClient,
+                clientContext.isAllDay(),
+                parseAndTransform(clientContext.getDate(), getComponentZoneId()),
+                createViewInfo(clientContext.getView()),
+                eventProviderContexts,
+                new MouseEventDetails(clientContext.getMouseDetails())
+        );
+    }
+
+    public EventClickEvent createEventClickEvent(DomEventMouse clientContext, boolean fromClient) {
+        AbstractEventProviderManager eventProviderManager = getEventProviderManager(clientContext.getEvent().getSourceId());
+        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), eventProviderManager);
+
+        return new EventClickEvent(
+                fullCalendar,
+                fromClient,
+                new MouseEventDetails(clientContext.getMouseDetails()),
+                calendarEvent,
+                eventProviderManager.getEventProvider(),
+                createViewInfo(clientContext.getView())
+        );
+    }
+
+    public EventMouseEnterEvent createEventMouseEnterEvent(DomEventMouse clientContext, boolean fromClient) {
+        AbstractEventProviderManager eventProviderManager = getEventProviderManager(clientContext.getEvent().getSourceId());
+        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), eventProviderManager);
+
+        return new EventMouseEnterEvent(
+                fullCalendar,
+                fromClient,
+                new MouseEventDetails(clientContext.getMouseDetails()),
+                calendarEvent,
+                eventProviderManager.getEventProvider(),
+                createViewInfo(clientContext.getView()));
+    }
+
+    public EventMouseLeaveEvent createEventMouseLeaveEvent(DomEventMouse clientContext, boolean fromClient) {
+        AbstractEventProviderManager eventProviderManager = getEventProviderManager(clientContext.getEvent().getSourceId());
+        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), eventProviderManager);
+
+        return new EventMouseLeaveEvent(
+                fullCalendar,
+                fromClient,
+                new MouseEventDetails(clientContext.getMouseDetails()),
+                calendarEvent,
+                eventProviderManager.getEventProvider(),
+                createViewInfo(clientContext.getView()));
+    }
+
+    public EventDropEvent createEventDropEvent(DomEventDrop clientEvent, boolean fromClient) {
+        AbstractEventProviderManager epManager = getEventProviderManager(clientEvent.getEvent().getSourceId());
+
+        CalendarEvent droppedEvent = getCalendarEvent(clientEvent.getEvent(), epManager);
+        applyChangesToCalendarEvent(droppedEvent, clientEvent.getEvent());
+
+        List<CalendarEvent> relatedEvents = getRelatedEvents(clientEvent.getRelatedEvents(), epManager);
+
+        return new EventDropEvent(fullCalendar, fromClient,
+                new MouseEventDetails(clientEvent.getMouseDetails()),
+                createOldValues(clientEvent.getOldEvent()),
+                droppedEvent,
+                relatedEvents,
+                createViewInfo(clientEvent.getView()),
+                createDelta(clientEvent.getDelta()));
+    }
+
+    public EventResizeEvent createEventResizeEvent(DomEventResize clientEvent, boolean fromClient) {
+        AbstractEventProviderManager epManager = getEventProviderManager(clientEvent.getEvent().getSourceId());
+
+        CalendarEvent resizedEvent = getCalendarEvent(clientEvent.getEvent(), epManager);
+        applyChangesToCalendarEvent(resizedEvent, clientEvent.getEvent());
+
+        List<CalendarEvent> relatedEvents = getRelatedEvents(clientEvent.getRelatedEvents(), epManager);
+
+        return new EventResizeEvent(fullCalendar, fromClient,
+                new MouseEventDetails(clientEvent.getMouseDetails()),
+                createOldValues(clientEvent.getOldEvent()),
+                resizedEvent,
+                relatedEvents,
+                createViewInfo(clientEvent.getView()),
+                createDelta(clientEvent.getStartDelta()),
+                createDelta(clientEvent.getEndDelta()));
+    }
+
+    public DateClickEvent createDateClickEvent(DomDateClick clientEvent, boolean fromClient) {
+        return new DateClickEvent(fullCalendar, fromClient,
+                new MouseEventDetails(clientEvent.getMouseDetails()),
+                parseAndTransform(clientEvent.getDate(), getComponentZoneId()),
+                clientEvent.isAllDay(),
+                createViewInfo(clientEvent.getView()));
+    }
+
+    public SelectEvent createSelectEvent(DomSelect clientEvent, boolean fromClient) {
+        return new SelectEvent(
+                fullCalendar, fromClient,
+                clientEvent.getMouseDetails() != null ? new MouseEventDetails(clientEvent.getMouseDetails()) : null,
+                parseAndTransform(clientEvent.getStart(), getComponentZoneId()),
+                parseAndTransform(clientEvent.getEnd(), getComponentZoneId()),
+                clientEvent.isAllDay(),
+                createViewInfo(clientEvent.getView()));
+    }
+
+    public UnselectEvent createUnselectEvent(DomUnselect clientEvent, boolean fromClient) {
+        return new UnselectEvent(
+                fullCalendar, fromClient,
+                createViewInfo(clientEvent.getView()),
+                clientEvent.getMouseDetails() != null ? new MouseEventDetails(clientEvent.getMouseDetails()) : null);
     }
 
     public void setupLocalization() {
@@ -320,10 +316,6 @@ public class FullCalendarDelegate {
         fullCalendar.setEventTimeFormat(messages.getMessage(PACKAGE, "eventTimeFormat"));
     }
 
-    protected <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(CalendarViewType viewType) {
-        return Objects.requireNonNull(fullCalendar.getCalendarViewProperties(viewType));
-    }
-
     protected void setupCalendarLocalizedUnitNames() {
         JsonObject json = createCalendarLocalizedUnitNamesJson();
 
@@ -340,21 +332,35 @@ public class FullCalendarDelegate {
         fullCalendar.getElement().setPropertyJson("i18n", json);
     }
 
-    protected Optional<String> getOptMessage(String key) {
-        String message = messages.getMessage(PACKAGE, key);
-        return Optional.ofNullable(message.equals(key) ? null : message);
+    protected <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(CalendarViewType viewType) {
+        return Objects.requireNonNull(fullCalendar.getCalendarViewProperties(viewType));
     }
 
-    protected Optional<List<String>> getListMessage(String key) {
-        String message = getOptMessage(key).orElse(null);
-        if (message != null) {
-            List<String> messages = Splitter.on(",")
-                    .trimResults()
-                    .omitEmptyStrings()
-                    .splitToList(message);
-            return Optional.of(messages);
+    protected String getMessage(String key) {
+        return messages.getMessage(PACKAGE, key);
+    }
+
+    protected List<String> getListMessage(String key) {
+        return Splitter.on(",")
+                .trimResults()
+                .omitEmptyStrings()
+                .splitToList(getMessage(key));
+    }
+
+    protected ZoneId getComponentZoneId() {
+        return getComponentTimeZone().toZoneId();
+    }
+
+    protected TimeZone getComponentTimeZone() {
+        TimeZone timeZone = fullCalendar.getTimeZone();
+        if (timeZone != null) {
+            return timeZone;
         }
-        return Optional.empty();
+        TimeZone defaultTimeZone = fullCalendar.getOptions().getTimeZone().getDefaultValue();
+        if (defaultTimeZone != null) {
+            return defaultTimeZone;
+        }
+        return TimeZone.getDefault();
     }
 
     protected AbstractEventProviderManager getEventProviderManager(String sourceId) {
@@ -466,33 +472,29 @@ public class FullCalendarDelegate {
     }
 
     protected FullCalendarI18n createDefaultI18n() {
-        FullCalendarI18n i18n = new FullCalendarI18n();
-
-        getOptMessage("i18n.direction")
-                .ifPresent(d -> i18n.setDirection(FullCalendarI18n.Direction.valueOf(d.toUpperCase())));
-        getOptMessage("i18n.dayOfWeek").ifPresent(d -> i18n.setDayOfWeek(Integer.parseInt(d)));
-        getOptMessage("i18n.dayOfYear").ifPresent(d -> i18n.setDayOfYear(Integer.parseInt(d)));
-
-        getOptMessage("i18n.weekTextLong").ifPresent(i18n::setWeekTextLong);
-        getOptMessage("i18n.allDayText").ifPresent(i18n::setAllDayText);
-        getOptMessage("i18n.moreLinkText").ifPresent(i18n::setMoreLinkText);
-        getOptMessage("i18n.noEventsText").ifPresent(i18n::setNoEventsText);
-        getOptMessage("i18n.closeHint").ifPresent(i18n::setCloseHint);
-        getOptMessage("i18n.eventHint").ifPresent(i18n::setEventHint);
-        getOptMessage("i18n.timeHint").ifPresent(i18n::setTimeHint);
-        getOptMessage("i18n.navLinkHint").ifPresent(i18n::setNavLinkHint);
-        getOptMessage("i18n.moreLinkHint").ifPresent(i18n::setMoreLinkHint);
-        return i18n;
+        return new FullCalendarI18n()
+                .withDirection(FullCalendarI18n.Direction.valueOf(getMessage("i18n.direction").toUpperCase()))
+                .withDayOfWeek(Integer.parseInt(getMessage("i18n.dayOfWeek")))
+                .withDayOfYear(Integer.parseInt(getMessage("i18n.dayOfYear")))
+                .withWeekTextLong(getMessage("i18n.weekTextLong"))
+                .withAllDayText(getMessage("i18n.allDayText"))
+                .withMoreLinkText(getMessage("i18n.moreLinkText"))
+                .withNoEventsText(getMessage("i18n.noEventsText"))
+                .withCloseHint(getMessage("i18n.closeHint"))
+                .withEventHint(getMessage("i18n.eventHint"))
+                .withTimeHint(getMessage("i18n.timeHint"))
+                .withNavLinkHint(getMessage("i18n.navLinkHint"))
+                .withMoreLinkHint(getMessage("i18n.moreLinkHint"));
     }
 
     protected JsonObject createCalendarLocalizedUnitNamesJson() {
         JsonObject result = jsonFactory.createObject();
         FullCalendarSerializer serializer = fullCalendar.getSerializer();
-        getListMessage("months").ifPresent(s -> result.put("months", serializer.toJsonArrayFromString(s)));
-        getListMessage("monthsShort").ifPresent(s -> result.put("monthsShort", serializer.toJsonArrayFromString(s)));
-        getListMessage("weekdays").ifPresent(s -> result.put("weekdays", serializer.toJsonArrayFromString(s)));
-        getListMessage("weekdaysShort").ifPresent(s -> result.put("weekdaysShort", serializer.toJsonArrayFromString(s)));
-        getListMessage("weekdaysMin").ifPresent(s -> result.put("weekdaysMin", serializer.toJsonArrayFromString(s)));
+        result.put("months", serializer.toJsonArrayFromString(getListMessage("months")));
+        result.put("monthsShort", serializer.toJsonArrayFromString(getListMessage("monthsShort")));
+        result.put("weekdays", serializer.toJsonArrayFromString(getListMessage("weekdays")));
+        result.put("weekdaysShort", serializer.toJsonArrayFromString(getListMessage("weekdaysShort")));
+        result.put("weekdaysMin", serializer.toJsonArrayFromString(getListMessage("weekdaysMin")));
         return result;
     }
 
@@ -529,9 +531,5 @@ public class FullCalendarDelegate {
         } catch (DateTimeParseException e) {
             throw new IllegalStateException("Cannot parse date: " + isoDateTime, e);
         }
-    }
-
-    private ZoneId getComponentZoneId() {
-        return fullCalendar.getTimeZone().toZoneId();
     }
 }

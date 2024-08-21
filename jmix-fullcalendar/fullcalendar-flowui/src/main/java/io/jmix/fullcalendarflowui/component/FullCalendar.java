@@ -51,10 +51,17 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Override
     public void afterPropertiesSet() {
+        autoWireDependencies();
+        initComponent();
+    }
+
+    protected void autoWireDependencies() {
         currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
         dateTimeTransformations = applicationContext.getBean(DateTimeTransformations.class);
-        calendarDelegate = applicationContext.getBean(FullCalendarDelegate.class, this,
-                applicationContext.getBean(Messages.class), currentAuthentication);
+    }
+
+    protected void initComponent() {
+        calendarDelegate = createCalendarDelegate();
 
         setupLocalization();
 
@@ -502,7 +509,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         DomMoreLinkClassNames clientContext =
                 deserializer.deserialize(jsonContext, DomMoreLinkClassNames.class);
 
-        JsonArray classNames = calendarDelegate.getMoreLinkClassNamesJson(clientContext);
+        JsonArray classNames = calendarDelegate.getMoreLinkClassNames(clientContext);
 
         return classNames;
     }
@@ -513,7 +520,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         DomDatesSet domDatesSet = deserializer.deserialize(event.getContext(), DomDatesSet.class);
 
-        DatesSetEvent datesSetEvent = calendarDelegate.convertToDatesSetEvent(domDatesSet, event.isFromClient());
+        DatesSetEvent datesSetEvent = calendarDelegate.createDatesSetEvent(domDatesSet, event.isFromClient());
 
         getEventBus().fireEvent(datesSetEvent);
     }
@@ -523,7 +530,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         DomMoreLinkClick clientContext =
                 deserializer.deserialize(event.getContext(), DomMoreLinkClick.class);
 
-        MoreLinkClickEvent clickEvent = calendarDelegate.convertToMoreLinkClickEvent(clientContext, event.isFromClient());
+        MoreLinkClickEvent clickEvent = calendarDelegate.createMoreLinkClickEvent(clientContext, event.isFromClient());
 
         getEventBus().fireEvent(clickEvent);
     }
@@ -533,7 +540,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         DomEventMouse clientContext = deserializer
                 .deserialize(event.getContext(), DomEventMouse.class);
 
-        EventClickEvent clickEvent = calendarDelegate.convertToEventClickEvent(clientContext, event.isFromClient());
+        EventClickEvent clickEvent = calendarDelegate.createEventClickEvent(clientContext, event.isFromClient());
 
         getEventBus().fireEvent(clickEvent);
     }
@@ -544,7 +551,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 .deserialize(event.getContext(), DomEventMouse.class);
 
         EventMouseEnterEvent eventMouseEnterEvent = calendarDelegate
-                .convertToEventMouseEnterEvent(clientContext, event.isFromClient());
+                .createEventMouseEnterEvent(clientContext, event.isFromClient());
 
         getEventBus().fireEvent(eventMouseEnterEvent);
     }
@@ -555,7 +562,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 .deserialize(event.getContext(), DomEventMouse.class);
 
         EventMouseLeaveEvent eventMouseLeaveEvent = calendarDelegate
-                .convertToEventMouseLeaveEvent(clientContext, event.isFromClient());
+                .createEventMouseLeaveEvent(clientContext, event.isFromClient());
 
         getEventBus().fireEvent(eventMouseLeaveEvent);
     }
@@ -565,8 +572,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         DomEventDrop clientEvent = deserializer
                 .deserialize(event.getContext(), DomEventDrop.class);
 
-        EventDropEvent eventDropEvent =
-                calendarDelegate.convertToEventDropEvent(clientEvent, event.isFromClient());
+        EventDropEvent eventDropEvent = calendarDelegate.createEventDropEvent(clientEvent, event.isFromClient());
 
         getEventBus().fireEvent(eventDropEvent);
     }
@@ -577,7 +583,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 .deserialize(event.getContext(), DomEventResize.class);
 
         EventResizeEvent eventResizeEvent =
-                calendarDelegate.convertToEventResizeEvent(clientEvent, event.isFromClient());
+                calendarDelegate.createEventResizeEvent(clientEvent, event.isFromClient());
 
         getEventBus().fireEvent(eventResizeEvent);
     }
@@ -586,7 +592,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected void onDateClick(DateClickDomEvent event) {
         DomDateClick clientEvent = deserializer.deserialize(event.getContext(), DomDateClick.class);
 
-        DateClickEvent dateClickEvent = calendarDelegate.convertToDateClickEvent(clientEvent, event.isFromClient());
+        DateClickEvent dateClickEvent = calendarDelegate.createDateClickEvent(clientEvent, event.isFromClient());
 
         getEventBus().fireEvent(dateClickEvent);
     }
@@ -595,7 +601,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected void onSelect(SelectDomEvent event) {
         DomSelect clientEvent = deserializer.deserialize(event.getContext(), DomSelect.class);
 
-        SelectEvent selectEvent = calendarDelegate.convertToSelectEvent(clientEvent, event.isFromClient());
+        SelectEvent selectEvent = calendarDelegate.createSelectEvent(clientEvent, event.isFromClient());
 
         getEventBus().fireEvent(selectEvent);
     }
@@ -604,7 +610,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected void onUnselect(UnselectDomEvent event) {
         DomUnselect clientEvent = deserializer.deserialize(event.getContext(), DomUnselect.class);
 
-        UnselectEvent unselectEvent = calendarDelegate.convertToUnselectEvent(clientEvent, event.isFromClient());
+        UnselectEvent unselectEvent = calendarDelegate.createUnselectEvent(clientEvent, event.isFromClient());
 
         getEventBus().fireEvent(unselectEvent);
     }
@@ -640,6 +646,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         TimeZone timeZone = applicationContext.getBean(CurrentAuthentication.class).getTimeZone();
 
         setTimeZone(timeZone);
+    }
+
+    protected FullCalendarDelegate createCalendarDelegate() {
+        return applicationContext.getBean(FullCalendarDelegate.class,
+                this, applicationContext.getBean(Messages.class), currentAuthentication);
     }
 
     @Override

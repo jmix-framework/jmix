@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -328,7 +329,7 @@ public class RestInvoker {
         @Override
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
             log.debug("Request: {} {}", request.getMethod(), request.getURI());
-            if (traceBody)
+            if (traceBody && (request.getMethod().equals(HttpMethod.POST) || request.getMethod().equals(HttpMethod.PUT)))
                 log.trace("Request body: {}", new String(body));
 
             ClientHttpResponse response = execution.execute(request, body);

@@ -499,7 +499,10 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected boolean propertyReadRequired(String propertyName) {
-            return !"id".equals(propertyName) && !ENTITY_NAME_PROP.equals(propertyName) && !"__securityToken".equals(propertyName);
+            return !"id".equals(propertyName)
+                    && !ENTITY_NAME_PROP.equals(propertyName)
+                    && !INSTANCE_NAME_PROP.equals(propertyName)
+                    && !"__securityToken".equals(propertyName);
         }
 
         protected void readFields(JsonObject jsonObject, Object entity) {
@@ -595,7 +598,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                         }
                     }
                 } else {
-                    log.warn("Entity {} doesn't contain a '{}' property", metadata.getClass(entity.getClass()).getName(), propertyName);
+                    log.debug("Entity {} doesn't contain '{}' property", metadata.getClass(entity.getClass()).getName(), propertyName);
                 }
             }
 

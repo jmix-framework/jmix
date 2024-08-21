@@ -63,6 +63,13 @@ public class JmixFullCalendarOptions {
     protected SimpleOption<String> slotLabelFormat = new SimpleOption<>("slotLabelFormat", "ha");
     protected SimpleOption<String> eventTimeFormat = new SimpleOption<>("eventTimeFormat", "h:mma");
 
+    protected SimpleOption<Boolean> fixedWeekCount = new SimpleOption<>("fixedWeekCount", true);
+    protected SimpleOption<Boolean> showNonCurrentDates = new SimpleOption<>("showNonCurrentDates", true);
+
+    protected SimpleOption<Integer> eventMinHeight = new SimpleOption<>("eventMinHeight", 15);
+    protected SimpleOption<Integer> eventShortHeight = new SimpleOption<>("eventShortHeight", 30);
+    protected SimpleOption<Boolean> slotEventOverlap = new SimpleOption<>("slotEventOverlap", true);
+
     protected final List<CalendarOption> updatableOptions = new ArrayList<>(28);
 
     /**
@@ -80,7 +87,8 @@ public class JmixFullCalendarOptions {
                 selectOverlap, selectAllow, visibleRange));
 
         initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll,
-                dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat));
+                dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat,
+                fixedWeekCount, showNonCurrentDates, eventMinHeight, eventShortHeight, slotEventOverlap));
 
         updatableOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
         initialOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
@@ -234,6 +242,26 @@ public class JmixFullCalendarOptions {
 
     public SimpleOption<String> getEventTimeFormat() {
         return eventTimeFormat;
+    }
+
+    public SimpleOption<Boolean> getFixedWeekCount() {
+        return fixedWeekCount;
+    }
+
+    public SimpleOption<Boolean> getShowNonCurrentDates() {
+        return showNonCurrentDates;
+    }
+
+    public SimpleOption<Integer> getEventMinHeight() {
+        return eventMinHeight;
+    }
+
+    public SimpleOption<Integer> getEventShortHeight() {
+        return eventShortHeight;
+    }
+
+    public SimpleOption<Boolean> getSlotEventOverlap() {
+        return slotEventOverlap;
     }
 
     public boolean isInitial(CalendarOption option) {

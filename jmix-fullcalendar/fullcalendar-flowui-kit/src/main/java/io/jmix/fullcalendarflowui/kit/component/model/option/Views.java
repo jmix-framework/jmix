@@ -40,6 +40,8 @@ public class Views extends CalendarOption {
     protected ListMonthViewProperties listMonth;
     protected ListYearViewProperties listYear;
 
+    protected MultiMonthYearProperties multiMonthYear;
+
     protected List<CalendarCustomView> customViews;
 
     public Views() {
@@ -48,6 +50,7 @@ public class Views extends CalendarOption {
         initDayGridViews();
         initTimeGridViews();
         initListViews();
+        initMultiMonthViews();
     }
 
     public DayGridWeekViewProperties getDayGridWeek() {
@@ -88,6 +91,10 @@ public class Views extends CalendarOption {
 
     public ListYearViewProperties getListYear() {
         return listYear;
+    }
+
+    public MultiMonthYearProperties getMultiMonthYear() {
+        return multiMonthYear;
     }
 
     public List<CalendarCustomView> getCustomViews() {
@@ -157,6 +164,8 @@ public class Views extends CalendarOption {
             return (T) listMonth;
         } else if (CalendarViewType.LIST_YEAR.getId().equals(viewId)) {
             return (T) listYear;
+        } else if (CalendarViewType.MULTI_MONTH_YEAR.getId().equals(viewId)) {
+            return (T) multiMonthYear;
         } else {
             return null;
         }
@@ -200,5 +209,10 @@ public class Views extends CalendarOption {
 
         listYear = new ListYearViewProperties();
         listYear.addChangeListener(this::onOptionChange);
+    }
+
+    protected void initMultiMonthViews() {
+        multiMonthYear = new MultiMonthYearProperties();
+        multiMonthYear.addChangeListener(this::onOptionChange);
     }
 }

@@ -16,14 +16,55 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
-public class DayGridMonthViewProperties extends AbstractDayGridViewProperties {
+import jakarta.annotation.Nullable;
+
+public class MultiMonthYearProperties extends AbstractCalendarViewProperties {
+
+    protected Integer multiMonthMaxColumns;
+
+    protected Integer multiMonthMinWidth;
+
+    protected String multiMonthTitleFormat;
 
     protected boolean fixedWeekCount = true;
 
     protected boolean showNonCurrentDates = true;
 
-    public DayGridMonthViewProperties() {
-        super(CalendarViewType.DAY_GRID_MONTH.getId());
+    public MultiMonthYearProperties() {
+        super(CalendarViewType.MULTI_MONTH_YEAR.getId());
+    }
+
+    @Nullable
+    public Integer getMultiMonthMaxColumns() {
+        return multiMonthMaxColumns;
+    }
+
+    public void setMultiMonthMaxColumns(@Nullable Integer multiMonthMaxColumns) {
+        this.multiMonthMaxColumns = multiMonthMaxColumns;
+
+        markAsDirty();
+    }
+
+    @Nullable
+    public Integer getMultiMonthMinWidth() {
+        return multiMonthMinWidth;
+    }
+
+    public void setMultiMonthMinWidth(@Nullable Integer multiMonthMinWidth) {
+        this.multiMonthMinWidth = multiMonthMinWidth;
+
+        markAsDirty();
+    }
+
+    @Nullable
+    public String getMultiMonthTitleFormat() {
+        return multiMonthTitleFormat;
+    }
+
+    public void setMultiMonthTitleFormat(@Nullable String multiMonthTitleFormat) {
+        this.multiMonthTitleFormat = multiMonthTitleFormat;
+
+        markAsDirty();
     }
 
     public boolean isFixedWeekCount() {

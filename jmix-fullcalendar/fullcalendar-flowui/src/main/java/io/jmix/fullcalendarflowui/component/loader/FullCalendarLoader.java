@@ -100,6 +100,13 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadResourceString(element, "eventTimeFormat", context.getMessageGroup(),
                 resultComponent::setEventTimeFormat);
 
+        loadBoolean(element, "fixedWeekCount", resultComponent::setFixedWeekCount);
+        loadBoolean(element, "showNonCurrentDates", resultComponent::setShowNonCurrentDates);
+
+        loadInteger(element, "eventMinHeight", resultComponent::setEventMinHeight);
+        loadInteger(element, "eventShortHeight", resultComponent::setEventShortHeight);
+        loadBoolean(element, "slotEventOverlap", resultComponent::setSlotEventOverlap);
+
         loadEventProviders(element, "containerEventProvider",
                 (ep) -> resultComponent.addEventProvider((CalendarEventProvider) ep));
         loadEventProviders(element, "lazyEventProvider",

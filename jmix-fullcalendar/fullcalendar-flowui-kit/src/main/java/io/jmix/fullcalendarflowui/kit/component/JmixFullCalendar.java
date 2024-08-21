@@ -657,6 +657,48 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getEventTimeFormat().setValue(format);
     }
 
+    public boolean isFixedWeekCount() {
+        return options.getFixedWeekCount().getNotNullValue();
+    }
+
+    public void setFixedWeekCount(boolean fixedWeekCount) {
+        options.getFixedWeekCount().setValue(fixedWeekCount);
+    }
+
+    public boolean isShowNonCurrentDates() {
+        return options.getShowNonCurrentDates().getNotNullValue();
+    }
+
+    public void setShowNonCurrentDates(boolean showNonCurrentDates) {
+        options.getShowNonCurrentDates().setValue(showNonCurrentDates);
+    }
+
+    @Nullable
+    public Integer getEventMinHeight() {
+        return options.getEventMinHeight().getValue();
+    }
+
+    public void setEventMinHeight(@Nullable Integer minHeight) {
+        options.getEventMinHeight().setValue(minHeight);
+    }
+
+    @Nullable
+    public Integer getEventShortHeight() {
+        return options.getEventShortHeight().getValue();
+    }
+
+    public void setEventShortHeight(@Nullable Integer shortHeight) {
+        options.getEventShortHeight().setValue(shortHeight);
+    }
+
+    public boolean isSlotEventOverlap() {
+        return options.getSlotEventOverlap().getNotNullValue();
+    }
+
+    public void setSlotEventOverlap(boolean slotEventOverlap) {
+        options.getSlotEventOverlap().setValue(slotEventOverlap);
+    }
+
     protected JmixFullCalendarSerializer createSerializer() {
         return new JmixFullCalendarSerializer();
     }
@@ -717,10 +759,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected void onOptionChange(JmixFullCalendarOptions.OptionChangeEvent event) {
-        if (options.isInitial(event.getOption())) {
-            updateInitialOptions();
+        if (!options.isInitial(event.getOption())) {
+            requestUpdateOptions(true);
         }
-        requestUpdateOptions(true);
     }
 
     protected void attachDatesSetDomEventListener() {
@@ -922,6 +963,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         // call them again.
         // Also, if a component was reattached, it looses all configuration
         // on a client-side, so we should restore it.
+        updateInitialOptions();
+
         requestUpdateOptions(false);
 
         addEventProvidersOnAttach();

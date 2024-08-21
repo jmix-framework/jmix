@@ -239,6 +239,7 @@ public class FullCalendarDelegate {
         setupDayGridLocalizedFormats();
         setupTimeGridLocalizedFormats();
         setupListLocalizedFormats();
+        setupMultiLocalizedFormats();
         setupLocalizedFormats();
 
         defaultI18n = createDefaultI18n();
@@ -249,63 +250,68 @@ public class FullCalendarDelegate {
 
     protected void setupDayGridLocalizedFormats() {
         DayGridDayViewProperties dayGridDay = getCalendarViewProperties(CalendarViewType.DAY_GRID_DAY);
-        dayGridDay.setDayPopoverFormat(messages.getMessage(PACKAGE, "dayGridDayDayPopoverFormat"));
-        dayGridDay.setDayHeaderFormat(messages.getMessage(PACKAGE, "dayGridDayDayHeaderFormat"));
-        dayGridDay.setWeekNumberFormat(messages.getMessage(PACKAGE, "dayGridDayWeekNumberFormat"));
-        dayGridDay.setEventTimeFormat(messages.getMessage(PACKAGE, "dayGridDayEventTimeFormat"));
+        dayGridDay.setDayPopoverFormat(getMessage("dayGridDayDayPopoverFormat"));
+        dayGridDay.setDayHeaderFormat(getMessage("dayGridDayDayHeaderFormat"));
+        dayGridDay.setWeekNumberFormat(getMessage("dayGridDayWeekNumberFormat"));
+        dayGridDay.setEventTimeFormat(getMessage("dayGridDayEventTimeFormat"));
 
         DayGridWeekViewProperties dayGridWeek = getCalendarViewProperties(CalendarViewType.DAY_GRID_WEEK);
-        dayGridWeek.setDayPopoverFormat(messages.getMessage(PACKAGE, "dayGridWeekDayDayPopoverFormat"));
-        dayGridWeek.setDayHeaderFormat(messages.getMessage(PACKAGE, "dayGridWeekDayHeaderFormat"));
-        dayGridWeek.setWeekNumberFormat(messages.getMessage(PACKAGE, "dayGridWeekWeekNumberFormat"));
-        dayGridWeek.setEventTimeFormat(messages.getMessage(PACKAGE, "dayGridWeekEventTimeFormat"));
+        dayGridWeek.setDayPopoverFormat(getMessage("dayGridWeekDayDayPopoverFormat"));
+        dayGridWeek.setDayHeaderFormat(getMessage("dayGridWeekDayHeaderFormat"));
+        dayGridWeek.setWeekNumberFormat(getMessage("dayGridWeekWeekNumberFormat"));
+        dayGridWeek.setEventTimeFormat(getMessage("dayGridWeekEventTimeFormat"));
 
         DayGridMonthViewProperties dayGridMonth = getCalendarViewProperties(CalendarViewType.DAY_GRID_MONTH);
-        dayGridMonth.setDayPopoverFormat(messages.getMessage(PACKAGE, "dayGridMonthDayPopoverFormat"));
-        dayGridMonth.setDayHeaderFormat(messages.getMessage(PACKAGE, "dayGridMonthDayHeaderFormat"));
-        dayGridMonth.setWeekNumberFormat(messages.getMessage(PACKAGE, "dayGridMonthWeekNumberFormat"));
-        dayGridMonth.setEventTimeFormat(messages.getMessage(PACKAGE, "dayGridMonthEventTimeFormat"));
+        dayGridMonth.setDayPopoverFormat(getMessage("dayGridMonthDayPopoverFormat"));
+        dayGridMonth.setDayHeaderFormat(getMessage("dayGridMonthDayHeaderFormat"));
+        dayGridMonth.setWeekNumberFormat(getMessage("dayGridMonthWeekNumberFormat"));
+        dayGridMonth.setEventTimeFormat(getMessage("dayGridMonthEventTimeFormat"));
 
         DayGridYearViewProperties dayGridYear = getCalendarViewProperties(CalendarViewType.DAY_GRID_YEAR);
-        dayGridYear.setDayPopoverFormat(messages.getMessage(PACKAGE, "dayGridYearDayPopoverFormat"));
-        dayGridYear.setDayHeaderFormat(messages.getMessage(PACKAGE, "dayGridYearDayHeaderFormat"));
-        dayGridYear.setWeekNumberFormat(messages.getMessage(PACKAGE, "dayGridYearWeekNumberFormat"));
-        dayGridYear.setEventTimeFormat(messages.getMessage(PACKAGE, "dayGridYearEventTimeFormat"));
-        dayGridYear.setMonthStartFormat(messages.getMessage(PACKAGE, "dayGridYearMonthStartFormat"));
+        dayGridYear.setDayPopoverFormat(getMessage("dayGridYearDayPopoverFormat"));
+        dayGridYear.setDayHeaderFormat(getMessage("dayGridYearDayHeaderFormat"));
+        dayGridYear.setWeekNumberFormat(getMessage("dayGridYearWeekNumberFormat"));
+        dayGridYear.setEventTimeFormat(getMessage("dayGridYearEventTimeFormat"));
+        dayGridYear.setMonthStartFormat(getMessage("dayGridYearMonthStartFormat"));
     }
 
     protected void setupTimeGridLocalizedFormats() {
         TimeGridDayViewProperties timeGridDay = getCalendarViewProperties(CalendarViewType.TIME_GRID_DAY);
-        timeGridDay.setDayPopoverFormat(messages.getMessage(PACKAGE, "timeGridDayDayPopoverFormat"));
-        timeGridDay.setDayHeaderFormat(messages.getMessage(PACKAGE, "timeGridDayDayHeaderFormat"));
-        timeGridDay.setWeekNumberFormat(messages.getMessage(PACKAGE, "timeGridDayWeekNumberFormat"));
-        timeGridDay.setEventTimeFormat(messages.getMessage(PACKAGE, "timeGridDayEventTimeFormat"));
-        timeGridDay.setSlotLabelFormat(messages.getMessage(PACKAGE, "timeGridDaySlotLabelFormat"));
+        timeGridDay.setDayPopoverFormat(getMessage("timeGridDayDayPopoverFormat"));
+        timeGridDay.setDayHeaderFormat(getMessage("timeGridDayDayHeaderFormat"));
+        timeGridDay.setWeekNumberFormat(getMessage("timeGridDayWeekNumberFormat"));
+        timeGridDay.setEventTimeFormat(getMessage("timeGridDayEventTimeFormat"));
+        timeGridDay.setSlotLabelFormat(getMessage("timeGridDaySlotLabelFormat"));
 
         TimeGridWeekViewProperties timeGridWeek = getCalendarViewProperties(CalendarViewType.TIME_GRID_WEEK);
-        timeGridWeek.setDayPopoverFormat(messages.getMessage(PACKAGE, "timeGridWeekDayPopoverFormat"));
-        timeGridWeek.setDayHeaderFormat(messages.getMessage(PACKAGE, "timeGridWeekDayHeaderFormat"));
-        timeGridWeek.setWeekNumberFormat(messages.getMessage(PACKAGE, "timeGridWeekWeekNumberFormat"));
-        timeGridWeek.setEventTimeFormat(messages.getMessage(PACKAGE, "timeGridWeekEventTimeFormat"));
-        timeGridWeek.setSlotLabelFormat(messages.getMessage(PACKAGE, "timeGridWeekSlotLabelFormat"));
+        timeGridWeek.setDayPopoverFormat(getMessage("timeGridWeekDayPopoverFormat"));
+        timeGridWeek.setDayHeaderFormat(getMessage("timeGridWeekDayHeaderFormat"));
+        timeGridWeek.setWeekNumberFormat(getMessage("timeGridWeekWeekNumberFormat"));
+        timeGridWeek.setEventTimeFormat(getMessage("timeGridWeekEventTimeFormat"));
+        timeGridWeek.setSlotLabelFormat(getMessage("timeGridWeekSlotLabelFormat"));
     }
 
     protected void setupListLocalizedFormats() {
         ListDayViewProperties listDay = getCalendarViewProperties(CalendarViewType.LIST_DAY);
-        listDay.setListDayFormat(messages.getMessage(PACKAGE, "listDayListDayFormat"));
-        listDay.setListDaySideFormat(messages.getMessage(PACKAGE, "listDayListDaySideFormat"));
+        listDay.setListDayFormat(getMessage("listDayListDayFormat"));
+        listDay.setListDaySideFormat(getMessage("listDayListDaySideFormat"));
 
         ListWeekViewProperties listWeek = getCalendarViewProperties(CalendarViewType.LIST_WEEK);
-        listWeek.setListDayFormat(messages.getMessage(PACKAGE, "listWeekListDayFormat"));
-        listWeek.setListDaySideFormat(messages.getMessage(PACKAGE, "listWeekListDaySideFormat"));
+        listWeek.setListDayFormat(getMessage("listWeekListDayFormat"));
+        listWeek.setListDaySideFormat(getMessage("listWeekListDaySideFormat"));
 
         ListMonthViewProperties listMonth = getCalendarViewProperties(CalendarViewType.LIST_MONTH);
-        listMonth.setListDayFormat(messages.getMessage(PACKAGE, "listMonthListDayFormat"));
-        listMonth.setListDaySideFormat(messages.getMessage(PACKAGE, "listMonthListDaySideFormat"));
+        listMonth.setListDayFormat(getMessage("listMonthListDayFormat"));
+        listMonth.setListDaySideFormat(getMessage("listMonthListDaySideFormat"));
 
         ListYearViewProperties listYear = getCalendarViewProperties(CalendarViewType.LIST_YEAR);
-        listYear.setListDayFormat(messages.getMessage(PACKAGE, "listYearListDayFormat"));
-        listYear.setListDaySideFormat(messages.getMessage(PACKAGE, "listYearListDaySideFormat"));
+        listYear.setListDayFormat(getMessage("listYearListDayFormat"));
+        listYear.setListDaySideFormat(getMessage("listYearListDaySideFormat"));
+    }
+
+    protected void setupMultiLocalizedFormats() {
+        MultiMonthYearProperties multiMonthYear = getCalendarViewProperties(CalendarViewType.MULTI_MONTH_YEAR);
+        multiMonthYear.setMultiMonthTitleFormat(getMessage("multiMonthYearMultiMonthTitleFormat"));
     }
 
     protected void setupLocalizedFormats() {

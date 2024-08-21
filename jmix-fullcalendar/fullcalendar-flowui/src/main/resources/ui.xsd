@@ -77,6 +77,13 @@
                     <xs:attribute name="slotLabelFormat" type="layout:resourceString"/>
                     <xs:attribute name="eventTimeFormat" type="layout:resourceString"/>
 
+                    <xs:attribute name="fixedWeekCount" type="xs:boolean"/>
+                    <xs:attribute name="showNonCurrentDates" type="xs:boolean"/>
+
+                    <xs:attribute name="eventMinHeight" type="xs:integer"/>
+                    <xs:attribute name="eventShortHeight" type="xs:integer"/>
+                    <xs:attribute name="slotEventOverlap" type="xs:boolean"/>
+
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
                 </xs:extension>

@@ -230,12 +230,12 @@ public class CommonAttributeDefinition implements AttributeDefinition, Serializa
         AttributeType dataType = attribute.getDataType();
         if (dataType != null) {
             Object singleDefaultValue = getSingleDefaultValue(dataType);
-            if(!attribute.getIsCollection()){
+            if (!attribute.getIsCollection()) {
                 return singleDefaultValue;
-            }else {
-                if(singleDefaultValue == null){
+            } else {
+                if (singleDefaultValue == null) {
                     return Collections.emptyList();
-                }else {
+                } else {
                     return List.of(singleDefaultValue);
                 }
             }

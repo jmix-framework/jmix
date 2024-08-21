@@ -248,8 +248,22 @@ export function deleteNullProperties(object) {
     return Object.fromEntries(Object.entries(object).filter(([_, v]) => v != null));
 }
 
-function isNotNullUndefined(value) {
+export function isNotNullUndefined(value) {
     return value !== null && value !== undefined;
+}
+
+export function findElementRecursivelyByInnerText(element, innerText) {
+    if (element.innerText === innerText) {
+        return element;
+    }
+    if (element.children) {
+        for (const child of element.children) {
+            const result = findElementRecursivelyByInnerText(child, innerText);
+            if (result) {
+                return result;
+            }
+        }
+    }
 }
 
 export default viewToServerObject;

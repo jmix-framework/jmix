@@ -5,6 +5,7 @@ const NO_VIEW_MORE_LINK_CLICK = 'NO_VIEW';
 export const MORE_LINK_CLICK = 'moreLinkClick';
 export const MORE_LINK_CLASS_NAMES = 'moreLinkClassNames';
 export const UNSELECT_CANCEL = 'unselectCancel';
+export const DAY_HEADER_CLASS_NAMES = 'dayHeaderClassNames';
 const EVENT_OVERLAP = 'eventOverlap';
 const SELECT_OVERLAP = 'selectOverlap';
 const EVENT_CONSTRAINT = 'eventConstraint';
@@ -104,6 +105,8 @@ class Options {
 
             this._updateDayMaxEventRows(options);
             this._updateDayMaxEvents(options);
+
+            this._updateDayHeaderClassNames(options);
         });
     }
 
@@ -114,6 +117,7 @@ class Options {
     _skipOption(key) {
         return MORE_LINK_CLICK === key
             || MORE_LINK_CLASS_NAMES === key
+            || DAY_HEADER_CLASS_NAMES === key
             || EVENT_OVERLAP === key
             || EVENT_CONSTRAINT === key
             || BUSINESS_HOURS === key
@@ -266,6 +270,14 @@ class Options {
         }
     }
 
+    _updateDayHeaderClassNames(options) {
+        const dayHeaderClassNames = options[DAY_HEADER_CLASS_NAMES];
+
+        if (calendarUtils.isNotNullUndefined(dayHeaderClassNames)) {
+            this.updateOption(DAY_HEADER_CLASS_NAMES, dayHeaderClassNames ? this._onDayHeaderClassNames.bind(this) : null);
+        }
+    }
+
     _onMoreLinkClick(e) {
         if (this.listeners[MORE_LINK_CLICK]) {
             this.listeners[MORE_LINK_CLICK].forEach((listener) => listener(e));
@@ -276,6 +288,13 @@ class Options {
     _onMoreLinkClassNames(e) {
         if (this.listeners[MORE_LINK_CLASS_NAMES]) {
             this.listeners[MORE_LINK_CLASS_NAMES].forEach((listener) => listener(e));
+        }
+        return [];
+    }
+
+    _onDayHeaderClassNames(e) {
+        if (this.listeners[DAY_HEADER_CLASS_NAMES]) {
+            this.listeners[DAY_HEADER_CLASS_NAMES].forEach((listener) => listener(e));
         }
         return [];
     }

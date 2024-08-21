@@ -27,6 +27,7 @@
                         <xs:element name="eventProviders" type="eventProvidersType"/>
                         <xs:element name="businessHours" type="businessHoursType"/>
                         <xs:element name="views" type="customViewsType"/>
+                        <xs:element name="hiddenDays" type="hiddenDaysType"/>
                     </xs:all>
 
                     <xs:attribute name="initialView" type="calendarViewType"/>
@@ -77,12 +78,13 @@
                     <xs:attribute name="slotLabelFormat" type="layout:resourceString"/>
                     <xs:attribute name="eventTimeFormat" type="layout:resourceString"/>
 
-                    <xs:attribute name="fixedWeekCount" type="xs:boolean"/>
-                    <xs:attribute name="showNonCurrentDates" type="xs:boolean"/>
-
+                    <!--todo rp remove?-->
                     <xs:attribute name="eventMinHeight" type="xs:integer"/>
                     <xs:attribute name="eventShortHeight" type="xs:integer"/>
                     <xs:attribute name="slotEventOverlap" type="xs:boolean"/>
+
+                    <xs:attribute name="weekendsVisible" type="xs:boolean"/>
+                    <xs:attribute name="dayHeadersVisible" type="xs:boolean"/>
 
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
@@ -134,13 +136,13 @@
 
     <xs:complexType name="businessHoursEntryType">
         <xs:choice maxOccurs="7">
-            <xs:element name="day" type="businessHoursDayType"/>
+            <xs:element name="day" type="simpleDayType"/>
         </xs:choice>
         <xs:attribute name="startTime" type="xs:string"/>
         <xs:attribute name="endTime" type="xs:string"/>
     </xs:complexType>
 
-    <xs:complexType name="businessHoursDayType">
+    <xs:complexType name="simpleDayType">
         <xs:attribute name="name" use="required" type="dayOfWeekType"/>
     </xs:complexType>
     
@@ -155,6 +157,12 @@
             <xs:enumeration value="SUNDAY"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="hiddenDaysType">
+        <xs:choice maxOccurs="7">
+            <xs:element name="day" type="simpleDayType"/>
+        </xs:choice>
+    </xs:complexType>
 
     <xs:complexType name="eventProvidersType">
         <xs:all minOccurs="0">

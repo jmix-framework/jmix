@@ -9,6 +9,7 @@ import elemental.json.impl.JreJsonFactory;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.data.LazyEventProviderManager;
 import io.jmix.fullcalendarflowui.component.event.*;
 import io.jmix.fullcalendarflowui.component.event.MoreLinkClickEvent.EventProviderContext;
@@ -20,6 +21,8 @@ import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
 import io.jmix.fullcalendarflowui.kit.component.serialization.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
@@ -36,6 +39,8 @@ import java.util.*;
 @Component("fcaldr_FullCalendarHelper")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FullCalendarDelegate {
+    private static final Logger log = LoggerFactory.getLogger(FullCalendarDelegate.class);
+
     private static final String PACKAGE = "io.jmix.fullcalendarflowui.component";
 
     protected FullCalendar fullCalendar;
@@ -72,21 +77,42 @@ public class FullCalendarDelegate {
             return jsonFactory.createArray();
         }
 
-        MoreLinkClassNamesContext context = new MoreLinkClassNamesContext(
-                clientContext.getEventsCount(),
-                clientContext.getShortText(),
-                clientContext.getText(),
-                createViewInfo(clientContext.getView()));
+        List<String> classNames = fullCalendar.getMoreLinkClassNamesGenerator()
+                .apply(new MoreLinkClassNamesContext(
+                        clientContext.getEventsCount(),
+                        clientContext.getShortText(),
+                        clientContext.getText(),
+                        createViewInfo(clientContext.getView())));
 
-        List<String> classNames = fullCalendar.getMoreLinkClassNamesGenerator().apply(context);
-        if (classNames == null) {
+        JsonArray result = classNames == null
+                ? jsonFactory.createArray()
+                : fullCalendar.getSerializer().toJsonArrayFromString(classNames);
+
+        log.debug("Serialized 'MoreLinkClassNames': {}", result.toJson());
+
+        return result;
+    }
+
+    public JsonArray getDayHeaderClassNames(DomDayHeaderClassNames clientContext) {
+        if (fullCalendar.getDayHeaderClassNamesGenerator() == null) {
             return jsonFactory.createArray();
         }
 
-        JsonArray result = jsonFactory.createArray();
-        for (int i = 0; i < classNames.size(); i++) {
-            result.set(i, classNames.get(i));
-        }
+        List<String> classNames = fullCalendar.getDayHeaderClassNamesGenerator()
+                .apply(new DayHeaderClassNamesContext(
+                        parseAndTransform(clientContext.getDate(), getComponentZoneId()),
+                        Objects.requireNonNull(DayOfWeek.fromId(clientContext.getDow())),
+                        clientContext.isDisabled(),
+                        clientContext.isFuture(),
+                        clientContext.isOther(),
+                        clientContext.isPast(),
+                        clientContext.isToday()));
+
+        JsonArray result = classNames == null
+                ? jsonFactory.createArray()
+                : fullCalendar.getSerializer().toJsonArrayFromString(classNames);
+
+        log.debug("Serialized 'DayHeaderClassNames': {}", result.toJson());
 
         return result;
     }

@@ -13,6 +13,7 @@ import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.data.*;
 import io.jmix.fullcalendarflowui.component.event.*;
 import io.jmix.fullcalendarflowui.component.model.BusinessHours;
@@ -45,6 +46,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected Map<String, AbstractEventProviderManager> eventProvidersMap = new HashMap<>(2);
 
     protected Function<MoreLinkClassNamesContext, List<String>> linkMoreClassNamesGenerator;
+    protected Function<DayHeaderClassNamesContext, List<String>> dayHeaderClassNamesGenerator;
 
     protected Object eventConstraintGroupId;
     protected Object selectConstraintGroupId;
@@ -227,6 +229,15 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getOptions().getSelectConstraint().setBusinessHours(businessHoursSelectConstraint);
     }
 
+    public List<DayOfWeek> getHiddenDays() {
+        List<DayOfWeek> hiddenDays = getOptions().getHiddenDays().getValue();
+        return hiddenDays == null ? Collections.emptyList() : hiddenDays;
+    }
+
+    public void setHiddenDays(@Nullable List<DayOfWeek> hiddenDays) {
+        getOptions().getHiddenDays().setValue(hiddenDays);
+    }
+
     @Nullable
     public FullCalendarI18n getI18n() {
         return calendarDelegate.getI18n();
@@ -403,6 +414,17 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         options.getMoreLinkClassNames().setFunctionEnabled(classNamesGenerator != null);
     }
 
+    @Nullable
+    public Function<DayHeaderClassNamesContext, List<String>> getDayHeaderClassNamesGenerator() {
+        return dayHeaderClassNamesGenerator;
+    }
+
+    public void setDayHeaderClassNamesGenerator(@Nullable Function<DayHeaderClassNamesContext, List<String>> classNamesGenerator) {
+        this.dayHeaderClassNamesGenerator = classNamesGenerator;
+
+        options.getDayHeaderClassNames().setValue(classNamesGenerator != null);
+    }
+
     @Override
     protected FullCalendarOptions createOptions() {
         return new FullCalendarOptions();
@@ -504,14 +526,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     @Override
-    @SuppressWarnings("UnnecessaryLocalVariable")
     protected JsonArray getMoreLinkClassNames(JsonObject jsonContext) {
         DomMoreLinkClassNames clientContext =
                 deserializer.deserialize(jsonContext, DomMoreLinkClassNames.class);
 
-        JsonArray classNames = calendarDelegate.getMoreLinkClassNames(clientContext);
-
-        return classNames;
+        return calendarDelegate.getMoreLinkClassNames(clientContext);
     }
 
     @Override
@@ -613,6 +632,13 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         UnselectEvent unselectEvent = calendarDelegate.createUnselectEvent(clientEvent, event.isFromClient());
 
         getEventBus().fireEvent(unselectEvent);
+    }
+
+    @Override
+    protected JsonArray getDayHeaderClassNames(JsonObject jsonContext) {
+        DomDayHeaderClassNames clientContext = deserializer.deserialize(jsonContext, DomDayHeaderClassNames.class);
+
+        return calendarDelegate.getDayHeaderClassNames(clientContext);
     }
 
     protected EventProviderManager createEventProviderManager(CalendarEventProvider eventProvider) {

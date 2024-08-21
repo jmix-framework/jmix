@@ -657,22 +657,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getEventTimeFormat().setValue(format);
     }
 
-    public boolean isFixedWeekCount() {
-        return options.getFixedWeekCount().getNotNullValue();
-    }
-
-    public void setFixedWeekCount(boolean fixedWeekCount) {
-        options.getFixedWeekCount().setValue(fixedWeekCount);
-    }
-
-    public boolean isShowNonCurrentDates() {
-        return options.getShowNonCurrentDates().getNotNullValue();
-    }
-
-    public void setShowNonCurrentDates(boolean showNonCurrentDates) {
-        options.getShowNonCurrentDates().setValue(showNonCurrentDates);
-    }
-
     @Nullable
     public Integer getEventMinHeight() {
         return options.getEventMinHeight().getValue();
@@ -697,6 +681,22 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     public void setSlotEventOverlap(boolean slotEventOverlap) {
         options.getSlotEventOverlap().setValue(slotEventOverlap);
+    }
+
+    public boolean isWeekendsVisible() {
+        return options.getWeekends().getNotNullValue();
+    }
+
+    public void setWeekendsVisible(boolean visible) {
+        options.getWeekends().setValue(visible);
+    }
+
+    public boolean isDayHeadersVisible() {
+        return options.getDayHeaders().getNotNullValue();
+    }
+
+    public void setDayHeadersVisible(boolean visible) {
+        options.getDayHeaders().setValue(visible);
     }
 
     protected JmixFullCalendarSerializer createSerializer() {
@@ -944,6 +944,12 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     @ClientCallable
     protected JsonArray getMoreLinkClassNames(JsonObject jsonContext) {
+        // Stub, is used in inheritors
+        return new JreJsonFactory().createArray();
+    }
+
+    @ClientCallable
+    protected JsonArray getDayHeaderClassNames(JsonObject jsonContext) {
         // Stub, is used in inheritors
         return new JreJsonFactory().createArray();
     }

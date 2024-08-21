@@ -100,12 +100,15 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadResourceString(element, "eventTimeFormat", context.getMessageGroup(),
                 resultComponent::setEventTimeFormat);
 
-        loadBoolean(element, "fixedWeekCount", resultComponent::setFixedWeekCount);
-        loadBoolean(element, "showNonCurrentDates", resultComponent::setShowNonCurrentDates);
-
         loadInteger(element, "eventMinHeight", resultComponent::setEventMinHeight);
         loadInteger(element, "eventShortHeight", resultComponent::setEventShortHeight);
         loadBoolean(element, "slotEventOverlap", resultComponent::setSlotEventOverlap);
+
+        loadBoolean(element, "weekendsVisible", resultComponent::setWeekendsVisible);
+        loadBoolean(element, "dayHeadersVisible", resultComponent::setDayHeadersVisible);
+
+        loadHiddenDays(element, resultComponent);
+
 
         loadEventProviders(element, "containerEventProvider",
                 (ep) -> resultComponent.addEventProvider((CalendarEventProvider) ep));
@@ -375,5 +378,23 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
                 .plusMinutes(loadInteger(element, "minutes").orElse(0))
                 .plusSeconds(loadInteger(element, "seconds").orElse(0))
                 .plusMilliseconds(loadInteger(element, "milliseconds").orElse(0));
+    }
+
+    protected void loadHiddenDays(Element element, FullCalendar resultComponent) {
+        Element hiddenDaysElement = element.element("hiddenDays");
+        if (hiddenDaysElement == null) {
+            return;
+        }
+
+        List<DayOfWeek> hiddenDays = new ArrayList<>();
+        hiddenDaysElement.elements("day")
+                .forEach(e -> {
+                    loadString(e, "name")
+                            .ifPresent(n -> hiddenDays.add(DayOfWeek.valueOf(n)));
+                });
+
+        if (!hiddenDays.isEmpty()) {
+            resultComponent.setHiddenDays(hiddenDays);
+        }
     }
 }

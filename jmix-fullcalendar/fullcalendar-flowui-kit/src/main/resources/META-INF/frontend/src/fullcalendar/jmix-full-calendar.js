@@ -21,9 +21,11 @@ import Options, {
     processInitialOptions,
     MORE_LINK_CLASS_NAMES,
     MORE_LINK_CLICK,
+    DAY_HEADER_CLASS_NAMES
 } from './Options.js';
 
 const FC_LINK_CLASS_NAME = 'fc-more-link';
+const FC_COL_HEADER_CELL = 'fc-col-header-cell';
 
 class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     static get template() {
@@ -74,6 +76,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.jmixOptions = new Options(this.calendar, this);
         this.jmixOptions.addListener(MORE_LINK_CLICK, this._onMoreLinkClick.bind(this));
         this.jmixOptions.addListener(MORE_LINK_CLASS_NAMES, this._onMoreLinkClassNames.bind(this));
+        this.jmixOptions.addListener(DAY_HEADER_CLASS_NAMES, this._onDayHeaderCellClassNames.bind(this));
 
         this._onI18nChange(this.i18n);
 
@@ -251,6 +254,32 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             "   }\n" +
             "lazyFetchFunction;");
         return fetchFunction;
+    }
+
+    _onDayHeaderCellClassNames(e) {
+        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
+        const context = {
+            date: dateFormatter(e.date),
+            dow: e.dow,
+            isDisabled: e.isDisabled,
+            isFuture: e.isFuture,
+            isOther: e.isOther,
+            isPast: e.isPast,
+            isToday: e.isToday,
+            view: calendarUtils.viewToServerObject(e.view, dateFormatter)
+        }
+
+        const classNamesPromise = this.$server.getDayHeaderClassNames(context);
+        classNamesPromise.then((classNames) => {
+            // Find generated element and assign classNames
+            for (const element of this.getElementsByClassName(FC_COL_HEADER_CELL)) {
+                const target = calendarUtils.findElementRecursivelyByInnerText(element, e.text);
+                if (target) {
+                    target.classList.remove(...classNames);
+                    target.classList.add(...classNames);
+                }
+            }
+        });
     }
 
     _onMoreLinkClassNames(e) {
@@ -490,6 +519,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     _defineMomentJsLocale(localizedNames) {
         moment.defineLocale(localizedNames.locale, localizedNames);
     }
+
     /**
      * Is required by Vaadin contextMenuTargetConnector.js. It returns
      * details for 'vaadin-context-menu-before-open' event that will be

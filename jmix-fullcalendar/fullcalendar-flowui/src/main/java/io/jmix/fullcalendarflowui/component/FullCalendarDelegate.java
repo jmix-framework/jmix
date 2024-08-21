@@ -8,6 +8,7 @@ import elemental.json.JsonObject;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.fullcalendarflowui.component.data.LazyEventProviderManager;
 import io.jmix.fullcalendarflowui.component.event.*;
 import io.jmix.fullcalendarflowui.component.event.MoreLinkClickEvent.EventProviderContext;
@@ -16,10 +17,11 @@ import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
+import io.jmix.fullcalendarflowui.kit.component.model.*;
 import io.jmix.fullcalendarflowui.kit.component.serialization.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -36,15 +38,35 @@ import java.util.*;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FullCalendarDelegate {
 
+    private static final String PACKAGE = "io.jmix.fullcalendarflowui.component";
+
     protected FullCalendar fullCalendar;
     protected JsonFactory jsonFactory;
     protected Messages messages;
+    protected CurrentAuthentication currentAuthentication;
 
-    public FullCalendarDelegate(FullCalendar fullCalendar, Messages messages) {
+    protected FullCalendarI18n defaultI18n;
+    protected FullCalendarI18n explicitI18n;
+
+    public FullCalendarDelegate(FullCalendar fullCalendar,
+                                Messages messages,
+                                CurrentAuthentication currentAuthentication) {
         this.fullCalendar = fullCalendar;
         this.messages = messages;
+        this.currentAuthentication = currentAuthentication;
 
         jsonFactory = createJsonFactory();
+    }
+
+    @Nullable
+    public FullCalendarI18n getI18n() {
+        return explicitI18n;
+    }
+
+    public void setI18n(@Nullable FullCalendarI18n i18n) {
+        this.explicitI18n = i18n;
+
+        setI18nInternal(defaultI18n.combine(explicitI18n));
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
@@ -193,7 +215,7 @@ public class FullCalendarDelegate {
                 clientEvent.getMouseDetails() != null ? new MouseEventDetails(clientEvent.getMouseDetails()) : null);
     }
 
-    public JsonArray getMoreLinkClassNames(DomMoreLinkClassNames clientContext) {
+    public JsonArray getMoreLinkClassNamesJson(DomMoreLinkClassNames clientContext) {
         if (fullCalendar.getMoreLinkClassNamesGenerator() == null) {
             return jsonFactory.createArray();
         }
@@ -217,55 +239,114 @@ public class FullCalendarDelegate {
         return result;
     }
 
-    public FullCalendarI18n createDefaultI18n() {
-        FullCalendarI18n i18n = new FullCalendarI18n();
+    public void setupLocalization() {
+        setupDayGridLocalizedFormats();
+        setupTimeGridLocalizedFormats();
+        setupListLocalizedFormats();
+        setupLocalizedFormats();
 
-        getMessage("i18n.direction")
-                .ifPresent(d -> i18n.setDirection(FullCalendarI18n.Direction.valueOf(d.toUpperCase())));
-        getMessage("i18n.dayOfWeek").ifPresent(d -> i18n.setDayOfWeek(Integer.parseInt(d)));
-        getMessage("i18n.dayOfYear").ifPresent(d -> i18n.setDayOfYear(Integer.parseInt(d)));
+        defaultI18n = createDefaultI18n();
+        setI18nInternal(defaultI18n);
 
-        getMessage("i18n.weekText").ifPresent(i18n::setWeekText);
-        getMessage("i18n.weekTextLong").ifPresent(i18n::setWeekTextLong);
-        getMessage("i18n.allDayText").ifPresent(i18n::setAllDayText);
-        getMessage("i18n.moreLinkText").ifPresent(i18n::setMoreLinkText);
-        getMessage("i18n.noEventsText").ifPresent(i18n::setNoEventsText);
-        getMessage("i18n.closeHint").ifPresent(i18n::setCloseHint);
-        getMessage("i18n.eventHint").ifPresent(i18n::setEventHint);
-        getMessage("i18n.timeHint").ifPresent(i18n::setTimeHint);
-        getMessage("i18n.navLinkHint").ifPresent(i18n::setNavLinkHint);
-        getMessage("i18n.moreLinkHint").ifPresent(i18n::setMoreLinkHint);
-
-        getMessage("i18n.dayPopoverFormat").ifPresent(i18n::setDayPopoverFormat);
-        getMessage("i18n.dayHeaderFormat").ifPresent(i18n::setDayHeaderFormat);
-        getMessage("i18n.weekNumberFormat").ifPresent(i18n::setWeekNumberFormat);
-        getMessage("i18n.slotLabelFormat").ifPresent(i18n::setSlotLabelFormat);
-        getMessage("i18n.eventTimeFormat").ifPresent(i18n::setEventTimeFormat);
-        getMessage("i18n.monthStartFormat").ifPresent(i18n::setMonthStartFormat);
-
-        return i18n;
+        setupCalendarLocalizedUnitNames();
     }
 
-    public JsonObject getCalendarLocalizedUnitNames() {
-        JsonObject result = jsonFactory.createObject();
-        FullCalendarSerializer serializer = fullCalendar.getSerializer();
+    protected void setupDayGridLocalizedFormats() {
+        DayGridDayViewProperties dayGridDay = getCalendarViewProperties(CalendarViewType.DAY_GRID_DAY);
+        dayGridDay.setDayPopoverFormat(messages.getMessage(PACKAGE, "dayGridDayDayPopoverFormat"));
+        dayGridDay.setDayHeaderFormat(messages.getMessage(PACKAGE, "dayGridDayDayHeaderFormat"));
+        dayGridDay.setWeekNumberFormat(messages.getMessage(PACKAGE, "dayGridDayWeekNumberFormat"));
+        dayGridDay.setEventTimeFormat(messages.getMessage(PACKAGE, "dayGridDayEventTimeFormat"));
 
-        getListMessage("months").ifPresent(s -> result.put("months", serializer.toJsonArrayFromString(s)));
-        getListMessage("monthsShort").ifPresent(s -> result.put("monthsShort", serializer.toJsonArrayFromString(s)));
-        getListMessage("weekdays").ifPresent(s -> result.put("weekdays", serializer.toJsonArrayFromString(s)));
-        getListMessage("weekdaysShort").ifPresent(s -> result.put("weekdaysShort", serializer.toJsonArrayFromString(s)));
-        getListMessage("weekdaysMin").ifPresent(s -> result.put("weekdaysMin", serializer.toJsonArrayFromString(s)));
+        DayGridWeekViewProperties dayGridWeek = getCalendarViewProperties(CalendarViewType.DAY_GRID_WEEK);
+        dayGridWeek.setDayPopoverFormat(messages.getMessage(PACKAGE, "dayGridWeekDayDayPopoverFormat"));
+        dayGridWeek.setDayHeaderFormat(messages.getMessage(PACKAGE, "dayGridWeekDayHeaderFormat"));
+        dayGridWeek.setWeekNumberFormat(messages.getMessage(PACKAGE, "dayGridWeekWeekNumberFormat"));
+        dayGridWeek.setEventTimeFormat(messages.getMessage(PACKAGE, "dayGridWeekEventTimeFormat"));
 
-        return result;
+        DayGridMonthViewProperties dayGridMonth = getCalendarViewProperties(CalendarViewType.DAY_GRID_MONTH);
+        dayGridMonth.setDayPopoverFormat(messages.getMessage(PACKAGE, "dayGridMonthDayPopoverFormat"));
+        dayGridMonth.setDayHeaderFormat(messages.getMessage(PACKAGE, "dayGridMonthDayHeaderFormat"));
+        dayGridMonth.setWeekNumberFormat(messages.getMessage(PACKAGE, "dayGridMonthWeekNumberFormat"));
+        dayGridMonth.setEventTimeFormat(messages.getMessage(PACKAGE, "dayGridMonthEventTimeFormat"));
+
+        DayGridYearViewProperties dayGridYear = getCalendarViewProperties(CalendarViewType.DAY_GRID_YEAR);
+        dayGridYear.setDayPopoverFormat(messages.getMessage(PACKAGE, "dayGridYearDayPopoverFormat"));
+        dayGridYear.setDayHeaderFormat(messages.getMessage(PACKAGE, "dayGridYearDayHeaderFormat"));
+        dayGridYear.setWeekNumberFormat(messages.getMessage(PACKAGE, "dayGridYearWeekNumberFormat"));
+        dayGridYear.setEventTimeFormat(messages.getMessage(PACKAGE, "dayGridYearEventTimeFormat"));
+        dayGridYear.setMonthStartFormat(messages.getMessage(PACKAGE, "dayGridYearMonthStartFormat"));
     }
 
-    protected Optional<String> getMessage(String key) {
-        String message = messages.getMessage("io.jmix.fullcalendarflowui.component", key);
+    protected void setupTimeGridLocalizedFormats() {
+        TimeGridDayViewProperties timeGridDay = getCalendarViewProperties(CalendarViewType.TIME_GRID_DAY);
+        timeGridDay.setDayPopoverFormat(messages.getMessage(PACKAGE, "timeGridDayDayPopoverFormat"));
+        timeGridDay.setDayHeaderFormat(messages.getMessage(PACKAGE, "timeGridDayDayHeaderFormat"));
+        timeGridDay.setWeekNumberFormat(messages.getMessage(PACKAGE, "timeGridDayWeekNumberFormat"));
+        timeGridDay.setEventTimeFormat(messages.getMessage(PACKAGE, "timeGridDayEventTimeFormat"));
+        timeGridDay.setSlotLabelFormat(messages.getMessage(PACKAGE, "timeGridDaySlotLabelFormat"));
+
+        TimeGridWeekViewProperties timeGridWeek = getCalendarViewProperties(CalendarViewType.TIME_GRID_WEEK);
+        timeGridWeek.setDayPopoverFormat(messages.getMessage(PACKAGE, "timeGridWeekDayPopoverFormat"));
+        timeGridWeek.setDayHeaderFormat(messages.getMessage(PACKAGE, "timeGridWeekDayHeaderFormat"));
+        timeGridWeek.setWeekNumberFormat(messages.getMessage(PACKAGE, "timeGridWeekWeekNumberFormat"));
+        timeGridWeek.setEventTimeFormat(messages.getMessage(PACKAGE, "timeGridWeekEventTimeFormat"));
+        timeGridWeek.setSlotLabelFormat(messages.getMessage(PACKAGE, "timeGridWeekSlotLabelFormat"));
+    }
+
+    protected void setupListLocalizedFormats() {
+        ListDayViewProperties listDay = getCalendarViewProperties(CalendarViewType.LIST_DAY);
+        listDay.setListDayFormat(messages.getMessage(PACKAGE, "listDayListDayFormat"));
+        listDay.setListDaySideFormat(messages.getMessage(PACKAGE, "listDayListDaySideFormat"));
+
+        ListWeekViewProperties listWeek = getCalendarViewProperties(CalendarViewType.LIST_WEEK);
+        listWeek.setListDayFormat(messages.getMessage(PACKAGE, "listWeekListDayFormat"));
+        listWeek.setListDaySideFormat(messages.getMessage(PACKAGE, "listWeekListDaySideFormat"));
+
+        ListMonthViewProperties listMonth = getCalendarViewProperties(CalendarViewType.LIST_MONTH);
+        listMonth.setListDayFormat(messages.getMessage(PACKAGE, "listMonthListDayFormat"));
+        listMonth.setListDaySideFormat(messages.getMessage(PACKAGE, "listMonthListDaySideFormat"));
+
+        ListYearViewProperties listYear = getCalendarViewProperties(CalendarViewType.LIST_YEAR);
+        listYear.setListDayFormat(messages.getMessage(PACKAGE, "listYearListDayFormat"));
+        listYear.setListDaySideFormat(messages.getMessage(PACKAGE, "listYearListDaySideFormat"));
+    }
+
+    protected void setupLocalizedFormats() {
+        fullCalendar.setDayPopoverFormat(messages.getMessage(PACKAGE, "dayPopoverFormat"));
+        fullCalendar.setDayHeaderFormat(messages.getMessage(PACKAGE, "dayHeaderFormat"));
+        fullCalendar.setWeekNumberFormat(messages.getMessage(PACKAGE, "weekNumberFormat"));
+        fullCalendar.setSlotNumberFormat(messages.getMessage(PACKAGE, "slotLabelFormat"));
+        fullCalendar.setEventTimeFormat(messages.getMessage(PACKAGE, "eventTimeFormat"));
+    }
+
+    protected <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(CalendarViewType viewType) {
+        return Objects.requireNonNull(fullCalendar.getCalendarViewProperties(viewType));
+    }
+
+    protected void setupCalendarLocalizedUnitNames() {
+        JsonObject json = createCalendarLocalizedUnitNamesJson();
+
+        json.put("locale", fullCalendar.getSerializer().serializeValue(currentAuthentication.getLocale()));
+
+        fullCalendar.getElement().callJsFunction("_defineMomentJsLocale", json);
+    }
+
+    protected void setI18nInternal(FullCalendarI18n i18n) {
+        JsonObject json = fullCalendar.getSerializer().serializeObject(i18n);
+
+        json.put("locale", fullCalendar.getSerializer().serializeValue(currentAuthentication.getLocale()));
+
+        fullCalendar.getElement().setPropertyJson("i18n", json);
+    }
+
+    protected Optional<String> getOptMessage(String key) {
+        String message = messages.getMessage(PACKAGE, key);
         return Optional.ofNullable(message.equals(key) ? null : message);
     }
 
     protected Optional<List<String>> getListMessage(String key) {
-        String message = getMessage(key).orElse(null);
+        String message = getOptMessage(key).orElse(null);
         if (message != null) {
             List<String> messages = Splitter.on(",")
                     .trimResults()
@@ -382,6 +463,37 @@ public class FullCalendarDelegate {
                 && (calendarEvent.getAllDay() != null || allDay)) {
             calendarEvent.setAllDay(allDay);
         }
+    }
+
+    protected FullCalendarI18n createDefaultI18n() {
+        FullCalendarI18n i18n = new FullCalendarI18n();
+
+        getOptMessage("i18n.direction")
+                .ifPresent(d -> i18n.setDirection(FullCalendarI18n.Direction.valueOf(d.toUpperCase())));
+        getOptMessage("i18n.dayOfWeek").ifPresent(d -> i18n.setDayOfWeek(Integer.parseInt(d)));
+        getOptMessage("i18n.dayOfYear").ifPresent(d -> i18n.setDayOfYear(Integer.parseInt(d)));
+
+        getOptMessage("i18n.weekTextLong").ifPresent(i18n::setWeekTextLong);
+        getOptMessage("i18n.allDayText").ifPresent(i18n::setAllDayText);
+        getOptMessage("i18n.moreLinkText").ifPresent(i18n::setMoreLinkText);
+        getOptMessage("i18n.noEventsText").ifPresent(i18n::setNoEventsText);
+        getOptMessage("i18n.closeHint").ifPresent(i18n::setCloseHint);
+        getOptMessage("i18n.eventHint").ifPresent(i18n::setEventHint);
+        getOptMessage("i18n.timeHint").ifPresent(i18n::setTimeHint);
+        getOptMessage("i18n.navLinkHint").ifPresent(i18n::setNavLinkHint);
+        getOptMessage("i18n.moreLinkHint").ifPresent(i18n::setMoreLinkHint);
+        return i18n;
+    }
+
+    protected JsonObject createCalendarLocalizedUnitNamesJson() {
+        JsonObject result = jsonFactory.createObject();
+        FullCalendarSerializer serializer = fullCalendar.getSerializer();
+        getListMessage("months").ifPresent(s -> result.put("months", serializer.toJsonArrayFromString(s)));
+        getListMessage("monthsShort").ifPresent(s -> result.put("monthsShort", serializer.toJsonArrayFromString(s)));
+        getListMessage("weekdays").ifPresent(s -> result.put("weekdays", serializer.toJsonArrayFromString(s)));
+        getListMessage("weekdaysShort").ifPresent(s -> result.put("weekdaysShort", serializer.toJsonArrayFromString(s)));
+        getListMessage("weekdaysMin").ifPresent(s -> result.put("weekdaysMin", serializer.toJsonArrayFromString(s)));
+        return result;
     }
 
     /**

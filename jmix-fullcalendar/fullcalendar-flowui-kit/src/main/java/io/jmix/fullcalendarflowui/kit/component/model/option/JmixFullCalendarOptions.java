@@ -57,7 +57,13 @@ public class JmixFullCalendarOptions {
     protected SimpleOption<JsFunction> selectAllow = new SimpleOption<>("selectAllow");
     protected SimpleOption<Integer> selectMinDistance = new SimpleOption<>("selectMinDistance", 0);
 
-    protected final List<CalendarOption> options = new ArrayList<>(28);
+    protected SimpleOption<String> dayPopoverFormat = new SimpleOption<>("dayPopoverFormat", "MMMM D, YYYY");
+    protected SimpleOption<String> dayHeaderFormat = new SimpleOption<>("dayHeaderFormat", "ddd");
+    protected SimpleOption<String> weekNumberFormat = new SimpleOption<>("weekNumberFormat");
+    protected SimpleOption<String> slotLabelFormat = new SimpleOption<>("slotLabelFormat", "ha");
+    protected SimpleOption<String> eventTimeFormat = new SimpleOption<>("eventTimeFormat", "h:mma");
+
+    protected final List<CalendarOption> updatableOptions = new ArrayList<>(28);
 
     /**
      * Options that applied only at creation time.
@@ -67,20 +73,21 @@ public class JmixFullCalendarOptions {
     protected Consumer<OptionChangeEvent> optionChangeListener;
 
     public JmixFullCalendarOptions() {
-        options.addAll(List.of(weekNumbers, validRange, timeZone, initialView,
-                navLinks, dayMaxEventRows, eventMaxStack, dayMaxEvents, moreLinkClick, dragScroll,
-                moreLinkClassNames, eventStartEditable, eventDurationEditable, eventResizableFromStart,
-                eventDragMinDistance, eventOverlap, dragRevertDuration, snapDuration,
-                allDayMaintainDuration, selectable, selectMirror, unselectAuto,
-                unselectCancel, selectOverlap, selectAllow, selectMinDistance, views, visibleRange));
+        updatableOptions.addAll(List.of(weekNumbers, validRange, timeZone, navLinks, dayMaxEventRows,
+                eventMaxStack, dayMaxEvents, moreLinkClick, moreLinkClassNames, eventStartEditable,
+                eventDurationEditable, eventResizableFromStart, eventDragMinDistance, eventOverlap, dragRevertDuration,
+                snapDuration, allDayMaintainDuration, selectable, selectMirror, unselectCancel,
+                selectOverlap, selectAllow, visibleRange));
 
-        initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll));
+        initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll,
+                dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat));
 
-        options.forEach(o -> o.addChangeListener(this::onOptionChange));
+        updatableOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
+        initialOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
     }
 
-    public List<CalendarOption> getOptions() {
-        return options;
+    public List<CalendarOption> getUpdatableOptions() {
+        return updatableOptions;
     }
 
     public List<CalendarOption> getInitialOptions() {
@@ -88,13 +95,13 @@ public class JmixFullCalendarOptions {
     }
 
     public List<CalendarOption> getDirtyOptions() {
-        return options.stream()
+        return updatableOptions.stream()
                 .filter(CalendarOption::isDirty)
                 .toList();
     }
 
     public void unmarkAllAsDirty() {
-        options.forEach(CalendarOption::unmarkAsDirty);
+        updatableOptions.forEach(CalendarOption::unmarkAsDirty);
     }
 
     public SimpleOption<Boolean> getWeekNumbers() {
@@ -109,7 +116,7 @@ public class JmixFullCalendarOptions {
         return timeZone;
     }
 
-    public SimpleOption<CalendarView> getInitialCalendarView() {
+    public SimpleOption<CalendarView> getInitialView() {
         return initialView;
     }
 
@@ -189,10 +196,6 @@ public class JmixFullCalendarOptions {
         return unselectCancel;
     }
 
-    public void setUnselectCancel(@Nullable String unselectCancel) {
-        this.unselectCancel.setValue(unselectCancel == null ? "" : unselectCancel);
-    }
-
     public SelectOverlap getSelectOverlap() {
         return selectOverlap;
     }
@@ -205,25 +208,32 @@ public class JmixFullCalendarOptions {
         return selectMinDistance;
     }
 
-    public void addCalendarCustomView(CalendarCustomView customView) {
-        this.views.addCustomView(customView);
-    }
-
-    public void removeCalendarCustomView(CalendarCustomView customView) {
-        this.views.removeCustomView(customView);
-    }
-
-    @Nullable
-    public CalendarCustomView getCalendarCustomView(String viewId) {
-        return this.views.getCustomView(viewId);
-    }
-
-    public List<CalendarCustomView> getCalendarCustomViews() {
-        return views.getCustomViews();
+    public Views getViews() {
+        return views;
     }
 
     public VisibleRange getVisibleRange() {
         return visibleRange;
+    }
+
+    public SimpleOption<String> getDayPopoverFormat() {
+        return dayPopoverFormat;
+    }
+
+    public SimpleOption<String> getDayHeaderFormat() {
+        return dayHeaderFormat;
+    }
+
+    public SimpleOption<String> getWeekNumberFormat() {
+        return weekNumberFormat;
+    }
+
+    public SimpleOption<String> getSlotLabelFormat() {
+        return slotLabelFormat;
+    }
+
+    public SimpleOption<String> getEventTimeFormat() {
+        return eventTimeFormat;
     }
 
     public boolean isInitial(CalendarOption option) {

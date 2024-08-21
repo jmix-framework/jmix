@@ -22,6 +22,7 @@ import jakarta.annotation.Nullable;
 
 import java.io.Serializable;
 import java.util.EventObject;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public abstract class CalendarOption implements Serializable {
@@ -32,6 +33,7 @@ public abstract class CalendarOption implements Serializable {
     protected boolean dirty = false;
 
     public CalendarOption(String name) {
+        Objects.requireNonNull(name);
         this.name = name;
     }
 
@@ -65,7 +67,6 @@ public abstract class CalendarOption implements Serializable {
         return eventBus.addListener(OptionChangeEvent.class, listener);
     }
 
-    @SuppressWarnings("rawtypes")
     public static class OptionChangeEvent extends EventObject {
 
         public OptionChangeEvent(CalendarOption source) {

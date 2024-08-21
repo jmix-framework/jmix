@@ -27,6 +27,7 @@ import elemental.json.JsonObject;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.fullcalendarflowui.kit.component.event.dom.*;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
+import io.jmix.fullcalendarflowui.kit.component.model.AbstractCalendarViewProperties;
 import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOptions;
 import io.jmix.fullcalendarflowui.kit.component.serialization.deserializer.JmixFullCalendarDeserializer;
 import io.jmix.fullcalendarflowui.kit.component.serialization.serializer.JmixFullCalendarSerializer;
@@ -87,18 +88,27 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         attachMoreLinkClickDomEventListener();
     }
 
+    @Nullable
     public CalendarView getInitialCalendarView() {
-        return options.getInitialCalendarView().getValue();
+        return options.getInitialView().getValue();
     }
 
     public void setInitialCalendarView(CalendarView calendarView) {
         Objects.requireNonNull(calendarView);
 
-        options.getInitialCalendarView().setValue(calendarView);
+        options.getInitialView().setValue(calendarView);
     }
 
     public CalendarView getCurrentCalendarView() {
-        return calendarView != null ? calendarView : options.getInitialCalendarView().getValue();
+        if (calendarView != null) {
+            return calendarView;
+        }
+        CalendarView initialCalendarView = options.getInitialView().getValue();
+        if (initialCalendarView != null) {
+            return initialCalendarView;
+        }
+        CalendarView defaultCalendarView = options.getInitialView().getDefaultValue();
+        return Objects.requireNonNull(defaultCalendarView);
     }
 
     public void changeCalendarView(CalendarView calendarView) {
@@ -118,7 +128,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     public void addCalendarCustomView(CalendarCustomView calendarCustomView) {
         Objects.requireNonNull(calendarCustomView);
 
-        options.addCalendarCustomView(calendarCustomView);
+        options.getViews().addCustomView(calendarCustomView);
     }
 
     /**
@@ -132,15 +142,20 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     public void removeCalendarCustomView(CalendarCustomView calendarCustomView) {
         Objects.requireNonNull(calendarCustomView);
 
-        options.removeCalendarCustomView(calendarCustomView);
+        options.getViews().removeCustomView(calendarCustomView);
     }
 
     public List<CalendarCustomView> getCalendarCustomViews() {
-        return options.getCalendarCustomViews();
+        return options.getViews().getCustomViews();
+    }
+
+    @Nullable
+    public <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(CalendarView calendarView) {
+        return options.getViews().getCalendarViewProperties(calendarView);
     }
 
     public boolean isWeekNumbersVisible() {
-        return options.getWeekNumbers().getValue();
+        return options.getWeekNumbers().getNotNullValue();
     }
 
     public void setWeekNumbersVisible(boolean weekNumbersVisible) {
@@ -186,6 +201,12 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getVisibleRange().setRange(start, end);
     }
 
+    /**
+     * The default value is user's timezone. If no user's timezone, the system default is used for component.
+     *
+     * @return {@code null} if not set
+     */
+    @Nullable
     public TimeZone getTimeZone() {
         return options.getTimeZone().getValue();
     }
@@ -258,7 +279,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     public boolean isNavigationLinksEnabled() {
-        return options.getNavLinks().getNonNullValue();
+        return options.getNavLinks().getNotNullValue();
     }
 
     public void setNavigationLinksEnabled(boolean enabled) {
@@ -273,6 +294,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getDayMaxEventRows().setLimited(limited);
     }
 
+    /**
+     * @return {@code null} if not set
+     */
     @Nullable
     public Integer getDayMaxEventRows() {
         return options.getDayMaxEventRows().getMax();
@@ -298,6 +322,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getDayMaxEvents().setLimited(limited);
     }
 
+    /**
+     * @return {@code null} if not set
+     */
     @Nullable
     public Integer getDayMaxEvents() {
         return options.getDayMaxEvents().getMax();
@@ -316,8 +343,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * @return maximum number of events to stack or {@code -1} if not set
+     * @return maximum number of events to stack or {@code null} if not set
      */
+    @Nullable
     public Integer getEventMaxStack() {
         return options.getEventMaxStack().getValue();
     }
@@ -329,13 +357,15 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *                      values set default behaviour.
      */
     public void setEventMaxStack(@Nullable Integer eventMaxStack) {
-        int maxStack = eventMaxStack == null ? -1 : eventMaxStack;
-        if (maxStack < -1) {
+        if (eventMaxStack != null && eventMaxStack < -1) {
             throw new IllegalArgumentException("Event max stack value must be >= -1");
         }
-        options.getEventMaxStack().setValue(maxStack);
+        options.getEventMaxStack().setValue(eventMaxStack);
     }
 
+    /**
+     * @return {@code null} if not set
+     */
     @Nullable
     public CalendarView getMoreLinkCalendarView() {
         return options.getMoreLinkClick().getCalendarView();
@@ -366,7 +396,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     public boolean isEventStartEditable() {
-        return options.getEventStartEditable().getNonNullValue();
+        return options.getEventStartEditable().getNotNullValue();
     }
 
     public void setEventStartEditable(boolean editable) {
@@ -374,7 +404,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     public boolean isEventDurationEditable() {
-        return options.getEventDurationEditable().getNonNullValue();
+        return options.getEventDurationEditable().getNotNullValue();
     }
 
     public void setEventDurationEditable(boolean editable) {
@@ -382,31 +412,39 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     public boolean isEventResizableFromStart() {
-        return options.getEventResizableFromStart().getNonNullValue();
+        return options.getEventResizableFromStart().getNotNullValue();
     }
 
     public void setEventResizableFromStart(boolean resizableFromStart) {
         options.getEventResizableFromStart().setValue(resizableFromStart);
     }
 
-    public int getEventDragMinDistance() {
-        return options.getEventDragMinDistance().getNonNullValue();
+    /**
+     * @return {@code null} if not set
+     */
+    @Nullable
+    public Integer getEventDragMinDistance() {
+        return options.getEventDragMinDistance().getValue();
     }
 
-    public void setEventDragMinDistance(int minDistance) {
+    public void setEventDragMinDistance(@Nullable Integer minDistance) {
         options.getEventDragMinDistance().setValue(minDistance);
     }
 
-    public int getDragRevertDuration() {
-        return options.getDragRevertDuration().getNonNullValue();
+    /**
+     * @return {@code null} if not set
+     */
+    @Nullable
+    public Integer getDragRevertDuration() {
+        return options.getDragRevertDuration().getValue();
     }
 
-    public void setDragRevertDuration(int revertDuration) {
+    public void setDragRevertDuration(@Nullable Integer revertDuration) {
         options.getDragRevertDuration().setValue(revertDuration);
     }
 
     public boolean isDragScrollEnabled() {
-        return options.getDragScroll().getNonNullValue();
+        return options.getDragScroll().getNotNullValue();
     }
 
     /**
@@ -418,18 +456,20 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getDragScroll().setValue(enabled);
     }
 
+    /**
+     * @return {@code null} if not set
+     */
+    @Nullable
     public CalendarDuration getSnapDuration() {
-        return options.getSnapDuration().getNonNullValue();
+        return options.getSnapDuration().getValue();
     }
 
-    public void setSnapDuration(CalendarDuration snapDuration) {
-        Objects.requireNonNull(snapDuration);
-
+    public void setSnapDuration(@Nullable CalendarDuration snapDuration) {
         options.getSnapDuration().setValue(snapDuration);
     }
 
     public boolean isAllMaintainDurationEnabled() {
-        return options.getAllDayMaintainDuration().getNonNullValue();
+        return options.getAllDayMaintainDuration().getNotNullValue();
     }
 
     public void setAllDayMaintainDurationEnabled(boolean enabled) {
@@ -444,6 +484,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getEventOverlap().setEnabled(enabled);
     }
 
+    /**
+     * @return {@code null} if not set
+     */
     @Nullable
     public JsFunction getEventOverlapJsFunction() {
         return options.getEventOverlap().getJsFunction();
@@ -480,7 +523,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     public boolean isSelectionEnabled() {
-        return options.getSelectable().getNonNullValue();
+        return options.getSelectable().getNotNullValue();
     }
 
     public void setSelectionEnabled(boolean enabled) {
@@ -488,7 +531,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     public boolean isSelectMirrorEnabled() {
-        return options.getSelectMirror().getNonNullValue();
+        return options.getSelectMirror().getNotNullValue();
     }
 
     public void setSelectMirrorEnabled(boolean enabled) {
@@ -496,7 +539,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     public boolean isUnselectAutoEnabled() {
-        return options.getUnselectAuto().getNonNullValue();
+        return options.getUnselectAuto().getNotNullValue();
     }
 
     /**
@@ -515,8 +558,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     @Nullable
     public String getUnselectCancelClassName() {
-        String className = options.getUnselectCancel().getNonNullValue();
-        return className.isEmpty() ? null : className;
+        return options.getUnselectCancel().getValue();
     }
 
     /**
@@ -528,7 +570,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * @param className CSS class name, e.g. ".my-element"
      */
     public void setUnselectCancelClassName(@Nullable String className) {
-        options.setUnselectCancel(className == null ? "" : className);
+        options.getUnselectCancel().setValue(className);
     }
 
     public boolean isSelectOverlapEnabled() {
@@ -539,6 +581,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getSelectOverlap().setEnabled(enabled);
     }
 
+    @Nullable
     public JsFunction getSelectOverlapJsFunction() {
         return options.getSelectOverlap().getJsFunction();
     }
@@ -557,11 +600,61 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     public int getSelectMinDistance() {
-        return options.getSelectMinDistance().getNonNullValue();
+        return options.getSelectMinDistance().getNotNullValue();
     }
 
     public void setSelectMinDistance(int minDistance) {
         options.getSelectMinDistance().setValue(minDistance);
+    }
+
+    @Nullable
+    public String getDayPopoverFormat() {
+        return options.getDayPopoverFormat().getValue();
+    }
+
+    public void setDayPopoverFormat(@Nullable String format) {
+        options.getDayPopoverFormat().setValue(format);
+    }
+
+    @Nullable
+    public String getDayHeaderFormat() {
+        return options.getDayHeaderFormat().getValue();
+    }
+
+    public void setDayHeaderFormat(@Nullable String format) {
+        options.getDayHeaderFormat().setValue(format);
+    }
+
+    @Nullable
+    public String getWeekNumberFormat() {
+        return options.getWeekNumberFormat().getValue();
+    }
+
+    /**
+     * Note that it override the {@code weekText} value in i18n object.
+     *
+     * @param format
+     */
+    public void setWeekNumberFormat(@Nullable String format) {
+        options.getWeekNumberFormat().setValue(format);
+    }
+
+    @Nullable
+    public String getSlotNumberFormat() {
+        return options.getSlotLabelFormat().getValue();
+    }
+
+    public void setSlotNumberFormat(@Nullable String format) {
+        options.getSlotLabelFormat().setValue(format);
+    }
+
+    @Nullable
+    public String getEventTimeFormat() {
+        return options.getEventTimeFormat().getValue();
+    }
+
+    public void setEventTimeFormat(@Nullable String format) {
+        options.getEventTimeFormat().setValue(format);
     }
 
     protected JmixFullCalendarSerializer createSerializer() {
@@ -598,7 +691,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected void performUpdateOptions(boolean onlyDirty) {
-        JsonObject json = serializer.serializeOptions(onlyDirty ? options.getDirtyOptions() : options.getOptions());
+        JsonObject json = serializer.serializeOptions(onlyDirty
+                ? options.getDirtyOptions()
+                : options.getUpdatableOptions());
 
         getElement().callJsFunction("updateOptions", json);
 
@@ -795,7 +890,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
             return calendarViewType;
         }
 
-        CalendarCustomView customView = options.getCalendarCustomView(id);
+        CalendarCustomView customView = options.getViews().getCustomView(id);
 
         return customView != null ? customView.getCalendarView() : () -> id;
     }

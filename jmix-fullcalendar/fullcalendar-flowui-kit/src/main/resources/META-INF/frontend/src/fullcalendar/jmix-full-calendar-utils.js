@@ -244,6 +244,10 @@ export function convertToLocaleDependedOptions(jmixI18n) {
     return options;
 }
 
+export function deleteNullProperties(object) {
+    return Object.fromEntries(Object.entries(object).filter(([_, v]) => v != null));
+}
+
 function isNotNullUndefined(value) {
     return value !== null && value !== undefined;
 }

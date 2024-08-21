@@ -28,7 +28,7 @@ public class FullCalendarOptions extends JmixFullCalendarOptions {
     protected SelectConstraint selectConstraint = new SelectConstraint();
 
     public FullCalendarOptions() {
-        options.addAll(List.of(eventConstraint, businessHours, selectConstraint));
+        updatableOptions.addAll(List.of(eventConstraint, businessHours, selectConstraint));
 
         OptionUtils.addChangeListener(eventConstraint, this::onOptionChange);
         OptionUtils.addChangeListener(businessHours, this::onOptionChange);

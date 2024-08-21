@@ -45,7 +45,9 @@ function processViews(viewsObject) {
         if (view === 'customViews') {
             continue;
         }
-        viewsObject[view] = {...view, ...view.properties && {...view.properties}};
+        viewsObject[view] = {...viewsObject[view], ...viewsObject[view].properties && {...viewsObject[view].properties}};
+        viewsObject[view] = calendarUtils.deleteNullProperties(viewsObject[view]);
+        delete viewsObject[view].properties;
     }
 
     if (viewsObject.customViews) {
@@ -58,6 +60,8 @@ function processViews(viewsObject) {
             };
         }
     }
+    delete viewsObject.customViews;
+
     return viewsObject;
 }
 

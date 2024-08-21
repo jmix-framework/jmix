@@ -32,7 +32,6 @@ public class FullCalendarI18n implements Serializable {
     protected Integer dayOfWeek;
     protected Integer dayOfYear;
 
-    protected String weekText;
     protected String weekTextLong;
     protected String allDayText;
     protected String moreLinkText;
@@ -44,13 +43,6 @@ public class FullCalendarI18n implements Serializable {
     protected String navLinkHint;
     protected String moreLinkHint;
 
-    protected String dayPopoverFormat;
-    protected String dayHeaderFormat;
-    protected String weekNumberFormat;
-    protected String slotLabelFormat;
-    protected String eventTimeFormat;
-    protected String monthStartFormat;
-
     public FullCalendarI18n() {
     }
 
@@ -58,7 +50,6 @@ public class FullCalendarI18n implements Serializable {
         direction = i18n.direction;
         dayOfWeek = i18n.dayOfWeek;
         dayOfYear = i18n.dayOfYear;
-        weekText = i18n.weekText;
         weekTextLong = i18n.weekTextLong;
         allDayText = i18n.allDayText;
         moreLinkText = i18n.moreLinkText;
@@ -68,12 +59,6 @@ public class FullCalendarI18n implements Serializable {
         timeHint = i18n.timeHint;
         navLinkHint = i18n.navLinkHint;
         moreLinkHint = i18n.moreLinkHint;
-        dayPopoverFormat = i18n.dayPopoverFormat;
-        dayHeaderFormat = i18n.dayHeaderFormat;
-        weekNumberFormat = i18n.weekNumberFormat;
-        slotLabelFormat = i18n.slotLabelFormat;
-        eventTimeFormat = i18n.eventTimeFormat;
-        monthStartFormat = i18n.monthStartFormat;
     }
 
     @Nullable
@@ -115,20 +100,6 @@ public class FullCalendarI18n implements Serializable {
 
     public FullCalendarI18n withDayOfYear(@Nullable Integer dayOfYear) {
         setDayOfYear(dayOfYear);
-        return this;
-    }
-
-    @Nullable
-    public String getWeekText() {
-        return weekText;
-    }
-
-    public void setWeekText(@Nullable String weekText) {
-        this.weekText = weekText;
-    }
-
-    public FullCalendarI18n withWeekText(@Nullable String weekText) {
-        setWeekText(weekText);
         return this;
     }
 
@@ -257,95 +228,6 @@ public class FullCalendarI18n implements Serializable {
         return this;
     }
 
-    @Nullable
-    public String getDayPopoverFormat() {
-        return dayPopoverFormat;
-    }
-
-    public void setDayPopoverFormat(@Nullable String dayPopoverFormat) {
-        this.dayPopoverFormat = dayPopoverFormat;
-    }
-
-    public FullCalendarI18n withDayPopoverFormat(@Nullable String dayPopoverFormat) {
-        setDayPopoverFormat(dayPopoverFormat);
-        return this;
-    }
-
-    @Nullable
-    public String getDayHeaderFormat() {
-        return dayHeaderFormat;
-    }
-
-    public void setDayHeaderFormat(@Nullable String dayHeaderFormat) {
-        this.dayHeaderFormat = dayHeaderFormat;
-    }
-
-    public FullCalendarI18n withDayHeaderFormat(@Nullable String dayHeaderFormat) {
-        setDayHeaderFormat(dayHeaderFormat);
-        return this;
-    }
-
-    @Nullable
-    public String getWeekNumberFormat() {
-        return weekNumberFormat;
-    }
-
-    /**
-     * Note that it override the {@link #setWeekText(String)} value.
-     *
-     * @param weekNumberFormat
-     */
-    public void setWeekNumberFormat(@Nullable String weekNumberFormat) {
-        this.weekNumberFormat = weekNumberFormat;
-    }
-
-    public FullCalendarI18n withWeekNumberFormat(@Nullable String weekNumberFormat) {
-        setWeekNumberFormat(weekNumberFormat);
-        return this;
-    }
-
-    @Nullable
-    public String getSlotLabelFormat() {
-        return slotLabelFormat;
-    }
-
-    public void setSlotLabelFormat(@Nullable String slotLabelFormat) {
-        this.slotLabelFormat = slotLabelFormat;
-    }
-
-    public FullCalendarI18n withSlotLabelFormat(@Nullable String slotLabelFormat) {
-        setSlotLabelFormat(slotLabelFormat);
-        return this;
-    }
-
-    @Nullable
-    public String getEventTimeFormat() {
-        return eventTimeFormat;
-    }
-
-    public void setEventTimeFormat(@Nullable String eventTimeFormat) {
-        this.eventTimeFormat = eventTimeFormat;
-    }
-
-    public FullCalendarI18n withEventTimeFormat(@Nullable String eventTimeFormat) {
-        setEventTimeFormat(eventTimeFormat);
-        return this;
-    }
-
-    @Nullable
-    public String getMonthStartFormat() {
-        return monthStartFormat;
-    }
-
-    public void setMonthStartFormat(@Nullable String monthStartFormat) {
-        this.monthStartFormat = monthStartFormat;
-    }
-
-    public FullCalendarI18n withMonthStartFormat(@Nullable String monthStartFormat) {
-        setMonthStartFormat(monthStartFormat);
-        return this;
-    }
-
     public FullCalendarI18n combine(@Nullable FullCalendarI18n i18n) {
         FullCalendarI18n result = new FullCalendarI18n(this);
         if (i18n == null) {
@@ -354,7 +236,6 @@ public class FullCalendarI18n implements Serializable {
         setProperty(i18n.getDirection(), "direction", result);
         setProperty(i18n.getDayOfWeek(), "dayOfWeek", result);
         setProperty(i18n.getDayOfYear(), "dayOfYear", result);
-        setProperty(i18n.getWeekText(), "weekText", result);
         setProperty(i18n.getWeekTextLong(), "weekTextLong", result);
         setProperty(i18n.getAllDayText(), "allDayText", result);
         setProperty(i18n.getMoreLinkText(), "moreLinkText", result);
@@ -364,12 +245,6 @@ public class FullCalendarI18n implements Serializable {
         setProperty(i18n.getTimeHint(), "timeHint", result);
         setProperty(i18n.getNavLinkHint(), "navLinkHint", result);
         setProperty(i18n.getMoreLinkHint(), "moreLinkHint", result);
-        setProperty(i18n.getDayPopoverFormat(), "dayPopoverFormat", result);
-        setProperty(i18n.getDayHeaderFormat(), "dayHeaderFormat", result);
-        setProperty(i18n.getWeekNumberFormat(), "weekNumberFormat", result);
-        setProperty(i18n.getSlotLabelFormat(), "slotLabelFormat", result);
-        setProperty(i18n.getEventTimeFormat(), "eventTimeFormat", result);
-        setProperty(i18n.getMonthStartFormat(), "monthStartFormat", result);
 
         return result;
     }
@@ -383,36 +258,4 @@ public class FullCalendarI18n implements Serializable {
             ReflectionUtils.invokeMethod(method, i18n, value);
         }
     }
-
-    /*todo rp specific options for Views*/
-    /*public class DayGrid implements Serializable {
-        protected String dayGridDayDayHeaderFormat;
-        protected String dayGridWeekDayHeaderFormat;
-        protected String dayGridMonthDayHeaderFormat;
-        protected String dayGridYearDayHeaderFormat;
-
-        protected String dayGridDayWeekNumberFormat;
-        protected String dayGridWeekWeekNumberFormat;
-        protected String dayGridMonthWeekNumberFormat;
-        protected String dayGridYearWeekNumberFormat;
-
-        protected String dayGridDayEventTimeFormat;
-        protected String dayGridWeekEventTimeFormat;
-        protected String dayGridMonthEventTimeFormat;
-        protected String dayGridYearEventTimeFormat;
-    }
-
-    public class TimeGrid implements Serializable {
-        protected String timeGridDayDayHeaderFormat;
-        protected String timeGridWeekDayHeaderFormat;
-
-        protected String timeGridDayWeekNumberFormat;
-        protected String timeGridWeekWeekNumberFormat;
-
-        protected String timeGridDaySlotLabelFormat;
-        protected String timeGridWeekSlotLabelFormat;
-
-        protected String timeGridDayEventTimeFormat;
-        protected String timeGridWeekEventTimeFormat;
-    }*/
 }

@@ -49,19 +49,14 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected Object eventConstraintGroupId;
     protected Object selectConstraintGroupId;
 
-    protected FullCalendarI18n defaultI18n;
-    protected FullCalendarI18n explicitI18n;
-
     @Override
     public void afterPropertiesSet() {
         currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
         dateTimeTransformations = applicationContext.getBean(DateTimeTransformations.class);
         calendarDelegate = applicationContext.getBean(FullCalendarDelegate.class, this,
-                applicationContext.getBean(Messages.class));
+                applicationContext.getBean(Messages.class), currentAuthentication);
 
-        defaultI18n = calendarDelegate.createDefaultI18n();
-        setI18nInternal(defaultI18n);
-        setupCalendarLocalizedUnitNames();
+        setupLocalization();
 
         initTimeZone();
     }
@@ -227,13 +222,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Nullable
     public FullCalendarI18n getI18n() {
-        return explicitI18n;
+        return calendarDelegate.getI18n();
     }
 
     public void setI18n(@Nullable FullCalendarI18n i18n) {
-        this.explicitI18n = i18n;
-
-        setI18nInternal(defaultI18n.combine(explicitI18n));
+        calendarDelegate.setI18n(i18n);
     }
 
     public Registration addDatesSetListener(ComponentEventListener<DatesSetEvent> listener) {
@@ -421,20 +414,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return (FullCalendarSerializer) serializer;
     }
 
-    protected void setI18nInternal(FullCalendarI18n i18n) {
-        JsonObject json = serializer.serializeObject(i18n);
-
-        json.put("locale", serializer.serializeValue(currentAuthentication.getLocale()));
-
-        getElement().setPropertyJson("i18n", json);
-    }
-
-    protected void setupCalendarLocalizedUnitNames() {
-        JsonObject json = calendarDelegate.getCalendarLocalizedUnitNames();
-
-        json.put("locale", serializer.serializeValue(currentAuthentication.getLocale()));
-
-        getElement().callJsFunction("_defineMomentJsLocale", json);
+    protected void setupLocalization() {
+        calendarDelegate.setupLocalization();
     }
 
     @Override
@@ -521,7 +502,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         DomMoreLinkClassNames clientContext =
                 deserializer.deserialize(jsonContext, DomMoreLinkClassNames.class);
 
-        JsonArray classNames = calendarDelegate.getMoreLinkClassNames(clientContext);
+        JsonArray classNames = calendarDelegate.getMoreLinkClassNamesJson(clientContext);
 
         return classNames;
     }

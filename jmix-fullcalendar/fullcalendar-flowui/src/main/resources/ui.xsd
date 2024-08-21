@@ -26,7 +26,7 @@
                     <xs:all>
                         <xs:element name="eventProviders" type="eventProvidersType"/>
                         <xs:element name="businessHours" type="businessHoursType"/>
-                        <xs:element name="customViews" type="customViewsType"/>
+                        <xs:element name="views" type="customViewsType"/>
                     </xs:all>
 
                     <xs:attribute name="initialView" type="calendarViewType"/>
@@ -71,6 +71,12 @@
                     <xs:attribute name="selectConstraintGroupId" type="xs:string"/>
                     <xs:attribute name="selectMinDistance" type="xs:integer"/>
 
+                    <xs:attribute name="dayPopoverFormat" type="layout:resourceString"/>
+                    <xs:attribute name="dayHeaderFormat" type="layout:resourceString"/>
+                    <xs:attribute name="weekNumberFormat" type="layout:resourceString"/>
+                    <xs:attribute name="slotLabelFormat" type="layout:resourceString"/>
+                    <xs:attribute name="eventTimeFormat" type="layout:resourceString"/>
+
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
                 </xs:extension>
@@ -109,6 +115,7 @@
             <xs:enumeration value="DAY_GRID"/>
             <xs:enumeration value="TIME_GRID"/>
             <xs:enumeration value="LIST"/>
+            <xs:enumeration value="MULTI_MONTH"/>
         </xs:restriction>
     </xs:simpleType>
 

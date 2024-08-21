@@ -21,8 +21,10 @@ import jakarta.annotation.Nullable;
 import java.util.Objects;
 
 public class SimpleOption<V> extends CalendarOption {
+    protected boolean isValueSet = false;
 
     protected V value;
+    protected V defaultValue;
 
     public SimpleOption(String name) {
         super(name);
@@ -31,20 +33,33 @@ public class SimpleOption<V> extends CalendarOption {
     public SimpleOption(String name, V defaultValue) {
         super(name);
 
-        this.value = Objects.requireNonNull(defaultValue);
+        this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.value = this.defaultValue;
     }
 
     @Nullable
     public V getValue() {
-        return value;
+        return isValueSet ? value : null;
     }
 
-    public V getNonNullValue() {
+    public V getNotNullValue() {
         return Objects.requireNonNull(value);
+    }
+
+    @Nullable
+    public V getDefaultValue() {
+        return defaultValue;
     }
 
     public void setValue(@Nullable V value) {
         this.value = value;
+
+        if (value == null) {
+            this.value = this.defaultValue;
+            isValueSet = false;
+        } else {
+            isValueSet = true;
+        }
 
         markAsDirty();
     }
@@ -52,6 +67,6 @@ public class SimpleOption<V> extends CalendarOption {
     @Nullable
     @Override
     protected V getValueToSerialize() {
-        return getValue();
+        return value;
     }
 }

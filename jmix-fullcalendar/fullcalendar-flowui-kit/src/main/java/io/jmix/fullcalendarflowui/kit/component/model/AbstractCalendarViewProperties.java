@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.model.option;
+package io.jmix.fullcalendarflowui.kit.component.model;
 
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import io.jmix.fullcalendarflowui.kit.component.model.option.CalendarOption;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DayGridWeekViewProperties extends CalendarOption {
+public abstract class AbstractCalendarViewProperties extends CalendarOption {
 
     protected Map<String, Object> properties;
 
-    public DayGridWeekViewProperties() {
-        super(CalendarViewType.DAY_GRID_WEEK.getId());
+    public AbstractCalendarViewProperties(String name) {
+        super(name);
     }
 
     public Map<String, Object> getProperties() {

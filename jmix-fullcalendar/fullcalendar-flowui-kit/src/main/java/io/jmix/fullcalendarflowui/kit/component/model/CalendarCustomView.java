@@ -18,10 +18,7 @@ package io.jmix.fullcalendarflowui.kit.component.model;
 
 import jakarta.annotation.Nullable;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-public class CalendarCustomView implements Serializable {
+public class CalendarCustomView extends AbstractCalendarViewProperties {
 
     protected CalendarView calendarView;
 
@@ -36,7 +33,7 @@ public class CalendarCustomView implements Serializable {
     }
 
     public CalendarCustomView(String id, @Nullable CalendarViewType type) {
-        Objects.requireNonNull(id);
+        super(id);
 
         this.calendarView = () -> id;
         this.type = type;

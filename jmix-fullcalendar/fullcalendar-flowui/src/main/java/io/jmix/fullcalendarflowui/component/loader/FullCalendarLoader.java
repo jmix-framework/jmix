@@ -48,7 +48,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         componentLoaderSupport.loadSizeAttributes(resultComponent, element);
         componentLoaderSupport.loadClassNames(resultComponent, element);
 
-        loadCalendarCustomViews(element, resultComponent);
+        loadCalendarViews(element, resultComponent);
         loadInitialView(element, resultComponent);
 
         loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
@@ -73,7 +73,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadInteger(element, "dragRevertDuration", resultComponent::setDragRevertDuration);
         loadBoolean(element, "dragScrollEnabled", resultComponent::setDragScrollEnabled);
 
-        loadBoolean(element, "allDayMaintainDurationEnabled", resultComponent::setAllDayMaintainDurationEnabled);
+        loadBoolean(element, "allDayMaintainDurationEnabled",
+                resultComponent::setAllDayMaintainDurationEnabled);
         loadSnapDuration(element, resultComponent::setSnapDuration);
 
         loadBoolean(element, "businessHoursEnabled", resultComponent::setBusinessHoursEnabled);
@@ -87,6 +88,17 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadBoolean(element, "selectConstraintEnabled", resultComponent::setSelectConstraintEnabled);
         loadString(element, "selectConstraintGroupId", resultComponent::setSelectConstraintGroupId);
         loadInteger(element, "selectMinDistance", resultComponent::setSelectMinDistance);
+
+        loadResourceString(element, "dayPopoverFormat", context.getMessageGroup(),
+                resultComponent::setDayPopoverFormat);
+        loadResourceString(element, "dayHeaderFormat", context.getMessageGroup(),
+                resultComponent::setDayHeaderFormat);
+        loadResourceString(element, "weekNumberFormat", context.getMessageGroup(),
+                resultComponent::setWeekNumberFormat);
+        loadResourceString(element, "slotLabelFormat", context.getMessageGroup(),
+                resultComponent::setSlotNumberFormat);
+        loadResourceString(element, "eventTimeFormat", context.getMessageGroup(),
+                resultComponent::setEventTimeFormat);
 
         loadEventProviders(element, "containerEventProvider",
                 (ep) -> resultComponent.addEventProvider((CalendarEventProvider) ep));
@@ -320,10 +332,10 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         });
     }
 
-    protected void loadCalendarCustomViews(Element element, FullCalendar resultComponent) {
-        Element customViewsElement = element.element("customViews");
-        if (customViewsElement != null) {
-            List<Element> views = customViewsElement.elements("view");
+    protected void loadCalendarViews(Element element, FullCalendar resultComponent) {
+        Element viewsElement = element.element("views");
+        if (viewsElement != null) {
+            List<Element> views = viewsElement.elements("view");
 
             views.forEach(e -> resultComponent.addCalendarCustomView(loadCustomView(e)));
         }

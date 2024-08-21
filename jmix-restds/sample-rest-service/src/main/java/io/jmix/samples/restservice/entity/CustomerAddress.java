@@ -17,8 +17,7 @@
 package io.jmix.samples.restservice.entity;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 
 @JmixEntity
 @Embeddable
@@ -28,6 +27,18 @@ public class CustomerAddress {
 
     @Column(name = "ADDRESS_LINE")
     private String addressLine;
+
+    @JoinColumn(name = "COUNTRY_CODE")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Country country;
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
 
     public String getAddressLine() {
         return addressLine;

@@ -16,38 +16,33 @@
 
 package test_support.entity;
 
+import io.jmix.core.entity.annotation.JmixId;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.Store;
 
+@Store(name = "restService1")
 @JmixEntity
-public class CustomerAddress {
+public class Country {
+    @JmixId
+    private String code;
 
-    private String zip;
+    @InstanceName
+    private String name;
 
-    private String addressLine;
-
-    private Country country;
-
-    public Country getCountry() {
-        return country;
+    public String getName() {
+        return name;
     }
 
-    public void setCountry(Country country) {
-        this.country = country;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getAddressLine() {
-        return addressLine;
+    public String getCode() {
+        return code;
     }
 
-    public void setAddressLine(String addressLine) {
-        this.addressLine = addressLine;
-    }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public void setZip(String zip) {
-        this.zip = zip;
+    public void setCode(String code) {
+        this.code = code;
     }
 }

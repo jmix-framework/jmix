@@ -31,6 +31,7 @@ import test_support.AuthenticatedAsSystem;
 import test_support.SampleServiceConnection;
 import test_support.TestRestDsConfiguration;
 import test_support.TestSupport;
+import test_support.entity.Country;
 import test_support.entity.Customer;
 import test_support.entity.CustomerRegionDto;
 
@@ -58,13 +59,13 @@ public class RestDataStoreTest {
 
     @Test
     void testLoad() {
+        Customer customer = dataManager.load(Customer.class).id(TestSupport.UUID_1).one();
+
+        assertThat(customer).isNotNull();
+
         List<Customer> customers = dataManager.load(Customer.class).all().list();
 
         assertThat(customers).isNotEmpty();
-
-        Customer customer = dataManager.load(Customer.class).id(customers.get(0).getId()).one();
-
-        assertThat(customer).isEqualTo(customers.get(0));
     }
 
     @Test
@@ -272,6 +273,39 @@ public class RestDataStoreTest {
         CustomerRegionDto deletedRegion = dataManager.load(CustomerRegionDto.class).id(region.getId()).optional().orElse(null);
 
         assertThat(deletedRegion).isNull();
+    }
+
+    @Test
+    void testStringId() {
+        // create
+
+        Country country = dataManager.create(Country.class);
+        country.setCode("zz-" + now);
+        country.setName("testStringId-" + now);
+
+        Country savedCountry = dataManager.save(country);
+
+        assertThat(savedCountry).isEqualTo(country);
+
+        // update
+
+        savedCountry.setName("testStringId-updated-" + now);
+
+        savedCountry = dataManager.save(savedCountry);
+
+        assertThat(savedCountry).isEqualTo(country);
+
+        // load
+
+        savedCountry = dataManager.load(Country.class).id(country.getCode()).one();
+
+        // delete
+
+        dataManager.remove(savedCountry);
+
+        Country deletedCountry = dataManager.load(Country.class).id(country.getCode()).optional().orElse(null);
+
+        assertThat(deletedCountry).isNull();
     }
 
     private Customer createCustomer(String firstName, String lastName) {

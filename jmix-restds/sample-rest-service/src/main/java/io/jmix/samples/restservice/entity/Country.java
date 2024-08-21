@@ -14,40 +14,40 @@
  * limitations under the License.
  */
 
-package test_support.entity;
+package io.jmix.samples.restservice.entity;
 
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @JmixEntity
-public class CustomerAddress {
+@Table(name = "COUNTRY")
+@Entity
+public class Country {
+    @Column(name = "CODE", nullable = false, length = 100)
+    @Id
+    private String code;
 
-    private String zip;
+    @InstanceName
+    @Column(name = "NAME")
+    private String name;
 
-    private String addressLine;
-
-    private Country country;
-
-    public Country getCountry() {
-        return country;
+    public String getName() {
+        return name;
     }
 
-    public void setCountry(Country country) {
-        this.country = country;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getAddressLine() {
-        return addressLine;
+    public String getCode() {
+        return code;
     }
 
-    public void setAddressLine(String addressLine) {
-        this.addressLine = addressLine;
-    }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public void setZip(String zip) {
-        this.zip = zip;
+    public void setCode(String code) {
+        this.code = code;
     }
 }

@@ -26,19 +26,16 @@ import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component("report_ReportSecurityManager")
 public class ReportSecurityManager {
-
-    public static final String LIST_VIEW_SUFFIX = ".list";
-
     @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
 
@@ -60,15 +57,15 @@ public class ReportSecurityManager {
     /**
      * Apply security constraints for query to select reports available by roles and screen restrictions
      *
-     * @param lc          load context
-     * @param screenId    screen id
+     * @param lc load context
+     * @param screen screen id
      * @param userDetails user details
      */
-    public void applySecurityPolicies(LoadContext lc, @Nullable String screenId, @Nullable UserDetails userDetails) {
+    public void applySecurityPolicies(LoadContext lc, @Nullable String screen, @Nullable UserDetails userDetails) {
         QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
-        if (screenId != null) {
+        if (screen != null) {
             transformer.addWhereAsIs("r.screensIdx like :screen escape '\\'");
-            lc.getQuery().setParameter("screen", wrapCodeParameterForSearch(screenId));
+            lc.getQuery().setParameter("screen", wrapCodeParameterForSearch(screen));
         }
         if (userDetails != null) {
             List<BaseRole> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
@@ -90,13 +87,11 @@ public class ReportSecurityManager {
 
     /**
      * Apply constraints for query to select reports which have input parameter with class matching inputValueMetaClass
-     *
-     * @param lc                  load context
-     * @param screenId            screen id
+     * @param lc load context
      * @param inputValueMetaClass meta class of input parameter value
      */
-    public void applyPoliciesByEntityParameters(LoadContext lc, @Nullable String screenId, @Nullable MetaClass inputValueMetaClass) {
-        if (inputValueMetaClass != null && !isListView(screenId)) {
+    public void applyPoliciesByEntityParameters(LoadContext lc, @Nullable MetaClass inputValueMetaClass) {
+        if (inputValueMetaClass != null) {
             QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
             StringBuilder parameterTypeCondition = new StringBuilder("r.inputEntityTypesIdx like :type escape '\\'");
             lc.getQuery().setParameter("type", wrapCodeParameterForSearch(inputValueMetaClass.getName()));
@@ -107,7 +102,7 @@ public class ReportSecurityManager {
                 parameterTypeCondition.append(" or r.inputEntityTypesIdx like :").append(paramName).append(" escape '\\'");
                 lc.getQuery().setParameter(paramName, wrapCodeParameterForSearch(metaClass.getName()));
             }
-            transformer.addWhereAsIs(String.format("(%s)", parameterTypeCondition));
+            transformer.addWhereAsIs(String.format("(%s)", parameterTypeCondition.toString()));
             lc.getQuery().setQueryString(transformer.getResult());
         }
     }
@@ -154,15 +149,11 @@ public class ReportSecurityManager {
             query.setSort(sort);
         }
         applySecurityPolicies(lc, screenId, user);
-        applyPoliciesByEntityParameters(lc, screenId, inputValueMetaClass);
+        applyPoliciesByEntityParameters(lc, inputValueMetaClass);
         return dataManager.loadList(lc);
     }
 
     protected String wrapCodeParameterForSearch(String value) {
         return "%," + QueryUtils.escapeForLike(value) + ",%";
-    }
-
-    protected boolean isListView(@Nullable String screenId) {
-        return screenId != null && screenId.toLowerCase().contains(LIST_VIEW_SUFFIX);
     }
 }

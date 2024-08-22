@@ -17,17 +17,18 @@
 package io.jmix.restds.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.jmix.core.entity.EntityValues;
+import io.jmix.restds.auth.RestAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -40,27 +41,23 @@ import org.springframework.web.util.UriBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @SuppressWarnings("UnnecessaryLocalVariable")
 @Component("restds_RestInvoker")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class RestInvoker {
+public class RestInvoker implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(RestInvoker.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final RestClient restClient;
-    private final RestClient authClient;
+    private final String dataStoreName;
+    private final RestAuthenticator authenticator;
 
-    private final String clientId;
-    private final String clientSecret;
+    private RestClient restClient;
 
-    private String authToken;
-
-    private final ReadWriteLock authLock = new ReentrantReadWriteLock();
+    @Autowired
+    private Environment environment;
 
     public record LoadParams(String entityName,
                                  Object id,
@@ -83,93 +80,20 @@ public class RestInvoker {
         }
     }
 
-    public RestInvoker(RestConnectionParams connectionParams) {
-        this(connectionParams.baseUrl(), connectionParams.clientId(), connectionParams.clientSecret());
+    public RestInvoker(String dataStoreName, RestAuthenticator authenticator) {
+        this.dataStoreName = dataStoreName;
+        this.authenticator = authenticator;
     }
 
-    public RestInvoker(String baseUrl, String clientId, String clientSecret) {
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
+    @Override
+    public void afterPropertiesSet() {
+        String baseUrl = environment.getRequiredProperty(dataStoreName + ".baseUrl");
 
         restClient = RestClient.builder()
                 .baseUrl(baseUrl)
-                .requestInterceptor(new RetryingClientHttpRequestInterceptor())
-                .requestInterceptor(new LoggingClientHttpRequestInterceptor(true))
+                .requestInterceptor(authenticator.getAuthenticationInterceptor(dataStoreName))
+                .requestInterceptor(new LoggingClientHttpRequestInterceptor())
                 .build();
-
-        authClient = RestClient.builder()
-                .baseUrl(baseUrl)
-                .requestInterceptor(new LoggingClientHttpRequestInterceptor(false))
-                .build();
-    }
-
-    public String getAuthenticationToken() {
-        authLock.readLock().lock();
-        try {
-            if (authToken != null) {
-                return authToken;
-            }
-        } finally {
-            authLock.readLock().unlock();
-        }
-
-        authLock.writeLock().lock();
-        try {
-            if (authToken == null) {
-                authToken = obtainAuthToken(clientId, clientSecret);
-            }
-            return authToken;
-        } finally {
-            authLock.writeLock().unlock();
-        }
-    }
-
-    public void resetAuthToken() {
-        authLock.writeLock().lock();
-        try {
-            authToken = null;
-        } finally {
-            authLock.writeLock().unlock();
-        }
-    }
-
-    private String obtainAuthToken(String clientId, String clientSecret) {
-        ResponseEntity<String> authResponse = authClient.post()
-                .uri("/oauth2/token")
-                .headers(httpHeaders -> {
-                    httpHeaders.setBasicAuth(clientId, clientSecret);
-                    httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                })
-                .body("grant_type=client_credentials")
-                .retrieve()
-                .toEntity(String.class);
-        try {
-            JsonNode rootNode = objectMapper.readTree(authResponse.getBody());
-            return rootNode.get("access_token").asText();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void revokeAuthenticationToken() {
-        authLock.readLock().lock();
-        try {
-            if (authToken == null) {
-                log.warn("No auth token in use");
-                return;
-            }
-            authClient.post()
-                    .uri("/oauth2/revoke")
-                    .headers(httpHeaders -> {
-                        httpHeaders.setBasicAuth(clientId, clientSecret);
-                        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                    })
-                    .body("token=" + authToken)
-                    .retrieve()
-                    .toBodilessEntity();
-        } finally {
-            authLock.readLock().unlock();
-        }
     }
 
     @Nullable
@@ -304,32 +228,16 @@ public class RestInvoker {
                 .toBodilessEntity();
     }
 
-    private class RetryingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
-        @Override
-        public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-            request.getHeaders().setBearerAuth(getAuthenticationToken());
-            ClientHttpResponse response = execution.execute(request, body);
-            if (response.getStatusCode().is4xxClientError() && response.getStatusCode().value() == 401) {
-                resetAuthToken();
-                request.getHeaders().setBearerAuth(getAuthenticationToken());
-                response = execution.execute(request, body);
-            }
-            return response;
-        }
+    public RestAuthenticator getAuthenticator() {
+        return authenticator;
     }
 
     private static class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-        private final boolean traceBody;
-
-        public LoggingClientHttpRequestInterceptor(boolean traceBody) {
-            this.traceBody = traceBody;
-        }
-
         @Override
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
             log.debug("Request: {} {}", request.getMethod(), request.getURI());
-            if (traceBody && (request.getMethod().equals(HttpMethod.POST) || request.getMethod().equals(HttpMethod.PUT)))
+            if (request.getMethod().equals(HttpMethod.POST) || request.getMethod().equals(HttpMethod.PUT))
                 log.trace("Request body: {}", new String(body));
 
             ClientHttpResponse response = execution.execute(request, body);

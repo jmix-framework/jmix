@@ -17,7 +17,8 @@
 package rest_invoker;
 
 import io.jmix.core.Metadata;
-import io.jmix.restds.impl.RestConnectionParams;
+import io.jmix.restds.auth.JmixRestClientCredentialsAuthenticator;
+import io.jmix.restds.auth.RestAuthenticator;
 import io.jmix.restds.impl.RestInvoker;
 import io.jmix.restds.impl.RestSerialization;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import test_support.BaseRestDsIntegrationTest;
-import test_support.SampleServiceConnection;
 import test_support.entity.Customer;
 
 import java.time.LocalDateTime;
@@ -46,11 +46,8 @@ class RestInvokerTest extends BaseRestDsIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        restInvoker = applicationContext.getBean(
-                RestInvoker.class,
-                new RestConnectionParams(SampleServiceConnection.getInstance().getBaseUrl(),
-                        SampleServiceConnection.CLIENT_ID,
-                        SampleServiceConnection.CLIENT_SECRET));
+        RestAuthenticator authenticator = applicationContext.getBean(JmixRestClientCredentialsAuthenticator.class);
+        restInvoker = applicationContext.getBean(RestInvoker.class, "restService1", authenticator);
     }
 
     @Test

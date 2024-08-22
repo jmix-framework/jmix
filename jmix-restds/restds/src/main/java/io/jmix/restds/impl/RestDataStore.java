@@ -25,11 +25,11 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.restds.annotation.RestDataStoreEntity;
+import io.jmix.restds.auth.RestAuthenticator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -321,13 +321,11 @@ public class RestDataStore extends AbstractDataStore {
     @Override
     public void setName(String name) {
         storeName = name;
+        this.restInvoker = applicationContext.getBean(RestInvoker.class, storeName, getRestAuthenticator());
+    }
 
-        Environment environment = applicationContext.getEnvironment();
-        String baseUrl = environment.getRequiredProperty(storeName + ".baseUrl");
-        String clientId = environment.getRequiredProperty(storeName + ".clientId");
-        String clientSecret = environment.getRequiredProperty(storeName + ".clientSecret");
-
-        this.restInvoker = applicationContext.getBean(RestInvoker.class, new RestConnectionParams(baseUrl, clientId, clientSecret));
+    private RestAuthenticator getRestAuthenticator() {
+        return applicationContext.getBean(RestAuthenticator.class);
     }
 
     protected static class DummyTransactionContextState implements TransactionContextState {

@@ -564,7 +564,7 @@ class DataContextTest extends DataContextSpec {
 
         then:
 
-        !customer.address.__getEntityEntry().propertyChangeListeners.isEmpty()
+        !customer.address.__getEntityEntry().weakPropertyChangeListeners.isEmpty()
 
         when:
 
@@ -572,7 +572,7 @@ class DataContextTest extends DataContextSpec {
 
         then:
 
-        customer.address.__getEntityEntry().propertyChangeListeners.isEmpty()
+        customer.address.__getEntityEntry().weakPropertyChangeListeners.isEmpty()
     }
 
     def "removed embedded entity has no PropertyChangeListener"() {
@@ -588,7 +588,7 @@ class DataContextTest extends DataContextSpec {
 
         then:
 
-        !customer.address.__getEntityEntry().propertyChangeListeners.isEmpty()
+        !customer.address.__getEntityEntry().weakPropertyChangeListeners.isEmpty()
 
         when:
 
@@ -596,7 +596,7 @@ class DataContextTest extends DataContextSpec {
 
         then:
 
-        customer.address.__getEntityEntry().propertyChangeListeners.isEmpty()
+        customer.address.__getEntityEntry().weakPropertyChangeListeners.isEmpty()
     }
 
     def "create entity"() {

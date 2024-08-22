@@ -36,19 +36,29 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
-    implementation 'io.swagger.core.v3:swagger-models-jakarta'
-    implementation 'io.swagger.core.v3:swagger-core-jakarta'
-
     testImplementation project(':data')
     testImplementation project(':eclipselink')
     testImplementation project(':security')
 
+    testImplementation 'org.testcontainers:testcontainers:1.20.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.apache.commons:commons-dbcp2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
-    testImplementation 'org.apache.commons:commons-dbcp2'
+    testRuntimeOnly 'ch.qos.logback:logback-classic'
+}
+
+boolean skipRestDsTests = project.rootProject.findProperty('skipRestDsTests')?.toBoolean() ?: false
+boolean useStandaloneServiceForRestDsTests = project.rootProject.findProperty('useStandaloneServiceForRestDsTests')?.toBoolean() ?: false
+
+tasks.named('test') {
+    onlyIf { !skipRestDsTests }
+    if (useStandaloneServiceForRestDsTests) {
+        systemProperty('useStandaloneServiceForRestDsTests', true)
+    } else {
+        dependsOn(':sample-rest-service:bootJar')
+    }
 }

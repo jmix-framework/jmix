@@ -20,21 +20,15 @@ import io.jmix.core.DataManager;
 import io.jmix.core.impl.DataStoreFactory;
 import io.jmix.restds.impl.RestDataStore;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import test_support.AuthenticatedAsSystem;
-import test_support.TestRestDsConfiguration;
+import test_support.BaseRestDsIntegrationTest;
 import test_support.TestSupport;
 import test_support.entity.Customer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-@ContextConfiguration(classes = TestRestDsConfiguration.class)
-@ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
-public class AuthTokenExpirationTest {
+public class AuthTokenExpirationTest extends BaseRestDsIntegrationTest {
 
     @Autowired
     DataManager dataManager;

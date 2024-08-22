@@ -31,11 +31,11 @@ public class SampleDataInitializer {
         List<Customer> customers = dataManager.load(Customer.class).all().maxResults(1).list();
         if (!customers.isEmpty()) {
             log.info("Customers already exist, skipping initialization");
-            return;
+        } else {
+            List<CustomerRegion> regions = createRegions();
+            createCustomers(regions);
         }
-
-        List<CustomerRegion> regions = createRegions();
-        createCustomers(regions);
+        log.info("Ready for testing");
     }
 
     private List<CustomerRegion> createRegions() {

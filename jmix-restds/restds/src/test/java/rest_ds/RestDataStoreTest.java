@@ -26,11 +26,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import test_support.AuthenticatedAsSystem;
-import test_support.SampleServiceConnection;
-import test_support.TestRestDsConfiguration;
-import test_support.TestSupport;
+import test_support.*;
 import test_support.entity.Country;
 import test_support.entity.Customer;
 import test_support.entity.CustomerRegionDto;
@@ -41,9 +40,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-@ContextConfiguration(classes = TestRestDsConfiguration.class)
-@ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
-public class RestDataStoreTest {
+public class RestDataStoreTest extends BaseRestDsIntegrationTest {
 
     @Autowired
     DataManager dataManager;

@@ -91,7 +91,15 @@
                     <xs:attribute name="slotMinTime" type="xs:string"/>
                     <xs:attribute name="slotMaxTime" type="xs:string"/>
                     <xs:attribute name="scrollTime" type="xs:string"/>
-                    <xs:attribute name="scrollTimeReset" type="xs:string"/>
+                    <xs:attribute name="scrollTimeReset" type="xs:boolean"/>
+
+                    <xs:attribute name="defaultAllDay" type="xs:boolean"/>
+                    <xs:attribute name="defaultAllDayEventDuration" type="xs:string"/>
+                    <xs:attribute name="defaultTimedEventDuration" type="xs:string"/>
+                    <xs:attribute name="forceEventDuration" type="xs:boolean"/>
+
+                    <xs:attribute name="initialDate" type="xs:string"/>
+                    <xs:attribute name="dateAlignment" type="xs:string"/>
 
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>

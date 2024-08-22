@@ -752,6 +752,79 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getScrollTimeReset().setValue(scrollTimeReset);
     }
 
+    public boolean isDefaultAllDay() {
+        return options.getDefaultAllDay().getNotNullValue();
+    }
+
+    /**
+     * Note, events without allDay property will be shown as all-day events. If such event will be changed by dragging
+     * or resizing calendar will set allDay = true to entity instance.
+     *
+     * @param defaultAllDay
+     */
+    public void setDefaultAllDay(boolean defaultAllDay) {
+        options.getDefaultAllDay().setValue(defaultAllDay);
+    }
+
+    @Nullable
+    public CalendarDuration getDefaultAllDayEventDuration() {
+        return options.getDefaultAllDayEventDuration().getValue();
+    }
+
+    public void setDefaultAllDayEventDuration(@Nullable CalendarDuration duration) {
+        options.getDefaultAllDayEventDuration().setValue(duration);
+    }
+
+    @Nullable
+    public CalendarDuration getDefaultTimedEventDuration() {
+        return options.getDefaultTimedEventDuration().getValue();
+    }
+
+    public void setDefaultTimedEventDuration(@Nullable CalendarDuration duration) {
+        options.getDefaultTimedEventDuration().setValue(duration);
+    }
+
+    public boolean isForceEventDuration() {
+        return options.getForceEventDuration().getNotNullValue();
+    }
+
+    /**
+     * Note, if event does not have end date, calendar will set it explicitly. For instance, if event is entity
+     * instance the `endDate` property will be changed after dragging or resizing event.
+     *
+     * @param forceEventDuration
+     */
+    public void setForceEventDuration(boolean forceEventDuration) {
+        options.getForceEventDuration().setValue(forceEventDuration);
+    }
+
+    @Nullable
+    public LocalDate getInitialDate() {
+        return options.getInitialDate().getValue();
+    }
+
+    public void setInitialDate(@Nullable LocalDate initialDate) {
+        options.getInitialDate().setValue(initialDate);
+    }
+
+    @Nullable
+    public CalendarDuration getDateIncrement() {
+        return options.getDateIncrement().getValue();
+    }
+
+    public void setDateIncrement(CalendarDuration dateIncrement) {
+        options.getDateIncrement().setValue(dateIncrement);
+    }
+
+    @Nullable
+    public String getDateAlignment() {
+        return options.getDateAlignment().getValue();
+    }
+
+    public void setDateAlignment(@Nullable String alignment) {
+        options.getDateAlignment().setValue(alignment);
+    }
+
     protected JmixFullCalendarSerializer createSerializer() {
         return new JmixFullCalendarSerializer();
     }

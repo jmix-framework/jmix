@@ -26,7 +26,7 @@ import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
 import org.dom4j.Element;
 import org.springframework.lang.Nullable;
 
-import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,6 +118,14 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadDuration(element, "slotMaxTime", resultComponent::setSlotMaxTime);
         loadDuration(element, "scrollTime", resultComponent::setScrollTime);
         loadBoolean(element, "scrollTimeReset", resultComponent::setScrollTimeReset);
+
+        loadBoolean(element, "defaultAllDay", resultComponent::setDefaultAllDay);
+        loadDuration(element, "defaultAllDayEventDuration", resultComponent::setDefaultAllDayEventDuration);
+        loadDuration(element, "defaultTimedEventDuration", resultComponent::setDefaultTimedEventDuration);
+        loadBoolean(element, "forceEventDuration", resultComponent::setForceEventDuration);
+
+        loadString(element, "initialDate", (s) -> resultComponent.setInitialDate(LocalDate.parse(s)));
+        loadString(element, "dateAlignment", resultComponent::setDateAlignment);
 
         loadEventProviders(element, "containerEventProvider",
                 (ep) -> resultComponent.addEventProvider((CalendarEventProvider) ep));

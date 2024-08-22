@@ -19,6 +19,7 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
 import jakarta.annotation.Nullable;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -80,6 +81,17 @@ public class JmixFullCalendarOptions {
     protected SimpleOption<Boolean> scrollTimeReset = new SimpleOption<>("scrollTimeReset", true);
     protected SimpleOption<Boolean> slotLabelClassNames = new SimpleOption<>("slotLabelClassNames", false);
 
+    protected SimpleOption<Boolean> defaultAllDay = new SimpleOption<>("defaultAllDay", false);
+    // todo rework loading and parsing with java.time.Duration
+    protected SimpleOption<CalendarDuration> defaultAllDayEventDuration = new SimpleOption<>("defaultAllDayEventDuration", CalendarDuration.ofDays(1));
+    protected SimpleOption<CalendarDuration> defaultTimedEventDuration = new SimpleOption<>("defaultTimedEventDuration", CalendarDuration.ofHours(1));
+    protected SimpleOption<Boolean> forceEventDuration = new SimpleOption<>("forceEventDuration", false);
+    protected SimpleOption<CalendarDuration> dateIncrement = new SimpleOption<>("dateIncrement");
+    protected SimpleOption<String> dateAlignment = new SimpleOption<>("dateAlignment", "");
+
+
+    protected SimpleOption<LocalDate> initialDate = new SimpleOption<>("initialDate");
+
     protected final List<CalendarOption> updatableOptions = new ArrayList<>(28);
 
     /**
@@ -95,11 +107,13 @@ public class JmixFullCalendarOptions {
                 eventDurationEditable, eventResizableFromStart, eventDragMinDistance, eventOverlap, dragRevertDuration,
                 snapDuration, allDayMaintainDuration, selectable, selectMirror, unselectCancel,
                 selectOverlap, selectAllow, visibleRange, weekends, dayHeaderClassNames, dayCellClassNames,
-                slotDuration, slotLabelInterval, slotMinTime, slotMaxTime, slotLabelClassNames));
+                slotDuration, slotLabelInterval, slotMinTime, slotMaxTime, slotLabelClassNames, defaultAllDay,
+                defaultAllDayEventDuration, defaultTimedEventDuration, forceEventDuration, dateIncrement,
+                dateAlignment));
 
         initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll,
                 dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat,
-                eventMinHeight, eventShortHeight, slotEventOverlap, scrollTime, scrollTimeReset));
+                eventMinHeight, eventShortHeight, slotEventOverlap, scrollTime, scrollTimeReset, initialDate));
 
         updatableOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
         initialOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
@@ -309,6 +323,34 @@ public class JmixFullCalendarOptions {
 
     public SimpleOption<Boolean> getSlotLabelClassNames() {
         return slotLabelClassNames;
+    }
+
+    public SimpleOption<Boolean> getDefaultAllDay() {
+        return defaultAllDay;
+    }
+
+    public SimpleOption<CalendarDuration> getDefaultAllDayEventDuration() {
+        return defaultAllDayEventDuration;
+    }
+
+    public SimpleOption<CalendarDuration> getDefaultTimedEventDuration() {
+        return defaultTimedEventDuration;
+    }
+
+    public SimpleOption<Boolean> getForceEventDuration() {
+        return forceEventDuration;
+    }
+
+    public SimpleOption<LocalDate> getInitialDate() {
+        return initialDate;
+    }
+
+    public SimpleOption<CalendarDuration> getDateIncrement() {
+        return dateIncrement;
+    }
+
+    public SimpleOption<String> getDateAlignment() {
+        return dateAlignment;
     }
 
     public boolean isInitial(CalendarOption option) {

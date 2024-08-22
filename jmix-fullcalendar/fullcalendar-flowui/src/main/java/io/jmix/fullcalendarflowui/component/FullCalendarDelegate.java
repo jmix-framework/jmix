@@ -28,10 +28,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
@@ -100,19 +97,64 @@ public class FullCalendarDelegate {
 
         List<String> classNames = fullCalendar.getDayHeaderClassNamesGenerator()
                 .apply(new DayHeaderClassNamesContext(
-                        parseAndTransform(clientContext.getDate(), getComponentZoneId()),
+                        LocalDate.parse(clientContext.getDate()),
                         Objects.requireNonNull(DayOfWeek.fromId(clientContext.getDow())),
                         clientContext.isDisabled(),
                         clientContext.isFuture(),
                         clientContext.isOther(),
                         clientContext.isPast(),
-                        clientContext.isToday()));
+                        clientContext.isToday(),
+                        createViewInfo(clientContext.getView())));
 
         JsonArray result = classNames == null
                 ? jsonFactory.createArray()
                 : fullCalendar.getSerializer().toJsonArrayFromString(classNames);
 
         log.debug("Serialized 'DayHeaderClassNames': {}", result.toJson());
+
+        return result;
+    }
+
+    public JsonArray getDayCellClassNames(DomDayCellClassNames clientContext) {
+        if (fullCalendar.getDayCellClassNamesGenerator() == null) {
+            return jsonFactory.createArray();
+        }
+
+        List<String> classNames = fullCalendar.getDayCellClassNamesGenerator()
+                .apply(new DayCellClassNamesContext(
+                        LocalDate.parse(clientContext.getDate()),
+                        Objects.requireNonNull(DayOfWeek.fromId(clientContext.getDow())),
+                        clientContext.isDisabled(),
+                        clientContext.isFuture(),
+                        clientContext.isOther(),
+                        clientContext.isPast(),
+                        clientContext.isToday(),
+                        createViewInfo(clientContext.getView())));
+
+        JsonArray result = classNames == null
+                ? jsonFactory.createArray()
+                : fullCalendar.getSerializer().toJsonArrayFromString(classNames);
+
+        log.debug("Serialized 'DayCellClassNames': {}", result.toJson());
+
+        return result;
+    }
+
+    public JsonArray getSlotLabelClassNames(DomSlotLabelClassNames clientContext) {
+        if (fullCalendar.getSlotLabelClassNamesGenerator() == null) {
+            return jsonFactory.createArray();
+        }
+
+        List<String> classNames = fullCalendar.getSlotLabelClassNamesGenerator()
+                .apply(new SlotLabelClassNamesContext(
+                        LocalTime.parse(clientContext.getTime()),
+                        createViewInfo(clientContext.getView())));
+
+        JsonArray result = classNames == null
+                ? jsonFactory.createArray()
+                : fullCalendar.getSerializer().toJsonArrayFromString(classNames);
+
+        log.debug("Serialized 'SlotLabelClassNames': {}", result.toJson());
 
         return result;
     }

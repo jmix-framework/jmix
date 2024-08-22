@@ -21,11 +21,14 @@ import Options, {
     processInitialOptions,
     MORE_LINK_CLASS_NAMES,
     MORE_LINK_CLICK,
-    DAY_HEADER_CLASS_NAMES
+    DAY_HEADER_CLASS_NAMES,
+    DAY_CELL_CLASS_NAMES,
+    SLOT_LABEL_CLASS_NAMES
 } from './Options.js';
 
 const FC_LINK_CLASS_NAME = 'fc-more-link';
 const FC_COL_HEADER_CELL = 'fc-col-header-cell';
+const FC_TIMEGRID_SLOT_LABEL = 'fc-timegrid-slot-label';
 
 class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     static get template() {
@@ -76,7 +79,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.jmixOptions = new Options(this.calendar, this);
         this.jmixOptions.addListener(MORE_LINK_CLICK, this._onMoreLinkClick.bind(this));
         this.jmixOptions.addListener(MORE_LINK_CLASS_NAMES, this._onMoreLinkClassNames.bind(this));
-        this.jmixOptions.addListener(DAY_HEADER_CLASS_NAMES, this._onDayHeaderCellClassNames.bind(this));
+        this.jmixOptions.addListener(DAY_HEADER_CLASS_NAMES, this._onDayHeaderClassNames.bind(this));
+        this.jmixOptions.addListener(DAY_CELL_CLASS_NAMES, this._onDayCellClassNames.bind(this));
+        this.jmixOptions.addListener(SLOT_LABEL_CLASS_NAMES, this._onSlotLabelClassNames.bind(this));
 
         this._onI18nChange(this.i18n);
 
@@ -256,10 +261,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         return fetchFunction;
     }
 
-    _onDayHeaderCellClassNames(e) {
+    _onDayHeaderClassNames(e) {
         const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         const context = {
-            date: dateFormatter(e.date),
+            date: dateFormatter(e.date, true), // omit time
             dow: e.dow,
             isDisabled: e.isDisabled,
             isFuture: e.isFuture,
@@ -275,8 +280,61 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             for (const element of this.getElementsByClassName(FC_COL_HEADER_CELL)) {
                 const target = calendarUtils.findElementRecursivelyByInnerText(element, e.text);
                 if (target) {
-                    target.classList.remove(...classNames);
-                    target.classList.add(...classNames);
+                    element.classList.remove(...classNames);
+                    element.classList.add(...classNames);
+                }
+            }
+        });
+    }
+
+    _onDayCellClassNames(e) {
+        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
+        const dateStr = dateFormatter(e.date, true); // omit time
+        const context = {
+            date: dateStr,
+            dow: e.dow,
+            isDisabled: e.isDisabled,
+            isFuture: e.isFuture,
+            isOther: e.isOther,
+            isPast: e.isPast,
+            isToday: e.isToday,
+            view: calendarUtils.viewToServerObject(e.view, dateFormatter)
+        }
+
+        const classNamesPromise = this.$server.getDayCellClassNames(context);
+        classNamesPromise.then((classNames) => {
+            if (!classNames || classNames.length === 0) {
+                return
+            }
+            // Find generated element and assign classNames
+            for (const element of this.querySelectorAll("[data-date='" + dateStr + "']")) {
+                if (element.nodeName === 'TD') {
+                    element.classList.remove(...classNames);
+                    element.classList.add(...classNames);
+                }
+            }
+        });
+    }
+
+    _onSlotLabelClassNames(e) {
+        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
+        const timeStr = moment(e.date).format('HH:mm:ss');
+        const context = {
+            time: timeStr,
+            view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+        }
+
+        const classNamesPromise = this.$server.getSlotLabelClassNames(context);
+        classNamesPromise.then((classNames) => {
+            if (!classNames || classNames.length === 0) {
+                return
+            }
+            // Find generated element and assign classNames
+            for (const linkElement of this.getElementsByClassName(FC_TIMEGRID_SLOT_LABEL)) {
+                if (linkElement.dataset.time === timeStr) {
+                    linkElement.classList.remove(...classNames);
+                    linkElement.classList.add(...classNames);
+                    return;
                 }
             }
         });
@@ -291,6 +349,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         }
         const classNamesPromise = this.$server.getMoreLinkClassNames(context);
         classNamesPromise.then((classNames) => {
+            if (!classNames || classNames.length === 0) {
+                return
+            }
             // Find generated element and assign classNames
             for (const linkElement of this.getElementsByClassName(FC_LINK_CLASS_NAME)) {
                 if (linkElement.innerText === e.text) {

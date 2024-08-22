@@ -70,6 +70,15 @@ public class JmixFullCalendarOptions {
     protected SimpleOption<Boolean> weekends = new SimpleOption<>("weekends", true);
     protected SimpleOption<Boolean> dayHeaders = new SimpleOption<>("dayHeaders", true);
     protected SimpleOption<Boolean> dayHeaderClassNames = new SimpleOption<>("dayHeaderClassNames", false);
+    protected SimpleOption<Boolean> dayCellClassNames = new SimpleOption<>("dayCellClassNames", false);
+
+    protected SimpleOption<CalendarDuration> slotDuration = new SimpleOption<>("slotDuration", CalendarDuration.ofMinutes(30));
+    protected SimpleOption<CalendarDuration> slotLabelInterval = new SimpleOption<>("slotLabelInterval");
+    protected SimpleOption<CalendarDuration> slotMinTime = new SimpleOption<>("slotMinTime", CalendarDuration.ofHours(0));
+    protected SimpleOption<CalendarDuration> slotMaxTime = new SimpleOption<>("slotMaxTime", CalendarDuration.ofHours(24));
+    protected SimpleOption<CalendarDuration> scrollTime = new SimpleOption<>("scrollTime", CalendarDuration.ofHours(6));
+    protected SimpleOption<Boolean> scrollTimeReset = new SimpleOption<>("scrollTimeReset", true);
+    protected SimpleOption<Boolean> slotLabelClassNames = new SimpleOption<>("slotLabelClassNames", false);
 
     protected final List<CalendarOption> updatableOptions = new ArrayList<>(28);
 
@@ -85,11 +94,12 @@ public class JmixFullCalendarOptions {
                 eventMaxStack, dayMaxEvents, moreLinkClick, moreLinkClassNames, eventStartEditable,
                 eventDurationEditable, eventResizableFromStart, eventDragMinDistance, eventOverlap, dragRevertDuration,
                 snapDuration, allDayMaintainDuration, selectable, selectMirror, unselectCancel,
-                selectOverlap, selectAllow, visibleRange, weekends, dayHeaderClassNames));
+                selectOverlap, selectAllow, visibleRange, weekends, dayHeaderClassNames, dayCellClassNames,
+                slotDuration, slotLabelInterval, slotMinTime, slotMaxTime, slotLabelClassNames));
 
         initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll,
                 dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat,
-                eventMinHeight, eventShortHeight, slotEventOverlap));
+                eventMinHeight, eventShortHeight, slotEventOverlap, scrollTime, scrollTimeReset));
 
         updatableOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
         initialOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
@@ -267,6 +277,38 @@ public class JmixFullCalendarOptions {
 
     public SimpleOption<Boolean> getDayHeaderClassNames() {
         return dayHeaderClassNames;
+    }
+
+    public SimpleOption<Boolean> getDayCellClassNames() {
+        return dayCellClassNames;
+    }
+
+    public SimpleOption<CalendarDuration> getSlotDuration() {
+        return slotDuration;
+    }
+
+    public SimpleOption<CalendarDuration> getSlotLabelInterval() {
+        return slotLabelInterval;
+    }
+
+    public SimpleOption<CalendarDuration> getSlotMinTime() {
+        return slotMinTime;
+    }
+
+    public SimpleOption<CalendarDuration> getSlotMaxTime() {
+        return slotMaxTime;
+    }
+
+    public SimpleOption<CalendarDuration> getScrollTime() {
+        return scrollTime;
+    }
+
+    public SimpleOption<Boolean> getScrollTimeReset() {
+        return scrollTimeReset;
+    }
+
+    public SimpleOption<Boolean> getSlotLabelClassNames() {
+        return slotLabelClassNames;
     }
 
     public boolean isInitial(CalendarOption option) {

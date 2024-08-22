@@ -31,10 +31,13 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
+
+    private final Pattern durationPattern = Pattern.compile("(\\d+:\\d+)(:\\d+(\\.\\d+)?)?");
 
     @Override
     protected FullCalendar createComponent() {
@@ -75,7 +78,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
 
         loadBoolean(element, "allDayMaintainDurationEnabled",
                 resultComponent::setAllDayMaintainDurationEnabled);
-        loadSnapDuration(element, resultComponent::setSnapDuration);
+        loadDuration(element, "snapDuration", resultComponent::setSnapDuration);
 
         loadBoolean(element, "businessHoursEnabled", resultComponent::setBusinessHoursEnabled);
         loadBusinessHours(element, resultComponent::setBusinessHours);
@@ -109,6 +112,12 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
 
         loadHiddenDays(element, resultComponent);
 
+        loadDuration(element, "slotDuration", resultComponent::setSlotDuration);
+        loadDuration(element, "slotLabelInterval", resultComponent::setSlotLabelInterval);
+        loadDuration(element, "slotMinTime", resultComponent::setSlotMinTime);
+        loadDuration(element, "slotMaxTime", resultComponent::setSlotMaxTime);
+        loadDuration(element, "scrollTime", resultComponent::setScrollTime);
+        loadBoolean(element, "scrollTimeReset", resultComponent::setScrollTimeReset);
 
         loadEventProviders(element, "containerEventProvider",
                 (ep) -> resultComponent.addEventProvider((CalendarEventProvider) ep));
@@ -269,19 +278,33 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
                 .toList();
     }
 
-    protected void loadSnapDuration(Element element, Consumer<CalendarDuration> setter) {
-        loadString(element, "snapDuration")
+    protected void loadDuration(Element element, String attribute, Consumer<CalendarDuration> setter) {
+        loadString(element, attribute)
                 .ifPresent(s -> {
-                    try {
-                        LocalTime time = LocalTime.parse(s);
-                        setter.accept(CalendarDuration.ofHours(time.getHour())
-                                .plusMinutes(time.getMinute())
-                                .plusSeconds(time.getSecond())
-                                .plusMilliseconds((int) TimeUnit.NANOSECONDS.toMillis(time.getNano())));
-                    } catch (DateTimeException e) {
-                        throw new GuiDevelopmentException("Invalid snap duration format. Use one of the following" +
+                    Matcher matcher = durationPattern.matcher(s);
+                    if (!matcher.matches()) {
+                        throw new GuiDevelopmentException("Invalid duration format. Use one of the following" +
                                 " formats: hh:mm:ss.sss, hh:mm:ss, hh:mm", context);
                     }
+
+                    String[] durationParts = s.split(":");
+
+                    CalendarDuration duration = CalendarDuration
+                            .ofHours(Integer.parseInt(durationParts[0]))
+                            .plusMinutes(Integer.parseInt(durationParts[1]));
+
+                    if (durationParts.length == 3) {
+                        String secondsPart = durationParts[2];
+                        if (secondsPart.contains(".")) {
+                            String[] secondsParts = secondsPart.split("\\.");
+                            duration = duration
+                                    .plusSeconds(Integer.parseInt(secondsParts[0]))
+                                    .plusMilliseconds(Integer.parseInt(secondsParts[1].substring(0, 3)));
+                        } else {
+                            duration = duration.plusSeconds(Integer.parseInt(secondsPart));
+                        }
+                    }
+                    setter.accept(duration);
                 });
     }
 

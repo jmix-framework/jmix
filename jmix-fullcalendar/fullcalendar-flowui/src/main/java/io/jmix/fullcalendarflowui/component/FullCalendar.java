@@ -47,6 +47,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     protected Function<MoreLinkClassNamesContext, List<String>> linkMoreClassNamesGenerator;
     protected Function<DayHeaderClassNamesContext, List<String>> dayHeaderClassNamesGenerator;
+    protected Function<DayCellClassNamesContext, List<String>> dayCellClassNamesGenerator;
+    protected Function<SlotLabelClassNamesContext, List<String>> slotLabelClassNamesGenerator;
 
     protected Object eventConstraintGroupId;
     protected Object selectConstraintGroupId;
@@ -419,10 +421,35 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return dayHeaderClassNamesGenerator;
     }
 
-    public void setDayHeaderClassNamesGenerator(@Nullable Function<DayHeaderClassNamesContext, List<String>> classNamesGenerator) {
+    public void setDayHeaderClassNamesGenerator(
+            @Nullable Function<DayHeaderClassNamesContext, List<String>> classNamesGenerator) {
         this.dayHeaderClassNamesGenerator = classNamesGenerator;
 
         options.getDayHeaderClassNames().setValue(classNamesGenerator != null);
+    }
+
+    @Nullable
+    public Function<DayCellClassNamesContext, List<String>> getDayCellClassNamesGenerator() {
+        return dayCellClassNamesGenerator;
+    }
+
+    public void setDayCellClassNamesGenerator(
+            @Nullable Function<DayCellClassNamesContext, List<String>> dayCellClassNamesGenerator) {
+        this.dayCellClassNamesGenerator = dayCellClassNamesGenerator;
+
+        options.getDayCellClassNames().setValue(dayCellClassNamesGenerator != null);
+    }
+
+    @Nullable
+    public Function<SlotLabelClassNamesContext, List<String>> getSlotLabelClassNamesGenerator() {
+        return slotLabelClassNamesGenerator;
+    }
+
+    public void setSlotLabelClassNamesGenerator(
+            @Nullable Function<SlotLabelClassNamesContext, List<String>> slotLabelClassNamesGenerator) {
+        this.slotLabelClassNamesGenerator = slotLabelClassNamesGenerator;
+
+        options.getSlotLabelClassNames().setValue(slotLabelClassNamesGenerator != null);
     }
 
     @Override
@@ -639,6 +666,20 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         DomDayHeaderClassNames clientContext = deserializer.deserialize(jsonContext, DomDayHeaderClassNames.class);
 
         return calendarDelegate.getDayHeaderClassNames(clientContext);
+    }
+
+    @Override
+    protected JsonArray getDayCellClassNames(JsonObject jsonContext) {
+        DomDayCellClassNames clientContext = deserializer.deserialize(jsonContext, DomDayCellClassNames.class);
+
+        return calendarDelegate.getDayCellClassNames(clientContext);
+    }
+
+    @Override
+    protected JsonArray getSlotLabelClassNames(JsonObject jsonContext) {
+        DomSlotLabelClassNames clientContext = deserializer.deserialize(jsonContext, DomSlotLabelClassNames.class);
+
+        return calendarDelegate.getSlotLabelClassNames(clientContext);
     }
 
     protected EventProviderManager createEventProviderManager(CalendarEventProvider eventProvider) {

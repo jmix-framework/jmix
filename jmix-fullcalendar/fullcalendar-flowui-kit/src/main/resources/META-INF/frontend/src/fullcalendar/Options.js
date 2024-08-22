@@ -6,6 +6,8 @@ export const MORE_LINK_CLICK = 'moreLinkClick';
 export const MORE_LINK_CLASS_NAMES = 'moreLinkClassNames';
 export const UNSELECT_CANCEL = 'unselectCancel';
 export const DAY_HEADER_CLASS_NAMES = 'dayHeaderClassNames';
+export const DAY_CELL_CLASS_NAMES = 'dayCellClassNames';
+export const SLOT_LABEL_CLASS_NAMES = 'slotLabelClassNames';
 const EVENT_OVERLAP = 'eventOverlap';
 const SELECT_OVERLAP = 'selectOverlap';
 const EVENT_CONSTRAINT = 'eventConstraint';
@@ -107,6 +109,8 @@ class Options {
             this._updateDayMaxEvents(options);
 
             this._updateDayHeaderClassNames(options);
+            this._updateDayCellClassNames(options);
+            this._updateSlotLabelClassNames(options);
         });
     }
 
@@ -118,6 +122,8 @@ class Options {
         return MORE_LINK_CLICK === key
             || MORE_LINK_CLASS_NAMES === key
             || DAY_HEADER_CLASS_NAMES === key
+            || DAY_CELL_CLASS_NAMES === key
+            || SLOT_LABEL_CLASS_NAMES === key
             || EVENT_OVERLAP === key
             || EVENT_CONSTRAINT === key
             || BUSINESS_HOURS === key
@@ -278,6 +284,22 @@ class Options {
         }
     }
 
+    _updateDayCellClassNames(options) {
+        const dyCellClassNames = options[DAY_CELL_CLASS_NAMES];
+
+        if (calendarUtils.isNotNullUndefined(dyCellClassNames)) {
+            this.updateOption(DAY_CELL_CLASS_NAMES, dyCellClassNames ? this._onDayCellClassNames.bind(this) : null);
+        }
+    }
+
+    _updateSlotLabelClassNames(options) {
+        const slotLabelClassNames = options[SLOT_LABEL_CLASS_NAMES];
+
+        if (calendarUtils.isNotNullUndefined(slotLabelClassNames)) {
+            this.updateOption(SLOT_LABEL_CLASS_NAMES, slotLabelClassNames ? this._onSlotLabelClassNames.bind(this) : null);
+        }
+    }
+
     _onMoreLinkClick(e) {
         if (this.listeners[MORE_LINK_CLICK]) {
             this.listeners[MORE_LINK_CLICK].forEach((listener) => listener(e));
@@ -295,6 +317,20 @@ class Options {
     _onDayHeaderClassNames(e) {
         if (this.listeners[DAY_HEADER_CLASS_NAMES]) {
             this.listeners[DAY_HEADER_CLASS_NAMES].forEach((listener) => listener(e));
+        }
+        return [];
+    }
+
+    _onDayCellClassNames(e) {
+        if (this.listeners[DAY_CELL_CLASS_NAMES]) {
+            this.listeners[DAY_CELL_CLASS_NAMES].forEach((listener) => listener(e));
+        }
+        return [];
+    }
+
+    _onSlotLabelClassNames(e) {
+        if (this.listeners[SLOT_LABEL_CLASS_NAMES]) {
+            this.listeners[SLOT_LABEL_CLASS_NAMES].forEach((listener) => listener(e));
         }
         return [];
     }

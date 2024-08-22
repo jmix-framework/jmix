@@ -699,6 +699,59 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getDayHeaders().setValue(visible);
     }
 
+    @Nullable
+    public CalendarDuration getSlotDuration() {
+        return options.getSlotDuration().getValue();
+    }
+
+    public void setSlotDuration(@Nullable CalendarDuration duration) {
+        options.getSlotDuration().setValue(duration);
+    }
+
+    @Nullable
+    public CalendarDuration getSlotLabelInterval() {
+        return options.getSlotLabelInterval().getValue();
+    }
+
+    public void setSlotLabelInterval(@Nullable CalendarDuration duration) {
+        options.getSlotLabelInterval().setValue(duration);
+    }
+
+    @Nullable
+    public CalendarDuration getSlotMinTime() {
+        return options.getSlotMinTime().getValue();
+    }
+
+    public void setSlotMinTime(@Nullable CalendarDuration slotMinTime) {
+        options.getSlotMinTime().setValue(slotMinTime);
+    }
+
+    @Nullable
+    public CalendarDuration getSlotMaxTime() {
+        return options.getSlotMaxTime().getValue();
+    }
+
+    public void setSlotMaxTime(@Nullable CalendarDuration slotMaxTime) {
+        options.getSlotMaxTime().setValue(slotMaxTime);
+    }
+
+    @Nullable
+    public CalendarDuration getScrollTime() {
+        return options.getScrollTime().getValue();
+    }
+
+    public void setScrollTime(@Nullable CalendarDuration scrollTime) {
+        options.getScrollTime().setValue(scrollTime);
+    }
+
+    public boolean isScrollTimeReset() {
+        return options.getScrollTimeReset().getNotNullValue();
+    }
+
+    public void setScrollTimeReset(boolean scrollTimeReset) {
+        options.getScrollTimeReset().setValue(scrollTimeReset);
+    }
+
     protected JmixFullCalendarSerializer createSerializer() {
         return new JmixFullCalendarSerializer();
     }
@@ -950,6 +1003,18 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     @ClientCallable
     protected JsonArray getDayHeaderClassNames(JsonObject jsonContext) {
+        // Stub, is used in inheritors
+        return new JreJsonFactory().createArray();
+    }
+
+    @ClientCallable
+    protected JsonArray getDayCellClassNames(JsonObject jsonContext) {
+        // Stub, is used in inheritors
+        return new JreJsonFactory().createArray();
+    }
+
+    @ClientCallable
+    protected JsonArray getSlotLabelClassNames(JsonObject jsonContext) {
         // Stub, is used in inheritors
         return new JreJsonFactory().createArray();
     }

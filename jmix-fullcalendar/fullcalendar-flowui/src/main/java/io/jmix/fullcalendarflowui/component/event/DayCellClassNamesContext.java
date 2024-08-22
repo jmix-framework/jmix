@@ -20,7 +20,7 @@ import io.jmix.fullcalendar.DayOfWeek;
 
 import java.time.LocalDate;
 
-public class DayHeaderClassNamesContext {
+public class DayCellClassNamesContext {
 
     protected final LocalDate date;
 
@@ -38,7 +38,7 @@ public class DayHeaderClassNamesContext {
 
     protected final ViewInfo viewInfo;
 
-    public DayHeaderClassNamesContext(LocalDate date, DayOfWeek dayOfWeek, boolean isDisabled, boolean isFuture,
+    public DayCellClassNamesContext(LocalDate date, DayOfWeek dayOfWeek, boolean isDisabled, boolean isFuture,
                                       boolean isOther, boolean isPast, boolean isToday, ViewInfo viewInfo) {
         this.date = date;
         this.dayOfWeek = dayOfWeek;

@@ -82,9 +82,16 @@
                     <xs:attribute name="eventMinHeight" type="xs:integer"/>
                     <xs:attribute name="eventShortHeight" type="xs:integer"/>
                     <xs:attribute name="slotEventOverlap" type="xs:boolean"/>
-
+                    <!---->
                     <xs:attribute name="weekendsVisible" type="xs:boolean"/>
                     <xs:attribute name="dayHeadersVisible" type="xs:boolean"/>
+
+                    <xs:attribute name="slotDuration" type="xs:string"/>
+                    <xs:attribute name="slotLabelInterval" type="xs:string"/>
+                    <xs:attribute name="slotMinTime" type="xs:string"/>
+                    <xs:attribute name="slotMaxTime" type="xs:string"/>
+                    <xs:attribute name="scrollTime" type="xs:string"/>
+                    <xs:attribute name="scrollTimeReset" type="xs:string"/>
 
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
@@ -173,6 +180,7 @@
 
     <xs:complexType name="baseProviderType">
         <xs:attribute name="id" type="xs:string"/>
+        <!--todo use or remove property word-->
         <xs:attribute name="groupIdProperty" type="xs:string"/>
         <xs:attribute name="allDayProperty" type="xs:string"/>
         <xs:attribute name="startDateTimeProperty" type="xs:string"/>

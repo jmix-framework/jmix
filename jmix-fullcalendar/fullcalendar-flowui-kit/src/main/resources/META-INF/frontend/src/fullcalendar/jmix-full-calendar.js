@@ -110,7 +110,6 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             height: "100%",
             plugins: [dayGridPlugin, timeGridPlugin, listPlugin, multiMonthPlugin, interactionPlugin,
                 momentTimezonePlugin, momentPlugin],
-            timeZone: 'UTC',
             eventClick: (e) => this._onEventClick(e),
             eventMouseEnter: (e) => this._onEventMouseEnter(e),
             eventMouseLeave: (e) => this._onEventMouseLeave(e),

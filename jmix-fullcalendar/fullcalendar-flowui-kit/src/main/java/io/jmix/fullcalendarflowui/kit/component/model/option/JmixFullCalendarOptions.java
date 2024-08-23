@@ -96,6 +96,11 @@ public class JmixFullCalendarOptions {
 
     protected SimpleOption<Boolean> eventInteractive = new SimpleOption<>("eventInteractive", false);
 
+    protected SimpleOption<Integer> longPressDelay = new SimpleOption<>("longPressDelay", 1000);
+    protected SimpleOption<Integer> selectLongPressDelay = new SimpleOption<>("selectLongPressDelay", 1000);
+
+    protected SimpleOption<Boolean> nowIndicator = new SimpleOption<>("nowIndicator", false);
+
     protected final List<CalendarOption> updatableOptions = new ArrayList<>(28);
 
     /**
@@ -113,11 +118,12 @@ public class JmixFullCalendarOptions {
                 selectOverlap, selectAllow, visibleRange, weekends, dayHeaderClassNames, dayCellClassNames,
                 slotDuration, slotLabelInterval, slotMinTime, slotMaxTime, slotLabelClassNames, defaultAllDay,
                 defaultAllDayEventDuration, defaultTimedEventDuration, forceEventDuration, dateIncrement,
-                dateAlignment, expandRows, windowResizeDelay, eventInteractive));
+                dateAlignment, expandRows, windowResizeDelay, eventInteractive, longPressDelay, selectLongPressDelay));
 
         initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll,
                 dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat,
-                eventMinHeight, eventShortHeight, slotEventOverlap, scrollTime, scrollTimeReset, initialDate));
+                eventMinHeight, eventShortHeight, slotEventOverlap, scrollTime, scrollTimeReset, initialDate,
+                nowIndicator));
 
         updatableOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
         initialOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
@@ -367,6 +373,18 @@ public class JmixFullCalendarOptions {
 
     public SimpleOption<Boolean> getEventInteractive() {
         return eventInteractive;
+    }
+
+    public SimpleOption<Integer> getLongPressDelay() {
+        return longPressDelay;
+    }
+
+    public SimpleOption<Integer> getSelectLongPressDelay() {
+        return selectLongPressDelay;
+    }
+
+    public SimpleOption<Boolean> getNowIndicator() {
+        return nowIndicator;
     }
 
     public boolean isInitial(CalendarOption option) {

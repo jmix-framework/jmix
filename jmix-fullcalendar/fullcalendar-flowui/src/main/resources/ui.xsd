@@ -42,7 +42,7 @@
                     <xs:attribute name="dayMaxEvents" type="xs:integer"/>
 
                     <xs:attribute name="eventMaxStack " type="xs:integer"/>
-                    
+
                     <xs:attribute name="moreLinkView" type="calendarViewType"/>
                     <xs:attribute name="moreLinkClassNames" type="xs:string"/>
 
@@ -108,6 +108,11 @@
 
                     <xs:attribute name="eventInteractive" type="xs:boolean"/>
 
+                    <xs:attribute name="longPressDelay" type="xs:integer"/>
+                    <xs:attribute name="selectLongPressDelay" type="xs:integer"/>
+
+                    <xs:attribute name="nowIndicatorVisible" type="xs:boolean"/>
+
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
                 </xs:extension>
@@ -167,7 +172,7 @@
     <xs:complexType name="simpleDayType">
         <xs:attribute name="name" use="required" type="dayOfWeekType"/>
     </xs:complexType>
-    
+
     <xs:simpleType name="dayOfWeekType">
         <xs:restriction>
             <xs:enumeration value="MONDAY"/>
@@ -273,7 +278,7 @@
             <xs:enumeration value="BATCH"/>
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="calendarViewType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="DAY_GRID"/>

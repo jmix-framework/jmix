@@ -134,6 +134,11 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
 
         loadBoolean(element, "eventInteractive", resultComponent::setEventInteractive);
 
+        loadInteger(element, "longPressDelay", resultComponent::setLongPressDelay);
+        loadInteger(element, "selectLongPressDelay", resultComponent::setSelectLongPressDelay);
+
+        loadBoolean(element, "nowIndicatorVisible", resultComponent::setNowIndicatorVisible);
+
         loadEventProviders(element, "containerEventProvider",
                 (ep) -> resultComponent.addEventProvider((CalendarEventProvider) ep));
         loadEventProviders(element, "lazyEventProvider",

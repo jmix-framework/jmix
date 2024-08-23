@@ -833,6 +833,32 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getEventInteractive().setValue(interactive);
     }
 
+    @Nullable
+    public Integer getLongPressDelay() {
+        return options.getLongPressDelay().getValue();
+    }
+
+    public void setLongPressDelay(@Nullable Integer delay) {
+        options.getLongPressDelay().setValue(delay);
+    }
+
+    @Nullable
+    public Integer getSelectLongPressDelay() {
+        return options.getSelectLongPressDelay().getValue();
+    }
+
+    public void setSelectLongPressDelay(@Nullable Integer delay) {
+        options.getSelectLongPressDelay().setValue(delay);
+    }
+
+    public boolean isNowIndicatorVisible() {
+        return options.getNowIndicator().getNotNullValue();
+    }
+
+    public void setNowIndicatorVisible(boolean nowIndicatorVisible) {
+        options.getNowIndicator().setValue(nowIndicatorVisible);
+    }
+
     protected JmixFullCalendarSerializer createSerializer() {
         return new JmixFullCalendarSerializer();
     }

@@ -19,5 +19,6 @@
     }
   ],
   "hideForSubproject": true,
-  "subFolder": "${project_name}-all"
+  "subFolder": "${project_name}-all",
+  "tags": "BPM"
 }

@@ -21,10 +21,15 @@ import java.io.Serializable;
 public class DomViewInfo implements Serializable {
 
     protected String activeEnd;
+
     protected String activeStart;
+
     protected String currentEnd;
+
     protected String currentStart;
+
     protected String title;
+
     protected String type;
 
     public String getActiveEnd() {

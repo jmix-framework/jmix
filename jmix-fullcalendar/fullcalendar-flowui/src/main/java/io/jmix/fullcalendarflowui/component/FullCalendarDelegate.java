@@ -76,6 +76,7 @@ public class FullCalendarDelegate {
 
         List<String> classNames = fullCalendar.getMoreLinkClassNamesGenerator()
                 .apply(new MoreLinkClassNamesContext(
+                        fullCalendar,
                         clientContext.getEventsCount(),
                         clientContext.getShortText(),
                         clientContext.getText(),
@@ -97,6 +98,7 @@ public class FullCalendarDelegate {
 
         List<String> classNames = fullCalendar.getDayHeaderClassNamesGenerator()
                 .apply(new DayHeaderClassNamesContext(
+                        fullCalendar,
                         LocalDate.parse(clientContext.getDate()),
                         Objects.requireNonNull(DayOfWeek.fromId(clientContext.getDow())),
                         clientContext.isDisabled(),
@@ -110,7 +112,7 @@ public class FullCalendarDelegate {
                 ? jsonFactory.createArray()
                 : fullCalendar.getSerializer().toJsonArrayFromString(classNames);
 
-        log.debug("Serialized 'DayHeaderClassNames': {}", result.toJson());
+        log.debug("Serialized day header's class names': {}", result.toJson());
 
         return result;
     }
@@ -122,6 +124,7 @@ public class FullCalendarDelegate {
 
         List<String> classNames = fullCalendar.getDayCellClassNamesGenerator()
                 .apply(new DayCellClassNamesContext(
+                        fullCalendar,
                         LocalDate.parse(clientContext.getDate()),
                         Objects.requireNonNull(DayOfWeek.fromId(clientContext.getDow())),
                         clientContext.isDisabled(),
@@ -135,7 +138,7 @@ public class FullCalendarDelegate {
                 ? jsonFactory.createArray()
                 : fullCalendar.getSerializer().toJsonArrayFromString(classNames);
 
-        log.debug("Serialized 'DayCellClassNames': {}", result.toJson());
+        log.debug("Serialized day cell's class names: {}", result.toJson());
 
         return result;
     }
@@ -147,6 +150,7 @@ public class FullCalendarDelegate {
 
         List<String> classNames = fullCalendar.getSlotLabelClassNamesGenerator()
                 .apply(new SlotLabelClassNamesContext(
+                        fullCalendar,
                         LocalTime.parse(clientContext.getTime()),
                         createViewInfo(clientContext.getView())));
 
@@ -154,7 +158,28 @@ public class FullCalendarDelegate {
                 ? jsonFactory.createArray()
                 : fullCalendar.getSerializer().toJsonArrayFromString(classNames);
 
-        log.debug("Serialized 'SlotLabelClassNames': {}", result.toJson());
+        log.debug("Serialized slot labels' class names: {}", result.toJson());
+
+        return result;
+    }
+
+    public JsonArray getNowIndicatorClassNames(DomNowIndicatorClassNames clientContext) {
+        if (fullCalendar.getNowIndicatorClassNamesGenerator() == null) {
+            return jsonFactory.createArray();
+        }
+
+        List<String> classNames = fullCalendar.getNowIndicatorClassNamesGenerator()
+                .apply(new NowIndicatorClassNamesContext(
+                        fullCalendar,
+                        clientContext.isAxis(),
+                        parseAndTransform(clientContext.getDateTime(), getComponentZoneId()),
+                        createViewInfo(clientContext.getView())));
+
+        JsonArray result = classNames == null
+                ? jsonFactory.createArray()
+                : fullCalendar.getSerializer().toJsonArrayFromString(classNames);
+
+        log.debug("Serialized now-indicator's class names: {}", result.toJson());
 
         return result;
     }

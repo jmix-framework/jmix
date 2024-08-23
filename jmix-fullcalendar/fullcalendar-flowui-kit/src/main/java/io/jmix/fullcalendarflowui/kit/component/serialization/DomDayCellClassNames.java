@@ -21,11 +21,17 @@ import java.io.Serializable;
 public class DomDayCellClassNames implements Serializable {
 
     protected String date;
+
     protected Integer dow;
+
     protected boolean isDisabled;
+
     protected boolean isFuture;
+
     protected boolean isOther;
+
     protected boolean isPast;
+
     protected boolean isToday;
 
     protected DomViewInfo view;
@@ -50,7 +56,7 @@ public class DomDayCellClassNames implements Serializable {
         return isDisabled;
     }
 
-    public void setDisabled(boolean disabled) {
+    public void setIsDisabled(boolean disabled) {
         isDisabled = disabled;
     }
 
@@ -58,7 +64,7 @@ public class DomDayCellClassNames implements Serializable {
         return isFuture;
     }
 
-    public void setFuture(boolean future) {
+    public void setIsFuture(boolean future) {
         isFuture = future;
     }
 
@@ -66,7 +72,7 @@ public class DomDayCellClassNames implements Serializable {
         return isOther;
     }
 
-    public void setOther(boolean other) {
+    public void setIsOther(boolean other) {
         isOther = other;
     }
 
@@ -74,7 +80,7 @@ public class DomDayCellClassNames implements Serializable {
         return isPast;
     }
 
-    public void setPast(boolean past) {
+    public void setIsPast(boolean past) {
         isPast = past;
     }
 
@@ -82,7 +88,7 @@ public class DomDayCellClassNames implements Serializable {
         return isToday;
     }
 
-    public void setToday(boolean today) {
+    public void setIsToday(boolean today) {
         isToday = today;
     }
 

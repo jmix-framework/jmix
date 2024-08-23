@@ -18,27 +18,15 @@ package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 
-import java.time.LocalTime;
+public class AbstractClassNamesContext {
 
-public class SlotLabelClassNamesContext extends AbstractClassNamesContext {
+    protected FullCalendar fullCalendar;
 
-    protected final LocalTime time;
-
-    protected final ViewInfo viewInfo;
-
-    public SlotLabelClassNamesContext(FullCalendar fullCalendar,
-                                      LocalTime time,
-                                      ViewInfo viewInfo) {
-        super(fullCalendar);
-        this.time = time;
-        this.viewInfo = viewInfo;
+    public AbstractClassNamesContext(FullCalendar fullCalendar) {
+        this.fullCalendar = fullCalendar;
     }
 
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public FullCalendar getFullCalendar() {
+        return fullCalendar;
     }
 }

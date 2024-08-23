@@ -22,10 +22,15 @@ import java.util.List;
 public class DomMoreLinkClick implements Serializable {
 
     protected boolean allDay;
+
     protected String date;
+
     protected DomViewInfo view;
+
     protected DomMouseEventDetails mouseDetails;
+
     protected List<DomSegment> allData;
+
     protected List<DomSegment> hiddenData;
 
     public boolean isAllDay() {

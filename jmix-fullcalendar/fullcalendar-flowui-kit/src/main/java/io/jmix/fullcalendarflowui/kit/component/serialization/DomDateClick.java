@@ -21,9 +21,11 @@ import java.io.Serializable;
 public class DomDateClick implements Serializable {
 
     protected String date;
+
     protected boolean allDay;
 
     protected DomMouseEventDetails mouseDetails;
+
     protected DomViewInfo view;
 
     public String getDate() {

@@ -101,6 +101,8 @@ public class JmixFullCalendarOptions {
 
     protected SimpleOption<Boolean> nowIndicator = new SimpleOption<>("nowIndicator", false);
 
+    protected SimpleOption<Boolean> nowIndicatorClassNames = new SimpleOption<>("nowIndicatorClassNames", false);
+
     protected final List<CalendarOption> updatableOptions = new ArrayList<>(28);
 
     /**
@@ -118,7 +120,8 @@ public class JmixFullCalendarOptions {
                 selectOverlap, selectAllow, visibleRange, weekends, dayHeaderClassNames, dayCellClassNames,
                 slotDuration, slotLabelInterval, slotMinTime, slotMaxTime, slotLabelClassNames, defaultAllDay,
                 defaultAllDayEventDuration, defaultTimedEventDuration, forceEventDuration, dateIncrement,
-                dateAlignment, expandRows, windowResizeDelay, eventInteractive, longPressDelay, selectLongPressDelay));
+                dateAlignment, expandRows, windowResizeDelay, eventInteractive, longPressDelay, selectLongPressDelay,
+                nowIndicatorClassNames));
 
         initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll,
                 dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat,
@@ -385,6 +388,10 @@ public class JmixFullCalendarOptions {
 
     public SimpleOption<Boolean> getNowIndicator() {
         return nowIndicator;
+    }
+
+    public SimpleOption<Boolean> getNowIndicatorClassNames() {
+        return nowIndicatorClassNames;
     }
 
     public boolean isInitial(CalendarOption option) {

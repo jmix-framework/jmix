@@ -22,10 +22,14 @@ import java.util.Map;
 public class DomCalendarEvent implements Serializable {
 
     protected String id;
+
     protected String title;
+
     protected String start;
+
     protected String end;
-    boolean allDay = false;
+
+    protected boolean allDay;
 
     protected Map<String, Object> extendedProps;
 

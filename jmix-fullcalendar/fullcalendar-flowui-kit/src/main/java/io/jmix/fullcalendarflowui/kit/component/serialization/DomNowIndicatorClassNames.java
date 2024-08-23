@@ -18,38 +18,28 @@ package io.jmix.fullcalendarflowui.kit.component.serialization;
 
 import java.io.Serializable;
 
-public class DomMoreLinkClassNames implements Serializable {
+public class DomNowIndicatorClassNames implements Serializable {
 
-    protected Integer eventsCount;
+    protected boolean isAxis;
 
-    protected String shortText;
-
-    protected String text;
+    protected String dateTime;
 
     protected DomViewInfo view;
 
-    public Integer getEventsCount() {
-        return eventsCount;
+    public boolean isAxis() {
+        return isAxis;
     }
 
-    public void setEventsCount(Integer eventsCount) {
-        this.eventsCount = eventsCount;
+    public void setIsAxis(boolean axis) {
+        isAxis = axis;
     }
 
-    public String getShortText() {
-        return shortText;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setShortText(String shortText) {
-        this.shortText = shortText;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
 
     public DomViewInfo getView() {

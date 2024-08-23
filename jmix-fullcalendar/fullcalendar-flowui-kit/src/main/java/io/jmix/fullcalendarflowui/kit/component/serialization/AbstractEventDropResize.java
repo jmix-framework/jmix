@@ -22,9 +22,11 @@ import java.util.List;
 public class AbstractEventDropResize implements Serializable {
 
     protected DomCalendarEvent event;
+
     protected DomCalendarEvent oldEvent;
 
     protected DomMouseEventDetails mouseDetails;
+
     protected DomViewInfo view;
 
     protected List<DomCalendarEvent> relatedEvents;

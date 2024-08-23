@@ -21,6 +21,7 @@ import java.io.Serializable;
 public class DomDatesSet implements Serializable {
 
     protected String startDateTime;
+
     protected String endDateTime;
 
     protected DomViewInfo view;

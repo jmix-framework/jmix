@@ -1126,6 +1126,11 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         return new JreJsonFactory().createArray();
     }
 
+    @ClientCallable
+    protected JsonArray getNowIndicatorClassNames(JsonObject jsonContext) {
+        return new JreJsonFactory().createArray();
+    }
+
     protected void addEventProvidersOnAttach() {
         // Stub, is used in inheritors
     }

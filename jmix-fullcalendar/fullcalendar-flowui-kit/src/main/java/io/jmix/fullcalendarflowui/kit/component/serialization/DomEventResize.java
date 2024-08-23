@@ -19,6 +19,7 @@ package io.jmix.fullcalendarflowui.kit.component.serialization;
 public class DomEventResize extends AbstractEventDropResize {
 
     protected DomCalendarDuration startDelta;
+
     protected DomCalendarDuration endDelta;
 
     public DomCalendarDuration getStartDelta() {

@@ -21,8 +21,11 @@ import java.io.Serializable;
 public class DomCalendarDuration implements Serializable {
 
     protected int years;
+
     protected int months;
+
     protected int days;
+
     protected int milliseconds;
 
     public int getYears() {

@@ -23,12 +23,16 @@ public class DomMouseEventDetails implements Serializable {
     protected int button;
 
     protected int pageX;
+
     protected int pageY;
 
-    boolean altKey;
-    boolean ctrlKey;
-    boolean metaKey;
-    boolean shiftKey;
+    protected boolean altKey;
+
+    protected boolean ctrlKey;
+
+    protected boolean metaKey;
+
+    protected boolean shiftKey;
 
     public int getButton() {
         return button;

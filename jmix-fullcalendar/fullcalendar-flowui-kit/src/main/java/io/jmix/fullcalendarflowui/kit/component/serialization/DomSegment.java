@@ -22,11 +22,15 @@ import java.util.Objects;
 public class DomSegment implements Serializable {
 
     protected String endDate;
+
     protected String startDate;
+
     boolean isEnd;
+
     boolean isStart;
 
     protected String eventId;
+
     protected String eventSourceId;
 
     public String getEndDate() {
@@ -49,7 +53,7 @@ public class DomSegment implements Serializable {
         return isEnd;
     }
 
-    public void setEnd(boolean end) {
+    public void setIsEnd(boolean end) {
         isEnd = end;
     }
 
@@ -57,7 +61,7 @@ public class DomSegment implements Serializable {
         return isStart;
     }
 
-    public void setStart(boolean start) {
+    public void setIsStart(boolean start) {
         isStart = start;
     }
 

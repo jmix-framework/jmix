@@ -49,6 +49,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected Function<DayHeaderClassNamesContext, List<String>> dayHeaderClassNamesGenerator;
     protected Function<DayCellClassNamesContext, List<String>> dayCellClassNamesGenerator;
     protected Function<SlotLabelClassNamesContext, List<String>> slotLabelClassNamesGenerator;
+    protected Function<NowIndicatorClassNamesContext, List<String>> nowIndicatorClassNamesGenerator;
 
     protected Object eventConstraintGroupId;
     protected Object selectConstraintGroupId;
@@ -478,6 +479,18 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         options.getSlotLabelClassNames().setValue(slotLabelClassNamesGenerator != null);
     }
 
+    @Nullable
+    public Function<NowIndicatorClassNamesContext, List<String>> getNowIndicatorClassNamesGenerator() {
+        return nowIndicatorClassNamesGenerator;
+    }
+
+    public void setNowIndicatorClassNamesGenerator(
+            @Nullable Function<NowIndicatorClassNamesContext, List<String>> nowIndicatorClassNamesGenerator) {
+        this.nowIndicatorClassNamesGenerator = nowIndicatorClassNamesGenerator;
+
+        options.getNowIndicatorClassNames().setValue(nowIndicatorClassNamesGenerator != null);
+    }
+
     @Override
     protected FullCalendarOptions createOptions() {
         return new FullCalendarOptions();
@@ -706,6 +719,13 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         DomSlotLabelClassNames clientContext = deserializer.deserialize(jsonContext, DomSlotLabelClassNames.class);
 
         return calendarDelegate.getSlotLabelClassNames(clientContext);
+    }
+
+    @Override
+    protected JsonArray getNowIndicatorClassNames(JsonObject jsonContext) {
+        DomNowIndicatorClassNames clientContext = deserializer.deserialize(jsonContext, DomNowIndicatorClassNames.class);
+
+        return calendarDelegate.getNowIndicatorClassNames(clientContext);
     }
 
     protected EventProviderManager createEventProviderManager(CalendarEventProvider eventProvider) {

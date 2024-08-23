@@ -17,10 +17,11 @@
 package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendarflowui.component.FullCalendar;
 
 import java.time.LocalDate;
 
-public class DayCellClassNamesContext {
+public class DayCellClassNamesContext extends AbstractClassNamesContext {
 
     protected final LocalDate date;
 
@@ -38,8 +39,16 @@ public class DayCellClassNamesContext {
 
     protected final ViewInfo viewInfo;
 
-    public DayCellClassNamesContext(LocalDate date, DayOfWeek dayOfWeek, boolean isDisabled, boolean isFuture,
-                                      boolean isOther, boolean isPast, boolean isToday, ViewInfo viewInfo) {
+    public DayCellClassNamesContext(FullCalendar fullCalendar,
+                                    LocalDate date,
+                                    DayOfWeek dayOfWeek,
+                                    boolean isDisabled,
+                                    boolean isFuture,
+                                    boolean isOther,
+                                    boolean isPast,
+                                    boolean isToday,
+                                    ViewInfo viewInfo) {
+        super(fullCalendar);
         this.date = date;
         this.dayOfWeek = dayOfWeek;
         this.isDisabled = isDisabled;

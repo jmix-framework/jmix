@@ -23,12 +23,14 @@ import Options, {
     MORE_LINK_CLICK,
     DAY_HEADER_CLASS_NAMES,
     DAY_CELL_CLASS_NAMES,
-    SLOT_LABEL_CLASS_NAMES
+    SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES
 } from './Options.js';
 
 const FC_LINK_CLASS_NAME = 'fc-more-link';
 const FC_COL_HEADER_CELL = 'fc-col-header-cell';
 const FC_TIMEGRID_SLOT_LABEL = 'fc-timegrid-slot-label';
+const FC_TIMEGRID_NOW_INDICATOR_ARROW = 'fc-timegrid-now-indicator-arrow';
+const FC_TIMEGRID_NOW_INDICATOR_LINE = 'fc-timegrid-now-indicator-line';
 
 class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     static get template() {
@@ -88,6 +90,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.jmixOptions.addListener(DAY_HEADER_CLASS_NAMES, this._onDayHeaderClassNames.bind(this));
         this.jmixOptions.addListener(DAY_CELL_CLASS_NAMES, this._onDayCellClassNames.bind(this));
         this.jmixOptions.addListener(SLOT_LABEL_CLASS_NAMES, this._onSlotLabelClassNames.bind(this));
+        this.jmixOptions.addListener(NOW_INDICATOR_CLASS_NAMES, this._onNowIndicatorClassNames.bind(this));
 
         this._onI18nChange(this.i18n);
 
@@ -332,15 +335,37 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         const classNamesPromise = this.$server.getSlotLabelClassNames(context);
         classNamesPromise.then((classNames) => {
             if (!classNames || classNames.length === 0) {
-                return
+                return;
             }
             // Find generated element and assign classNames
-            for (const linkElement of this.getElementsByClassName(FC_TIMEGRID_SLOT_LABEL)) {
-                if (linkElement.dataset.time === timeStr) {
-                    linkElement.classList.remove(...classNames);
-                    linkElement.classList.add(...classNames);
+            for (const element of this.getElementsByClassName(FC_TIMEGRID_SLOT_LABEL)) {
+                if (element.dataset.time === timeStr) {
+                    element.classList.remove(...classNames);
+                    element.classList.add(...classNames);
                     return;
                 }
+            }
+        });
+    }
+
+    _onNowIndicatorClassNames(e) {
+        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
+        const context = {
+            isAxis: e.isAxis,
+            dateTime: dateFormatter(e.date),
+            view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+        }
+
+        const classNamesPromise = this.$server.getNowIndicatorClassNames(context);
+        classNamesPromise.then((classNames) => {
+            if (!classNames || classNames.length === 0) {
+                return;
+            }
+            const className = e.isAxis ? FC_TIMEGRID_NOW_INDICATOR_ARROW : FC_TIMEGRID_NOW_INDICATOR_LINE
+            for (const element of this.getElementsByClassName(className)) {
+                element.classList.remove(...classNames);
+                element.classList.add(...classNames);
+                return;
             }
         });
     }

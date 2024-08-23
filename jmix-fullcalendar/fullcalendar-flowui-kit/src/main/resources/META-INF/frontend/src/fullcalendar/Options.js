@@ -8,6 +8,7 @@ export const UNSELECT_CANCEL = 'unselectCancel';
 export const DAY_HEADER_CLASS_NAMES = 'dayHeaderClassNames';
 export const DAY_CELL_CLASS_NAMES = 'dayCellClassNames';
 export const SLOT_LABEL_CLASS_NAMES = 'slotLabelClassNames';
+export const NOW_INDICATOR_CLASS_NAMES = 'nowIndicatorClassNames';
 const EVENT_OVERLAP = 'eventOverlap';
 const SELECT_OVERLAP = 'selectOverlap';
 const EVENT_CONSTRAINT = 'eventConstraint';
@@ -112,6 +113,7 @@ class Options {
             this._updateDayHeaderClassNames(options);
             this._updateDayCellClassNames(options);
             this._updateSlotLabelClassNames(options);
+            this._updateNowIndicatorClassNames(options);
 
             this._updateFirstDay(options);
         });
@@ -130,6 +132,7 @@ class Options {
             || DAY_HEADER_CLASS_NAMES === key
             || DAY_CELL_CLASS_NAMES === key
             || SLOT_LABEL_CLASS_NAMES === key
+            || NOW_INDICATOR_CLASS_NAMES === key
             || EVENT_OVERLAP === key
             || EVENT_CONSTRAINT === key
             || BUSINESS_HOURS === key
@@ -307,6 +310,14 @@ class Options {
         }
     }
 
+    _updateNowIndicatorClassNames(options) {
+        const nowIndicatorClassNames = options[NOW_INDICATOR_CLASS_NAMES];
+
+        if (calendarUtils.isNotNullUndefined(nowIndicatorClassNames)) {
+            this.updateOption(NOW_INDICATOR_CLASS_NAMES, nowIndicatorClassNames ? this._onNowIndicatorClassNames.bind(this) : null);
+        }
+    }
+
     _updateFirstDay(options) {
         if (!options.hasOwnProperty(FIRST_DAY)) {
             return;
@@ -356,6 +367,13 @@ class Options {
     _onSlotLabelClassNames(e) {
         if (this.listeners[SLOT_LABEL_CLASS_NAMES]) {
             this.listeners[SLOT_LABEL_CLASS_NAMES].forEach((listener) => listener(e));
+        }
+        return [];
+    }
+
+    _onNowIndicatorClassNames(e) {
+        if (this.listeners[NOW_INDICATOR_CLASS_NAMES]) {
+            this.listeners[NOW_INDICATOR_CLASS_NAMES].forEach((listener) => listener(e));
         }
         return [];
     }

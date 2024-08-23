@@ -125,10 +125,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *
      * @param calendarCustomView calendar custom view to add
      */
-    public void addCalendarCustomView(CalendarCustomView calendarCustomView) {
+    public void addCustomCalendarView(CustomCalendarView calendarCustomView) {
         Objects.requireNonNull(calendarCustomView);
 
-        options.getViews().addCustomView(calendarCustomView);
+        options.getViews().addCustomCalendarView(calendarCustomView);
     }
 
     /**
@@ -139,14 +139,14 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *
      * @param calendarCustomView calendar custom view to remove
      */
-    public void removeCalendarCustomView(CalendarCustomView calendarCustomView) {
+    public void removeCustomCalendarView(CustomCalendarView calendarCustomView) {
         Objects.requireNonNull(calendarCustomView);
 
-        options.getViews().removeCustomView(calendarCustomView);
+        options.getViews().removeCustomCalendarView(calendarCustomView);
     }
 
-    public List<CalendarCustomView> getCalendarCustomViews() {
-        return options.getViews().getCustomViews();
+    public List<CustomCalendarView> getCustomCalendarViews() {
+        return options.getViews().getCustomCalendarViews();
     }
 
     @Nullable
@@ -825,6 +825,14 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getDateAlignment().setValue(alignment);
     }
 
+    public boolean isEventInteractive() {
+        return options.getEventInteractive().getNotNullValue();
+    }
+
+    public void setEventInteractive(boolean interactive) {
+        options.getEventInteractive().setValue(interactive);
+    }
+
     protected JmixFullCalendarSerializer createSerializer() {
         return new JmixFullCalendarSerializer();
     }
@@ -1057,7 +1065,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
             return calendarViewType;
         }
 
-        CalendarCustomView customView = options.getViews().getCustomView(id);
+        CustomCalendarView customView = options.getViews().getCustomCalendarView(id);
 
         return customView != null ? customView.getCalendarView() : () -> id;
     }

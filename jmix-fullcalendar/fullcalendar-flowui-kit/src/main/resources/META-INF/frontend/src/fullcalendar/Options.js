@@ -17,6 +17,7 @@ const SELECT_ALLOW = 'selectAllow';
 const VIEWS = 'views';
 const DAY_MAX_EVENT_ROWS = 'dayMaxEventRows';
 const DAY_MAX_EVENTS = 'dayMaxEvents';
+const FIRST_DAY = 'firstDay';
 
 export function processInitialOptions(serverOptions) {
     const options = serverOptions;
@@ -45,7 +46,7 @@ export function processInitialOptions(serverOptions) {
 
 function processViews(viewsObject) {
     for (let view in viewsObject) {
-        if (view === 'customViews') {
+        if (view === 'customCalendarViews') {
             continue;
         }
         viewsObject[view] = {...viewsObject[view], ...viewsObject[view].properties && {...viewsObject[view].properties}};
@@ -53,8 +54,8 @@ function processViews(viewsObject) {
         delete viewsObject[view].properties;
     }
 
-    if (viewsObject.customViews) {
-        for (const view of viewsObject.customViews) {
+    if (viewsObject.customCalendarViews) {
+        for (const view of viewsObject.customCalendarViews) {
             viewsObject[view.calendarView] = {
                 type: view.type,
                 ...(view.dayCount) && {dayCount: view.dayCount},
@@ -63,7 +64,7 @@ function processViews(viewsObject) {
             };
         }
     }
-    delete viewsObject.customViews;
+    delete viewsObject.customCalendarViews;
 
     return viewsObject;
 }
@@ -111,11 +112,16 @@ class Options {
             this._updateDayHeaderClassNames(options);
             this._updateDayCellClassNames(options);
             this._updateSlotLabelClassNames(options);
+
+            this._updateFirstDay(options);
         });
     }
 
     updateOption(key, value) {
-        this.calendar.setOption(key, value);
+        let oldValue = this.calendar.getOption(key);
+        if (oldValue !== value) {
+            this.calendar.setOption(key, value);
+        }
     }
 
     _skipOption(key) {
@@ -132,6 +138,7 @@ class Options {
             || SELECT_ALLOW === key
             || DAY_MAX_EVENT_ROWS === key
             || DAY_MAX_EVENTS === key
+            || FIRST_DAY === key
     }
 
     _updateMoreLinkClick(options) {
@@ -298,6 +305,24 @@ class Options {
         if (calendarUtils.isNotNullUndefined(slotLabelClassNames)) {
             this.updateOption(SLOT_LABEL_CLASS_NAMES, slotLabelClassNames ? this._onSlotLabelClassNames.bind(this) : null);
         }
+    }
+
+    _updateFirstDay(options) {
+        if (!options.hasOwnProperty(FIRST_DAY)) {
+            return;
+        }
+
+        let value = options[FIRST_DAY];
+
+        if (!this.context.initialized && value == null) {
+            return;
+        }
+
+        if (value == null) {
+            value = this.context.i18n.dayOfWeek;
+        }
+
+        this.updateOption(FIRST_DAY, value);
     }
 
     _onMoreLinkClick(e) {

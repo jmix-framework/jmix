@@ -19,7 +19,7 @@ import io.jmix.fullcalendarflowui.component.model.BusinessHours;
 import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarCustomView;
+import io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarView;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
@@ -127,6 +127,13 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadString(element, "initialDate", (s) -> resultComponent.setInitialDate(LocalDate.parse(s)));
         loadString(element, "dateAlignment", resultComponent::setDateAlignment);
 
+        loadEnum(element, DayOfWeek.class, "firstDayOfWeek", resultComponent::setFirstDayOfWeek);
+
+        loadBoolean(element, "expandRows", resultComponent::setExpandRows);
+        loadInteger(element, "windowResizeDelay", resultComponent::setWindowResizeDelay);
+
+        loadBoolean(element, "eventInteractive", resultComponent::setEventInteractive);
+
         loadEventProviders(element, "containerEventProvider",
                 (ep) -> resultComponent.addEventProvider((CalendarEventProvider) ep));
         loadEventProviders(element, "lazyEventProvider",
@@ -171,6 +178,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadString(eventProviderElement, "endDateTimeProperty", calendarItems::setEndDateTimeProperty);
         loadString(eventProviderElement, "titleProperty", calendarItems::setTitleProperty);
         loadString(eventProviderElement, "descriptionProperty", calendarItems::setDescriptionProperty);
+        loadString(eventProviderElement, "interactiveProperty", calendarItems::setInteractiveProperty);
         loadString(eventProviderElement, "classNamesProperty", calendarItems::setClassNamesProperty);
         loadString(eventProviderElement, "startEditableProperty", calendarItems::setStartEditableProperty);
         loadString(eventProviderElement, "durationEditableProperty", calendarItems::setDurationEditableProperty);
@@ -362,7 +370,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
                 // ignore
             }
 
-            for (CalendarCustomView customView : resultComponent.getCalendarCustomViews()) {
+            for (CustomCalendarView customView : resultComponent.getCustomCalendarViews()) {
                 if (customView.getCalendarView().getId().equals(view)) {
                     resultComponent.setInitialCalendarView(customView.getCalendarView());
                     return;
@@ -378,11 +386,11 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         if (viewsElement != null) {
             List<Element> views = viewsElement.elements("view");
 
-            views.forEach(e -> resultComponent.addCalendarCustomView(loadCustomView(e)));
+            views.forEach(e -> resultComponent.addCustomCalendarView(loadCustomView(e)));
         }
     }
 
-    protected CalendarCustomView loadCustomView(Element element) {
+    protected CustomCalendarView loadCustomView(Element element) {
         String id = loadString(element, "id")
                 .orElseThrow(() -> new IllegalStateException("Calendar custom view must have an ID"));
         CalendarViewType type = loadEnum(element, CalendarViewType.class, "type")
@@ -395,7 +403,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
             calendarDuration = loadCalendarDuration(durartionElement);
         }
 
-        return new CalendarCustomView(id, type)
+        return new CustomCalendarView(id, type)
                 .withDayCount(dayCount)
                 .withDuration(calendarDuration);
     }

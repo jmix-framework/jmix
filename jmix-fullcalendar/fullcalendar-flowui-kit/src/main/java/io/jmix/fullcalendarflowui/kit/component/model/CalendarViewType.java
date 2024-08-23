@@ -24,7 +24,7 @@ package io.jmix.fullcalendarflowui.kit.component.model;
  */
 public enum CalendarViewType implements CalendarView {
     /**
-     * A "generic" value, can be used as a type for {@link CalendarCustomView}, or with "visibleRange" option.
+     * A "generic" value, can be used as a type for {@link CustomCalendarView}, or with "visibleRange" option.
      */
     DAY_GRID("dayGrid"),
     DAY_GRID_DAY("dayGridDay"),
@@ -33,14 +33,14 @@ public enum CalendarViewType implements CalendarView {
     DAY_GRID_YEAR("dayGridYear"),
 
     /**
-     * A "generic" value, can be used as a type for {@link CalendarCustomView}, or with "visibleRange" option.
+     * A "generic" value, can be used as a type for {@link CustomCalendarView}, or with "visibleRange" option.
      */
     TIME_GRID("timeGrid"),
     TIME_GRID_DAY("timeGridDay"),
     TIME_GRID_WEEK("timeGridWeek"),
 
     /**
-     * A "generic" value, can be used as a type for {@link CalendarCustomView}, or with "visibleRange" option.
+     * A "generic" value, can be used as a type for {@link CustomCalendarView}, or with "visibleRange" option.
      */
     LIST("list"),
     LIST_DAY("listDay"),
@@ -49,7 +49,7 @@ public enum CalendarViewType implements CalendarView {
     LIST_YEAR("listYear"),
 
     /**
-     * A "generic" value, can be used as a type for {@link CalendarCustomView}, or with "visibleRange" option.
+     * A "generic" value, can be used as a type for {@link CustomCalendarView}, or with "visibleRange" option.
      */
     MULTI_MONTH("multiMonth"),
     MULTI_MONTH_YEAR("multiMonthYear");

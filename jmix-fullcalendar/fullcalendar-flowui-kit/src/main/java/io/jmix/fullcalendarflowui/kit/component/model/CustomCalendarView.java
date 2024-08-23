@@ -18,7 +18,7 @@ package io.jmix.fullcalendarflowui.kit.component.model;
 
 import jakarta.annotation.Nullable;
 
-public class CalendarCustomView extends AbstractCalendarViewProperties {
+public class CustomCalendarView extends AbstractCalendarViewProperties {
 
     protected CalendarView calendarView;
 
@@ -28,11 +28,11 @@ public class CalendarCustomView extends AbstractCalendarViewProperties {
 
     protected Integer dayCount;
 
-    public CalendarCustomView(String id) {
+    public CustomCalendarView(String id) {
         this(id, null);
     }
 
-    public CalendarCustomView(String id, @Nullable CalendarViewType type) {
+    public CustomCalendarView(String id, @Nullable CalendarViewType type) {
         super(id);
 
         this.calendarView = () -> id;
@@ -52,7 +52,7 @@ public class CalendarCustomView extends AbstractCalendarViewProperties {
         return duration;
     }
 
-    public CalendarCustomView withDuration(@Nullable CalendarDuration duration) {
+    public CustomCalendarView withDuration(@Nullable CalendarDuration duration) {
         this.duration = duration;
         return this;
     }
@@ -62,7 +62,7 @@ public class CalendarCustomView extends AbstractCalendarViewProperties {
         return dayCount;
     }
 
-    public CalendarCustomView withDayCount(@Nullable Integer dayCount) {
+    public CustomCalendarView withDayCount(@Nullable Integer dayCount) {
         this.dayCount = dayCount;
         return this;
     }

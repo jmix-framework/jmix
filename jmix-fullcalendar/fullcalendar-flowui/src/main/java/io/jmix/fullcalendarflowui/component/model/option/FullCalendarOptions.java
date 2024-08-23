@@ -17,6 +17,7 @@
 package io.jmix.fullcalendarflowui.component.model.option;
 
 import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendarflowui.kit.component.model.option.CalendarOption;
 import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOptions;
 import io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils;
 import io.jmix.fullcalendarflowui.kit.component.model.option.SimpleOption;
@@ -31,13 +32,13 @@ public class FullCalendarOptions extends JmixFullCalendarOptions {
 
     protected SimpleOption<List<DayOfWeek>> hiddenDays = new SimpleOption<>("hiddenDays");
 
-    public FullCalendarOptions() {
-        updatableOptions.addAll(List.of(eventConstraint, businessHours, selectConstraint, hiddenDays));
+    protected SimpleOption<DayOfWeek> firstDay = new SimpleOption<>("firstDay");
 
-        OptionUtils.addChangeListener(eventConstraint, this::onOptionChange);
-        OptionUtils.addChangeListener(businessHours, this::onOptionChange);
-        OptionUtils.addChangeListener(selectConstraint, this::onOptionChange);
-        OptionUtils.addChangeListener(hiddenDays, this::onOptionChange);
+    public FullCalendarOptions() {
+        List<CalendarOption> options = List.of(eventConstraint, businessHours, selectConstraint, hiddenDays, firstDay);
+        options.forEach(o -> OptionUtils.addChangeListener(o, this::onOptionChange));
+
+        updatableOptions.addAll(options);
     }
 
     public EventConstraint getEventConstraint() {
@@ -54,5 +55,9 @@ public class FullCalendarOptions extends JmixFullCalendarOptions {
 
     public SimpleOption<List<DayOfWeek>> getHiddenDays() {
         return hiddenDays;
+    }
+
+    public SimpleOption<DayOfWeek> getFirstDay() {
+        return firstDay;
     }
 }

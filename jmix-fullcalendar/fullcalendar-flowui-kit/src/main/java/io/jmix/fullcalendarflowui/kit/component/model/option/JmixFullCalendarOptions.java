@@ -89,8 +89,12 @@ public class JmixFullCalendarOptions {
     protected SimpleOption<CalendarDuration> dateIncrement = new SimpleOption<>("dateIncrement");
     protected SimpleOption<String> dateAlignment = new SimpleOption<>("dateAlignment", "");
 
-
     protected SimpleOption<LocalDate> initialDate = new SimpleOption<>("initialDate");
+
+    protected SimpleOption<Boolean> expandRows = new SimpleOption<>("expandRows", false);
+    protected SimpleOption<Integer> windowResizeDelay = new SimpleOption<>("windowResizeDelay", 100);
+
+    protected SimpleOption<Boolean> eventInteractive = new SimpleOption<>("eventInteractive", false);
 
     protected final List<CalendarOption> updatableOptions = new ArrayList<>(28);
 
@@ -109,7 +113,7 @@ public class JmixFullCalendarOptions {
                 selectOverlap, selectAllow, visibleRange, weekends, dayHeaderClassNames, dayCellClassNames,
                 slotDuration, slotLabelInterval, slotMinTime, slotMaxTime, slotLabelClassNames, defaultAllDay,
                 defaultAllDayEventDuration, defaultTimedEventDuration, forceEventDuration, dateIncrement,
-                dateAlignment));
+                dateAlignment, expandRows, windowResizeDelay, eventInteractive));
 
         initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll,
                 dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat,
@@ -351,6 +355,18 @@ public class JmixFullCalendarOptions {
 
     public SimpleOption<String> getDateAlignment() {
         return dateAlignment;
+    }
+
+    public SimpleOption<Boolean> getExpandRows() {
+        return expandRows;
+    }
+
+    public SimpleOption<Integer> getWindowResizeDelay() {
+        return windowResizeDelay;
+    }
+
+    public SimpleOption<Boolean> getEventInteractive() {
+        return eventInteractive;
     }
 
     public boolean isInitial(CalendarOption option) {

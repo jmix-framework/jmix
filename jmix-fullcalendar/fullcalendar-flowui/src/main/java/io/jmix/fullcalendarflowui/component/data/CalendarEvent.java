@@ -78,6 +78,9 @@ public interface CalendarEvent {
     String getDescription();
 
     @Nullable
+    Boolean getInteractive();
+
+    @Nullable
     String getClassNames();
 
     /**

@@ -42,7 +42,7 @@ public class Views extends CalendarOption {
 
     protected MultiMonthYearProperties multiMonthYear;
 
-    protected List<CalendarCustomView> customViews;
+    protected List<CustomCalendarView> customViews;
 
     public Views() {
         super(NAME);
@@ -97,13 +97,13 @@ public class Views extends CalendarOption {
         return multiMonthYear;
     }
 
-    public List<CalendarCustomView> getCustomViews() {
+    public List<CustomCalendarView> getCustomCalendarViews() {
         return customViews == null
                 ? Collections.emptyList()
                 : Collections.unmodifiableList(customViews);
     }
 
-    public void addCustomView(CalendarCustomView customView) {
+    public void addCustomCalendarView(CustomCalendarView customView) {
         if (customViews == null) {
             customViews = new ArrayList<>();
         }
@@ -114,7 +114,7 @@ public class Views extends CalendarOption {
         }
     }
 
-    public void removeCustomView(CalendarCustomView customView) {
+    public void removeCustomCalendarView(CustomCalendarView customView) {
         if (customViews == null) {
             return;
         }
@@ -125,7 +125,7 @@ public class Views extends CalendarOption {
     }
 
     @Nullable
-    public CalendarCustomView getCustomView(String id) {
+    public CustomCalendarView getCustomCalendarView(String id) {
         if (customViews == null) {
             return null;
         }

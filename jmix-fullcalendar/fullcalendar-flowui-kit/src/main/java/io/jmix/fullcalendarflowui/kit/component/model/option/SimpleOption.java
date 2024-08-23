@@ -27,13 +27,13 @@ public class SimpleOption<V> extends CalendarOption {
     protected V defaultValue;
 
     public SimpleOption(String name) {
-        super(name);
+        this(name, null);
     }
 
-    public SimpleOption(String name, V defaultValue) {
+    public SimpleOption(String name, @Nullable V defaultValue) {
         super(name);
 
-        this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.defaultValue = defaultValue;
         this.value = this.defaultValue;
     }
 
@@ -44,11 +44,6 @@ public class SimpleOption<V> extends CalendarOption {
 
     public V getNotNullValue() {
         return Objects.requireNonNull(value);
-    }
-
-    @Nullable
-    public V getDefaultValue() {
-        return defaultValue;
     }
 
     public void setValue(@Nullable V value) {
@@ -62,6 +57,11 @@ public class SimpleOption<V> extends CalendarOption {
         }
 
         markAsDirty();
+    }
+
+    @Nullable
+    public V getDefaultValue() {
+        return defaultValue;
     }
 
     @Nullable

@@ -118,6 +118,11 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
     }
 
     @Override
+    public Boolean getInteractive() {
+        return getValue(eventProvider.getInteractiveProperty());
+    }
+
+    @Override
     public String getClassNames() {
         return getValue(eventProvider.getClassNamesProperty());
     }

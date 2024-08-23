@@ -24,6 +24,7 @@ public abstract class AbstractEntityEventProvider<F> extends AbstractDataProvide
     protected String endDateTimeProperty;
     protected String titleProperty;
     protected String descriptionProperty;
+    protected String interactiveProperty;
     protected String classNamesProperty;
     protected String startEditableProperty;
     protected String durationEditableProperty;
@@ -114,6 +115,16 @@ public abstract class AbstractEntityEventProvider<F> extends AbstractDataProvide
     @Override
     public void setDescriptionProperty(@Nullable String descriptionProperty) {
         this.descriptionProperty = descriptionProperty;
+    }
+
+    @Override
+    public String getInteractiveProperty() {
+        return interactiveProperty;
+    }
+
+    @Override
+    public void setInteractiveProperty(@Nullable String interactiveProperty) {
+        this.interactiveProperty = interactiveProperty;
     }
 
     @Override

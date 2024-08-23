@@ -58,7 +58,13 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 type: Object,
                 value: null,
                 observer: '_onI18nChange',
-            }
+            },
+            /**
+             * @Override
+             */
+            dir: {
+                observer: '_onDirChane',
+            },
         }
     }
 
@@ -570,6 +576,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         const formatOptions = calendarUtils.convertToLocaleDependedOptions(i18n);
 
         this.jmixOptions.updateOptions(formatOptions);
+    }
+
+    _onDirChane(dir) {
+        this.jmixOptions.updateOption('direction', dir);
     }
 
     /**

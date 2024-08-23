@@ -38,6 +38,11 @@ public interface EntityCalendarEventProvider extends BaseCalendarEventProvider {
     void setDescriptionProperty(@Nullable String descriptionProperty);
 
     @Nullable
+    String getInteractiveProperty();
+
+    void setInteractiveProperty(@Nullable String interactiveProperty);
+
+    @Nullable
     String getClassNamesProperty();
 
     void setClassNamesProperty(@Nullable String classNamesProperty);

@@ -101,6 +101,13 @@
                     <xs:attribute name="initialDate" type="xs:string"/>
                     <xs:attribute name="dateAlignment" type="xs:string"/>
 
+                    <xs:attribute name="firstDayOfWeek" type="dayOfWeekType"/>
+
+                    <xs:attribute name="expandRows" type="xs:boolean"/>
+                    <xs:attribute name="windowResizeDelay" type="xs:integer"/>
+
+                    <xs:attribute name="eventInteractive" type="xs:boolean"/>
+
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
                 </xs:extension>
@@ -195,6 +202,7 @@
         <xs:attribute name="endDateTimeProperty" type="xs:string"/>
         <xs:attribute name="titleProperty" type="xs:string"/>
         <xs:attribute name="descriptionProperty" type="xs:string"/>
+        <xs:attribute name="interactiveProperty" type="xs:string"/>
         <xs:attribute name="classNamesProperty" type="xs:string"/>
         <xs:attribute name="startEditableProperty" type="xs:string"/>
         <xs:attribute name="durationEditableProperty" type="xs:string"/>

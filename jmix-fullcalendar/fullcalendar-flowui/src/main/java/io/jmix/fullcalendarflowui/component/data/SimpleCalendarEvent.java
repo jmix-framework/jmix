@@ -40,6 +40,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
 
     protected String title;
     protected String description;
+    protected Boolean interactive;
     protected String classNames;
     protected Boolean startEditable;
     protected Boolean durationEditable;
@@ -97,7 +98,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
     }
 
     @Override
-    public void setStartDateTime(LocalDateTime start) {
+    public void setStartDateTime(@Nullable LocalDateTime start) {
         this.startDateTime = start;
     }
 
@@ -107,7 +108,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
     }
 
     @Override
-    public void setEndDateTime(LocalDateTime end) {
+    public void setEndDateTime(@Nullable LocalDateTime end) {
         this.endDateTime = end;
     }
 
@@ -116,7 +117,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@Nullable String title) {
         this.title = title;
     }
 
@@ -125,8 +126,17 @@ public class SimpleCalendarEvent implements CalendarEvent {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
+    }
+
+    @Override
+    public Boolean getInteractive() {
+        return interactive;
+    }
+
+    public void setInteractive(@Nullable Boolean interactive) {
+        this.interactive = interactive;
     }
 
     @Override
@@ -134,7 +144,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
         return classNames;
     }
 
-    public void setClassNames(String classNames) {
+    public void setClassNames(@Nullable String classNames) {
         this.classNames = classNames;
     }
 
@@ -163,7 +173,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
         return display;
     }
 
-    public void setDisplay(Display display) {
+    public void setDisplay(@Nullable Display display) {
         this.display = display;
     }
 
@@ -172,7 +182,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
         return overlap;
     }
 
-    public void setOverlap(Boolean overlap) {
+    public void setOverlap(@Nullable Boolean overlap) {
         this.overlap = overlap;
     }
 
@@ -191,7 +201,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
         return backgroundColor;
     }
 
-    public void setBackgroundColor(String backgroundColor) {
+    public void setBackgroundColor(@Nullable String backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
 
@@ -200,7 +210,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
         return borderColor;
     }
 
-    public void setBorderColor(String borderColor) {
+    public void setBorderColor(@Nullable String borderColor) {
         this.borderColor = borderColor;
     }
 
@@ -209,7 +219,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
         return textColor;
     }
 
-    public void setTextColor(String textColor) {
+    public void setTextColor(@Nullable String textColor) {
         this.textColor = textColor;
     }
 
@@ -314,27 +324,32 @@ public class SimpleCalendarEvent implements CalendarEvent {
             return this;
         }
 
-        public Builder withStartDateTime(LocalDateTime start) {
+        public Builder withStartDateTime(@Nullable LocalDateTime start) {
             event.startDateTime = start;
             return this;
         }
 
-        public Builder withEndDateTime(LocalDateTime end) {
+        public Builder withEndDateTime(@Nullable LocalDateTime end) {
             event.endDateTime = end;
             return this;
         }
 
-        public Builder withTitle(String title) {
+        public Builder withTitle(@Nullable String title) {
             event.title = title;
             return this;
         }
 
-        public Builder withDescription(String description) {
+        public Builder withDescription(@Nullable String description) {
             event.description = description;
             return this;
         }
 
-        public Builder withClassNames(String classNames) {
+        public Builder withInteractive(@Nullable Boolean interactive) {
+            event.interactive = interactive;
+            return this;
+        }
+
+        public Builder withClassNames(@Nullable String classNames) {
             event.classNames = classNames;
             return this;
         }
@@ -349,37 +364,37 @@ public class SimpleCalendarEvent implements CalendarEvent {
             return this;
         }
 
-        public Builder withDisplay(Display display) {
+        public Builder withDisplay(@Nullable Display display) {
             event.display = display;
             return this;
         }
 
-        public Builder withOverlap(Boolean overlap) {
+        public Builder withOverlap(@Nullable Boolean overlap) {
             event.overlap = overlap;
             return this;
         }
 
-        public Builder withConstraint(Object constraint) {
+        public Builder withConstraint(@Nullable Object constraint) {
             event.constraint = constraint;
             return this;
         }
 
-        public Builder withBackgroundColor(String backgroundColor) {
+        public Builder withBackgroundColor(@Nullable String backgroundColor) {
             event.backgroundColor = backgroundColor;
             return this;
         }
 
-        public Builder withBorderColor(String borderColor) {
+        public Builder withBorderColor(@Nullable String borderColor) {
             event.borderColor = borderColor;
             return this;
         }
 
-        public Builder withTextColor(String textColor) {
+        public Builder withTextColor(@Nullable String textColor) {
             event.textColor = textColor;
             return this;
         }
 
-        public Builder withAdditionalProperties(Map<String, Object> additionalProperties) {
+        public Builder withAdditionalProperties(@Nullable Map<String, Object> additionalProperties) {
             event.additionalProperties = additionalProperties;
             return this;
         }

@@ -32,10 +32,7 @@ import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.utils.SslConfigurer;
 import io.jmix.searchelasticsearch.SearchElasticsearchConfiguration;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
-import io.jmix.searchelasticsearch.index.impl.ElasticsearchEntityIndexer;
-import io.jmix.searchelasticsearch.index.impl.ElasticsearchIndexConfigurationComparator;
-import io.jmix.searchelasticsearch.index.impl.ElasticsearchIndexManager;
-import io.jmix.searchelasticsearch.index.impl.ElasticsearchMetadataResolver;
+import io.jmix.searchelasticsearch.index.impl.*;
 import io.jmix.searchelasticsearch.searching.impl.ElasticsearchEntitySearcher;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategyProvider;
@@ -102,14 +99,16 @@ public class SearchElasticsearchAutoConfiguration {
                                                      IndexStateRegistry indexStateRegistry,
                                                      ElasticsearchIndexSettingsProvider indexSettingsProcessor,
                                                      ElasticsearchIndexConfigurationComparator configurationComparator,
-                                                     ElasticsearchMetadataResolver metadataResolver) {
+                                                     ElasticsearchMetadataResolver metadataResolver,
+                                                     ElasticsearchPutMappingService putMappingRequestService) {
         return new ElasticsearchIndexManager(client,
                 indexStateRegistry,
                 indexConfigurationManager,
                 searchProperties,
                 indexSettingsProcessor,
                 configurationComparator,
-                metadataResolver
+                metadataResolver,
+                putMappingRequestService
         );
     }
 

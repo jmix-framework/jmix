@@ -6,5 +6,5 @@
 }
 
 jmix-full-calendar a:not(:any-link) {
-    color: inherit;
+    color: var(--lumo-body-text-color);
 }

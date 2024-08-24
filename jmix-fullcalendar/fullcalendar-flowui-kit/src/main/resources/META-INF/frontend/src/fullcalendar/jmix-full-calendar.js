@@ -556,6 +556,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     _onEventDidMount(e) {
         const eventElement = e.el;
 
+        // todo use html title?
         if (e.event.extendedProps.description) {
             if (!eventElement.id) {
                 eventElement.id = window.crypto.randomUUID();

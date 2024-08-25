@@ -76,8 +76,8 @@ public class EntityFieldDelegate<C extends AbstractField<?, V> & SupportsMetaCla
         if (!fieldClass.isAssignableFrom(valueClass)) {
             throw new IllegalArgumentException(
                     String.format("Could not set value with class %s to field with class %s",
-                            fieldClass.getCanonicalName(),
-                            valueClass.getCanonicalName())
+                            valueClass.getCanonicalName(),
+                            fieldClass.getCanonicalName())
             );
         }
     }

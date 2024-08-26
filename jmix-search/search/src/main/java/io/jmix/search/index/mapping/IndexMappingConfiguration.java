@@ -21,7 +21,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.mapping.impl.IndexMappingConfigurationSerializer;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Contains details about all fields
@@ -52,5 +51,4 @@ public class IndexMappingConfiguration {
     public DisplayedNameDescriptor getDisplayedNameDescriptor() {
         return displayedNameDescriptor;
     }
-
 }

@@ -1665,7 +1665,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             EntityTableItems<?> items = ((EntityTableItems<?>) getItems());
             MetaClass metaClass = items.getEntityMetaClass();
 
-            if (metaClass != null) {
+            if (metaClass != null && metaClass.getPropertyPath(columnId.toString()) != null) {
                 attributeContext = new UiEntityAttributeContext(metaClass, columnId.toString());
             }
         }

@@ -18,9 +18,9 @@ package test_support.indexing;
 
 import io.jmix.search.index.annotation.AutoMappedField;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
-import test_support.entity.indexing.TestExpHiddenFieldsEntity;
+import test_support.entity.indexing.TestExplicitHiddenFieldsEntity;
 
-@JmixEntitySearchIndex(entity = TestExpHiddenFieldsEntity.class)
+@JmixEntitySearchIndex(entity = TestExplicitHiddenFieldsEntity.class)
 public interface TestHiddenFieldsSecretIndexDefinition {
 
     @AutoMappedField(includeProperties = {"name", "secretField"})

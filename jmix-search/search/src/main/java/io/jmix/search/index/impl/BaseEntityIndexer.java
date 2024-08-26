@@ -21,8 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.*;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.annotation.Secret;
-import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
@@ -284,16 +282,11 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                                                       Object instance) {
         ObjectNode sourceObject = JsonNodeFactory.instance.objectNode();
         IndexMappingConfiguration indexMappingConfiguration = indexConfiguration.getMapping();
+
         indexMappingConfiguration.getFields()
                 .values()
                 .stream()
                 .filter(field -> !field.isStandalone())
-                .filter(field -> Arrays.stream(field.getMetaPropertyPath().getMetaProperties())
-                        .noneMatch(p -> p.getName().equals(field.getEntityPropertyFullName())
-                                && (p.getAnnotations().containsKey(Secret.class.getName())
-                                || p.getAnnotations().containsKey(SystemLevel.class.getName()))
-                                && !indexMappingConfiguration.getIncludedFieldNames().contains(field.getEntityPropertyFullName())
-                        ))
                 .forEach(field -> addFieldValueToEntityIndexContent(sourceObject, field, instance));
 
         DisplayedNameDescriptor displayedNameDescriptor = indexMappingConfiguration.getDisplayedNameDescriptor();

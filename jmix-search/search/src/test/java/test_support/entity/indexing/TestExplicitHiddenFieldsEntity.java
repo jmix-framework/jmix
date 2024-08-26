@@ -31,9 +31,9 @@ import java.util.Date;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "TEST_EXP_HIDDEN_FIELD_ENTITY")
-@Entity(name = "test_ExpHiddenFieldEntity")
-public class TestExpHiddenFieldsEntity {
+@Table(name = "TEST_EXPLICIT_HIDDEN_FIELD_ENTITY")
+@Entity(name = "test_ExplicitHiddenFieldEntity")
+public class TestExplicitHiddenFieldsEntity {
     @JmixGeneratedValue
     @Column(name = "ID", nullable = false)
     @Id

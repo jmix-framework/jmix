@@ -35,13 +35,10 @@ public class IndexMappingConfiguration {
 
     protected final DisplayedNameDescriptor displayedNameDescriptor;
 
-    protected final Set<String> includedFieldNames;
-
-    public IndexMappingConfiguration(MetaClass entityMetaClass, Map<String, MappingFieldDescriptor> fields, DisplayedNameDescriptor displayedNameDescriptor, Set<String> includedFieldNames) {
+    public IndexMappingConfiguration(MetaClass entityMetaClass, Map<String, MappingFieldDescriptor> fields, DisplayedNameDescriptor displayedNameDescriptor) {
         this.entityMetaClass = entityMetaClass;
         this.fields = fields;
         this.displayedNameDescriptor = displayedNameDescriptor;
-        this.includedFieldNames = includedFieldNames;
     }
 
     public Map<String, MappingFieldDescriptor> getFields() {
@@ -56,7 +53,4 @@ public class IndexMappingConfiguration {
         return displayedNameDescriptor;
     }
 
-    public Set<String> getIncludedFieldNames() {
-        return includedFieldNames;
-    }
 }

@@ -637,14 +637,14 @@ public class OpenSearchEntityIndexingTest {
     @Test
     @DisplayName("Indexing of entity hidden fields must be available with explicit includes")
     public void indexWithExplicitHiddenProps() {
-        TestExpHiddenFieldsEntity entity = metadata.create(TestExpHiddenFieldsEntity.class);
+        TestExplicitHiddenFieldsEntity entity = metadata.create(TestExplicitHiddenFieldsEntity.class);
         entity.setName("Hidden Field entity");
         entity.setSecretField("Hidden Field Secret");
         dataManager.save(entity);
 
-        JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_exp_hidden_fields");
+        JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_explicit_hidden_fields");
         TestBulkRequestIndexActionValidationData expectedIndexAction = new TestBulkRequestIndexActionValidationData(
-                "search_index_test_exphiddenfieldentity",
+                "search_index_test_explicithiddenfieldentity",
                 idSerialization.idToString(Id.of(entity)),
                 jsonNode
         );

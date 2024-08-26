@@ -200,19 +200,11 @@ public class AnnotatedIndexDefinitionProcessor {
         DisplayedNameDescriptor displayedNameDescriptor = createDisplayedNameDescriptor(parsedIndexDefinition.getMetaClass());
         MappingDefinition mappingDefinition;
         Method mappingDefinitionImplementationMethod = parsedIndexDefinition.getMappingDefinitionImplementationMethod();
-        final Set<String> includedFields = new HashSet<>();
         if (mappingDefinitionImplementationMethod == null) {
-            MappingDefinitionBuilder
-                    builder = MappingDefinition.builder();
-            parsedIndexDefinition.getFieldAnnotations().forEach(annotation -> {
-                processAnnotation(
-                        builder, annotation, parsedIndexDefinition.getMetaClass()
-                );
-                if (annotation instanceof AutoMappedField autoMappedField) {
-                    includedFields.addAll(Arrays.stream(autoMappedField.includeProperties())
-                            .filter(n -> !n.equals("*")).collect(Collectors.toSet()));
-                }
-            });
+            MappingDefinitionBuilder builder = MappingDefinition.builder();
+            parsedIndexDefinition.getFieldAnnotations().forEach(annotation -> processAnnotation(
+                    builder, annotation, parsedIndexDefinition.getMetaClass()
+            ));
             mappingDefinition = builder.build();
         } else {
             Class<?> returnType = mappingDefinitionImplementationMethod.getReturnType();
@@ -229,7 +221,7 @@ public class AnnotatedIndexDefinitionProcessor {
                 parsedIndexDefinition.getMetaClass(), mappingDefinition
         );
         indexMappingConfiguration = new IndexMappingConfiguration(
-                parsedIndexDefinition.getMetaClass(), fieldDescriptors, displayedNameDescriptor, includedFields
+                parsedIndexDefinition.getMetaClass(), fieldDescriptors, displayedNameDescriptor
         );
         return indexMappingConfiguration;
     }

@@ -69,38 +69,4 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet id="5" author="test">
-        <createTable tableName="TEST_HIDDEN_FIELD_ENTITY">
-            <column name="ID" type="UUID">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_HIDDEN_FIELD_ENTITY"/>
-            </column>
-            <column name="NAME" type="VARCHAR(255)"/>
-            <column name="SECRET_FIELD" type="VARCHAR(255)"/>
-            <column name="SYSTEM_FIELD" type="VARCHAR(255)"/>
-            <column name="VERSION" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="CREATED_BY" type="VARCHAR(255)"/>
-            <column name="CREATED_DATE" type="DATETIME"/>
-            <column name="DELETED_BY" type="VARCHAR(255)"/>
-            <column name="DELETED_DATE" type="DATETIME"/>
-        </createTable>
-    </changeSet>
-    <changeSet id="6" author="test">
-        <createTable tableName="TEST_EXP_HIDDEN_FIELD_ENTITY">
-            <column name="ID" type="UUID">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_EXP_HIDDEN_FIELD_ENTITY"/>
-            </column>
-            <column name="NAME" type="VARCHAR(255)"/>
-            <column name="SECRET_FIELD" type="VARCHAR(255)"/>
-            <column name="SYSTEM_FIELD" type="VARCHAR(255)"/>
-            <column name="VERSION" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="CREATED_BY" type="VARCHAR(255)"/>
-            <column name="CREATED_DATE" type="DATETIME"/>
-            <column name="DELETED_BY" type="VARCHAR(255)"/>
-            <column name="DELETED_DATE" type="DATETIME"/>
-        </createTable>
-    </changeSet>
 </databaseChangeLog>

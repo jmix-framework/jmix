@@ -282,7 +282,6 @@ public abstract class BaseEntityIndexer implements EntityIndexer {
                                                       Object instance) {
         ObjectNode sourceObject = JsonNodeFactory.instance.objectNode();
         IndexMappingConfiguration indexMappingConfiguration = indexConfiguration.getMapping();
-
         indexMappingConfiguration.getFields()
                 .values()
                 .stream()

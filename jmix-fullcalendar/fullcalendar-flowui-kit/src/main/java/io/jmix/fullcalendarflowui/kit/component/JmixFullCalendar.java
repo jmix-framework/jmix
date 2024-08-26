@@ -32,8 +32,6 @@ import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOpt
 import io.jmix.fullcalendarflowui.kit.component.serialization.deserializer.JmixFullCalendarDeserializer;
 import io.jmix.fullcalendarflowui.kit.component.serialization.serializer.JmixFullCalendarSerializer;
 import jakarta.annotation.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -53,7 +51,6 @@ import java.util.*;
 @JsModule("./src/fullcalendar/jmix-full-calendar-connector.js")
 @CssImport("./src/fullcalendar/jmix-full-calendar.css")
 public class JmixFullCalendar extends Component implements HasSize, HasStyle {
-    private static final Logger log = LoggerFactory.getLogger(JmixFullCalendar.class);
 
     protected JmixFullCalendarSerializer serializer;
     protected JmixFullCalendarDeserializer deserializer;
@@ -145,12 +142,16 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getViews().removeCustomCalendarView(calendarCustomView);
     }
 
+    @Nullable
+    public CustomCalendarView getCustomCalendarView(String viewId) {
+        return options.getViews().getCustomCalendarView(viewId);
+    }
+
     public List<CustomCalendarView> getCustomCalendarViews() {
         return options.getViews().getCustomCalendarViews();
     }
 
-    @Nullable
-    public <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(CalendarView calendarView) {
+    public <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(CalendarViewType calendarView) {
         return options.getViews().getCalendarViewProperties(calendarView);
     }
 
@@ -655,32 +656,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     public void setEventTimeFormat(@Nullable String format) {
         options.getEventTimeFormat().setValue(format);
-    }
-
-    @Nullable
-    public Integer getEventMinHeight() {
-        return options.getEventMinHeight().getValue();
-    }
-
-    public void setEventMinHeight(@Nullable Integer minHeight) {
-        options.getEventMinHeight().setValue(minHeight);
-    }
-
-    @Nullable
-    public Integer getEventShortHeight() {
-        return options.getEventShortHeight().getValue();
-    }
-
-    public void setEventShortHeight(@Nullable Integer shortHeight) {
-        options.getEventShortHeight().setValue(shortHeight);
-    }
-
-    public boolean isSlotEventOverlap() {
-        return options.getSlotEventOverlap().getNotNullValue();
-    }
-
-    public void setSlotEventOverlap(boolean slotEventOverlap) {
-        options.getSlotEventOverlap().setValue(slotEventOverlap);
     }
 
     public boolean isWeekendsVisible() {

@@ -26,7 +26,8 @@
                     <xs:all>
                         <xs:element name="eventProviders" type="eventProvidersType"/>
                         <xs:element name="businessHours" type="businessHoursType"/>
-                        <xs:element name="views" type="customViewsType"/>
+                        <xs:element name="viewProperties" type="viewProperties"/>
+                        <xs:element name="customViews" type="customViews"/>
                         <xs:element name="hiddenDays" type="hiddenDaysType"/>
                     </xs:all>
 
@@ -78,11 +79,6 @@
                     <xs:attribute name="slotLabelFormat" type="layout:resourceString"/>
                     <xs:attribute name="eventTimeFormat" type="layout:resourceString"/>
 
-                    <!--todo rp remove?-->
-                    <xs:attribute name="eventMinHeight" type="xs:integer"/>
-                    <xs:attribute name="eventShortHeight" type="xs:integer"/>
-                    <xs:attribute name="slotEventOverlap" type="xs:boolean"/>
-                    <!---->
                     <xs:attribute name="weekendsVisible" type="xs:boolean"/>
                     <xs:attribute name="dayHeadersVisible" type="xs:boolean"/>
 
@@ -120,19 +116,171 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:complexType name="customViewsType">
+    <xs:complexType name="customViews">
         <xs:sequence maxOccurs="unbounded">
-            <xs:element name="view" type="customViewType"/>
+            <xs:element name="customView" type="customViewType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="customViewType">
+    <xs:complexType name="viewProperties">
+        <xs:all minOccurs="0">
+            <xs:element name="dayGridDay" type="dayGridDay"/>
+            <xs:element name="dayGridWeek" type="dayGridWeek"/>
+            <xs:element name="dayGridMonth" type="dayGridMonth"/>
+            <xs:element name="dayGridYear" type="dayGridYear"/>
+            <xs:element name="timeGridDay" type="timeGridDay"/>
+            <xs:element name="timeGridWeek" type="timeGridWeek"/>
+            <xs:element name="listDay" type="listDay"/>
+            <xs:element name="listWeek" type="listWeek"/>
+            <xs:element name="listMonth" type="listMonth"/>
+            <xs:element name="listYear" type="listYear"/>
+            <xs:element name="multiMonthYear" type="multiMonthYear"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="baseViewType">
         <xs:choice minOccurs="0">
-            <xs:element name="duration" type="calendarDurationType"/>
+            <xs:element name="properties" type="viewPropertiesType"/>
         </xs:choice>
-        <xs:attribute name="id" type="xs:string" use="required"/>
-        <xs:attribute name="type" type="customCalendarViewType"/>
-        <xs:attribute name="dayCount" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseDayGridViewType">
+        <xs:complexContent>
+            <xs:extension base="baseViewType">
+                <xs:attribute name="dayPopoverFormat" type="layout:resourceString"/>
+                <xs:attribute name="dayHeaderFormat" type="layout:resourceString"/>
+                <xs:attribute name="weekNumberFormat" type="layout:resourceString"/>
+                <xs:attribute name="eventTimeFormat" type="layout:resourceString"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseTimeGridViewType">
+        <xs:complexContent>
+            <xs:extension base="baseViewType">
+                <xs:attribute name="dayPopoverFormat" type="layout:resourceString"/>
+                <xs:attribute name="dayHeaderFormat" type="layout:resourceString"/>
+                <xs:attribute name="weekNumberFormat" type="layout:resourceString"/>
+                <xs:attribute name="eventTimeFormat" type="layout:resourceString"/>
+                <xs:attribute name="slotLabelFormat" type="layout:resourceString"/>
+                <xs:attribute name="eventMinHeight" type="xs:integer"/>
+                <xs:attribute name="eventShortHeight" type="xs:integer"/>
+                <xs:attribute name="slotEventOverlap" type="xs:boolean"/>
+                <xs:attribute name="allDaySlot" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseListViewType">
+        <xs:complexContent>
+            <xs:extension base="baseViewType">
+                <xs:attribute name="listDayFormat" type="layout:resourceString"/>
+                <xs:attribute name="listDaySideFormat" type="layout:resourceString"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="viewPropertiesType">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="property" type="viewProperty"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="viewProperty">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="dayGridDay">
+        <xs:complexContent>
+            <xs:extension base="baseDayGridViewType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dayGridWeek">
+        <xs:complexContent>
+            <xs:extension base="baseDayGridViewType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dayGridMonth">
+        <xs:complexContent>
+            <xs:extension base="baseDayGridViewType">
+                <xs:attribute name="fixedWeekCount" type="xs:boolean"/>
+                <xs:attribute name="showNonCurrentDates" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dayGridYear">
+        <xs:complexContent>
+            <xs:extension base="baseDayGridViewType">
+                <xs:attribute name="monthStartFormat" type="layout:resourceString"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="customViewType">
+        <xs:complexContent>
+            <xs:extension base="baseViewType">
+                <xs:choice minOccurs="0">
+                    <xs:element name="duration" type="calendarDurationType"/>
+                </xs:choice>
+                <xs:attribute name="id" type="xs:string" use="required"/>
+                <xs:attribute name="type" type="customCalendarViewType"/>
+                <xs:attribute name="dayCount" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="timeGridDay">
+        <xs:complexContent>
+            <xs:extension base="baseTimeGridViewType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="timeGridWeek">
+        <xs:complexContent>
+            <xs:extension base="baseTimeGridViewType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="listDay">
+        <xs:complexContent>
+            <xs:extension base="baseListViewType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="listWeek">
+        <xs:complexContent>
+            <xs:extension base="baseListViewType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="listMonth">
+        <xs:complexContent>
+            <xs:extension base="baseListViewType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="listYear">
+        <xs:complexContent>
+            <xs:extension base="baseListViewType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="multiMonthYear">
+        <xs:complexContent>
+            <xs:extension base="baseViewType">
+                <xs:attribute name="multiMonthMaxColumns" type="xs:integer"/>
+                <xs:attribute name="multiMonthMinWidth" type="xs:integer"/>
+                <xs:attribute name="multiMonthTitleFormat" type="layout:resourceString"/>
+                <xs:attribute name="fixedWeekCount" type="xs:boolean"/>
+                <xs:attribute name="showNonCurrentDates" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="calendarDurationType">
@@ -200,23 +348,22 @@
 
     <xs:complexType name="baseProviderType">
         <xs:attribute name="id" type="xs:string"/>
-        <!--todo use or remove property word-->
-        <xs:attribute name="groupIdProperty" type="xs:string"/>
-        <xs:attribute name="allDayProperty" type="xs:string"/>
-        <xs:attribute name="startDateTimeProperty" type="xs:string"/>
-        <xs:attribute name="endDateTimeProperty" type="xs:string"/>
-        <xs:attribute name="titleProperty" type="xs:string"/>
-        <xs:attribute name="descriptionProperty" type="xs:string"/>
-        <xs:attribute name="interactiveProperty" type="xs:string"/>
-        <xs:attribute name="classNamesProperty" type="xs:string"/>
-        <xs:attribute name="startEditableProperty" type="xs:string"/>
-        <xs:attribute name="durationEditableProperty" type="xs:string"/>
-        <xs:attribute name="displayProperty" type="xs:string"/>
-        <xs:attribute name="overlapProperty" type="xs:string"/>
-        <xs:attribute name="constraintProperty" type="xs:string"/>
-        <xs:attribute name="backgroundColorProperty" type="xs:string"/>
-        <xs:attribute name="borderColorProperty" type="xs:string"/>
-        <xs:attribute name="textColorProperty" type="xs:string"/>
+        <xs:attribute name="groupId" type="xs:string"/>
+        <xs:attribute name="allDay" type="xs:string"/>
+        <xs:attribute name="startDateTime" type="xs:string"/>
+        <xs:attribute name="endDateTime" type="xs:string"/>
+        <xs:attribute name="title" type="xs:string"/>
+        <xs:attribute name="description" type="xs:string"/>
+        <xs:attribute name="interactive" type="xs:string"/>
+        <xs:attribute name="classNames" type="xs:string"/>
+        <xs:attribute name="startEditable" type="xs:string"/>
+        <xs:attribute name="durationEditable" type="xs:string"/>
+        <xs:attribute name="display" type="xs:string"/>
+        <xs:attribute name="overlap" type="xs:string"/>
+        <xs:attribute name="constraint" type="xs:string"/>
+        <xs:attribute name="backgroundColor" type="xs:string"/>
+        <xs:attribute name="borderColor" type="xs:string"/>
+        <xs:attribute name="textColor" type="xs:string"/>
 
         <xs:attribute name="additionalProperties" type="xs:string"/>
 

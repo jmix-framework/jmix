@@ -342,25 +342,29 @@ public class FullCalendarDelegate {
     }
 
     protected void setupDayGridLocalizedFormats() {
-        DayGridDayViewProperties dayGridDay = getCalendarViewProperties(CalendarViewType.DAY_GRID_DAY);
+        DayGridDayViewProperties dayGridDay =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_DAY);
         dayGridDay.setDayPopoverFormat(getMessage("dayGridDayDayPopoverFormat"));
         dayGridDay.setDayHeaderFormat(getMessage("dayGridDayDayHeaderFormat"));
         dayGridDay.setWeekNumberFormat(getMessage("dayGridDayWeekNumberFormat"));
         dayGridDay.setEventTimeFormat(getMessage("dayGridDayEventTimeFormat"));
 
-        DayGridWeekViewProperties dayGridWeek = getCalendarViewProperties(CalendarViewType.DAY_GRID_WEEK);
+        DayGridWeekViewProperties dayGridWeek =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_WEEK);
         dayGridWeek.setDayPopoverFormat(getMessage("dayGridWeekDayDayPopoverFormat"));
         dayGridWeek.setDayHeaderFormat(getMessage("dayGridWeekDayHeaderFormat"));
         dayGridWeek.setWeekNumberFormat(getMessage("dayGridWeekWeekNumberFormat"));
         dayGridWeek.setEventTimeFormat(getMessage("dayGridWeekEventTimeFormat"));
 
-        DayGridMonthViewProperties dayGridMonth = getCalendarViewProperties(CalendarViewType.DAY_GRID_MONTH);
+        DayGridMonthViewProperties dayGridMonth =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_MONTH);
         dayGridMonth.setDayPopoverFormat(getMessage("dayGridMonthDayPopoverFormat"));
         dayGridMonth.setDayHeaderFormat(getMessage("dayGridMonthDayHeaderFormat"));
         dayGridMonth.setWeekNumberFormat(getMessage("dayGridMonthWeekNumberFormat"));
         dayGridMonth.setEventTimeFormat(getMessage("dayGridMonthEventTimeFormat"));
 
-        DayGridYearViewProperties dayGridYear = getCalendarViewProperties(CalendarViewType.DAY_GRID_YEAR);
+        DayGridYearViewProperties dayGridYear =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_YEAR);
         dayGridYear.setDayPopoverFormat(getMessage("dayGridYearDayPopoverFormat"));
         dayGridYear.setDayHeaderFormat(getMessage("dayGridYearDayHeaderFormat"));
         dayGridYear.setWeekNumberFormat(getMessage("dayGridYearWeekNumberFormat"));
@@ -369,14 +373,16 @@ public class FullCalendarDelegate {
     }
 
     protected void setupTimeGridLocalizedFormats() {
-        TimeGridDayViewProperties timeGridDay = getCalendarViewProperties(CalendarViewType.TIME_GRID_DAY);
+        TimeGridDayViewProperties timeGridDay =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.TIME_GRID_DAY);
         timeGridDay.setDayPopoverFormat(getMessage("timeGridDayDayPopoverFormat"));
         timeGridDay.setDayHeaderFormat(getMessage("timeGridDayDayHeaderFormat"));
         timeGridDay.setWeekNumberFormat(getMessage("timeGridDayWeekNumberFormat"));
         timeGridDay.setEventTimeFormat(getMessage("timeGridDayEventTimeFormat"));
         timeGridDay.setSlotLabelFormat(getMessage("timeGridDaySlotLabelFormat"));
 
-        TimeGridWeekViewProperties timeGridWeek = getCalendarViewProperties(CalendarViewType.TIME_GRID_WEEK);
+        TimeGridWeekViewProperties timeGridWeek =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.TIME_GRID_WEEK);
         timeGridWeek.setDayPopoverFormat(getMessage("timeGridWeekDayPopoverFormat"));
         timeGridWeek.setDayHeaderFormat(getMessage("timeGridWeekDayHeaderFormat"));
         timeGridWeek.setWeekNumberFormat(getMessage("timeGridWeekWeekNumberFormat"));
@@ -385,25 +391,30 @@ public class FullCalendarDelegate {
     }
 
     protected void setupListLocalizedFormats() {
-        ListDayViewProperties listDay = getCalendarViewProperties(CalendarViewType.LIST_DAY);
+        ListDayViewProperties listDay =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.LIST_DAY);
         listDay.setListDayFormat(getMessage("listDayListDayFormat"));
         listDay.setListDaySideFormat(getMessage("listDayListDaySideFormat"));
 
-        ListWeekViewProperties listWeek = getCalendarViewProperties(CalendarViewType.LIST_WEEK);
+        ListWeekViewProperties listWeek =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.LIST_WEEK);
         listWeek.setListDayFormat(getMessage("listWeekListDayFormat"));
         listWeek.setListDaySideFormat(getMessage("listWeekListDaySideFormat"));
 
-        ListMonthViewProperties listMonth = getCalendarViewProperties(CalendarViewType.LIST_MONTH);
+        ListMonthViewProperties listMonth =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.LIST_MONTH);
         listMonth.setListDayFormat(getMessage("listMonthListDayFormat"));
         listMonth.setListDaySideFormat(getMessage("listMonthListDaySideFormat"));
 
-        ListYearViewProperties listYear = getCalendarViewProperties(CalendarViewType.LIST_YEAR);
+        ListYearViewProperties listYear =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.LIST_YEAR);
         listYear.setListDayFormat(getMessage("listYearListDayFormat"));
         listYear.setListDaySideFormat(getMessage("listYearListDaySideFormat"));
     }
 
     protected void setupMultiLocalizedFormats() {
-        MultiMonthYearProperties multiMonthYear = getCalendarViewProperties(CalendarViewType.MULTI_MONTH_YEAR);
+        MultiMonthYearProperties multiMonthYear =
+                fullCalendar.getCalendarViewProperties(CalendarViewType.MULTI_MONTH_YEAR);
         multiMonthYear.setMultiMonthTitleFormat(getMessage("multiMonthYearMultiMonthTitleFormat"));
     }
 
@@ -429,10 +440,6 @@ public class FullCalendarDelegate {
         json.put("locale", fullCalendar.getSerializer().serializeValue(currentAuthentication.getLocale()));
 
         fullCalendar.getElement().setPropertyJson("i18n", json);
-    }
-
-    protected <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(CalendarViewType viewType) {
-        return Objects.requireNonNull(fullCalendar.getCalendarViewProperties(viewType));
     }
 
     protected String getMessage(String key) {

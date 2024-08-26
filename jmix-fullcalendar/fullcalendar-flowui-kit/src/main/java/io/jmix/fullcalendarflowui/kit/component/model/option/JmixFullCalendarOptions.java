@@ -64,10 +64,6 @@ public class JmixFullCalendarOptions {
     protected SimpleOption<String> slotLabelFormat = new SimpleOption<>("slotLabelFormat", "ha");
     protected SimpleOption<String> eventTimeFormat = new SimpleOption<>("eventTimeFormat", "h:mma");
 
-    protected SimpleOption<Integer> eventMinHeight = new SimpleOption<>("eventMinHeight", 15);
-    protected SimpleOption<Integer> eventShortHeight = new SimpleOption<>("eventShortHeight", 30);
-    protected SimpleOption<Boolean> slotEventOverlap = new SimpleOption<>("slotEventOverlap", true);
-
     protected SimpleOption<Boolean> weekends = new SimpleOption<>("weekends", true);
     protected SimpleOption<Boolean> dayHeaders = new SimpleOption<>("dayHeaders", true);
     protected SimpleOption<Boolean> dayHeaderClassNames = new SimpleOption<>("dayHeaderClassNames", false);
@@ -125,8 +121,7 @@ public class JmixFullCalendarOptions {
 
         initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll,
                 dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat,
-                eventMinHeight, eventShortHeight, slotEventOverlap, scrollTime, scrollTimeReset, initialDate,
-                nowIndicator));
+                scrollTime, scrollTimeReset, initialDate, nowIndicator));
 
         updatableOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
         initialOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
@@ -280,18 +275,6 @@ public class JmixFullCalendarOptions {
 
     public SimpleOption<String> getEventTimeFormat() {
         return eventTimeFormat;
-    }
-
-    public SimpleOption<Integer> getEventMinHeight() {
-        return eventMinHeight;
-    }
-
-    public SimpleOption<Integer> getEventShortHeight() {
-        return eventShortHeight;
-    }
-
-    public SimpleOption<Boolean> getSlotEventOverlap() {
-        return slotEventOverlap;
     }
 
     public SimpleOption<Boolean> getWeekends() {

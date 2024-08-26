@@ -135,13 +135,11 @@ public class Views extends CalendarOption {
                 .orElse(null);
     }
 
-    @Nullable
     public <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(CalendarView calendarView) {
         Objects.requireNonNull(calendarView);
         return getCalendarViewProperties(calendarView.getId());
     }
 
-    @Nullable
     @SuppressWarnings("unchecked")
     public <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(String viewId) {
         if (CalendarViewType.DAY_GRID_DAY.getId().equals(viewId)) {
@@ -167,7 +165,7 @@ public class Views extends CalendarOption {
         } else if (CalendarViewType.MULTI_MONTH_YEAR.getId().equals(viewId)) {
             return (T) multiMonthYear;
         } else {
-            return null;
+            throw new IllegalStateException("There is no predefined view properties with id: " + viewId);
         }
     }
 

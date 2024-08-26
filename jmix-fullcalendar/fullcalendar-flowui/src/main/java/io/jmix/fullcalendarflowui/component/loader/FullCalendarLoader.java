@@ -19,10 +19,7 @@ import io.jmix.fullcalendarflowui.component.model.BusinessHours;
 import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider;
-import io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarView;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import io.jmix.fullcalendarflowui.kit.component.model.*;
 import org.dom4j.Element;
 import org.springframework.lang.Nullable;
 
@@ -39,6 +36,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
 
     private final Pattern durationPattern = Pattern.compile("(\\d+:\\d+)(:\\d+(\\.\\d+)?)?");
 
+    protected ViewPropertiesLoader viewPropertiesLoader;
+
     @Override
     protected FullCalendar createComponent() {
         return factory.create(FullCalendar.class);
@@ -51,7 +50,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         componentLoaderSupport.loadSizeAttributes(resultComponent, element);
         componentLoaderSupport.loadClassNames(resultComponent, element);
 
-        loadCalendarViews(element, resultComponent);
+        viewProperties().loadCalendarViewProperties(element, resultComponent);
+        viewProperties().loadCustomCalendarViews(element, resultComponent);
         loadInitialView(element, resultComponent);
 
         loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
@@ -102,10 +102,6 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
                 resultComponent::setSlotNumberFormat);
         loadResourceString(element, "eventTimeFormat", context.getMessageGroup(),
                 resultComponent::setEventTimeFormat);
-
-        loadInteger(element, "eventMinHeight", resultComponent::setEventMinHeight);
-        loadInteger(element, "eventShortHeight", resultComponent::setEventShortHeight);
-        loadBoolean(element, "slotEventOverlap", resultComponent::setSlotEventOverlap);
 
         loadBoolean(element, "weekendsVisible", resultComponent::setWeekendsVisible);
         loadBoolean(element, "dayHeadersVisible", resultComponent::setDayHeadersVisible);
@@ -177,22 +173,22 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
     }
 
     protected void loadBaseContainerProperties(Element eventProviderElement, AbstractEntityEventProvider<?> calendarItems) {
-        loadString(eventProviderElement, "groupIdProperty", calendarItems::setGroupIdProperty);
-        loadString(eventProviderElement, "allDayProperty", calendarItems::setAllDayProperty);
-        loadString(eventProviderElement, "startDateTimeProperty", calendarItems::setStartDateTimeProperty);
-        loadString(eventProviderElement, "endDateTimeProperty", calendarItems::setEndDateTimeProperty);
-        loadString(eventProviderElement, "titleProperty", calendarItems::setTitleProperty);
-        loadString(eventProviderElement, "descriptionProperty", calendarItems::setDescriptionProperty);
-        loadString(eventProviderElement, "interactiveProperty", calendarItems::setInteractiveProperty);
-        loadString(eventProviderElement, "classNamesProperty", calendarItems::setClassNamesProperty);
-        loadString(eventProviderElement, "startEditableProperty", calendarItems::setStartEditableProperty);
-        loadString(eventProviderElement, "durationEditableProperty", calendarItems::setDurationEditableProperty);
-        loadString(eventProviderElement, "displayProperty", calendarItems::setDisplayProperty);
-        loadString(eventProviderElement, "overlapProperty", calendarItems::setOverlapProperty);
-        loadString(eventProviderElement, "constraintProperty", calendarItems::setConstraintProperty);
-        loadString(eventProviderElement, "backgroundColorProperty", calendarItems::setBackgroundColorProperty);
-        loadString(eventProviderElement, "borderColorProperty", calendarItems::setBorderColorProperty);
-        loadString(eventProviderElement, "textColorProperty", calendarItems::setTextColorProperty);
+        loadString(eventProviderElement, "groupId", calendarItems::setGroupIdProperty);
+        loadString(eventProviderElement, "allDay", calendarItems::setAllDayProperty);
+        loadString(eventProviderElement, "startDateTime", calendarItems::setStartDateTimeProperty);
+        loadString(eventProviderElement, "endDateTime", calendarItems::setEndDateTimeProperty);
+        loadString(eventProviderElement, "title", calendarItems::setTitleProperty);
+        loadString(eventProviderElement, "description", calendarItems::setDescriptionProperty);
+        loadString(eventProviderElement, "interactive", calendarItems::setInteractiveProperty);
+        loadString(eventProviderElement, "classNames", calendarItems::setClassNamesProperty);
+        loadString(eventProviderElement, "startEditable", calendarItems::setStartEditableProperty);
+        loadString(eventProviderElement, "durationEditable", calendarItems::setDurationEditableProperty);
+        loadString(eventProviderElement, "display", calendarItems::setDisplayProperty);
+        loadString(eventProviderElement, "overlap", calendarItems::setOverlapProperty);
+        loadString(eventProviderElement, "constraint", calendarItems::setConstraintProperty);
+        loadString(eventProviderElement, "backgroundColor", calendarItems::setBackgroundColorProperty);
+        loadString(eventProviderElement, "borderColor", calendarItems::setBorderColorProperty);
+        loadString(eventProviderElement, "textColor", calendarItems::setTextColorProperty);
 
         loadStringList(eventProviderElement, "additionalProperties", calendarItems::setAdditionalProperties);
 
@@ -386,44 +382,6 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         });
     }
 
-    protected void loadCalendarViews(Element element, FullCalendar resultComponent) {
-        Element viewsElement = element.element("views");
-        if (viewsElement != null) {
-            List<Element> views = viewsElement.elements("view");
-
-            views.forEach(e -> resultComponent.addCustomCalendarView(loadCustomView(e)));
-        }
-    }
-
-    protected CustomCalendarView loadCustomView(Element element) {
-        String id = loadString(element, "id")
-                .orElseThrow(() -> new IllegalStateException("Calendar custom view must have an ID"));
-        CalendarViewType type = loadEnum(element, CalendarViewType.class, "type")
-                .orElse(null);
-        Integer dayCount = loadInteger(element, "dayCount").orElse(null);
-        CalendarDuration calendarDuration = null;
-
-        Element durartionElement = element.element("duration");
-        if (durartionElement != null) {
-            calendarDuration = loadCalendarDuration(durartionElement);
-        }
-
-        return new CustomCalendarView(id, type)
-                .withDayCount(dayCount)
-                .withDuration(calendarDuration);
-    }
-
-    protected CalendarDuration loadCalendarDuration(Element element) {
-        return CalendarDuration.ofYears(loadInteger(element, "years").orElse(0))
-                .plusMonths(loadInteger(element, "months").orElse(0))
-                .plusWeeks(loadInteger(element, "weeks").orElse(0))
-                .plusDays(loadInteger(element, "days").orElse(0))
-                .plusHours(loadInteger(element, "hours").orElse(0))
-                .plusMinutes(loadInteger(element, "minutes").orElse(0))
-                .plusSeconds(loadInteger(element, "seconds").orElse(0))
-                .plusMilliseconds(loadInteger(element, "milliseconds").orElse(0));
-    }
-
     protected void loadHiddenDays(Element element, FullCalendar resultComponent) {
         Element hiddenDaysElement = element.element("hiddenDays");
         if (hiddenDaysElement == null) {
@@ -440,5 +398,12 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         if (!hiddenDays.isEmpty()) {
             resultComponent.setHiddenDays(hiddenDays);
         }
+    }
+
+    protected ViewPropertiesLoader viewProperties() {
+        if (viewPropertiesLoader == null) {
+            viewPropertiesLoader = new ViewPropertiesLoader(loaderSupport, context);
+        }
+        return viewPropertiesLoader;
     }
 }

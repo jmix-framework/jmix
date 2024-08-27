@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.TimeZone;
 import java.util.function.Supplier;
 
-import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeTransformations.transformToZDT;
+import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.transformToZDT;
 
 public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
 

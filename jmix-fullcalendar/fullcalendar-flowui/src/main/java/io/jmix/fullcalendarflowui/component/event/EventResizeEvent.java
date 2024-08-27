@@ -10,13 +10,16 @@ import java.util.List;
 public class EventResizeEvent extends AbstractEventChangeEvent {
 
     protected final CalendarEvent calendarEvent;
+
     protected final List<CalendarEvent> relatedEvents;
 
     protected final ViewInfo viewInfo;
+
     protected final CalendarDuration startDelta;
+
     protected final CalendarDuration endDelta;
 
-    public EventResizeEvent(FullCalendar source,
+    public EventResizeEvent(FullCalendar fullCalendar,
                             boolean fromClient,
                             MouseEventDetails mouseEventDetails,
                             OldValues oldValues,
@@ -25,7 +28,7 @@ public class EventResizeEvent extends AbstractEventChangeEvent {
                             ViewInfo viewInfo,
                             CalendarDuration startDelta,
                             CalendarDuration endDelta) {
-        super(source, fromClient, mouseEventDetails, oldValues);
+        super(fullCalendar, fromClient, mouseEventDetails, oldValues);
 
         this.calendarEvent = calendarEvent;
         this.relatedEvents = relatedEvents;

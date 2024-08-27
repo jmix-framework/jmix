@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class SelectEvent extends ComponentEvent<FullCalendar> {
 
     protected final LocalDateTime startDateTime;
+
     protected final LocalDateTime endDateTime;
 
     protected final boolean allDay;
@@ -35,10 +36,20 @@ public class SelectEvent extends ComponentEvent<FullCalendar> {
         this.viewInfo = viewInfo;
     }
 
+    /**
+     * Returns date-time as is from component without transformation.
+     *
+     * @return start date-time of selection
+     */
     public LocalDateTime getStartDateTime() {
         return startDateTime;
     }
 
+    /**
+     * Returns date-time as is from component without transformation.
+     *
+     * @return end date-time of selection
+     */
     public LocalDateTime getEndDateTime() {
         return endDateTime;
     }

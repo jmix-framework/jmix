@@ -11,10 +11,10 @@ public class AbstractEventChangeEvent extends AbstractClickEvent {
 
     protected final OldValues oldValues;
 
-    public AbstractEventChangeEvent(FullCalendar source, boolean fromClient,
+    public AbstractEventChangeEvent(FullCalendar fullCalendar, boolean fromClient,
                                     MouseEventDetails mouseEventDetails,
                                     OldValues oldValues) {
-        super(source, fromClient, mouseEventDetails);
+        super(fullCalendar, fromClient, mouseEventDetails);
 
         this.oldValues = oldValues;
     }

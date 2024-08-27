@@ -15,7 +15,7 @@ public class EventDropEvent extends AbstractEventChangeEvent {
     protected final ViewInfo viewInfo;
     protected final CalendarDuration delta;
 
-    public EventDropEvent(FullCalendar source,
+    public EventDropEvent(FullCalendar fullCalendar,
                           boolean fromClient,
                           MouseEventDetails mouseEventDetails,
                           OldValues oldValues,
@@ -23,7 +23,7 @@ public class EventDropEvent extends AbstractEventChangeEvent {
                           List<CalendarEvent> relatedEvents,
                           ViewInfo viewInfo,
                           CalendarDuration delta) {
-        super(source, fromClient, mouseEventDetails, oldValues);
+        super(fullCalendar, fromClient, mouseEventDetails, oldValues);
 
         this.calendarEvent = calendarEvent;
         this.relatedEvents = relatedEvents;

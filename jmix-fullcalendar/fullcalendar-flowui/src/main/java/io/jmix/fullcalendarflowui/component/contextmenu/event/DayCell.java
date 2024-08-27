@@ -1,10 +1,10 @@
 package io.jmix.fullcalendarflowui.component.contextmenu.event;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class DayCell {
 
-    protected LocalDateTime date;
+    protected LocalDate date;
     protected boolean isFuture;
     protected boolean isPast;
     protected boolean isToday;
@@ -12,7 +12,7 @@ public class DayCell {
     protected boolean isOther;
     protected boolean isDisabled;
 
-    public DayCell(LocalDateTime date, boolean isDisabled, boolean isFuture, boolean isMonthStart,
+    public DayCell(LocalDate date, boolean isDisabled, boolean isFuture, boolean isMonthStart,
                    boolean isOther, boolean isPast, boolean isToday) {
         this.date = date;
         this.isDisabled = isDisabled;
@@ -23,7 +23,7 @@ public class DayCell {
         this.isToday = isToday;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 

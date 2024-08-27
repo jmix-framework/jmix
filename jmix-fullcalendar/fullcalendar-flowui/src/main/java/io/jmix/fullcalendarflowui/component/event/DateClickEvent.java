@@ -11,19 +11,24 @@ public class DateClickEvent extends AbstractClickEvent {
     protected final boolean allDay;
     protected final ViewInfo viewInfo;
 
-    public DateClickEvent(FullCalendar source,
+    public DateClickEvent(FullCalendar fullCalendar,
                           boolean fromClient,
                           MouseEventDetails mouseEventDetails,
                           LocalDateTime dateTime,
                           boolean allDay,
                           ViewInfo viewInfo) {
-        super(source, fromClient, mouseEventDetails);
+        super(fullCalendar, fromClient, mouseEventDetails);
 
         this.dateTime = dateTime;
         this.allDay = allDay;
         this.viewInfo = viewInfo;
     }
 
+    /**
+     * Returns date-time as is from component without transformation.
+     *
+     * @return date-time of clicked cell
+     */
     public LocalDateTime getDateTime() {
         return dateTime;
     }

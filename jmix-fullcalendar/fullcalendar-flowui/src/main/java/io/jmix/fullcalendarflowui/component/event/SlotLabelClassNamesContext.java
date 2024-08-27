@@ -34,6 +34,11 @@ public class SlotLabelClassNamesContext extends AbstractClassNamesContext {
         this.viewInfo = viewInfo;
     }
 
+    /**
+     * Returns time as is from component without transformation.
+     *
+     * @return slot time
+     */
     public LocalTime getTime() {
         return time;
     }

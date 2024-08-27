@@ -23,7 +23,7 @@ public class DomMoreLinkClick implements Serializable {
 
     protected boolean allDay;
 
-    protected String date;
+    protected String dateTime;
 
     protected DomViewInfo view;
 
@@ -41,12 +41,12 @@ public class DomMoreLinkClick implements Serializable {
         this.allDay = allDay;
     }
 
-    public String getDate() {
-        return date;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
 
     public DomViewInfo getView() {

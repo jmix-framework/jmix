@@ -12,18 +12,21 @@ import java.util.TimeZone;
 public class MoreLinkClickEvent extends AbstractClickEvent {
 
     protected final boolean allDay;
+
     protected final LocalDateTime dateTime;
+
     protected final ViewInfo viewInfo;
+
     protected final List<EventProviderContext> eventProviderContexts;
 
-    public MoreLinkClickEvent(FullCalendar calendar,
+    public MoreLinkClickEvent(FullCalendar fullCalendar,
                               boolean fromClient,
                               boolean allDay,
                               LocalDateTime dateTime,
                               ViewInfo viewInfo,
                               List<EventProviderContext> eventProviderContexts,
                               MouseEventDetails mouseEventDetails) {
-        super(calendar, fromClient, mouseEventDetails);
+        super(fullCalendar, fromClient, mouseEventDetails);
         this.allDay = allDay;
         this.dateTime = dateTime;
         this.viewInfo = viewInfo;
@@ -35,9 +38,9 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
     }
 
     /**
-     * Returns transformed date time from component's time zone to {@link LocalDateTime} with system time zone.
+     * Returns date-time as is from component without transformation.
      *
-     * @return date time that corresponds to system time zone: {@link TimeZone#getDefault()}
+     * @return date-time
      */
     public LocalDateTime getDateTime() {
         return dateTime;

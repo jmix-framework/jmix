@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 public class UnselectEvent extends ComponentEvent<FullCalendar> {
 
     protected final ViewInfo viewInfo;
+
     protected final MouseEventDetails mouseEventDetails;
 
     public UnselectEvent(FullCalendar source, boolean fromClient,

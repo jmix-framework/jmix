@@ -20,13 +20,14 @@ import com.google.common.base.Preconditions;
 import jakarta.annotation.Nullable;
 
 import java.time.*;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Objects;
 
 /**
  * INTERNAL.
  */
-public final class CalendarDateTimeTransformations {
+public final class CalendarDateTimeUtils {
 
     /**
      * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToType()
@@ -115,5 +116,48 @@ public final class CalendarDateTimeTransformations {
 
     private static RuntimeException newUnsupportedTypeException(Class javaType) {
         throw new IllegalArgumentException(String.format("Unsupported date type %s", javaType));
+    }
+
+    public static LocalDate parseIsoDate(String isoDate) {
+        try {
+            return LocalDate.parse(isoDate);
+        } catch (DateTimeParseException e) {
+            throw new IllegalStateException("Cannot parse date: " + isoDate, e);
+        }
+    }
+
+    /**
+     * Parses raw ISO date time to {@link ZonedDateTime} with component zoneId and then transform this value
+     * to {@link LocalDateTime} with system default time zone.
+     *
+     * @param isoDateTime     raw ISO date time
+     * @param componentZoneId {@link JmixFullCalendar}'s zoneId
+     * @return local date time
+     */
+    public static LocalDateTime parseAndTransform(String isoDateTime, ZoneId componentZoneId) {
+        ZonedDateTime zonedDateTime = parseIsoDateTime(isoDateTime, componentZoneId);
+        return transformAsSystemDefault(zonedDateTime);
+    }
+
+    private static LocalDateTime transformAsSystemDefault(ZonedDateTime zonedDateTime) {
+        return zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    public static ZonedDateTime parseIsoDateTime(String isoDateTime, ZoneId zoneId) {
+        try {
+            return ZonedDateTime.parse(isoDateTime);
+        } catch (DateTimeParseException e) {
+            // Exception means that offset part is missed
+        }
+        try {
+            return LocalDateTime.parse(isoDateTime).atZone(zoneId);
+        } catch (DateTimeParseException e) {
+            // Exception means that time part is missed
+        }
+        try {
+            return LocalDate.parse(isoDateTime).atStartOfDay(zoneId);
+        } catch (DateTimeParseException e) {
+            throw new IllegalStateException("Cannot parse date: " + isoDateTime, e);
+        }
     }
 }

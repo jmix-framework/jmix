@@ -78,7 +78,7 @@ public class JmixFullCalendarOptions {
     protected SimpleOption<Boolean> slotLabelClassNames = new SimpleOption<>("slotLabelClassNames", false);
 
     protected SimpleOption<Boolean> defaultAllDay = new SimpleOption<>("defaultAllDay", false);
-    // todo rework loading and parsing with java.time.Duration
+
     protected SimpleOption<CalendarDuration> defaultAllDayEventDuration = new SimpleOption<>("defaultAllDayEventDuration", CalendarDuration.ofDays(1));
     protected SimpleOption<CalendarDuration> defaultTimedEventDuration = new SimpleOption<>("defaultTimedEventDuration", CalendarDuration.ofHours(1));
     protected SimpleOption<Boolean> forceEventDuration = new SimpleOption<>("forceEventDuration", false);

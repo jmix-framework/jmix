@@ -2,56 +2,53 @@ package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.TimeZone;
 
 public class ViewInfo {
 
-    protected final LocalDateTime activeEnd;
-    protected final LocalDateTime activeStart;
-    protected final LocalDateTime currentEnd;
-    protected final LocalDateTime currentStart;
-    protected final CalendarView calendarView;
-    protected final String title;
+    protected final LocalDate activeEnd;
 
-    public ViewInfo(LocalDateTime activeEnd,
-                    LocalDateTime activeStart,
-                    LocalDateTime currentEnd,
-                    LocalDateTime currentStart,
-                    CalendarView calendarView,
-                    String title) {
+    protected final LocalDate activeStart;
+
+    protected final LocalDate currentEnd;
+
+    protected final LocalDate currentStart;
+
+    protected final CalendarView calendarView;
+
+    public ViewInfo(LocalDate activeEnd,
+                    LocalDate activeStart,
+                    LocalDate currentEnd,
+                    LocalDate currentStart,
+                    CalendarView calendarView) {
         this.activeEnd = activeEnd;
         this.activeStart = activeStart;
         this.currentEnd = currentEnd;
         this.currentStart = currentStart;
         this.calendarView = calendarView;
-        this.title = title;
     }
 
     /**
      * @return active end date time that corresponds to system time zone: {@link TimeZone#getDefault()}
      */
-    public LocalDateTime getActiveEnd() {
+    public LocalDate getActiveEnd() {
         return activeEnd;
     }
 
-    public LocalDateTime getActiveStart() {
+    public LocalDate getActiveStart() {
         return activeStart;
     }
 
-    public LocalDateTime getCurrentEnd() {
+    public LocalDate getCurrentEnd() {
         return currentEnd;
     }
 
-    public LocalDateTime getCurrentStart() {
+    public LocalDate getCurrentStart() {
         return currentStart;
     }
 
     public CalendarView getCalendarView() {
         return calendarView;
-    }
-
-    public String getTitle() {
-        return title;
     }
 }

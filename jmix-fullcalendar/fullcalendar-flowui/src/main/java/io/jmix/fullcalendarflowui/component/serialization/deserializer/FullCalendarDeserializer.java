@@ -13,10 +13,8 @@ import io.jmix.fullcalendarflowui.kit.component.serialization.deserializer.JmixF
 import io.jmix.fullcalendarflowui.kit.component.serialization.DomCalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.serialization.DomMouseEventDetails;
 
-import java.time.ZoneId;
-
-import static io.jmix.fullcalendarflowui.component.FullCalendarDelegate.parseAndTransform;
 import static io.jmix.fullcalendarflowui.component.FullCalendarUtils.getEventProviderManager;
+import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.parseIsoDate;
 
 public class FullCalendarDeserializer extends JmixFullCalendarDeserializer {
 
@@ -25,7 +23,7 @@ public class FullCalendarDeserializer extends JmixFullCalendarDeserializer {
         Preconditions.checkNotNullArgument(calendar);
 
         DayCell dayCell = json.hasKey("dayCell")
-                ? deserializeDayCell(json.getObject("dayCell"), calendar.getTimeZone().toZoneId())
+                ? deserializeDayCell(json.getObject("dayCell"))
                 : null;
         EventCell eventCell = json.hasKey("eventCell")
                 ? deserializeEventCell(json.getObject("eventCell"), calendar)
@@ -36,9 +34,9 @@ public class FullCalendarDeserializer extends JmixFullCalendarDeserializer {
         return new FullCalendarCellContext(dayCell, eventCell, new MouseEventDetails(domMouseEventDetails));
     }
 
-    public DayCell deserializeDayCell(JsonObject json, ZoneId zoneId) {
+    public DayCell deserializeDayCell(JsonObject json) {
         Preconditions.checkNotNullArgument(json);
-        return new DayCell(parseAndTransform(json.getString("date"), zoneId),
+        return new DayCell(parseIsoDate(json.getString("date")),
                 json.getBoolean("isDisabled"),
                 json.getBoolean("isFuture"),
                 json.getBoolean("isMonthStart"),

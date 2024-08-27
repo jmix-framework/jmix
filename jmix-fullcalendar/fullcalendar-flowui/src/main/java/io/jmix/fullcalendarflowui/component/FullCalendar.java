@@ -35,6 +35,8 @@ import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
+import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.parseIsoDate;
+
 public class FullCalendar extends JmixFullCalendar implements ApplicationContextAware, InitializingBean {
     private static final Logger log = LoggerFactory.getLogger(FullCalendar.class);
 
@@ -605,9 +607,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         DomDatesSet domDatesSet = deserializer.deserialize(event.getContext(), DomDatesSet.class);
 
-        DatesSetEvent datesSetEvent = calendarDelegate.createDatesSetEvent(domDatesSet, event.isFromClient());
-
-        getEventBus().fireEvent(datesSetEvent);
+        getEventBus().fireEvent(
+                new DatesSetEvent(this, event.isFromClient(),
+                        parseIsoDate(domDatesSet.getStartDate()),
+                        parseIsoDate(domDatesSet.getEndDate()),
+                        calendarDelegate.createViewInfo(domDatesSet.getView())));
     }
 
     @Override

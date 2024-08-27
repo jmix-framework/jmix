@@ -5,8 +5,11 @@ import io.jmix.fullcalendarflowui.component.FullCalendar;
 public class MoreLinkClassNamesContext extends AbstractClassNamesContext {
 
     protected final Integer eventsCount;
+
     protected final String shortText;
+
     protected final String text;
+
     protected final ViewInfo viewInfo;
 
     public MoreLinkClassNamesContext(FullCalendar fullCalendar,

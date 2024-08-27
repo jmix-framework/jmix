@@ -10,12 +10,10 @@ import multiMonthPlugin from '@fullcalendar/multimonth';
 import interactionPlugin from '@fullcalendar/interaction';
 import momentPlugin from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
-import localesAll from '@fullcalendar/core/locales-all.js';
 
 import moment from 'moment';
 
-import * as calendarUtils from './jmix-full-calendar-utils.js';
-import {RAW_EN_LOCALE} from "./jmix-full-calendar-utils.js";
+import * as utils from './jmix-full-calendar-utils.js';
 import {dataHolder} from './DataHolder.js';
 import Options, {
     processInitialOptions,
@@ -48,13 +46,6 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             initialOptions: {
                 type: Object,
                 value: null,
-            },
-            /**
-             * @private
-             */
-            _eventDescriptionPosition: {
-                type: String,
-                value: 'bottom-end'
             },
             i18n: {
                 type: Object,
@@ -92,6 +83,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.jmixOptions.addListener(SLOT_LABEL_CLASS_NAMES, this._onSlotLabelClassNames.bind(this));
         this.jmixOptions.addListener(NOW_INDICATOR_CLASS_NAMES, this._onNowIndicatorClassNames.bind(this));
 
+        // First call of `_onI18nChange` was ignored since jmixOptions was undefined.
+        // So call it again to update locale.
         this._onI18nChange(this.i18n);
 
         // Rerender calendar since after page refresh component layout is broken
@@ -100,6 +93,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
 
     /**
      * Server callable function
+     * <p>
+     * It is invoked from <code>Component#onAttach()</code> to indicate that full initialization is complete
      * @private
      */
     _onCompleteInit() {
@@ -129,8 +124,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     /**
-     * Server callable function
-     * @param options
+     * Server callable function.
+     * @param options the object that contains options as properties
      * @private
      */
     updateOptions(options) {
@@ -138,17 +133,19 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     /**
-     * Server callable function
-     * @param name
-     * @param value
+     * Server callable function.
+     * @param name option name
+     * @param value value
      */
     updateOption(name, value) {
         this.jmixOptions.updateOption(name, value);
     }
 
     /**
-     * Server callable function
-     * @param context
+     * Server callable function.
+     * <p>
+     * Updates simple events source, calling <code>#refetch()</code> function.
+     * @param context the context contains sourceId and data items
      * @private
      */
     _updateSyncSourcesData(context) {
@@ -158,8 +155,11 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     /**
-     * Server callable function
-     * @param sourcesData
+     * Server callable function.
+     * <p>
+     * Is used for incremental data updates.
+     * @param sourcesData the sources data contains a list of data "records". Each record has operation name and
+     * items for performing operation
      * @private
      */
     _updateSourcesWithIncrementalData(sourcesData) {
@@ -270,23 +270,22 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onDayHeaderClassNames(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         const context = {
-            date: dateFormatter(e.date, true), // omit time
+            date: this.formatDate(e.date, true), // omit time
             dow: e.dow,
             isDisabled: e.isDisabled,
             isFuture: e.isFuture,
             isOther: e.isOther,
             isPast: e.isPast,
             isToday: e.isToday,
-            view: calendarUtils.viewToServerObject(e.view, dateFormatter)
+            view: utils.createViewInfo(e.view, this.formatDate.bind(this))
         }
 
         const classNamesPromise = this.$server.getDayHeaderClassNames(context);
         classNamesPromise.then((classNames) => {
             // Find generated element and assign classNames
             for (const element of this.getElementsByClassName(FC_COL_HEADER_CELL)) {
-                const target = calendarUtils.findElementRecursivelyByInnerText(element, e.text);
+                const target = utils.findElementRecursivelyByInnerText(element, e.text);
                 if (target) {
                     element.classList.remove(...classNames);
                     element.classList.add(...classNames);
@@ -296,8 +295,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onDayCellClassNames(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
-        const dateStr = dateFormatter(e.date, true); // omit time
+        const dateStr = this.formatDate(e.date, true); // omit time
         const context = {
             date: dateStr,
             dow: e.dow,
@@ -306,7 +304,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             isOther: e.isOther,
             isPast: e.isPast,
             isToday: e.isToday,
-            view: calendarUtils.viewToServerObject(e.view, dateFormatter)
+            view: utils.createViewInfo(e.view, this.formatDate.bind(this))
         }
 
         const classNamesPromise = this.$server.getDayCellClassNames(context);
@@ -325,11 +323,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onSlotLabelClassNames(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         const timeStr = moment(e.date).format('HH:mm:ss');
         const context = {
             time: timeStr,
-            view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+            view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
         }
 
         const classNamesPromise = this.$server.getSlotLabelClassNames(context);
@@ -349,11 +346,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onNowIndicatorClassNames(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         const context = {
             isAxis: e.isAxis,
-            dateTime: dateFormatter(e.date),
-            view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+            dateTime: this.formatDate(e.date),
+            view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
         }
 
         const classNamesPromise = this.$server.getNowIndicatorClassNames(context);
@@ -375,7 +371,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             eventsCount: e.num,
             shortText: e.shortText,
             text: e.text,
-            view: calendarUtils.viewToServerObject(e.view, this.calendar.formatIso.bind(this.calendar))
+            view: utils.createViewInfo(e.view, this.calendar.formatIso.bind(this.calendar))
         }
         const classNamesPromise = this.$server.getMoreLinkClassNames(context);
         classNamesPromise.then((classNames) => {
@@ -393,101 +389,95 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onMoreLinkClick(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
+        // Todo wrong date time! fix it somehow!
         this.dispatchEvent(new CustomEvent("jmix-more-link-click", {
             detail: {
                 context: {
                     allDay: e.allDay,
-                    date: this.calendar.formatIso(e.date),
-                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
-                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
-                    allData: calendarUtils.segmentsToServerData(e.allSegs, dateFormatter),
-                    hiddenData: calendarUtils.segmentsToServerData(e.hiddenSegs, dateFormatter),
+                    dateTime: this.formatDate(e.date),
+                    view: utils.createViewInfo(e.view, dateFormatter),
+                    mouseDetails: utils.createMouseDetails(e.jsEvent),
+                    allData: utils.segmentsToServerData(e.allSegs, this.formatDate.bind(this)),
+                    hiddenData: utils.segmentsToServerData(e.hiddenSegs, this.formatDate.bind(this)),
                 }
             }
         }))
     }
 
     _onEventClick(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         this.dispatchEvent(new CustomEvent("jmix-event-click", {
             detail: {
                 context: {
-                    event: calendarUtils.eventToServerData(e.event),
-                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
-                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+                    event: utils.eventToServerData(e.event),
+                    mouseDetails: utils.createMouseDetails(e.jsEvent),
+                    view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
                 }
             }
         }))
     }
 
     _onEventMouseEnter(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         this.dispatchEvent(new CustomEvent("jmix-event-mouse-enter", {
             detail: {
                 context: {
-                    event: calendarUtils.eventToServerData(e.event),
-                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
-                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+                    event: utils.eventToServerData(e.event),
+                    mouseDetails: utils.createMouseDetails(e.jsEvent),
+                    view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
                 }
             }
         }))
     }
 
     _onEventMouseLeave(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         this.dispatchEvent(new CustomEvent("jmix-event-mouse-leave", {
             detail: {
                 context: {
-                    event: calendarUtils.eventToServerData(e.event),
-                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
-                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+                    event: utils.eventToServerData(e.event),
+                    mouseDetails: utils.createMouseDetails(e.jsEvent),
+                    view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
                 }
             }
         }))
     }
 
     _onEventDrop(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         this.dispatchEvent(new CustomEvent('jmix-event-drop', {
             detail: {
                 context: {
                     delta: e.delta,
-                    event: calendarUtils.eventToServerData(e.event),
-                    oldEvent: calendarUtils.eventToServerData(e.oldEvent),
-                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
-                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
-                    relatedEvents: calendarUtils.eventsToServerData(e.relatedEvents),
+                    event: utils.eventToServerData(e.event),
+                    oldEvent: utils.eventToServerData(e.oldEvent),
+                    mouseDetails: utils.createMouseDetails(e.jsEvent),
+                    view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
+                    relatedEvents: utils.eventsToServerData(e.relatedEvents),
                 }
             }
         }));
     }
 
     _onEventResize(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         this.dispatchEvent(new CustomEvent('jmix-event-resize', {
             detail: {
                 context: {
                     startDelta: e.startDelta,
                     endDelta: e.endDelta,
-                    event: calendarUtils.eventToServerData(e.event),
-                    oldEvent: calendarUtils.eventToServerData(e.oldEvent),
-                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
-                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
-                    relatedEvents: calendarUtils.eventsToServerData(e.relatedEvents),
+                    event: utils.eventToServerData(e.event),
+                    oldEvent: utils.eventToServerData(e.oldEvent),
+                    mouseDetails: utils.createMouseDetails(e.jsEvent),
+                    view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
+                    relatedEvents: utils.eventsToServerData(e.relatedEvents),
                 }
             }
         }));
     }
 
     _onDatesSet(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         this.dispatchEvent(new CustomEvent('jmix-dates-set', {
             detail: {
                 context: {
-                    startDateTime: e.startStr,
-                    endDateTime: e.endStr,
-                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+                    startDate: this.formatDate(e.start, true), // omit time as it always 00:00
+                    endDate: this.formatDate(e.end, true),     // omit time as it always 00:00
+                    view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
                     viewType: e.view.type,
                 }
             }
@@ -495,48 +485,43 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onDateClick(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         this.dispatchEvent(new CustomEvent('jmix-date-click', {
             detail: {
                 context: {
-                    date: e.dateStr,
+                    dateTime: this.formatDate(e.date),
                     allDay: e.allDay,
-                    mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent),
-                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
+                    mouseDetails: utils.createMouseDetails(e.jsEvent),
+                    view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
                 }
             }
         }));
     }
 
     _onSelect(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
         this.dispatchEvent(new CustomEvent('jmix-select', {
             detail: {
                 context: {
-                    start: e.startStr,
-                    end: e.endStr,
+                    startDateTime: this.formatDate(e.start),
+                    endDateTime: this.formatDate(e.end),
                     allDay: e.allDay,
-                    view: calendarUtils.viewToServerObject(e.view, dateFormatter),
-                    ...(e.jsEvent) && {mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent)},
+                    view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
+                    ...(e.jsEvent) && {mouseDetails: utils.createMouseDetails(e.jsEvent)},
                 }
             }
         }));
     }
 
     _onUnselect(e) {
-        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
-
         const context = {
-            view: calendarUtils.viewToServerObject(e.view, dateFormatter),
-            ...(e.jsEvent) && {mouseDetails: calendarUtils.mouseInfoToServerObject(e.jsEvent)},
+            view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
+            ...(e.jsEvent) && {mouseDetails: utils.createMouseDetails(e.jsEvent)},
         }
 
         this.dispatchEvent(new CustomEvent('jmix-unselect', {detail: {context: context}}));
     }
 
     _onDayCellDidMount(e) {
-        const cellElement = e.el;
-        cellElement.addEventListener("contextmenu", (jsEvent) => {
+        e.el.addEventListener("contextmenu", (jsEvent) => {
             // Get current view from calendar, since view from event can be obsolete
             const viewType = this.calendar.view.type;
             if (viewType === 'dayGridDay'
@@ -546,40 +531,28 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                 if (!this.contextMenuDetails) {
                     this.contextMenuDetails = {};
                 }
-                this.contextMenuDetails['dayCell'] = calendarUtils.createCalendarCellDetails(
-                    {dayEvent: e, jsEvent: jsEvent, calendar: this.calendar});
-                this.contextMenuDetails['mouseDetails'] = calendarUtils.mouseInfoToServerObject(jsEvent);
+                this.contextMenuDetails['dayCell'] = utils.createCalendarCellDetails(e, this.calendar);
+                this.contextMenuDetails['mouseDetails'] = utils.createMouseDetails(jsEvent);
             }
         });
     }
 
     _onEventDidMount(e) {
-        const eventElement = e.el;
-
-        // todo use html title?
         if (e.event.extendedProps.description) {
-            if (!eventElement.id) {
-                eventElement.id = window.crypto.randomUUID();
-            }
-
-            const tooltip = document.createElement('vaadin-tooltip');
-            tooltip.setAttribute("for", eventElement.id);
-            tooltip.setAttribute("text", e.event.extendedProps.description);
-            tooltip.setAttribute("position", this._eventDescriptionPosition)
-            eventElement.appendChild(tooltip);
+            e.el.title = e.event.extendedProps.description;
         }
 
-        eventElement.addEventListener("contextmenu", (jsEvent) => {
+        e.el.addEventListener("contextmenu", (jsEvent) => {
             if (!this.contextMenuDetails) {
                 this.contextMenuDetails = {};
             }
-            this.contextMenuDetails['mouseDetails'] = calendarUtils.mouseInfoToServerObject(jsEvent);
+            this.contextMenuDetails['mouseDetails'] = utils.createMouseDetails(jsEvent);
             this.contextMenuDetails['eventCell'] = {
                 isFuture: e.isFuture,
                 isMirror: e.isMirror,
                 isPast: e.isPast,
                 isToday: e.isToday,
-                event: calendarUtils.eventToServerData(e.event),
+                event: utils.eventToServerData(e.event),
             };
         });
     }
@@ -589,27 +562,26 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             return;
         }
 
-        // todo move to Options?
-        const calendarI18nArray = localesAll.filter((item) => item.code === i18n.locale);
-
-        const calendarI18n = calendarI18nArray.length > 0 ? calendarI18nArray[0] : RAW_EN_LOCALE;
-
-        calendarUtils.assignI18n(calendarI18n, i18n);
-
-        this.jmixOptions.updateOption("locale", calendarI18n);
-
-        const formatOptions = calendarUtils.convertToLocaleDependedOptions(i18n);
-
-        this.jmixOptions.updateOptions(formatOptions);
+        this.jmixOptions.updateLocale(i18n);
     }
 
+    /**
+     * Observers <code>dir</code> property changes. The <code>DirMixin</code> that is available from
+     * <code>ElementMixin</code> listen <code>document.dir</code> property changes and triggers this function.
+     * @param dir direction
+     * @private
+     */
     _onDirChane(dir) {
         this.jmixOptions.updateOption('direction', dir);
     }
 
     /**
      * Server callable function.
-     * @param localizedNames
+     * <p>
+     * If <code>momentPlugin</code> is used, FullCalendar starts to get all date units localization from
+     * <code>moment.js</code>. This function register localized date units that are defined in message bundle.
+     * @param localizedNames JSON with localized days, months, etc.
+     * @see https://momentjs.com/docs/#/customization/
      * @private
      */
     _defineMomentJsLocale(localizedNames) {
@@ -698,6 +670,16 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
 
     render() {
         setTimeout((e) => this.calendar.render());
+    }
+
+    formatDate(dateTime, omitTime) {
+        if (!(dateTime instanceof Date)) {
+            dateTime = new Date(dateTime);
+        }
+
+        const dateFormatter = this.calendar.formatIso.bind(this.calendar);
+
+        return dateFormatter(dateTime, omitTime);
     }
 }
 

@@ -26,11 +26,11 @@ public class CalendarDuration implements Serializable {
     protected int days;
     protected int hours;
     protected int minutes;
-    protected int seconds;
-    protected int milliseconds;
+    protected long seconds;
+    protected long milliseconds;
 
     private CalendarDuration(int years, int months, int weeks, int days, int hours, int minutes,
-                             int seconds, int milliseconds) {
+                             long seconds, long milliseconds) {
         this.years = years;
         this.months = months;
         this.weeks = weeks;
@@ -65,16 +65,16 @@ public class CalendarDuration implements Serializable {
         return create(0, 0, 0, 0, 0, minutes, 0, 0);
     }
 
-    public static CalendarDuration ofSeconds(int seconds) {
+    public static CalendarDuration ofSeconds(long seconds) {
         return create(0, 0, 0, 0, 0, 0, seconds, 0);
     }
 
-    public static CalendarDuration ofMilliseconds(int ms) {
+    public static CalendarDuration ofMilliseconds(long ms) {
         return create(0, 0, 0, 0, 0, 0, 0, ms);
     }
 
     private static CalendarDuration create(int years, int months, int weeks, int days, int hours, int minutes,
-                                           int seconds, int milliseconds) {
+                                           long seconds, long milliseconds) {
         return new CalendarDuration(years, months, weeks, days, hours, minutes, seconds, milliseconds);
     }
 
@@ -132,21 +132,21 @@ public class CalendarDuration implements Serializable {
         return plusMinutes(-minutes);
     }
 
-    public CalendarDuration plusSeconds(int seconds) {
-        int newSeconds = this.seconds + seconds;
+    public CalendarDuration plusSeconds(long seconds) {
+        long newSeconds = this.seconds + seconds;
         return create(years, months, weeks, days, hours, minutes, newSeconds, milliseconds);
     }
 
-    public CalendarDuration minusSeconds(int seconds) {
+    public CalendarDuration minusSeconds(long seconds) {
         return plusSeconds(-seconds);
     }
 
-    public CalendarDuration plusMilliseconds(int milliseconds) {
-        int newMilliseconds = this.milliseconds + milliseconds;
+    public CalendarDuration plusMilliseconds(long milliseconds) {
+        long newMilliseconds = this.milliseconds + milliseconds;
         return create(years, months, weeks, days, hours, minutes, seconds, newMilliseconds);
     }
 
-    public CalendarDuration minusMilliseconds(int milliseconds) {
+    public CalendarDuration minusMilliseconds(long milliseconds) {
         return plusMilliseconds(-milliseconds);
     }
 
@@ -174,11 +174,11 @@ public class CalendarDuration implements Serializable {
         return minutes;
     }
 
-    public int getSeconds() {
+    public long getSeconds() {
         return seconds;
     }
 
-    public int getMilliseconds() {
+    public long getMilliseconds() {
         return milliseconds;
     }
 }

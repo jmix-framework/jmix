@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 public class DomDateClick implements Serializable {
 
-    protected String date;
+    protected String dateTime;
 
     protected boolean allDay;
 
@@ -28,12 +28,12 @@ public class DomDateClick implements Serializable {
 
     protected DomViewInfo view;
 
-    public String getDate() {
-        return date;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
 
     public boolean isAllDay() {

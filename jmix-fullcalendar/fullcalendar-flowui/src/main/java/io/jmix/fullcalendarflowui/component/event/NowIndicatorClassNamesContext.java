@@ -48,7 +48,11 @@ public class NowIndicatorClassNamesContext extends AbstractClassNamesContext {
     }
 
     /**
-     * @return indicator's date time that corresponds to system time zone: {@link TimeZone#getDefault()}
+     * Returns date-time as is from component without transformation.
+     * <p>
+     * For now-indicator's line the time part will be {@code 00:00}.
+     *
+     * @return indicator's date-time
      */
     public LocalDateTime getDateTime() {
         return dateTime;

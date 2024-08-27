@@ -20,26 +20,26 @@ import java.io.Serializable;
 
 public class DomDatesSet implements Serializable {
 
-    protected String startDateTime;
+    protected String startDate;
 
-    protected String endDateTime;
+    protected String endDate;
 
     protected DomViewInfo view;
 
-    public String getStartDateTime() {
-        return startDateTime;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setStartDateTime(String startDateTime) {
-        this.startDateTime = startDateTime;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
-    public String getEndDateTime() {
-        return endDateTime;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public void setEndDateTime(String endDateTime) {
-        this.endDateTime = endDateTime;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     public DomViewInfo getView() {

@@ -8,16 +8,18 @@ import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 public class EventMouseLeaveEvent extends AbstractClickEvent {
 
     protected final CalendarEvent calendarEvent;
+
     protected final BaseCalendarEventProvider eventProvider;
+
     protected final ViewInfo viewInfo;
 
-    public EventMouseLeaveEvent(FullCalendar source,
+    public EventMouseLeaveEvent(FullCalendar fullCalendar,
                                 boolean fromClient,
                                 MouseEventDetails mouseEventDetails,
                                 CalendarEvent calendarEvent,
                                 BaseCalendarEventProvider eventProvider,
                                 ViewInfo viewInfo) {
-        super(source, fromClient, mouseEventDetails);
+        super(fullCalendar, fromClient, mouseEventDetails);
 
         this.calendarEvent = calendarEvent;
         this.eventProvider = eventProvider;

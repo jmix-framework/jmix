@@ -1,4 +1,7 @@
-import * as calendarUtils from "./jmix-full-calendar-utils";
+import localesAll from '@fullcalendar/core/locales-all.js';
+
+import * as utils from "./jmix-full-calendar-utils";
+import {RAW_EN_LOCALE} from "./jmix-full-calendar-utils";
 
 const NO_VIEW_MORE_LINK_CLICK = 'NO_VIEW';
 
@@ -51,7 +54,7 @@ function processViews(viewsObject) {
             continue;
         }
         viewsObject[view] = {...viewsObject[view], ...viewsObject[view].properties && {...viewsObject[view].properties}};
-        viewsObject[view] = calendarUtils.deleteNullProperties(viewsObject[view]);
+        viewsObject[view] = utils.deleteNullProperties(viewsObject[view]);
         delete viewsObject[view].properties;
     }
 
@@ -126,6 +129,19 @@ class Options {
         }
     }
 
+    updateLocale(jmixI18n) {
+        const calendarI18nArray = localesAll.filter((item) => item.code === jmixI18n.locale);
+        const calendarI18n = calendarI18nArray.length > 0 ? calendarI18nArray[0] : RAW_EN_LOCALE;
+
+        this._assignI18n(calendarI18n, jmixI18n);
+
+        this.updateOption("locale", calendarI18n);
+
+        const formatOptions = utils.convertToLocaleDependedOptions(jmixI18n);
+
+        this.updateOptions(formatOptions);
+    }
+
     _skipOption(key) {
         return MORE_LINK_CLICK === key
             || MORE_LINK_CLASS_NAMES === key
@@ -175,7 +191,7 @@ class Options {
             this.updateOption(EVENT_OVERLAP, eventOverlap.enabled);
 
             if (eventOverlap.jsFunction) {
-                const jsFunction = calendarUtils.parseJavaScriptFunction(eventOverlap['jsFunction']);
+                const jsFunction = utils.parseJavaScriptFunction(eventOverlap['jsFunction']);
                 if (jsFunction) {
                     this.updateOption(EVENT_OVERLAP, jsFunction);
                 }
@@ -221,7 +237,7 @@ class Options {
             this.updateOption(SELECT_OVERLAP, selectOverlap.enabled);
 
             if (selectOverlap.jsFunction) {
-                const jsFunction = calendarUtils.parseJavaScriptFunction(selectOverlap.jsFunction);
+                const jsFunction = utils.parseJavaScriptFunction(selectOverlap.jsFunction);
                 if (jsFunction) {
                     this.updateOption(SELECT_OVERLAP, jsFunction);
                 }
@@ -255,7 +271,7 @@ class Options {
         if (selectAllow === null) {
             this.updateOption(SELECT_ALLOW, selectAllow);
         } else {
-            const jsFunction = calendarUtils.parseJavaScriptFunction(selectAllow);
+            const jsFunction = utils.parseJavaScriptFunction(selectAllow);
             if (jsFunction) {
                 this.updateOption(SELECT_ALLOW, jsFunction);
             }
@@ -289,7 +305,7 @@ class Options {
     _updateDayHeaderClassNames(options) {
         const dayHeaderClassNames = options[DAY_HEADER_CLASS_NAMES];
 
-        if (calendarUtils.isNotNullUndefined(dayHeaderClassNames)) {
+        if (utils.isNotNullUndefined(dayHeaderClassNames)) {
             this.updateOption(DAY_HEADER_CLASS_NAMES, dayHeaderClassNames ? this._onDayHeaderClassNames.bind(this) : null);
         }
     }
@@ -297,7 +313,7 @@ class Options {
     _updateDayCellClassNames(options) {
         const dyCellClassNames = options[DAY_CELL_CLASS_NAMES];
 
-        if (calendarUtils.isNotNullUndefined(dyCellClassNames)) {
+        if (utils.isNotNullUndefined(dyCellClassNames)) {
             this.updateOption(DAY_CELL_CLASS_NAMES, dyCellClassNames ? this._onDayCellClassNames.bind(this) : null);
         }
     }
@@ -305,7 +321,7 @@ class Options {
     _updateSlotLabelClassNames(options) {
         const slotLabelClassNames = options[SLOT_LABEL_CLASS_NAMES];
 
-        if (calendarUtils.isNotNullUndefined(slotLabelClassNames)) {
+        if (utils.isNotNullUndefined(slotLabelClassNames)) {
             this.updateOption(SLOT_LABEL_CLASS_NAMES, slotLabelClassNames ? this._onSlotLabelClassNames.bind(this) : null);
         }
     }
@@ -313,7 +329,7 @@ class Options {
     _updateNowIndicatorClassNames(options) {
         const nowIndicatorClassNames = options[NOW_INDICATOR_CLASS_NAMES];
 
-        if (calendarUtils.isNotNullUndefined(nowIndicatorClassNames)) {
+        if (utils.isNotNullUndefined(nowIndicatorClassNames)) {
             this.updateOption(NOW_INDICATOR_CLASS_NAMES, nowIndicatorClassNames ? this._onNowIndicatorClassNames.bind(this) : null);
         }
     }
@@ -376,6 +392,54 @@ class Options {
             this.listeners[NOW_INDICATOR_CLASS_NAMES].forEach((listener) => listener(e));
         }
         return [];
+    }
+
+    _assignI18n(calendarI18n, jmixI18n) {
+        if (utils.isNotNullUndefined(jmixI18n.direction)) {
+            calendarI18n['direction'] = jmixI18n.direction.toLowerCase();
+        }
+        if (utils.isNotNullUndefined(jmixI18n.dayOfWeek)) {
+            calendarI18n['week'].dow = jmixI18n.dayOfWeek;
+        }
+        if (utils.isNotNullUndefined(jmixI18n.dayOfYear)) {
+            calendarI18n['week'].doy = jmixI18n.dayOfYear;
+        }
+        if (utils.isNotNullUndefined(jmixI18n.weekText)) {
+            calendarI18n['weekText'] = jmixI18n.weekText;
+        }
+        if (utils.isNotNullUndefined(jmixI18n.weekTextLong)) {
+            calendarI18n['weekTextLong'] = jmixI18n.weekTextLong;
+        }
+        if (utils.isNotNullUndefined(jmixI18n.allDayText)) {
+            calendarI18n['allDayText'] = jmixI18n.allDayText;
+        }
+        if (utils.isNotNullUndefined(jmixI18n.moreLinkText)) {
+            calendarI18n['moreLinkText'] = utils.isJavaScriptFunction(jmixI18n.moreLinkText)
+                ? utils.parseJavaScriptFunction(jmixI18n.moreLinkText)
+                : new Function("count", "return `" + jmixI18n.moreLinkText + "`");
+        }
+        if (utils.isNotNullUndefined(jmixI18n.noEventsText)) {
+            calendarI18n['noEventsText'] = jmixI18n.noEventsText;
+        }
+        if (utils.isNotNullUndefined(jmixI18n.closeHint)) {
+            calendarI18n['closeHint'] = jmixI18n.closeHint;
+        }
+        if (utils.isNotNullUndefined(jmixI18n.eventHint)) {
+            calendarI18n['eventHint'] = jmixI18n.eventHint;
+        }
+        if (utils.isNotNullUndefined(jmixI18n.timeHint)) {
+            calendarI18n['timeHint'] = jmixI18n.timeHint;
+        }
+        if (utils.isNotNullUndefined(jmixI18n.navLinkHint)) {
+            calendarI18n['navLinkHint'] = utils.isJavaScriptFunction(jmixI18n.navLinkHint)
+                ? utils.parseJavaScriptFunction(jmixI18n.navLinkHint)
+                : new Function("date", "return `" + jmixI18n.navLinkHint + "`");
+        }
+        if (utils.isNotNullUndefined(jmixI18n.moreLinkHint)) {
+            calendarI18n['moreLinkHint'] = utils.isJavaScriptFunction(jmixI18n.moreLinkHint)
+                ? utils.parseJavaScriptFunction(jmixI18n.moreLinkHint)
+                : new Function("count", "return `" + jmixI18n.moreLinkHint + "`")
+        }
     }
 }
 

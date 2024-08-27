@@ -29,8 +29,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.time.*;
-import java.time.format.DateTimeParseException;
 import java.util.*;
+
+import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.*;
 
 @Internal
 @Component("fcaldr_FullCalendarHelper")
@@ -99,7 +100,7 @@ public class FullCalendarDelegate {
         List<String> classNames = fullCalendar.getDayHeaderClassNamesGenerator()
                 .apply(new DayHeaderClassNamesContext(
                         fullCalendar,
-                        LocalDate.parse(clientContext.getDate()),
+                        parseIsoDate(clientContext.getDate()),
                         Objects.requireNonNull(DayOfWeek.fromId(clientContext.getDow())),
                         clientContext.isDisabled(),
                         clientContext.isFuture(),
@@ -125,7 +126,7 @@ public class FullCalendarDelegate {
         List<String> classNames = fullCalendar.getDayCellClassNamesGenerator()
                 .apply(new DayCellClassNamesContext(
                         fullCalendar,
-                        LocalDate.parse(clientContext.getDate()),
+                        parseIsoDate(clientContext.getDate()),
                         Objects.requireNonNull(DayOfWeek.fromId(clientContext.getDow())),
                         clientContext.isDisabled(),
                         clientContext.isFuture(),
@@ -168,11 +169,14 @@ public class FullCalendarDelegate {
             return jsonFactory.createArray();
         }
 
+        // Pass dateTime as is without transformation
+        LocalDateTime dateTime = parseIsoDateTime(clientContext.getDateTime(), getComponentZoneId()).toLocalDateTime();
+
         List<String> classNames = fullCalendar.getNowIndicatorClassNamesGenerator()
                 .apply(new NowIndicatorClassNamesContext(
                         fullCalendar,
                         clientContext.isAxis(),
-                        parseAndTransform(clientContext.getDateTime(), getComponentZoneId()),
+                        dateTime,
                         createViewInfo(clientContext.getView())));
 
         JsonArray result = classNames == null
@@ -199,15 +203,6 @@ public class FullCalendarDelegate {
                         getComponentTimeZone()));
     }
 
-    public DatesSetEvent createDatesSetEvent(DomDatesSet domDatesSet, boolean fromClient) {
-        return new DatesSetEvent(
-                fullCalendar,
-                fromClient,
-                parseAndTransform(domDatesSet.getStartDateTime(), getComponentZoneId()),
-                parseAndTransform(domDatesSet.getEndDateTime(), getComponentZoneId()),
-                createViewInfo(domDatesSet.getView()));
-    }
-
     public MoreLinkClickEvent createMoreLinkClickEvent(DomMoreLinkClick clientContext, boolean fromClient) {
         List<EventProviderContext> eventProviderContexts = new ArrayList<>();
         for (AbstractEventProviderManager epWrapper : getEventProvidersMap().values()) {
@@ -217,11 +212,15 @@ public class FullCalendarDelegate {
                 eventProviderContexts.add(eventProviderContext);
             }
         }
+
+        // Pass dateTime as is without transformation
+        LocalDateTime dateTime = parseIsoDateTime(clientContext.getDateTime(), getComponentZoneId()).toLocalDateTime();
+
         return new MoreLinkClickEvent(
                 fullCalendar,
                 fromClient,
                 clientContext.isAllDay(),
-                parseAndTransform(clientContext.getDate(), getComponentZoneId()),
+                dateTime,
                 createViewInfo(clientContext.getView()),
                 eventProviderContexts,
                 new MouseEventDetails(clientContext.getMouseDetails())
@@ -304,19 +303,28 @@ public class FullCalendarDelegate {
     }
 
     public DateClickEvent createDateClickEvent(DomDateClick clientEvent, boolean fromClient) {
+        // Pass date and dateTime as is without transformation
+        LocalDateTime dateTime = parseIsoDateTime(clientEvent.getDateTime(), getComponentZoneId()).toLocalDateTime();
+
         return new DateClickEvent(fullCalendar, fromClient,
                 new MouseEventDetails(clientEvent.getMouseDetails()),
-                parseAndTransform(clientEvent.getDate(), getComponentZoneId()),
+                dateTime,
                 clientEvent.isAllDay(),
                 createViewInfo(clientEvent.getView()));
     }
 
     public SelectEvent createSelectEvent(DomSelect clientEvent, boolean fromClient) {
+        // Pass date and dateTime as is without transformation
+        LocalDateTime startDateTime =
+                parseIsoDateTime(clientEvent.getStartDateTime(), getComponentZoneId()).toLocalDateTime();
+        LocalDateTime endDateTime =
+                parseIsoDateTime(clientEvent.getEndDateTime(), getComponentZoneId()).toLocalDateTime();
+
         return new SelectEvent(
                 fullCalendar, fromClient,
                 clientEvent.getMouseDetails() != null ? new MouseEventDetails(clientEvent.getMouseDetails()) : null,
-                parseAndTransform(clientEvent.getStart(), getComponentZoneId()),
-                parseAndTransform(clientEvent.getEnd(), getComponentZoneId()),
+                startDateTime,
+                endDateTime,
                 clientEvent.isAllDay(),
                 createViewInfo(clientEvent.getView()));
     }
@@ -527,12 +535,11 @@ public class FullCalendarDelegate {
 
     protected ViewInfo createViewInfo(DomViewInfo clientViewInfo) {
         return new ViewInfo(
-                parseAndTransform(clientViewInfo.getActiveEnd(), getComponentZoneId()),
-                parseAndTransform(clientViewInfo.getActiveStart(), getComponentZoneId()),
-                parseAndTransform(clientViewInfo.getCurrentEnd(), getComponentZoneId()),
-                parseAndTransform(clientViewInfo.getCurrentStart(), getComponentZoneId()),
-                fullCalendar.getCalendarView(clientViewInfo.getType()),
-                clientViewInfo.getTitle());
+                parseIsoDate(clientViewInfo.getActiveEnd()),
+                parseIsoDate(clientViewInfo.getActiveStart()),
+                parseIsoDate(clientViewInfo.getCurrentEnd()),
+                parseIsoDate(clientViewInfo.getCurrentStart()),
+                fullCalendar.getCalendarView(clientViewInfo.getType()));
     }
 
     protected AbstractEventChangeEvent.OldValues createOldValues(DomCalendarEvent clientEvent) {
@@ -602,40 +609,5 @@ public class FullCalendarDelegate {
         result.put("weekdaysShort", serializer.toJsonArrayFromString(getListMessage("weekdaysShort")));
         result.put("weekdaysMin", serializer.toJsonArrayFromString(getListMessage("weekdaysMin")));
         return result;
-    }
-
-    /**
-     * Parses raw ISO date time to {@link ZonedDateTime} with component zoneId and then transform this value
-     * to {@link LocalDateTime} with system default time zone.
-     *
-     * @param isoDateTime     raw ISO date time
-     * @param componentZoneId {@link FullCalendar}'s zoneId
-     * @return local date time
-     */
-    public static LocalDateTime parseAndTransform(String isoDateTime, ZoneId componentZoneId) {
-        ZonedDateTime startZonedDateTime = parseIsoDateTime(isoDateTime, componentZoneId);
-        return transformAsSystemDefault(startZonedDateTime);
-    }
-
-    private static LocalDateTime transformAsSystemDefault(ZonedDateTime zonedDateTime) {
-        return zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
-    }
-
-    private static ZonedDateTime parseIsoDateTime(String isoDateTime, ZoneId zoneId) {
-        try {
-            return ZonedDateTime.parse(isoDateTime);
-        } catch (DateTimeParseException e) {
-            // Exception means that offset part is missed
-        }
-        try {
-            return LocalDateTime.parse(isoDateTime).atZone(zoneId);
-        } catch (DateTimeParseException e) {
-            // Exception means that time part is missed
-        }
-        try {
-            return LocalDate.parse(isoDateTime).atStartOfDay(zoneId);
-        } catch (DateTimeParseException e) {
-            throw new IllegalStateException("Cannot parse date: " + isoDateTime, e);
-        }
     }
 }

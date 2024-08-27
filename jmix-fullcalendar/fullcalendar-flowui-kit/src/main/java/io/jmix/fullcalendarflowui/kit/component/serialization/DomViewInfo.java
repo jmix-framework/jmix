@@ -28,8 +28,6 @@ public class DomViewInfo implements Serializable {
 
     protected String currentStart;
 
-    protected String title;
-
     protected String type;
 
     public String getActiveEnd() {
@@ -62,14 +60,6 @@ public class DomViewInfo implements Serializable {
 
     public void setCurrentStart(String currentStart) {
         this.currentStart = currentStart;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getType() {

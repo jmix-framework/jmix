@@ -23,18 +23,15 @@ import io.jmix.fullcalendarflowui.kit.component.model.*;
 import org.dom4j.Element;
 import org.springframework.lang.Nullable;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
-
-    private final Pattern durationPattern = Pattern.compile("(\\d+:\\d+)(:\\d+(\\.\\d+)?)?");
 
     protected ViewPropertiesLoader viewPropertiesLoader;
 
@@ -298,30 +295,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
     protected void loadDuration(Element element, String attribute, Consumer<CalendarDuration> setter) {
         loadString(element, attribute)
                 .ifPresent(s -> {
-                    Matcher matcher = durationPattern.matcher(s);
-                    if (!matcher.matches()) {
-                        throw new GuiDevelopmentException("Invalid duration format. Use one of the following" +
-                                " formats: hh:mm:ss.sss, hh:mm:ss, hh:mm", context);
-                    }
-
-                    String[] durationParts = s.split(":");
-
-                    CalendarDuration duration = CalendarDuration
-                            .ofHours(Integer.parseInt(durationParts[0]))
-                            .plusMinutes(Integer.parseInt(durationParts[1]));
-
-                    if (durationParts.length == 3) {
-                        String secondsPart = durationParts[2];
-                        if (secondsPart.contains(".")) {
-                            String[] secondsParts = secondsPart.split("\\.");
-                            duration = duration
-                                    .plusSeconds(Integer.parseInt(secondsParts[0]))
-                                    .plusMilliseconds(Integer.parseInt(secondsParts[1].substring(0, 3)));
-                        } else {
-                            duration = duration.plusSeconds(Integer.parseInt(secondsPart));
-                        }
-                    }
-                    setter.accept(duration);
+                    Duration javaDuration = Duration.parse(s);
+                    setter.accept(CalendarDuration.ofMilliseconds(javaDuration.toMillis()));
                 });
     }
 

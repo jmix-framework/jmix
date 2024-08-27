@@ -8,10 +8,10 @@ public class AbstractClickEvent extends ComponentEvent<FullCalendar> {
 
     protected final MouseEventDetails mouseEventDetails;
 
-    public AbstractClickEvent(FullCalendar source,
+    public AbstractClickEvent(FullCalendar fullCalendar,
                               boolean fromClient,
                               MouseEventDetails mouseEventDetails) {
-        super(source, fromClient);
+        super(fullCalendar, fromClient);
 
         this.mouseEventDetails = mouseEventDetails;
     }

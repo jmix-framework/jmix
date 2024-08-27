@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeTransformations.*;
+import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.*;
 
 public class EntityCalendarEvent<E> implements CalendarEvent {
     private static final Logger log = LoggerFactory.getLogger(EntityCalendarEvent.class);

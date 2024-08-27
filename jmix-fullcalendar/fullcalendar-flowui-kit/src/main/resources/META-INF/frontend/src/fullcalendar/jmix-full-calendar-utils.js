@@ -50,28 +50,28 @@ export const RAW_EN_LOCALE = Object.assign(Object.assign({}, MINIMAL_RAW_EN_LOCA
         },
     }, viewHint: '$0 view', navLinkHint: 'Go to $0', moreLinkHint(eventCnt) {
         return `Show ${eventCnt} more event${eventCnt === 1 ? '' : 's'}`;
-    } });
+    }
+});
 
-export function viewToServerObject(calendarView, dateFormatter) {
+export function createViewInfo(view, dateFormatter) {
     return {
-        activeEnd: dateFormatter(calendarView.activeEnd),
-        activeStart: dateFormatter(calendarView.activeStart),
-        currentEnd: dateFormatter(calendarView.currentEnd),
-        currentStart: dateFormatter(calendarView.currentStart),
-        title: calendarView.title,
-        type: calendarView.type
+        activeEnd: dateFormatter(view.activeEnd, true), // omit time as it always 00:00
+        activeStart: dateFormatter(view.activeStart, true), // omit time as it always 00:00
+        currentEnd: dateFormatter(view.currentEnd, true), // omit time as it always 00:00
+        currentStart: dateFormatter(view.currentStart, true), // omit time as it always 00:00
+        type: view.type
     }
 }
 
-export function mouseInfoToServerObject(mouseDetails) {
+export function createMouseDetails(jsEvent) {
     return {
-        button: mouseDetails.button,
-        pageX: mouseDetails.pageX,
-        pageY: mouseDetails.pageY,
-        altKey: mouseDetails.altKey,
-        ctrlKey: mouseDetails.ctrlKey,
-        metaKey: mouseDetails.metaKey,
-        shiftKey: mouseDetails.shiftKey,
+        button: jsEvent.button,
+        pageX: jsEvent.pageX,
+        pageY: jsEvent.pageY,
+        altKey: jsEvent.altKey,
+        ctrlKey: jsEvent.ctrlKey,
+        metaKey: jsEvent.metaKey,
+        shiftKey: jsEvent.shiftKey,
     }
 }
 
@@ -110,12 +110,11 @@ export function segmentToServerData(segment, dateFormatter) {
     }
 }
 
-export function createCalendarCellDetails(context) {
-    const dayEvent = context.dayEvent;
-    const dateFormatter = context.calendar.formatIso.bind(context.calendar);
+export function createCalendarCellDetails(dayEvent, calendar) {
+    const dateFormatter = calendar.formatIso.bind(calendar);
 
     let isCellDisabled = false;
-    const validRange = context.calendar.getOption('validRange');
+    const validRange = calendar.getOption('validRange');
     if (validRange) {
         const date = moment(dayEvent.date).startOf('day');
         const startDisabled = validRange.start ? date.isBefore(validRange.start) : false;
@@ -123,7 +122,7 @@ export function createCalendarCellDetails(context) {
         isCellDisabled = startDisabled || endDisabled;
     }
     return {
-        date: dateFormatter(dayEvent.date),
+        date: dateFormatter(dayEvent.date, true), // omit time
         isFuture: dayEvent.isFuture,
         isPast: dayEvent.isPast,
         isToday: dayEvent.isToday,
@@ -153,60 +152,11 @@ export function parseJavaScriptFunction(stringFunction) {
     return new Function(args, body);
 }
 
-function isJavaScriptFunction(stringFunction) {
+export function isJavaScriptFunction(stringFunction) {
     return stringFunction.indexOf('(') !== -1
         && stringFunction.indexOf(')') !== -1
         && stringFunction.indexOf('{') !== -1
         && stringFunction.lastIndexOf('}') !== -1
-}
-
-// todo rp move to Option?
-export function assignI18n(calendarI18n, jmixI18n) {
-    if (isNotNullUndefined(jmixI18n.direction)) {
-        calendarI18n['direction'] = jmixI18n.direction.toLowerCase();
-    }
-    if (isNotNullUndefined(jmixI18n.dayOfWeek)) {
-        calendarI18n['week'].dow = jmixI18n.dayOfWeek;
-    }
-    if (isNotNullUndefined(jmixI18n.dayOfYear)) {
-        calendarI18n['week'].doy = jmixI18n.dayOfYear;
-    }
-    if (isNotNullUndefined(jmixI18n.weekText)) {
-        calendarI18n['weekText'] = jmixI18n.weekText;
-    }
-    if (isNotNullUndefined(jmixI18n.weekTextLong)) {
-        calendarI18n['weekTextLong'] = jmixI18n.weekTextLong;
-    }
-    if (isNotNullUndefined(jmixI18n.allDayText)) {
-        calendarI18n['allDayText'] = jmixI18n.allDayText;
-    }
-    if (isNotNullUndefined(jmixI18n.moreLinkText)) {
-        calendarI18n['moreLinkText'] = isJavaScriptFunction(jmixI18n.moreLinkText)
-            ? parseJavaScriptFunction(jmixI18n.moreLinkText)
-            : new Function("count", "return `" + jmixI18n.moreLinkText + "`");
-    }
-    if (isNotNullUndefined(jmixI18n.noEventsText)) {
-        calendarI18n['noEventsText'] = jmixI18n.noEventsText;
-    }
-    if (isNotNullUndefined(jmixI18n.closeHint)) {
-        calendarI18n['closeHint'] = jmixI18n.closeHint;
-    }
-    if (isNotNullUndefined(jmixI18n.eventHint)) {
-        calendarI18n['eventHint'] = jmixI18n.eventHint;
-    }
-    if (isNotNullUndefined(jmixI18n.timeHint)) {
-        calendarI18n['timeHint'] = jmixI18n.timeHint;
-    }
-    if (isNotNullUndefined(jmixI18n.navLinkHint)) {
-        calendarI18n['navLinkHint'] = isJavaScriptFunction(jmixI18n.navLinkHint)
-            ? parseJavaScriptFunction(jmixI18n.navLinkHint)
-            : new Function("date", "return `" + jmixI18n.navLinkHint + "`");
-    }
-    if (isNotNullUndefined(jmixI18n.moreLinkHint)) {
-        calendarI18n['moreLinkHint'] = isJavaScriptFunction(jmixI18n.moreLinkHint)
-            ? parseJavaScriptFunction(jmixI18n.moreLinkHint)
-            : new Function("count", "return `" + jmixI18n.moreLinkHint + "`")
-    }
 }
 
 export function convertToLocaleDependedOptions(jmixI18n) {
@@ -244,6 +194,11 @@ export function convertToLocaleDependedOptions(jmixI18n) {
     return options;
 }
 
+/**
+ * Deletes null properties of first level.
+ * @param object the object to delete from
+ * @returns {{[p: string]: unknown}}
+ */
 export function deleteNullProperties(object) {
     return Object.fromEntries(Object.entries(object).filter(([_, v]) => v != null));
 }
@@ -266,4 +221,4 @@ export function findElementRecursivelyByInnerText(element, innerText) {
     }
 }
 
-export default viewToServerObject;
+export default createViewInfo;

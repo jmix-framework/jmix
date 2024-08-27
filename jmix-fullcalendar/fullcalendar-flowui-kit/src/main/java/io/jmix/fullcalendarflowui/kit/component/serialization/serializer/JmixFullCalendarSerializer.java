@@ -30,9 +30,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeTransformations.transformToZDT;
+import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.transformToZDT;
 
 public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
     private static final Logger log = LoggerFactory.getLogger(JmixFullCalendarSerializer.class);

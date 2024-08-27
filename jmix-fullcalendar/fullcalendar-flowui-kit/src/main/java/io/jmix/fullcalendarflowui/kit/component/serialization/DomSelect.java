@@ -22,9 +22,9 @@ import java.io.Serializable;
 
 public class DomSelect implements Serializable {
 
-    protected String start;
+    protected String startDateTime;
 
-    protected String end;
+    protected String endDateTime;
 
     protected boolean allDay;
 
@@ -32,20 +32,20 @@ public class DomSelect implements Serializable {
 
     protected DomViewInfo view;
 
-    public String getStart() {
-        return start;
+    public String getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setStart(String start) {
-        this.start = start;
+    public void setStartDateTime(String startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public String getEnd() {
-        return end;
+    public String getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setEnd(String end) {
-        this.end = end;
+    public void setEndDateTime(String endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public boolean isAllDay() {

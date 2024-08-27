@@ -70,6 +70,12 @@ jmixFullCalendarStyle.textContent = `
     jmix-full-calendar .fc-more-link:hover {
         background-color: var(--lumo-contrast-10pct);
     }
+    
+    /* More link in events stack in time slots */
+    jmix-full-calendar .fc-timegrid-col-events .fc-more-link:hover {
+        filter: brightness(0.9) contrast(1.2);
+        background-color: var(--fc-more-link-bg-color);
+    }
 `;
 
 document.head.append(jmixFullCalendarStyle);

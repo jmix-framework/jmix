@@ -6,7 +6,9 @@ import org.springframework.lang.Nullable;
 public class FullCalendarCellContext {
 
     protected final DayCell dayCell;
+
     protected final EventCell eventCell;
+
     protected final MouseEventDetails mouseDetails;
 
     public FullCalendarCellContext(@Nullable DayCell dayCell,

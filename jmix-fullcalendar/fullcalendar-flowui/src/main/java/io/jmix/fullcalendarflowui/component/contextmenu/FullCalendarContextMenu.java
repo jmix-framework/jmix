@@ -19,7 +19,9 @@ public class FullCalendarContextMenu extends ContextMenuBase<FullCalendarContext
         FullCalendarSubMenu> implements HasFullCalendarMenuItems {
 
     protected FullCalendarCellContext cellContext;
+
     protected Function<FullCalendarCellContext, Boolean> contentMenuHandler;
+
     protected FullCalendarDeserializer deserializer = new FullCalendarDeserializer();
 
     public FullCalendarContextMenu() {

@@ -6,10 +6,15 @@ import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 public class EventCell {
 
     protected boolean isFuture;
+
     protected boolean isMirror;
+
     protected boolean isPast;
+
     protected boolean isToday;
+
     protected CalendarEvent event;
+
     protected BaseCalendarEventProvider eventProvider;
 
     public EventCell(boolean isFuture, boolean isMirror, boolean isPast, boolean isToday, CalendarEvent event,

@@ -5,11 +5,17 @@ import java.time.LocalDate;
 public class DayCell {
 
     protected LocalDate date;
+
     protected boolean isFuture;
+
     protected boolean isPast;
+
     protected boolean isToday;
+
     protected boolean isMonthStart;
+
     protected boolean isOther;
+
     protected boolean isDisabled;
 
     public DayCell(LocalDate date, boolean isDisabled, boolean isFuture, boolean isMonthStart,

@@ -17,4 +17,24 @@
 package io.jmix.fullcalendarflowui.kit.component.model;
 
 public interface CalendarView extends HasEnumId<String> {
+
+    /**
+     * A "generic" value, can be used as a type for {@link CustomCalendarView}, or with "visibleRange" option.
+     */
+    CalendarView DAY_GRID = () -> "dayGrid";
+
+    /**
+     * A "generic" value, can be used as a type for {@link CustomCalendarView}, or with "visibleRange" option.
+     */
+    CalendarView TIME_GRID = () -> "timeGrid";
+
+    /**
+     * A "generic" value, can be used as a type for {@link CustomCalendarView}, or with "visibleRange" option.
+     */
+    CalendarView LIST = () -> "list";
+
+    /**
+     * A "generic" value, can be used as a type for {@link CustomCalendarView}, or with "visibleRange" option.
+     */
+    CalendarView MULTI_MONTH = () -> "multiMonth";
 }

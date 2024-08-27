@@ -389,13 +389,16 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onMoreLinkClick(e) {
-        // Todo wrong date time! fix it somehow!
+        // Workaround with date for https://github.com/fullcalendar/fullcalendar/issues/7314
+        let dateStr = e.date.toISOString();
+        dateStr = dateStr.substring(0, dateStr.length - 1);
+
         this.dispatchEvent(new CustomEvent("jmix-more-link-click", {
             detail: {
                 context: {
                     allDay: e.allDay,
-                    dateTime: this.formatDate(e.date),
-                    view: utils.createViewInfo(e.view, dateFormatter),
+                    dateTime: this.formatDate(dateStr),
+                    view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
                     mouseDetails: utils.createMouseDetails(e.jsEvent),
                     allData: utils.segmentsToServerData(e.allSegs, this.formatDate.bind(this)),
                     hiddenData: utils.segmentsToServerData(e.hiddenSegs, this.formatDate.bind(this)),

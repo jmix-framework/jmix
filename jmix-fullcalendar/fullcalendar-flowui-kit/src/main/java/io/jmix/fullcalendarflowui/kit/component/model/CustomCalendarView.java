@@ -22,7 +22,7 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
 
     protected CalendarView calendarView;
 
-    protected CalendarViewType type;
+    protected CalendarView type;
 
     protected CalendarDuration duration;
 
@@ -32,7 +32,7 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
         this(id, null);
     }
 
-    public CustomCalendarView(String id, @Nullable CalendarViewType type) {
+    public CustomCalendarView(String id, @Nullable CalendarView type) {
         super(id);
 
         this.calendarView = () -> id;
@@ -43,8 +43,8 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
         return calendarView;
     }
 
-    public CalendarViewType getType() {
-        return type == null ? CalendarViewType.DAY_GRID : type;
+    public CalendarView getType() {
+        return type == null ? CalendarView.DAY_GRID : type;
     }
 
     @Nullable

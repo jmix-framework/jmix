@@ -2228,6 +2228,10 @@
         <xs:attribute name="ariaLabelledBy" type="resourceString"/>
     </xs:attributeGroup>
 
+    <xs:attributeGroup name="hasTrimming">
+        <xs:attribute name="trimEnabled" type="xs:boolean"/>
+    </xs:attributeGroup>
+
     <xs:attributeGroup name="hasLabel">
         <xs:attribute name="label" type="resourceString"/>
     </xs:attributeGroup>
@@ -3037,6 +3041,7 @@
 
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasTrimming"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3561,6 +3566,7 @@
                 <xs:attributeGroup ref="hasValueAndElement"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasTrimming"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

@@ -24,9 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableType, ClientType> {
     protected final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
@@ -72,7 +75,7 @@ public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableTy
 
     MappingComparingResult compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
 
-        Map<String, Object> filteredSearchIndexMapping = searchIndexMapping.entrySet().stream().filter(e -> !(e.getKey().equals("type") && e.getValue().equals("object"))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        Map<String, Object> filteredSearchIndexMapping = getFilteredMapping(searchIndexMapping);
 
         if (!areKeySetsEqual(filteredSearchIndexMapping, applicationMapping)) {
             return MappingComparingResult.NOT_COMPATIBLE;
@@ -104,6 +107,16 @@ public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableTy
         }
 
         return result;
+    }
+
+    private static Map<String, Object> getFilteredMapping(Map<String, Object> searchIndexMapping) {
+        //This code contains some strange lines that is for collecting values.
+        //It is so because of JDK Bug https://bugs.openjdk.org/browse/JDK-8148463
+        return searchIndexMapping
+                .entrySet()
+                .stream()
+                .filter(e -> !(e.getKey().equals("type") && "object".equals(e.getValue())))
+                .collect(HashMap::new, (m, e)->m.put(e.getKey(), e.getValue()), HashMap::putAll);
     }
 
     private static boolean areKeySetsEqual(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {

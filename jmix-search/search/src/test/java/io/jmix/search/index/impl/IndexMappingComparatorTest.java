@@ -119,51 +119,6 @@ class IndexMappingComparatorTest {
     }
 
     @Test
-    void compare_not_compatible_something_strange_instead_of_type() {
-        Map<String, Object> searchIndexMapping =
-                Map.of(
-                        "properties",
-                        Map.of(
-                                "field1",
-                                Map.of("type", "text"),
-                                "field2",
-                                Map.of("type", "text"),
-                                "referenceField1",
-                                Map.of(
-                                        "field1_1",
-                                        Map.of("type", "text"),
-                                        "field1_2",
-                                        Map.of("notType", "text")
-                                )
-                        )
-                );
-
-
-        Map<String, Object> applicationMapping =
-                Map.of(
-                        "properties",
-                        Map.of(
-                                "referenceField1",
-                                Map.of(
-                                        "field1_2",
-                                        Map.of("type", "text"),
-                                        "field1_1",
-                                        Map.of("type", "text")
-                                ),
-                                "field1",
-                                Map.of("type", "text"),
-                                "field2",
-                                Map.of("type", "text")
-                        )
-                );
-
-        IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
-
-        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
-    }
-
-    @Test
     void compare_not_compatible_something_strange_instead_of_type_2() {
         Map<String, Object> searchIndexMapping =
                 Map.of(

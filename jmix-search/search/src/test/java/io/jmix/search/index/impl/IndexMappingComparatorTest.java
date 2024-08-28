@@ -16,13 +16,23 @@
 
 package io.jmix.search.index.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import test_support.TestJsonUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static test_support.TestJsonUtils.readJsonAsMap;
+import static test_support.TestJsonUtils.readJsonFromFile;
 
 class IndexMappingComparatorTest {
 
@@ -146,6 +156,51 @@ class IndexMappingComparatorTest {
 
     @Test
     void compare_equal_two_levels() {
+        Map<String, Object> searchIndexMapping =
+                Map.of(
+                        "properties",
+                        Map.of(
+                                "field1",
+                                Map.of("type", "text"),
+                                "field2",
+                                Map.of("type", "text"),
+                                "referenceField1",
+                                Map.of(
+                                        "field1_1",
+                                        Map.of("type", "text"),
+                                        "field1_2",
+                                        Map.of("type", "text")
+                                )
+                        )
+                );
+
+
+        Map<String, Object> applicationMapping =
+                Map.of(
+                        "properties",
+                        Map.of(
+                                "referenceField1",
+                                Map.of(
+                                        "field1_2",
+                                        Map.of("type", "text"),
+                                        "field1_1",
+                                        Map.of("type", "text")
+                                ),
+                                "field1",
+                                Map.of("type", "text"),
+                                "field2",
+                                Map.of("type", "text")
+                        )
+                );
+
+        IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
+        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
+
+        assertEquals(IndexMappingComparator.MappingComparingResult.EQUAL, result);
+    }
+
+    @Test
+    void compare_equal_two_levels_with_object() {
         Map<String, Object> searchIndexMapping =
                 Map.of(
                         "properties",
@@ -720,5 +775,24 @@ class IndexMappingComparatorTest {
         protected Object extractTypeMapping(Object currentIndexState) {
             throw new UnsupportedOperationException();
         }
+    }
+
+
+    @ParameterizedTest(name = "{index} - {0}")
+    @CsvFileSource(resources = "/mapping/data.csv", numLinesToSkip = 1)
+    void testWithCsvData(@ConvertWith(IndexMappingComparatorTestCaseConverter.class) IndexMappingComparatorTestCase testCase) {
+
+        IndexMappingComparator<?, ?, ?> comparator = new TestIndexMappingComparator(new MappingFieldComparator());
+        Map<String, Object> expectedMapping = readJsonAsMap("mapping/" + testCase.getFolderWithFiles() + "/server.json");
+        Map<String, Object> actualMapping = readJsonAsMap("mapping/" + testCase.getFolderWithFiles() + "/application.json");
+
+        assertEquals(testCase.getExpectedResult(), comparator.compare(actualMapping, expectedMapping));
+    }
+
+
+    private static Map<String, Object> convertToMap(JsonNode node) {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.convertValue(node, new TypeReference<Map<String, Object>>() {
+        });
     }
 }

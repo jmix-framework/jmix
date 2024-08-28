@@ -129,6 +129,9 @@
               propertyType="BOOLEAN"
               dynamic="true"
               valueTemplate="${processFormIdEntity != null &amp;&amp; !processFormIdEntity.id.isEmpty()}">
+        <dynamicAttribute name="visible" source="${processFormIdEntity != null &amp;&amp; !processFormIdEntity.id.isEmpty()}">
+            <dependency code = "processFormIdEntity"/>
+        </dynamicAttribute>
         <dependency code="processFormIdEntity"/>
     </property>
 

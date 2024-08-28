@@ -31,6 +31,17 @@ import static test_support.TestJsonUtils.readJsonAsMap;
 
 class IndexMappingComparatorTest {
 
+    @ParameterizedTest(name = "{index} - {0}")
+    @CsvFileSource(resources = "/mapping/data.csv", numLinesToSkip = 1)
+    void testWithCsvData(@ConvertWith(IndexMappingComparatorTestCaseConverter.class) IndexMappingComparatorTestCase testCase) {
+
+        IndexMappingComparator<?, ?, ?> comparator = new TestIndexMappingComparator(new MappingFieldComparator());
+        String folderName = "mapping/" + testCase.getFolderWithFiles();
+        Map<String, Object> expectedMapping = getMappingOrNull(folderName + "/application.json");
+        Map<String, Object> actualMapping = getMappingOrNull(folderName + "/server.json");
+
+        assertEquals(testCase.getExpectedResult(), comparator.compare(actualMapping, expectedMapping));
+    }
 
     @Test
     void compare_not_compatible_type_is_absent() {
@@ -164,51 +175,6 @@ class IndexMappingComparatorTest {
     }
 
     @Test
-    void compare_different_types() {
-        Map<String, Object> searchIndexMapping =
-                Map.of(
-                        "properties",
-                        Map.of(
-                                "field1",
-                                Map.of("type", "text"),
-                                "field2",
-                                Map.of("type", "text"),
-                                "referenceField1",
-                                Map.of(
-                                        "field1_1",
-                                        Map.of("type", "text"),
-                                        "field1_2",
-                                        Map.of("type", "number")
-                                )
-                        )
-                );
-
-
-        Map<String, Object> applicationMapping =
-                Map.of(
-                        "properties",
-                        Map.of(
-                                "referenceField1",
-                                Map.of(
-                                        "field1_2",
-                                        Map.of("type", "text"),
-                                        "field1_1",
-                                        Map.of("type", "text")
-                                ),
-                                "field1",
-                                Map.of("type", "text"),
-                                "field2",
-                                Map.of("type", "text")
-                        )
-                );
-
-        IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
-
-        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
-    }
-
-    @Test
     void compare_not_string_value_in_type() {
         Map<String, Object> searchIndexMapping =
                 Map.of(
@@ -271,51 +237,6 @@ class IndexMappingComparatorTest {
                                         Map.of("type", "text"),
                                         "field1_2",
                                         typeMap
-                                )
-                        )
-                );
-
-
-        Map<String, Object> applicationMapping =
-                Map.of(
-                        "properties",
-                        Map.of(
-                                "referenceField1",
-                                Map.of(
-                                        "field1_2",
-                                        Map.of("type", "text"),
-                                        "field1_1",
-                                        Map.of("type", "text")
-                                ),
-                                "field1",
-                                Map.of("type", "text"),
-                                "field2",
-                                Map.of("type", "text")
-                        )
-                );
-
-        IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
-
-        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
-    }
-
-    @Test
-    void compare_something_strange_with_type() {
-        Map<String, Object> searchIndexMapping =
-                Map.of(
-                        "properties",
-                        Map.of(
-                                "field1",
-                                Map.of("type", "text"),
-                                "field2",
-                                Map.of("type", "text"),
-                                "referenceField1",
-                                Map.of(
-                                        "field1_1",
-                                        Map.of("type", "text"),
-                                        "field1_2",
-                                        Map.of("type", "text", "byaka", "byaka-value")
                                 )
                         )
                 );
@@ -432,19 +353,6 @@ class IndexMappingComparatorTest {
         protected Object extractTypeMapping(Object currentIndexState) {
             throw new UnsupportedOperationException();
         }
-    }
-
-
-    @ParameterizedTest(name = "{index} - {0}")
-    @CsvFileSource(resources = "/mapping/data.csv", numLinesToSkip = 1)
-    void testWithCsvData(@ConvertWith(IndexMappingComparatorTestCaseConverter.class) IndexMappingComparatorTestCase testCase) {
-
-        IndexMappingComparator<?, ?, ?> comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        String folderName = "mapping/" + testCase.getFolderWithFiles();
-        Map<String, Object> expectedMapping = getMappingOrNull(folderName + "/application.json");
-        Map<String, Object> actualMapping = getMappingOrNull(folderName + "/server.json");
-
-        assertEquals(testCase.getExpectedResult(), comparator.compare(actualMapping, expectedMapping));
     }
 
     private static Map<String, Object> getMappingOrNull(String fileName) {

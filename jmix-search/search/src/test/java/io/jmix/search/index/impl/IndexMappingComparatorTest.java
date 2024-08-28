@@ -16,69 +16,21 @@
 
 package io.jmix.search.index.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvFileSource;
-import test_support.TestJsonUtils;
 
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static test_support.TestJsonUtils.readJsonAsMap;
-import static test_support.TestJsonUtils.readJsonFromFile;
 
 class IndexMappingComparatorTest {
 
-    @Test
-    void compare_empty_application_mapping() {
-        Map<String, Object> searchIndexMapping =
-                Map.of(
-                        "properties",
-                        Map.of(
-                                "number",
-                                Map.of("type", "text"),
-                                "product",
-                                Map.of("type", "text")
-                        )
-                );
-
-
-        Map<String, Object> applicationMapping = Collections.emptyMap();
-
-        IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
-
-        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
-    }
-
-    @Test
-    void compare_empty_search_mapping() {
-        Map<String, Object> searchIndexMapping = Collections.emptyMap();
-
-        Map<String, Object> applicationMapping =
-                Map.of(
-                        "properties",
-                        Map.of(
-                                "number",
-                                Map.of("type", "text"),
-                                "product",
-                                Map.of("type", "text")
-                        )
-                );
-
-        IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
-
-        assertEquals(IndexMappingComparator.MappingComparingResult.CAN_BE_UPDATED, result);
-    }
 
     @Test
     void compare_not_compatible_type_is_absent() {
@@ -533,14 +485,14 @@ class IndexMappingComparatorTest {
     void testWithCsvData(@ConvertWith(IndexMappingComparatorTestCaseConverter.class) IndexMappingComparatorTestCase testCase) {
 
         IndexMappingComparator<?, ?, ?> comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        Map<String, Object> expectedMapping = getMappingOrNull(testCase);
-        Map<String, Object> actualMapping = readJsonAsMap("mapping/" + testCase.getFolderWithFiles() + "/server.json");
+        String folderName = "mapping/" + testCase.getFolderWithFiles();
+        Map<String, Object> expectedMapping = getMappingOrNull(folderName + "/application.json");
+        Map<String, Object> actualMapping = getMappingOrNull(folderName + "/server.json");
 
         assertEquals(testCase.getExpectedResult(), comparator.compare(actualMapping, expectedMapping));
     }
 
-    private static Map<String, Object> getMappingOrNull(IndexMappingComparatorTestCase testCase) {
-        String fileName = "mapping/" + testCase.getFolderWithFiles() + "/application.json";
+    private static Map<String, Object> getMappingOrNull(String fileName) {
         URL resource = ClassLoader.getSystemClassLoader().getResource(fileName);
         if (resource == null) return Collections.emptyMap();
         return readJsonAsMap(resource);

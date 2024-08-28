@@ -25,6 +25,7 @@ import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import test_support.TestJsonUtils;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -783,16 +784,16 @@ class IndexMappingComparatorTest {
     void testWithCsvData(@ConvertWith(IndexMappingComparatorTestCaseConverter.class) IndexMappingComparatorTestCase testCase) {
 
         IndexMappingComparator<?, ?, ?> comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        Map<String, Object> expectedMapping = readJsonAsMap("mapping/" + testCase.getFolderWithFiles() + "/server.json");
-        Map<String, Object> actualMapping = readJsonAsMap("mapping/" + testCase.getFolderWithFiles() + "/application.json");
+        Map<String, Object> expectedMapping = getMappingOrNull(testCase);
+        Map<String, Object> actualMapping = readJsonAsMap("mapping/" + testCase.getFolderWithFiles() + "/server.json");
 
         assertEquals(testCase.getExpectedResult(), comparator.compare(actualMapping, expectedMapping));
     }
 
-
-    private static Map<String, Object> convertToMap(JsonNode node) {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.convertValue(node, new TypeReference<Map<String, Object>>() {
-        });
+    private static Map<String, Object> getMappingOrNull(IndexMappingComparatorTestCase testCase) {
+        String fileName = "mapping/" + testCase.getFolderWithFiles() + "/application.json";
+        URL resource = ClassLoader.getSystemClassLoader().getResource(fileName);
+        if (resource == null) return Collections.emptyMap();
+        return readJsonAsMap(resource);
     }
 }

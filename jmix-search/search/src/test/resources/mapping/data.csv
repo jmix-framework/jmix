@@ -1,2 +1,7 @@
 ﻿TC name;Folder with files;Result
-First TC;simple;EQUAL
+One-level mappings are equal;simple;EQUAL
+One-level mappings with different nodes' order are equal;simple_different_order;EQUAL
+Compatible mapping with additional field;compatible_one_level;CAN_BE_UPDATED
+Not compatible mapping with additional field;not_compatible_one_level;NOT_COMPATIBLE
+Two-level mappings are equal;two_levels_equal;EQUAL
+Two-level mappings are not compatible;two_levels_not_compatible;NOT_COMPATIBLE

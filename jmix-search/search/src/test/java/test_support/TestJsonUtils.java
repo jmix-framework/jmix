@@ -99,4 +99,14 @@ public class TestJsonUtils {
         }
     }
 
+    public static Map<String, Object> readJsonAsMap(URL resource) {
+        try {
+            JsonNode node = objectMapper.readTree(resource);
+            return objectMapper.convertValue(node, new TypeReference<Map<String, Object>>() {
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Unable to read json from file '%s'", resource.getPath()), e);
+        }
+    }
+
 }

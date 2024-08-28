@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableType, ClientType> {
     protected final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
@@ -70,20 +72,22 @@ public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableTy
 
     MappingComparingResult compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
 
-        if (!applicationMapping.keySet().containsAll(searchIndexMapping.keySet())) {
+        Map<String, Object> filteredSearchIndexMapping = searchIndexMapping.entrySet().stream().filter(e -> !(e.getKey().equals("type") && e.getValue().equals("object"))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        if (!areKeySetsEqual(filteredSearchIndexMapping, applicationMapping)) {
             return MappingComparingResult.NOT_COMPATIBLE;
         }
 
-        if (mappingFieldComparator.isLeafField(searchIndexMapping)) {
+        if (mappingFieldComparator.isLeafField(filteredSearchIndexMapping)) {
             if (mappingFieldComparator.isLeafField(applicationMapping)) {
-                return mappingFieldComparator.compareLeafFields(searchIndexMapping, applicationMapping);
+                return mappingFieldComparator.compareLeafFields(filteredSearchIndexMapping, applicationMapping);
             } else {
                 return MappingComparingResult.NOT_COMPATIBLE;
             }
         }
 
         MappingComparingResult result = MappingComparingResult.EQUAL;
-        for (Map.Entry<String, Object> mapEntry : searchIndexMapping.entrySet()) {
+        for (Map.Entry<String, Object> mapEntry : filteredSearchIndexMapping.entrySet()) {
             if (!(mapEntry.getValue() instanceof Map)) {
                 return MappingComparingResult.NOT_COMPATIBLE;
             }
@@ -95,14 +99,20 @@ public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableTy
             }
         }
 
-        if (result == MappingComparingResult.EQUAL && applicationMapping.size() > searchIndexMapping.size()) {
+        if (result == MappingComparingResult.EQUAL && applicationMapping.size() > filteredSearchIndexMapping.size()) {
             return MappingComparingResult.CAN_BE_UPDATED;
         }
 
         return result;
     }
 
-    public enum MappingComparingResult implements ConfigurationPartComparingResult{
+    private static boolean areKeySetsEqual(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
+        Set<String> applicationKeySet = applicationMapping.keySet();
+        Set<String> serverKeySet = searchIndexMapping.keySet();
+        return applicationKeySet.containsAll(serverKeySet);
+    }
+
+    public enum MappingComparingResult implements ConfigurationPartComparingResult {
         EQUAL,
         CAN_BE_UPDATED,
         NOT_COMPATIBLE;

@@ -1,0 +1,22 @@
+{
+  "parameters": {
+    "field1": {
+      "type": "text"
+    },
+    "field2": {
+      "type": "text"
+    },
+    "referenceField1": {
+      "type": "object",
+      "field_1_1": {
+        "type": "text"
+      },
+      "field_1_2": {
+        "type": "text"
+      },
+      "additional_field": {
+        "type": "text"
+      }
+    }
+  }
+}

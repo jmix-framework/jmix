@@ -10,3 +10,6 @@ Empty server mapping;empty_server_mapping;CAN_BE_UPDATED
 Something strange instead of type;something_strange_instead_of_type;NOT_COMPATIBLE
 Different types comparing;different_types_comparing;NOT_COMPATIBLE
 Some additional key next to type;additional_key;NOT_COMPATIBLE
+"Two-level mappings are equal with ""object"" key";two_levels_are_equal_with_object_key;EQUAL
+"Two-level mappings are compatible with ""object"" key";two_levels_are_compatible_with_object_key;CAN_BE_UPDATED
+"Two-level mappings are not compatible with ""object"" key";two_levels_are_not_compatible_with_object_key;NOT_COMPATIBLE

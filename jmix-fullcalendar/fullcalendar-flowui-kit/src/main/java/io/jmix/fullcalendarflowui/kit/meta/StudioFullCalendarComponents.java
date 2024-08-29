@@ -27,11 +27,11 @@ public interface StudioFullCalendarComponents {
 
     @StudioComponent(
             name = "FullCalendar",
-            classFqn = "io.jmix.fullcalendarflowui.component.FullCalendar",
-            category = "Components",
             xmlElement = "calendar",
-            xmlns = "http://jmix.io/schema/fullcalendar/ui",
             xmlnsAlias = "calendar",
+            xmlns = "http://jmix.io/schema/fullcalendar/ui",
+            category = "Components",
+            classFqn = "io.jmix.fullcalendarflowui.component.FullCalendar",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/component/calendar.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,

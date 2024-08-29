@@ -55,10 +55,12 @@ public class BusinessHours implements Serializable {
         return create(startTime, endTime, daysOfWeek);
     }
 
+    @Nullable
     public LocalTime getStartTime() {
         return startTime;
     }
 
+    @Nullable
     public LocalTime getEndTime() {
         return endTime;
     }

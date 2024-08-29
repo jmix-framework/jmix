@@ -261,23 +261,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getOptions().getFirstDay().setValue(firstDay);
     }
 
-    public boolean isExpandRows() {
-        return options.getExpandRows().getNotNullValue();
-    }
-
-    public void setExpandRows(boolean expandRows) {
-        options.getExpandRows().setValue(expandRows);
-    }
-
-    @Nullable
-    public Integer getWindowResizeDelay() {
-        return options.getWindowResizeDelay().getValue();
-    }
-
-    public void setWindowResizeDelay(@Nullable Integer windowResizeDelay) {
-        options.getWindowResizeDelay().setValue(windowResizeDelay);
-    }
-
     public Registration addDatesSetListener(ComponentEventListener<DatesSetEvent> listener) {
         Preconditions.checkNotNullArgument(listener);
 

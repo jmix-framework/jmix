@@ -836,6 +836,23 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getNowIndicator().setValue(nowIndicatorVisible);
     }
 
+    public boolean isExpandRows() {
+        return options.getExpandRows().getNotNullValue();
+    }
+
+    public void setExpandRows(boolean expandRows) {
+        options.getExpandRows().setValue(expandRows);
+    }
+
+    @Nullable
+    public Integer getWindowResizeDelay() {
+        return options.getWindowResizeDelay().getValue();
+    }
+
+    public void setWindowResizeDelay(@Nullable Integer windowResizeDelay) {
+        options.getWindowResizeDelay().setValue(windowResizeDelay);
+    }
+
     protected JmixFullCalendarSerializer createSerializer() {
         return new JmixFullCalendarSerializer();
     }

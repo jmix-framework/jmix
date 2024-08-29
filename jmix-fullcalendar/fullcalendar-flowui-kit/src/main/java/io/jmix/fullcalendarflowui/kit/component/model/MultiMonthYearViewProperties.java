@@ -18,7 +18,7 @@ package io.jmix.fullcalendarflowui.kit.component.model;
 
 import jakarta.annotation.Nullable;
 
-public class MultiMonthYearProperties extends AbstractCalendarViewProperties {
+public class MultiMonthYearViewProperties extends AbstractCalendarViewProperties {
 
     protected Integer multiMonthMaxColumns;
 
@@ -30,7 +30,7 @@ public class MultiMonthYearProperties extends AbstractCalendarViewProperties {
 
     protected boolean showNonCurrentDates = true;
 
-    public MultiMonthYearProperties() {
+    public MultiMonthYearViewProperties() {
         super(CalendarViewType.MULTI_MONTH_YEAR.getId());
     }
 

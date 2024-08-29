@@ -25,9 +25,9 @@ import java.util.stream.Stream;
 
 @Component("fclndr_LazyCalendarItems")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class EntityCalendarEventRetriever extends AbstractEntityEventProvider<ItemsFetchContext>
+public class LazyEntityCalendarEventRetriever extends AbstractEntityEventProvider<ItemsFetchContext>
         implements LazyCalendarEventProvider, ApplicationContextAware {
-    private static final Logger log = LoggerFactory.getLogger(EntityCalendarEventRetriever.class);
+    private static final Logger log = LoggerFactory.getLogger(LazyEntityCalendarEventRetriever.class);
 
     protected static final String START_DATE_PARAMETER = "fetchStartDate";
     protected static final String END_DATE_PARAMETER = "fetchEndDate";
@@ -42,10 +42,10 @@ public class EntityCalendarEventRetriever extends AbstractEntityEventProvider<It
 
     protected Function<ItemsFetchContext, List<CalendarEvent>> loadDelegate;
 
-    public EntityCalendarEventRetriever() {
+    public LazyEntityCalendarEventRetriever() {
     }
 
-    public EntityCalendarEventRetriever(String id) {
+    public LazyEntityCalendarEventRetriever(String id) {
         super(id);
     }
 

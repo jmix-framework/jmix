@@ -17,6 +17,7 @@
 package io.jmix.fullcalendarflowui.kit.component.model;
 
 import java.io.Serializable;
+import java.time.Duration;
 
 public class CalendarDuration implements Serializable {
 
@@ -71,6 +72,34 @@ public class CalendarDuration implements Serializable {
 
     public static CalendarDuration ofMilliseconds(long ms) {
         return create(0, 0, 0, 0, 0, 0, 0, ms);
+    }
+
+    public static CalendarDuration ofDuration(Duration duration) {
+        long durationMs = duration.toMillis();
+
+        int dayMs = 86400000;
+        int days = (int) (durationMs / dayMs);
+
+        durationMs = durationMs - (long) days * dayMs;
+
+        int hourMs = 3600000;
+        int hours = (int) (durationMs / hourMs);
+
+        durationMs = durationMs - (long) hours * hourMs;
+
+        int minuteMs = 60000;
+        int minutes = (int) (durationMs / minuteMs);
+
+        durationMs = durationMs - (long) minutes * minuteMs;
+
+        long secondsMs = 1000;
+        long seconds = durationMs / secondsMs;
+
+        durationMs = durationMs - seconds * secondsMs;
+
+        long milliseconds = durationMs;
+
+        return create(0, 0, 0, days, hours, minutes, seconds, milliseconds);
     }
 
     private static CalendarDuration create(int years, int months, int weeks, int days, int hours, int minutes,

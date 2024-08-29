@@ -14,7 +14,7 @@ import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.data.AbstractEntityEventProvider;
 import io.jmix.fullcalendarflowui.component.data.ContainerCalendarEventProvider;
-import io.jmix.fullcalendarflowui.component.data.EntityCalendarEventRetriever;
+import io.jmix.fullcalendarflowui.component.data.LazyEntityCalendarEventRetriever;
 import io.jmix.fullcalendarflowui.component.model.BusinessHours;
 import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEventProvider;
@@ -53,9 +53,9 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
 
         loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
-        loadBoolean(element, "limitedDayMaxEventRows", resultComponent::setLimitedDayMaxEventRows);
+        loadBoolean(element, "defaultDayMaxEventRowsEnabled", resultComponent::setDefaultDayMaxEventRowsEnabled);
         loadInteger(element, "dayMaxEventRows", resultComponent::setDayMaxEventRows);
-        loadBoolean(element, "limitedDayMaxEvents", resultComponent::setLimitedDayMaxEvents);
+        loadBoolean(element, "defaultDayMaxEventsEnabled", resultComponent::setDefaultDayMaxEventsEnabled);
         loadInteger(element, "dayMaxEvents", resultComponent::setDayMaxEvents);
         loadInteger(element, "eventMaxStack", resultComponent::setEventMaxStack);
 
@@ -66,39 +66,39 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadBoolean(element, "eventDurationEditable", resultComponent::setEventDurationEditable);
         loadBoolean(element, "eventResizableFromStart", resultComponent::setEventResizableFromStart);
         loadInteger(element, "eventDragMinDistance", resultComponent::setEventDragMinDistance);
-        loadBoolean(element, "eventOverlapEnabled", resultComponent::setEventOverlapEnabled);
-        loadBoolean(element, "eventConstraintEnabled", resultComponent::setEventOverlapEnabled);
+        loadBoolean(element, "eventOverlap", resultComponent::setEventOverlap);
+        loadBoolean(element, "eventConstraintEnabled", resultComponent::setEventConstraintEnabled);
         loadString(element, "eventConstraintGroupId", resultComponent::setEventConstraintGroupId);
 
         loadInteger(element, "dragRevertDuration", resultComponent::setDragRevertDuration);
-        loadBoolean(element, "dragScrollEnabled", resultComponent::setDragScrollEnabled);
+        loadBoolean(element, "dragScroll", resultComponent::setDragScroll);
 
         loadBoolean(element, "allDayMaintainDurationEnabled",
                 resultComponent::setAllDayMaintainDurationEnabled);
         loadDuration(element, "snapDuration", resultComponent::setSnapDuration);
 
-        loadBoolean(element, "businessHoursEnabled", resultComponent::setBusinessHoursEnabled);
+        loadBoolean(element, "defaultBusinessHoursEnabled", resultComponent::setDefaultBusinessHoursEnabled);
         loadBusinessHours(element, resultComponent::setBusinessHours);
 
         loadBoolean(element, "selectionEnabled", resultComponent::setSelectionEnabled);
-        loadBoolean(element, "selectMirrorEnabled", resultComponent::setSelectMirrorEnabled);
-        loadBoolean(element, "unselectAutoEnabled", resultComponent::setUnselectAutoEnabled);
-        loadString(element, "unselectCancelClassName", resultComponent::setUnselectCancelClassName);
-        loadBoolean(element, "selectOverlapEnabled", resultComponent::setSelectOverlapEnabled);
+        loadBoolean(element, "selectMirror", resultComponent::setSelectMirror);
+        loadBoolean(element, "unselectAuto", resultComponent::setUnselectAuto);
+        loadString(element, "unselectCancelSelector", resultComponent::setUnselectCancelSelector);
+        loadBoolean(element, "selectOverlap", resultComponent::setSelectOverlap);
         loadBoolean(element, "selectConstraintEnabled", resultComponent::setSelectConstraintEnabled);
         loadString(element, "selectConstraintGroupId", resultComponent::setSelectConstraintGroupId);
         loadInteger(element, "selectMinDistance", resultComponent::setSelectMinDistance);
 
-        loadResourceString(element, "dayPopoverFormat", context.getMessageGroup(),
-                resultComponent::setDayPopoverFormat);
-        loadResourceString(element, "dayHeaderFormat", context.getMessageGroup(),
-                resultComponent::setDayHeaderFormat);
-        loadResourceString(element, "weekNumberFormat", context.getMessageGroup(),
-                resultComponent::setWeekNumberFormat);
-        loadResourceString(element, "slotLabelFormat", context.getMessageGroup(),
-                resultComponent::setSlotNumberFormat);
-        loadResourceString(element, "eventTimeFormat", context.getMessageGroup(),
-                resultComponent::setEventTimeFormat);
+        loadResourceString(element, "defaultDayPopoverFormat", context.getMessageGroup(),
+                resultComponent::setDefaultDayPopoverFormat);
+        loadResourceString(element, "defaultDayHeaderFormat", context.getMessageGroup(),
+                resultComponent::setDefaultDayHeaderFormat);
+        loadResourceString(element, "defaultWeekNumberFormat", context.getMessageGroup(),
+                resultComponent::setDefaultWeekNumberFormat);
+        loadResourceString(element, "defaultSlotLabelFormat", context.getMessageGroup(),
+                resultComponent::setDefaultSlotNumberFormat);
+        loadResourceString(element, "defaultEventTimeFormat", context.getMessageGroup(),
+                resultComponent::setDefaultEventTimeFormat);
 
         loadBoolean(element, "weekendsVisible", resultComponent::setWeekendsVisible);
         loadBoolean(element, "dayHeadersVisible", resultComponent::setDayHeadersVisible);
@@ -160,7 +160,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
 
             Element itemsQueryElement = eventProviderElement.element("itemsQuery");
             if (itemsQueryElement != null) {
-                loadItemsQuery(itemsQueryElement, (EntityCalendarEventRetriever) calendarItems);
+                loadItemsQuery(itemsQueryElement, (LazyEntityCalendarEventRetriever) calendarItems);
             }
         } else {
             throw new GuiDevelopmentException("Unknown event provider tag:" + eventProviderElement.getName(), context);
@@ -207,8 +207,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
     protected AbstractEntityEventProvider<?> createLazyCalendarItems(Element eventProviderElement) {
         String id = loadString(eventProviderElement, "id").orElse(null);
         return Strings.isNullOrEmpty(id)
-                ? applicationContext.getBean(EntityCalendarEventRetriever.class)
-                : applicationContext.getBean(EntityCalendarEventRetriever.class, id);
+                ? applicationContext.getBean(LazyEntityCalendarEventRetriever.class)
+                : applicationContext.getBean(LazyEntityCalendarEventRetriever.class, id);
     }
 
     protected InstanceContainer<?> loadDataContainer(Element eventProviderElement) {
@@ -219,7 +219,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         return context.getDataHolder().getContainer(dataContainer);
     }
 
-    protected void loadItemsQuery(Element itemsQueryElement, EntityCalendarEventRetriever lazyCalendarItems) {
+    protected void loadItemsQuery(Element itemsQueryElement, LazyEntityCalendarEventRetriever lazyCalendarItems) {
         Class<?> entityClass = loaderSupport.loadString(itemsQueryElement, "class")
                 .map(ReflectionHelper::getClass)
                 .orElseThrow(() -> new GuiDevelopmentException("Entity class must be specified", context));
@@ -296,7 +296,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadString(element, attribute)
                 .ifPresent(s -> {
                     Duration javaDuration = Duration.parse(s);
-                    setter.accept(CalendarDuration.ofMilliseconds(javaDuration.toMillis()));
+                    setter.accept(CalendarDuration.ofDuration(javaDuration));
                 });
     }
 
@@ -321,7 +321,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         LocalTime startTime = loadString(element, "startTime")
                 .map(LocalTime::parse)
                 .orElse(null);
-        LocalTime endTime = loadString(element, "startTime")
+        LocalTime endTime = loadString(element, "endTime")
                 .map(LocalTime::parse)
                 .orElse(null);
 
@@ -339,21 +339,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
 
     protected void loadInitialView(Element element, FullCalendar resultComponent) {
         loadString(element, "initialView", (view) -> {
-            try {
-                resultComponent.setInitialCalendarView(CalendarViewType.valueOf(view));
-                return;
-            } catch (IllegalArgumentException e) {
-                // ignore
-            }
-
-            for (CustomCalendarView customView : resultComponent.getCustomCalendarViews()) {
-                if (customView.getCalendarView().getId().equals(view)) {
-                    resultComponent.setInitialCalendarView(customView.getCalendarView());
-                    return;
-                }
-            }
-
-            resultComponent.setInitialCalendarView(() -> view);
+            CalendarView calendarView = viewProperties().getView(view, resultComponent);
+            resultComponent.setInitialCalendarView(calendarView);
         });
     }
 

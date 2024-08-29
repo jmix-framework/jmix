@@ -186,11 +186,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getOptions().getSelectConstraint().setGroupId(serializedGroupId);
     }
 
-    public boolean isBusinessHoursEnabled() {
+    public boolean isDefaultBusinessHoursEnabled() {
         return getOptions().getBusinessHours().isEnabled();
     }
 
-    public void setBusinessHoursEnabled(boolean enabled) {
+    public void setDefaultBusinessHoursEnabled(boolean enabled) {
         getOptions().getBusinessHours().setEnabled(enabled);
     }
 

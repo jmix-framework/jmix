@@ -40,7 +40,7 @@ public class Views extends CalendarOption {
     protected ListMonthViewProperties listMonth;
     protected ListYearViewProperties listYear;
 
-    protected MultiMonthYearProperties multiMonthYear;
+    protected MultiMonthYearViewProperties multiMonthYear;
 
     protected List<CustomCalendarView> customViews;
 
@@ -93,7 +93,7 @@ public class Views extends CalendarOption {
         return listYear;
     }
 
-    public MultiMonthYearProperties getMultiMonthYear() {
+    public MultiMonthYearViewProperties getMultiMonthYear() {
         return multiMonthYear;
     }
 
@@ -210,7 +210,7 @@ public class Views extends CalendarOption {
     }
 
     protected void initMultiMonthViews() {
-        multiMonthYear = new MultiMonthYearProperties();
+        multiMonthYear = new MultiMonthYearViewProperties();
         multiMonthYear.addChangeListener(this::onOptionChange);
     }
 }

@@ -23,19 +23,19 @@ import java.io.Serializable;
 public class DayMaxEvents extends CalendarOption implements Serializable {
     public static final String NAME = "dayMaxEvents";
 
-    protected boolean limited = false;
+    protected boolean defaultEnabled = false;
     protected Integer max;
 
     public DayMaxEvents() {
         super(NAME);
     }
 
-    public boolean isLimited() {
-        return limited;
+    public boolean isDefaultEnabled() {
+        return defaultEnabled;
     }
 
-    public void setLimited(boolean limited) {
-        this.limited = limited;
+    public void setDefaultEnabled(boolean defaultEnabled) {
+        this.defaultEnabled = defaultEnabled;
 
         markAsDirty();
     }

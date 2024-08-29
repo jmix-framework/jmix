@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.model;
+package io.jmix.fullcalendarflowui.kit.meta.element;
 
-public interface CalendarView extends HasEnumId<String> {
+public interface StudioFullCalendarViewProperties {
 }

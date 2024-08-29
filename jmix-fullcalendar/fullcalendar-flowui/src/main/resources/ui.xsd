@@ -23,7 +23,7 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="layout:baseComponent">
-                    <xs:all>
+                    <xs:all minOccurs="0">
                         <xs:element name="eventProviders" type="eventProvidersType"/>
                         <xs:element name="businessHours" type="businessHoursType"/>
                         <xs:element name="viewProperties" type="viewProperties"/>
@@ -36,13 +36,13 @@
                     <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                     <xs:attribute name="navigationLinksEnabled" type="xs:boolean"/>
 
-                    <xs:attribute name="limitedDayMaxEventRows" type="xs:boolean"/>
+                    <xs:attribute name="defaultDayMaxEventRowsEnabled" type="xs:boolean"/>
                     <xs:attribute name="dayMaxEventRows" type="xs:integer"/>
 
-                    <xs:attribute name="limitedDayMaxEvents" type="xs:boolean"/>
+                    <xs:attribute name="defaultDayMaxEventsEnabled" type="xs:boolean"/>
                     <xs:attribute name="dayMaxEvents" type="xs:integer"/>
 
-                    <xs:attribute name="eventMaxStack " type="xs:integer"/>
+                    <xs:attribute name="eventMaxStack" type="xs:integer"/>
 
                     <xs:attribute name="moreLinkView" type="calendarViewType"/>
                     <xs:attribute name="moreLinkClassNames" type="xs:string"/>
@@ -51,33 +51,33 @@
                     <xs:attribute name="eventDurationEditable" type="xs:boolean"/>
                     <xs:attribute name="eventResizableFromStart" type="xs:boolean"/>
                     <xs:attribute name="eventDragMinDistance" type="xs:integer"/>
-                    <xs:attribute name="eventOverlapEnabled" type="xs:boolean"/>
+                    <xs:attribute name="eventOverlap" type="xs:boolean"/>
                     <xs:attribute name="eventConstraintEnabled" type="xs:boolean"/>
                     <xs:attribute name="eventConstraintGroupId" type="xs:string"/>
 
                     <xs:attribute name="dragRevertDuration" type="xs:integer"/>
-                    <xs:attribute name="dragScrollEnabled" type="xs:boolean"/>
+                    <xs:attribute name="dragScroll" type="xs:boolean"/>
 
                     <xs:attribute name="snapDuration" type="xs:string"/>
 
                     <xs:attribute name="allDayMaintainDurationEnabled" type="xs:boolean"/>
 
-                    <xs:attribute name="businessHoursEnabled" type="xs:boolean"/>
+                    <xs:attribute name="defaultBusinessHoursEnabled" type="xs:boolean"/>
 
                     <xs:attribute name="selectionEnabled" type="xs:boolean"/>
-                    <xs:attribute name="selectMirrorEnabled" type="xs:boolean"/>
-                    <xs:attribute name="unselectAutoEnabled" type="xs:boolean"/>
-                    <xs:attribute name="unselectCancelClassName" type="xs:string"/>
-                    <xs:attribute name="selectOverlapEnabled" type="xs:boolean"/>
+                    <xs:attribute name="selectMirror" type="xs:boolean"/>
+                    <xs:attribute name="unselectAuto" type="xs:boolean"/>
+                    <xs:attribute name="unselectCancelSelector" type="xs:string"/>
+                    <xs:attribute name="selectOverlap" type="xs:boolean"/>
                     <xs:attribute name="selectConstraintEnabled" type="xs:boolean"/>
                     <xs:attribute name="selectConstraintGroupId" type="xs:string"/>
                     <xs:attribute name="selectMinDistance" type="xs:integer"/>
 
-                    <xs:attribute name="dayPopoverFormat" type="layout:resourceString"/>
-                    <xs:attribute name="dayHeaderFormat" type="layout:resourceString"/>
-                    <xs:attribute name="weekNumberFormat" type="layout:resourceString"/>
-                    <xs:attribute name="slotLabelFormat" type="layout:resourceString"/>
-                    <xs:attribute name="eventTimeFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultDayPopoverFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultDayHeaderFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultWeekNumberFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultSlotLabelFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultEventTimeFormat" type="layout:resourceString"/>
 
                     <xs:attribute name="weekendsVisible" type="xs:boolean"/>
                     <xs:attribute name="dayHeadersVisible" type="xs:boolean"/>
@@ -118,7 +118,7 @@
 
     <xs:complexType name="customViews">
         <xs:sequence maxOccurs="unbounded">
-            <xs:element name="customView" type="customViewType"/>
+            <xs:element name="view" type="customViewType"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -428,23 +428,19 @@
 
     <xs:simpleType name="calendarViewType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="DAY_GRID"/>
             <xs:enumeration value="DAY_GRID_DAY"/>
             <xs:enumeration value="DAY_GRID_WEEK"/>
             <xs:enumeration value="DAY_GRID_MONTH"/>
             <xs:enumeration value="DAY_GRID_YEAR"/>
 
-            <xs:enumeration value="TIME_GRID"/>
             <xs:enumeration value="TIME_GRID_DAY"/>
             <xs:enumeration value="TIME_GRID_WEEK"/>
 
-            <xs:enumeration value="LIST"/>
             <xs:enumeration value="LIST_DAY"/>
             <xs:enumeration value="LIST_WEEK"/>
             <xs:enumeration value="LIST_MONTH"/>
             <xs:enumeration value="LIST_YEAR"/>
 
-            <xs:enumeration value="MULTI_MONTH"/>
             <xs:enumeration value="MULTI_MONTH_YEAR"/>
         </xs:restriction>
     </xs:simpleType>

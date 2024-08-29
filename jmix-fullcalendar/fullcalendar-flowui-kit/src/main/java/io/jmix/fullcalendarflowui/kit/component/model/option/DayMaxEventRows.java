@@ -21,19 +21,19 @@ import jakarta.annotation.Nullable;
 public class DayMaxEventRows extends CalendarOption {
     public static final String NAME = "dayMaxEventRows";
 
-    protected boolean limited = false;
+    protected boolean defaultEnabled = false;
     protected Integer max;
 
     public DayMaxEventRows() {
         super(NAME);
     }
 
-    public boolean isLimited() {
-        return limited;
+    public boolean isDefaultEnabled() {
+        return defaultEnabled;
     }
 
-    public void setLimited(boolean limited) {
-        this.limited = limited;
+    public void setEnabled(boolean limited) {
+        this.defaultEnabled = limited;
 
         markAsDirty();
     }

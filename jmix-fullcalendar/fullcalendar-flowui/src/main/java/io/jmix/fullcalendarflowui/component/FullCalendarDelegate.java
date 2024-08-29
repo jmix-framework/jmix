@@ -421,17 +421,17 @@ public class FullCalendarDelegate {
     }
 
     protected void setupMultiLocalizedFormats() {
-        MultiMonthYearProperties multiMonthYear =
+        MultiMonthYearViewProperties multiMonthYear =
                 fullCalendar.getCalendarViewProperties(CalendarViewType.MULTI_MONTH_YEAR);
         multiMonthYear.setMultiMonthTitleFormat(getMessage("multiMonthYearMultiMonthTitleFormat"));
     }
 
     protected void setupLocalizedFormats() {
-        fullCalendar.setDayPopoverFormat(messages.getMessage(PACKAGE, "dayPopoverFormat"));
-        fullCalendar.setDayHeaderFormat(messages.getMessage(PACKAGE, "dayHeaderFormat"));
-        fullCalendar.setWeekNumberFormat(messages.getMessage(PACKAGE, "weekNumberFormat"));
-        fullCalendar.setSlotNumberFormat(messages.getMessage(PACKAGE, "slotLabelFormat"));
-        fullCalendar.setEventTimeFormat(messages.getMessage(PACKAGE, "eventTimeFormat"));
+        fullCalendar.setDefaultDayPopoverFormat(messages.getMessage(PACKAGE, "dayPopoverFormat"));
+        fullCalendar.setDefaultDayHeaderFormat(messages.getMessage(PACKAGE, "dayHeaderFormat"));
+        fullCalendar.setDefaultWeekNumberFormat(messages.getMessage(PACKAGE, "weekNumberFormat"));
+        fullCalendar.setDefaultSlotNumberFormat(messages.getMessage(PACKAGE, "slotLabelFormat"));
+        fullCalendar.setDefaultEventTimeFormat(messages.getMessage(PACKAGE, "eventTimeFormat"));
     }
 
     protected void setupCalendarLocalizedUnitNames() {

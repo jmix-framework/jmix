@@ -282,7 +282,7 @@ class Options {
         const dayMaxEventRows = options[DAY_MAX_EVENT_ROWS];
 
         if (dayMaxEventRows) {
-            this.updateOption(DAY_MAX_EVENT_ROWS, dayMaxEventRows.limited);
+            this.updateOption(DAY_MAX_EVENT_ROWS, dayMaxEventRows.defaultEnabled);
 
             if (dayMaxEventRows.max) {
                 this.updateOption(DAY_MAX_EVENT_ROWS, dayMaxEventRows.max);
@@ -294,7 +294,7 @@ class Options {
         const dayMaxEvents = options[DAY_MAX_EVENTS];
 
         if (dayMaxEvents) {
-            this.updateOption(DAY_MAX_EVENTS, dayMaxEvents.limited);
+            this.updateOption(DAY_MAX_EVENTS, dayMaxEvents.defaultEnabled);
 
             if (dayMaxEvents.max) {
                 this.updateOption(DAY_MAX_EVENTS, dayMaxEvents.max);

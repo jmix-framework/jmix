@@ -50,14 +50,15 @@ public class ViewPropertiesLoader {
             return;
         }
         customViews.elements()
-                .forEach(v -> resultComponent.addCustomCalendarView(loadCustomView(v)));
+                .forEach(v -> resultComponent.addCustomCalendarView(loadCustomView(v, resultComponent)));
     }
 
-    protected CustomCalendarView loadCustomView(Element viewElement) {
+    protected CustomCalendarView loadCustomView(Element viewElement, FullCalendar resultComponent) {
         String id = loaderSupport.loadString(viewElement, "id")
                 .orElseThrow(() -> new IllegalStateException("Calendar custom view must have an ID"));
-        CalendarViewType type = loaderSupport.loadEnum(viewElement, CalendarViewType.class, "type")
-                .orElse(null);
+        CalendarView type = loaderSupport.loadString(viewElement, "type")
+                .map(t -> getView(t, resultComponent))
+                .orElse(GenericCalendarViewType.DAY_GRID);
         Integer dayCount = loaderSupport.loadInteger(viewElement, "dayCount").orElse(null);
         CalendarDuration calendarDuration = null;
 
@@ -244,14 +245,14 @@ public class ViewPropertiesLoader {
 
     protected void loadMultiMonthViewProperties(Element multiMonthElement, FullCalendar resultComponent) {
         if (CalendarViewType.MULTI_MONTH_YEAR.getId().equals(multiMonthElement.getName())) {
-            MultiMonthYearProperties view =
+            MultiMonthYearViewProperties view =
                     resultComponent.getCalendarViewProperties(CalendarViewType.MULTI_MONTH_YEAR);
 
             loadMultiMonthYearViewProperties(multiMonthElement, view);
         }
     }
 
-    protected void loadMultiMonthYearViewProperties(Element multiMonthElement, MultiMonthYearProperties view) {
+    protected void loadMultiMonthYearViewProperties(Element multiMonthElement, MultiMonthYearViewProperties view) {
         loaderSupport.loadInteger(multiMonthElement, "multiMonthMaxColumns", view::setMultiMonthMaxColumns);
         loaderSupport.loadInteger(multiMonthElement, "multiMonthMinWidth", view::setMultiMonthMinWidth);
         loaderSupport.loadBoolean(multiMonthElement, "fixedWeekCount", view::setFixedWeekCount);
@@ -310,5 +311,24 @@ public class ViewPropertiesLoader {
                 .plusMinutes(loaderSupport.loadInteger(element, "minutes").orElse(0))
                 .plusSeconds(loaderSupport.loadInteger(element, "seconds").orElse(0))
                 .plusMilliseconds(loaderSupport.loadInteger(element, "milliseconds").orElse(0));
+    }
+
+    protected CalendarView getView(String view, FullCalendar resultComponent) {
+        try {
+            return CalendarViewType.valueOf(view);
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+        try {
+            return GenericCalendarViewType.valueOf(view);
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+        for (CustomCalendarView customView : resultComponent.getCustomCalendarViews()) {
+            if (customView.getCalendarView().getId().equals(view)) {
+                return customView.getCalendarView();
+            }
+        }
+        return () -> view;
     }
 }

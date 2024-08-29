@@ -44,7 +44,7 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
     }
 
     public CalendarView getType() {
-        return type == null ? CalendarView.DAY_GRID : type;
+        return type == null ? GenericCalendarViewType.DAY_GRID : type;
     }
 
     @Nullable

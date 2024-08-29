@@ -76,8 +76,7 @@ public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableTy
     MappingComparingResult compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
 
         Map<String, Object> filteredSearchIndexMapping = getFilteredMapping(searchIndexMapping);
-
-        if (!areKeySetsEqual(filteredSearchIndexMapping, applicationMapping)) {
+        if (!applicationMapping.keySet().containsAll(filteredSearchIndexMapping.keySet())) {
             return MappingComparingResult.NOT_COMPATIBLE;
         }
 
@@ -117,12 +116,6 @@ public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableTy
                 .stream()
                 .filter(e -> !(e.getKey().equals("type") && "object".equals(e.getValue())))
                 .collect(HashMap::new, (m, e)->m.put(e.getKey(), e.getValue()), HashMap::putAll);
-    }
-
-    private static boolean areKeySetsEqual(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
-        Set<String> applicationKeySet = applicationMapping.keySet();
-        Set<String> serverKeySet = searchIndexMapping.keySet();
-        return applicationKeySet.containsAll(serverKeySet);
     }
 
     public enum MappingComparingResult implements ConfigurationPartComparingResult {

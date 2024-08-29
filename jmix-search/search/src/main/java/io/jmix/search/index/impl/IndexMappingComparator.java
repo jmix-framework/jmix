@@ -105,13 +105,12 @@ public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableTy
     }
 
     private static Map<String, Object> getFilteredMapping(Map<String, Object> searchIndexMapping) {
-        //This code contains some strange lines that is for collecting values.
-        //It is so because of JDK Bug https://bugs.openjdk.org/browse/JDK-8148463
         return searchIndexMapping
                 .entrySet()
                 .stream()
                 .filter(e -> !(e.getKey().equals("type") && "object".equals(e.getValue())))
-                .collect(HashMap::new, (m, e)->m.put(e.getKey(), e.getValue()), HashMap::putAll);
+                //It is so because of JDK Bug https://bugs.openjdk.org/browse/JDK-8148463
+                .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
     }
 
     public enum MappingComparingResult implements ConfigurationPartComparingResult {

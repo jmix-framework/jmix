@@ -44,12 +44,12 @@ public class TestHiddenFieldsEntity {
     private String name;
 
     @Secret
-    @Column(name = "SECRET_FIELD")
-    private String secretField;
+    @Column(name = "SECRET")
+    private String secret;
 
     @SystemLevel
-    @Column(name = "SYSTEM_FIELD")
-    private String systemField;
+    @Column(name = "SYSTEM_LEVEL")
+    private String systemLevel;
 
     @Column(name = "VERSION", nullable = false)
     @Version
@@ -81,12 +81,12 @@ public class TestHiddenFieldsEntity {
         this.name = name;
     }
 
-    public String getSecretField() {
-        return secretField;
+    public String getSecret() {
+        return secret;
     }
 
-    public void setSecretField(String secretField) {
-        this.secretField = secretField;
+    public void setSecret(String secretField) {
+        this.secret = secretField;
     }
 
     public Date getDeletedDate() {
@@ -137,11 +137,11 @@ public class TestHiddenFieldsEntity {
         this.id = id;
     }
 
-    public String getSystemField() {
-        return systemField;
+    public String getSystemLevel() {
+        return systemLevel;
     }
 
-    public void setSystemField(String systemLevel) {
-        this.systemField = systemLevel;
+    public void setSystemLevel(String systemLevel) {
+        this.systemLevel = systemLevel;
     }
 }

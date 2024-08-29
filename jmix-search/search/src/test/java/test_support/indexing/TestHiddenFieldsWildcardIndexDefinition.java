@@ -18,11 +18,11 @@ package test_support.indexing;
 
 import io.jmix.search.index.annotation.AutoMappedField;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
-import test_support.entity.indexing.TestExplicitHiddenFieldsEntity;
+import test_support.entity.indexing.TestHiddenFieldsEntity;
 
-@JmixEntitySearchIndex(entity = TestExplicitHiddenFieldsEntity.class)
-public interface TestHiddenFieldsSecretIndexDefinition {
+@JmixEntitySearchIndex(entity = TestHiddenFieldsEntity.class)
+public interface TestHiddenFieldsWildcardIndexDefinition {
 
-    @AutoMappedField(includeProperties = {"name", "secretField"})
+    @AutoMappedField(includeProperties = "*")
     void mapping();
 }

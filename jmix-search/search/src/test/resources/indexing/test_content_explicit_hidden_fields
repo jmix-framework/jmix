@@ -1,5 +1,6 @@
 {
 	"name": "Hidden Field entity",
-	"secretField": "Hidden Field Secret",
+    "secret": "Hidden Field Secret",
+    "createdBy": "system",
 	"_instance_name": "Hidden Field entity"
 }

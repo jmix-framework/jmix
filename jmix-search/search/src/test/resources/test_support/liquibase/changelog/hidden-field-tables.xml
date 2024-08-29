@@ -11,8 +11,8 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_HIDDEN_FIELD_ENTITY"/>
             </column>
             <column name="NAME" type="VARCHAR(255)"/>
-            <column name="SECRET_FIELD" type="VARCHAR(255)"/>
-            <column name="SYSTEM_FIELD" type="VARCHAR(255)"/>
+            <column name="SECRET" type="VARCHAR(255)"/>
+            <column name="SYSTEM_LEVEL" type="VARCHAR(255)"/>
             <column name="VERSION" type="INT">
                 <constraints nullable="false"/>
             </column>
@@ -28,8 +28,8 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_EXPLICIT_HIDDEN_FIELD_ENTITY"/>
             </column>
             <column name="NAME" type="VARCHAR(255)"/>
-            <column name="SECRET_FIELD" type="VARCHAR(255)"/>
-            <column name="SYSTEM_FIELD" type="VARCHAR(255)"/>
+            <column name="SECRET" type="VARCHAR(255)"/>
+            <column name="SYSTEM_LEVEL" type="VARCHAR(255)"/>
             <column name="VERSION" type="INT">
                 <constraints nullable="false"/>
             </column>

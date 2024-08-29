@@ -614,7 +614,8 @@ public class OpenSearchEntityIndexingTest {
     public void indexWithHiddenProps() {
         TestHiddenFieldsEntity entity = metadata.create(TestHiddenFieldsEntity.class);
         entity.setName("Hidden Field entity");
-        entity.setSecretField("Hidden Field Secret");
+        entity.setSecret("Hidden Field Secret");
+        entity.setSystemLevel("System Level");
         dataManager.save(entity);
 
         JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_hidden_fields");
@@ -639,7 +640,7 @@ public class OpenSearchEntityIndexingTest {
     public void indexWithExplicitHiddenProps() {
         TestExplicitHiddenFieldsEntity entity = metadata.create(TestExplicitHiddenFieldsEntity.class);
         entity.setName("Hidden Field entity");
-        entity.setSecretField("Hidden Field Secret");
+        entity.setSecret("Hidden Field Secret");
         dataManager.save(entity);
 
         JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_explicit_hidden_fields");

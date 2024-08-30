@@ -30,6 +30,7 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.model.HasLoader;
+import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.DataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,7 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     protected Dialogs dialogs;
 
     protected DataGridExporter dataGridExporter;
+    protected List<ExportMode> availableExportModes;
 
     public ExportAction() {
         this(ID);
@@ -86,6 +88,31 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     @Autowired
     public void setDialogs(Dialogs dialogs) {
         this.dialogs = dialogs;
+    }
+
+    @Autowired
+    public void setGridExportProperties(GridExportProperties gridExportProperties) {
+        this.availableExportModes = gridExportProperties.getDefaultExportModes().stream()
+                .map(ExportMode::valueOf)
+                .toList();
+    }
+
+    /**
+     * Sets the export modes that will be available in the export option dialog.
+     *
+     * @param availableExportModes export modes to set
+     */
+    public void setAvailableExportModes(List<ExportMode> availableExportModes) {
+        this.availableExportModes = availableExportModes;
+    }
+
+    /**
+     * @return this
+     * @see #setAvailableExportModes(List)
+     */
+    public ExportAction withAvailableExportModes(List<ExportMode> availableExportModes) {
+        setAvailableExportModes(availableExportModes);
+        return this;
     }
 
     /**
@@ -166,29 +193,26 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
         Preconditions.checkNotNullArgument(dataGridExporter,
                 Grid.class.getSimpleName() + " exporter is not defined");
 
-        Action exportAllAction = createExportAllAction();
-        Action exportCurrentPageAction = createCurrentPageAction();
-        Action exportSelectedAction = createExportSelectedAction();
-
         List<Action> actions = new ArrayList<>();
 
-        if (isDataLoaderExist(target)) {
-            actions.add(exportAllAction);
-        }
-
-        actions.add(exportCurrentPageAction);
-
-        if (!target.getSelectedItems().isEmpty()) {
-            actions.add(exportSelectedAction);
+        for (ExportMode exportMode : availableExportModes) {
+            switch (exportMode) {
+                case ALL_ROWS -> {
+                    if (isDataLoaderExist(target)) {
+                        actions.add(createExportAllAction());
+                    }
+                }
+                case CURRENT_PAGE -> actions.add(createCurrentPageAction());
+                case SELECTED_ROWS -> {
+                    if (!target.getSelectedItems().isEmpty()) {
+                        actions.add(createExportSelectedAction());
+                    }
+                }
+            }
         }
 
         actions.add(new DialogAction(DialogAction.Type.CANCEL));
-
-        if (actions.contains(exportAllAction)) {
-            exportAllAction.setVariant(ActionVariant.PRIMARY);
-        } else {
-            exportCurrentPageAction.setVariant(ActionVariant.PRIMARY);
-        }
+        actions.get(0).setVariant(ActionVariant.PRIMARY);
 
         dialogs.createOptionDialog()
                 .withHeader(getMessage("exportConfirmationDialog.header"))

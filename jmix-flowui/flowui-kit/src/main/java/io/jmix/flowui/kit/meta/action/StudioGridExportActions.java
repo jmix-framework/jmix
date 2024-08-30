@@ -46,6 +46,10 @@ public interface StudioGridExportActions {
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
+            },
+            items = {
+                    @StudioPropertiesItem(xmlAttribute = "availableExportModes", type = StudioPropertyType.VALUES_LIST,
+                            options = {"ALL_ROWS", "CURRENT_PAGE", "SELECTED_ROWS"})
             }
     )
     void excelExport();
@@ -71,6 +75,10 @@ public interface StudioGridExportActions {
                     @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
+            },
+            items = {
+                    @StudioPropertiesItem(xmlAttribute = "availableExportModes", type = StudioPropertyType.VALUES_LIST,
+                            options = {"ALL_ROWS", "CURRENT_PAGE", "SELECTED_ROWS"})
             }
     )
     void jsonExport();

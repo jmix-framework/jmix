@@ -52,7 +52,6 @@
                     <xs:attribute name="eventResizableFromStart" type="xs:boolean"/>
                     <xs:attribute name="eventDragMinDistance" type="xs:integer"/>
                     <xs:attribute name="eventOverlap" type="xs:boolean"/>
-                    <xs:attribute name="eventConstraintEnabled" type="xs:boolean"/>
                     <xs:attribute name="eventConstraintGroupId" type="xs:string"/>
 
                     <xs:attribute name="dragRevertDuration" type="xs:integer"/>
@@ -109,6 +108,16 @@
 
                     <xs:attribute name="nowIndicatorVisible" type="xs:boolean"/>
 
+                    <xs:attribute name="eventBackgroundColor" type="xs:string"/>
+                    <xs:attribute name="eventBorderColor" type="xs:string"/>
+                    <xs:attribute name="eventTextColor" type="xs:string"/>
+                    <xs:attribute name="eventDisplay" type="eventDisplay"/>
+                    <xs:attribute name="displayEventTime" type="xs:boolean"/>
+                    <xs:attribute name="nextDayThreshold" type="xs:string"/>
+                    <xs:attribute name="eventOrderStrict" type="xs:boolean"/>
+                    <xs:attribute name="progressiveEventRendering" type="xs:boolean"/>
+                    <xs:attribute name="eventOrder" type="xs:string"/>
+
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>
                 </xs:extension>
@@ -151,6 +160,7 @@
                 <xs:attribute name="dayHeaderFormat" type="layout:resourceString"/>
                 <xs:attribute name="weekNumberFormat" type="layout:resourceString"/>
                 <xs:attribute name="eventTimeFormat" type="layout:resourceString"/>
+                <xs:attribute name="displayEventEnd" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -167,6 +177,7 @@
                 <xs:attribute name="eventShortHeight" type="xs:integer"/>
                 <xs:attribute name="slotEventOverlap" type="xs:boolean"/>
                 <xs:attribute name="allDaySlot" type="xs:boolean"/>
+                <xs:attribute name="displayEventEnd" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -442,6 +453,17 @@
             <xs:enumeration value="LIST_YEAR"/>
 
             <xs:enumeration value="MULTI_MONTH_YEAR"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="eventDisplay">
+        <xs:restriction>
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="BLOCK"/>
+            <xs:enumeration value="LIST_ITEM"/>
+            <xs:enumeration value="BACKGROUND"/>
+            <xs:enumeration value="INVERSE_BACKGROUND"/>
+            <xs:enumeration value="NONE"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

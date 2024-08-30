@@ -24,11 +24,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * INTERNAL.
+ */
 @Internal
 public final class DaysOfWeekDatatypeUtils {
     private DaysOfWeekDatatypeUtils() {
     }
 
+    /**
+     * Returns all days of week. The order starts from provided day. For instance, if the provided day is
+     * {@link DayOfWeek#WEDNESDAY}, so the order will be the following:
+     * <p>
+     * {@code WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, MONDAY, TUESDAY}
+     *
+     * @param firstDay the day from which a week should start
+     * @return days of week with the provided day as first
+     */
     public static List<DayOfWeek> getOrderedByFirstDay(DayOfWeek firstDay) {
         Preconditions.checkNotNullArgument(firstDay);
 
@@ -47,6 +59,13 @@ public final class DaysOfWeekDatatypeUtils {
         return result;
     }
 
+    /**
+     * Sorts provided collection in order that the provided day would have been the first day of week.
+     *
+     * @param daysOfWeek collection of days
+     * @param firstDay   the first day of week
+     * @return sorted collection
+     */
     public static List<DayOfWeek> sortByFirstDay(Collection<DayOfWeek> daysOfWeek, DayOfWeek firstDay) {
         Preconditions.checkNotNullArgument(daysOfWeek);
         Preconditions.checkNotNullArgument(firstDay);

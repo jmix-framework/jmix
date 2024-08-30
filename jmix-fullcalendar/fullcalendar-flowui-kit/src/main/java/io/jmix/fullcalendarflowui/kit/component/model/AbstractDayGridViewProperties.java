@@ -28,6 +28,8 @@ public abstract class AbstractDayGridViewProperties extends AbstractCalendarView
 
     protected String eventTimeFormat;
 
+    protected boolean displayEventEnd = false;
+
     public AbstractDayGridViewProperties(String name) {
         super(name);
     }
@@ -72,6 +74,16 @@ public abstract class AbstractDayGridViewProperties extends AbstractCalendarView
 
     public void setDayPopoverFormat(@Nullable String dayPopoverFormat) {
         this.dayPopoverFormat = dayPopoverFormat;
+
+        markAsDirty();
+    }
+
+    public boolean isDisplayEventEnd() {
+        return displayEventEnd;
+    }
+
+    public void setDisplayEventEnd(boolean displayEventEnd) {
+        this.displayEventEnd = displayEventEnd;
 
         markAsDirty();
     }

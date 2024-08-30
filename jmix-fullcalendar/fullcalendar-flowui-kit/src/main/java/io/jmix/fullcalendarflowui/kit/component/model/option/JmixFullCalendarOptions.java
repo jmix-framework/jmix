@@ -99,6 +99,15 @@ public class JmixFullCalendarOptions {
 
     protected SimpleOption<Boolean> nowIndicatorClassNames = new SimpleOption<>("nowIndicatorClassNames", false);
 
+    protected SimpleOption<String> eventBackgroundColor = new SimpleOption<>("eventBackgroundColor");
+    protected SimpleOption<String> eventBorderColor = new SimpleOption<>("eventBorderColor");
+    protected SimpleOption<String> eventTextColor = new SimpleOption<>("eventTextColor");
+    protected SimpleOption<Boolean> displayEventTime = new SimpleOption<>("displayEventTime", true);
+    protected SimpleOption<CalendarDuration> nextDayThreshold = new SimpleOption<>("nextDayThreshold", CalendarDuration.ofHours(0));
+    protected SimpleOption<Boolean> eventOrderStrict = new SimpleOption<>("eventOrderStrict", false);
+    protected SimpleOption<Boolean> progressiveEventRendering = new SimpleOption<>("progressiveEventRendering", false);
+    protected EventOrder eventOrder = new EventOrder();
+
     protected final List<CalendarOption> updatableOptions = new ArrayList<>(28);
 
     /**
@@ -117,7 +126,8 @@ public class JmixFullCalendarOptions {
                 slotDuration, slotLabelInterval, slotMinTime, slotMaxTime, slotLabelClassNames, defaultAllDay,
                 defaultAllDayEventDuration, defaultTimedEventDuration, forceEventDuration, dateIncrement,
                 dateAlignment, expandRows, windowResizeDelay, eventInteractive, longPressDelay, selectLongPressDelay,
-                nowIndicatorClassNames));
+                nowIndicatorClassNames, eventBackgroundColor, eventBorderColor, eventTextColor, displayEventTime,
+                nextDayThreshold, eventOrderStrict, progressiveEventRendering, eventOrder));
 
         initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll,
                 dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat,
@@ -375,6 +385,38 @@ public class JmixFullCalendarOptions {
 
     public SimpleOption<Boolean> getNowIndicatorClassNames() {
         return nowIndicatorClassNames;
+    }
+
+    public SimpleOption<String> getEventBackgroundColor() {
+        return eventBackgroundColor;
+    }
+
+    public SimpleOption<String> getEventBorderColor() {
+        return eventBorderColor;
+    }
+
+    public SimpleOption<String> getEventTextColor() {
+        return eventTextColor;
+    }
+
+    public SimpleOption<Boolean> getDisplayEventTime() {
+        return displayEventTime;
+    }
+
+    public SimpleOption<CalendarDuration> getNextDayThreshold() {
+        return nextDayThreshold;
+    }
+
+    public SimpleOption<Boolean> getEventOrderStrict() {
+        return eventOrderStrict;
+    }
+
+    public SimpleOption<Boolean> getProgressiveEventRendering() {
+        return progressiveEventRendering;
+    }
+
+    public EventOrder getEventOrder() {
+        return eventOrder;
     }
 
     public boolean isInitial(CalendarOption option) {

@@ -17,11 +17,19 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import com.vaadin.flow.data.provider.KeyMapper;
+import io.jmix.core.annotation.Internal;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
 import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer.FullCalendarDataSerializer;
 import org.springframework.lang.Nullable;
 
+/**
+ * INTERNAL.
+ * <p>
+ * The manager of concrete event provider. It is a connector between event source in client-side and server's
+ * {@link BaseCalendarEventProvider}.
+ */
+@Internal
 public abstract class AbstractEventProviderManager {
 
     protected final BaseCalendarEventProvider eventProvider;
@@ -47,18 +55,31 @@ public abstract class AbstractEventProviderManager {
         this.dataSerializer.setTimeZoneSupplier(fullCalendar::getTimeZone);
     }
 
+    /**
+     * @return event provider
+     */
     public BaseCalendarEventProvider getEventProvider() {
         return eventProvider;
     }
 
+    /**
+     * @return event provider's ID that is used in client-side
+     */
     public String getSourceId() {
         return sourceId;
     }
 
+    /**
+     * @return a JS function that should be invoked to add event provider to component at the client-side
+     */
     public String getJsFunctionName() {
         return this.jsFunctionName;
     }
 
+    /**
+     * @param clientId ID of event from client-side
+     * @return calendar event or {@code null} if there is no event with the provided ID
+     */
     @Nullable
     public abstract CalendarEvent getCalendarEvent(String clientId);
 

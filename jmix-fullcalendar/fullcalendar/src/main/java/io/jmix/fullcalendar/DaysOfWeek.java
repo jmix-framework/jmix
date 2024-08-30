@@ -6,6 +6,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * The class represents container for {@link DayOfWeek}. It can be used in entities as a property type.
+ */
 public class DaysOfWeek implements Serializable {
 
     public final Set<DayOfWeek> daysOfWeek;

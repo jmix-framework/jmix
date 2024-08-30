@@ -24,6 +24,9 @@ import Options, {
     SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES
 } from './Options.js';
 
+const FC_NON_BUSINESS_CLASS_NAME = 'fc-non-business';
+const FC_DAYGRID_DAY = 'fc-daygrid-day';
+const FC_DAY = 'fc-day';
 const FC_LINK_CLASS_NAME = 'fc-more-link';
 const FC_COL_HEADER_CELL = 'fc-col-header-cell';
 const FC_TIMEGRID_SLOT_LABEL = 'fc-timegrid-slot-label';
@@ -524,16 +527,44 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onDayCellDidMount(e) {
+        const viewType = this.calendar.view.type;
+        if (viewType !== 'dayGridDay'
+            && viewType !== 'dayGridWeek'
+            && viewType !== 'dayGridMonth'
+            && viewType !== 'dayGridYear') {
+            return;
+        }
         e.el.addEventListener("contextmenu", (jsEvent) => {
-            // Get current view from calendar, since view from event can be obsolete
-            const viewType = this.calendar.view.type;
-            if (viewType === 'dayGridDay'
-                || viewType === 'dayGridWeek'
-                || viewType === 'dayGridMonth'
-                || viewType === 'dayGridYear') {
+            // If business-hours enabled there is a possibility to generate
+            // event with wrong data due to FullCalendar layout.
+            // See 'div' with 'fc-non-business' class name.
+            if (jsEvent.target.className.includes(FC_NON_BUSINESS_CLASS_NAME)) {
+                // Try to find correct element by point.
+                const elements = document.elementsFromPoint(jsEvent.pageX, jsEvent.pageY);
+                let dayElement;
+                for (const element of elements) {
+                    if (element.nodeName === 'TD'
+                        && element.classList.contains(FC_DAYGRID_DAY)
+                        && element.classList.contains(FC_DAY)) {
+                        dayElement = element;
+                        break;
+                    }
+                }
+                if (!dayElement) {
+                    // Do not generate event at all
+                    return;
+                }
                 if (!this.contextMenuDetails) {
                     this.contextMenuDetails = {};
                 }
+                // Just add new properties, since there can be properties from an event
+                this.contextMenuDetails['dayCell'] = utils.createCalendarCellDetailsFromElement(dayElement);
+                this.contextMenuDetails['mouseDetails'] = utils.createMouseDetails(jsEvent);
+            } else {
+                if (!this.contextMenuDetails) {
+                    this.contextMenuDetails = {};
+                }
+                // Just add new properties, since there can be properties from an event
                 this.contextMenuDetails['dayCell'] = utils.createCalendarCellDetails(e, this.calendar);
                 this.contextMenuDetails['mouseDetails'] = utils.createMouseDetails(jsEvent);
             }
@@ -544,19 +575,12 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         if (e.event.extendedProps.description) {
             e.el.title = e.event.extendedProps.description;
         }
-
         e.el.addEventListener("contextmenu", (jsEvent) => {
             if (!this.contextMenuDetails) {
                 this.contextMenuDetails = {};
             }
             this.contextMenuDetails['mouseDetails'] = utils.createMouseDetails(jsEvent);
-            this.contextMenuDetails['eventCell'] = {
-                isFuture: e.isFuture,
-                isMirror: e.isMirror,
-                isPast: e.isPast,
-                isToday: e.isToday,
-                event: utils.eventToServerData(e.event),
-            };
+            this.contextMenuDetails['event'] = utils.eventToServerData(e.event);
         });
     }
 

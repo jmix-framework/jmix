@@ -1,34 +1,62 @@
 package io.jmix.fullcalendarflowui.component.contextmenu.event;
 
+import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
 import org.springframework.lang.Nullable;
 
+/**
+ * The context of cell from which context menu is opened.
+ */
 public class FullCalendarCellContext {
 
     protected final DayCell dayCell;
 
-    protected final EventCell eventCell;
+    protected final CalendarEvent calendarEvent;
+
+    protected final BaseCalendarEventProvider eventProvider;
 
     protected final MouseEventDetails mouseDetails;
 
     public FullCalendarCellContext(@Nullable DayCell dayCell,
-                                   @Nullable EventCell eventCell,
+                                   @Nullable CalendarEvent calendarEvent,
+                                   @Nullable BaseCalendarEventProvider eventProvider,
                                    MouseEventDetails mouseDetails) {
         this.dayCell = dayCell;
-        this.eventCell = eventCell;
+        this.calendarEvent = calendarEvent;
+        this.eventProvider = eventProvider;
         this.mouseDetails = mouseDetails;
     }
 
+    /**
+     * @return day cell information or {@code null} if component's view is Time Grid:
+     * {@link CalendarViewType#TIME_GRID_DAY} or {@link CalendarViewType#TIME_GRID_WEEK}.
+     */
     @Nullable
     public DayCell getDayCell() {
         return dayCell;
     }
 
+    /**
+     * @return calendar event if context menu is invoked from an event
+     */
     @Nullable
-    public EventCell getEventCell() {
-        return eventCell;
+    public CalendarEvent getCalendarEvent() {
+        return calendarEvent;
     }
 
+    /**
+     * @return calendar event's provider if context menu is invoked from an event
+     */
+    @Nullable
+    public BaseCalendarEventProvider getEventProvider() {
+        return eventProvider;
+    }
+
+    /**
+     * @return information about click
+     */
     public MouseEventDetails getMouseDetails() {
         return mouseDetails;
     }

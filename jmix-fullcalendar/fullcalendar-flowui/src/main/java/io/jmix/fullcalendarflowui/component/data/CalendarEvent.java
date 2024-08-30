@@ -30,6 +30,12 @@ import java.time.OffsetTime;
 import java.util.Map;
 import java.util.TimeZone;
 
+/**
+ * The base interface of event in {@link FullCalendar}.
+ *
+ * @see SimpleCalendarEvent
+ * @see EntityCalendarEvent
+ */
 public interface CalendarEvent {
 
     /**
@@ -39,68 +45,127 @@ public interface CalendarEvent {
      */
     Object getId();
 
+    /**
+     * Returns a group object that is shared between other evens. Events with the same group ID will be
+     * dragged and resized together automatically.
+     *
+     * @return group ID object or {@code null} if not set
+     */
     @Nullable
     Object getGroupId();
 
     /**
      * Determines if the event is shown in the “all-day” section of relevant {@link CalendarViewType}.
-     * In addition, if {@code true} the time text is not displayed with the event. The default value is {@code false}.
+     * The default value is {@code false}.
      * <p>
      * Note, the {@code null} value means not all day event.
      *
-     * @return {true} if the event is shown in the “all-day” section
+     * @return {true} if the event is shown in the “all-day” section or {@code null} if not set
      */
     @Nullable
     Boolean getAllDay();
 
+    /**
+     * Sets whether the event should be shown in the "all-day" section of relevant {@link CalendarViewType}.
+     * In addition, if {@code true} the time text is not displayed with the event. The default value is {@code false}.
+     * <p>
+     * Note, the {@code null} value means not all-day event.
+     *
+     * @param allDay allDay option
+     */
     void setAllDay(@Nullable Boolean allDay);
 
-
+    /**
+     * Returns the start date time object that corresponds to system default time zone: {@link TimeZone#getDefault()}.
+     * <p>
+     * For {@link EntityCalendarEvent} value automatically transformed from supported by entity date-time object to
+     * {@link LocalDateTime}.
+     *
+     * @return start date time object that corresponds to system default time zone or {@code null} if not set
+     */
     @Nullable
     LocalDateTime getStartDateTime();
 
     /**
      * Sets start date time value that corresponds to system default time zone: {@link TimeZone#getDefault()}.
+     * <p>
+     * For {@link EntityCalendarEvent} value automatically transformed from {@link LocalDateTime} to supported
+     * by entity date-time object to.
      *
-     * @param startDateTime start date time
+     * @param startDateTime start date-time
      */
     void setStartDateTime(@Nullable LocalDateTime startDateTime);
 
+    /**
+     * Returns the end date time object that corresponds to system default time zone: {@link TimeZone#getDefault()}.
+     * <p>
+     * For {@link EntityCalendarEvent} value automatically transformed from supported by entity date-time object to
+     * {@link LocalDateTime}.
+     *
+     * @return end date time value that corresponds to system default time zone or {@code null} if not set
+     */
     @Nullable
     LocalDateTime getEndDateTime();
 
+    /**
+     * Sets end date time value that corresponds to system default time zone: {@link TimeZone#getDefault()}.
+     * <p>
+     * Note that this value is <strong>exclusive</strong>. For instance, ab event with end property -
+     * {@code 2024-09-03} will appear to span through {code 2024-09-02} but before the start of {@code 2024-09-03}.
+     * <p>
+     * For {@link EntityCalendarEvent} value automatically transformed from {@link LocalDateTime} to supported
+     * by entity date-time object to.
+     *
+     * @param endDateTime end date-time
+     */
     void setEndDateTime(@Nullable LocalDateTime endDateTime);
 
+    /**
+     * @return a text that will appear on an event
+     */
     @Nullable
     String getTitle();
 
+    /**
+     * @return an event description
+     */
     @Nullable
     String getDescription();
 
+    /**
+     * Defines whether events can be navigated by TAB key.
+     * <p>
+     * If value is {@code null}, the event interactivity will be managed by {@link FullCalendar#isEventInteractive()}.
+     *
+     * @return {@code true} if the event should be navigable by TAB key or {@code null} if not set
+     */
     @Nullable
     Boolean getInteractive();
 
+    /**
+     * @return a class name or class names separated by space that should be attached to the rendered event
+     */
     @Nullable
     String getClassNames();
 
     /**
      * Determines whether an event can be dragged in the calendar component. This value override the
-     * {@link JmixFullCalendar#setEventStartEditable(boolean)} property.
+     * {@link FullCalendar#setEventStartEditable(boolean)} property.
      * <p>
      * Note, {@code null} value means that the ability of editing start position will be managed by component's
      * property.
      * <p>
      * For instance, for calendar {@code eventStartEditable=true}:
      * <ul>
-     *     <li>and {@code startEditable=true} - event start is editable</li>
-     *     <li>and {@code startEditable=false} - event start is not editable</li>
-     *     <li>and {@code startEditable=null} - event start is editable</li>
+     *     <li>and event's {@code startEditable=true} - event start is editable</li>
+     *     <li>and event's {@code startEditable=false} - event start is not editable</li>
+     *     <li>and event's {@code startEditable=null} - event start is editable</li>
      * </ul>
      * For calendar {@code eventStartEditable=false}:
      * <ul>
-     *     <li>and {@code startEditable=true} - event start is editable</li>
-     *     <li>and {@code startEditable=false} - event start is not editable</li>
-     *     <li>and {@code startEditable=null} - event start is not editable</li>
+     *     <li>and event's {@code startEditable=true} - event start is editable</li>
+     *     <li>and event's {@code startEditable=false} - event start is not editable</li>
+     *     <li>and event's {@code startEditable=null} - event start is not editable</li>
      * </ul>
      *
      * @return {@code false} if an event should not provide the ability to edit event start position
@@ -117,15 +182,15 @@ public interface CalendarEvent {
      * <p>
      * For instance, for calendar {@code eventDurationEditable=true}:
      * <ul>
-     *     <li>and {@code durationEditable=true} - event duration is editable</li>
-     *     <li>and {@code durationEditable=false} - event duration is not editable</li>
-     *     <li>and {@code durationEditable=null} - event duration is editable</li>
+     *     <li>and event's {@code durationEditable=true} - event duration is editable</li>
+     *     <li>and event's {@code durationEditable=false} - event duration is not editable</li>
+     *     <li>and event's {@code durationEditable=null} - event duration is editable</li>
      * </ul>
      * For calendar {@code eventStartEditable=false}:
      * <ul>
-     *     <li>and {@code durationEditable=true} - event duration is editable</li>
-     *     <li>and {@code durationEditable=false} - event duration is not editable</li>
-     *     <li>and {@code durationEditable=null} - event duration is not editable</li>
+     *     <li>and event's {@code durationEditable=true} - event duration is editable</li>
+     *     <li>and event's {@code durationEditable=false} - event duration is not editable</li>
+     *     <li>and event's {@code durationEditable=null} - event duration is not editable</li>
      * </ul>
      *
      * @return {@code false} if an event should not be resized
@@ -133,12 +198,47 @@ public interface CalendarEvent {
     @Nullable
     Boolean getDurationEditable();
 
+    /**
+     * Defines the type of entity rendering. If not specified, the {@link Display#AUTO} will be used by default.
+     *
+     * @return the type of entity rendering or {@code null} if not set
+     */
     @Nullable
     Display getDisplay();
 
+    /**
+     * Defines whether the event can be dragged/resized over other events and prevents other events from being
+     * dragged/resized over this event.
+     * <p>
+     * Note if value is {@code null}, the ability of overlapping will be managed by
+     * {@link FullCalendar#isEventOverlap()} or {@link FullCalendar#getEventOverlapJsFunction()}.
+     * <p>
+     * For instance, for calendar's {@code eventOverlap=true}:
+     * <ul>
+     *     <li>and event's {@code overlap=true} - event can be overlapped</li>
+     *     <li>and event's {@code overlap=false} - event cannot be overlapped</li>
+     *     <li>and event's {@code overlap=null} - event can be overlapped</li>
+     * </ul>
+     * For calendar {@code eventOverlap=false}:
+     * <ul>
+     *     <li>and event's {@code overlap=true} - event can be overlapped</li>
+     *     <li>and event's {@code overlap=false} - event cannot be overlapped</li>
+     *     <li>and event's {@code overlap=null} - event cannot be overlapped</li>
+     * </ul>
+     *
+     * @return {@code true} if event should be overlapped
+     */
     @Nullable
     Boolean getOverlap();
 
+    /**
+     * A group ID of other events. This property limits dragging and resizing to a certain cells in component.
+     * <p>
+     * If value is {@code null}, the event constraints will be managed component's
+     * {@link FullCalendar#getEventConstraintGroupId()} and {@link FullCalendar#getEventConstraintBusinessHours()}
+     *
+     * @return a constraint object or {@code null} if not set
+     */
     @Nullable
     Object getConstraint();
 

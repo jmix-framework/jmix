@@ -2,18 +2,21 @@ package io.jmix.fullcalendarflowui.component.serialization.deserializer;
 
 import elemental.json.JsonObject;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
+import io.jmix.fullcalendarflowui.component.FullCalendarUtils;
 import io.jmix.fullcalendarflowui.component.contextmenu.event.DayCell;
-import io.jmix.fullcalendarflowui.component.contextmenu.event.EventCell;
 import io.jmix.fullcalendarflowui.component.contextmenu.event.FullCalendarCellContext;
 import io.jmix.fullcalendarflowui.component.data.AbstractEventProviderManager;
+import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.serialization.deserializer.JmixFullCalendarDeserializer;
 import io.jmix.fullcalendarflowui.kit.component.serialization.DomCalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.serialization.DomMouseEventDetails;
 
-import static io.jmix.fullcalendarflowui.component.FullCalendarUtils.getEventProviderManager;
+import java.util.Objects;
+
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.parseIsoDate;
 
 public class FullCalendarDeserializer extends JmixFullCalendarDeserializer {
@@ -25,50 +28,50 @@ public class FullCalendarDeserializer extends JmixFullCalendarDeserializer {
         DayCell dayCell = json.hasKey("dayCell")
                 ? deserializeDayCell(json.getObject("dayCell"))
                 : null;
-        EventCell eventCell = json.hasKey("eventCell")
-                ? deserializeEventCell(json.getObject("eventCell"), calendar)
-                : null;
 
-        DomMouseEventDetails domMouseEventDetails = deserialize(json.getObject("mouseDetails"), DomMouseEventDetails.class);
+        CalendarEvent event = null;
+        BaseCalendarEventProvider eventProvider = null;
 
-        return new FullCalendarCellContext(dayCell, eventCell, new MouseEventDetails(domMouseEventDetails));
+        if (json.hasKey("event")) {
+            DomCalendarEvent domCalendarEvent = deserialize(json.getObject("event"), DomCalendarEvent.class);
+            AbstractEventProviderManager epManager = getEventProviderManager(domCalendarEvent, calendar);
+
+            event = epManager.getCalendarEvent(domCalendarEvent.getId());
+            if (event == null) {
+                throw new IllegalStateException("Unable to find calendar event for client id: "
+                        + domCalendarEvent.getId());
+            }
+            eventProvider = epManager.getEventProvider();
+        }
+
+        DomMouseEventDetails domMouseEventDetails =
+                deserialize(json.getObject("mouseDetails"), DomMouseEventDetails.class);
+
+        return new FullCalendarCellContext(dayCell, event, eventProvider, new MouseEventDetails(domMouseEventDetails));
     }
 
     public DayCell deserializeDayCell(JsonObject json) {
         Preconditions.checkNotNullArgument(json);
+        DayOfWeek dayOfWeek = DayOfWeek.fromId((int) json.getNumber("dow"));
         return new DayCell(parseIsoDate(json.getString("date")),
                 json.getBoolean("isDisabled"),
                 json.getBoolean("isFuture"),
-                json.getBoolean("isMonthStart"),
                 json.getBoolean("isOther"),
                 json.getBoolean("isPast"),
-                json.getBoolean("isToday"));
+                json.getBoolean("isToday"),
+                Objects.requireNonNull(dayOfWeek));
     }
 
-    public EventCell deserializeEventCell(JsonObject json, FullCalendar calendar) {
-        Preconditions.checkNotNullArgument(json);
-
-        DomCalendarEvent domCalendarEvent = deserialize(json.getObject("event"), DomCalendarEvent.class);
-
+    public AbstractEventProviderManager getEventProviderManager(DomCalendarEvent domCalendarEvent,
+                                                                FullCalendar calendar) {
         AbstractEventProviderManager eventProviderManager =
-                getEventProviderManager(calendar, domCalendarEvent.getSourceId());
+                FullCalendarUtils.getEventProviderManager(calendar, domCalendarEvent.getSourceId());
 
         if (eventProviderManager == null) {
             throw new IllegalStateException("Unable to find event provider for sourceId: "
                     + domCalendarEvent.getSourceId());
         }
-        CalendarEvent calendarEvent = eventProviderManager.getCalendarEvent(domCalendarEvent.getId());
-        if (calendarEvent == null) {
-            throw new IllegalStateException("Unable to find calendar event for client id: "
-                    + domCalendarEvent.getId());
-        }
-        return new EventCell(
-                json.getBoolean("isFuture"),
-                json.getBoolean("isMirror"),
-                json.getBoolean("isPast"),
-                json.getBoolean("isToday"),
-                calendarEvent,
-                eventProviderManager.getEventProvider()
-        );
+
+        return eventProviderManager;
     }
 }

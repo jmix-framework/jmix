@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * Abstract class for entity based event providers.
  *
  * @param <F> type of filter object
  */

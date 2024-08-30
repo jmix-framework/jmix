@@ -38,6 +38,8 @@ public abstract class AbstractTimeGridViewProperties extends AbstractCalendarVie
 
     protected boolean allDaySlot = true;
 
+    protected boolean displayEventEnd = true;
+
     public AbstractTimeGridViewProperties(String name) {
         super(name);
     }
@@ -133,6 +135,16 @@ public abstract class AbstractTimeGridViewProperties extends AbstractCalendarVie
 
     public void setAllDaySlot(boolean allDaySlot) {
         this.allDaySlot = allDaySlot;
+
+        markAsDirty();
+    }
+
+    public boolean isDisplayEventEnd() {
+        return displayEventEnd;
+    }
+
+    public void setDisplayEventEnd(boolean displayEventEnd) {
+        this.displayEventEnd = displayEventEnd;
 
         markAsDirty();
     }

@@ -26,24 +26,12 @@ import java.util.List;
 public class EventConstraint extends CalendarOption {
     public static final String NAME = "eventConstraint";
 
-    protected boolean enabled = false;
-
     protected String groupId;
 
     protected List<BusinessHours> businessHours;
 
     public EventConstraint() {
         super(NAME);
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-
-        markAsDirty();
     }
 
     @Nullable

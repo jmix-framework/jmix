@@ -1,5 +1,11 @@
 import moment from 'moment';
 
+const FC_DAY_PAST = 'fc-day-past';
+const FC_DAY_FUTURE = 'fc-day-future';
+const FC_DAY_TODAY = 'fc-day-today';
+const FC_DAY_OTHER = 'fc-day-other';
+const FC_DAY_DISABLED = 'fc-day-disabled';
+
 /**
  * CAUTION! Copied from @fullcalendar/core/index.js
  * @type {{}}
@@ -110,6 +116,19 @@ export function segmentToServerData(segment, dateFormatter) {
     }
 }
 
+export function createCalendarCellDetailsFromElement(dayCellElement) {
+    return {
+        date: dayCellElement.dataset.date,
+        isFuture: dayCellElement.classList.contains(FC_DAY_FUTURE),
+        isPast: dayCellElement.classList.contains(FC_DAY_PAST),
+        isToday: dayCellElement.classList.contains(FC_DAY_TODAY),
+        isOther: dayCellElement.classList.contains(FC_DAY_OTHER),
+        isDisabled: dayCellElement.classList.contains(FC_DAY_DISABLED),
+        // Ignore locale, since FullCalendar always consider Sunday = 0
+        dow: moment(dayCellElement.dataset.date, "YYYY-MM-DD").day()
+    }
+}
+
 export function createCalendarCellDetails(dayEvent, calendar) {
     const dateFormatter = calendar.formatIso.bind(calendar);
 
@@ -127,8 +146,8 @@ export function createCalendarCellDetails(dayEvent, calendar) {
         isPast: dayEvent.isPast,
         isToday: dayEvent.isToday,
         isOther: dayEvent.isOther,
-        isDisabled: isCellDisabled,
-        isMonthStart: dayEvent.isMonthStart,
+        isDisabled: isCellDisabled || dayEvent.el.className.includes('disabled'),
+        dow: dayEvent.dow,
     };
 }
 

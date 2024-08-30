@@ -22,6 +22,7 @@ const VIEWS = 'views';
 const DAY_MAX_EVENT_ROWS = 'dayMaxEventRows';
 const DAY_MAX_EVENTS = 'dayMaxEvents';
 const FIRST_DAY = 'firstDay';
+const EVENT_ORDER = 'eventOrder';
 
 export function processInitialOptions(serverOptions) {
     const options = serverOptions;
@@ -119,6 +120,7 @@ class Options {
             this._updateNowIndicatorClassNames(options);
 
             this._updateFirstDay(options);
+            this._updateEventOrder(options);
         });
     }
 
@@ -158,6 +160,7 @@ class Options {
             || DAY_MAX_EVENT_ROWS === key
             || DAY_MAX_EVENTS === key
             || FIRST_DAY === key
+            || EVENT_ORDER === key
     }
 
     _updateMoreLinkClick(options) {
@@ -210,10 +213,7 @@ class Options {
             }
             if (eventConstraint.groupId) {
                 this.updateOption(EVENT_CONSTRAINT, eventConstraint.groupId);
-                return;
             }
-
-            this.updateOption(EVENT_CONSTRAINT, eventConstraint.enabled ? "businessHours" : undefined);
         }
     }
 
@@ -350,6 +350,22 @@ class Options {
         }
 
         this.updateOption(FIRST_DAY, value);
+    }
+
+    // todo test
+    _updateEventOrder(options) {
+        const eventOrder = options[EVENT_ORDER];
+
+        if (eventOrder) {
+            if (eventOrder.jsFunction) {
+                const jsFunction = utils.parseJavaScriptFunction(eventOrder.jsFunction);
+                if (jsFunction) {
+                    this.updateOption(EVENT_ORDER, jsFunction);
+                    return;
+                }
+            }
+            this.updateOption(EVENT_ORDER, eventOrder.serializedEventOrder);
+        }
     }
 
     _onMoreLinkClick(e) {

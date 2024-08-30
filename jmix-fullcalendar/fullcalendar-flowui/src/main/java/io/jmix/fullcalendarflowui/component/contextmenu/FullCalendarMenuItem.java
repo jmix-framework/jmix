@@ -7,6 +7,10 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.fullcalendarflowui.component.contextmenu.HasFullCalendarMenuItems.FullCalendarClickContextMenuItemEvent;
 
+/**
+ * Menu item of context menu - {@link FullCalendarContextMenu}.
+ *
+ */
 public class FullCalendarMenuItem extends MenuItemBase<FullCalendarContextMenu, FullCalendarMenuItem, FullCalendarSubMenu> {
 
     protected final SerializableRunnable contentReset;
@@ -19,6 +23,12 @@ public class FullCalendarMenuItem extends MenuItemBase<FullCalendarContextMenu, 
         this.contentReset = contentReset;
     }
 
+    /**
+     * Adds menu item click listener.
+     *
+     * @param clickListener click listener to add
+     * @return A registration object for removing an event listener added to menu item
+     */
     public Registration addMenuItemClickListener(
             ComponentEventListener<FullCalendarClickContextMenuItemEvent> clickListener) {
         return getElement().addEventListener("click", event ->

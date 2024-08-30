@@ -118,6 +118,19 @@ public interface StudioFullCalendarComponents {
                     @StudioProperty(xmlAttribute = "weekendsVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "weekNumbersVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "windowResizeDelay", type = StudioPropertyType.INTEGER, defaultValue = "100"),
+
+                    // todo sort properties
+                    @StudioProperty(xmlAttribute = "eventBackgroundColor", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "eventBorderColor", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "eventTextColor", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "eventDisplay", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.fullcalendar.Display",
+                            options = {"AUTO", "BLOCK", "LIST_ITEM", "BACKGROUND", "INVERSE_BACKGROUND", "NONE"}),
+                    @StudioProperty(xmlAttribute = "displayEventTime", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "nextDayThreshold", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "eventOrderStrict", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "progressiveEventRendering", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "eventOrder", type = StudioPropertyType.VALUES_LIST, defaultValue = "start,-duration,allDay,title"),
             }
     )
     JmixFullCalendar fullCalendar();

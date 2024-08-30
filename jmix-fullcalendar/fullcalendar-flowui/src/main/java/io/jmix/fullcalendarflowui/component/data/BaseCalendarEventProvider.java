@@ -16,7 +16,15 @@
 
 package io.jmix.fullcalendarflowui.component.data;
 
+import io.jmix.fullcalendarflowui.component.FullCalendar;
+
+/**
+ * Base interface of event providers in {@link FullCalendar}.
+ */
 public interface BaseCalendarEventProvider {
 
+    /**
+     * @return an ID of event provider
+     */
     String getId();
 }

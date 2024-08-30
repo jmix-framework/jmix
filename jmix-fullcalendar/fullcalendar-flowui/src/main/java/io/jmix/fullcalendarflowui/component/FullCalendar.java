@@ -16,6 +16,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendar.Display;
 import io.jmix.fullcalendarflowui.component.data.*;
 import io.jmix.fullcalendarflowui.component.event.*;
 import io.jmix.fullcalendarflowui.component.event.MoreLinkClickEvent.EventProviderContext;
@@ -215,14 +216,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getOptions().getBusinessHours().setBusinessHours(businessHours);
     }
 
-    public boolean isEventConstraintEnabled() {
-        return getOptions().getEventConstraint().isEnabled();
-    }
-
-    public void setEventConstraintEnabled(boolean enabled) {
-        getOptions().getEventConstraint().setEnabled(enabled);
-    }
-
     public List<BusinessHours> getEventConstraintBusinessHours() {
         return getOptions().getEventConstraint().getBusinessHours();
     }
@@ -274,6 +267,15 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     public void setFirstDayOfWeek(@Nullable DayOfWeek firstDay) {
         getOptions().getFirstDay().setValue(firstDay);
+    }
+
+    @Nullable
+    public Display getEventDisplay() {
+        return getOptions().getEventDisplay().getValue();
+    }
+
+    public void setEventDisplay(@Nullable Display display) {
+        getOptions().getEventDisplay().setValue(display);
     }
 
     public Registration addDatesSetListener(ComponentEventListener<DatesSetEvent> listener) {

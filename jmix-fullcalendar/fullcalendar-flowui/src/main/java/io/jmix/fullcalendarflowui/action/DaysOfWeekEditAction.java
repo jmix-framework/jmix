@@ -22,14 +22,20 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.PickerComponent;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendar.DaysOfWeek;
 import io.jmix.fullcalendar.datatype.DaysOfWeekDatatypeUtils;
@@ -41,6 +47,9 @@ import org.springframework.lang.Nullable;
 import java.time.temporal.WeekFields;
 import java.util.*;
 
+/**
+ * Action is used for editing {@link DaysOfWeek} datatype in {@link ValuePicker} field.
+ */
 @ActionType(DaysOfWeekEditAction.ID)
 public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, PickerComponent<DaysOfWeek>, DaysOfWeek>
         implements InitializingBean {
@@ -49,6 +58,7 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
     protected Messages messages;
     protected FullCalendarFlowuiProperties calendarFlowuiProperties;
     protected CurrentAuthentication currentAuthentication;
+    protected UiComponents uiComponents;
 
     public DaysOfWeekEditAction() {
         this(ID);
@@ -73,17 +83,20 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
         this.calendarFlowuiProperties = calendarFlowuiProperties;
     }
 
+    @Autowired
+    public void setUiComponents(UiComponents uiComponents) {
+        this.uiComponents = uiComponents;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         setShortcutCombination(KeyCombination.create(calendarFlowuiProperties.getPickerDaysOfWeekEditShortcut()));
 
         if (getShortcutCombination() != null) {
-            setDescription(messages.getMessage(
-                    "io.jmix.fullcalendarflowui.action", "daysOfWeekEdit.description")
+            setDescription(messages.getMessage(getClass(), "daysOfWeekEdit.description")
                     + " (" + getShortcutCombination().format() + ")");
         } else {
-            setDescription(messages.getMessage(
-                    "io.jmix.fullcalendarflowui.action", "daysOfWeekEdit.description"));
+            setDescription(messages.getMessage(getClass(), "daysOfWeekEdit.description"));
         }
     }
 
@@ -105,12 +118,14 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
         editorDialog.open();
     }
 
+    @SuppressWarnings("unchecked")
     protected Dialog createEditorDialog(@Nullable DaysOfWeek daysOfWeek) {
         Dialog dialog = new Dialog();
         dialog.setHeaderTitle(messages.getMessage(
                 "io.jmix.fullcalendarflowui.action", "daysOfWeekSelectDialog.headerTitle"));
+        dialog.getHeader().add(createHeaderCloseButton(dialog));
 
-        CheckboxGroup<DayOfWeek> checkboxGroup = new CheckboxGroup<>();
+        JmixCheckboxGroup<DayOfWeek> checkboxGroup = uiComponents.create(JmixCheckboxGroup.class);
         checkboxGroup.setItems(getAllDaysOfWeek());
         checkboxGroup.setItemLabelGenerator(item -> messages.getMessage(item));
         checkboxGroup.addThemeVariants(CheckboxGroupVariant.LUMO_VERTICAL);
@@ -121,16 +136,31 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
 
         dialog.add(checkboxGroup);
 
-        Button okBtn = new Button(messages.getMessage("actions.Ok"));
+        JmixButton okBtn = uiComponents.create(JmixButton.class);
+        okBtn.setText(messages.getMessage("actions.Ok"));
         okBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         okBtn.addClickListener(__ -> onOkBtnClick(dialog, checkboxGroup.getValue()));
 
-        Button cancelBtn = new Button(messages.getMessage("actions.Cancel"));
+        JmixButton cancelBtn = uiComponents.create(JmixButton.class);
+        cancelBtn.setText(messages.getMessage("actions.Cancel"));
         cancelBtn.addClickListener(__ -> onCancelBtnClick(dialog));
 
         dialog.getFooter().add(okBtn, cancelBtn);
 
         return dialog;
+    }
+
+    protected Button createHeaderCloseButton(Dialog dialog) {
+        JmixButton closeButton = uiComponents.create(JmixButton.class);
+        closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
+        closeButton.addThemeVariants(
+                ButtonVariant.LUMO_TERTIARY_INLINE,
+                ButtonVariant.LUMO_ICON,
+                ButtonVariant.LUMO_CONTRAST
+        );
+        closeButton.setTitle(messages.getMessage("actions.Close"));
+        closeButton.addClickListener(__ -> onCloseButtonClick(dialog));
+        return closeButton;
     }
 
     protected void onOkBtnClick(Dialog dialog, Set<DayOfWeek> selectedValues) {
@@ -139,6 +169,10 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
     }
 
     protected void onCancelBtnClick(Dialog dialog) {
+        dialog.close();
+    }
+
+    protected void onCloseButtonClick(Dialog dialog) {
         dialog.close();
     }
 

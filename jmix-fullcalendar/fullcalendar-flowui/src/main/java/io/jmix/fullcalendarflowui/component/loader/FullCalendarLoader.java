@@ -11,6 +11,7 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendar.Display;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.data.AbstractEntityEventProvider;
 import io.jmix.fullcalendarflowui.component.data.ContainerCalendarEventProvider;
@@ -67,7 +68,6 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadBoolean(element, "eventResizableFromStart", resultComponent::setEventResizableFromStart);
         loadInteger(element, "eventDragMinDistance", resultComponent::setEventDragMinDistance);
         loadBoolean(element, "eventOverlap", resultComponent::setEventOverlap);
-        loadBoolean(element, "eventConstraintEnabled", resultComponent::setEventConstraintEnabled);
         loadString(element, "eventConstraintGroupId", resultComponent::setEventConstraintGroupId);
 
         loadInteger(element, "dragRevertDuration", resultComponent::setDragRevertDuration);
@@ -131,6 +131,16 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadInteger(element, "selectLongPressDelay", resultComponent::setSelectLongPressDelay);
 
         loadBoolean(element, "nowIndicatorVisible", resultComponent::setNowIndicatorVisible);
+
+        loadString(element, "eventBackgroundColor", resultComponent::setEventBackgroundColor);
+        loadString(element, "eventBorderColor", resultComponent::setEventBorderColor);
+        loadString(element, "eventTextColor", resultComponent::setEventTextColor);
+        loadEnum(element, Display.class, "eventDisplay", resultComponent::setEventDisplay);
+        loadBoolean(element, "displayEventTime", resultComponent::setDisplayEventTime);
+        loadDuration(element, "nextDayThreshold", resultComponent::setNextDayThreshold);
+        loadBoolean(element, "eventOrderStrict", resultComponent::setEventOrderStrict);
+        loadBoolean(element, "progressiveEventRendering", resultComponent::setProgressiveEventRendering);
+        loadStringList(element, "eventOrder", resultComponent::setEventOrder);
 
         loadEventProviders(element, "containerEventProvider",
                 (ep) -> resultComponent.addEventProvider((CalendarEventProvider) ep));

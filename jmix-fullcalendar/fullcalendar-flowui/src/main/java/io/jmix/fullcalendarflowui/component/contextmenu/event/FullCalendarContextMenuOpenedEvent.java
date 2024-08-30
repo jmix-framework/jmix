@@ -3,6 +3,9 @@ package io.jmix.fullcalendarflowui.component.contextmenu.event;
 import com.vaadin.flow.component.contextmenu.ContextMenuBase;
 import io.jmix.fullcalendarflowui.component.contextmenu.FullCalendarContextMenu;
 
+/**
+ * The event is fired when a context menu has been opened or closed.
+ */
 public class FullCalendarContextMenuOpenedEvent extends ContextMenuBase.OpenedChangeEvent<FullCalendarContextMenu> {
 
     protected final FullCalendarCellContext cellContext;
@@ -19,6 +22,9 @@ public class FullCalendarContextMenuOpenedEvent extends ContextMenuBase.OpenedCh
         return super.getSource();
     }
 
+    /**
+     * @return a cell context that contains information about cell and event
+     */
     public FullCalendarCellContext getCellContext() {
         return cellContext;
     }

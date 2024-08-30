@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.kit.component.model;
+@NonNullApi
+package io.jmix.fullcalendarflowui.component.contextmenu;
 
-public class DayGridDayViewProperties extends AbstractDayGridViewProperties {
-
-    public DayGridDayViewProperties() {
-        super(CalendarViewType.DAY_GRID_DAY.getId());
-
-        displayEventEnd = true;
-    }
-}
+import org.springframework.lang.NonNullApi;

@@ -15,6 +15,9 @@ import org.springframework.lang.Nullable;
 
 import java.util.function.Function;
 
+/**
+ * Component for context menu in {@link FullCalendar}.
+ */
 public class FullCalendarContextMenu extends ContextMenuBase<FullCalendarContextMenu, FullCalendarMenuItem,
         FullCalendarSubMenu> implements HasFullCalendarMenuItems {
 
@@ -31,10 +34,22 @@ public class FullCalendarContextMenu extends ContextMenuBase<FullCalendarContext
         setTarget(target);
     }
 
+    /**
+     * Creates new instance of context menu with provided {@link FullCalendar} target.
+     *
+     * @param target calendar to bound with context menu
+     * @return new instance of context menu
+     */
     public static FullCalendarContextMenu create(FullCalendar target) {
         return new FullCalendarContextMenu(target);
     }
 
+    /**
+     * Adds a listener to handle changing opened/closed state.
+     *
+     * @param listener a listener to add
+     * @return a registration object for removing an event listener from context menu
+     */
     public Registration addContextMenuOpenedListener(ComponentEventListener<FullCalendarContextMenuOpenedEvent> listener) {
         ComponentEventListener<OpenedChangeEvent<FullCalendarContextMenu>> baseListener = (e) -> {
             listener.onComponentEvent(
@@ -48,6 +63,29 @@ public class FullCalendarContextMenu extends ContextMenuBase<FullCalendarContext
         return contentMenuHandler;
     }
 
+    /**
+     * Sets a handler to configure content of context menu. For instance:
+     * <pre>
+     * contextMenu.setContentMenuHandler(context -> {
+     *     contextMenu.removeAll();
+     *     if (context.getCalendarEvent() != null) {
+     *         contextMenu.addItem("Event menu item", event -> {}); // do something
+     *         return true;
+     *     } else if (context.getDayCell() != null) {
+     *         if (context.getDayCell().isDisabled()) {
+     *             return false;
+     *         } else {
+     *             contextMenu.addItem("Simple day cell menu item", event -> {}); // do something
+     *             return true;
+     *         }
+     *     } else {
+     *         return false;
+     *     }
+     * });
+     * </pre>
+     *
+     * @param contentMenuHandler handler to add
+     */
     public void setContentMenuHandler(@Nullable Function<FullCalendarCellContext, Boolean> contentMenuHandler) {
         this.contentMenuHandler = contentMenuHandler;
     }
@@ -73,7 +111,7 @@ public class FullCalendarContextMenu extends ContextMenuBase<FullCalendarContext
     }
 
     @Override
-    public void setTarget(Component target) {
+    public void setTarget(@Nullable Component target) {
         if (target != null && !(target instanceof FullCalendar)) {
             throw new IllegalArgumentException(
                     "Only an instance of FullCalendar can be used as the target for FullCalendarContextMenu. "
@@ -82,6 +120,7 @@ public class FullCalendarContextMenu extends ContextMenuBase<FullCalendarContext
         super.setTarget(target);
     }
 
+    @Nullable
     @Override
     public FullCalendar getTarget() {
         return (FullCalendar) super.getTarget();

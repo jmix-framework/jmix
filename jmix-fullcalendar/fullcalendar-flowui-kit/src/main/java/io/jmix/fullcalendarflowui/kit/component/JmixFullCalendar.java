@@ -853,6 +853,83 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getWindowResizeDelay().setValue(windowResizeDelay);
     }
 
+    @Nullable
+    public String getEventBackgroundColor() {
+        return options.getEventBackgroundColor().getValue();
+    }
+
+    public void setEventBackgroundColor(@Nullable String eventBackgroundColor) {
+        options.getEventBackgroundColor().setValue(eventBackgroundColor);
+    }
+
+    @Nullable
+    public String getEventBorderColor() {
+        return options.getEventBorderColor().getValue();
+    }
+
+    public void setEventBorderColor(@Nullable String borderColor) {
+        options.getEventBorderColor().setValue(borderColor);
+    }
+
+    @Nullable
+    public String getEventTextColor() {
+        return options.getEventTextColor().getValue();
+    }
+
+    public void setEventTextColor(@Nullable String eventTextColor) {
+        options.getEventTextColor().setValue(eventTextColor);
+    }
+
+    public boolean isDisplayEventTime() {
+        return options.getDisplayEventTime().getNotNullValue();
+    }
+
+    public void setDisplayEventTime(boolean displayEventTime) {
+        options.getDisplayEventTime().setValue(displayEventTime);
+    }
+
+    @Nullable
+    public CalendarDuration getNextDayThreshold() {
+        return options.getNextDayThreshold().getValue();
+    }
+
+    public void setNextDayThreshold(@Nullable CalendarDuration nextDayThreshold) {
+        options.getNextDayThreshold().setValue(nextDayThreshold);
+    }
+
+    public boolean isEventOrderStrict() {
+        return options.getEventOrderStrict().getNotNullValue();
+    }
+
+    public void setEventOrderStrict(boolean eventOrderStrict) {
+        options.getEventOrderStrict().setValue(eventOrderStrict);
+    }
+
+    public boolean isProgressiveEventRendering() {
+        return options.getProgressiveEventRendering().getNotNullValue();
+    }
+
+    public void setProgressiveEventRendering(boolean progressiveEventRendering) {
+        options.getProgressiveEventRendering().setValue(progressiveEventRendering);
+    }
+
+    public List<String> getEventOrder() {
+        return options.getEventOrder().getEventOrder();
+    }
+
+    public void setEventOrder(@Nullable List<String> eventOrder) {
+        options.getEventOrder().setEventOrder(eventOrder);
+    }
+
+    @Nullable
+    public JsFunction getEventOrderJsFunction() {
+        return options.getEventOrder().getJsFunction();
+    }
+
+    public void setEventOrderJsFunction(@Nullable JsFunction jsFunction) {
+        options.getEventOrder().setJsFunction(jsFunction);
+    }
+
     protected JmixFullCalendarSerializer createSerializer() {
         return new JmixFullCalendarSerializer();
     }

@@ -153,6 +153,7 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "dayPopoverFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "eventTimeFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "weekNumberFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "displayEventEnd", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )
     void dayGridDay();
@@ -171,6 +172,7 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "dayPopoverFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "eventTimeFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "weekNumberFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "displayEventEnd", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
             }
     )
     void dayGridWeek();
@@ -191,6 +193,7 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "weekNumberFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "fixedWeekCount", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "showNonCurrentDates", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "displayEventEnd", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
             }
     )
     void dayGridMonth();
@@ -210,6 +213,7 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "eventTimeFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "weekNumberFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "monthStartFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "displayEventEnd", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
             }
     )
     void dayGridYear();
@@ -297,6 +301,7 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "eventShortHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "slotEventOverlap", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "allDaySlot", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "displayEventEnd", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )
     void timeGridDay();
@@ -320,6 +325,7 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "eventShortHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "slotEventOverlap", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "allDaySlot", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "displayEventEnd", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )
     void timeGridWeek();

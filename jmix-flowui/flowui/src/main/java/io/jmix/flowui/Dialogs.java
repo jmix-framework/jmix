@@ -18,6 +18,7 @@ package io.jmix.flowui;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.Paragraph;
@@ -141,9 +142,18 @@ public interface Dialogs {
         Action[] getActions();
 
         /**
-         * Opens the dialog.
+         * Builds option the dialog. Dialog should be shown using {@link Dialog#open()}.
+         *
+         * @return built option dialog
          */
-        void open();
+        Dialog build();
+
+        /**
+         * Opens the option dialog.
+         *
+         * @return opened {@link Dialog} instance
+         */
+        Dialog open();
     }
 
     interface MessageDialogBuilder extends DialogBuilder<MessageDialogBuilder>,
@@ -157,9 +167,18 @@ public interface Dialogs {
             Resizable<MessageDialogBuilder> {
 
         /**
-         * Opens the dialog.
+         * Builds the message dialog. Dialog should be shown using {@link Dialog#open()}.
+         *
+         * @return built message dialog
          */
-        void open();
+        Dialog build();
+
+        /**
+         * Opens the message dialog.
+         *
+         * @return opened {@link Dialog} instance
+         */
+        Dialog open();
     }
 
     interface InputDialogBuilder extends DialogBuilder<InputDialogBuilder> {
@@ -424,9 +443,16 @@ public interface Dialogs {
         boolean isShowProgressInPercentage();
 
         /**
-         * Opens the dialog.
+         * Build the background task dialog. Dialog should be shown using {@link Dialog#open()}.
+         *
+         * @return built background task dialog.
          */
-        void open();
+        Dialog build();
+
+        /**
+         * Opens the background task dialog.
+         */
+        Dialog open();
     }
 
     /**

@@ -18,25 +18,19 @@ package io.jmix.core.annotation;
 
 import io.jmix.core.entity.annotation.MetaAnnotation;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.FIELD;
 
 /**
  * Annotation that indicates that annotated element is secret.
  * For example, if the User entity attribute is annotated with @Secret then this attribute won't be returned by the REST API
  * /userInfo endpoint.
  */
-@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
+@Target({FIELD})
 @MetaAnnotation
 public @interface Secret {
-
-    boolean value() default true;
-
-    /**
-     * Set to false if you don't want this annotation to be set on subclasses.
-     */
-    boolean propagateToSubclasses() default true;
 }

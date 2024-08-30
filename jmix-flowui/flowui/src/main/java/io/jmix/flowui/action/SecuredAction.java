@@ -20,7 +20,10 @@ import io.jmix.flowui.kit.action.Action;
 
 /**
  * Indicates that the action can be affected by UI permissions.
+ *
+ * @deprecated use {@code io.jmix.uiconstraints.annotation.UiComponentPolicyAction} instead
  */
+@Deprecated(since = "2.4", forRemoval = true)
 public interface SecuredAction extends Action {
 
     boolean isEnabledByUiPermissions();

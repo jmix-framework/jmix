@@ -32,10 +32,6 @@ import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-/**
- * @deprecated use {@code io.jmix.uiconstraints.annotation.UiComponentPolicyAction} instead
- */
-@Deprecated(since = "2.4", forRemoval = true)
 public class SecuredBaseAction extends BaseAction implements SecuredAction {
 
     protected boolean enabledByUiPermissions = true;

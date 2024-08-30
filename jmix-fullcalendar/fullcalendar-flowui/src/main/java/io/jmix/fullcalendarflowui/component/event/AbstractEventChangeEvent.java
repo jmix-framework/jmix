@@ -24,8 +24,11 @@ public class AbstractEventChangeEvent extends AbstractClickEvent {
     }
 
     public static class OldValues {
+
         protected LocalDateTime startDateTime;
+
         protected LocalDateTime endDateTime;
+
         protected boolean allDay;
 
         public OldValues(LocalDateTime startDateTime, @Nullable LocalDateTime endDateTime, boolean allDay) {

@@ -10,10 +10,12 @@ import java.util.List;
 public class EventDropEvent extends AbstractEventChangeEvent {
 
     protected final CalendarEvent calendarEvent;
+
     protected final List<CalendarEvent> relatedEvents;
 
-    protected final ViewInfo viewInfo;
     protected final CalendarDuration delta;
+
+    protected final ViewInfo viewInfo;
 
     public EventDropEvent(FullCalendar fullCalendar,
                           boolean fromClient,

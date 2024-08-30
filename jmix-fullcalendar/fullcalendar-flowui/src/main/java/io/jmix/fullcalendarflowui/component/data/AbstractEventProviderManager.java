@@ -18,11 +18,9 @@ package io.jmix.fullcalendarflowui.component.data;
 
 import com.vaadin.flow.data.provider.KeyMapper;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.component.FullCalendarUtils;
+import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
 import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer.FullCalendarDataSerializer;
 import org.springframework.lang.Nullable;
-
-import static io.jmix.fullcalendarflowui.component.FullCalendarUtils.getSerializer;
 
 public abstract class AbstractEventProviderManager {
 
@@ -36,6 +34,7 @@ public abstract class AbstractEventProviderManager {
     protected FullCalendar fullCalendar;
 
     public AbstractEventProviderManager(BaseCalendarEventProvider eventProvider,
+                                        FullCalendarSerializer serializer,
                                         FullCalendar fullCalendar,
                                         String jsFunctionName) {
         this.eventProvider = eventProvider;
@@ -44,7 +43,7 @@ public abstract class AbstractEventProviderManager {
 
         this.sourceId = generateSourceId(eventProvider);
 
-        this.dataSerializer = getSerializer(fullCalendar).createDataSerializer(sourceId, eventKeyMapper);
+        this.dataSerializer = serializer.createDataSerializer(sourceId, eventKeyMapper);
         this.dataSerializer.setTimeZoneSupplier(fullCalendar::getTimeZone);
     }
 

@@ -2,7 +2,6 @@ package io.jmix.fullcalendarflowui.component;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.fullcalendarflowui.component.data.AbstractEventProviderManager;
-import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
 import org.springframework.lang.Nullable;
 
 /**
@@ -15,13 +14,9 @@ public final class FullCalendarUtils {
 
     @Nullable
     public static AbstractEventProviderManager getEventProviderManager(FullCalendar fullCalendar, String sourceId) {
-        return fullCalendar.getEventProvidersMap().values().stream()
+        return fullCalendar.eventProvidersMap.values().stream()
                 .filter(em -> em.getSourceId().equals(sourceId))
                 .findFirst()
                 .orElse(null);
-    }
-
-    public static FullCalendarSerializer getSerializer(FullCalendar fullCalendar) {
-        return fullCalendar.getSerializer();
     }
 }

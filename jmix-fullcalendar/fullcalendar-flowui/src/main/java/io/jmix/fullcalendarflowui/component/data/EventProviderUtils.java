@@ -16,8 +16,10 @@
 
 package io.jmix.fullcalendarflowui.component.data;
 
+import io.jmix.core.annotation.Internal;
 import org.apache.commons.lang3.RandomStringUtils;
 
+@Internal
 public final class EventProviderUtils {
 
     private EventProviderUtils() {

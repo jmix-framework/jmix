@@ -18,6 +18,11 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+/**
+ * Event provider that loads entities as {@link CalendarEvent}.
+ *
+ * @param <E> entity type
+ */
 public class ContainerCalendarEventProvider<E> extends AbstractEntityEventProvider<Void> implements EntityDataUnit,
         CalendarEventProvider {
 

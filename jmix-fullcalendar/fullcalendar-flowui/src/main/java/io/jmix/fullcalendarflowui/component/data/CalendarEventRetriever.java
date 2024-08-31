@@ -16,6 +16,25 @@
 
 package io.jmix.fullcalendarflowui.component.data;
 
+/**
+ * Base class for simple event retrievers. For instance:
+ * <pre>
+ * &#064;ViewComponent
+ * private FullCalendar calendar;
+ * &#064;Autowired
+ * private CalendarEventService eventService;
+ *
+ * &#064;Subscribe
+ * public void onInit(final InitEvent event) {
+ *     calendar.addEventProvider(new CalendarEventRetriever() {
+ *         &#064;Override
+ *         public List<CalendarEvent> onItemsFetch(ItemsFetchContext context) {
+ *             return eventService.fetchEvents(context);
+ *         }
+ *     });
+ * }
+ * </pre>
+ */
 public abstract class CalendarEventRetriever implements LazyCalendarEventProvider {
 
     protected String id;

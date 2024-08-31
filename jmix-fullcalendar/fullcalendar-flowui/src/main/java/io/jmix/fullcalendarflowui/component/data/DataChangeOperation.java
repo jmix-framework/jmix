@@ -19,6 +19,11 @@ package io.jmix.fullcalendarflowui.component.data;
 import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
 import org.springframework.lang.Nullable;
 
+/**
+ * Describes possible data operations in event providers.
+ *
+ * @see CalendarEventProvider
+ */
 public enum DataChangeOperation implements HasEnumId<String> {
     REFRESH("refresh"),
     UPDATE("update"),

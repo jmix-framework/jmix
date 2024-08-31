@@ -243,7 +243,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
     }
 
     @Override
-    public LocalDate getRecurringStarDate() {
+    public LocalDate getRecurringStartDate() {
         return recurringStartDate;
     }
 
@@ -261,7 +261,7 @@ public class SimpleCalendarEvent implements CalendarEvent {
     }
 
     @Override
-    public LocalTime getRecurringStarTime() {
+    public LocalTime getRecurringStartTime() {
         return recurringStartTime;
     }
 

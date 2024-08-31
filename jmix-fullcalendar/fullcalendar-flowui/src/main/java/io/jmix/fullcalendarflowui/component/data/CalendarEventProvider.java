@@ -24,13 +24,29 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Interface to be implemented by event providers that should load a list of event.
+ */
 public interface CalendarEventProvider extends BaseCalendarEventProvider {
 
+    /**
+     * @return loaded calendar events
+     */
     List<CalendarEvent> getItems();
 
+    /**
+     * @param itemId ID of calendar event
+     * @return calendar event or {@code null} if no event with provided ID
+     */
     @Nullable
     CalendarEvent getItem(Object itemId);
 
+    /**
+     * Adds an item set change listener.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to an event provider
+     */
     Registration addItemSetChangeListener(Consumer<ItemSetChangeEvent> listener);
 
     /**

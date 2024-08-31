@@ -76,10 +76,10 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         serializeNullableValue("extendedProps", value.getAdditionalProperties(), gen, provider);
         serializeNullableValue("daysOfWeek", value.getRecurringDaysOfWeek(), gen, provider);
 
-        serializeNullableValue("startRecur", value.getRecurringStarDate(), gen, provider);
+        serializeNullableValue("startRecur", value.getRecurringStartDate(), gen, provider);
         serializeNullableValue("endRecur", value.getRecurringEndDate(), gen, provider);
 
-        serializeNullableValue("startTime", value.getRecurringStarTime(), gen, provider);
+        serializeNullableValue("startTime", value.getRecurringStartTime(), gen, provider);
         serializeNullableValue("endTime", value.getRecurringEndTime(), gen, provider);
 
         gen.writeObjectField("jmixSourceId", sourceId);

@@ -1,6 +1,7 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import elemental.json.JsonValue;
+import io.jmix.core.annotation.Internal;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.data.CalendarEventProvider.ItemSetChangeEvent;
 import io.jmix.fullcalendarflowui.component.serialization.IncrementalData;
@@ -12,6 +13,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * INTERNAL.
+ */
+@Internal
 public class EventProviderManager extends AbstractEventProviderManager {
 
     protected Consumer<ItemSetChangeEvent> itemSetChangeListener;

@@ -21,6 +21,13 @@ import java.util.stream.Collectors;
 
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.*;
 
+/**
+ * Calendar event that wraps an entity.
+ *
+ * @param <E> entity type
+ * @see ContainerCalendarEventProvider
+ * @see LazyEntityCalendarEventRetriever
+ */
 public class EntityCalendarEvent<E> implements CalendarEvent {
     private static final Logger log = LoggerFactory.getLogger(EntityCalendarEvent.class);
 
@@ -41,6 +48,9 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
         }
     }
 
+    /**
+     * @return a wrapped entity
+     */
     public E getEntity() {
         return entity;
     }
@@ -190,7 +200,7 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
     }
 
     @Override
-    public LocalDate getRecurringStarDate() {
+    public LocalDate getRecurringStartDate() {
         Object value = getValue(eventProvider.getRecurringStartDateProperty());
 
         return value != null
@@ -208,7 +218,7 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
     }
 
     @Override
-    public LocalTime getRecurringStarTime() {
+    public LocalTime getRecurringStartTime() {
         Object value = getValue(eventProvider.getRecurringStartTimeProperty());
 
         return value != null ? transformToLocalTime(value) : null;

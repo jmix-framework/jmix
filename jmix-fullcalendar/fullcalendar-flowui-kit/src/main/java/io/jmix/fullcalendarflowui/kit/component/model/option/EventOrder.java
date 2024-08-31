@@ -28,12 +28,14 @@ public class EventOrder extends CalendarOption implements Serializable {
 
     protected boolean explicitlySetList = false;
 
-    protected List<String> eventOrder = null;
+    protected List<String> eventOrder;
 
     protected JsFunction jsFunction = null;
 
     public EventOrder() {
         super("eventOrder");
+
+        eventOrder = DEFAULT_ORDER;
     }
 
     public List<String> getEventOrder() {

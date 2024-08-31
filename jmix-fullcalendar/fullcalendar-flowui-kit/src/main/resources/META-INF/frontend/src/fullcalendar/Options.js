@@ -352,7 +352,6 @@ class Options {
         this.updateOption(FIRST_DAY, value);
     }
 
-    // todo test
     _updateEventOrder(options) {
         const eventOrder = options[EVENT_ORDER];
 

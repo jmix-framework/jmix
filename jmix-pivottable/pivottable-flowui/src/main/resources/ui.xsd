@@ -14,10 +14,10 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://jmix.io/schema/pivot/ui"
+<xs:schema targetNamespace="http://jmix.io/schema/pvttbl/ui"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:layout="http://jmix.io/schema/flowui/layout"
-           xmlns="http://jmix.io/schema/pivot/ui"
+           xmlns="http://jmix.io/schema/pvttbl/ui"
            elementFormDefault="qualified">
 
     <xs:element name="pivotTable">

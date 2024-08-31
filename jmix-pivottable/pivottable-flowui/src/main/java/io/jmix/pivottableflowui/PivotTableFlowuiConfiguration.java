@@ -17,14 +17,20 @@
 package io.jmix.pivottableflowui;
 
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.sys.ActionsConfiguration;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
 import io.jmix.pivottableflowui.component.PivotTable;
 import io.jmix.flowui.sys.registration.ComponentRegistration;
 import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
 import io.jmix.pivottableflowui.component.loader.PivotTableLoader;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collections;
 
 @Configuration
 @ComponentScan
@@ -36,5 +42,22 @@ public class PivotTableFlowuiConfiguration {
         return ComponentRegistrationBuilder.create(PivotTable.class)
                 .withComponentLoader("pivotTable", PivotTableLoader.class)
                 .build();
+    }
+
+    @Bean
+    public ActionsConfiguration actions(ApplicationContext applicationContext,
+                                        AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.pivottableflowui.action"));
+        return actionsConfiguration;
+    }
+
+    @Bean
+    public ViewControllersConfiguration views(ApplicationContext applicationContext,
+                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ViewControllersConfiguration viewControllers
+                = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+        viewControllers.setBasePackages(Collections.singletonList("io.jmix.pivottableflowui.export.view"));
+        return viewControllers;
     }
 }

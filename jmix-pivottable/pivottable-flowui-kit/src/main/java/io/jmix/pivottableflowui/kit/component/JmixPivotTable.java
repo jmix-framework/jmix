@@ -33,6 +33,8 @@ import io.jmix.pivottableflowui.kit.component.model.*;
 import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer;
 import io.jmix.pivottableflowui.kit.data.DataItem;
 import io.jmix.pivottableflowui.kit.data.PivotTableListDataSet;
+import io.jmix.pivottableflowui.kit.event.PivotTableCellClickEvent;
+import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,6 +55,8 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
     protected StateTree.ExecutionRegistration synchronizeItemsExecution;
 
+    protected Map<String, Registration> eventRegistrations = new HashMap<>();
+
     public JmixPivotTable() {
         initComponent();
     }
@@ -70,162 +74,41 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         onDataProviderChange();
     }
 
-    protected void onDataProviderChange() {
-        if (dataProviderItemSetChangeRegistration != null) {
-            dataProviderItemSetChangeRegistration.remove();
-            dataProviderItemSetChangeRegistration = null;
+    public void setData(DataItem... dataItems) {
+        if (dataItems != null) {
+            setDataProvider(new PivotTableListDataSet<>(Arrays.asList(dataItems)));
         }
-
-        if (dataProvider == null) {
-            return;
-        }
-
-        requestUpdateItems();
-        dataProviderItemSetChangeRegistration = dataProvider.addDataProviderListener(
-                (DataProviderListener<DataItem>) event -> requestUpdateItems());
     }
 
     public void setItems(List<DataItem> items) {
         setDataProvider(new PivotTableListDataSet<>(items));
     }
 
-    protected void initComponent() {
-        options = createOptions();
-        serializer = createSerializer();
+    /**
+     * Adds a listener to the pivot table refresh events. Fired only for editable PivotTable.
+     *
+     * @param listener a listener to add
+     * @return subscription
+     */
+    public Registration addRefreshEventListener(ComponentEventListener<PivotTableRefreshEvent> listener) {
+        Registration eventRegistration = getEventBus().addListener(PivotTableRefreshEvent.class, listener);
+        eventRegistrations.put(PivotTableRefreshEvent.EVENT_NAME, eventRegistration);
 
-        initOptionsChangeListener();
-
-        Div div = new Div();
-        div.setId("div-id");
-
-        SlotUtils.addToSlot(this, "output", div);
-    }
-
-    protected PivotTableOptions createOptions() {
-        return new PivotTableOptions();
-    }
-
-    protected JmixPivotTableSerializer createSerializer() {
-        return new JmixPivotTableSerializer();
-    }
-
-    protected void initOptionsChangeListener() {
-        options.setPivotTableObjectChangeListener(this::onOptionsChange);
-    }
-
-    protected void onOptionsChange(PivotTableOptionsObservable.ObjectChangeEvent event) {
-        requestUpdateOptions();
-    }
-
-    protected void requestUpdateOptions() {
-        // Do not call if it's still updating
-        if (synchronizeOptionsExecution != null) {
-            return;
-        }
-
-        getUI().ifPresent(ui ->
-                synchronizeOptionsExecution = ui.beforeClientResponse(this, this::performUpdateOptions));
-    }
-
-    protected void requestUpdateItems() {
-        // Do not call if it's still updating
-        if (synchronizeItemsExecution != null || getDataProvider() == null) {
-            return;
-        }
-
-        getUI().ifPresent(ui ->
-                synchronizeItemsExecution = ui.beforeClientResponse(this, this::performUpdateItems));
-    }
-
-    protected void performUpdateOptions(ExecutionContext context) {
-        JsonObject resultJson = new JreJsonFactory().createObject();
-        JsonValue optionsJson = serializer.serializeOptions(options);
-        resultJson.put("options", optionsJson);
-        callPendingJsFunction("_updateOptions", resultJson);
-
-        synchronizeOptionsExecution = null;
-    }
-
-    protected void performUpdateItems(ExecutionContext context) {
-        JsonObject resultJson = new JreJsonFactory().createObject();
-        List<DataItem> dataItems = getDataProvider().fetch(new Query<>()).toList();
-        JsonValue dataJson = serializer.serializeItems(dataItems.stream()
-                .map(dataItem ->{
-                        Map<String, Object> values = new HashMap<>();
-                    for (Map.Entry<String, String> property : options.getProperties().entrySet()) {
-                            values.put(property.getValue(), dataItem.getValue(property.getKey()));
-                        }
-                        return values;
-                })
-                .collect(Collectors.toList()));
-        resultJson.put("items", dataJson);
-        callPendingJsFunction("_updateItems", resultJson);
-
-        synchronizeItemsExecution = null;
-    }
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        requestUpdateOptions();
-        requestUpdateItems();
-    }
-
-    @ClientCallable
-    protected void onClientOptionsChanged(String clientChangedOptionsJson) {
-        options.setChangedFromClient(true);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            PivotTableOptions clientOptions = objectMapper.readValue(clientChangedOptionsJson, PivotTableOptions.class);
-            options.setRows(clientOptions.getRows());
-            options.setCols(clientOptions.getCols());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        options.setChangedFromClient(false);
-    }
-
-    @ClientCallable
-    protected void ready() {
-        synchronized (functions) {
-            while (!functions.isEmpty()) {
-                PendingJsFunction function = functions.remove(0);
-                callJsFunction(function.getFunction(), function.getResultJson());
-            }
-            clientReady = true;
-        }
-    }
-
-    @Override
-    protected void onDetach(DetachEvent detachEvent) {
-        clientReady = false;
-        super.onDetach(detachEvent);
+        return getRemovalCallback(PivotTableRefreshEvent.EVENT_NAME, PivotTableRefreshEvent.class);
     }
 
     /**
-     * Execute JavaScript function with the {@code resultJson} passed. Execution will be delayed till
-     * the client-side is ready.
+     * Adds a listener to the pivot table cell click events. Fired only for table
+     * renderers (table, heatmap, table barchart, col heatmap, row heatmap).
      *
-     * @param function   JavaScript function to execute
-     * @param resultJson resultJson
+     * @param listener a listener to add
+     * @return subscription
      */
-    protected synchronized void callPendingJsFunction(String function, JsonObject resultJson) {
-        if (clientReady) {
-            callJsFunction(function, resultJson);
-        } else {
-            synchronized (functions) {
-                if (clientReady) {
-                    callJsFunction(function, resultJson);
-                } else {
-                    functions.add(new PendingJsFunction(function, resultJson));
-                }
-            }
-        }
-    }
+    public Registration addCellClickListener(ComponentEventListener<PivotTableCellClickEvent> listener) {
+        Registration eventRegistration = getEventBus().addListener(PivotTableCellClickEvent.class, listener);
+        eventRegistrations.put(PivotTableCellClickEvent.EVENT_NAME, eventRegistration);
 
-    protected void callJsFunction(String function, JsonObject resultJson) {
-        getElement().callJsFunction(function, resultJson);
+        return getRemovalCallback(PivotTableCellClickEvent.EVENT_NAME, PivotTableCellClickEvent.class);
     }
 
     public Map<String, String> getProperties() {
@@ -460,50 +343,6 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         return options.getEmptyDataMessage();
     }
 
-    /*
-    @Override
-    public String getEmptyDataMessage() {
-        return component.getEmptyDataMessage();
-    }
-
-    @Override
-    public void setEmptyDataMessage(String emptyDataMessage) {
-        component.setEmptyDataMessage(emptyDataMessage);
-    }
-
-    @Override
-    public Subscription addRefreshListener(Consumer<RefreshEvent> refreshListener) {
-        if (refreshHandler == null) {
-            refreshHandler = this::onRefresh;
-            component.addRefreshListener(refreshHandler);
-        }
-        return getEventHub().subscribe(RefreshEvent.class, refreshListener);
-    }
-
-    protected void onRefresh(io.jmix.pivottable.widget.events.RefreshEvent e) {
-        RefreshEvent event = new RefreshEvent(PivotTableImpl.this,
-                e.getRows(), e.getCols(), e.getRenderer(),
-                e.getAggregation(), e.getAggregationProperties(),
-                e.getInclusions(), e.getExclusions(),
-                e.getColumnOrder(), e.getRowOrder());
-
-        publish(RefreshEvent.class, event);
-    }
-
-    @Override
-    public Subscription addCellClickListener(Consumer<CellClickEvent> listener) {
-        if (cellClickHandler == null) {
-            cellClickHandler = this::onCellClick;
-            component.addCellClickListener(cellClickHandler);
-        }
-        return getEventHub().subscribe(CellClickEvent.class, listener);
-    }
-
-    protected void onCellClick(io.jmix.pivottable.widget.events.CellClickEvent e) {
-        publish(CellClickEvent.class,
-                new CellClickEvent(PivotTableImpl.this, e.getValue(), e.getFilters(), e.getUsedDataItemsRetriever()));
-    }*/
-
     public void setShowUI(Boolean showUI) {
         options.setShowUI(showUI);
     }
@@ -526,6 +365,171 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
 
     public Boolean isColTotalsShown() {
         return options.isShowColTotals();
+    }
+
+    protected Registration getRemovalCallback(String eventName, Class<? extends ComponentEvent<?>> eventClass) {
+        return () -> {
+            eventRegistrations.get(eventName).remove();
+            if (!getEventBus().hasListener(eventClass)
+                    && eventRegistrations.get(eventName) != null) {
+                eventRegistrations.get(eventName).remove();
+                eventRegistrations.remove(eventName);
+            }
+        };
+    }
+
+    protected void onDataProviderChange() {
+        if (dataProviderItemSetChangeRegistration != null) {
+            dataProviderItemSetChangeRegistration.remove();
+            dataProviderItemSetChangeRegistration = null;
+        }
+
+        if (dataProvider == null) {
+            return;
+        }
+
+        requestUpdateItems();
+        dataProviderItemSetChangeRegistration = dataProvider.addDataProviderListener(
+                (DataProviderListener<DataItem>) event -> requestUpdateItems());
+    }
+
+    protected void initComponent() {
+        options = createOptions();
+        serializer = createSerializer();
+
+        initOptionsChangeListener();
+
+        Div div = new Div();
+        div.setId("div-id");
+
+        SlotUtils.addToSlot(this, "output", div);
+    }
+
+    protected PivotTableOptions createOptions() {
+        return new PivotTableOptions();
+    }
+
+    protected JmixPivotTableSerializer createSerializer() {
+        return new JmixPivotTableSerializer();
+    }
+
+    protected void initOptionsChangeListener() {
+        options.setPivotTableObjectChangeListener(this::onOptionsChange);
+    }
+
+    protected void onOptionsChange(PivotTableOptionsObservable.ObjectChangeEvent event) {
+        requestUpdateOptions();
+    }
+
+    protected void requestUpdateOptions() {
+        // Do not call if it's still updating
+        if (synchronizeOptionsExecution != null) {
+            return;
+        }
+
+        getUI().ifPresent(ui ->
+                synchronizeOptionsExecution = ui.beforeClientResponse(this, this::performUpdateOptions));
+    }
+
+    protected void requestUpdateItems() {
+        // Do not call if it's still updating
+        if (synchronizeItemsExecution != null || getDataProvider() == null) {
+            return;
+        }
+
+        getUI().ifPresent(ui ->
+                synchronizeItemsExecution = ui.beforeClientResponse(this, this::performUpdateItems));
+    }
+
+    protected void performUpdateOptions(ExecutionContext context) {
+        JsonObject resultJson = new JreJsonFactory().createObject();
+        JsonValue optionsJson = serializer.serializeOptions(options);
+        resultJson.put("options", optionsJson);
+        callPendingJsFunction("_updateOptions", resultJson);
+
+        synchronizeOptionsExecution = null;
+    }
+
+    protected void performUpdateItems(ExecutionContext context) {
+        JsonObject resultJson = new JreJsonFactory().createObject();
+        List<DataItem> dataItems = getDataProvider().fetch(new Query<>()).toList();
+        JsonValue dataJson = serializer.serializeItems(dataItems.stream()
+                .map(dataItem ->{
+                        Map<String, Object> values = new HashMap<>();
+                    for (Map.Entry<String, String> property : options.getProperties().entrySet()) {
+                            values.put(property.getValue(), dataItem.getValue(property.getKey()));
+                        }
+                        return values;
+                })
+                .collect(Collectors.toList()));
+        resultJson.put("dataSet", dataJson);
+        callPendingJsFunction("_updateDataSet", resultJson);
+
+        synchronizeItemsExecution = null;
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        requestUpdateOptions();
+        requestUpdateItems();
+    }
+
+    @ClientCallable
+    protected void onClientOptionsChanged(String clientChangedOptionsJson) {
+        options.setChangedFromClient(true);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            PivotTableOptions clientOptions = objectMapper.readValue(clientChangedOptionsJson, PivotTableOptions.class);
+            options.setRows(clientOptions.getRows());
+            options.setCols(clientOptions.getCols());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        options.setChangedFromClient(false);
+    }
+
+    @ClientCallable
+    protected void ready() {
+        synchronized (functions) {
+            while (!functions.isEmpty()) {
+                PendingJsFunction function = functions.remove(0);
+                callJsFunction(function.getFunction(), function.getResultJson());
+            }
+            clientReady = true;
+        }
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        clientReady = false;
+        super.onDetach(detachEvent);
+    }
+
+    /**
+     * Execute JavaScript function with the {@code resultJson} passed. Execution will be delayed till
+     * the client-side is ready.
+     *
+     * @param function   JavaScript function to execute
+     * @param resultJson resultJson
+     */
+    protected synchronized void callPendingJsFunction(String function, JsonObject resultJson) {
+        if (clientReady) {
+            callJsFunction(function, resultJson);
+        } else {
+            synchronized (functions) {
+                if (clientReady) {
+                    callJsFunction(function, resultJson);
+                } else {
+                    functions.add(new PendingJsFunction(function, resultJson));
+                }
+            }
+        }
+    }
+
+    protected void callJsFunction(String function, JsonObject resultJson) {
+        getElement().callJsFunction(function, resultJson);
     }
 
     @SuppressWarnings("ClassCanBeRecord")

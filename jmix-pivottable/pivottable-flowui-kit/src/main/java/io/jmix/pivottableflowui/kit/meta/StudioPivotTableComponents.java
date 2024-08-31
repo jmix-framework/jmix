@@ -19,7 +19,7 @@ package io.jmix.pivottableflowui.kit.meta;
 import io.jmix.flowui.kit.meta.*;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
 
-@StudioUiKit(studioClassloaderDependencies = "io.jmix.charts:jmix-pivottable-flowui-kit")
+@StudioUiKit(studioClassloaderDependencies = "io.jmix.pivottable:jmix-pivottable-flowui-kit")
 public interface StudioPivotTableComponents {
 
     @StudioComponent(
@@ -28,8 +28,8 @@ public interface StudioPivotTableComponents {
             category = "Components",
             xmlElement = "pivotTable",
             icon = "io/jmix/flowui/kit/meta/icon/component/pivotTable.svg",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             availableChildren = @StudioAvailableChildrenInfo(
                     availableTags = @StudioAvailableChildrenInfo.TagInfo(
                             qualifiedName = StudioAvailableChildrenInfo.ANY_TAG,

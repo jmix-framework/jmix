@@ -34,7 +34,7 @@ import java.util.function.Function;
 /**
  * Serializes options and data for the {@link PivotTable} into JSON for subsequent sending it to the client-side.
  */
-@Component("pivotTable_PivotTableSerializer")
+@Component("pvttbl_PivotTableSerializer")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PivotTableSerializer extends JmixPivotTableSerializer
         implements ApplicationContextAware, InitializingBean {

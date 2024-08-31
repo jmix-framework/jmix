@@ -29,8 +29,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.Aggregation",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "aggregations",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void aggregations();
@@ -40,8 +40,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.Renderer",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "renderers",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "defaultRenderer", type = StudioPropertyType.ENUMERATION,
@@ -65,8 +65,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.DerivedProperty",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "derivedProperties",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void derivedProperties();
@@ -76,8 +76,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.Row",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "rows",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void rows();
@@ -87,8 +87,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.Col",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "cols",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void cols();
@@ -98,8 +98,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.Property",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "properties",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void properties();
@@ -109,8 +109,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.NamedProperty",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "aggregationProperties",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void aggregationProperties();
@@ -120,8 +120,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.NamedProperty",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "hiddenProperties",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void hiddenProperties();
@@ -131,8 +131,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.NamedProperty",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "hiddenFromAggregations",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void hiddenFromAggregations();
@@ -142,8 +142,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.NamedProperty",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "hiddenFromDragDrop",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void hiddenFromDragDrop();
@@ -152,8 +152,8 @@ public interface StudioPivotTableElementsGroups {
             name = "PropertyWithValues",
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.NamedPropertyValue",
             xmlElement = "property",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING)
@@ -166,8 +166,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.NamedPropertyWithValues",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "inclusions",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void inclusions();
@@ -177,8 +177,8 @@ public interface StudioPivotTableElementsGroups {
             elementClassFqn = "io.jmix.pivottableflowui.kit.component.model.meta.NamedPropertyWithValues",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
             xmlElement = "exclusions",
-            xmlns = "http://jmix.io/schema/pivot/ui",
-            xmlnsAlias = "pivot",
+            xmlns = "http://jmix.io/schema/pvttbl/ui",
+            xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
     void exclusions();

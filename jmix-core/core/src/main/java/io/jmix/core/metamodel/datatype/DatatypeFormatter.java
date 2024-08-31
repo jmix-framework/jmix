@@ -165,29 +165,29 @@ public class DatatypeFormatter {
 
     /**
      * Parse Date (date without time) using {@code dateFormat} string specified in the main message group.
-     * @return Date value or null if a blank string is provided
+     * @return Date value or null if null or a blank string is provided
      */
     @Nullable
-    public Date parseDate(String str) throws ParseException {
+    public Date parseDate(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(java.sql.Date.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
      * Parse Date (time without date) using {@code timeFormat} string specified in the main message group.
-     * @return Date value or null if a blank string is provided
+     * @return Date value or null if null or a blank string is provided
      */
     @Nullable
-    public Date parseTime(String str) throws ParseException {
+    public Date parseTime(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(Time.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
      * Parse Date (date and time) using {@code dateTimeFormat} string specified in the main message group.
      * <p>Takes into account time zone if it is set for the current user session.</p>
-     * @return Date value or null if a blank string is provided
+     * @return Date value or null if null or a blank string is provided
      */
     @Nullable
-    public Date parseDateTime(String str) throws ParseException {
+    public Date parseDateTime(@Nullable String str) throws ParseException {
         TimeZone timeZone = currentAuthentication.getTimeZone();
         Datatype<Date> datatype = datatypeRegistry.get(Date.class);
         if (datatype instanceof DateTimeDatatype) {
@@ -200,10 +200,10 @@ public class DatatypeFormatter {
      * Parse LocalDate (date without time and without a time-zone) using {@code dateFormat} string specified in the main
      * message group.
      *
-     * @return LocalDate value or null if a blank string is provided
+     * @return LocalDate value or null if null or a blank string is provided
      */
     @Nullable
-    public LocalDate parseLocalDate(String str) throws ParseException {
+    public LocalDate parseLocalDate(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(LocalDate.class).parse(str, currentAuthentication.getLocale());
     }
 
@@ -211,10 +211,10 @@ public class DatatypeFormatter {
      * Parse LocalTime (time without date and without a time-zone) using {@code timeFormat} string specified in the main
      * message group.
      *
-     * @return LocalTime value or null if a blank string is provided
+     * @return LocalTime value or null if null or a blank string is provided
      */
     @Nullable
-    public LocalTime parseLocalTime(String str) throws ParseException {
+    public LocalTime parseLocalTime(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(LocalTime.class).parse(str, currentAuthentication.getLocale());
     }
 
@@ -222,10 +222,10 @@ public class DatatypeFormatter {
      * Parse LocalDateTime (date and time without a time-zone) using {@code dateTimeFormat} string specified in the main
      * message group.
      *
-     * @return LocalDateTime value or null if a blank string is provided
+     * @return LocalDateTime value or null if null or a blank string is provided
      */
     @Nullable
-    public LocalDateTime parseLocalDateTime(String str) throws ParseException {
+    public LocalDateTime parseLocalDateTime(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(LocalDateTime.class).parse(str, currentAuthentication.getLocale());
     }
 
@@ -233,10 +233,10 @@ public class DatatypeFormatter {
      * Parse OffsetDateTime (date and time with an offset from UTC/Greenwich) using {@code offsetDateTimeFormat} string
      * specified in the main message group.
      *
-     * @return OffsetDateTime value or null if a blank string is provided
+     * @return OffsetDateTime value or null if null or a blank string is provided
      */
     @Nullable
-    public OffsetDateTime parseOffsetDateTime(String str) throws ParseException {
+    public OffsetDateTime parseOffsetDateTime(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(OffsetDateTime.class).parse(str, currentAuthentication.getLocale());
     }
 
@@ -244,55 +244,55 @@ public class DatatypeFormatter {
      * Parse OffsetTime (time without date and with an offset from UTC/Greenwich) using {@code offsetTimeFormat} string
      * specified in the main message group.
      *
-     * @return OffsetTime value or null if a blank string is provided
+     * @return OffsetTime value or null if null or a blank string is provided
      */
     @Nullable
-    public OffsetTime parseOffsetTime(String str) throws ParseException {
+    public OffsetTime parseOffsetTime(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(OffsetTime.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
      * Parse Double using {@code doubleFormat} string specified in the main message group.
-     * @return Double value or null if a blank string is provided
+     * @return Double value or null if null or a blank string is provided
      */
     @Nullable
-    public Double parseDouble(String str) throws ParseException {
+    public Double parseDouble(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(Double.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
      * Parse BigDecimal using {@code decimalFormat} string specified in the main message group.
-     * @return BigDecimal value or null if a blank string is provided
+     * @return BigDecimal value or null if null or a blank string is provided
      */
     @Nullable
-    public BigDecimal parseBigDecimal(String str) throws ParseException {
+    public BigDecimal parseBigDecimal(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(BigDecimal.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
      * Parse Boolean using {@code trueString} and {@code falseString} strings specified in the main message group.
-     * @return Boolean value or null if a blank string is provided
+     * @return Boolean value or null if null or a blank string is provided
      */
     @Nullable
-    public Boolean parseBoolean(String str) throws ParseException {
+    public Boolean parseBoolean(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(Boolean.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
      * Parse Integer using {@code integerFormat} string specified in the main message group.
-     * @return Integer value or null if a blank string is provided
+     * @return Integer value or null if null or a blank string is provided
      */
     @Nullable
-    public Integer parseInteger(String str) throws ParseException {
+    public Integer parseInteger(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(Integer.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
      * Parse Long using {@code integerFormat} string specified in the main message group.
-     * @return Long value or null if a blank string is provided
+     * @return Long value or null if null or a blank string is provided
      */
     @Nullable
-    public Long parseLong(String str) throws ParseException {
+    public Long parseLong(@Nullable String str) throws ParseException {
         return datatypeRegistry.get(Long.class).parse(str, currentAuthentication.getLocale());
     }
 }

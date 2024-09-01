@@ -2,7 +2,7 @@ package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 
-public class MoreLinkClassNamesContext extends AbstractClassNamesContext {
+public class MoreLinkClassNamesContext extends AbstractFullCalendarContext {
 
     protected final Integer eventsCount;
 

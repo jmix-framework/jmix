@@ -16,7 +16,7 @@
 
 package io.jmix.fullcalendarflowui.component.model.option;
 
-import io.jmix.fullcalendarflowui.component.model.BusinessHours;
+import io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours;
 import io.jmix.fullcalendarflowui.kit.component.model.option.CalendarOption;
 import org.springframework.lang.Nullable;
 
@@ -30,7 +30,7 @@ public class SelectConstraint extends CalendarOption {
 
     protected String groupId;
 
-    protected List<BusinessHours> businessHours;
+    protected List<CalendarBusinessHours> businessHours;
 
     public SelectConstraint() {
         super(NAME);
@@ -57,11 +57,11 @@ public class SelectConstraint extends CalendarOption {
         markAsDirty();
     }
 
-    public List<BusinessHours> getBusinessHours() {
+    public List<CalendarBusinessHours> getBusinessHours() {
         return businessHours == null ? Collections.emptyList() : businessHours;
     }
 
-    public void setBusinessHours(@Nullable List<BusinessHours> businessHours) {
+    public void setBusinessHours(@Nullable List<CalendarBusinessHours> businessHours) {
         this.businessHours = businessHours;
 
         markAsDirty();

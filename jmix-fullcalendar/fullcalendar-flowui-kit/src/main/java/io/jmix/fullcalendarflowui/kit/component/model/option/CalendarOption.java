@@ -25,6 +25,9 @@ import java.util.EventObject;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * INTERNAL.
+ */
 public abstract class CalendarOption implements Serializable {
 
     protected EventBus eventBus = new EventBus();

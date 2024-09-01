@@ -21,7 +21,7 @@ import io.jmix.fullcalendarflowui.component.FullCalendar;
 
 import java.time.LocalDate;
 
-public class DayHeaderClassNamesContext extends AbstractClassNamesContext {
+public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
 
     protected final LocalDate date;
 

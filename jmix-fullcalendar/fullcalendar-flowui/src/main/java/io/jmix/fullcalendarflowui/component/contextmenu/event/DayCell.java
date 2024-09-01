@@ -24,19 +24,19 @@ import java.time.LocalDate;
  */
 public class DayCell {
 
-    protected LocalDate date;
+    protected final LocalDate date;
 
-    protected boolean isFuture;
+    protected final boolean isFuture;
 
-    protected boolean isPast;
+    protected final boolean isPast;
 
-    protected boolean isToday;
+    protected final boolean isToday;
 
-    protected boolean isOther;
+    protected final boolean isOther;
 
-    protected boolean isDisabled;
+    protected final boolean isDisabled;
 
-    protected DayOfWeek dayOfWeek;
+    protected final DayOfWeek dayOfWeek;
 
     public DayCell(LocalDate date, boolean isDisabled, boolean isFuture,
                    boolean isOther, boolean isPast, boolean isToday, DayOfWeek dayOfWeek) {

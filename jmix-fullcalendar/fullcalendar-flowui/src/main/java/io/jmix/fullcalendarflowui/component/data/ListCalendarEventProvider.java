@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+/**
+ * Event provider that set events from {@link List}.
+ */
 public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEvent, Void>
         implements CalendarEventProvider {
 
@@ -70,22 +73,43 @@ public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEven
                 .orElse(null);
     }
 
+    /**
+     * Adds calendar event.
+     *
+     * @param item item to add
+     */
     public void addItem(CalendarEvent item) {
         items.add(item);
 
         fireItemSetChangeEvent(DataChangeOperation.ADD, Collections.singletonList(item));
     }
 
+    /**
+     * Adds calendar events.
+     *
+     * @param items items to add
+     */
     public final void addItems(CalendarEvent... items) {
         addItems(List.of(items));
     }
 
+    /**
+     * Adds a list of calendar events.
+     *
+     * @param items items to add
+     */
     public void addItems(List<CalendarEvent> items) {
         this.items.addAll(items);
 
         fireItemSetChangeEvent(DataChangeOperation.ADD, items);
     }
 
+    /**
+     * Replaces previous event by new one, if exists.
+     *
+     * @param item item to update
+     * @throws IllegalArgumentException if event provider does not contain provided event
+     */
     public void updateItem(CalendarEvent item) {
         if (items.contains(item)) {
             items.set(items.indexOf(item), item);
@@ -95,12 +119,20 @@ public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEven
         }
     }
 
+    /**
+     * Removes event.
+     *
+     * @param item item to remove
+     */
     public void removeItem(CalendarEvent item) {
         items.remove(item);
 
         fireItemSetChangeEvent(DataChangeOperation.REMOVE, Collections.singletonList(item));
     }
 
+    /**
+     * Removes all events from event provider.
+     */
     public void removeAllItems() {
         // todo rp discuss
         List<CalendarEvent> removedItems = new ArrayList<>(items);

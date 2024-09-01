@@ -23,6 +23,9 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * INTERNAL.
+ */
 public class EventOrder extends CalendarOption implements Serializable {
     public static final String NAME = "eventOrder";
 

@@ -20,7 +20,7 @@ import io.jmix.fullcalendarflowui.component.FullCalendar;
 
 import java.time.LocalTime;
 
-public class SlotLabelClassNamesContext extends AbstractClassNamesContext {
+public class SlotLabelClassNamesContext extends AbstractFullCalendarContext {
 
     protected final LocalTime time;
 

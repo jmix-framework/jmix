@@ -19,11 +19,10 @@ package io.jmix.fullcalendarflowui.component.event;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 
 import java.time.LocalDateTime;
-import java.util.TimeZone;
 
-public class NowIndicatorClassNamesContext extends AbstractClassNamesContext {
+public class NowIndicatorClassNamesContext extends AbstractFullCalendarContext {
 
-    protected final Boolean isAxis;
+    protected final boolean isAxis;
 
     protected final LocalDateTime dateTime;
 
@@ -43,7 +42,7 @@ public class NowIndicatorClassNamesContext extends AbstractClassNamesContext {
      * @return {@code true} if class names will be applied for now-indicator's arrow, otherwise class names will be
      * applied for now-indicator's line
      */
-    public Boolean getAxis() {
+    public boolean isAxis() {
         return isAxis;
     }
 

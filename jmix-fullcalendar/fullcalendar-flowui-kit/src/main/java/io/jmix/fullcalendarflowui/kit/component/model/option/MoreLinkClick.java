@@ -19,6 +19,9 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
 import jakarta.annotation.Nullable;
 
+/**
+ * INTERNAL.
+ */
 public class MoreLinkClick extends CalendarOption {
     public static final String NAME = "moreLinkClick";
 

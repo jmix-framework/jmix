@@ -16,22 +16,26 @@
 
 package io.jmix.fullcalendarflowui.kit.component.event;
 
-import io.jmix.fullcalendarflowui.kit.component.serialization.DomMouseEventDetails;
+import io.jmix.fullcalendarflowui.kit.component.model.dom.DomMouseEventDetails;
 
 /**
  * Class contains mouse details when the user clicks in a map component.
  */
 public class MouseEventDetails {
 
-    protected MouseButton button;
+    protected final MouseButton button;
 
-    protected int pageX;
-    protected int pageY;
+    protected final int pageX;
 
-    boolean altKey;
-    boolean ctrlKey;
-    boolean metaKey;
-    boolean shiftKey;
+    protected final int pageY;
+
+    protected final boolean altKey;
+
+    protected final boolean ctrlKey;
+
+    protected final boolean metaKey;
+
+    protected final boolean shiftKey;
 
     public MouseEventDetails(DomMouseEventDetails event) {
         this(MouseButton.of(event.getButton()),

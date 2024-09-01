@@ -1,11 +1,17 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import elemental.json.JsonArray;
+import io.jmix.core.annotation.Internal;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
+import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer;
 
 import java.util.List;
 
+/**
+ * INTERNAL.
+ * Event provider manager that works with {@link LazyCalendarEventProvider}.
+ */
+@Internal
 public class LazyEventProviderManager extends AbstractEventProviderManager {
 
     protected List<CalendarEvent> lastFetchedEvents;

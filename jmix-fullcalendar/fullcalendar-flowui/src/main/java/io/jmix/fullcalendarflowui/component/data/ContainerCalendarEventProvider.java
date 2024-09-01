@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * Event provider that loads entities as {@link CalendarEvent}.
+ * Event provider that loads entities from containers.
  *
  * @param <E> entity type
  */

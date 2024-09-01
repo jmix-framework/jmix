@@ -26,6 +26,10 @@ import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+/**
+ * Event provider for loading entities by request. It is created when calendar's XML description defines
+ * lazy event provider.
+ */
 @Component("fclndr_LazyCalendarItems")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class LazyEntityCalendarEventRetriever extends AbstractEntityEventProvider<ItemsFetchContext>
@@ -59,11 +63,19 @@ public class LazyEntityCalendarEventRetriever extends AbstractEntityEventProvide
         dateTimeTransformations = applicationContext.getBean(DateTimeTransformations.class);
     }
 
+    /**
+     * @return load delegate or {@code null} if not set
+     */
     @Nullable
     public Function<ItemsFetchContext, List<CalendarEvent>> getLoadDelegate() {
         return loadDelegate;
     }
 
+    /**
+     * Sets load delegate that will be used for loading events.
+     *
+     * @param loadDelegate delegate to set
+     */
     public void setLoadDelegate(@Nullable Function<ItemsFetchContext, List<CalendarEvent>> loadDelegate) {
         this.loadDelegate = loadDelegate;
     }
@@ -84,6 +96,13 @@ public class LazyEntityCalendarEventRetriever extends AbstractEntityEventProvide
         return entityClass;
     }
 
+    /**
+     * Sets entity class that should be used for loading entities using JPQL query.
+     * <p>
+     * Is not used if load delegate is set.
+     *
+     * @param entityClass entity class, can not be null
+     */
     public void setEntityClass(Class<?> entityClass) {
         Preconditions.checkNotNullArgument(entityClass);
         this.entityClass = entityClass;
@@ -97,16 +116,33 @@ public class LazyEntityCalendarEventRetriever extends AbstractEntityEventProvide
         return queryString;
     }
 
+    /**
+     * Sets JPQL query string.
+     * <p>
+     * Is not used if load delegate is set.
+     *
+     * @param queryString JPQL query string
+     */
     public void setQueryString(String queryString) {
         Preconditions.checkNotEmptyString(queryString);
         this.queryString = queryString;
     }
 
+    /**
+     * @return fetch plan or {@code null} if not set
+     */
     @Nullable
     public FetchPlan getFetchPlan() {
         return fetchPlan;
     }
 
+    /**
+     * Sets fetch plan for loading entities using JPQL query.
+     * <p>
+     * Is not used if load delegate is set.
+     *
+     * @param fetchPlan fetch plan
+     */
     public void setFetchPlan(@Nullable FetchPlan fetchPlan) {
         this.fetchPlan = fetchPlan;
     }

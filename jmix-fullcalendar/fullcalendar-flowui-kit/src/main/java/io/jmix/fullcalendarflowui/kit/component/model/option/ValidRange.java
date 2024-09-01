@@ -20,6 +20,9 @@ import jakarta.annotation.Nullable;
 
 import java.time.LocalDate;
 
+/**
+ * INTERNAL.
+ */
 public class ValidRange extends AbstractRange {
     public static final String NAME = "validRange";
 

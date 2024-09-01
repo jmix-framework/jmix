@@ -20,6 +20,9 @@ import jakarta.annotation.Nullable;
 
 import java.io.Serializable;
 
+/**
+ * INTERNAL.
+ */
 public class DayMaxEvents extends CalendarOption implements Serializable {
     public static final String NAME = "dayMaxEvents";
 

@@ -18,6 +18,9 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 
 import jakarta.annotation.Nullable;
 
+/**
+ * INTERNAL.
+ */
 public class DayMaxEventRows extends CalendarOption {
     public static final String NAME = "dayMaxEventRows";
 

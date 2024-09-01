@@ -23,6 +23,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * INTERNAL.
+ */
 public class JmixFullCalendarOptions {
 
     protected SimpleOption<Boolean> weekNumbers = new SimpleOption<>("weekNumbers", false);

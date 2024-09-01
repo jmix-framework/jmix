@@ -23,6 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * INTERNAL.
+ */
 public class MoreLinkClassNames extends CalendarOption {
     public static final String NAME = "moreLinkClassNames";
 

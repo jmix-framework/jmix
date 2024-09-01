@@ -200,9 +200,9 @@ public interface CalendarEvent {
     Boolean getDurationEditable();
 
     /**
-     * Defines the type of entity rendering. If not specified, the {@link Display#AUTO} will be used by default.
+     * Defines the type of event rendering. If not specified, the {@link Display#AUTO} will be used by default.
      *
-     * @return the type of entity rendering or {@code null} if not set
+     * @return the type of event rendering or {@code null} if not set
      */
     @Nullable
     Display getDisplay();
@@ -244,7 +244,7 @@ public interface CalendarEvent {
     Object getConstraint();
 
     /**
-     * Specifies the background color for all events on the {@link FullCalendar}. Supported values are:
+     * Specifies the background color for event. Supported values are:
      * <ul>
      *     <li>
      *         <code>#f00</code>
@@ -268,7 +268,7 @@ public interface CalendarEvent {
     String getBackgroundColor();
 
     /**
-     * Specifies the border color for all events on the {@link FullCalendar}. Supported values are:
+     * Specifies the border color for event. Supported values are:
      * <ul>
      *     <li>
      *         <code>#f00</code>
@@ -292,7 +292,7 @@ public interface CalendarEvent {
     String getBorderColor();
 
     /**
-     * Specifies the text color for all events on the {@link FullCalendar}. Supported values are:
+     * Specifies the text color for event. Supported values are:
      * <ul>
      *     <li>
      *         <code>#f00</code>

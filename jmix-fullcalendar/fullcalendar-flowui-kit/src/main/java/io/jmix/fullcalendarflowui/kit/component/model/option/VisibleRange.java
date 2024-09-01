@@ -19,6 +19,9 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 import java.time.LocalDate;
 import java.util.Objects;
 
+/**
+ * INTERNAL.
+ */
 public class VisibleRange extends AbstractRange {
 
     public static final String NAME = "visibleRange";

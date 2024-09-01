@@ -10,7 +10,7 @@ import elemental.json.JsonObject;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.contextmenu.event.FullCalendarCellContext;
 import io.jmix.fullcalendarflowui.component.contextmenu.event.FullCalendarContextMenuOpenedEvent;
-import io.jmix.fullcalendarflowui.component.serialization.deserializer.FullCalendarDeserializer;
+import io.jmix.fullcalendarflowui.component.serialization.FullCalendarDeserializer;
 import org.springframework.lang.Nullable;
 
 import java.util.function.Function;

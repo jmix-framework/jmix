@@ -7,7 +7,6 @@ import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.TimeZone;
 
 public class MoreLinkClickEvent extends AbstractClickEvent {
 

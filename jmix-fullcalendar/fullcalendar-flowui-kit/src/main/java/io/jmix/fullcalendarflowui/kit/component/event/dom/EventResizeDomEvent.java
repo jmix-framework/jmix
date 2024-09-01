@@ -22,6 +22,9 @@ import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 
+/**
+ * INTERNAL.
+ */
 @DomEvent("jmix-event-resize")
 public class EventResizeDomEvent extends ComponentEvent<JmixFullCalendar> {
 

@@ -29,8 +29,8 @@ import io.jmix.fullcalendarflowui.kit.component.event.dom.*;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
 import io.jmix.fullcalendarflowui.kit.component.model.AbstractCalendarViewProperties;
 import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOptions;
-import io.jmix.fullcalendarflowui.kit.component.serialization.deserializer.JmixFullCalendarDeserializer;
-import io.jmix.fullcalendarflowui.kit.component.serialization.serializer.JmixFullCalendarSerializer;
+import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarDeserializer;
+import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarSerializer;
 import jakarta.annotation.Nullable;
 
 import java.time.LocalDate;

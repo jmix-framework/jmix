@@ -16,7 +16,7 @@ import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.data.AbstractEntityEventProvider;
 import io.jmix.fullcalendarflowui.component.data.ContainerCalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.LazyEntityCalendarEventRetriever;
-import io.jmix.fullcalendarflowui.component.model.BusinessHours;
+import io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours;
 import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEventProvider;
 import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider;
@@ -310,12 +310,12 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
                 });
     }
 
-    protected void loadBusinessHours(Element element, Consumer<List<BusinessHours>> setter) {
+    protected void loadBusinessHours(Element element, Consumer<List<CalendarBusinessHours>> setter) {
         Element businessHoursElement = element.element("businessHours");
         if (businessHoursElement != null) {
-            List<BusinessHours> businessHours = new ArrayList<>();
+            List<CalendarBusinessHours> businessHours = new ArrayList<>();
             for (Element entry : businessHoursElement.elements("entry")) {
-                BusinessHours bh = loadBusinessHoursEntry(entry);
+                CalendarBusinessHours bh = loadBusinessHoursEntry(entry);
                 if (bh != null) {
                     businessHours.add(bh);
                 }
@@ -327,7 +327,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
     }
 
     @Nullable
-    protected BusinessHours loadBusinessHoursEntry(Element element) {
+    protected CalendarBusinessHours loadBusinessHoursEntry(Element element) {
         LocalTime startTime = loadString(element, "startTime")
                 .map(LocalTime::parse)
                 .orElse(null);
@@ -344,7 +344,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         if (startTime == null && endTime == null && businessDays.isEmpty()) {
             return null;
         }
-        return BusinessHours.of(startTime, endTime, businessDays.toArray(new DayOfWeek[0]));
+        return CalendarBusinessHours.of(startTime, endTime, businessDays.toArray(new DayOfWeek[0]));
     }
 
     protected void loadInitialView(Element element, FullCalendar resultComponent) {

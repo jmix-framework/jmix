@@ -3,7 +3,6 @@ package io.jmix.fullcalendarflowui.component;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
@@ -20,15 +19,15 @@ import io.jmix.fullcalendar.Display;
 import io.jmix.fullcalendarflowui.component.data.*;
 import io.jmix.fullcalendarflowui.component.event.*;
 import io.jmix.fullcalendarflowui.component.event.MoreLinkClickEvent.EventProviderContext;
-import io.jmix.fullcalendarflowui.component.model.BusinessHours;
+import io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours;
 import io.jmix.fullcalendarflowui.component.model.option.FullCalendarOptions;
-import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
+import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.event.dom.*;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
-import io.jmix.fullcalendarflowui.kit.component.serialization.*;
-import io.jmix.fullcalendarflowui.kit.component.serialization.serializer.JmixFullCalendarSerializer;
+import io.jmix.fullcalendarflowui.kit.component.model.dom.*;
+import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarSerializer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,19 +207,19 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getOptions().getBusinessHours().setEnabled(enabled);
     }
 
-    public List<BusinessHours> getBusinessHours() {
+    public List<CalendarBusinessHours> getBusinessHours() {
         return getOptions().getBusinessHours().getBusinessHours();
     }
 
-    public void setBusinessHours(@Nullable List<BusinessHours> businessHours) {
+    public void setBusinessHours(@Nullable List<CalendarBusinessHours> businessHours) {
         getOptions().getBusinessHours().setBusinessHours(businessHours);
     }
 
-    public List<BusinessHours> getEventConstraintBusinessHours() {
+    public List<CalendarBusinessHours> getEventConstraintBusinessHours() {
         return getOptions().getEventConstraint().getBusinessHours();
     }
 
-    public void setEventConstraintBusinessHours(@Nullable List<BusinessHours> businessHoursEventConstraint) {
+    public void setEventConstraintBusinessHours(@Nullable List<CalendarBusinessHours> businessHoursEventConstraint) {
         getOptions().getEventConstraint().setBusinessHours(businessHoursEventConstraint);
     }
 
@@ -232,11 +231,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getOptions().getSelectConstraint().setEnabled(enabled);
     }
 
-    public List<BusinessHours> getSelectConstraintBusinessHours() {
+    public List<CalendarBusinessHours> getSelectConstraintBusinessHours() {
         return getOptions().getSelectConstraint().getBusinessHours();
     }
 
-    public void setSelectConstraintBusinessHours(@Nullable List<BusinessHours> businessHoursSelectConstraint) {
+    public void setSelectConstraintBusinessHours(@Nullable List<CalendarBusinessHours> businessHoursSelectConstraint) {
         getOptions().getSelectConstraint().setBusinessHours(businessHoursSelectConstraint);
     }
 

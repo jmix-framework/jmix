@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 public class DateClickEvent extends AbstractClickEvent {
 
     protected final LocalDateTime dateTime;
+
     protected final boolean allDay;
+
     protected final ViewInfo viewInfo;
 
     public DateClickEvent(FullCalendar fullCalendar,

@@ -28,7 +28,7 @@ import java.util.List;
 public class FullCalendarOptions extends JmixFullCalendarOptions {
 
     protected EventConstraint eventConstraint = new EventConstraint();
-    protected BusinessHoursOption businessHours = new BusinessHoursOption();
+    protected BusinessHours businessHours = new BusinessHours();
     protected SelectConstraint selectConstraint = new SelectConstraint();
 
     protected SimpleOption<List<DayOfWeek>> hiddenDays = new SimpleOption<>("hiddenDays");
@@ -48,7 +48,7 @@ public class FullCalendarOptions extends JmixFullCalendarOptions {
         return eventConstraint;
     }
 
-    public BusinessHoursOption getBusinessHours() {
+    public BusinessHours getBusinessHours() {
         return businessHours;
     }
 

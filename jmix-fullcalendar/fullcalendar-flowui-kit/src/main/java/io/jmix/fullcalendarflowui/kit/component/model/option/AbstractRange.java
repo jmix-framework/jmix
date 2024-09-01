@@ -21,6 +21,9 @@ import jakarta.annotation.Nullable;
 import java.time.LocalDate;
 import java.util.Objects;
 
+/**
+ * INTERNAL.
+ */
 public abstract class AbstractRange extends CalendarOption {
 
     protected LocalDate start;

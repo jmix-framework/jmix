@@ -19,8 +19,8 @@ package io.jmix.fullcalendarflowui.component.data;
 import com.vaadin.flow.data.provider.KeyMapper;
 import io.jmix.core.annotation.Internal;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer;
-import io.jmix.fullcalendarflowui.component.serialization.serializer.FullCalendarSerializer.FullCalendarDataSerializer;
+import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer;
+import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer.FullCalendarDataSerializer;
 import org.springframework.lang.Nullable;
 
 /**

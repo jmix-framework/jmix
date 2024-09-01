@@ -19,6 +19,7 @@ package io.jmix.search.index;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -41,13 +42,16 @@ public class IndexConfiguration {
 
     protected final ExtendedSearchSettings extendedSearchSettings;
 
+    protected final DynamicAttributesIndexingDescriptor dynamicAttributesIndexingDescriptor;
+
     public IndexConfiguration(String entityName,
                               Class<?> entityClass,
                               String indexName,
                               IndexMappingConfiguration mapping,
                               Set<Class<?>> affectedEntityClasses,
                               Predicate<Object> indexablePredicate,
-                              ExtendedSearchSettings extendedSearchSettings) {
+                              ExtendedSearchSettings extendedSearchSettings,
+                              DynamicAttributesIndexingDescriptor dynamicAttributesIndexingDescriptor) {
         this.entityName = entityName;
         this.entityClass = entityClass;
         this.indexName = indexName;
@@ -55,6 +59,7 @@ public class IndexConfiguration {
         this.affectedEntityClasses = affectedEntityClasses;
         this.indexablePredicate = indexablePredicate;
         this.extendedSearchSettings = extendedSearchSettings;
+        this.dynamicAttributesIndexingDescriptor = dynamicAttributesIndexingDescriptor;
     }
 
     /**
@@ -115,5 +120,24 @@ public class IndexConfiguration {
 
     public ExtendedSearchSettings getExtendedSearchSettings() {
         return extendedSearchSettings;
+    }
+
+    public record DynamicAttributesIndexingDescriptor(DynamicAttributesIndexingMode indexingMode,
+                                                      ReferenceFieldsIndexingMode referenceFieldsIndexingMode,
+                                                      List<String> includedCategories,
+                                                      List<String> excludedCategories){
+
+    }
+
+    public enum DynamicAttributesIndexingMode {
+        NONE, ALL_FIELDS_INDEXING, EXACT_FIELDS_INDEXING
+    }
+
+    public enum ReferenceFieldsIndexingMode {
+        NONE, INSTANCE_NAME_ONLY
+    }
+
+    public DynamicAttributesIndexingDescriptor getDynamicAttributesIndexingDescriptor() {
+        return dynamicAttributesIndexingDescriptor;
     }
 }

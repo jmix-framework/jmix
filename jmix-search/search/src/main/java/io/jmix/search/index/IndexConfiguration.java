@@ -17,6 +17,7 @@
 package io.jmix.search.index;
 
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
+import io.jmix.search.index.annotation.DynamicAttributes;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 
 import java.util.List;
@@ -123,7 +124,7 @@ public class IndexConfiguration {
     }
 
     public record DynamicAttributesIndexingDescriptor(DynamicAttributesIndexingMode indexingMode,
-                                                      ReferenceFieldsIndexingMode referenceFieldsIndexingMode,
+                                                      DynamicAttributes.ReferenceFieldsIndexingMode referenceFieldsIndexingMode,
                                                       List<String> includedCategories,
                                                       List<String> excludedCategories){
 
@@ -131,10 +132,6 @@ public class IndexConfiguration {
 
     public enum DynamicAttributesIndexingMode {
         NONE, ALL_FIELDS_INDEXING, EXACT_FIELDS_INDEXING
-    }
-
-    public enum ReferenceFieldsIndexingMode {
-        NONE, INSTANCE_NAME_ONLY
     }
 
     public DynamicAttributesIndexingDescriptor getDynamicAttributesIndexingDescriptor() {

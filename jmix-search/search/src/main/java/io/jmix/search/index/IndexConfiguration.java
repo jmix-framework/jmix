@@ -18,6 +18,7 @@ package io.jmix.search.index;
 
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -38,18 +39,22 @@ public class IndexConfiguration {
 
     protected final Predicate<Object> indexablePredicate;
 
+    protected final DynamicAttributesIndexingDescriptor dynamicAttributesIndexingDescriptor;
+
     public IndexConfiguration(String entityName,
                               Class<?> entityClass,
                               String indexName,
                               IndexMappingConfiguration mapping,
                               Set<Class<?>> affectedEntityClasses,
-                              Predicate<Object> indexablePredicate) {
+                              Predicate<Object> indexablePredicate,
+                              DynamicAttributesIndexingDescriptor dynamicAttributesIndexingDescriptor) {
         this.entityName = entityName;
         this.entityClass = entityClass;
         this.indexName = indexName;
         this.mapping = mapping;
         this.affectedEntityClasses = affectedEntityClasses;
         this.indexablePredicate = indexablePredicate;
+        this.dynamicAttributesIndexingDescriptor = dynamicAttributesIndexingDescriptor;
     }
 
     /**
@@ -106,5 +111,24 @@ public class IndexConfiguration {
      */
     public Predicate<Object> getIndexablePredicate() {
         return indexablePredicate;
+    }
+
+    public record DynamicAttributesIndexingDescriptor(DynamicAttributesIndexingMode indexingMode,
+                                                      ReferenceFieldsIndexingMode referenceFieldsIndexingMode,
+                                                      List<String> includedCategories,
+                                                      List<String> excludedCategories){
+
+    }
+
+    public enum DynamicAttributesIndexingMode {
+        NONE, ALL_FIELDS_INDEXING, EXACT_FIELDS_INDEXING
+    }
+
+    public enum ReferenceFieldsIndexingMode {
+        NONE, INSTANCE_NAME_ONLY
+    }
+
+    public DynamicAttributesIndexingDescriptor getDynamicAttributesIndexingDescriptor() {
+        return dynamicAttributesIndexingDescriptor;
     }
 }

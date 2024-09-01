@@ -547,8 +547,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return epManager.fetchAndSerialize(
                 new LazyCalendarEventProvider.ItemsFetchContext(
                         epManager.getEventProvider(),
-                        transformToLocalDateTime(start),
-                        transformToLocalDateTime(end),
+                        parseIsoDate(start),
+                        parseIsoDate(end),
                         getComponentTimeZone()));
     }
 
@@ -973,7 +973,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     protected AbstractEventProviderManager getEventProviderManager(String sourceId) {
         return eventProvidersMap.values().stream()
-                .filter(epw -> epw.getSourceId().equals(sourceId))
+                .filter(epm -> epm.getSourceId().equals(sourceId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("There is no event provider with ID:" + sourceId));
     }
@@ -1198,20 +1198,5 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 requestUpdateItemEventProvider(ep.getEventProvider().getId());
             }
         });
-    }
-
-    @Override
-    protected void clearEventProvidersOnDetach() {
-        // As DataHolder is a shared object between calendars on a page,
-        // we must remove event sources from it when component is detached.
-        if (!eventProvidersMap.values().isEmpty()) {
-            JsonArray sourceIds = serializer.toJsonArray(
-                    eventProvidersMap.values().stream()
-                            .map(AbstractEventProviderManager::getSourceId)
-                            .toList());
-            UI.getCurrent().getPage().executeJs(
-                    "window.Vaadin.Flow.jmixFullCalendarConnector.removeSources($0)", sourceIds);
-        }
-        getSerializer().clearData();
     }
 }

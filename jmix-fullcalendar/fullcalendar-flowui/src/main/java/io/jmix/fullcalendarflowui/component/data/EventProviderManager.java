@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 
 /**
  * INTERNAL.
+ * Event provider manager that works with {@link CalendarEventProvider}.
  */
 @Internal
 public class EventProviderManager extends AbstractEventProviderManager {

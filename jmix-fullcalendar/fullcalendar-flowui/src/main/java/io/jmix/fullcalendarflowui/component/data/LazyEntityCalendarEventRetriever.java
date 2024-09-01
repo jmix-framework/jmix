@@ -7,6 +7,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider.ItemsFetchContext;
+import io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -17,9 +18,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -191,7 +194,8 @@ public class LazyEntityCalendarEventRetriever extends AbstractEntityEventProvide
         if (Strings.isNullOrEmpty(startProperty)) {
             throw new IllegalStateException("Cannot convert start bound to type of startProperty");
         }
-        return transformToValueWithSystemTimeZone(fetchContext.getStartDateTime(), startProperty);
+        return transformToValueWithSystemTimeZone(fetchContext.getStartDate(),
+                fetchContext.getComponentTimeZone(), startProperty);
     }
 
     protected Object getEndParameterValue(ItemsFetchContext fetchContext) {
@@ -199,14 +203,21 @@ public class LazyEntityCalendarEventRetriever extends AbstractEntityEventProvide
         if (Strings.isNullOrEmpty(endProperty)) {
             throw new IllegalStateException("Cannot convert end bound to type of endProperty");
         }
-        return transformToValueWithSystemTimeZone(fetchContext.getEndDateTime(), endProperty);
+        return transformToValueWithSystemTimeZone(fetchContext.getEndDate(),
+                fetchContext.getComponentTimeZone(), endProperty);
     }
 
-    protected Object transformToValueWithSystemTimeZone(LocalDateTime value, String propertyName) {
+    protected Object transformToValueWithSystemTimeZone(LocalDate value, TimeZone timeZone, String propertyName) {
         MetaProperty metaProperty = metadata.getClass(entityClass).getProperty(propertyName);
         Class<?> propertyType = metaProperty.getJavaType();
 
-        return dateTimeTransformations.transformToType(value, propertyType, null);
+        // The value is visible range that corresponds to component's timeZone. However, this value
+        // is interpreter as system default, so events that should be visible for user, won't be shown
+        // in corner cases.
+        // We need to convert to LocalDateTime with component TimeZone, then transform to system.
+        LocalDateTime dateTime = CalendarDateTimeUtils.parseAndTransform(value.toString(), timeZone.toZoneId());
+
+        return dateTimeTransformations.transformToType(dateTime, propertyType, null);
     }
 
     protected boolean isStartDateUsed(String query) {

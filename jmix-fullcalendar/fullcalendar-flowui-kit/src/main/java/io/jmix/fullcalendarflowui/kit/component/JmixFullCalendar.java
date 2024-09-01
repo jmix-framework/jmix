@@ -48,7 +48,6 @@ import java.util.*;
 @NpmPackage(value = "@fullcalendar/moment-timezone", version = "6.1.15")
 @NpmPackage(value = "@fullcalendar/moment", version = "6.1.15")
 @JsModule("./src/fullcalendar/jmix-full-calendar.js")
-@JsModule("./src/fullcalendar/jmix-full-calendar-connector.js")
 @CssImport("./src/fullcalendar/jmix-full-calendar.css")
 public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
@@ -1205,10 +1204,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         // Stub, is used in inheritors
     }
 
-    protected void clearEventProvidersOnDetach() {
-        // Stub, is used in inheritors
-    }
-
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         // All request-update methods do not register JS function call,
@@ -1223,12 +1218,5 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         addEventProvidersOnAttach();
 
         performCompleteInit();
-    }
-
-    @Override
-    protected void onDetach(DetachEvent detachEvent) {
-        // As DataHolder is a shared object between calendars on a page,
-        // we must remove event sources from it when component is detached.
-        clearEventProvidersOnDetach();
     }
 }

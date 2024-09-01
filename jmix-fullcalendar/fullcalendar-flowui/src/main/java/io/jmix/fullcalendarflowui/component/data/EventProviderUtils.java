@@ -19,12 +19,21 @@ package io.jmix.fullcalendarflowui.component.data;
 import io.jmix.core.annotation.Internal;
 import org.apache.commons.lang3.RandomStringUtils;
 
+/**
+ * INTERNAL.
+ * Utility class for event providers.
+ */
 @Internal
 public final class EventProviderUtils {
 
     private EventProviderUtils() {
     }
 
+    /**
+     * Generates an ID for event providers
+     *
+     * @return a string ID
+     */
     public static String generateId() {
         return RandomStringUtils.randomAlphabetic(6);
     }

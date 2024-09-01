@@ -14,7 +14,7 @@ import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 import moment from 'moment';
 
 import * as utils from './jmix-full-calendar-utils.js';
-import {dataHolder} from './DataHolder.js';
+import DataHolder from './DataHolder.js';
 import Options, {
     processInitialOptions,
     MORE_LINK_CLASS_NAMES,
@@ -74,6 +74,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.calendarElement.id = 'fullcalendar';
         this.calendarElement.slot = 'calendarSlot';
         this.appendChild(this.calendarElement);
+
+        this.dataHolder = new DataHolder();
 
         this.calendar = new Calendar(this.calendarElement, this.getInitialOptions());
         this.calendar.render();
@@ -152,7 +154,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
      * @private
      */
     _updateSyncSourcesData(context) {
-        dataHolder.set(context.sourceId, context.data);
+        this.dataHolder.set(context.sourceId, context.data);
 
         this.calendar.getEventSourceById(context.sourceId).refetch();
     }
@@ -170,7 +172,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             if (!sourceData.items) {
                 continue;
             }
-            const items = dataHolder.get(sourceData.sourceId);
+            const items = this.dataHolder.get(sourceData.sourceId);
             switch (sourceData.operation) {
                 case 'add':
                     items.push(...sourceData.items);
@@ -218,7 +220,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
 
     _addEventSource(sourceId, lazySource) {
         if (lazySource) {
-            dataHolder.set(sourceId, {compContext: this});
+            this.dataHolder.set(sourceId, {compContext: this});
         }
         this.calendar.addEventSource(this._createEventSource(sourceId, lazySource));
     }
@@ -231,45 +233,37 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     _removeEventSource(sourceId) {
         const eventSource = this.calendar.getEventSourceById(sourceId);
         if (eventSource) {
-            dataHolder.delete(sourceId);
+            this.dataHolder.delete(sourceId);
             eventSource.remove();
         }
     }
 
     _createEventSource(sourceId, lazySource) {
-        const fetchFunction = lazySource ? this._createAsyncFetchFunction(sourceId) : this._createFetchFunction(sourceId);
         return {
-            events: fetchFunction,
+            events: (a, b, c) => lazySource
+                ? this._lazyFetchFunction(a, b, c, this.dataHolder, sourceId)
+                : this._fetchFunction(a, b, c, this.dataHolder.get(sourceId)),
             id: sourceId
         }
     }
 
-    _createFetchFunction(sourceId) {
-        const fetchFunction = eval(
-            "var fetchFunction = function (fetchInfo, successCallback, failureCallback) {\n" +
-            "        const data = dataHolder.get('" + sourceId + "');\n" +
-            "        if (!data) {\n" +
-            "            return;\n" +
-            "        }\n" +
-            "        successCallback(data);\n" +
-            "  };\n" +
-            "fetchFunction;");
-        return fetchFunction;
+    _fetchFunction(fetchInfo, successCallback, failureCallback, data) {
+        if (!data) {
+            return;
+        }
+        successCallback(data);
     }
 
-    _createAsyncFetchFunction(sourceId) {
-        const fetchFunction = eval(
-            "var lazyFetchFunction = async function (fetchInfo, successCallback, failureCallback) {\n" +
-            "      const context = dataHolder.get('" + sourceId + "');\n" +
-            "      const fetchCalendarItems = async () => {\n" +
-            "            return await context.compContext.$server.fetchCalendarItems('" + sourceId + "', fetchInfo.startStr, fetchInfo.endStr);\n" +
-            "      }\n" +
-            "      const data = await fetchCalendarItems();\n" +
-            "      dataHolder.set('" + sourceId + "', {compContext: context.compContext, data: data, lastFetchInfo: fetchInfo});\n" +
-            "      successCallback(data);" +
-            "   }\n" +
-            "lazyFetchFunction;");
-        return fetchFunction;
+    async _lazyFetchFunction(fetchInfo, successCallback, failureCallback, dataHolder, sourceId) {
+        const context = dataHolder.get(sourceId);
+        const fetchCalendarItems = async () => {
+            const startDate = this.formatDate(fetchInfo.start, true);
+            const endDate = this.formatDate(fetchInfo.end, true);
+            return await context.compContext.$server.fetchCalendarItems(sourceId, startDate, endDate);
+        }
+        const data = await fetchCalendarItems();
+        dataHolder.set(sourceId, {compContext: context.compContext, data: data, lastFetchInfo: fetchInfo});
+        successCallback(data);
     }
 
     _onDayHeaderClassNames(e) {

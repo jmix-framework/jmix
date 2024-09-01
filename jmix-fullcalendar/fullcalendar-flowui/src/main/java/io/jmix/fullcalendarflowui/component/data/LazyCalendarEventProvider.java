@@ -16,28 +16,48 @@
 
 package io.jmix.fullcalendarflowui.component.data;
 
-import java.time.LocalDateTime;
+import io.jmix.fullcalendarflowui.component.FullCalendar;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.TimeZone;
 
+/**
+ * Interface to be implemented by event providers that should load items by request.
+ *
+ * @see LazyEntityCalendarEventRetriever
+ * @see CalendarEventRetriever
+ */
 public interface LazyCalendarEventProvider extends BaseCalendarEventProvider {
 
+    /**
+     * A callback method that is invoked by {@link FullCalendar}, for instance, when the user navigates to
+     * next/previous dates.
+     *
+     * @param context context that contains information about date range
+     * @return a list of fetched calendar events
+     */
     List<CalendarEvent> onItemsFetch(ItemsFetchContext context);
 
+    /**
+     * A fetch context that is used for loading events.
+     */
     class ItemsFetchContext {
         protected LazyCalendarEventProvider eventProvider;
 
-        protected LocalDateTime startDateTime;
-        protected LocalDateTime endDateTime;
+        protected LocalDate startDate;
+
+        protected LocalDate endDate;
+
         protected TimeZone componentTimeZone;
 
         public ItemsFetchContext(LazyCalendarEventProvider eventProvider,
-                                 LocalDateTime startDateTime,
-                                 LocalDateTime endDateTime,
+                                 LocalDate startDate,
+                                 LocalDate endDate,
                                  TimeZone componentTimeZone) {
             this.eventProvider = eventProvider;
-            this.startDateTime = startDateTime;
-            this.endDateTime = endDateTime;
+            this.startDate = startDate;
+            this.endDate = endDate;
             this.componentTimeZone = componentTimeZone;
         }
 
@@ -46,23 +66,28 @@ public interface LazyCalendarEventProvider extends BaseCalendarEventProvider {
         }
 
         /**
-         * Returns date time object that corresponds to system default time zone: {@link TimeZone#getDefault()}.
+         * The return date is the left border of the visible range in the component. This date corresponds to the
+         * component's time zone {@link FullCalendar#getTimeZone()}, as if it were a date-time object with zero time.
          *
-         * @return left border of visible range in calendar
+         * @return left border of visible range in component
          */
-        public LocalDateTime getStartDateTime() {
-            return startDateTime;
+        public LocalDate getStartDate() {
+            return startDate;
         }
 
         /**
-         * Returns date time object that corresponds to system default time zone: {@link TimeZone#getDefault()}.
+         * The return date is the right border of the visible range in the component. This date corresponds to the
+         * component's time zone {@link FullCalendar#getTimeZone()}, as if it were a date-time object with zero time.
          *
          * @return right border of visible range in calendar
          */
-        public LocalDateTime getEndDateTime() {
-            return endDateTime;
+        public LocalDate getEndDate() {
+            return endDate;
         }
 
+        /**
+         * @return component's time zone
+         */
         public TimeZone getComponentTimeZone() {
             return componentTimeZone;
         }

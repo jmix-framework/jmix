@@ -124,4 +124,8 @@ public class IndexConfiguration {
     public enum DynamicAttributesIndexingMode {
         NONE, ALL_CATEGORIES_INDEXING, ALL_FIELDS_INDEXING_WITH_EXCEPTIONS, EXACT_FIELDS_INDEXING
     }
+
+    public DynamicAttributesIndexingDescriptor getDynamicAttributesIndexingDescriptor() {
+        return dynamicAttributesIndexingDescriptor;
+    }
 }

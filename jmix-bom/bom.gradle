@@ -376,7 +376,7 @@ dependencies {
         api "net.sf.jasperreports:jasperreports:$jasperVersion"
         api "net.sf.jasperreports:jasperreports-fonts:$jasperVersion"
 
-        api 'org.apache.tika:tika-parsers:1.27'
+        api 'org.apache.tika:tika-parsers:1.28.5'
 
         def flowableVersion = '7.0.1'
         api "org.flowable:flowable-spring-configurator:$flowableVersion"

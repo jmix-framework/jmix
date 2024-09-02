@@ -497,7 +497,7 @@ public class MetadataTools {
      */
     public boolean isSecret(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
-        return Boolean.TRUE.equals(metaProperty.getAnnotations().containsKey(Secret.class.getName()));
+        return Boolean.TRUE.equals(metaProperty.getAnnotatedElement().isAnnotationPresent(Secret.class));
     }
 
     public Map<String, Object> getMetaAnnotationAttributes(Map<String, Object> metaAnnotations, Class metaAnnotationClass) {

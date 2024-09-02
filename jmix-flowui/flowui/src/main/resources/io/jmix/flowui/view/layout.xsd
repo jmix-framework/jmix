@@ -2909,6 +2909,7 @@
         <xs:attributeGroup ref="hasTitle"/>
         <xs:attributeGroup ref="hasClassNames"/>
 
+        <xs:attribute name="shortcutCombination" type="xs:string"/>
         <xs:attribute name="themeNames" type="buttonThemeNames"/>
         <xs:attribute name="iconAfterText" type="xs:boolean"/>
     </xs:complexType>
@@ -2916,7 +2917,7 @@
     <!--Grid.EditorActionsColumn-->
     <xs:complexType name="dataGridEditorActionsColumn">
         <xs:sequence>
-            <xs:element name="editButton" minOccurs="1" type="gridEditorButtonType"/>
+            <xs:element name="editButton" type="gridEditorButtonType"/>
             <xs:element name="saveButton" minOccurs="0" type="gridEditorButtonType"/>
             <xs:element name="closeButton" minOccurs="0" type="gridEditorButtonType"/>
             <xs:element name="cancelButton" minOccurs="0" type="gridEditorButtonType"/>

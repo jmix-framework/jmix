@@ -48,6 +48,7 @@ import io.jmix.flowui.data.aggregation.AggregationStrategy;
 import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.model.*;
@@ -301,6 +302,9 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             componentLoader().loadClassNames(button, buttonElement);
             componentLoader().loadThemeNames(button, buttonElement);
             loadBoolean(buttonElement, "iconAfterText", button::setIconAfterText);
+            componentLoader().loadShortcutCombination(buttonElement)
+                    .map(KeyCombination::create)
+                    .ifPresent(button::setShortcutCombination);
 
             return button;
         }

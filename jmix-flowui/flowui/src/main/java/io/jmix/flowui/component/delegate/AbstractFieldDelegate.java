@@ -78,6 +78,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     protected String requiredMessage;
     protected boolean explicitlyInvalid = false;
     protected boolean conversionInvalid = false;
+    protected boolean showInitialFormValidation = true;
 
     public AbstractFieldDelegate(C component) {
         super(component);
@@ -101,6 +102,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     @Autowired
     public void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         this.uiComponentProperties = uiComponentProperties;
+        showInitialFormValidation = uiComponentProperties.isShowInitialFormValidation();
     }
 
     public void setToModelConverter(@Nullable Function<V, T> toModelConverter) {
@@ -252,6 +254,12 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     }
 
     public void updateInvalidState() {
+        // skip initial validation when the form is opened
+        if (!showInitialFormValidation) {
+            showInitialFormValidation = true;
+            return;
+        }
+
         boolean invalid = explicitlyInvalid || conversionInvalid || !validatorsPassed();
 
         setInvalidInternal(invalid);

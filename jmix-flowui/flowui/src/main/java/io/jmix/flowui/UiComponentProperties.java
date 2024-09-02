@@ -23,8 +23,8 @@ import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationDetail;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +112,11 @@ public class UiComponentProperties {
      */
     boolean showErrorMessageBelowField;
 
+    /**
+     * Whether error message should be shown immediately after the form is opened.
+     */
+    boolean showInitialFormValidation;
+
     public UiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -134,7 +139,8 @@ public class UiComponentProperties {
             @DefaultValue("false") boolean filterShowConfigurationIdField,
             @DefaultValue("true") boolean filterShowNonJpaProperties,
             @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled,
-            @DefaultValue("true") boolean showErrorMessageBelowField) {
+            @DefaultValue("true") boolean showErrorMessageBelowField,
+            @DefaultValue("true") boolean showInitialFormValidation) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -162,6 +168,7 @@ public class UiComponentProperties {
         this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
 
         this.showErrorMessageBelowField = showErrorMessageBelowField;
+        this.showInitialFormValidation = showInitialFormValidation;
     }
 
     public String getGridCreateShortcut() {
@@ -286,5 +293,12 @@ public class UiComponentProperties {
      */
     public boolean isShowErrorMessageBelowField() {
         return showErrorMessageBelowField;
+    }
+
+    /**
+     * @see #showInitialFormValidation
+     */
+    public boolean isShowInitialFormValidation() {
+        return showInitialFormValidation;
     }
 }

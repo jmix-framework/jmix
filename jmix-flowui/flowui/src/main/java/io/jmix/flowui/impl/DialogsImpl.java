@@ -61,6 +61,7 @@ import java.util.function.Function;
 public class DialogsImpl implements Dialogs {
 
     protected static final String MIN_WIDTH = "25em";
+    protected static final String BUTTON_CLASS_NAMES_POSTFIX = "-button";
 
     protected Messages messages;
     protected UiViewProperties flowUiViewProperties;
@@ -104,8 +105,10 @@ public class DialogsImpl implements Dialogs {
     protected Button createButton(Action action, Dialog dialog) {
         Button button = new Button();
 
-        if (action instanceof DialogAction) {
-            DialogAction.Type type = ((DialogAction) action).getType();
+        if (action instanceof DialogAction dialogAction) {
+            DialogAction.Type type = dialogAction.getType();
+
+            button.addClassName(type.getId() + BUTTON_CLASS_NAMES_POSTFIX);
             button.setText(messages.getMessage(type.getMsgKey()));
             button.setIcon(type.getVaadinIcon().create());
         }

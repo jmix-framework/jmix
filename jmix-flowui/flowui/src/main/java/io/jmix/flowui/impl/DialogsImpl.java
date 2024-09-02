@@ -613,6 +613,8 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public Dialog build() {
+            dialog.getFooter().removeAll();
+
             DialogAction okAction = new DialogAction(DialogAction.Type.OK);
             okButton = createButton(okAction, dialog);
 
@@ -790,6 +792,8 @@ public class DialogsImpl implements Dialogs {
         protected Number total;
         protected boolean showProgressInPercentage;
         protected boolean cancelAllowed = false;
+
+        protected AtomicReference<Registration> openedRegistration = new AtomicReference<>();
 
         protected BackgroundTaskHandler<V> taskHandler;
 
@@ -1014,20 +1018,24 @@ public class DialogsImpl implements Dialogs {
             }
             updateProgress(0);
 
-            AtomicReference<Registration> openedRegistration = new AtomicReference<>();
-            openedRegistration.set(
-                    dialog.addOpenedChangeListener(event -> {
-                        // self-remove
-                        if (openedRegistration.get() != null) {
-                            openedRegistration.getAndSet(null)
-                                    .remove();
-                        }
+            openedRegistration.getAndUpdate(registration -> {
+                // removing the previous listener, makes sense in case of dialog rebuilding
+                if (registration != null) {
+                    registration.remove();
+                }
 
-                        if (event.isOpened()) {
-                            startExecution();
-                        }
-                    })
-            );
+                return dialog.addOpenedChangeListener(event -> {
+                    // self-remove
+                    if (openedRegistration.get() != null) {
+                        openedRegistration.getAndSet(null)
+                                .remove();
+                    }
+
+                    if (event.isOpened()) {
+                        startExecution();
+                    }
+                });
+            });
 
             return dialog;
         }

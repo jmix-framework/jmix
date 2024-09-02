@@ -18,7 +18,7 @@ package io.jmix.flowui;
 
 import com.vaadin.flow.component.notification.Notification;
 import io.jmix.flowui.app.filter.condition.AddConditionView;
-import io.jmix.flowui.component.HasTrimming;
+import io.jmix.flowui.component.SupportsTrimming;
 import io.jmix.flowui.component.factory.EntityFieldCreationSupport;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationDetail;
@@ -115,7 +115,7 @@ public class UiComponentProperties {
     boolean showErrorMessageBelowField;
 
     /**
-     * Whether to trim the entered string by default for {@link HasTrimming} components.
+     * Whether to trim the entered string by default for {@link SupportsTrimming} components.
      */
     boolean defaultTrimEnabled;
 

@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 public class TypedTextField<V> extends TextField
         implements SupportsValidation<V>, SupportsStatusChangeHandler<TypedTextField<V>>, SupportsDatatype<V>,
         SupportsTypedValue<TypedTextField<V>, ComponentValueChangeEvent<TextField, String>, V, String>,
-        SupportsValueSource<V>, HasLengthLimited, HasRequired, HasTitle, HasTrimming,
+        SupportsValueSource<V>, HasLengthLimited, HasRequired, HasTitle, SupportsTrimming,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;

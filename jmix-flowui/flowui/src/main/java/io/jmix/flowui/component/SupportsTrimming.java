@@ -21,7 +21,7 @@ import io.jmix.flowui.UiComponentProperties;
 /**
  * A component that trims spaces at the beginning and at the end of the entered string.
  */
-public interface HasTrimming {
+public interface SupportsTrimming {
 
     /**
      * @return {@code true} if trims spaces at the beginning and at the end of the entered string,

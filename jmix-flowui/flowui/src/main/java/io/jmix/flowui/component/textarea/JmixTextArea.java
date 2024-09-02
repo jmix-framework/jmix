@@ -36,7 +36,7 @@ import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public class JmixTextArea extends TextArea implements SupportsValueSource<String>, SupportsValidation<String>,
-        SupportsStatusChangeHandler<JmixTextArea>, HasLengthLimited, HasRequired, HasTrimming,
+        SupportsStatusChangeHandler<JmixTextArea>, HasLengthLimited, HasRequired, SupportsTrimming,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;

@@ -18,6 +18,7 @@ package io.jmix.fullcalendarflowui.kit.component.model;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.util.Objects;
 
 public class CalendarDuration implements Serializable {
 
@@ -209,5 +210,26 @@ public class CalendarDuration implements Serializable {
 
     public long getMilliseconds() {
         return milliseconds;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        return (obj instanceof CalendarDuration cObj)
+                && cObj.years == years
+                && cObj.months == months
+                && cObj.weeks == weeks
+                && cObj.days == days
+                && cObj.hours == hours
+                && cObj.minutes == minutes
+                && cObj.seconds == seconds
+                && cObj.milliseconds == milliseconds;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(years, months, weeks, days, hours, minutes, seconds, milliseconds);
     }
 }

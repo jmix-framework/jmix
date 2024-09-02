@@ -124,7 +124,7 @@ public class ViewPropertiesLoader {
         loadBaseDayGridViewProperties(dayGridElement, dayGridMonth);
 
         loaderSupport.loadBoolean(dayGridElement, "fixedWeekCount", dayGridMonth::setFixedWeekCount);
-        loaderSupport.loadBoolean(dayGridElement, "showNonCurrentDates", dayGridMonth::setFixedWeekCount);
+        loaderSupport.loadBoolean(dayGridElement, "showNonCurrentDates", dayGridMonth::setShowNonCurrentDates);
 
         loadBaseViewProperties(dayGridElement, dayGridMonth);
     }
@@ -143,11 +143,12 @@ public class ViewPropertiesLoader {
         loaderSupport.loadResourceString(dayGridElement, "dayPopoverFormat",
                 context.getMessageGroup(), view::setDayPopoverFormat);
         loaderSupport.loadResourceString(dayGridElement, "dayHeaderFormat",
-                context.getMessageGroup(), view::setDayPopoverFormat);
+                context.getMessageGroup(), view::setDayHeaderFormat);
         loaderSupport.loadResourceString(dayGridElement, "weekNumberFormat",
-                context.getMessageGroup(), view::setDayPopoverFormat);
+                context.getMessageGroup(), view::setWeekNumberFormat);
         loaderSupport.loadResourceString(dayGridElement, "eventTimeFormat",
-                context.getMessageGroup(), view::setDayPopoverFormat);
+                context.getMessageGroup(), view::setEventTimeFormat);
+        loaderSupport.loadBoolean(dayGridElement, "displayEventEnd", view::setDisplayEventEnd);
     }
 
     protected void loadTimeGridViewProperties(Element timeGridElement, FullCalendar resultComponent) {
@@ -190,6 +191,7 @@ public class ViewPropertiesLoader {
         loaderSupport.loadInteger(timeGridElement, "eventShortHeight", view::setEventShortHeight);
         loaderSupport.loadBoolean(timeGridElement, "slotEventOverlap", view::setSlotEventOverlap);
         loaderSupport.loadBoolean(timeGridElement, "allDaySlot", view::setAllDaySlot);
+        loaderSupport.loadBoolean(timeGridElement, "displayEventEnd", view::setDisplayEventEnd);
     }
 
     protected void loadListViewProperties(Element listElement, FullCalendar resultComponent) {

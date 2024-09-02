@@ -25,4 +25,10 @@ dependencies {
     api project(':flowui')
     api project(':fullcalendar')
     api project(':fullcalendar-flowui-kit')
+
+    testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
+    testImplementation 'io.jmix.data:jmix-eclipselink-starter'
+    testImplementation 'org.apache.commons:commons-dbcp2'
+
+    testRuntimeOnly 'org.hsqldb:hsqldb'
 }

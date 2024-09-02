@@ -26,24 +26,12 @@ import java.util.List;
 public class SelectConstraint extends CalendarOption {
     public static final String NAME = "selectConstraint";
 
-    protected boolean enabled = false;
-
     protected String groupId;
 
     protected List<CalendarBusinessHours> businessHours;
 
     public SelectConstraint() {
         super(NAME);
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-
-        markAsDirty();
     }
 
     @Nullable

@@ -27,10 +27,8 @@ public class DaysOfWeek implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof DaysOfWeek dObj) {
-            return CollectionUtils.isEqualCollection(dObj.daysOfWeek, daysOfWeek);
-        }
-        return false;
+        return (obj instanceof DaysOfWeek dObj)
+                && CollectionUtils.isEqualCollection(dObj.daysOfWeek, daysOfWeek);
     }
 
     @Override

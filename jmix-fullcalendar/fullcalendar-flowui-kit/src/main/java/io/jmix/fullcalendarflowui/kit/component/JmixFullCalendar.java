@@ -610,7 +610,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     @Nullable
-    public String getDayPopoverFormat() {
+    public String getDefaultDayPopoverFormat() {
         return options.getDayPopoverFormat().getValue();
     }
 
@@ -619,7 +619,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     @Nullable
-    public String getDayHeaderFormat() {
+    public String getDefaultDayHeaderFormat() {
         return options.getDayHeaderFormat().getValue();
     }
 
@@ -628,7 +628,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     @Nullable
-    public String getWeekNumberFormat() {
+    public String getDefaultWeekNumberFormat() {
         return options.getWeekNumberFormat().getValue();
     }
 
@@ -642,7 +642,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     @Nullable
-    public String getSlotNumberFormat() {
+    public String getDefaultSlotNumberFormat() {
         return options.getSlotLabelFormat().getValue();
     }
 
@@ -651,7 +651,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     @Nullable
-    public String getEventTimeFormat() {
+    public String getDefaultEventTimeFormat() {
         return options.getEventTimeFormat().getValue();
     }
 

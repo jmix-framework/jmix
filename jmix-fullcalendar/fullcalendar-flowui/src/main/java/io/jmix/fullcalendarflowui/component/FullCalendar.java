@@ -100,13 +100,13 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     @Nullable
-    public BaseCalendarEventProvider getEventProvider(String id) {
+    @SuppressWarnings("unchecked")
+    public <T extends BaseCalendarEventProvider> T getEventProvider(String id) {
         Preconditions.checkNotEmptyString(id);
 
         AbstractEventProviderManager eventProviderManager = eventProvidersMap.get(id);
-
         if (eventProviderManager != null) {
-            return eventProviderManager.getEventProvider();
+            return (T) eventProviderManager.getEventProvider();
         }
         return null;
     }
@@ -221,14 +221,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     public void setEventConstraintBusinessHours(@Nullable List<CalendarBusinessHours> businessHoursEventConstraint) {
         getOptions().getEventConstraint().setBusinessHours(businessHoursEventConstraint);
-    }
-
-    public boolean isSelectConstraintEnabled() {
-        return getOptions().getSelectConstraint().isEnabled();
-    }
-
-    public void setSelectConstraintEnabled(boolean enabled) {
-        getOptions().getSelectConstraint().setEnabled(enabled);
     }
 
     public List<CalendarBusinessHours> getSelectConstraintBusinessHours() {

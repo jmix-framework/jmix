@@ -68,7 +68,6 @@
                     <xs:attribute name="unselectAuto" type="xs:boolean"/>
                     <xs:attribute name="unselectCancelSelector" type="xs:string"/>
                     <xs:attribute name="selectOverlap" type="xs:boolean"/>
-                    <xs:attribute name="selectConstraintEnabled" type="xs:boolean"/>
                     <xs:attribute name="selectConstraintGroupId" type="xs:string"/>
                     <xs:attribute name="selectMinDistance" type="xs:integer"/>
 

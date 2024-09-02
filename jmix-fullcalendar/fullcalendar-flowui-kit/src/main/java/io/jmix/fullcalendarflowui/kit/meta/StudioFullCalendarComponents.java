@@ -72,7 +72,6 @@ public interface StudioFullCalendarComponents {
                     @StudioProperty(xmlAttribute = "dragScroll", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "eventBackgroundColor", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "eventBorderColor", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "eventConstraintEnabled", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "eventConstraintGroupId", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "eventDisplay", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.fullcalendar.Display",

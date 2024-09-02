@@ -85,7 +85,6 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadBoolean(element, "unselectAuto", resultComponent::setUnselectAuto);
         loadString(element, "unselectCancelSelector", resultComponent::setUnselectCancelSelector);
         loadBoolean(element, "selectOverlap", resultComponent::setSelectOverlap);
-        loadBoolean(element, "selectConstraintEnabled", resultComponent::setSelectConstraintEnabled);
         loadString(element, "selectConstraintGroupId", resultComponent::setSelectConstraintGroupId);
         loadInteger(element, "selectMinDistance", resultComponent::setSelectMinDistance);
 
@@ -329,10 +328,10 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
     @Nullable
     protected CalendarBusinessHours loadBusinessHoursEntry(Element element) {
         LocalTime startTime = loadString(element, "startTime")
-                .map(LocalTime::parse)
+                .map(s -> LocalTime.ofSecondOfDay(Duration.parse(s).toSeconds()))
                 .orElse(null);
         LocalTime endTime = loadString(element, "endTime")
-                .map(LocalTime::parse)
+                .map(s -> LocalTime.ofSecondOfDay(Duration.parse(s).toSeconds()))
                 .orElse(null);
 
         List<DayOfWeek> businessDays = new ArrayList<>();

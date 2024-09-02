@@ -23,6 +23,6 @@ import test_support.entity.indexing.TestExplicitHiddenFieldsEntity;
 @JmixEntitySearchIndex(entity = TestExplicitHiddenFieldsEntity.class)
 public interface TestHiddenFieldsExplicitIndexDefinition {
 
-    @AutoMappedField(includeProperties = {"name", "secret", "createdBy"})
+    @AutoMappedField(includeProperties = {"name", "secret", "createdBy", "systemLevel"})
     void mapping();
 }

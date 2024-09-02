@@ -611,14 +611,14 @@ public class ElasticsearchEntityIndexingTest {
 
     @Test
     @DisplayName("Indexing of entity hidden fields must not be available with asterisk include")
-    public void indexWithHiddenProps() {
+    public void indexWithWildcardHiddenProps() {
         TestHiddenFieldsEntity entity = metadata.create(TestHiddenFieldsEntity.class);
         entity.setName("Hidden Field entity");
         entity.setSecret("Hidden Field Secret");
         entity.setSystemLevel("System Level");
         dataManager.save(entity);
 
-        JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_hidden_fields");
+        JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_wildcard_hidden_fields");
         TestBulkRequestIndexActionValidationData expectedIndexAction = new TestBulkRequestIndexActionValidationData(
                 "search_index_test_hiddenfieldentity",
                 idSerialization.idToString(Id.of(entity)),
@@ -641,6 +641,7 @@ public class ElasticsearchEntityIndexingTest {
         TestExplicitHiddenFieldsEntity entity = metadata.create(TestExplicitHiddenFieldsEntity.class);
         entity.setName("Hidden Field entity");
         entity.setSecret("Hidden Field Secret");
+        entity.setSystemLevel("System Level");
         dataManager.save(entity);
 
         JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_explicit_hidden_fields");

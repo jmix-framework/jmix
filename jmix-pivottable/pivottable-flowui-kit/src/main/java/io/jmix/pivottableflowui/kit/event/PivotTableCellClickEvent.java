@@ -31,7 +31,7 @@ public class PivotTableCellClickEvent extends AbstractPivotTableEvent {
 
     protected PivotTableCellClickEventParams params;
 
-    public PivotTableCellClickEvent(JmixPivotTable pivotTable, boolean fromClient,  @EventData("event.params") JsonObject params) {
+    public PivotTableCellClickEvent(JmixPivotTable pivotTable, boolean fromClient,  @EventData("event.detail") JsonObject params) {
         super(pivotTable, fromClient, params);
     }
 

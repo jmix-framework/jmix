@@ -26,8 +26,10 @@ import com.vaadin.flow.data.provider.*;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
+import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
+import elemental.json.impl.JreJsonArray;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.pivottableflowui.kit.component.model.*;
 import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer;
@@ -37,11 +39,14 @@ import io.jmix.pivottableflowui.kit.event.PivotTableCellClickEvent;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Tag("jmix-pivot-table")
 @JsModule("./src/pivot-table/jmix-pivot-table.js")
 public class JmixPivotTable extends Component implements HasEnabled, HasSize {
+
+    protected static final String ITEM_ID_PROPERTY_NAME = "$k";
 
     protected DataProvider<DataItem, ?> dataProvider;
     protected Registration dataProviderItemSetChangeRegistration;
@@ -454,12 +459,13 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         JsonObject resultJson = new JreJsonFactory().createObject();
         List<DataItem> dataItems = getDataProvider().fetch(new Query<>()).toList();
         JsonValue dataJson = serializer.serializeItems(dataItems.stream()
-                .map(dataItem ->{
-                        Map<String, Object> values = new HashMap<>();
+                .map(dataItem -> {
+                    Map<String, Object> values = new HashMap<>();
+                    values.put(ITEM_ID_PROPERTY_NAME, dataItem.getId());
                     for (Map.Entry<String, String> property : options.getProperties().entrySet()) {
-                            values.put(property.getValue(), dataItem.getValue(property.getKey()));
-                        }
-                        return values;
+                        values.put(property.getValue(), dataItem.getValue(property.getKey()));
+                    }
+                    return values;
                 })
                 .collect(Collectors.toList()));
         resultJson.put("dataSet", dataJson);

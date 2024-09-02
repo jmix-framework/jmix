@@ -32,7 +32,7 @@ public class PivotTableRefreshEvent extends AbstractPivotTableEvent {
     protected PivotTableRefreshEventParams params;
 
     public PivotTableRefreshEvent(JmixPivotTable pivotTable, boolean fromClient,
-                                  @EventData("event.params") JsonObject params) {
+                                  @EventData("event.detail") JsonObject params) {
         super(pivotTable, fromClient, params);
     }
 

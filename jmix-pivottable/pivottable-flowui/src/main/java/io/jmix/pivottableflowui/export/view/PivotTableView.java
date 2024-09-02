@@ -26,7 +26,6 @@ import io.jmix.pivottableflowui.export.PivotTableExporter;
 import io.jmix.pivottableflowui.export.PivotTableExporterImpl;
 import io.jmix.pivottableflowui.kit.data.DataItem;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
-import org.springframework.lang.Nullable;
 
 import java.util.List;
 import java.util.Map;

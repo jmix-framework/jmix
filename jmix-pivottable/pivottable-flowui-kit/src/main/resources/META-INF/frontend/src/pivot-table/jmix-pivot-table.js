@@ -117,13 +117,41 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         this._updateOrderDirection("a.pvtRowOrder", pivotState.rowOrder);
         this._updateOrderDirection("a.pvtColOrder", pivotState.colOrder);
 
-        const customEvent = new CustomEvent('jmix-pivottable:refresh', pivotState);
+        const customEvent = new CustomEvent('jmix-pivottable:refresh', {
+            detail: {
+                rows: pivotState.rows,
+                cols: pivotState.cols,
+                renderer: pivotState.rendererName,
+                aggregation: pivotState.aggregatorName,
+                aggregationProperties: pivotState.vals,
+                inlusions: pivotState.inclusions,
+                exclusions: pivotState.exclusions,
+                rowOrder: pivotState.rowOrder,
+                colOrder: pivotState.colOrder
+            }
+        });
         this.dispatchEvent(customEvent);
     }
 
-    _cellClickHandler(e, v, filters, pivotData) {
-        const customEvent = new CustomEvent('jmix-pivottable:cellclick',
-            {detail: {}});
+    _cellClickHandler(value, filters, pivotData) {
+        var dataItemKeys = [];
+        (function(pivotTable) {
+            pivotData.forEachMatchingRecord(filters, function(record) {
+                let itemIndex = pivotTable._dataSet.indexOf(record);
+                if (itemIndex >= 0) {
+                    dataItemKeys.push(pivotTable.itemIds[itemIndex]);
+                }
+            });
+        })(this);
+
+        const customEvent = new CustomEvent('jmix-pivottable:cellclick', {
+            detail: {
+                value: value,
+                filters: filters,
+                dataItemKeys: dataItemKeys
+            }
+        });
+
         this.dispatchEvent(customEvent);
     }
 
@@ -154,7 +182,11 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                 $("#div-id").pivotUI(
                     pivotTable._dataSet,
                     {
-                        onRefresh: pivotTable._refreshHandler,
+                        onRefresh: (function(pivotTableCls){
+                            return function(pivotState) {
+                                pivotTableCls._refreshHandler(pivotState);
+                            };
+                        })(pivotTable),
                         showUI: options.showUI,
                         rows: options.rows, //already localized from server
                         cols: options.cols,
@@ -172,7 +204,11 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                         sorters: options.sorters,
                         rendererOptions: {
                             table: {
-                                clickCallback: pivotTable._cellClickHandler,
+                                clickCallback: (function(pivotTableCls){
+                                    return function(event, value, filters, pivotData) {
+                                        pivotTableCls._cellClickHandler(value, filters, pivotData);
+                                    };
+                                })(pivotTable),
                                 rowTotals: options.rowTotals ? options.rowTotals : true,
                                 colTotals: options.colTotals ? options.colTotals : true
                             },
@@ -275,8 +311,6 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         allAggregators[localizedStrings.aggregation.countAsFractionOfColumns] =
             aggregatorTemplates.fractionOf(aggregatorTemplates.count(), "col", formatPercent);
 
-
-
         var allRenderers = {};
         allRenderers[localizedStrings.renderer.table] = $.pivotUtilities.renderers["Table"];
         allRenderers[localizedStrings.renderer.tableBarchart] = $.pivotUtilities.renderers["Table Barchart"];
@@ -340,30 +374,28 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         if (aggregationMode == null) {
             return null;
         }
-        return $.pivotUtilities.locales[this._options.localeCode].aggregators[this._options.localizedStrings.aggregation[aggregationMode]];
+        return this._options.localizedStrings.aggregation[aggregationMode];
     }
 
     _getLocalizedRendererName() {
-        let rendererName = this._options.renderer ? this._options.renderer.id : null;
-        if (rendererName == null) {
+        let renderMode = this._options.renderer ? this._options.renderer : null;
+        if (renderMode == null) {
             return null;
         }
-        let localizedRendererName = $.pivotUtilities.locales[this._options.localeCode].aggregators[rendererName];
-        return localizedRendererName !== undefined ? localizedRendererName : rendererName;
+        return this._options.localizedStrings.renderer[renderMode];
     }
 
-    _getLocalizedRenderers(selectedRenderers) {
-        if (!selectedRenderers) {
+    _getLocalizedRenderers() {
+        if (!this._options.renderers) {
             return null;
         }
 
-        let localizedRenderers = [];
+        let localizedRenderers = {};
+        for (let selectedRenderer of this._options.renderers.renderers) {
+            let localizedKey = this._options.localizedStrings.renderer[selectedRenderer];
 
-        for (let selectedRenderer in selectedRenderers) {
-            if (this._options.localizedStrings.renderer.hasOwnProperty(selectedRenderer.id)) {
-                localizedRenderers.push();
-            }
-            $.pivotUtilities.locales[this._options.localeCode].renderers[this._options.localizedStrings.renderer.getAttribute(selectedRenderer.id)];
+            localizedRenderers[localizedKey] = $.pivotUtilities.locales[this._options.localizedStrings.localeCode].renderers[localizedKey];
+
         }
         return localizedRenderers;
     }
@@ -385,8 +417,18 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         this._recreatePivot();
     }
 
+    itemIds = [];
+    itm = [];
+
     _updateDataSet(changes) {
         this._dataSet = changes.dataSet;
+        this.items = {};
+        if (changes.dataSet) {
+            changes.dataSet.forEach(value => {
+                this.itemIds.push(value.$k)
+                delete value.$k;
+            });
+        }
         this._recreatePivot();
     }
 

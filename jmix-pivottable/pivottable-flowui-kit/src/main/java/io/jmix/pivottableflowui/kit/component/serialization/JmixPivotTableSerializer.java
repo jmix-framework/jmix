@@ -24,9 +24,11 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.pivottableflowui.kit.component.model.PivotTableOptions;
+import io.jmix.pivottableflowui.kit.data.DataItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

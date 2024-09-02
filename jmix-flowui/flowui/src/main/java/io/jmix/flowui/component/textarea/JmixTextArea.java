@@ -19,15 +19,14 @@ package io.jmix.flowui.component.textarea;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.HasLengthLimited;
-import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.SupportsStatusChangeHandler;
-import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.UiComponentProperties;
+import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.delegate.TextAreaFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -37,12 +36,14 @@ import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 public class JmixTextArea extends TextArea implements SupportsValueSource<String>, SupportsValidation<String>,
-        SupportsStatusChangeHandler<JmixTextArea>, HasLengthLimited, HasRequired, ApplicationContextAware,
-        InitializingBean {
+        SupportsStatusChangeHandler<JmixTextArea>, HasLengthLimited, HasRequired, SupportsTrimming,
+        ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
     protected TextAreaFieldDelegate<JmixTextArea, String> fieldDelegate;
+
+    protected boolean trimEnabled;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -56,6 +57,7 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
+        trimEnabled = applicationContext.getBean(UiComponentProperties.class).isDefaultTrimEnabled();
     }
 
     @SuppressWarnings("unchecked")
@@ -146,7 +148,28 @@ public class JmixTextArea extends TextArea implements SupportsValueSource<String
     }
 
     @Override
+    public boolean isTrimEnabled() {
+        return trimEnabled;
+    }
+
+    @Override
+    public void setTrimEnabled(boolean trimEnabled) {
+        this.trimEnabled = trimEnabled;
+    }
+
+    @Override
     public void setValue(String value) {
         super.setValue(Strings.nullToEmpty(value));
+    }
+
+    @Override
+    protected void setModelValue(String newModelValue, boolean fromClient) {
+        if (isTrimEnabled()) {
+            newModelValue = StringUtils.trimToNull(newModelValue);
+
+            setPresentationValue(Strings.nullToEmpty(newModelValue));
+        }
+
+        super.setModelValue(newModelValue, fromClient);
     }
 }

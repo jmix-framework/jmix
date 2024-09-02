@@ -348,6 +348,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadResourceString(element, "ariaLabelledBy", context.getMessageGroup(), component::setAriaLabel);
     }
 
+    public void loadTrimming(SupportsTrimming component, Element element) {
+        loaderSupport.loadBoolean(element, "trimEnabled", component::setTrimEnabled);
+    }
+
     public void loadWhiteSpace(HasText component, Element element) {
         loaderSupport.loadEnum(element, HasText.WhiteSpace.class, "whiteSpace", component::setWhiteSpace);
     }

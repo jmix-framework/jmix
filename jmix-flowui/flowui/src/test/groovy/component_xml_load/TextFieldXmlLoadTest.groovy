@@ -90,6 +90,7 @@ class TextFieldXmlLoadTest extends FlowuiTestSpecification {
             tabIndex == 3
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
+            !trimEnabled
             typedValue == 5050
             valueChangeMode == ValueChangeMode.ON_CHANGE
             valueChangeTimeout == 50

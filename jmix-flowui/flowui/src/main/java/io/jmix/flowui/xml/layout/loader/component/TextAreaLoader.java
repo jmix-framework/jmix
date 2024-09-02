@@ -68,6 +68,7 @@ public class TextAreaLoader extends AbstractComponentLoader<JmixTextArea> {
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAllowedCharPattern(resultComponent, element, context);
+        componentLoader().loadTrimming(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
     }
 

@@ -16,19 +16,24 @@
 
 package io.jmix.search.index.annotation;
 
+import com.drew.lang.annotations.Nullable;
+
 import java.lang.annotation.*;
 
-import static io.jmix.search.index.annotation.DynamicAttributes.ReferenceFieldsIndexingMode.NONE;
+import static io.jmix.search.index.annotation.DynamicAttributes.ReferenceFieldsIndexingMode.*;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @FieldMappingAnnotation
 public @interface DynamicAttributes {
+    @Nullable
     String[] includeCategories() default "";
 
+    @Nullable
     String[] excludeProperties() default "";
 
-    ReferenceFieldsIndexingMode referenceFieldsIndexingMode() default NONE;
+    @Nullable
+    ReferenceFieldsIndexingMode referenceFieldsIndexingMode() default INSTANCE_NAME_ONLY;
 
     enum ReferenceFieldsIndexingMode {
         NONE, INSTANCE_NAME_ONLY

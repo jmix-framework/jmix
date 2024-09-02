@@ -608,5 +608,57 @@ public class OpenSearchEntityIndexingTest {
         List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
         Assert.assertTrue(bulkRequests.isEmpty());
     }
+
+    @Test
+    @DisplayName("Indexing of entity hidden fields must not be available with asterisk include")
+    public void indexWithWildcardHiddenProps() {
+        TestHiddenFieldsEntity entity = metadata.create(TestHiddenFieldsEntity.class);
+        entity.setName("Hidden Field entity");
+        entity.setSecret("Hidden Field Secret");
+        entity.setSystemLevel("System Level");
+        dataManager.save(entity);
+
+        JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_wildcard_hidden_fields");
+        TestBulkRequestIndexActionValidationData expectedIndexAction = new TestBulkRequestIndexActionValidationData(
+                "search_index_test_hiddenfieldentity",
+                idSerialization.idToString(Id.of(entity)),
+                jsonNode
+        );
+        TestBulkRequestValidationData expectedData = new TestBulkRequestValidationData(
+                Collections.singletonList(expectedIndexAction),
+                Collections.emptyList());
+
+        entityIndexer.index(entity);
+        List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
+
+        TestBulkRequestValidationResult result = OpenSearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        Assert.assertFalse(result.toString(), result.hasFailures());
+    }
+
+    @Test
+    @DisplayName("Indexing of entity hidden fields must be available with explicit includes")
+    public void indexWithExplicitHiddenProps() {
+        TestExplicitHiddenFieldsEntity entity = metadata.create(TestExplicitHiddenFieldsEntity.class);
+        entity.setName("Hidden Field entity");
+        entity.setSecret("Hidden Field Secret");
+        entity.setSystemLevel("System Level");
+        dataManager.save(entity);
+
+        JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_explicit_hidden_fields");
+        TestBulkRequestIndexActionValidationData expectedIndexAction = new TestBulkRequestIndexActionValidationData(
+                "search_index_test_explicithiddenfieldentity",
+                idSerialization.idToString(Id.of(entity)),
+                jsonNode
+        );
+        TestBulkRequestValidationData expectedData = new TestBulkRequestValidationData(
+                Collections.singletonList(expectedIndexAction),
+                Collections.emptyList());
+
+        entityIndexer.index(entity);
+        List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
+
+        TestBulkRequestValidationResult result = OpenSearchTestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        Assert.assertFalse(result.toString(), result.hasFailures());
+    }
 }
 

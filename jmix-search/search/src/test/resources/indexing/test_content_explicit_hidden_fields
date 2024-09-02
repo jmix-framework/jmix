@@ -1,7 +1,7 @@
 {
-	"name": "Hidden Field entity",
+    "name": "Hidden Field entity",
     "secret": "Hidden Field Secret",
     "createdBy": "system",
     "systemLevel": "System Level",
-	"_instance_name": "Hidden Field entity"
+    "_instance_name": "Hidden Field entity"
 }

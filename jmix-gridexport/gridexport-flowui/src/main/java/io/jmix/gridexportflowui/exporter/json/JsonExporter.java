@@ -30,9 +30,9 @@ import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.gridexportflowui.action.ExportAction;
 import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
+import io.jmix.gridexportflowui.exporter.ExportMode;
 import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoader;
 import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoaderFactory;
-import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -40,7 +40,9 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -73,7 +75,8 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
     }
 
     @Override
-    public void exportDataGrid(Downloader downloader, Grid<Object> dataGrid, ExportMode exportMode) {
+    public void exportDataGrid(Downloader downloader, Grid<Object> dataGrid, ExportMode exportMode,
+                               Predicate<Grid.Column<Object>> columnFilter) {
         Gson gson = createGsonForSerialization();
         JsonArray jsonElements = new JsonArray();
 
@@ -81,7 +84,7 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
             AllEntitiesLoader entitiesLoader = allEntitiesLoaderFactory.getEntitiesLoader();
             entitiesLoader.loadAll(((ListDataComponent<?>) dataGrid).getItems(),
                     context -> {
-                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, context.getEntity());
+                        JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, context.getEntity(), columnFilter);
                         jsonElements.add(jsonObject);
                         return true;
                     });
@@ -89,7 +92,7 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
             Collection<Object> items = getItems(dataGrid, exportMode);
 
             for (Object entity : items) {
-                JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity);
+                JsonObject jsonObject = createJsonObjectFromEntity(dataGrid, entity, columnFilter);
                 jsonElements.add(jsonObject);
             }
         }
@@ -103,10 +106,15 @@ public class JsonExporter extends AbstractDataGridExporter<JsonExporter> {
         downloader.download(downloadDataProvider, getFileName(dataGrid) + ".json", DownloadFormat.JSON);
     }
 
-    protected JsonObject createJsonObjectFromEntity(Grid<Object> dataGrid, Object entity) {
+    protected JsonObject createJsonObjectFromEntity(Grid<Object> dataGrid, Object entity,
+                                                    Predicate<Grid.Column<Object>> columnFilter) {
         JsonObject jsonObject = new JsonObject();
 
-        for (Grid.Column<Object> column : dataGrid.getColumns()) {
+        List<Grid.Column<Object>> columns = dataGrid.getColumns().stream()
+                .filter(columnFilter)
+                .toList();
+
+        for (Grid.Column<Object> column : columns) {
             Object columnValue = getColumnValue(dataGrid, column, entity);
             //noinspection unchecked,rawtypes
             MetaPropertyPath metaPropertyPath = ((EnhancedDataGrid) dataGrid).getColumnMetaPropertyPath(column);

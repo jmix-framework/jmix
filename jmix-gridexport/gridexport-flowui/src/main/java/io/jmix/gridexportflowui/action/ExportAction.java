@@ -25,22 +25,27 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.gridexportflowui.GridExportProperties;
+import io.jmix.gridexportflowui.exporter.ColumnExportFilter;
 import io.jmix.gridexportflowui.exporter.DataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Base action for export table content with defined exporter.
@@ -61,6 +66,10 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
 
     protected DataGridExporter dataGridExporter;
     protected List<ExportMode> availableExportModes;
+
+    protected ColumnExportFilter columnExportFilter;
+    protected Predicate<Grid.Column<Object>> columnExportPredicate;
+    protected List<String> columnKeysToExport;
 
     public ExportAction() {
         this(ID);
@@ -95,6 +104,65 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
         this.availableExportModes = gridExportProperties.getDefaultExportModes().stream()
                 .map(ExportMode::valueOf)
                 .toList();
+        this.columnExportFilter = ColumnExportFilter.valueOf(gridExportProperties.getDefaultColumnExportFilter());
+    }
+
+    /**
+     * Sets the {@link ColumnExportFilter} that is used to filter columns to export. This is a simple, predefined
+     * alternative to {@link #setColumnExportPredicate(Predicate)}. Has the lowest filtering priority.
+     * <p>
+     * The default value depends on {@link GridExportProperties#getDefaultColumnExportFilter()}.
+     *
+     * @param columnExportFilter column export filter to set
+     */
+    public void setColumnExportFilter(ColumnExportFilter columnExportFilter) {
+        this.columnExportFilter = columnExportFilter;
+    }
+
+    /**
+     * @return this
+     * @see #setColumnExportFilter(ColumnExportFilter)
+     */
+    public ExportAction withColumnExportFilter(ColumnExportFilter columnExportFilter) {
+        setColumnExportFilter(columnExportFilter);
+        return this;
+    }
+
+    /**
+     * Sets the {@link Predicate} that is used to filter columns to export. This is a flexible alternative to
+     * {@link #setColumnExportFilter(ColumnExportFilter)}. Has secondary filtering priority.
+     *
+     * @param columnExportPredicate column export predicate to set
+     */
+    public void setColumnExportPredicate(Predicate<Grid.Column<Object>> columnExportPredicate) {
+        this.columnExportPredicate = columnExportPredicate;
+    }
+
+    /**
+     * @return this
+     * @see #setColumnExportPredicate(Predicate)
+     */
+    public ExportAction withColumnExportPredicate(Predicate<Grid.Column<Object>> columnExportPredicate) {
+        setColumnExportPredicate(columnExportPredicate);
+        return this;
+    }
+
+    /**
+     * Sets a list of column keys to use for export. Has primary filtering priority.
+     *
+     * @param columnKeysToExport list of column keys
+     */
+    public void setColumnKeysToExport(List<String> columnKeysToExport) {
+        this.columnKeysToExport = columnKeysToExport;
+    }
+
+    /**
+     * @return this
+     * @see #setColumnKeysToExport(List)
+     */
+    public ExportAction withColumnKeysToExport(List<String> columnKeysToExport) {
+        setColumnKeysToExport(columnKeysToExport);
+        return this;
     }
 
     /**
@@ -195,17 +263,19 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
 
         List<Action> actions = new ArrayList<>();
 
+        Predicate<Grid.Column<Object>> primaryFilterPredicate = definePrimaryFilterPredicate();
+
         for (ExportMode exportMode : availableExportModes) {
             switch (exportMode) {
                 case ALL_ROWS -> {
                     if (isDataLoaderExist(target)) {
-                        actions.add(createExportAllAction());
+                        actions.add(createExportAllAction(primaryFilterPredicate));
                     }
                 }
-                case CURRENT_PAGE -> actions.add(createCurrentPageAction());
+                case CURRENT_PAGE -> actions.add(createCurrentPageAction(primaryFilterPredicate));
                 case SELECTED_ROWS -> {
                     if (!target.getSelectedItems().isEmpty()) {
-                        actions.add(createExportSelectedAction());
+                        actions.add(createExportSelectedAction(primaryFilterPredicate));
                     }
                 }
             }
@@ -222,10 +292,19 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
                 .open();
     }
 
+    protected Predicate<Grid.Column<Object>> definePrimaryFilterPredicate() {
+        if (!CollectionUtils.isEmpty(columnKeysToExport)) {
+            return column -> columnKeysToExport.contains(column.getKey());
+        } else {
+            return Objects.requireNonNullElse(columnExportPredicate,
+                    columnExportFilter.getFilterPredicate());
+        }
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected void doExport(ExportMode exportMode) {
+    protected void doExport(ExportMode exportMode, Predicate<Grid.Column<Object>> primaryFilterPredicate) {
         if (getTarget() instanceof Grid) {
-            dataGridExporter.exportDataGrid(downloader, (Grid) getTarget(), exportMode);
+            dataGridExporter.exportDataGrid(downloader, (DataGrid) getTarget(), exportMode, primaryFilterPredicate);
         } else {
             throw new UnsupportedOperationException("Unsupported component for export");
         }
@@ -235,22 +314,22 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
         return messages.getMessage(getClass(), id);
     }
 
-    protected Action createExportSelectedAction() {
+    protected Action createExportSelectedAction(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
         return new SecuredBaseAction("ExportMode.SELECTED_ROWS")
                 .withText(messages.getMessage(ExportMode.SELECTED_ROWS))
-                .withHandler(event -> doExport(ExportMode.SELECTED_ROWS));
+                .withHandler(event -> doExport(ExportMode.SELECTED_ROWS, primaryFilterPredicate));
     }
 
-    protected Action createExportAllAction() {
+    protected Action createExportAllAction(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
         return new SecuredBaseAction("ExportMode.CURRENT_PAGE")
                 .withText(messages.getMessage(ExportMode.ALL_ROWS))
-                .withHandler(event -> doExport(ExportMode.ALL_ROWS));
+                .withHandler(event -> doExport(ExportMode.ALL_ROWS, primaryFilterPredicate));
     }
 
-    protected Action createCurrentPageAction() {
+    protected Action createCurrentPageAction(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
         return new SecuredBaseAction("ExportMode.CURRENT_PAGE")
                 .withText(messages.getMessage(ExportMode.CURRENT_PAGE))
-                .withHandler(event -> doExport(ExportMode.CURRENT_PAGE));
+                .withHandler(event -> doExport(ExportMode.CURRENT_PAGE, primaryFilterPredicate));
     }
 
     protected boolean isDataLoaderExist(ListDataComponent<?> target) {

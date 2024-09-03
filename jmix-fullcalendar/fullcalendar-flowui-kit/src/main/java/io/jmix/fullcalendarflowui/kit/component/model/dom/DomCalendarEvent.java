@@ -18,6 +18,7 @@ package io.jmix.fullcalendarflowui.kit.component.model.dom;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * INTERNAL.
@@ -25,8 +26,6 @@ import java.util.Map;
 public class DomCalendarEvent implements Serializable {
 
     protected String id;
-
-    protected String title;
 
     protected String start;
 
@@ -42,14 +41,6 @@ public class DomCalendarEvent implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getStart() {
@@ -86,5 +77,20 @@ public class DomCalendarEvent implements Serializable {
 
     public String getSourceId() {
         return getExtendedProps().get("jmixSourceId").toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, getSourceId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        return (obj instanceof DomCalendarEvent eObj)
+                && Objects.equals(id, eObj.id)
+                && Objects.equals(getSourceId(), eObj.getSourceId());
     }
 }

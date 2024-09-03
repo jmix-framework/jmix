@@ -18,9 +18,14 @@ package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
 
+/**
+ * The context for generating class names that day header cell will use.
+ */
 public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
 
     protected final LocalDate date;
@@ -40,7 +45,7 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
     protected final ViewInfo viewInfo;
 
     public DayHeaderClassNamesContext(FullCalendar fullCalendar,
-                                      LocalDate date,
+                                      @Nullable LocalDate date,
                                       DayOfWeek dayOfWeek,
                                       boolean isDisabled,
                                       boolean isFuture,
@@ -60,36 +65,79 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * @return date that corresponds to header cell
+     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it returns
+     * {@code null} value.
+     *
+     * @return date that corresponds to day header cell
      */
+    @Nullable
     public LocalDate getDate() {
         return date;
     }
 
+    /**
+     * @return day header's day of week
+     */
     public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
     }
 
+    /**
+     * Cell can be disabled, for instance, if it is not in valid date range. See
+     * {@link FullCalendar#setValidRange(LocalDate, LocalDate)}.
+     * <p>
+     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it always
+     * returns {@code false} value.
+     *
+     * @return {@code true} if day header cell is disabled
+     */
     public boolean isDisabled() {
         return isDisabled;
     }
 
+    /**
+     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it always
+     * returns {@code false} value.
+     *
+     * @return whether the day header cell's date is in future compared with today's date
+     */
     public boolean isFuture() {
         return isFuture;
     }
 
+    /**
+     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it always
+     * returns {@code false} value.
+     *
+     * @return whether the day header cell's date is in other month
+     */
     public boolean isOther() {
         return isOther;
     }
 
+    /**
+     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it always
+     * returns {@code false} value.
+     *
+     * @return whether the day header cell's date is in past compared with today's date
+     */
     public boolean isPast() {
         return isPast;
     }
 
+    /**
+     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it always
+     * returns {@code false} value.
+     *
+     * @return whether the day header cell's date is today
+     */
     public boolean isToday() {
         return isToday;
     }
 
+    /**
+     * @return information about current calendar's view
+     */
     public ViewInfo getViewInfo() {
         return viewInfo;
     }

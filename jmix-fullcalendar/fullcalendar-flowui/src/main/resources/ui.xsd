@@ -378,10 +378,10 @@
         <xs:attribute name="additionalProperties" type="xs:string"/>
 
         <xs:attribute name="recurringDaysOfWeek" type="xs:string"/>
-        <xs:attribute name="recurringStartTime" type="xs:string"/>
-        <xs:attribute name="recurringEndTime" type="xs:string"/>
         <xs:attribute name="recurringStartDate" type="xs:string"/>
         <xs:attribute name="recurringEndDate" type="xs:string"/>
+        <xs:attribute name="recurringStartTime" type="xs:string"/>
+        <xs:attribute name="recurringEndTime" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="containerProviderType">

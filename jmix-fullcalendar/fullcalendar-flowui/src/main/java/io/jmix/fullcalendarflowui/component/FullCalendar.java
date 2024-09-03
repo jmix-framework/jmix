@@ -18,6 +18,8 @@ import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendar.Display;
 import io.jmix.fullcalendarflowui.component.data.*;
 import io.jmix.fullcalendarflowui.component.event.*;
+import io.jmix.fullcalendarflowui.component.event.AbstractEventMoveEvent;
+import io.jmix.fullcalendarflowui.component.event.AbstractEventMoveEvent.RelatedEventProviderContext;
 import io.jmix.fullcalendarflowui.component.event.MoreLinkClickEvent.EventProviderContext;
 import io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours;
 import io.jmix.fullcalendarflowui.component.model.option.FullCalendarOptions;
@@ -635,14 +637,19 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         List<EventProviderContext> eventProviderContexts = createMoreLinkEventProviderContexts(clientContext);
 
+        List<CalendarEvent> hiddenCalendarEvents = toCalendarEvents(clientContext.getHiddenEvents());
+        List<CalendarEvent> visibleCalendarEvents = toCalendarEvents(clientContext.getAllEvents());
+        visibleCalendarEvents.removeAll(hiddenCalendarEvents);
+
         getEventBus().fireEvent(
                 new MoreLinkClickEvent(this, event.isFromClient(),
                         clientContext.isAllDay(),
                         toLocalDateTime(clientContext.getDateTime()),
-                        createViewInfo(clientContext.getView()),
+                        visibleCalendarEvents,
+                        hiddenCalendarEvents,
                         eventProviderContexts,
-                        new MouseEventDetails(clientContext.getMouseDetails())
-                )
+                        new MouseEventDetails(clientContext.getMouseDetails()),
+                        createViewInfo(clientContext.getView()))
         );
     }
 
@@ -703,12 +710,14 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         getEventBus().fireEvent(
                 new EventDropEvent(this, event.isFromClient(),
-                        new MouseEventDetails(clientEvent.getMouseDetails()),
-                        createOldValues(clientEvent.getOldEvent()),
                         droppedEvent,
-                        getRelatedEvents(clientEvent.getRelatedEvents(), epManager),
-                        createViewInfo(clientEvent.getView()),
-                        createDelta(clientEvent.getDelta()))
+                        epManager.getEventProvider(),
+                        getRelatedEventProviderContexts(clientEvent.getRelatedEvents()),
+                        getRelatedEvents(clientEvent.getRelatedEvents()),
+                        createOldValues(clientEvent.getOldEvent()),
+                        createDelta(clientEvent.getDelta()),
+                        new MouseEventDetails(clientEvent.getMouseDetails()),
+                        createViewInfo(clientEvent.getView()))
         );
     }
 
@@ -723,13 +732,15 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         getEventBus().fireEvent(
                 new EventResizeEvent(this, event.isFromClient(),
-                        new MouseEventDetails(clientEvent.getMouseDetails()),
-                        createOldValues(clientEvent.getOldEvent()),
                         resizedEvent,
-                        getRelatedEvents(clientEvent.getRelatedEvents(), epManager),
-                        createViewInfo(clientEvent.getView()),
-                        createDelta(clientEvent.getStartDelta()),
-                        createDelta(clientEvent.getEndDelta())));
+                        epManager.getEventProvider(),
+                        getRelatedEventProviderContexts(clientEvent.getRelatedEvents()),
+                        getRelatedEvents(clientEvent.getRelatedEvents()),
+                        createOldValues(clientEvent.getOldEvent()),
+                        clientEvent.getStartDelta() == null ? null : createDelta(clientEvent.getStartDelta()),
+                        clientEvent.getEndDelta() == null ? null : createDelta(clientEvent.getEndDelta()),
+                        new MouseEventDetails(clientEvent.getMouseDetails()),
+                        createViewInfo(clientEvent.getView())));
     }
 
     @Override
@@ -789,8 +800,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 new MoreLinkClassNamesContext(
                         this,
                         clientContext.getEventsCount(),
-                        clientContext.getShortText(),
-                        clientContext.getText(),
                         createViewInfo(clientContext.getView())));
 
         JsonArray classNamesJson = classNames == null
@@ -813,7 +822,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         List<String> classNames = getDayHeaderClassNamesGenerator().apply(
                 new DayHeaderClassNamesContext(
                         this,
-                        parseIsoDate(clientContext.getDate()),
+                        clientContext.getDate() == null ? null : parseIsoDate(clientContext.getDate()),
                         Objects.requireNonNull(DayOfWeek.fromId(clientContext.getDow())),
                         clientContext.isDisabled(),
                         clientContext.isFuture(),
@@ -937,7 +946,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
-     * Returns transformed date-time from component's time zone to system defaule ({@link TimeZone#getDefault()}).
+     * Returns transformed date-time from component's time zone to system default ({@link TimeZone#getDefault()}).
      *
      * @param isoDateTime string to parse
      * @return transformed local date-time
@@ -969,10 +978,18 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 .orElseThrow(() -> new IllegalStateException("There is no event provider with ID:" + sourceId));
     }
 
-    protected List<CalendarEvent> getRelatedEvents(List<DomCalendarEvent> relatedEvents,
-                                                   AbstractEventProviderManager epManager) {
+    /**
+     * Returns all related calendar events, even if they are from different event providers.
+     * <p>
+     * Note, it applies changes to {@link CalendarEvent}.
+     *
+     * @param relatedEvents list of raw related events
+     * @return related calendar events
+     */
+    protected List<CalendarEvent> getRelatedEvents(List<DomCalendarEvent> relatedEvents) {
         List<CalendarEvent> calendarEvents = new ArrayList<>(relatedEvents.size());
         for (DomCalendarEvent changedEvent : relatedEvents) {
+            AbstractEventProviderManager epManager = getEventProviderManager(changedEvent.getSourceId());
             CalendarEvent relatedEvent = getCalendarEvent(changedEvent, epManager);
 
             calendarEvents.add(relatedEvent);
@@ -980,6 +997,21 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
             applyChangesToCalendarEvent(relatedEvent, changedEvent);
         }
         return calendarEvents;
+    }
+
+    protected List<RelatedEventProviderContext> getRelatedEventProviderContexts(List<DomCalendarEvent> relatedEvents) {
+        List<RelatedEventProviderContext> contexts = new ArrayList<>(eventProvidersMap.size());
+
+        for (AbstractEventProviderManager epManager : eventProvidersMap.values()) {
+            List<CalendarEvent> calendarEvents = relatedEvents.stream()
+                    .filter(e -> epManager.getSourceId().equals(e.getSourceId()))
+                    .map(e -> epManager.getCalendarEvent(e.getId()))
+                    .toList();
+            if (!calendarEvents.isEmpty()) {
+                contexts.add(new RelatedEventProviderContext(epManager.getEventProvider(), calendarEvents));
+            }
+        }
+        return contexts;
     }
 
     protected CalendarEvent getCalendarEvent(DomCalendarEvent clientEvent, AbstractEventProviderManager epManager) {
@@ -1009,7 +1041,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
         for (AbstractEventProviderManager epManager : eventProvidersMap.values()) {
             EventProviderContext eventProviderContext =
-                    createMoreLinkEventProviderContext(epManager, context.getAllData(), context.getHiddenData());
+                    createMoreLinkEventProviderContext(epManager, context.getAllEvents(), context.getHiddenEvents());
 
             if (eventProviderContext != null) {
                 eventProviderContexts.add(eventProviderContext);
@@ -1020,34 +1052,43 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Nullable
     protected EventProviderContext createMoreLinkEventProviderContext(AbstractEventProviderManager epWrapper,
-                                                                      List<DomSegment> allData,
-                                                                      List<DomSegment> hiddenData) {
-        List<DomSegment> visibleData = new ArrayList<>();
-        allData.stream().filter(s -> !hiddenData.contains(s)).forEach(visibleData::add);
+                                                                      List<DomCalendarEvent> allEvents,
+                                                                      List<DomCalendarEvent> hiddenEvents) {
+        List<DomCalendarEvent> visibleEvents = new ArrayList<>();
+        allEvents.stream().filter(s -> !hiddenEvents.contains(s)).forEach(visibleEvents::add);
 
-        List<CalendarEvent> visibleEvents = toCalendarEvents(epWrapper, visibleData);
-        List<CalendarEvent> hiddenEvents = toCalendarEvents(epWrapper, hiddenData);
+        List<CalendarEvent> visibleCalendarEvents = toCalendarEvents(epWrapper, visibleEvents);
+        List<CalendarEvent> hiddenCalendarEvents = toCalendarEvents(epWrapper, hiddenEvents);
 
-        if (CollectionUtils.isEmpty(visibleEvents)
-                && CollectionUtils.isEmpty(hiddenEvents)) {
+        if (CollectionUtils.isEmpty(visibleCalendarEvents)
+                && CollectionUtils.isEmpty(hiddenCalendarEvents)) {
             return null;
         }
 
-        return new EventProviderContext(epWrapper.getEventProvider(), visibleEvents, hiddenEvents);
+        return new EventProviderContext(epWrapper.getEventProvider(), visibleCalendarEvents, hiddenCalendarEvents);
     }
 
-    protected List<CalendarEvent> toCalendarEvents(AbstractEventProviderManager epWrapper, List<DomSegment> segments) {
+    protected List<CalendarEvent> toCalendarEvents(List<DomCalendarEvent> events) {
+        List<CalendarEvent> calendarEvents = new ArrayList<>(events.size());
+        for (DomCalendarEvent changedEvent : events) {
+            AbstractEventProviderManager epManager = getEventProviderManager(changedEvent.getSourceId());
+            calendarEvents.add(getCalendarEvent(changedEvent, epManager));
+        }
+        return calendarEvents;
+    }
+
+    protected List<CalendarEvent> toCalendarEvents(AbstractEventProviderManager epWrapper, List<DomCalendarEvent> segments) {
         return segments.stream()
-                .filter(e -> e.getEventSourceId().equals(epWrapper.getSourceId()))
-                .map(e -> epWrapper.getCalendarEvent(e.getEventId()))
+                .filter(e -> e.getSourceId().equals(epWrapper.getSourceId()))
+                .map(e -> epWrapper.getCalendarEvent(e.getId()))
                 .toList();
     }
 
-    protected AbstractEventChangeEvent.OldValues createOldValues(DomCalendarEvent clientEvent) {
+    protected AbstractEventMoveEvent.OldValues createOldValues(DomCalendarEvent clientEvent) {
         LocalDateTime endDateTime = !Strings.isNullOrEmpty(clientEvent.getEnd())
                 ? transformToLocalDateTime(clientEvent.getEnd())
                 : null;
-        return new AbstractEventChangeEvent.OldValues(
+        return new AbstractEventMoveEvent.OldValues(
                 transformToLocalDateTime(clientEvent.getStart()),
                 endDateTime,
                 clientEvent.isAllDay());
@@ -1062,10 +1103,10 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     protected ViewInfo createViewInfo(DomViewInfo clientViewInfo) {
         return new ViewInfo(
-                parseIsoDate(clientViewInfo.getActiveEnd()),
                 parseIsoDate(clientViewInfo.getActiveStart()),
-                parseIsoDate(clientViewInfo.getCurrentEnd()),
+                parseIsoDate(clientViewInfo.getActiveEnd()),
                 parseIsoDate(clientViewInfo.getCurrentStart()),
+                parseIsoDate(clientViewInfo.getCurrentEnd()),
                 getCalendarView(clientViewInfo.getType()));
     }
 

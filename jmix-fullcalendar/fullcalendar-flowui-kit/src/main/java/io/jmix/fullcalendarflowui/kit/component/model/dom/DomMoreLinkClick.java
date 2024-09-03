@@ -32,9 +32,9 @@ public class DomMoreLinkClick implements Serializable {
 
     protected DomMouseEventDetails mouseDetails;
 
-    protected List<DomSegment> allData;
+    protected List<DomCalendarEvent> allEvents;
 
-    protected List<DomSegment> hiddenData;
+    protected List<DomCalendarEvent> hiddenEvents;
 
     public boolean isAllDay() {
         return allDay;
@@ -68,19 +68,19 @@ public class DomMoreLinkClick implements Serializable {
         this.mouseDetails = mouseDetails;
     }
 
-    public List<DomSegment> getAllData() {
-        return allData;
+    public List<DomCalendarEvent> getAllEvents() {
+        return allEvents;
     }
 
-    public void setAllData(List<DomSegment> allData) {
-        this.allData = allData;
+    public void setAllEvents(List<DomCalendarEvent> allEvents) {
+        this.allEvents = allEvents;
     }
 
-    public List<DomSegment> getHiddenData() {
-        return hiddenData;
+    public List<DomCalendarEvent> getHiddenEvents() {
+        return hiddenEvents;
     }
 
-    public void setHiddenData(List<DomSegment> hiddenData) {
-        this.hiddenData = hiddenData;
+    public void setHiddenEvents(List<DomCalendarEvent> hiddenEvents) {
+        this.hiddenEvents = hiddenEvents;
     }
 }

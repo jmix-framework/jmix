@@ -33,6 +33,11 @@ const FC_TIMEGRID_SLOT_LABEL = 'fc-timegrid-slot-label';
 const FC_TIMEGRID_NOW_INDICATOR_ARROW = 'fc-timegrid-now-indicator-arrow';
 const FC_TIMEGRID_NOW_INDICATOR_LINE = 'fc-timegrid-now-indicator-line';
 
+const DAY_GRID_DAY = "dayGridDay";
+const DAY_GRID_WEEK = "dayGridWeek";
+const DAY_GRID_MONTH = "dayGridMonth";
+const DAY_GRID_YEAR = "dayGridYear";
+
 class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     static get template() {
         return html`
@@ -267,8 +272,17 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onDayHeaderClassNames(e) {
+        let date = null;
+        const viewType = e.view.type;
+        // If current view is not DAY_GRID_MONTH or DAY_GRID_YEAR we
+        // should provide a date value. Otherwise, null value will be sent,
+        // because dates for headers in month and year are equal to 1970 year.
+        if (viewType !== DAY_GRID_MONTH
+            && viewType !== DAY_GRID_YEAR) {
+            date = this.formatDate(e.date, true) // omit time
+        }
         const context = {
-            date: this.formatDate(e.date, true), // omit time
+            date: date,
             dow: e.dow,
             isDisabled: e.isDisabled,
             isFuture: e.isFuture,
@@ -366,8 +380,6 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     _onMoreLinkClassNames(e) {
         const context = {
             eventsCount: e.num,
-            shortText: e.shortText,
-            text: e.text,
             view: utils.createViewInfo(e.view, this.calendar.formatIso.bind(this.calendar))
         }
         const classNamesPromise = this.$server.getMoreLinkClassNames(context);
@@ -397,8 +409,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
                     dateTime: this.formatDate(dateStr),
                     view: utils.createViewInfo(e.view, this.formatDate.bind(this)),
                     mouseDetails: utils.createMouseDetails(e.jsEvent),
-                    allData: utils.segmentsToServerData(e.allSegs, this.formatDate.bind(this)),
-                    hiddenData: utils.segmentsToServerData(e.hiddenSegs, this.formatDate.bind(this)),
+                    allEvents: utils.segmentsToServerData(e.allSegs, this.formatDate.bind(this)),
+                    hiddenEvents: utils.segmentsToServerData(e.hiddenSegs, this.formatDate.bind(this)),
                 }
             }
         }))
@@ -459,8 +471,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.dispatchEvent(new CustomEvent('jmix-event-resize', {
             detail: {
                 context: {
-                    startDelta: e.startDelta,
-                    endDelta: e.endDelta,
+                    ...(utils.isNotZeroDuration(e.startDelta)) && {startDelta: e.startDelta},
+                    ...(utils.isNotZeroDuration(e.endDelta)) && {endDelta: e.endDelta},
                     event: utils.eventToServerData(e.event),
                     oldEvent: utils.eventToServerData(e.oldEvent),
                     mouseDetails: utils.createMouseDetails(e.jsEvent),
@@ -522,10 +534,10 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
 
     _onDayCellDidMount(e) {
         const viewType = this.calendar.view.type;
-        if (viewType !== 'dayGridDay'
-            && viewType !== 'dayGridWeek'
-            && viewType !== 'dayGridMonth'
-            && viewType !== 'dayGridYear') {
+        if (viewType !== DAY_GRID_DAY
+            && viewType !== DAY_GRID_WEEK
+            && viewType !== DAY_GRID_MONTH
+            && viewType !== DAY_GRID_YEAR) {
             return;
         }
         e.el.addEventListener("contextmenu", (jsEvent) => {
@@ -698,6 +710,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             dateTime = new Date(dateTime);
         }
 
+        // todo use moment.js and move to utils
         const dateFormatter = this.calendar.formatIso.bind(this.calendar);
 
         return dateFormatter(dateTime, omitTime);

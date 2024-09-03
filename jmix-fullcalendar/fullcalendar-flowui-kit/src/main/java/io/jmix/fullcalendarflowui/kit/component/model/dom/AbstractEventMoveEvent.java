@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * INTERNAL.
  */
-public class AbstractEventDropResize implements Serializable {
+public class AbstractEventMoveEvent implements Serializable {
 
     protected DomCalendarEvent event;
 

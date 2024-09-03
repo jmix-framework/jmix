@@ -84,8 +84,14 @@ export function createMouseDetails(jsEvent) {
 export function segmentsToServerData(segments, dateFormatter) {
     const serverData = [];
 
-    segments.forEach((segment) =>
-        serverData.push(segmentToServerData(segment, dateFormatter)));
+    segments.forEach((segment) => serverData.push({
+        id: segment.event.id,
+        start: dateFormatter(segment.start),
+        ...(segment.end) && {end: dateFormatter(segment.end)},
+        extendedProps: {
+            jmixSourceId: segment.event.extendedProps.jmixSourceId,
+        }
+    }));
 
     return serverData;
 }
@@ -103,17 +109,6 @@ export function eventsToServerData(events) {
 
 export function eventToServerData(event) {
     return event.toJSON();
-}
-
-export function segmentToServerData(segment, dateFormatter) {
-    return {
-        endDate: dateFormatter(segment.end),
-        startDate: dateFormatter(segment.start),
-        isEnd: segment.isEnd,
-        isStart: segment.isStart,
-        eventId: segment.event.id,
-        eventSourceId: segment.event.extendedProps.jmixSourceId,
-    }
 }
 
 export function createCalendarCellDetailsFromElement(dayCellElement) {
@@ -238,6 +233,17 @@ export function findElementRecursivelyByInnerText(element, innerText) {
             }
         }
     }
+}
+
+export function isNotZeroDuration(duration) {
+    return duration.years && duration.years !== 0
+        || duration.months && duration.months !== 0
+        || duration.weeks && duration.weeks !== 0
+        || duration.days && duration.days !== 0
+        || duration.hours && duration.hours !== 0
+        || duration.minutes && duration.minutes !== 0
+        || duration.seconds && duration.seconds !== 0
+        || duration.milliseconds && duration.milliseconds !== 0;
 }
 
 export default createViewInfo;

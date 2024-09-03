@@ -48,98 +48,94 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         componentLoaderSupport.loadSizeAttributes(resultComponent, element);
         componentLoaderSupport.loadClassNames(resultComponent, element);
 
+        loadBoolean(element, "allDayMaintainDurationEnabled",
+                resultComponent::setAllDayMaintainDurationEnabled);
+        loadBoolean(element, "dayHeadersVisible", resultComponent::setDayHeadersVisible);
+        loadInteger(element, "dayMaxEvents", resultComponent::setDayMaxEvents);
+        loadInteger(element, "dayMaxEventRows", resultComponent::setDayMaxEventRows);
+        loadString(element, "dateAlignment", resultComponent::setDateAlignment);
+        loadBoolean(element, "defaultAllDay", resultComponent::setDefaultAllDay);
+        loadDuration(element, "defaultAllDayEventDuration", resultComponent::setDefaultAllDayEventDuration);
+        loadResourceString(element, "defaultDayHeaderFormat", context.getMessageGroup(),
+                resultComponent::setDefaultDayHeaderFormat);
+        loadBoolean(element, "defaultDayMaxEventRowsEnabled",
+                resultComponent::setDefaultDayMaxEventRowsEnabled);
+        loadBoolean(element, "defaultDayMaxEventsEnabled",
+                resultComponent::setDefaultDayMaxEventsEnabled);
+        loadResourceString(element, "defaultDayPopoverFormat", context.getMessageGroup(),
+                resultComponent::setDefaultDayPopoverFormat);
+        loadBoolean(element, "defaultBusinessHoursEnabled",
+                resultComponent::setDefaultBusinessHoursEnabled);
+        loadResourceString(element, "defaultEventTimeFormat", context.getMessageGroup(),
+                resultComponent::setDefaultEventTimeFormat);
+        loadResourceString(element, "defaultSlotLabelFormat", context.getMessageGroup(),
+                resultComponent::setDefaultSlotNumberFormat);
+        loadDuration(element, "defaultTimedEventDuration", resultComponent::setDefaultTimedEventDuration);
+        loadResourceString(element, "defaultWeekNumberFormat", context.getMessageGroup(),
+                resultComponent::setDefaultWeekNumberFormat);
+        loadBoolean(element, "displayEventTime", resultComponent::setDisplayEventTime);
+        loadInteger(element, "dragRevertDuration", resultComponent::setDragRevertDuration);
+        loadBoolean(element, "dragScroll", resultComponent::setDragScroll);
+
+        loadString(element, "eventBackgroundColor", resultComponent::setEventBackgroundColor);
+        loadString(element, "eventBorderColor", resultComponent::setEventBorderColor);
+        loadString(element, "eventConstraintGroupId", resultComponent::setEventConstraintGroupId);
+        loadEnum(element, Display.class, "eventDisplay", resultComponent::setEventDisplay);
+        loadInteger(element, "eventDragMinDistance", resultComponent::setEventDragMinDistance);
+        loadBoolean(element, "eventDurationEditable", resultComponent::setEventDurationEditable);
+        loadBoolean(element, "eventInteractive", resultComponent::setEventInteractive);
+        loadInteger(element, "eventMaxStack", resultComponent::setEventMaxStack);
+        loadStringList(element, "eventOrder", resultComponent::setEventOrder);
+        loadBoolean(element, "eventOrderStrict", resultComponent::setEventOrderStrict);
+        loadBoolean(element, "eventOverlap", resultComponent::setEventOverlap);
+        loadBoolean(element, "eventResizableFromStart", resultComponent::setEventResizableFromStart);
+        loadBoolean(element, "eventStartEditable", resultComponent::setEventStartEditable);
+        loadString(element, "eventTextColor", resultComponent::setEventTextColor);
+        loadBoolean(element, "expandRows", resultComponent::setExpandRows);
+
+        loadEnum(element, DayOfWeek.class, "firstDayOfWeek", resultComponent::setFirstDayOfWeek);
+        loadBoolean(element, "forceEventDuration", resultComponent::setForceEventDuration);
+
+        loadString(element, "initialDate", (s) -> resultComponent.setInitialDate(LocalDate.parse(s)));
+
+        loadInteger(element, "longPressDelay", resultComponent::setLongPressDelay);
+
+        loadStringList(element, "moreLinkClassNames", resultComponent::setMoreLinkClassNames);
+        loadMoreLinkView(element, resultComponent::setMoreLinkCalendarView);
+
+        loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
+        loadDuration(element, "nextDayThreshold", resultComponent::setNextDayThreshold);
+        loadBoolean(element, "nowIndicatorVisible", resultComponent::setNowIndicatorVisible);
+
+        loadBoolean(element, "progressiveEventRendering", resultComponent::setProgressiveEventRendering);
+
+        loadDuration(element, "scrollTime", resultComponent::setScrollTime);
+        loadBoolean(element, "scrollTimeReset", resultComponent::setScrollTimeReset);
+        loadString(element, "selectConstraintGroupId", resultComponent::setSelectConstraintGroupId);
+        loadBoolean(element, "selectionEnabled", resultComponent::setSelectionEnabled);
+        loadInteger(element, "selectLongPressDelay", resultComponent::setSelectLongPressDelay);
+        loadInteger(element, "selectMinDistance", resultComponent::setSelectMinDistance);
+        loadBoolean(element, "selectMirror", resultComponent::setSelectMirror);
+        loadBoolean(element, "selectOverlap", resultComponent::setSelectOverlap);
+        loadDuration(element, "slotDuration", resultComponent::setSlotDuration);
+        loadDuration(element, "slotLabelInterval", resultComponent::setSlotLabelInterval);
+        loadDuration(element, "slotMaxTime", resultComponent::setSlotMaxTime);
+        loadDuration(element, "slotMinTime", resultComponent::setSlotMinTime);
+        loadDuration(element, "snapDuration", resultComponent::setSnapDuration);
+
+        loadBoolean(element, "unselectAuto", resultComponent::setUnselectAuto);
+        loadString(element, "unselectCancelSelector", resultComponent::setUnselectCancelSelector);
+
+        loadBoolean(element, "weekendsVisible", resultComponent::setWeekendsVisible);
+        loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
+        loadInteger(element, "windowResizeDelay", resultComponent::setWindowResizeDelay);
+
         viewProperties().loadCalendarViewProperties(element, resultComponent);
         viewProperties().loadCustomCalendarViews(element, resultComponent);
         loadInitialView(element, resultComponent);
 
-        loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
-        loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
-        loadBoolean(element, "defaultDayMaxEventRowsEnabled", resultComponent::setDefaultDayMaxEventRowsEnabled);
-        loadInteger(element, "dayMaxEventRows", resultComponent::setDayMaxEventRows);
-        loadBoolean(element, "defaultDayMaxEventsEnabled", resultComponent::setDefaultDayMaxEventsEnabled);
-        loadInteger(element, "dayMaxEvents", resultComponent::setDayMaxEvents);
-        loadInteger(element, "eventMaxStack", resultComponent::setEventMaxStack);
-
-        loadMoreLinkView(element, resultComponent::setMoreLinkCalendarView);
-        loadStringList(element, "moreLinkClassNames", resultComponent::setMoreLinkClassNames);
-
-        loadBoolean(element, "eventStartEditable", resultComponent::setEventStartEditable);
-        loadBoolean(element, "eventDurationEditable", resultComponent::setEventDurationEditable);
-        loadBoolean(element, "eventResizableFromStart", resultComponent::setEventResizableFromStart);
-        loadInteger(element, "eventDragMinDistance", resultComponent::setEventDragMinDistance);
-        loadBoolean(element, "eventOverlap", resultComponent::setEventOverlap);
-        loadString(element, "eventConstraintGroupId", resultComponent::setEventConstraintGroupId);
-
-        loadInteger(element, "dragRevertDuration", resultComponent::setDragRevertDuration);
-        loadBoolean(element, "dragScroll", resultComponent::setDragScroll);
-
-        loadBoolean(element, "allDayMaintainDurationEnabled",
-                resultComponent::setAllDayMaintainDurationEnabled);
-        loadDuration(element, "snapDuration", resultComponent::setSnapDuration);
-
-        loadBoolean(element, "defaultBusinessHoursEnabled", resultComponent::setDefaultBusinessHoursEnabled);
         loadBusinessHours(element, resultComponent::setBusinessHours);
-
-        loadBoolean(element, "selectionEnabled", resultComponent::setSelectionEnabled);
-        loadBoolean(element, "selectMirror", resultComponent::setSelectMirror);
-        loadBoolean(element, "unselectAuto", resultComponent::setUnselectAuto);
-        loadString(element, "unselectCancelSelector", resultComponent::setUnselectCancelSelector);
-        loadBoolean(element, "selectOverlap", resultComponent::setSelectOverlap);
-        loadString(element, "selectConstraintGroupId", resultComponent::setSelectConstraintGroupId);
-        loadInteger(element, "selectMinDistance", resultComponent::setSelectMinDistance);
-
-        loadResourceString(element, "defaultDayPopoverFormat", context.getMessageGroup(),
-                resultComponent::setDefaultDayPopoverFormat);
-        loadResourceString(element, "defaultDayHeaderFormat", context.getMessageGroup(),
-                resultComponent::setDefaultDayHeaderFormat);
-        loadResourceString(element, "defaultWeekNumberFormat", context.getMessageGroup(),
-                resultComponent::setDefaultWeekNumberFormat);
-        loadResourceString(element, "defaultSlotLabelFormat", context.getMessageGroup(),
-                resultComponent::setDefaultSlotNumberFormat);
-        loadResourceString(element, "defaultEventTimeFormat", context.getMessageGroup(),
-                resultComponent::setDefaultEventTimeFormat);
-
-        loadBoolean(element, "weekendsVisible", resultComponent::setWeekendsVisible);
-        loadBoolean(element, "dayHeadersVisible", resultComponent::setDayHeadersVisible);
-
         loadHiddenDays(element, resultComponent);
-
-        loadDuration(element, "slotDuration", resultComponent::setSlotDuration);
-        loadDuration(element, "slotLabelInterval", resultComponent::setSlotLabelInterval);
-        loadDuration(element, "slotMinTime", resultComponent::setSlotMinTime);
-        loadDuration(element, "slotMaxTime", resultComponent::setSlotMaxTime);
-        loadDuration(element, "scrollTime", resultComponent::setScrollTime);
-        loadBoolean(element, "scrollTimeReset", resultComponent::setScrollTimeReset);
-
-        loadBoolean(element, "defaultAllDay", resultComponent::setDefaultAllDay);
-        loadDuration(element, "defaultAllDayEventDuration", resultComponent::setDefaultAllDayEventDuration);
-        loadDuration(element, "defaultTimedEventDuration", resultComponent::setDefaultTimedEventDuration);
-        loadBoolean(element, "forceEventDuration", resultComponent::setForceEventDuration);
-
-        loadString(element, "initialDate", (s) -> resultComponent.setInitialDate(LocalDate.parse(s)));
-        loadString(element, "dateAlignment", resultComponent::setDateAlignment);
-
-        loadEnum(element, DayOfWeek.class, "firstDayOfWeek", resultComponent::setFirstDayOfWeek);
-
-        loadBoolean(element, "expandRows", resultComponent::setExpandRows);
-        loadInteger(element, "windowResizeDelay", resultComponent::setWindowResizeDelay);
-
-        loadBoolean(element, "eventInteractive", resultComponent::setEventInteractive);
-
-        loadInteger(element, "longPressDelay", resultComponent::setLongPressDelay);
-        loadInteger(element, "selectLongPressDelay", resultComponent::setSelectLongPressDelay);
-
-        loadBoolean(element, "nowIndicatorVisible", resultComponent::setNowIndicatorVisible);
-
-        loadString(element, "eventBackgroundColor", resultComponent::setEventBackgroundColor);
-        loadString(element, "eventBorderColor", resultComponent::setEventBorderColor);
-        loadString(element, "eventTextColor", resultComponent::setEventTextColor);
-        loadEnum(element, Display.class, "eventDisplay", resultComponent::setEventDisplay);
-        loadBoolean(element, "displayEventTime", resultComponent::setDisplayEventTime);
-        loadDuration(element, "nextDayThreshold", resultComponent::setNextDayThreshold);
-        loadBoolean(element, "eventOrderStrict", resultComponent::setEventOrderStrict);
-        loadBoolean(element, "progressiveEventRendering", resultComponent::setProgressiveEventRendering);
-        loadStringList(element, "eventOrder", resultComponent::setEventOrder);
 
         loadEventProviders(element, "containerEventProvider",
                 (ep) -> resultComponent.addEventProvider((CalendarEventProvider) ep));
@@ -147,7 +143,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
                 (ep) -> resultComponent.addEventProvider((LazyCalendarEventProvider) ep));
     }
 
-    protected void loadEventProviders(Element element, String providerTag, Consumer<BaseCalendarEventProvider> setter) {
+    protected void loadEventProviders(Element element, String providerTag,
+                                      Consumer<BaseCalendarEventProvider> setter) {
         Element eventProvidersElement = element.element("eventProviders");
         if (eventProvidersElement != null) {
             eventProvidersElement.elements(providerTag)
@@ -178,7 +175,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         return calendarItems;
     }
 
-    protected void loadBaseContainerProperties(Element eventProviderElement, AbstractEntityEventProvider<?> calendarItems) {
+    protected void loadBaseContainerProperties(Element eventProviderElement,
+                                               AbstractEntityEventProvider<?> calendarItems) {
         loadString(eventProviderElement, "groupId", calendarItems::setGroupIdProperty);
         loadString(eventProviderElement, "allDay", calendarItems::setAllDayProperty);
         loadString(eventProviderElement, "startDateTime", calendarItems::setStartDateTimeProperty);
@@ -198,11 +196,16 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
 
         loadStringList(eventProviderElement, "additionalProperties", calendarItems::setAdditionalProperties);
 
-        loadString(eventProviderElement, "recurringDaysOfWeek", calendarItems::setRecurringDaysOfWeekProperty);
-        loadString(eventProviderElement, "recurringStartDate", calendarItems::setRecurringStartDateProperty);
-        loadString(eventProviderElement, "recurringEndDate", calendarItems::setRecurringEndDateProperty);
-        loadString(eventProviderElement, "recurringStartTime", calendarItems::setRecurringStartTimeProperty);
-        loadString(eventProviderElement, "recurringEndTime", calendarItems::setRecurringEndTimeProperty);
+        loadString(eventProviderElement, "recurringDaysOfWeek",
+                calendarItems::setRecurringDaysOfWeekProperty);
+        loadString(eventProviderElement, "recurringStartDate",
+                calendarItems::setRecurringStartDateProperty);
+        loadString(eventProviderElement, "recurringEndDate",
+                calendarItems::setRecurringEndDateProperty);
+        loadString(eventProviderElement, "recurringStartTime",
+                calendarItems::setRecurringStartTimeProperty);
+        loadString(eventProviderElement, "recurringEndTime",
+                calendarItems::setRecurringEndTimeProperty);
     }
 
     protected AbstractEntityEventProvider<?> createCalendarItems(Element eventProviderElement,

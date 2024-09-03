@@ -25,10 +25,6 @@ public class DomMoreLinkClassNames implements Serializable {
 
     protected Integer eventsCount;
 
-    protected String shortText;
-
-    protected String text;
-
     protected DomViewInfo view;
 
     public Integer getEventsCount() {
@@ -37,22 +33,6 @@ public class DomMoreLinkClassNames implements Serializable {
 
     public void setEventsCount(Integer eventsCount) {
         this.eventsCount = eventsCount;
-    }
-
-    public String getShortText() {
-        return shortText;
-    }
-
-    public void setShortText(String shortText) {
-        this.shortText = shortText;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public DomViewInfo getView() {

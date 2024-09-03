@@ -17,9 +17,14 @@
 package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
 
 import java.time.LocalTime;
 
+/**
+ * The context for generating class names for labels in time slots in time views: {@link CalendarViewType#TIME_GRID_DAY}
+ * and {@link CalendarViewType#TIME_GRID_WEEK}.
+ */
 public class SlotLabelClassNamesContext extends AbstractFullCalendarContext {
 
     protected final LocalTime time;
@@ -35,7 +40,8 @@ public class SlotLabelClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * Returns time as is from component without transformation.
+     * Returns time as is from component without transformation. It means that value corresponds component's
+     * TimeZone.
      *
      * @return slot time
      */
@@ -43,6 +49,9 @@ public class SlotLabelClassNamesContext extends AbstractFullCalendarContext {
         return time;
     }
 
+    /**
+     * @return information about current calendar's view
+     */
     public ViewInfo getViewInfo() {
         return viewInfo;
     }

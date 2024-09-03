@@ -16,28 +16,32 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model.dom;
 
+import jakarta.annotation.Nullable;
+
 /**
  * INTERNAL.
  */
-public class DomEventResize extends AbstractEventDropResize {
+public class DomEventResize extends AbstractEventMoveEvent {
 
     protected DomCalendarDuration startDelta;
 
     protected DomCalendarDuration endDelta;
 
+    @Nullable
     public DomCalendarDuration getStartDelta() {
         return startDelta;
     }
 
-    public void setStartDelta(DomCalendarDuration startDelta) {
+    public void setStartDelta(@Nullable DomCalendarDuration startDelta) {
         this.startDelta = startDelta;
     }
 
+    @Nullable
     public DomCalendarDuration getEndDelta() {
         return endDelta;
     }
 
-    public void setEndDelta(DomCalendarDuration endDelta) {
+    public void setEndDelta(@Nullable DomCalendarDuration endDelta) {
         this.endDelta = endDelta;
     }
 }

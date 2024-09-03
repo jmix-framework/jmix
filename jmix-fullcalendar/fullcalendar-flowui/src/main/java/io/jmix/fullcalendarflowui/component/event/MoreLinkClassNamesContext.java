@@ -2,40 +2,33 @@ package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 
+/**
+ * The context for generating class names for "more" link.
+ */
 public class MoreLinkClassNamesContext extends AbstractFullCalendarContext {
 
     protected final Integer eventsCount;
-
-    protected final String shortText;
-
-    protected final String text;
 
     protected final ViewInfo viewInfo;
 
     public MoreLinkClassNamesContext(FullCalendar fullCalendar,
                                      Integer eventsCount,
-                                     String shortText,
-                                     String text,
                                      ViewInfo viewInfo) {
         super(fullCalendar);
         this.eventsCount = eventsCount;
-        this.shortText = shortText;
-        this.text = text;
         this.viewInfo = viewInfo;
     }
 
+    /**
+     * @return count of hidden events
+     */
     public Integer getEventsCount() {
         return eventsCount;
     }
 
-    public String getShortText() {
-        return shortText;
-    }
-
-    public String getText() {
-        return text;
-    }
-
+    /**
+     * @return information about current calendar's view
+     */
     public ViewInfo getViewInfo() {
         return viewInfo;
     }

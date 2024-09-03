@@ -19,7 +19,7 @@ package io.jmix.fullcalendarflowui.kit.component.model.dom;
 /**
  * INTERNAL.
  */
-public class DomEventDrop extends AbstractEventDropResize {
+public class DomEventDrop extends AbstractEventMoveEvent {
 
     protected DomCalendarDuration delta;
 

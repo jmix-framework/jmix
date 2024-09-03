@@ -17,9 +17,14 @@
 package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
 
 import java.time.LocalDateTime;
 
+/**
+ * The context for generating class names for "now" indicator in time views: {@link CalendarViewType#TIME_GRID_DAY}
+ * and {@link CalendarViewType#TIME_GRID_WEEK}.
+ */
 public class NowIndicatorClassNamesContext extends AbstractFullCalendarContext {
 
     protected final boolean isAxis;
@@ -47,9 +52,10 @@ public class NowIndicatorClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * Returns date-time as is from component without transformation.
+     * Returns date-time as is from component without transformation. It means that value corresponds component's
+     * TimeZone.
      * <p>
-     * For now-indicator's line the time part will be {@code 00:00}.
+     * For now-indicator's line the time part will be {@code 00:00:00}.
      *
      * @return indicator's date-time
      */
@@ -57,6 +63,9 @@ public class NowIndicatorClassNamesContext extends AbstractFullCalendarContext {
         return dateTime;
     }
 
+    /**
+     * @return information about current calendar's view
+     */
     public ViewInfo getViewInfo() {
         return viewInfo;
     }

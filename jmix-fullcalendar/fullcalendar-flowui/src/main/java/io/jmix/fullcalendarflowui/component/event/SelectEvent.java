@@ -7,6 +7,11 @@ import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 
+/**
+ * The event is fired when a date/time selection is made.
+ * <p>
+ * Selection mode can be enabled by {@link FullCalendar#setSelectionEnabled(boolean)}.
+ */
 public class SelectEvent extends ComponentEvent<FullCalendar> {
 
     protected final LocalDateTime startDateTime;
@@ -37,7 +42,8 @@ public class SelectEvent extends ComponentEvent<FullCalendar> {
     }
 
     /**
-     * Returns date-time as is from component without transformation.
+     * Returns date-time as is from component without transformation. It means that value corresponds component's
+     * TimeZone.
      *
      * @return start date-time of selection
      */
@@ -46,7 +52,8 @@ public class SelectEvent extends ComponentEvent<FullCalendar> {
     }
 
     /**
-     * Returns date-time as is from component without transformation.
+     * Returns date-time as is from component without transformation. It means that value corresponds component's
+     * TimeZone.
      *
      * @return end date-time of selection
      */
@@ -54,14 +61,24 @@ public class SelectEvent extends ComponentEvent<FullCalendar> {
         return endDateTime;
     }
 
+    /**
+     * @return whether the selection happened on all-day cells
+     */
     public boolean isAllDay() {
         return allDay;
     }
 
+    /**
+     * @return information about current calendar's view
+     */
     public ViewInfo getViewInfo() {
         return viewInfo;
     }
 
+    /**
+     * @return information about mouse click or {@code null} if selection is performed by component methods like
+     * {@link FullCalendar#select(LocalDateTime, LocalDateTime)}
+     */
     @Nullable
     public MouseEventDetails getMouseEventDetails() {
         return mouseEventDetails;

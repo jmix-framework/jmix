@@ -21,6 +21,9 @@ import io.jmix.fullcalendarflowui.component.FullCalendar;
 
 import java.time.LocalDate;
 
+/**
+ * The context for generating class names that day cell will use.
+ */
 public class DayCellClassNamesContext extends AbstractFullCalendarContext {
 
     protected final LocalDate date;
@@ -66,30 +69,54 @@ public class DayCellClassNamesContext extends AbstractFullCalendarContext {
         return date;
     }
 
+    /**
+     * @return cell's day of week
+     */
     public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
     }
 
+    /**
+     * Cell can be disabled, for instance, if it is not in valid date range. See
+     * {@link FullCalendar#setValidRange(LocalDate, LocalDate)}.
+     *
+     * @return {@code true} if day cell is disabled
+     */
     public boolean isDisabled() {
         return isDisabled;
     }
 
+    /**
+     * @return whether the cell's date is in future compared with today's date
+     */
     public boolean isFuture() {
         return isFuture;
     }
 
+    /**
+     * @return whether the cell's date is in other month
+     */
     public boolean isOther() {
         return isOther;
     }
 
+    /**
+     * @return whether the cell's date is in past compared with today's date
+     */
     public boolean isPast() {
         return isPast;
     }
 
+    /**
+     * @return whether the cell's date is today
+     */
     public boolean isToday() {
         return isToday;
     }
 
+    /**
+     * @return information about current calendar's view
+     */
     public ViewInfo getViewInfo() {
         return viewInfo;
     }

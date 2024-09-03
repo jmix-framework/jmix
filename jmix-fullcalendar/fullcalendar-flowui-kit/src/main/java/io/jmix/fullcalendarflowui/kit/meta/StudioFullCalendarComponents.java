@@ -112,7 +112,6 @@ public interface StudioFullCalendarComponents {
                     @StudioProperty(xmlAttribute = "scrollTime", type = StudioPropertyType.STRING, defaultValue = "PT6h"),
                     @StudioProperty(xmlAttribute = "scrollTimeReset", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "selectConstraintGroupId", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "selectConstraintEnabled", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "selectionEnabled", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "selectLongPressDelay", type = StudioPropertyType.INTEGER, defaultValue = "1000"),
                     @StudioProperty(xmlAttribute = "selectMinDistance", type = StudioPropertyType.INTEGER, defaultValue = "0"),

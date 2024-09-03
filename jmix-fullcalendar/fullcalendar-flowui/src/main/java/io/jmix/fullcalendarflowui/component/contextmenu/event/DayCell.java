@@ -1,6 +1,7 @@
 package io.jmix.fullcalendarflowui.component.contextmenu.event;
 
 import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
 
 import java.time.LocalDate;
@@ -57,6 +58,9 @@ public class DayCell {
     }
 
     /**
+     * Cell can be disabled, for instance, if it is not in valid date range. See
+     * {@link FullCalendar#setValidRange(LocalDate, LocalDate)}
+     *
      * @return whether day cell is disabled
      */
     public boolean isDisabled() {

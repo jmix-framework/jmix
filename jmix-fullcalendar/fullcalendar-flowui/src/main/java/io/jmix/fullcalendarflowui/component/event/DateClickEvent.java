@@ -5,6 +5,9 @@ import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 
 import java.time.LocalDateTime;
 
+/**
+ * Describes date click. The event is fired when day cell or time cell is clicked.
+ */
 public class DateClickEvent extends AbstractClickEvent {
 
     protected final LocalDateTime dateTime;
@@ -27,7 +30,10 @@ public class DateClickEvent extends AbstractClickEvent {
     }
 
     /**
-     * Returns date-time as is from component without transformation.
+     * Returns date-time as is from component without transformation. It means that value corresponds component's
+     * TimeZone.
+     * <p>
+     * Note, if day cell is clicked, the time part will be {@code 00:00:00}.
      *
      * @return date-time of clicked cell
      */
@@ -35,10 +41,16 @@ public class DateClickEvent extends AbstractClickEvent {
         return dateTime;
     }
 
+    /**
+     * @return {@code true} if day cell is clicked
+     */
     public boolean isAllDay() {
         return allDay;
     }
 
+    /**
+     * @return information about current calendar's view
+     */
     public ViewInfo getViewInfo() {
         return viewInfo;
     }

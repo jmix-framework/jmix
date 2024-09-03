@@ -18,6 +18,9 @@ package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 
+/**
+ * Base class for all context-based "events".
+ */
 public class AbstractFullCalendarContext {
 
     protected FullCalendar fullCalendar;
@@ -26,6 +29,9 @@ public class AbstractFullCalendarContext {
         this.fullCalendar = fullCalendar;
     }
 
+    /**
+     * @return calendar component
+     */
     public FullCalendar getFullCalendar() {
         return fullCalendar;
     }

@@ -5,6 +5,9 @@ import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 
+/**
+ * The event is fired when the user mouses over a calendar event.
+ */
 public class EventMouseEnterEvent extends AbstractClickEvent {
 
     protected final CalendarEvent calendarEvent;
@@ -26,14 +29,23 @@ public class EventMouseEnterEvent extends AbstractClickEvent {
         this.viewInfo = viewInfo;
     }
 
+    /**
+     * @return calendar event
+     */
     public CalendarEvent getCalendarEvent() {
         return calendarEvent;
     }
 
+    /**
+     * @return event provider of calendar event
+     */
     public BaseCalendarEventProvider getEventProvider() {
         return eventProvider;
     }
 
+    /**
+     * @return information about current calendar's view
+     */
     public ViewInfo getViewInfo() {
         return viewInfo;
     }

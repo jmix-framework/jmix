@@ -183,7 +183,7 @@ public class TypedTextField<V> extends TextField
     protected void setValueInternal(@Nullable V modelValue, String presentationValue, boolean fromClient) {
         try {
             if (isTrimEnabled()) {
-                presentationValue = StringUtils.trimToNull(presentationValue);
+                presentationValue = StringUtils.trimToEmpty(presentationValue);
             }
 
             if (modelValue == null) {

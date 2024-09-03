@@ -58,7 +58,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -793,7 +792,7 @@ public class DialogsImpl implements Dialogs {
         protected boolean showProgressInPercentage;
         protected boolean cancelAllowed = false;
 
-        protected AtomicReference<Registration> openedRegistration = new AtomicReference<>();
+        protected Registration openedRegistration;
 
         protected BackgroundTaskHandler<V> taskHandler;
 
@@ -1018,23 +1017,18 @@ public class DialogsImpl implements Dialogs {
             }
             updateProgress(0);
 
-            openedRegistration.getAndUpdate(registration -> {
-                // removing the previous listener, makes sense in case of dialog rebuilding
-                if (registration != null) {
-                    registration.remove();
+            // removing the previous listener, makes sense in case of dialog rebuilding
+            if (openedRegistration != null) {
+                openedRegistration.remove();
+            }
+
+            openedRegistration = dialog.addOpenedChangeListener(event -> {
+                // self-remove
+                event.unregisterListener();
+
+                if (event.isOpened()) {
+                    startExecution();
                 }
-
-                return dialog.addOpenedChangeListener(event -> {
-                    // self-remove
-                    if (openedRegistration.get() != null) {
-                        openedRegistration.getAndSet(null)
-                                .remove();
-                    }
-
-                    if (event.isOpened()) {
-                        startExecution();
-                    }
-                });
             });
 
             return dialog;

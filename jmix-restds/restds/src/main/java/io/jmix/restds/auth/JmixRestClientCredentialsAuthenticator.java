@@ -19,6 +19,7 @@ package io.jmix.restds.auth;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jmix.restds.exception.RestDataStoreAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
@@ -48,6 +50,7 @@ public class JmixRestClientCredentialsAuthenticator implements RestAuthenticator
 
     private RestClient authClient;
 
+    private String dataStoreName;
     private String clientId;
     private String clientSecret;
 
@@ -60,6 +63,7 @@ public class JmixRestClientCredentialsAuthenticator implements RestAuthenticator
 
     @Override
     public ClientHttpRequestInterceptor getAuthenticationInterceptor(String dataStoreName) {
+        this.dataStoreName = dataStoreName;
         String baseUrl = environment.getRequiredProperty(dataStoreName + ".baseUrl");
         clientId = environment.getRequiredProperty(dataStoreName + ".clientId");
         clientSecret = environment.getRequiredProperty(dataStoreName + ".clientSecret");
@@ -103,15 +107,20 @@ public class JmixRestClientCredentialsAuthenticator implements RestAuthenticator
     }
 
     private String obtainAuthToken(String clientId, String clientSecret) {
-        ResponseEntity<String> authResponse = authClient.post()
-                .uri("/oauth2/token")
-                .headers(httpHeaders -> {
-                    httpHeaders.setBasicAuth(clientId, clientSecret);
-                    httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                })
-                .body("grant_type=client_credentials")
-                .retrieve()
-                .toEntity(String.class);
+        ResponseEntity<String> authResponse = null;
+        try {
+            authResponse = authClient.post()
+                    .uri("/oauth2/token")
+                    .headers(httpHeaders -> {
+                        httpHeaders.setBasicAuth(clientId, clientSecret);
+                        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                    })
+                    .body("grant_type=client_credentials")
+                    .retrieve()
+                    .toEntity(String.class);
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
+        }
         try {
             JsonNode rootNode = objectMapper.readTree(authResponse.getBody());
             return rootNode.get("access_token").asText();
@@ -136,6 +145,8 @@ public class JmixRestClientCredentialsAuthenticator implements RestAuthenticator
                     .body("token=" + authToken)
                     .retrieve()
                     .toBodilessEntity();
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
         } finally {
             authLock.readLock().unlock();
         }

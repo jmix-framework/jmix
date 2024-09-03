@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.restds.auth.RestAuthenticator;
+import io.jmix.restds.exception.RestDataStoreAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -36,6 +37,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriBuilder;
 
@@ -105,6 +107,8 @@ public class RestInvoker implements InitializingBean {
                     .retrieve()
                     .body(String.class);
             return resultJson;
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
         } catch (HttpClientErrorException.NotFound e) {
             return null;
         }
@@ -120,18 +124,22 @@ public class RestInvoker implements InitializingBean {
 
     public String loadList(LoadListParams params) {
         String resultJson;
-        if (params.filter() == null) {
-            resultJson = restClient.get()
-                    .uri(uriBuilder ->
-                            createLoadListUri(uriBuilder, params, false))
-                    .retrieve()
-                    .body(String.class);
-        } else {
-            resultJson = restClient.post()
-                    .uri("/rest/entities/{entityName}/search", params.entityName())
-                    .body(createSearchPostBody(params, false))
-                    .retrieve()
-                    .body(String.class);
+        try {
+            if (params.filter() == null) {
+                resultJson = restClient.get()
+                        .uri(uriBuilder ->
+                                createLoadListUri(uriBuilder, params, false))
+                        .retrieve()
+                        .body(String.class);
+            } else {
+                resultJson = restClient.post()
+                        .uri("/rest/entities/{entityName}/search", params.entityName())
+                        .body(createSearchPostBody(params, false))
+                        .retrieve()
+                        .body(String.class);
+            }
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
         }
         if (resultJson == null) {
             throw new IllegalStateException("Result JSON is null");
@@ -183,49 +191,64 @@ public class RestInvoker implements InitializingBean {
 
     public long count(String entityName, @Nullable String filter) {
         ResponseEntity<Void> response;
-        if (filter == null) {
-            response = restClient.get()
-                    .uri(uriBuilder ->
-                            createLoadListUri(uriBuilder, new LoadListParams(entityName, null), true))
-                    .retrieve()
-                    .toBodilessEntity();
-        } else {
-            response = restClient.post()
-                    .uri("/rest/entities/{entityName}/search", entityName)
-                    .body(createSearchPostBody(new LoadListParams(entityName, filter), true))
-                    .retrieve()
-                    .toBodilessEntity();
+        try {
+            if (filter == null) {
+                response = restClient.get()
+                        .uri(uriBuilder ->
+                                createLoadListUri(uriBuilder, new LoadListParams(entityName, null), true))
+                        .retrieve()
+                        .toBodilessEntity();
+            } else {
+                response = restClient.post()
+                        .uri("/rest/entities/{entityName}/search", entityName)
+                        .body(createSearchPostBody(new LoadListParams(entityName, filter), true))
+                        .retrieve()
+                        .toBodilessEntity();
+            }
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
         }
-
         String countStr = response.getHeaders().getFirst("X-Total-Count");
         return countStr == null ? 0 : Long.parseLong(countStr);
     }
 
     public String create(String entityName, String entityJson) {
-        String resultJson = restClient.post()
-                .uri("/rest/entities/{entityName}?responseFetchPlan=_base", entityName)
-                .body(entityJson)
-                .retrieve()
-                .body(String.class);
+        try {
+            String resultJson = restClient.post()
+                    .uri("/rest/entities/{entityName}?responseFetchPlan=_base", entityName)
+                    .body(entityJson)
+                    .retrieve()
+                    .body(String.class);
 
-        return resultJson;
+            return resultJson;
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
+        }
     }
 
     public String update(String entityName, String entityId, String entityJson) {
-        String resultJson = restClient.put()
-                .uri("/rest/entities/{entityName}/{id}?responseFetchPlan=_base", entityName, entityId)
-                .body(entityJson)
-                .retrieve()
-                .body(String.class);
+        try {
+            String resultJson = restClient.put()
+                    .uri("/rest/entities/{entityName}/{id}?responseFetchPlan=_base", entityName, entityId)
+                    .body(entityJson)
+                    .retrieve()
+                    .body(String.class);
 
-        return resultJson;
+            return resultJson;
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
+        }
     }
 
     public void delete(String entityName, String entityId) {
-        restClient.delete()
-                .uri("/rest/entities/{entityName}/{id}", entityName, entityId)
-                .retrieve()
-                .toBodilessEntity();
+        try {
+            restClient.delete()
+                    .uri("/rest/entities/{entityName}/{id}", entityName, entityId)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
+        }
     }
 
     public RestAuthenticator getAuthenticator() {

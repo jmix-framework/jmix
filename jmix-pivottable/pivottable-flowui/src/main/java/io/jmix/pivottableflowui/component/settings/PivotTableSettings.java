@@ -20,6 +20,7 @@ import io.jmix.flowui.facet.settings.Settings;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public class PivotTableSettings implements Settings {
 
@@ -28,9 +29,9 @@ public class PivotTableSettings implements Settings {
     protected List<String> cols;
     protected String rendererName;
     protected String aggregatorName;
-    protected List<String> vals;
-    protected List<String> inclusions;
-    protected List<String> exclusions;
+    protected List<String> aggregationProperties;
+    protected Map<String, List<String>> inclusions;
+    protected Map<String, List<String>> exclusions;
     protected String rowOrder;
     protected String colOrder;
 
@@ -82,29 +83,29 @@ public class PivotTableSettings implements Settings {
     }
 
     @Nullable
-    public List<String> getVals() {
-        return vals;
+    public List<String> getAggregationProperties() {
+        return aggregationProperties;
     }
 
-    public void setVals(@Nullable List<String> vals) {
-        this.vals = vals;
+    public void setAggregationProperties(@Nullable List<String> aggregationProperties) {
+        this.aggregationProperties = aggregationProperties;
     }
 
     @Nullable
-    public List<String> getInclusions() {
+    public Map<String, List<String>> getInclusions() {
         return inclusions;
     }
 
-    public void setInclusions(@Nullable List<String> inclusions) {
+    public void setInclusions(@Nullable Map<String, List<String>> inclusions) {
         this.inclusions = inclusions;
     }
 
     @Nullable
-    public List<String> getExclusions() {
+    public Map<String, List<String>> getExclusions() {
         return exclusions;
     }
 
-    public void setExclusions(@Nullable List<String> exclusions) {
+    public void setExclusions(@Nullable Map<String, List<String>> exclusions) {
         this.exclusions = exclusions;
     }
 

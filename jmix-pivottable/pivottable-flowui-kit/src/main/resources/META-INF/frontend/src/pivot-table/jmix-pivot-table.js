@@ -417,15 +417,12 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         this._recreatePivot();
     }
 
-    itemIds = [];
-    itm = [];
-
     _updateDataSet(changes) {
         this._dataSet = changes.dataSet;
-        this.items = {};
+        this.itemIds = [];
         if (changes.dataSet) {
             changes.dataSet.forEach(value => {
-                this.itemIds.push(value.$k)
+                this.itemIds.push(value.$k);
                 delete value.$k;
             });
         }

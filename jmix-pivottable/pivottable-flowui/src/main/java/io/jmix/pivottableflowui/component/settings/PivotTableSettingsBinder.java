@@ -16,10 +16,15 @@
 
 package io.jmix.pivottableflowui.component.settings;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.facet.settings.Settings;
 import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.pivottableflowui.component.PivotTable;
+import io.jmix.pivottableflowui.kit.component.model.Aggregation;
+import io.jmix.pivottableflowui.kit.component.model.AggregationMode;
+import io.jmix.pivottableflowui.kit.component.model.Order;
+import io.jmix.pivottableflowui.kit.component.model.Renderer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +32,9 @@ import org.springframework.lang.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-@org.springframework.stereotype.Component("flowui_PivotTableSettingsBinder")
+@org.springframework.stereotype.Component("pvttbl_PivotTableSettingsBinder")
 public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTable, PivotTableSettings> {
 
     private static final Logger log = LoggerFactory.getLogger(PivotTableSettingsBinder.class);
@@ -68,31 +74,95 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
             }
             component.setCols(newCols);
         }
+
+        if (!Strings.isNullOrEmpty(settings.getRendererName())) {
+            component.setRenderer(Renderer.fromId(settings.getRendererName()));
+        }
+
+        if (!Strings.isNullOrEmpty(settings.getAggregatorName())) {
+            Aggregation componentAggregation = component.getAggregation();
+            if (componentAggregation == null || !componentAggregation.getMode().getId().equals(settings.getAggregatorName())) {
+                Aggregation settingsAggregation = new Aggregation();
+                settingsAggregation.setMode(AggregationMode.fromId(settings.getAggregatorName()));
+
+                if (CollectionUtils.isNotEmpty(settings.getAggregationProperties())) {
+                    component.setAggregationProperties(settings.getAggregationProperties());
+                }
+            }
+        }
+
+        if (settings.getInclusions() != null && !settings.getInclusions().isEmpty()) {
+            component.setInclusions(settings.getInclusions());
+        }
+
+        if (settings.getExclusions() != null && !settings.getExclusions().isEmpty()) {
+            component.setExclusions(settings.getExclusions());
+        }
+
+        component.setRowOrder(Order.fromId(settings.getRowOrder()));
+        component.setColOrder(Order.fromId(settings.getColOrder()));
     }
 
     @Override
     public boolean saveSettings(PivotTable component, PivotTableSettings settings) {
         boolean changed = false;
-        if (propertiesOrderChanged(component.getRows(), settings.getRows())) {
+        if (!listsEqual(component.getRows(), settings.getRows())) {
             settings.setRows(component.getRows());
             changed = true;
         }
-        if (propertiesOrderChanged(component.getCols(), settings.getCols())) {
+        if (!listsEqual(component.getCols(), settings.getCols())) {
             settings.setCols(component.getCols());
+            changed = true;
+        }
+        if (component.getRenderer() != null && !component.getRenderer().getId().equals(settings.getRendererName())) {
+            settings.setRendererName(component.getRenderer().getId());
+            changed = true;
+        }
+        if (component.getAggregation() != null && !component.getAggregation().getMode().getId().equals(settings.getAggregatorName())) {
+            settings.setAggregatorName(component.getAggregation().getMode().getId());
+            changed = true;
+        }
+        if (!listsEqual(component.getAggregationProperties(), settings.getAggregationProperties())) {
+            settings.setAggregationProperties(component.getAggregationProperties());
+            changed = true;
+        }
+        if (!mapsEqual(component.getInclusions(), settings.getInclusions())) {
+            settings.setInclusions(component.getInclusions());
+            changed = true;
+        }
+        if (!mapsEqual(component.getExclusions(), settings.getExclusions())) {
+            settings.setExclusions(component.getExclusions());
             changed = true;
         }
 
         return changed;
     }
 
-    private boolean propertiesOrderChanged(@Nullable List<String> componentProperties,
-                                           @Nullable List<String> settingsProperties) {
+    private boolean listsEqual(@Nullable List<String> componentProperties,
+                               @Nullable List<String> settingsProperties) {
         if (componentProperties == null && settingsProperties == null) {
-            return false;
+            return true;
         } else if (componentProperties != null) {
-            return !componentProperties.equals(settingsProperties);
+            return componentProperties.equals(settingsProperties);
         }
-        return true;
+        return false;
+    }
+
+    private boolean mapsEqual(@Nullable Map<String, List<String>> componentProperties,
+                               @Nullable Map<String, List<String>> settingsProperties) {
+        if (componentProperties == null && settingsProperties == null) {
+            return true;
+        } else if (componentProperties != null && settingsProperties != null &&
+                componentProperties.keySet().equals(settingsProperties.keySet())) {
+            for (Map.Entry<String, List<String>> entry : componentProperties.entrySet()) {
+                if (entry.getValue() != null && !listsEqual(entry.getValue(), settingsProperties.get(entry.getKey()))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -104,9 +174,9 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
         settings.setRows(component.getRows());
         settings.setRendererName(component.getRenderers().getSelectedRenderer().getId());
         settings.setAggregatorName(component.getAggregations().getSelectedAggregation().getId());
-//        settings.setVals(component.getVals());
-//        settings.setInclusions(component.getInclusions());
-//        settings.setExclusions(component.getExclusions());
+        settings.setAggregationProperties(component.getAggregationProperties());
+        settings.setInclusions(component.getInclusions());
+        settings.setExclusions(component.getExclusions());
         settings.setRowOrder(component.getRowOrder().getId());
         settings.setRowOrder(component.getRowOrder().getId());
 

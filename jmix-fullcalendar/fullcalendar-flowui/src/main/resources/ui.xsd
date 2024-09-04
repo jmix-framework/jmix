@@ -31,91 +31,71 @@
                         <xs:element name="hiddenDays" type="hiddenDaysType"/>
                     </xs:all>
 
-                    <xs:attribute name="initialView" type="calendarViewType"/>
-
-                    <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
-                    <xs:attribute name="navigationLinksEnabled" type="xs:boolean"/>
-
-                    <xs:attribute name="defaultDayMaxEventRowsEnabled" type="xs:boolean"/>
-                    <xs:attribute name="dayMaxEventRows" type="xs:integer"/>
-
-                    <xs:attribute name="defaultDayMaxEventsEnabled" type="xs:boolean"/>
-                    <xs:attribute name="dayMaxEvents" type="xs:integer"/>
-
-                    <xs:attribute name="eventMaxStack" type="xs:integer"/>
-
-                    <xs:attribute name="moreLinkView" type="calendarViewType"/>
-                    <xs:attribute name="moreLinkClassNames" type="xs:string"/>
-
-                    <xs:attribute name="eventStartEditable" type="xs:boolean"/>
-                    <xs:attribute name="eventDurationEditable" type="xs:boolean"/>
-                    <xs:attribute name="eventResizableFromStart" type="xs:boolean"/>
-                    <xs:attribute name="eventDragMinDistance" type="xs:integer"/>
-                    <xs:attribute name="eventOverlap" type="xs:boolean"/>
-                    <xs:attribute name="eventConstraintGroupId" type="xs:string"/>
-
-                    <xs:attribute name="dragRevertDuration" type="xs:integer"/>
-                    <xs:attribute name="dragScroll" type="xs:boolean"/>
-
-                    <xs:attribute name="snapDuration" type="xs:string"/>
-
                     <xs:attribute name="allDayMaintainDurationEnabled" type="xs:boolean"/>
-
-                    <xs:attribute name="defaultBusinessHoursEnabled" type="xs:boolean"/>
-
-                    <xs:attribute name="selectionEnabled" type="xs:boolean"/>
-                    <xs:attribute name="selectMirror" type="xs:boolean"/>
-                    <xs:attribute name="unselectAuto" type="xs:boolean"/>
-                    <xs:attribute name="unselectCancelSelector" type="xs:string"/>
-                    <xs:attribute name="selectOverlap" type="xs:boolean"/>
-                    <xs:attribute name="selectConstraintGroupId" type="xs:string"/>
-                    <xs:attribute name="selectMinDistance" type="xs:integer"/>
-
-                    <xs:attribute name="defaultDayPopoverFormat" type="layout:resourceString"/>
-                    <xs:attribute name="defaultDayHeaderFormat" type="layout:resourceString"/>
-                    <xs:attribute name="defaultWeekNumberFormat" type="layout:resourceString"/>
-                    <xs:attribute name="defaultSlotLabelFormat" type="layout:resourceString"/>
-                    <xs:attribute name="defaultEventTimeFormat" type="layout:resourceString"/>
-
-                    <xs:attribute name="weekendsVisible" type="xs:boolean"/>
                     <xs:attribute name="dayHeadersVisible" type="xs:boolean"/>
-
-                    <xs:attribute name="slotDuration" type="xs:string"/>
-                    <xs:attribute name="slotLabelInterval" type="xs:string"/>
-                    <xs:attribute name="slotMinTime" type="xs:string"/>
-                    <xs:attribute name="slotMaxTime" type="xs:string"/>
-                    <xs:attribute name="scrollTime" type="xs:string"/>
-                    <xs:attribute name="scrollTimeReset" type="xs:boolean"/>
-
+                    <xs:attribute name="dayMaxEvents" type="xs:integer"/>
+                    <xs:attribute name="dayMaxEventRows" type="xs:integer"/>
+                    <xs:attribute name="dateAlignment" type="xs:string"/>
                     <xs:attribute name="defaultAllDay" type="xs:boolean"/>
                     <xs:attribute name="defaultAllDayEventDuration" type="xs:string"/>
+                    <xs:attribute name="defaultDayHeaderFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultDayMaxEventRowsEnabled" type="xs:boolean"/>
+                    <xs:attribute name="defaultDayMaxEventsEnabled" type="xs:boolean"/>
+                    <xs:attribute name="defaultDayPopoverFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultBusinessHoursEnabled" type="xs:boolean"/>
+                    <xs:attribute name="defaultEventTimeFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultSlotLabelFormat" type="layout:resourceString"/>
                     <xs:attribute name="defaultTimedEventDuration" type="xs:string"/>
-                    <xs:attribute name="forceEventDuration" type="xs:boolean"/>
-
-                    <xs:attribute name="initialDate" type="xs:string"/>
-                    <xs:attribute name="dateAlignment" type="xs:string"/>
-
-                    <xs:attribute name="firstDayOfWeek" type="dayOfWeekType"/>
-
-                    <xs:attribute name="expandRows" type="xs:boolean"/>
-                    <xs:attribute name="windowResizeDelay" type="xs:integer"/>
-
-                    <xs:attribute name="eventInteractive" type="xs:boolean"/>
-
-                    <xs:attribute name="longPressDelay" type="xs:integer"/>
-                    <xs:attribute name="selectLongPressDelay" type="xs:integer"/>
-
-                    <xs:attribute name="nowIndicatorVisible" type="xs:boolean"/>
-
+                    <xs:attribute name="defaultWeekNumberFormat" type="layout:resourceString"/>
+                    <xs:attribute name="displayEventTime" type="xs:boolean"/>
+                    <xs:attribute name="dragRevertDuration" type="xs:integer"/>
+                    <xs:attribute name="dragScroll" type="xs:boolean"/>
                     <xs:attribute name="eventBackgroundColor" type="xs:string"/>
                     <xs:attribute name="eventBorderColor" type="xs:string"/>
-                    <xs:attribute name="eventTextColor" type="xs:string"/>
+                    <xs:attribute name="eventConstraintGroupId" type="xs:string"/>
+                    <xs:attribute name="eventConstraintBusinessHoursEnabled" type="xs:boolean"/>
                     <xs:attribute name="eventDisplay" type="eventDisplay"/>
-                    <xs:attribute name="displayEventTime" type="xs:boolean"/>
-                    <xs:attribute name="nextDayThreshold" type="xs:string"/>
-                    <xs:attribute name="eventOrderStrict" type="xs:boolean"/>
-                    <xs:attribute name="progressiveEventRendering" type="xs:boolean"/>
+                    <xs:attribute name="eventDragMinDistance" type="xs:integer"/>
+                    <xs:attribute name="eventDurationEditable" type="xs:boolean"/>
+                    <xs:attribute name="eventInteractive" type="xs:boolean"/>
+                    <xs:attribute name="eventMaxStack" type="xs:integer"/>
                     <xs:attribute name="eventOrder" type="xs:string"/>
+                    <xs:attribute name="eventOrderStrict" type="xs:boolean"/>
+                    <xs:attribute name="eventOverlap" type="xs:boolean"/>
+                    <xs:attribute name="eventResizableFromStart" type="xs:boolean"/>
+                    <xs:attribute name="eventStartEditable" type="xs:boolean"/>
+                    <xs:attribute name="eventTextColor" type="xs:string"/>
+                    <xs:attribute name="expandRows" type="xs:boolean"/>
+                    <xs:attribute name="firstDayOfWeek" type="dayOfWeekType"/>
+                    <xs:attribute name="forceEventDuration" type="xs:boolean"/>
+                    <xs:attribute name="initialDate" type="xs:string"/>
+                    <xs:attribute name="initialView" type="calendarViewType"/>
+                    <xs:attribute name="longPressDelay" type="xs:integer"/>
+                    <xs:attribute name="moreLinkClassNames" type="xs:string"/>
+                    <xs:attribute name="moreLinkView" type="calendarViewType"/>
+                    <xs:attribute name="navigationLinksEnabled" type="xs:boolean"/>
+                    <xs:attribute name="nextDayThreshold" type="xs:string"/>
+                    <xs:attribute name="nowIndicatorVisible" type="xs:boolean"/>
+                    <xs:attribute name="progressiveEventRendering" type="xs:boolean"/>
+                    <xs:attribute name="scrollTime" type="xs:string"/>
+                    <xs:attribute name="scrollTimeReset" type="xs:boolean"/>
+                    <xs:attribute name="selectConstraintGroupId" type="xs:string"/>
+                    <xs:attribute name="selectConstraintBusinessHoursEnabled" type="xs:boolean"/>
+                    <xs:attribute name="selectionEnabled" type="xs:boolean"/>
+                    <xs:attribute name="selectLongPressDelay" type="xs:integer"/>
+                    <xs:attribute name="selectMinDistance" type="xs:integer"/>
+                    <xs:attribute name="selectMirror" type="xs:boolean"/>
+                    <xs:attribute name="selectOverlap" type="xs:boolean"/>
+                    <xs:attribute name="slotDuration" type="xs:string"/>
+                    <xs:attribute name="slotLabelInterval" type="xs:string"/>
+                    <xs:attribute name="slotMaxTime" type="xs:string"/>
+                    <xs:attribute name="slotMinTime" type="xs:string"/>
+                    <xs:attribute name="snapDuration" type="xs:string"/>
+                    <xs:attribute name="unselectAuto" type="xs:boolean"/>
+                    <xs:attribute name="unselectCancelSelector" type="xs:string"/>
+                    <xs:attribute name="weekendsVisible" type="xs:boolean"/>
+                    <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
+                    <xs:attribute name="windowResizeDelay" type="xs:integer"/>
 
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasSize"/>

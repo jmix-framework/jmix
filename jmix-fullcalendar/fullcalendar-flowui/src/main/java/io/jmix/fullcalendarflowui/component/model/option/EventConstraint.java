@@ -34,6 +34,8 @@ public class EventConstraint extends CalendarOption {
 
     protected List<CalendarBusinessHours> businessHours;
 
+    protected boolean businessHoursEnabled = false;
+
     public EventConstraint() {
         super(EVENT_CONSTRAINT);
     }
@@ -55,6 +57,16 @@ public class EventConstraint extends CalendarOption {
 
     public void setBusinessHours(@Nullable List<CalendarBusinessHours> businessHours) {
         this.businessHours = businessHours;
+
+        markAsDirty();
+    }
+
+    public boolean isBusinessHoursEnabled() {
+        return businessHoursEnabled;
+    }
+
+    public void setBusinessHoursEnabled(boolean businessHoursEnabled) {
+        this.businessHoursEnabled = businessHoursEnabled;
 
         markAsDirty();
     }

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 /**
  * The event is fired after the calendar’s date range has been initially set or changed in some way
- * and the DOM has been updated.
+ * and the DOM of component has been updated.
  * <p>
  * The calendar’s dates can change any time the user does the following:
  * <ul>

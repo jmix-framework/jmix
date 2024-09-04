@@ -24,6 +24,22 @@ import java.util.TimeZone;
 
 /**
  * Interface to be implemented by event providers that should load items by request.
+ * <p>
+ * The {@link #onItemsFetch(ItemsFetchContext)} is called in the following cases:
+ * <ul>
+ *     <li>
+ *         When the user navigates to the calendar view that has wider date range than previous view.
+ *     </li>
+ *     <li>
+ *         When {@link FullCalendar}'s navigation methods are invoked, e.g. {@link FullCalendar#navigateToNext()}.
+ *     </li>
+ *     <li>
+ *          When time zone of component is changed.
+ *     </li>
+ * </ul>
+ * By default {@link FullCalendar} calls {@link #onItemsFetch(ItemsFetchContext)} immediately after adding
+ * the provider. If calendar is not attached to the UI, loading will be performed after attaching component
+ * to the UI.
  *
  * @see LazyEntityCalendarEventRetriever
  * @see CalendarEventRetriever

@@ -80,6 +80,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadString(element, "eventBackgroundColor", resultComponent::setEventBackgroundColor);
         loadString(element, "eventBorderColor", resultComponent::setEventBorderColor);
         loadString(element, "eventConstraintGroupId", resultComponent::setEventConstraintGroupId);
+        loadBoolean(element, "eventConstraintBusinessHoursEnabled",
+                resultComponent::setEventConstraintBusinessHoursEnabled);
         loadEnum(element, Display.class, "eventDisplay", resultComponent::setEventDisplay);
         loadInteger(element, "eventDragMinDistance", resultComponent::setEventDragMinDistance);
         loadBoolean(element, "eventDurationEditable", resultComponent::setEventDurationEditable);
@@ -112,6 +114,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadDuration(element, "scrollTime", resultComponent::setScrollTime);
         loadBoolean(element, "scrollTimeReset", resultComponent::setScrollTimeReset);
         loadString(element, "selectConstraintGroupId", resultComponent::setSelectConstraintGroupId);
+        loadBoolean(element, "selectConstraintBusinessHoursEnabled",
+                resultComponent::setSelectConstraintBusinessHoursEnabled);
         loadBoolean(element, "selectionEnabled", resultComponent::setSelectionEnabled);
         loadInteger(element, "selectLongPressDelay", resultComponent::setSelectLongPressDelay);
         loadInteger(element, "selectMinDistance", resultComponent::setSelectMinDistance);

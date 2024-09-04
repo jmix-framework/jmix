@@ -974,9 +974,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected void performCompleteInit() {
-        getElement()
-                .callJsFunction("_onCompleteInit")
-                .then((__) -> initialized = true);
+        getUI().ifPresent(ui ->
+                ui.beforeClientResponse(this, (context) ->
+                        getElement().callJsFunction("_onCompleteInit")
+                                .then((__) -> initialized = true)));
     }
 
     protected void updateInitialOptions() {

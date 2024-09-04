@@ -16,12 +16,17 @@
 
 package io.jmix.fullcalendarflowui.component;
 
+import com.vaadin.flow.component.UI;
+import io.jmix.fullcalendar.DayOfWeek;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+/**
+ * The internationalization properties for {@link FullCalendar} component.
+ */
 public class FullCalendarI18n implements Serializable {
 
     public enum Direction {
@@ -61,43 +66,92 @@ public class FullCalendarI18n implements Serializable {
         moreLinkHint = i18n.moreLinkHint;
     }
 
+    /**
+     * @return the direction in which text should be written and read or {@code null} if not set
+     */
     @Nullable
     public Direction getDirection() {
         return direction;
     }
 
+    /**
+     * Sets the direction in which text should be written and read.
+     * <p>
+     * {@link FullCalendar} also respects the direction of
+     * {@link UI#setDirection(com.vaadin.flow.component.Direction)}.
+     *
+     * @param direction the direction to set
+     */
     public void setDirection(@Nullable Direction direction) {
         this.direction = direction;
     }
 
+    /**
+     * Sets a direction. See {@link #setDirection(Direction)}.
+     *
+     * @param direction the direction to set
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withDirection(@Nullable Direction direction) {
         setDirection(direction);
         return this;
     }
 
+    /**
+     * @return the first day of week or {@code null} if not set
+     */
     @Nullable
     public Integer getDayOfWeek() {
         return dayOfWeek;
     }
 
+    /**
+     * Sets the first day of week. The default value is taken from locale.
+     * <p>
+     * The first day of week can be also set by {@link FullCalendar#setFirstDayOfWeek(DayOfWeek)}.
+     *
+     * @param dayOfWeek the first day of week
+     */
     public void setDayOfWeek(@Nullable Integer dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
     }
 
+    /**
+     * Sets the first day of week. See {@link #setDayOfWeek(Integer)}.
+     *
+     * @param dayOfWeek the first day of week
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withDayOfWeek(@Nullable Integer dayOfWeek) {
         setDayOfWeek(dayOfWeek);
         return this;
     }
 
+    /**
+     * @return count of the days or {@code null} if not set
+     */
     @Nullable
     public Integer getDayOfYear() {
         return dayOfYear;
     }
 
+    /**
+     * The rule how to define the first week of the year. Sets the count of days that should be at least presented
+     * in the week to consider it as a first week of the year.
+     *
+     * @param dayOfYear count of the days
+     */
     public void setDayOfYear(@Nullable Integer dayOfYear) {
         this.dayOfYear = dayOfYear;
     }
 
+    /**
+     * Sets the count of days that should be at least presented in the week to consider it as a first week of the year.
+     * See {@link #setDayOfYear(Integer)}.
+     *
+     * @param dayOfYear count of the days
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withDayOfYear(@Nullable Integer dayOfYear) {
         setDayOfYear(dayOfYear);
         return this;

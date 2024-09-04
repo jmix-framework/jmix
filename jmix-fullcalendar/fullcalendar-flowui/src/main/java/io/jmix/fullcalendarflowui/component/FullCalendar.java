@@ -48,6 +48,11 @@ import java.util.function.Function;
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.*;
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.parseAndTransform;
 
+/**
+ * UI component for visualizing events in a calendar using various views (month, week, etc.).
+ * <p>
+ * Component provides event rendering, drag-and-drop functionality, event editing, and customizable views.
+ */
 public class FullCalendar extends JmixFullCalendar implements ApplicationContextAware, InitializingBean {
     private static final Logger log = LoggerFactory.getLogger(FullCalendar.class);
 
@@ -95,12 +100,22 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * @return a list of event providers
+     */
     public List<BaseCalendarEventProvider> getEventProviders() {
         return eventProvidersMap != null && !eventProvidersMap.isEmpty()
                 ? eventProvidersMap.values().stream().map(AbstractEventProviderManager::getEventProvider).toList()
                 : Collections.emptyList();
     }
 
+    /**
+     * Returns an event provider by its ID.
+     *
+     * @param id  event provider ID
+     * @param <T> type of event provider
+     * @return event provider or {@code null} if there is no event provider with passed ID
+     */
     @Nullable
     @SuppressWarnings("unchecked")
     public <T extends BaseCalendarEventProvider> T getEventProvider(String id) {
@@ -113,6 +128,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return null;
     }
 
+    /**
+     * Adds new lazy event provider.
+     *
+     * @param eventProvider lazy event provider to add
+     */
     public void addEventProvider(LazyCalendarEventProvider eventProvider) {
         Preconditions.checkNotNullArgument(eventProvider);
 
@@ -130,6 +150,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         }
     }
 
+    /**
+     * Adds new event provider.
+     *
+     * @param eventProvider event provider to add
+     */
     public void addEventProvider(CalendarEventProvider eventProvider) {
         Preconditions.checkNotNullArgument(eventProvider);
 
@@ -152,12 +177,22 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         }
     }
 
+    /**
+     * Removes an event provider from component.
+     *
+     * @param eventProvider event provider to remove
+     */
     public void removeEventProvider(BaseCalendarEventProvider eventProvider) {
         Preconditions.checkNotNullArgument(eventProvider);
 
         removeEventProvider(eventProvider.getId());
     }
 
+    /**
+     * Removes an event provider from component by ID.
+     *
+     * @param id ID of event provider to remove
+     */
     public void removeEventProvider(String id) {
         Preconditions.checkNotEmptyString(id);
 
@@ -171,15 +206,51 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         eventProvidersMap.remove(id);
     }
 
+    /**
+     * Removes all event providers from component.
+     */
     public void removeAllEventProviders() {
         getEventProviders().forEach(this::removeEventProvider);
     }
 
+    /**
+     * @return {@code true} if business hours used as event constraint
+     */
+    public boolean isEventConstraintBusinessHoursEnabled() {
+        return getOptions().getEventConstraint().isBusinessHoursEnabled();
+    }
+
+    /**
+     * Sets whether events being dragged or resized must be fully contained within the week’s business hours.
+     * <p>
+     * It also respects custom business hours {@link #setBusinessHours(List)}.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param enabled whether to use business hours as event constraint
+     */
+    public void setEventConstraintBusinessHoursEnabled(boolean enabled) {
+        getOptions().getEventConstraint().setBusinessHoursEnabled(enabled);
+    }
+
+    /**
+     * @return a group ID that limits dragging and resizing events or {@code null} if not set
+     */
     @Nullable
     public Object getEventConstraintGroupId() {
         return eventConstraintGroupId;
     }
 
+    /**
+     * Sets a group ID to limit the dragging and resizing of events. Events that are being dragged or resized
+     * must be fully contained by at least one of the events linked to by the given group ID.
+     * <p>
+     * Takes precedence over {@link #setEventConstraintBusinessHoursEnabled(boolean)}.
+     * <p>
+     * The group ID can be an entity instance, string, enum or other types.
+     *
+     * @param groupId a group ID
+     */
     public void setEventConstraintGroupId(@Nullable Object groupId) {
         this.eventConstraintGroupId = groupId;
 
@@ -188,11 +259,63 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getOptions().getEventConstraint().setGroupId(serializedGroupId);
     }
 
+    /**
+     * @return a list of business hours that limits the dragging and resizing of events
+     */
+    public List<CalendarBusinessHours> getEventConstraintBusinessHours() {
+        return getOptions().getEventConstraint().getBusinessHours();
+    }
+
+    /**
+     * Sets a list of business hours that limits the dragging and resizing of events.
+     * <p>
+     * Takes precedence over {@link FullCalendar#setEventConstraintGroupId(Object)} and
+     * {@link #setEventConstraintBusinessHoursEnabled(boolean)}
+     *
+     * @param businessHours business hours that will be available for event dragging and resizing
+     */
+    public void setEventConstraintBusinessHours(@Nullable List<CalendarBusinessHours> businessHours) {
+        getOptions().getEventConstraint().setBusinessHours(businessHours);
+    }
+
+    /**
+     * @return a group ID to limit selection or {@code null} if not set
+     */
     @Nullable
     public Object getSelectConstraintGroupId() {
         return selectConstraintGroupId;
     }
 
+    /**
+     * @return {@code true} is business hours used as selection constraint
+     */
+    public boolean isSelectConstraintBusinessHoursEnabled() {
+        return getOptions().getSelectConstraint().isBusinessHoursEnabled();
+    }
+
+    /**
+     * Sets whether the selection must be fully contained within the week’s business hours.
+     * <p>
+     * It also respects custom business hours {@link #setBusinessHours(List)}.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param enabled whether to use business hours as selection constraint
+     */
+    public void setSelectConstraintBusinessHoursEnabled(boolean enabled) {
+        getOptions().getSelectConstraint().setBusinessHoursEnabled(enabled);
+    }
+
+    /**
+     * Sets a group ID to limit selection. If group ID is set, only cells with events that contain the
+     * same group ID can be selected.
+     * <p>
+     * Takes precedence over {@link #setSelectConstraintBusinessHoursEnabled(boolean)}.
+     * <p>
+     * Note, this property will be applied if {@link FullCalendar#setSelectionEnabled(boolean)} is enabled.
+     *
+     * @param groupId a group ID
+     */
     public void setSelectConstraintGroupId(@Nullable Object groupId) {
         this.selectConstraintGroupId = groupId;
 
@@ -201,76 +324,144 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getOptions().getSelectConstraint().setGroupId(serializedGroupId);
     }
 
-    public boolean isDefaultBusinessHoursEnabled() {
-        return getOptions().getBusinessHours().isEnabled();
-    }
-
-    public void setDefaultBusinessHoursEnabled(boolean enabled) {
-        getOptions().getBusinessHours().setEnabled(enabled);
-    }
-
-    public List<CalendarBusinessHours> getBusinessHours() {
-        return getOptions().getBusinessHours().getBusinessHours();
-    }
-
-    public void setBusinessHours(@Nullable List<CalendarBusinessHours> businessHours) {
-        getOptions().getBusinessHours().setBusinessHours(businessHours);
-    }
-
-    public List<CalendarBusinessHours> getEventConstraintBusinessHours() {
-        return getOptions().getEventConstraint().getBusinessHours();
-    }
-
-    public void setEventConstraintBusinessHours(@Nullable List<CalendarBusinessHours> businessHoursEventConstraint) {
-        getOptions().getEventConstraint().setBusinessHours(businessHoursEventConstraint);
-    }
-
+    /**
+     * @return a list of business hours that limits the selection
+     */
     public List<CalendarBusinessHours> getSelectConstraintBusinessHours() {
         return getOptions().getSelectConstraint().getBusinessHours();
     }
 
-    public void setSelectConstraintBusinessHours(@Nullable List<CalendarBusinessHours> businessHoursSelectConstraint) {
-        getOptions().getSelectConstraint().setBusinessHours(businessHoursSelectConstraint);
+    /**
+     * Sets a list of business hours that limits the selection.
+     * <p>
+     * Takes precedence over {@link #setSelectConstraintBusinessHoursEnabled(boolean)} and
+     * {@link #setSelectConstraintGroupId(Object)}.
+     *
+     * @param businessHours business hours that will be available for selection
+     */
+    public void setSelectConstraintBusinessHours(@Nullable List<CalendarBusinessHours> businessHours) {
+        getOptions().getSelectConstraint().setBusinessHours(businessHours);
     }
 
+    /**
+     * @return {@code true} if default business hours enabled
+     */
+    public boolean isDefaultBusinessHoursEnabled() {
+        return getOptions().getBusinessHours().isEnabled();
+    }
+
+    /**
+     * Enables default business hours. The default business hour is: [monday-friday] from 9 AM to 5 PM.
+     * <p>
+     * Disabled by default.
+     *
+     * @param enabled whether to enable business hours
+     */
+    public void setDefaultBusinessHoursEnabled(boolean enabled) {
+        getOptions().getBusinessHours().setEnabled(enabled);
+    }
+
+    /**
+     * @return a list of business hours entries
+     */
+    public List<CalendarBusinessHours> getBusinessHours() {
+        return getOptions().getBusinessHours().getBusinessHours();
+    }
+
+    /**
+     * Sets a list of business hours entries.
+     * <p>
+     * Takes precedence over {@link #setDefaultBusinessHoursEnabled(boolean)}.
+     *
+     * @param businessHours list of custom entries of business hours
+     */
+    public void setBusinessHours(@Nullable List<CalendarBusinessHours> businessHours) {
+        getOptions().getBusinessHours().setBusinessHours(businessHours);
+    }
+
+    /**
+     * @return hidden days of week
+     */
     public List<DayOfWeek> getHiddenDays() {
         List<DayOfWeek> hiddenDays = getOptions().getHiddenDays().getValue();
         return hiddenDays == null ? Collections.emptyList() : hiddenDays;
     }
 
+    /**
+     * Sets the list of days that will be excluded from being displayed.
+     * <p>
+     * By default, all days of week are visible unless {@link #setWeekendsVisible(boolean)} is set to {@code false}.
+     *
+     * @param hiddenDays days to hide
+     */
     public void setHiddenDays(@Nullable List<DayOfWeek> hiddenDays) {
         getOptions().getHiddenDays().setValue(hiddenDays);
     }
 
+    /**
+     * @return the internationalization properties for this component or {@code null} if not set
+     */
     @Nullable
     public FullCalendarI18n getI18n() {
         return explicitI18n;
     }
 
+    /**
+     * Set the internationalization properties for this component. The {@code null} value resets to default values.
+     *
+     * @param i18n the internationalized properties
+     */
     public void setI18n(@Nullable FullCalendarI18n i18n) {
         this.explicitI18n = i18n;
 
         setI18nInternal(defaultI18n.combine(explicitI18n));
     }
 
+    /**
+     * @return first day of week or {@code null} if not set
+     */
     @Nullable
     public DayOfWeek getFirstDayOfWeek() {
         return getOptions().getFirstDay().getValue();
     }
 
+    /**
+     * Sets the day that each week begins. The default value is taken from locale.
+     *
+     * @param firstDay first day of week
+     */
     public void setFirstDayOfWeek(@Nullable DayOfWeek firstDay) {
         getOptions().getFirstDay().setValue(firstDay);
     }
 
+    /**
+     * @return display mode for events or {@code null} if not set
+     */
     @Nullable
     public Display getEventDisplay() {
         return getOptions().getEventDisplay().getValue();
     }
 
+    /**
+     * Sets the display mode that controls the appearance of all events that do not specify display mode.
+     * <p>
+     * To control the display of specific events, use the display property of calendar event
+     * {@link CalendarEvent#getDisplay()}.
+     *
+     * @param display display mode for events
+     */
     public void setEventDisplay(@Nullable Display display) {
         getOptions().getEventDisplay().setValue(display);
     }
 
+    /**
+     * Adds dates set listener. The event is fired after the calendar’s date range has been initially set
+     * or changed in some way and the DOM of component has been updated.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     * @see DatesSetEvent
+     */
     public Registration addDatesSetListener(ComponentEventListener<DatesSetEvent> listener) {
         Preconditions.checkNotNullArgument(listener);
 
@@ -278,11 +469,11 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
-     * Adds a "more" link click listener. When listener is added the {@link #setMoreLinkCalendarView(CalendarView)}
+     * Adds a "more" link click listener. When listener is added, the {@link #setMoreLinkCalendarView(CalendarView)}
      * value will be ignored.
      *
      * @param listener listener to add
-     * @return A registration object for removing an event listener added to a calendar
+     * @return a registration object for removing an event listener added to a component
      */
     public Registration addMoreLinkClickListener(ComponentEventListener<MoreLinkClickEvent> listener) {
         Preconditions.checkNotNullArgument(listener);
@@ -299,6 +490,12 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         };
     }
 
+    /**
+     * Adds an event click listener.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
     public Registration addEventClickListener(ComponentEventListener<EventClickEvent> listener) {
         if (!getEventBus().hasListener(EventClickEvent.class)) {
             attachEventClickDomEventListener();
@@ -314,6 +511,12 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         };
     }
 
+    /**
+     * Adds a listener that is invoked when the user mouses over a calendar event.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
     public Registration addEventMouseEnterListener(ComponentEventListener<EventMouseEnterEvent> listener) {
         if (!getEventBus().hasListener(EventMouseEnterEvent.class)) {
             attachEventMouseEnterDomEventListener();
@@ -329,6 +532,12 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         };
     }
 
+    /**
+     * Adds a listener that is invoked when the user mouses out of a calendar event.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
     public Registration addEventMouseLeaveListener(ComponentEventListener<EventMouseLeaveEvent> listener) {
         if (!getEventBus().hasListener(EventMouseLeaveEvent.class)) {
             attachEventMouseLeaveDomEventListener();
@@ -344,6 +553,12 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         };
     }
 
+    /**
+     * Adds a listener that is invoked when dragging stops and the event has moved to a different day/time cell.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
     public Registration addEventDropListener(ComponentEventListener<EventDropEvent> listener) {
         if (!getEventBus().hasListener(EventDropEvent.class)) {
             attachEventDropDomEventListener();
@@ -359,6 +574,12 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         };
     }
 
+    /**
+     * Adds a listener that is invoked when resizing stops and the calendar event has changed in duration.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
     public Registration addEventResizeListener(ComponentEventListener<EventResizeEvent> listener) {
         if (!getEventBus().hasListener(EventResizeEvent.class)) {
             attachEventResizeDomEventListener();
@@ -374,6 +595,12 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         };
     }
 
+    /**
+     * Adds a listener that is invoked when day cell or time cell is clicked.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
     public Registration addDateClickListener(ComponentEventListener<DateClickEvent> listener) {
         if (!getEventBus().hasListener(DateClickEvent.class)) {
             attachDateClickDomEventListener();
@@ -389,6 +616,12 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         };
     }
 
+    /**
+     * Adds a listener that is invoked when a date/time selection is made.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
     public Registration addSelectListener(ComponentEventListener<SelectEvent> listener) {
         if (!getEventBus().hasListener(SelectEvent.class)) {
             attachSelectDomEventListener();
@@ -404,6 +637,13 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         };
     }
 
+    /**
+     * Adds a listener thaat is invoked when the current selection is cleared.
+     *
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     * @see UnselectEvent
+     */
     public Registration addUnselectListener(ComponentEventListener<UnselectEvent> listener) {
         if (!getEventBus().hasListener(UnselectEvent.class)) {
             attachUnselectDomEventListener();
@@ -419,15 +659,19 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         };
     }
 
+    /**
+     * @return a class names generator for "more" link or {@code null} if not set
+     */
     @Nullable
     public Function<MoreLinkClassNamesContext, List<String>> getMoreLinkClassNamesGenerator() {
         return linkMoreClassNamesGenerator;
     }
 
     /**
-     * Sets a class names generator for "+x more" link.
+     * Sets a class names generator for "more" link.
      * <p>
-     * Note, generator has a precedence over a {@link #setMoreLinkClassNames(List)} and other "add class name" methods.
+     * Note, generator has a precedence over a {@link #setMoreLinkClassNames(List)} and other
+     * "add class name" methods.
      *
      * @param classNamesGenerator the generator to set
      */
@@ -438,11 +682,20 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         options.getMoreLinkClassNames().setFunctionEnabled(classNamesGenerator != null);
     }
 
+    /**
+     * @return a class names generator for day headers or {@code null} if not set
+     */
     @Nullable
     public Function<DayHeaderClassNamesContext, List<String>> getDayHeaderClassNamesGenerator() {
         return dayHeaderClassNamesGenerator;
     }
 
+    /**
+     * Sets a class names generator for day headers. The day header is a cell that shows day of week and date in
+     * some views.
+     *
+     * @param classNamesGenerator the generator to set
+     */
     public void setDayHeaderClassNamesGenerator(
             @Nullable Function<DayHeaderClassNamesContext, List<String>> classNamesGenerator) {
         this.dayHeaderClassNamesGenerator = classNamesGenerator;
@@ -450,11 +703,20 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         options.getDayHeaderClassNames().setValue(classNamesGenerator != null);
     }
 
+    /**
+     * @return a day cell class names generator or {@code null} if not set
+     */
     @Nullable
     public Function<DayCellClassNamesContext, List<String>> getDayCellClassNamesGenerator() {
         return dayCellClassNamesGenerator;
     }
 
+    /**
+     * Sets a day cell class names generator. The day cell appears in day grid views and
+     * in time grid views as an all-day cell.
+     *
+     * @param dayCellClassNamesGenerator the generator to set
+     */
     public void setDayCellClassNamesGenerator(
             @Nullable Function<DayCellClassNamesContext, List<String>> dayCellClassNamesGenerator) {
         this.dayCellClassNamesGenerator = dayCellClassNamesGenerator;
@@ -462,11 +724,19 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         options.getDayCellClassNames().setValue(dayCellClassNamesGenerator != null);
     }
 
+    /**
+     * @return slot label class names generator or {@code null} if not set
+     */
     @Nullable
     public Function<SlotLabelClassNamesContext, List<String>> getSlotLabelClassNamesGenerator() {
         return slotLabelClassNamesGenerator;
     }
 
+    /**
+     * Sets a slot label class names generator. The slot label appears in time grid views. It is a cell with time label.
+     *
+     * @param slotLabelClassNamesGenerator the generator to set
+     */
     public void setSlotLabelClassNamesGenerator(
             @Nullable Function<SlotLabelClassNamesContext, List<String>> slotLabelClassNamesGenerator) {
         this.slotLabelClassNamesGenerator = slotLabelClassNamesGenerator;
@@ -474,11 +744,21 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         options.getSlotLabelClassNames().setValue(slotLabelClassNamesGenerator != null);
     }
 
+    /**
+     * @return a now-indicator class names generator or {@code null} if not set
+     */
     @Nullable
     public Function<NowIndicatorClassNamesContext, List<String>> getNowIndicatorClassNamesGenerator() {
         return nowIndicatorClassNamesGenerator;
     }
 
+    /**
+     * Sets a now-indicator class names generator. The now-indicator contains of two part: line and axis.
+     * <p>
+     * The now-indicator can be enabled by {@link #setNowIndicatorVisible(boolean)}.
+     *
+     * @param nowIndicatorClassNamesGenerator the generator to set
+     */
     public void setNowIndicatorClassNamesGenerator(
             @Nullable Function<NowIndicatorClassNamesContext, List<String>> nowIndicatorClassNamesGenerator) {
         this.nowIndicatorClassNamesGenerator = nowIndicatorClassNamesGenerator;
@@ -546,6 +826,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected void addEventProviderInternal(AbstractEventProviderManager epManager) {
+        log.debug("Perform add event provider");
+
         getElement().callJsFunction(epManager.getJsFunctionName(), epManager.getSourceId());
     }
 
@@ -1223,9 +1505,13 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Override
     protected void addEventProvidersOnAttach() {
-        // Add all event providers
+        // Add all event providers using beforeClientResponse to respect the
+        // order of calling requests from onAttach.
+        getUI().ifPresent(ui ->
+                ui.beforeClientResponse(this, (context) ->
+                        eventProvidersMap.values().forEach(this::addEventProviderInternal)));
+
         eventProvidersMap.values().forEach(ep -> {
-            addEventProviderInternal(ep);
             if (ep instanceof EventProviderManager) {
                 requestUpdateItemEventProvider(ep.getEventProvider().getId());
             }

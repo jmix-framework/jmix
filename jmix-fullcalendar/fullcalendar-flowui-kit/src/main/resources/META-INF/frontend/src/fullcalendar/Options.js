@@ -209,9 +209,14 @@ class Options {
             const bHours = eventConstraint.businessHours;
             if (bHours && (Array.isArray(bHours) && bHours.length > 0)) {
                 this.updateOption(EVENT_CONSTRAINT, bHours);
-            } else if (eventConstraint.groupId) {
-                this.updateOption(EVENT_CONSTRAINT, eventConstraint.groupId);
+                return;
             }
+            if (eventConstraint.groupId) {
+                this.updateOption(EVENT_CONSTRAINT, eventConstraint.groupId);
+                return;
+            }
+
+            this.updateOption(EVENT_CONSTRAINT, eventConstraint.businessHoursEnabled ? "businessHours" : undefined);
         }
     }
 
@@ -250,9 +255,14 @@ class Options {
             const bHours = selectConstraint.businessHours;
             if (bHours && (Array.isArray(bHours) && bHours.length > 0)) {
                 this.updateOption(SELECT_CONSTRAINT, bHours);
-            } else if (selectConstraint.groupId) {
-                this.updateOption(SELECT_CONSTRAINT, selectConstraint.groupId);
+                return;
             }
+            if (selectConstraint.groupId) {
+                this.updateOption(SELECT_CONSTRAINT, selectConstraint.groupId);
+                return;
+            }
+
+            this.updateOption(SELECT_CONSTRAINT, selectConstraint.businessHoursEnabled ? "businessHours" : undefined);
         }
     }
 

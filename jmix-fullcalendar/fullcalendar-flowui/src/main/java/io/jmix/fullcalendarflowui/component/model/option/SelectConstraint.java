@@ -34,6 +34,8 @@ public class SelectConstraint extends CalendarOption {
 
     protected List<CalendarBusinessHours> businessHours;
 
+    protected boolean businessHoursEnabled = false;
+
     public SelectConstraint() {
         super(SELECT_CONSTRAINT);
     }
@@ -55,6 +57,16 @@ public class SelectConstraint extends CalendarOption {
 
     public void setBusinessHours(@Nullable List<CalendarBusinessHours> businessHours) {
         this.businessHours = businessHours;
+
+        markAsDirty();
+    }
+
+    public boolean isBusinessHoursEnabled() {
+        return businessHoursEnabled;
+    }
+
+    public void setBusinessHoursEnabled(boolean businessHoursEnabled) {
+        this.businessHoursEnabled = businessHoursEnabled;
 
         markAsDirty();
     }

@@ -37,7 +37,6 @@ import org.apache.tika.parser.txt.TXTParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
@@ -49,8 +48,11 @@ public class FileProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(FileProcessor.class);
 
-    @Autowired
     protected FileStorageLocator fileStorageLocator;
+
+    public FileProcessor(FileStorageLocator fileStorageLocator) {
+        this.fileStorageLocator = fileStorageLocator;
+    }
 
     public String extractFileContent(FileRef fileRef) throws FileParseException, UnsupportedFileFormatException {
         Preconditions.checkNotNullArgument(fileRef);

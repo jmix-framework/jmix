@@ -91,10 +91,10 @@ public class FilePropertyValueExtractor extends AbstractPropertyValueExtractor {
         try {
             String content = fileProcessor.extractFileContent(fileRef);
             node.put("_content", content);
+        } catch (UnsupportedFileFormatException e) {
+            log.warn(e.getMessage());
         } catch (FileParseException e) {
             log.error("Unable to index file content", e);
-        } catch (UnsupportedFileFormatException e) {
-            log.error(e.getMessage());
         }
     }
 }

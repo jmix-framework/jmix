@@ -18,7 +18,7 @@ package io.jmix.search.exception;
 
 import org.apache.commons.io.FilenameUtils;
 
-public class UnsupportedFileFormatException extends Exception{
+public class UnsupportedFileFormatException extends Exception {
 
     public static final String MESSAGE = "The file %s with \"%s\" extension is not supported. " +
             "Parser was not found. " +

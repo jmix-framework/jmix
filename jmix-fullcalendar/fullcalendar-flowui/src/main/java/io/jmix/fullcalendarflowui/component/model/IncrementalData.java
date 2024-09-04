@@ -22,6 +22,9 @@ import io.jmix.fullcalendarflowui.component.data.DataChangeOperation;
 import java.io.Serializable;
 import java.util.Collection;
 
+/**
+ * INTERNAL.
+ */
 @Internal
 public class IncrementalData implements Serializable {
 

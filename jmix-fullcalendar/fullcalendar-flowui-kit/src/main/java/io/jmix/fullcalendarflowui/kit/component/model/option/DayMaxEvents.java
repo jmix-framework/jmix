@@ -20,17 +20,19 @@ import jakarta.annotation.Nullable;
 
 import java.io.Serializable;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.DAY_MAX_EVENTS;
+
 /**
  * INTERNAL.
  */
 public class DayMaxEvents extends CalendarOption implements Serializable {
-    public static final String NAME = "dayMaxEvents";
 
     protected boolean defaultEnabled = false;
+
     protected Integer max;
 
     public DayMaxEvents() {
-        super(NAME);
+        super(DAY_MAX_EVENTS);
     }
 
     public boolean isDefaultEnabled() {

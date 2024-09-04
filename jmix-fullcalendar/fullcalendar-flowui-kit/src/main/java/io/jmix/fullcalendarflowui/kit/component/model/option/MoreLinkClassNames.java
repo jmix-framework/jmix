@@ -23,18 +23,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.MORE_LINK_CLASS_NAMES;
+
 /**
  * INTERNAL.
  */
 public class MoreLinkClassNames extends CalendarOption {
-    public static final String NAME = "moreLinkClassNames";
 
     protected List<String> classNames = new ArrayList<>();
 
     protected boolean functionEnabled = false;
 
     public MoreLinkClassNames() {
-        super(NAME);
+        super(MORE_LINK_CLASS_NAMES);
     }
 
     public List<String> getClassNames() {

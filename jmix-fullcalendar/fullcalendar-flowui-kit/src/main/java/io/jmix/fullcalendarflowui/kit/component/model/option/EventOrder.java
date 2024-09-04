@@ -23,11 +23,12 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.EVENT_ORDER;
+
 /**
  * INTERNAL.
  */
 public class EventOrder extends CalendarOption implements Serializable {
-    public static final String NAME = "eventOrder";
 
     protected List<String> DEFAULT_ORDER = List.of("start", "-duration", "allDay", "title");
 
@@ -38,7 +39,7 @@ public class EventOrder extends CalendarOption implements Serializable {
     protected JsFunction jsFunction = null;
 
     public EventOrder() {
-        super(NAME);
+        super(EVENT_ORDER);
 
         eventOrder = DEFAULT_ORDER;
     }

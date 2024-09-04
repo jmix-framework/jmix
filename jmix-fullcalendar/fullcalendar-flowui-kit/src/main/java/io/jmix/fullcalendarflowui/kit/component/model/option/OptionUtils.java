@@ -35,9 +35,4 @@ public final class OptionUtils {
     public static Object getValueToSerialize(CalendarOption option) {
         return option.getValueToSerialize();
     }
-
-    public static Registration addChangeListener(CalendarOption option,
-                                                 Consumer<CalendarOption.OptionChangeEvent> listener) {
-        return option.addChangeListener(listener);
-    }
 }

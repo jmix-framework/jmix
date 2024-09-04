@@ -25,8 +25,10 @@ import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.component.model.IncrementalData;
+import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
 import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,13 +56,9 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
             return null;
         }
 
-        String rawValue = CalendarEventSerializer.getRawGroupIdOrConstraint(value);
+        String rawValue = getRawGroupIdOrConstraint(value);
 
         return rawValue != null ? rawValue : crossEventProviderKeyMapper.key(value);
-    }
-
-    public void clearData() {
-        crossEventProviderKeyMapper.removeAll();
     }
 
     public FullCalendarDataSerializer createDataSerializer(String sourceId,
@@ -68,6 +66,26 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
         return new FullCalendarDataSerializer(sourceId, eventKeyMapper);
     }
 
+    @Nullable
+    public static String getRawGroupIdOrConstraint(Object value) {
+        Preconditions.checkNotNullArgument(value);
+
+        if (value instanceof String stringValue) {
+            return stringValue;
+        } else if (value instanceof EnumClass<?> enumClass) {
+            return enumClass.getId().toString();
+        } else if (value instanceof HasEnumId<?> enumId) {
+            return enumId.getId().toString();
+        } else if (value instanceof Enum<?> enumValue) {
+            return enumValue.name();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Data serializer is used per event provider manager.
+     */
     public class FullCalendarDataSerializer extends FullCalendarSerializer {
         private static final Logger log = LoggerFactory.getLogger(FullCalendarDataSerializer.class);
 

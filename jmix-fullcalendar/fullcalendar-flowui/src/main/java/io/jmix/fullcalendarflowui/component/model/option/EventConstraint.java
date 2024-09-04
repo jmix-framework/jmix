@@ -23,15 +23,19 @@ import org.springframework.lang.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.EVENT_CONSTRAINT;
+
+/**
+ * INTERNAL.
+ */
 public class EventConstraint extends CalendarOption {
-    public static final String NAME = "eventConstraint";
 
     protected String groupId;
 
     protected List<CalendarBusinessHours> businessHours;
 
     public EventConstraint() {
-        super(NAME);
+        super(EVENT_CONSTRAINT);
     }
 
     @Nullable

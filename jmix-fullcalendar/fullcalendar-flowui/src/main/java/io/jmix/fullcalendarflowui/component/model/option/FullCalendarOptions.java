@@ -18,53 +18,49 @@ package io.jmix.fullcalendarflowui.component.model.option;
 
 import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendar.Display;
-import io.jmix.fullcalendarflowui.kit.component.model.option.CalendarOption;
 import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOptions;
-import io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils;
 import io.jmix.fullcalendarflowui.kit.component.model.option.SimpleOption;
 
 import java.util.List;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.*;
+
+/**
+ * INTERNAL.
+ */
 public class FullCalendarOptions extends JmixFullCalendarOptions {
 
-    protected EventConstraint eventConstraint = new EventConstraint();
-    protected BusinessHours businessHours = new BusinessHours();
-    protected SelectConstraint selectConstraint = new SelectConstraint();
-
-    protected SimpleOption<List<DayOfWeek>> hiddenDays = new SimpleOption<>("hiddenDays");
-
-    protected SimpleOption<DayOfWeek> firstDay = new SimpleOption<>("firstDay");
-    protected SimpleOption<Display> eventDisplay = new SimpleOption<>("eventDisplay", Display.AUTO);
-
-    public FullCalendarOptions() {
-        List<CalendarOption> options = List.of(eventConstraint, businessHours, selectConstraint, hiddenDays, firstDay,
-                eventDisplay);
-        options.forEach(o -> OptionUtils.addChangeListener(o, this::onOptionChange));
-
-        updatableOptions.addAll(options);
+    @Override
+    protected void addAdditionalOptions() {
+        optionsMap.put(BUSINESS_HOURS, new BusinessHours());
+        optionsMap.put(EVENT_CONSTRAINT, new EventConstraint());
+        optionsMap.put(EVENT_DISPLAY, new SimpleOption<>(EVENT_DISPLAY, Display.AUTO));
+        optionsMap.put(FIRST_DAY, new SimpleOption<>(FIRST_DAY));
+        optionsMap.put(HIDDEN_DAYS, new SimpleOption<>(HIDDEN_DAYS));
+        optionsMap.put(SELECT_CONSTRAINT, new SelectConstraint());
     }
 
     public EventConstraint getEventConstraint() {
-        return eventConstraint;
+        return get(EVENT_CONSTRAINT);
     }
 
     public BusinessHours getBusinessHours() {
-        return businessHours;
+        return get(BUSINESS_HOURS);
     }
 
     public SelectConstraint getSelectConstraint() {
-        return selectConstraint;
+        return get(SELECT_CONSTRAINT);
     }
 
     public SimpleOption<List<DayOfWeek>> getHiddenDays() {
-        return hiddenDays;
+        return get(HIDDEN_DAYS);
     }
 
     public SimpleOption<DayOfWeek> getFirstDay() {
-        return firstDay;
+        return get(FIRST_DAY);
     }
 
     public SimpleOption<Display> getEventDisplay() {
-        return eventDisplay;
+        return get(EVENT_DISPLAY);
     }
 }

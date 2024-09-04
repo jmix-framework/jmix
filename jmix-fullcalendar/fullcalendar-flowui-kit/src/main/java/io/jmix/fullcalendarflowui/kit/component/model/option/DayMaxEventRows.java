@@ -18,17 +18,19 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 
 import jakarta.annotation.Nullable;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.DAY_MAX_EVENT_ROWS;
+
 /**
  * INTERNAL.
  */
 public class DayMaxEventRows extends CalendarOption {
-    public static final String NAME = "dayMaxEventRows";
 
     protected boolean defaultEnabled = false;
+
     protected Integer max;
 
     public DayMaxEventRows() {
-        super(NAME);
+        super(DAY_MAX_EVENT_ROWS);
     }
 
     public boolean isDefaultEnabled() {

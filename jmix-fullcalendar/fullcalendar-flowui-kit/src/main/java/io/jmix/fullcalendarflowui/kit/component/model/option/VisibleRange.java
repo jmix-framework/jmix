@@ -19,15 +19,15 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.VISIBLE_RANGE;
+
 /**
  * INTERNAL.
  */
 public class VisibleRange extends AbstractRange {
 
-    public static final String NAME = "visibleRange";
-
     public VisibleRange() {
-        super(NAME);
+        super(VISIBLE_RANGE);
     }
 
     public void setRange(LocalDate start, LocalDate end) {

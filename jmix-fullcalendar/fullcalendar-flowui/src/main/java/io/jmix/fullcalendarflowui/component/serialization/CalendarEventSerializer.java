@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.TimeZone;
 import java.util.function.Supplier;
 
+import static io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer.getRawGroupIdOrConstraint;
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.transformToZDT;
 
 public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
@@ -121,22 +122,5 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
             return;
         }
         provider.defaultSerializeField(property, value, gen);
-    }
-
-    @Nullable
-    public static String getRawGroupIdOrConstraint(Object value) {
-        Preconditions.checkNotNullArgument(value);
-
-        if (value instanceof String stringValue) {
-            return stringValue;
-        } else if (value instanceof EnumClass<?> enumClass) {
-            return enumClass.getId().toString();
-        } else if (value instanceof HasEnumId<?> enumId) {
-            return enumId.getId().toString();
-        } else if (value instanceof Enum<?> enumValue) {
-            return enumValue.name();
-        } else {
-            return null;
-        }
     }
 }

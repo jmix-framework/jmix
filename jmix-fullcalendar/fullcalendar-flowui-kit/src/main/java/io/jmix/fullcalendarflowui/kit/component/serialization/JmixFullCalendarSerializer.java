@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
         return json;
     }
 
-    public JsonObject serializeOptions(List<CalendarOption> options) {
+    public JsonObject serializeOptions(Collection<CalendarOption> options) {
         Map<String, Object> optionsMap = new HashMap<>(options.size());
         for (CalendarOption option : options) {
             optionsMap.put(

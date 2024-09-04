@@ -24,13 +24,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.VIEWS;
+
 /**
  * INTERNAL.
  */
 public class Views extends CalendarOption {
-    public static final String NAME = "views";
-
-    protected DayGridDayViewProperties dayGridDay;
+        protected DayGridDayViewProperties dayGridDay;
     protected DayGridWeekViewProperties dayGridWeek;
     protected DayGridMonthViewProperties dayGridMonth;
     protected DayGridYearViewProperties dayGridYear;
@@ -48,7 +48,7 @@ public class Views extends CalendarOption {
     protected List<CustomCalendarView> customViews;
 
     public Views() {
-        super(NAME);
+        super(VIEWS);
 
         initDayGridViews();
         initTimeGridViews();

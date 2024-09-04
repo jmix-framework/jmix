@@ -19,18 +19,19 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 import io.jmix.fullcalendarflowui.kit.component.model.JsFunction;
 import jakarta.annotation.Nullable;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.SELECT_OVERLAP;
+
 /**
  * INTERNAL.
  */
 public class SelectOverlap extends CalendarOption {
-    public static final String NAME = "selectOverlap";
 
     protected boolean enabled = true;
 
     protected JsFunction jsFunction;
 
     public SelectOverlap() {
-        super(NAME);
+        super(SELECT_OVERLAP);
     }
 
     public boolean isEnabled() {

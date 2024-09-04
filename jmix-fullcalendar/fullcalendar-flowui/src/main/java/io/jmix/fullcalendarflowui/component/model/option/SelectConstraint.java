@@ -23,15 +23,19 @@ import org.springframework.lang.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.SELECT_CONSTRAINT;
+
+/**
+ * INTERNAL.
+ */
 public class SelectConstraint extends CalendarOption {
-    public static final String NAME = "selectConstraint";
 
     protected String groupId;
 
     protected List<CalendarBusinessHours> businessHours;
 
     public SelectConstraint() {
-        super(NAME);
+        super(SELECT_CONSTRAINT);
     }
 
     @Nullable

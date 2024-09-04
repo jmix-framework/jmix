@@ -23,411 +23,404 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.*;
+
 /**
  * INTERNAL.
  */
 public class JmixFullCalendarOptions {
 
-    protected SimpleOption<Boolean> weekNumbers = new SimpleOption<>("weekNumbers", false);
-    protected ValidRange validRange = new ValidRange();
-    protected SimpleOption<TimeZone> timeZone = new SimpleOption<>("timeZone", TimeZone.getDefault());
-    protected SimpleOption<CalendarView> initialView = new SimpleOption<>("initialView", CalendarViewType.DAY_GRID_MONTH);
-    protected SimpleOption<Boolean> navLinks = new SimpleOption<>("navLinks", false);
-    protected DayMaxEventRows dayMaxEventRows = new DayMaxEventRows();
-    protected SimpleOption<Integer> eventMaxStack = new SimpleOption<>("eventMaxStack", -1);
-    protected DayMaxEvents dayMaxEvents = new DayMaxEvents();
-    protected MoreLinkClick moreLinkClick = new MoreLinkClick();
-
-    protected MoreLinkClassNames moreLinkClassNames = new MoreLinkClassNames();
-    protected SimpleOption<Boolean> eventStartEditable = new SimpleOption<>("eventStartEditable", false);
-    protected SimpleOption<Boolean> eventDurationEditable = new SimpleOption<>("eventDurationEditable", false);
-    protected SimpleOption<Boolean> eventResizableFromStart = new SimpleOption<>("eventResizableFromStart", false);
-    protected SimpleOption<Integer> eventDragMinDistance = new SimpleOption<>("eventDragMinDistance", 5);
-    protected EventOverlap eventOverlap = new EventOverlap();
-    protected SimpleOption<Integer> dragRevertDuration = new SimpleOption<>("dragRevertDuration", 500);
-    protected SimpleOption<CalendarDuration> snapDuration = new SimpleOption<>("snapDuration", CalendarDuration.ofMinutes(30));
-    protected SimpleOption<Boolean> dragScroll = new SimpleOption<>("dragScroll", true);
-    protected SimpleOption<Boolean> allDayMaintainDuration = new SimpleOption<>("allDayMaintainDuration", false);
-
-    protected Views views = new Views();
-    protected VisibleRange visibleRange = new VisibleRange();
-
-    protected SimpleOption<Boolean> selectable = new SimpleOption<>("selectable", false);
-    protected SimpleOption<Boolean> selectMirror = new SimpleOption<>("selectMirror", false);
-    protected SimpleOption<Boolean> unselectAuto = new SimpleOption<>("unselectAuto", true);
-    protected SimpleOption<String> unselectCancel = new SimpleOption<>("unselectCancel", "");
-    protected SelectOverlap selectOverlap = new SelectOverlap();
-
-    protected SimpleOption<JsFunction> selectAllow = new SimpleOption<>("selectAllow");
-    protected SimpleOption<Integer> selectMinDistance = new SimpleOption<>("selectMinDistance", 0);
-
-    protected SimpleOption<String> dayPopoverFormat = new SimpleOption<>("dayPopoverFormat", "MMMM D, YYYY");
-    protected SimpleOption<String> dayHeaderFormat = new SimpleOption<>("dayHeaderFormat", "ddd");
-    protected SimpleOption<String> weekNumberFormat = new SimpleOption<>("weekNumberFormat");
-    protected SimpleOption<String> slotLabelFormat = new SimpleOption<>("slotLabelFormat", "ha");
-    protected SimpleOption<String> eventTimeFormat = new SimpleOption<>("eventTimeFormat", "h:mma");
-
-    protected SimpleOption<Boolean> weekends = new SimpleOption<>("weekends", true);
-    protected SimpleOption<Boolean> dayHeaders = new SimpleOption<>("dayHeaders", true);
-    protected SimpleOption<Boolean> dayHeaderClassNames = new SimpleOption<>("dayHeaderClassNames", false);
-    protected SimpleOption<Boolean> dayCellClassNames = new SimpleOption<>("dayCellClassNames", false);
-
-    protected SimpleOption<CalendarDuration> slotDuration = new SimpleOption<>("slotDuration", CalendarDuration.ofMinutes(30));
-    protected SimpleOption<CalendarDuration> slotLabelInterval = new SimpleOption<>("slotLabelInterval");
-    protected SimpleOption<CalendarDuration> slotMinTime = new SimpleOption<>("slotMinTime", CalendarDuration.ofHours(0));
-    protected SimpleOption<CalendarDuration> slotMaxTime = new SimpleOption<>("slotMaxTime", CalendarDuration.ofHours(24));
-    protected SimpleOption<CalendarDuration> scrollTime = new SimpleOption<>("scrollTime", CalendarDuration.ofHours(6));
-    protected SimpleOption<Boolean> scrollTimeReset = new SimpleOption<>("scrollTimeReset", true);
-    protected SimpleOption<Boolean> slotLabelClassNames = new SimpleOption<>("slotLabelClassNames", false);
-
-    protected SimpleOption<Boolean> defaultAllDay = new SimpleOption<>("defaultAllDay", false);
-
-    protected SimpleOption<CalendarDuration> defaultAllDayEventDuration = new SimpleOption<>("defaultAllDayEventDuration", CalendarDuration.ofDays(1));
-    protected SimpleOption<CalendarDuration> defaultTimedEventDuration = new SimpleOption<>("defaultTimedEventDuration", CalendarDuration.ofHours(1));
-    protected SimpleOption<Boolean> forceEventDuration = new SimpleOption<>("forceEventDuration", false);
-    protected SimpleOption<CalendarDuration> dateIncrement = new SimpleOption<>("dateIncrement");
-    protected SimpleOption<String> dateAlignment = new SimpleOption<>("dateAlignment", "");
-
-    protected SimpleOption<LocalDate> initialDate = new SimpleOption<>("initialDate");
-
-    protected SimpleOption<Boolean> expandRows = new SimpleOption<>("expandRows", false);
-    protected SimpleOption<Integer> windowResizeDelay = new SimpleOption<>("windowResizeDelay", 100);
-
-    protected SimpleOption<Boolean> eventInteractive = new SimpleOption<>("eventInteractive", false);
-
-    protected SimpleOption<Integer> longPressDelay = new SimpleOption<>("longPressDelay", 1000);
-    protected SimpleOption<Integer> selectLongPressDelay = new SimpleOption<>("selectLongPressDelay", 1000);
-
-    protected SimpleOption<Boolean> nowIndicator = new SimpleOption<>("nowIndicator", false);
-
-    protected SimpleOption<Boolean> nowIndicatorClassNames = new SimpleOption<>("nowIndicatorClassNames", false);
-
-    protected SimpleOption<String> eventBackgroundColor = new SimpleOption<>("eventBackgroundColor");
-    protected SimpleOption<String> eventBorderColor = new SimpleOption<>("eventBorderColor");
-    protected SimpleOption<String> eventTextColor = new SimpleOption<>("eventTextColor");
-    protected SimpleOption<Boolean> displayEventTime = new SimpleOption<>("displayEventTime", true);
-    protected SimpleOption<CalendarDuration> nextDayThreshold = new SimpleOption<>("nextDayThreshold", CalendarDuration.ofHours(0));
-    protected SimpleOption<Boolean> eventOrderStrict = new SimpleOption<>("eventOrderStrict", false);
-    protected SimpleOption<Boolean> progressiveEventRendering = new SimpleOption<>("progressiveEventRendering", false);
-    protected EventOrder eventOrder = new EventOrder();
-
-    protected final List<CalendarOption> updatableOptions = new ArrayList<>(28);
-
     /**
      * Options that applied only at creation time.
      */
-    protected final List<CalendarOption> initialOptions = new ArrayList<>(4);
+    protected Map<String, CalendarOption> initialOptionsMap = new HashMap<>(15);
+
+    /**
+     * Options that can be updated during runtime.
+     */
+    protected Map<String, CalendarOption> optionsMap = new HashMap<>(57);
+
+    {
+        initialOptionsMap.put(DAY_HEADER_FORMAT, new SimpleOption<>(DAY_HEADER_FORMAT, "ddd"));
+        initialOptionsMap.put(DAY_POPOVER_FORMAT, new SimpleOption<>(DAY_POPOVER_FORMAT, "MMMM D, YYYY"));
+        initialOptionsMap.put(DRAG_SCROLL, new SimpleOption<>(DRAG_SCROLL, true));
+        initialOptionsMap.put(EVENT_TIME_FORMAT, new SimpleOption<>(EVENT_TIME_FORMAT, "h:mma"));
+        initialOptionsMap.put(INITIAL_DATE, new SimpleOption<>(INITIAL_DATE));
+        initialOptionsMap.put(INITIAL_VIEW, new SimpleOption<>(INITIAL_VIEW, CalendarViewType.DAY_GRID_MONTH));
+        initialOptionsMap.put(NOW_INDICATOR, new SimpleOption<>(NOW_INDICATOR, false));
+        initialOptionsMap.put(SCROLL_TIME, new SimpleOption<>(SCROLL_TIME, CalendarDuration.ofHours(6)));
+        initialOptionsMap.put(SCROLL_TIME_RESET, new SimpleOption<>(SCROLL_TIME_RESET, true));
+        initialOptionsMap.put(SELECT_MIN_DISTANCE, new SimpleOption<>(SELECT_MIN_DISTANCE, 0));
+        initialOptionsMap.put(SLOT_LABEL_FORMAT, new SimpleOption<>(SLOT_LABEL_FORMAT, "ha"));
+        initialOptionsMap.put(UNSELECT_AUTO, new SimpleOption<>(UNSELECT_AUTO, true));
+        initialOptionsMap.put(UNSELECT_CANCEL, new SimpleOption<>(UNSELECT_CANCEL, ""));
+        initialOptionsMap.put(VIEWS, new Views());
+        initialOptionsMap.put(WEEK_NUMBER_FORMAT, new SimpleOption<>(WEEK_NUMBER_FORMAT));
+
+        optionsMap.put(ALL_DAY_MAINTAIN_DURATION, new SimpleOption<>(ALL_DAY_MAINTAIN_DURATION, false));
+        optionsMap.put(DAY_HEADERS, new SimpleOption<>(DAY_HEADERS, true));
+        optionsMap.put(DAY_MAX_EVENTS, new DayMaxEvents());
+        optionsMap.put(DAY_MAX_EVENT_ROWS, new DayMaxEventRows());
+        optionsMap.put(DATE_ALIGNMENT, new SimpleOption<>(DATE_ALIGNMENT, ""));
+        optionsMap.put(DAY_HEADER_CLASS_NAMES, new SimpleOption<>(DAY_HEADER_CLASS_NAMES, false));
+        optionsMap.put(DAY_CELL_CLASS_NAMES, new SimpleOption<>(DAY_CELL_CLASS_NAMES, false));
+        optionsMap.put(DEFAULT_ALL_DAY, new SimpleOption<>(DEFAULT_ALL_DAY, false));
+        optionsMap.put(DEFAULT_ALL_DAY_EVENT_DURATION, new SimpleOption<>(DEFAULT_ALL_DAY_EVENT_DURATION, CalendarDuration.ofDays(1)));
+        optionsMap.put(DRAG_REVERT_DURATION, new SimpleOption<>(DRAG_REVERT_DURATION, 500));
+        optionsMap.put(DEFAULT_TIMED_EVENT_DURATION, new SimpleOption<>(DEFAULT_TIMED_EVENT_DURATION, CalendarDuration.ofHours(1)));
+        optionsMap.put(DATE_INCREMENT, new SimpleOption<>(DATE_INCREMENT));
+        optionsMap.put(DISPLAY_EVENT_TIME, new SimpleOption<>(DISPLAY_EVENT_TIME, true));
+        optionsMap.put(EVENT_MAX_STACK, new SimpleOption<>(EVENT_MAX_STACK, -1));
+        optionsMap.put(EVENT_START_EDITABLE, new SimpleOption<>(EVENT_START_EDITABLE, false));
+        optionsMap.put(EVENT_DURATION_EDITABLE, new SimpleOption<>(EVENT_DURATION_EDITABLE, false));
+        optionsMap.put(EVENT_RESIZABLE_FROM_START, new SimpleOption<>(EVENT_RESIZABLE_FROM_START, false));
+        optionsMap.put(EVENT_DRAG_MIN_DISTANCE, new SimpleOption<>(EVENT_DRAG_MIN_DISTANCE, 5));
+        optionsMap.put(EVENT_OVERLAP, new EventOverlap());
+        optionsMap.put(EXPAND_ROWS, new SimpleOption<>(EXPAND_ROWS, false));
+        optionsMap.put(EVENT_INTERACTIVE, new SimpleOption<>(EVENT_INTERACTIVE, false));
+        optionsMap.put(EVENT_BACKGROUND_COLOR, new SimpleOption<>(EVENT_BACKGROUND_COLOR));
+        optionsMap.put(EVENT_BORDER_COLOR, new SimpleOption<>(EVENT_BORDER_COLOR));
+        optionsMap.put(EVENT_TEXT_COLOR, new SimpleOption<>(EVENT_TEXT_COLOR));
+        optionsMap.put(EVENT_ORDER_STRICT, new SimpleOption<>(EVENT_ORDER_STRICT, false));
+        optionsMap.put(EVENT_ORDER, new EventOrder());
+        optionsMap.put(FORCE_EVENT_DURATION, new SimpleOption<>(FORCE_EVENT_DURATION, false));
+        optionsMap.put(LONG_PRESS_DELAY, new SimpleOption<>(LONG_PRESS_DELAY, 1000));
+        optionsMap.put(MORE_LINK_CLASS_NAMES, new MoreLinkClassNames());
+        optionsMap.put(MORE_LINK_CLICK, new MoreLinkClick());
+        optionsMap.put(NAV_LINKS, new SimpleOption<>(NAV_LINKS, false));
+        optionsMap.put(NEXT_DAY_THRESHOLD, new SimpleOption<>(NEXT_DAY_THRESHOLD, CalendarDuration.ofHours(0)));
+        optionsMap.put(NOW_INDICATOR_CLASS_NAMES, new SimpleOption<>(NOW_INDICATOR_CLASS_NAMES, false));
+        optionsMap.put(PROGRESSIVE_EVENT_RENDERING, new SimpleOption<>(PROGRESSIVE_EVENT_RENDERING, false));
+        optionsMap.put(SELECTABLE, new SimpleOption<>(SELECTABLE, false));
+        optionsMap.put(SELECT_ALLOW, new SimpleOption<>(SELECT_ALLOW));
+        optionsMap.put(SELECT_LONG_PRESS_DELAY, new SimpleOption<>(SELECT_LONG_PRESS_DELAY, 1000));
+        optionsMap.put(SELECT_MIRROR, new SimpleOption<>(SELECT_MIRROR, false));
+        optionsMap.put(SELECT_OVERLAP, new SelectOverlap());
+        optionsMap.put(SLOT_DURATION, new SimpleOption<>(SLOT_DURATION, CalendarDuration.ofMinutes(30)));
+        optionsMap.put(SLOT_LABEL_INTERVAL, new SimpleOption<>(SLOT_LABEL_INTERVAL));
+        optionsMap.put(SLOT_MIN_TIME, new SimpleOption<>(SLOT_MIN_TIME, CalendarDuration.ofHours(0)));
+        optionsMap.put(SLOT_MAX_TIME, new SimpleOption<>(SLOT_MAX_TIME, CalendarDuration.ofHours(24)));
+        optionsMap.put(SLOT_LABEL_CLASS_NAMES, new SimpleOption<>(SLOT_LABEL_CLASS_NAMES, false));
+        optionsMap.put(SNAP_DURATION, new SimpleOption<>(SNAP_DURATION, CalendarDuration.ofMinutes(30)));
+        optionsMap.put(TIME_ZONE, new SimpleOption<>(TIME_ZONE, TimeZone.getDefault()));
+        optionsMap.put(VALID_RANGE, new ValidRange());
+        optionsMap.put(VISIBLE_RANGE, new VisibleRange());
+        optionsMap.put(WEEK_NUMBERS, new SimpleOption<>(WEEK_NUMBERS, false));
+        optionsMap.put(WEEKENDS, new SimpleOption<>(WEEKENDS, true));
+        optionsMap.put(WINDOW_RESIZE_DELAY, new SimpleOption<>(WINDOW_RESIZE_DELAY, 100));
+    }
 
     protected Consumer<OptionChangeEvent> optionChangeListener;
 
     public JmixFullCalendarOptions() {
-        updatableOptions.addAll(List.of(weekNumbers, validRange, timeZone, navLinks, dayMaxEventRows,
-                eventMaxStack, dayMaxEvents, moreLinkClick, moreLinkClassNames, eventStartEditable,
-                eventDurationEditable, eventResizableFromStart, eventDragMinDistance, eventOverlap, dragRevertDuration,
-                snapDuration, allDayMaintainDuration, selectable, selectMirror, unselectCancel,
-                selectOverlap, selectAllow, visibleRange, weekends, dayHeaderClassNames, dayCellClassNames,
-                slotDuration, slotLabelInterval, slotMinTime, slotMaxTime, slotLabelClassNames, defaultAllDay,
-                defaultAllDayEventDuration, defaultTimedEventDuration, forceEventDuration, dateIncrement,
-                dateAlignment, expandRows, windowResizeDelay, eventInteractive, longPressDelay, selectLongPressDelay,
-                nowIndicatorClassNames, eventBackgroundColor, eventBorderColor, eventTextColor, displayEventTime,
-                nextDayThreshold, eventOrderStrict, progressiveEventRendering, eventOrder));
+        addAdditionalOptions();
 
-        initialOptions.addAll(List.of(initialView, unselectAuto, unselectCancel, selectMinDistance, views, dragScroll,
-                dayPopoverFormat, dayHeaderFormat, weekNumberFormat, slotLabelFormat, eventTimeFormat,
-                scrollTime, scrollTimeReset, initialDate, nowIndicator));
-
-        updatableOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
-        initialOptions.forEach(o -> o.addChangeListener(this::onOptionChange));
+        optionsMap.values().forEach(o -> o.addChangeListener(this::onOptionChange));
+        initialOptionsMap.values().forEach(o -> o.addChangeListener(this::onOptionChange));
     }
 
-    public List<CalendarOption> getUpdatableOptions() {
-        return updatableOptions;
+    public Collection<CalendarOption> getUpdatableOptions() {
+        return optionsMap.values();
     }
 
-    public List<CalendarOption> getInitialOptions() {
-        return initialOptions;
+    public Collection<CalendarOption> getInitialOptions() {
+        return initialOptionsMap.values();
     }
 
     public List<CalendarOption> getDirtyOptions() {
-        return updatableOptions.stream()
+        return optionsMap.values().stream()
                 .filter(CalendarOption::isDirty)
                 .toList();
     }
 
     public void unmarkAllAsDirty() {
-        updatableOptions.forEach(CalendarOption::unmarkAsDirty);
+        optionsMap.values().forEach(CalendarOption::unmarkAsDirty);
     }
 
     public SimpleOption<Boolean> getWeekNumbers() {
-        return weekNumbers;
+        return get(WEEK_NUMBERS);
     }
 
     public ValidRange getValidRange() {
-        return validRange;
+        return get(VALID_RANGE);
     }
 
     public SimpleOption<TimeZone> getTimeZone() {
-        return timeZone;
+        return get(TIME_ZONE);
     }
 
     public SimpleOption<CalendarView> getInitialView() {
-        return initialView;
+        return getInitial(INITIAL_VIEW);
     }
 
     public SimpleOption<Boolean> getNavLinks() {
-        return navLinks;
+        return get(NAV_LINKS);
     }
 
     public DayMaxEventRows getDayMaxEventRows() {
-        return dayMaxEventRows;
+        return get(DAY_MAX_EVENT_ROWS);
     }
 
     public SimpleOption<Integer> getEventMaxStack() {
-        return eventMaxStack;
+        return get(EVENT_MAX_STACK);
     }
 
     public DayMaxEvents getDayMaxEvents() {
-        return dayMaxEvents;
+        return get(DAY_MAX_EVENTS);
     }
 
     public MoreLinkClick getMoreLinkClick() {
-        return moreLinkClick;
+        return get(MORE_LINK_CLICK);
     }
 
     public MoreLinkClassNames getMoreLinkClassNames() {
-        return moreLinkClassNames;
+        return get(MORE_LINK_CLASS_NAMES);
     }
 
     public SimpleOption<Boolean> getEventStartEditable() {
-        return eventStartEditable;
+        return get(EVENT_START_EDITABLE);
     }
 
     public SimpleOption<Boolean> getEventDurationEditable() {
-        return eventDurationEditable;
+        return get(EVENT_DURATION_EDITABLE);
     }
 
     public SimpleOption<Boolean> getEventResizableFromStart() {
-        return eventResizableFromStart;
+        return get(EVENT_RESIZABLE_FROM_START);
     }
 
     public SimpleOption<Integer> getEventDragMinDistance() {
-        return eventDragMinDistance;
+        return get(EVENT_DRAG_MIN_DISTANCE);
     }
 
     public EventOverlap getEventOverlap() {
-        return eventOverlap;
+        return get(EVENT_OVERLAP);
     }
 
     public SimpleOption<Integer> getDragRevertDuration() {
-        return dragRevertDuration;
+        return get(DRAG_REVERT_DURATION);
     }
 
     public SimpleOption<Boolean> getDragScroll() {
-        return dragScroll;
+        return getInitial(DRAG_SCROLL);
     }
 
     public SimpleOption<CalendarDuration> getSnapDuration() {
-        return snapDuration;
+        return get(SNAP_DURATION);
     }
 
     public SimpleOption<Boolean> getAllDayMaintainDuration() {
-        return allDayMaintainDuration;
+        return get(ALL_DAY_MAINTAIN_DURATION);
     }
 
     public SimpleOption<Boolean> getSelectable() {
-        return selectable;
+        return get(SELECTABLE);
     }
 
     public SimpleOption<Boolean> getSelectMirror() {
-        return selectMirror;
+        return get(SELECT_MIRROR);
     }
 
     public SimpleOption<Boolean> getUnselectAuto() {
-        return unselectAuto;
+        return getInitial(UNSELECT_AUTO);
     }
 
     public SimpleOption<String> getUnselectCancel() {
-        return unselectCancel;
+        return getInitial(UNSELECT_CANCEL);
     }
 
     public SelectOverlap getSelectOverlap() {
-        return selectOverlap;
+        return get(SELECT_OVERLAP);
     }
 
     public SimpleOption<JsFunction> getSelectAllow() {
-        return selectAllow;
+        return get(SELECT_ALLOW);
     }
 
     public SimpleOption<Integer> getSelectMinDistance() {
-        return selectMinDistance;
+        return getInitial(SELECT_MIN_DISTANCE);
     }
 
     public Views getViews() {
-        return views;
+        return getInitial(VIEWS);
     }
 
     public VisibleRange getVisibleRange() {
-        return visibleRange;
+        return get(VISIBLE_RANGE);
     }
 
     public SimpleOption<String> getDayPopoverFormat() {
-        return dayPopoverFormat;
+        return getInitial(DAY_POPOVER_FORMAT);
     }
 
     public SimpleOption<String> getDayHeaderFormat() {
-        return dayHeaderFormat;
+        return getInitial(DAY_HEADER_FORMAT);
     }
 
     public SimpleOption<String> getWeekNumberFormat() {
-        return weekNumberFormat;
+        return getInitial(WEEK_NUMBER_FORMAT);
     }
 
     public SimpleOption<String> getSlotLabelFormat() {
-        return slotLabelFormat;
+        return getInitial(SLOT_LABEL_FORMAT);
     }
 
     public SimpleOption<String> getEventTimeFormat() {
-        return eventTimeFormat;
+        return getInitial(EVENT_TIME_FORMAT);
     }
 
     public SimpleOption<Boolean> getWeekends() {
-        return weekends;
+        return get(WEEKENDS);
     }
 
     public SimpleOption<Boolean> getDayHeaders() {
-        return dayHeaders;
+        return get(DAY_HEADERS);
     }
 
     public SimpleOption<Boolean> getDayHeaderClassNames() {
-        return dayHeaderClassNames;
+        return get(DAY_HEADER_CLASS_NAMES);
     }
 
     public SimpleOption<Boolean> getDayCellClassNames() {
-        return dayCellClassNames;
+        return get(DAY_CELL_CLASS_NAMES);
     }
 
     public SimpleOption<CalendarDuration> getSlotDuration() {
-        return slotDuration;
+        return get(SLOT_DURATION);
     }
 
     public SimpleOption<CalendarDuration> getSlotLabelInterval() {
-        return slotLabelInterval;
+        return get(SLOT_LABEL_INTERVAL);
     }
 
     public SimpleOption<CalendarDuration> getSlotMinTime() {
-        return slotMinTime;
+        return get(SLOT_MIN_TIME);
     }
 
     public SimpleOption<CalendarDuration> getSlotMaxTime() {
-        return slotMaxTime;
+        return get(SLOT_MAX_TIME);
     }
 
     public SimpleOption<CalendarDuration> getScrollTime() {
-        return scrollTime;
+        return getInitial(SCROLL_TIME);
     }
 
     public SimpleOption<Boolean> getScrollTimeReset() {
-        return scrollTimeReset;
+        return getInitial(SCROLL_TIME_RESET);
     }
 
     public SimpleOption<Boolean> getSlotLabelClassNames() {
-        return slotLabelClassNames;
+        return get(SLOT_LABEL_CLASS_NAMES);
     }
 
     public SimpleOption<Boolean> getDefaultAllDay() {
-        return defaultAllDay;
+        return get(DEFAULT_ALL_DAY);
     }
 
     public SimpleOption<CalendarDuration> getDefaultAllDayEventDuration() {
-        return defaultAllDayEventDuration;
+        return get(DEFAULT_ALL_DAY_EVENT_DURATION);
     }
 
     public SimpleOption<CalendarDuration> getDefaultTimedEventDuration() {
-        return defaultTimedEventDuration;
+        return get(DEFAULT_TIMED_EVENT_DURATION);
     }
 
     public SimpleOption<Boolean> getForceEventDuration() {
-        return forceEventDuration;
+        return get(FORCE_EVENT_DURATION);
     }
 
     public SimpleOption<LocalDate> getInitialDate() {
-        return initialDate;
+        return getInitial(INITIAL_DATE);
     }
 
     public SimpleOption<CalendarDuration> getDateIncrement() {
-        return dateIncrement;
+        return get(DATE_INCREMENT);
     }
 
     public SimpleOption<String> getDateAlignment() {
-        return dateAlignment;
+        return get(DATE_ALIGNMENT);
     }
 
     public SimpleOption<Boolean> getExpandRows() {
-        return expandRows;
+        return get(EXPAND_ROWS);
     }
 
     public SimpleOption<Integer> getWindowResizeDelay() {
-        return windowResizeDelay;
+        return get(WINDOW_RESIZE_DELAY);
     }
 
     public SimpleOption<Boolean> getEventInteractive() {
-        return eventInteractive;
+        return get(EVENT_INTERACTIVE);
     }
 
     public SimpleOption<Integer> getLongPressDelay() {
-        return longPressDelay;
+        return get(LONG_PRESS_DELAY);
     }
 
     public SimpleOption<Integer> getSelectLongPressDelay() {
-        return selectLongPressDelay;
+        return get(SELECT_LONG_PRESS_DELAY);
     }
 
     public SimpleOption<Boolean> getNowIndicator() {
-        return nowIndicator;
+        return getInitial(NOW_INDICATOR);
     }
 
     public SimpleOption<Boolean> getNowIndicatorClassNames() {
-        return nowIndicatorClassNames;
+        return get(NOW_INDICATOR_CLASS_NAMES);
     }
 
     public SimpleOption<String> getEventBackgroundColor() {
-        return eventBackgroundColor;
+        return get(EVENT_BACKGROUND_COLOR);
     }
 
     public SimpleOption<String> getEventBorderColor() {
-        return eventBorderColor;
+        return get(EVENT_BORDER_COLOR);
     }
 
     public SimpleOption<String> getEventTextColor() {
-        return eventTextColor;
+        return get(EVENT_TEXT_COLOR);
     }
 
     public SimpleOption<Boolean> getDisplayEventTime() {
-        return displayEventTime;
+        return get(DISPLAY_EVENT_TIME);
     }
 
     public SimpleOption<CalendarDuration> getNextDayThreshold() {
-        return nextDayThreshold;
+        return get(NEXT_DAY_THRESHOLD);
     }
 
     public SimpleOption<Boolean> getEventOrderStrict() {
-        return eventOrderStrict;
+        return get(EVENT_ORDER_STRICT);
     }
 
     public SimpleOption<Boolean> getProgressiveEventRendering() {
-        return progressiveEventRendering;
+        return get(PROGRESSIVE_EVENT_RENDERING);
     }
 
     public EventOrder getEventOrder() {
-        return eventOrder;
+        return get(EVENT_ORDER);
     }
 
     public boolean isInitial(CalendarOption option) {
-        return initialOptions.contains(option);
+        return initialOptionsMap.containsKey(option.getName());
     }
 
     public void setOptionChangeListener(@Nullable Consumer<OptionChangeEvent> listener) {
         this.optionChangeListener = listener;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends CalendarOption> T getInitial(String name) {
+        return (T) initialOptionsMap.get(name);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends CalendarOption> T get(String name) {
+        return (T) optionsMap.get(name);
+    }
+
+    protected void addAdditionalOptions() {
+        // Used in inheritors
     }
 
     protected void onOptionChange(CalendarOption.OptionChangeEvent event) {

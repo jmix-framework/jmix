@@ -23,15 +23,19 @@ import org.springframework.lang.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.BUSINESS_HOURS;
+
+/**
+ * INTERNAL.
+ */
 public class BusinessHours extends CalendarOption {
-    public static final String NAME = "businessHours";
 
     protected boolean enabled = false;
 
     protected List<CalendarBusinessHours> businessHours;
 
     public BusinessHours() {
-        super(NAME);
+        super(BUSINESS_HOURS);
     }
 
     public boolean isEnabled() {

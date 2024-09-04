@@ -4,6 +4,9 @@ import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
 
 import java.time.LocalDate;
 
+/**
+ * Class contains information about a calendar view, such as a date range.
+ */
 public class ViewInfo {
 
     protected final LocalDate activeStart;

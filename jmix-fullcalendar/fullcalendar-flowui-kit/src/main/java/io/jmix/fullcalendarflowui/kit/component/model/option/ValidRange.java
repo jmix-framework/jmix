@@ -20,14 +20,15 @@ import jakarta.annotation.Nullable;
 
 import java.time.LocalDate;
 
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.VALID_RANGE;
+
 /**
  * INTERNAL.
  */
 public class ValidRange extends AbstractRange {
-    public static final String NAME = "validRange";
 
     public ValidRange() {
-        super(NAME);
+        super(VALID_RANGE);
     }
 
     public void setStart(@Nullable LocalDate start) {

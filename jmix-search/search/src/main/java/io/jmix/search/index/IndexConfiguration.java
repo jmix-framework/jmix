@@ -21,6 +21,7 @@ import io.jmix.search.index.annotation.DynamicAttributes;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -137,4 +138,6 @@ public class IndexConfiguration {
     public DynamicAttributesIndexingDescriptor getDynamicAttributesIndexingDescriptor() {
         return dynamicAttributesIndexingDescriptor;
     }
+
+
 }

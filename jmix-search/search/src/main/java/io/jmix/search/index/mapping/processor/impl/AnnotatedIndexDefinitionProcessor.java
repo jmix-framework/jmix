@@ -83,6 +83,7 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final SearchProperties searchProperties;
     protected final MethodArgumentsProvider methodArgumentsProvider;
+    protected final DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor;
 
     @Autowired
     public AnnotatedIndexDefinitionProcessor(Metadata metadata,
@@ -93,7 +94,8 @@ public class AnnotatedIndexDefinitionProcessor {
                                              InstanceNameProvider instanceNameProvider,
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
-                                             ContextArgumentResolverComposite resolvers) {
+                                             ContextArgumentResolverComposite resolvers,
+                                             DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor) {
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
@@ -103,6 +105,7 @@ public class AnnotatedIndexDefinitionProcessor {
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
         this.searchProperties = searchProperties;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
+        this.dynamicAttributeDescriptorExtractor = dynamicAttributeDescriptorExtractor;
     }
 
     /**
@@ -134,7 +137,8 @@ public class AnnotatedIndexDefinitionProcessor {
                 indexMappingConfiguration,
                 affectedEntityClasses,
                 indexablePredicate,
-                indexDef.getExtendedSearchSettings()
+                indexDef.getExtendedSearchSettings(),
+                dynamicAttributeDescriptorExtractor.extract(indexDefClass)
         );
     }
 

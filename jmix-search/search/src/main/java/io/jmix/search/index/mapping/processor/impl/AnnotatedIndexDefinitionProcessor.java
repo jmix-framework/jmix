@@ -83,7 +83,7 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final SearchProperties searchProperties;
     protected final MethodArgumentsProvider methodArgumentsProvider;
-    //protected final IndexAnalysisElementsRegistry indexAnalysisElementsRegistry;
+    protected final DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor;
 
     @Autowired
     public AnnotatedIndexDefinitionProcessor(Metadata metadata,
@@ -94,8 +94,8 @@ public class AnnotatedIndexDefinitionProcessor {
                                              InstanceNameProvider instanceNameProvider,
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
-                                             ContextArgumentResolverComposite resolvers/*,
-                                             IndexAnalysisElementsRegistry indexAnalysisElementsRegistry*/) {
+                                             ContextArgumentResolverComposite resolvers,
+                                             DynamicAttributeDescriptorExtractor dynamicAttributeDescriptorExtractor) {
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
@@ -105,7 +105,7 @@ public class AnnotatedIndexDefinitionProcessor {
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
         this.searchProperties = searchProperties;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
-        //this.indexAnalysisElementsRegistry = indexAnalysisElementsRegistry;
+        this.dynamicAttributeDescriptorExtractor = dynamicAttributeDescriptorExtractor;
     }
 
     /**
@@ -136,7 +136,8 @@ public class AnnotatedIndexDefinitionProcessor {
                 indexName,
                 indexMappingConfiguration,
                 affectedEntityClasses,
-                indexablePredicate
+                indexablePredicate,
+                dynamicAttributeDescriptorExtractor.extract(indexDefClass)
         );
     }
 

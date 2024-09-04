@@ -15,8 +15,15 @@
  */
 package io.jmix.reports.yarg.formatters.impl.xlsx;
 
+import io.jmix.reports.yarg.structure.ReportTemplate;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFShape;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.docx4j.dml.CTBlip;
 import org.docx4j.dml.CTBlipFillProperties;
 import org.docx4j.dml.CTPositiveSize2D;
@@ -33,6 +40,14 @@ import org.docx4j.openpackaging.parts.PartName;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
 import org.docx4j.relationships.Relationship;
+
+import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class XlsxUtils {
 
@@ -177,5 +192,37 @@ public final class XlsxUtils {
             throw new RuntimeException(e);
         }
         return drawing;
+    }
+
+    public static Map<String, List<XlsxImage>> loadTemplateImages(ReportTemplate reportTemplate) {
+        Map<String, List<XlsxImage>> images = new HashMap<>();
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(reportTemplate.getDocumentContent().readAllBytes());
+            org.apache.poi.ss.usermodel.Workbook workbook = new XSSFWorkbook(bis);
+            org.apache.poi.ss.usermodel.Sheet srcSH = workbook.getSheetAt(0);
+            Drawing srcDraw = srcSH.createDrawingPatriarch();
+            if (srcDraw instanceof XSSFDrawing xssfDrawing) {
+                List<XSSFShape> shapes = xssfDrawing.getShapes();
+                for (XSSFShape xs : xssfDrawing.getShapes()) {
+                    if (xs instanceof Picture picture) {
+                        XSSFClientAnchor srcanchor = (XSSFClientAnchor) xs.getAnchor();
+                        int col = srcanchor.getCol1();
+                        int row = srcanchor.getRow1();
+                        org.apache.poi.ss.usermodel.Cell srcCell = srcSH.getRow(row).getCell(col);
+                        String cellAddress = srcCell.getAddress().toString();
+                        if (!images.containsKey(cellAddress)) {
+                            images.put(cellAddress, new ArrayList<>());
+                        }
+                        Dimension size = ImageUtils.getDimensionFromAnchor(picture);
+                        XlsxImage image = new XlsxImage(picture, size, xs.getDrawing(), row, col);
+                        images.get(cellAddress).add(image);
+                    }
+
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return images;
     }
 }

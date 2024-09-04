@@ -86,6 +86,7 @@ import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.attachImageToC
 import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.computeColumnIndex;
 import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.createPicture;
 import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.getOrCreateWorksheetDrawing;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.loadTemplateImages;
 
 public class XlsxFormatter extends AbstractFormatter {
 
@@ -130,38 +131,6 @@ public class XlsxFormatter extends AbstractFormatter {
 
     public void setFormulasPostProcessingEvaluationEnabled(boolean formulasPostProcessingEvaluationEnabled) {
         this.formulasPostProcessingEvaluationEnabled = formulasPostProcessingEvaluationEnabled;
-    }
-
-    private Map<String, List<XlsxImage>> loadTemplateImages() {
-        Map<String, List<XlsxImage>> images = new HashMap<>();
-        try {
-            ByteArrayInputStream bis = new ByteArrayInputStream(reportTemplate.getDocumentContent().readAllBytes());
-            org.apache.poi.ss.usermodel.Workbook workbook = new XSSFWorkbook(bis);
-            org.apache.poi.ss.usermodel.Sheet srcSH = workbook.getSheetAt(0);
-            Drawing srcDraw = srcSH.createDrawingPatriarch();
-            if (srcDraw instanceof XSSFDrawing xssfDrawing) {
-                List<XSSFShape> shapes = xssfDrawing.getShapes();
-                for (XSSFShape xs : xssfDrawing.getShapes()) {
-                    if (xs instanceof Picture picture) {
-                        XSSFClientAnchor srcanchor = (XSSFClientAnchor) xs.getAnchor();
-                        int col = srcanchor.getCol1();
-                        int row = srcanchor.getRow1();
-                        org.apache.poi.ss.usermodel.Cell srcCell = srcSH.getRow(row).getCell(col);
-                        String cellAddress = srcCell.getAddress().toString();
-                        if (!images.containsKey(cellAddress)) {
-                            images.put(cellAddress, new ArrayList<>());
-                        }
-                        Dimension size = ImageUtils.getDimensionFromAnchor(picture);
-                        XlsxImage image = new XlsxImage(picture, size, xs.getDrawing(), row, col);
-                        images.get(cellAddress).add(image);
-                    }
-
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return images;
     }
 
     @Override
@@ -294,7 +263,7 @@ public class XlsxFormatter extends AbstractFormatter {
     protected void init() {
         try {
             template = Document.create(SpreadsheetMLPackage.load(reportTemplate.getDocumentContent()));
-            templateImages = loadTemplateImages();
+            templateImages = loadTemplateImages(reportTemplate);
             result = Document.create(SpreadsheetMLPackage.load(reportTemplate.getDocumentContent()));
             clearTemplateDrawing();
             result.getWorkbook().getCalcPr().setCalcMode(STCalcMode.AUTO);

@@ -106,7 +106,6 @@ public class XlsxFormatter extends AbstractFormatter {
     protected Set<CellWithBand> outerFormulas = new HashSet<>();
 
     protected Map<String, List<XlsxImage>> templateImages = new HashMap<>();
-    protected Set<POIXMLDocumentPart> templateImageRels;
 
     protected Map<String, Range> lastRenderedRangeForBandName = new HashMap<>();
     protected Map<Worksheet, Long> lastRowForSheet = new HashMap<>();
@@ -250,6 +249,17 @@ public class XlsxFormatter extends AbstractFormatter {
         }
     }
 
+    protected boolean isCellInBand(String sheetName, int row, int col) {
+        boolean isInBand = false;
+        for (BandData childBand : rootBand.getChildrenList()) {
+            Range range = getBandRange(childBand);
+            if (range.contains(new CellReference(sheetName, row + 1, col + 1))) {
+                isInBand = true;
+            }
+        }
+        return isInBand;
+    }
+
     public byte[] extractTemplateImages(ReportTemplate reportTemplate) {
         templateImages = new HashMap<>();
         try (ByteArrayInputStream bis = new ByteArrayInputStream(reportTemplate.getDocumentContent().readAllBytes());
@@ -266,6 +276,9 @@ public class XlsxFormatter extends AbstractFormatter {
                             int row = srcanchor.getRow1();
                             org.apache.poi.ss.usermodel.Cell srcCell = srcSH.getRow(row).getCell(col);
                             if (srcCell != null) {
+                                if (!isCellInBand(srcSH.getSheetName(), row, col)) {
+                                    break;
+                                }
                                 String cellAddress = srcSH.getSheetName() + "_" + srcCell.getAddress().toString();
                                 if (!templateImages.containsKey(cellAddress)) {
                                     templateImages.put(cellAddress, new ArrayList<>());
@@ -292,12 +305,10 @@ public class XlsxFormatter extends AbstractFormatter {
 
     protected void init() {
         try {
+            template = Document.create(SpreadsheetMLPackage.load(reportTemplate.getDocumentContent()));
             byte[] templateData = extractTemplateImages(reportTemplate);
-            try (InputStream is = new ByteArrayInputStream(templateData);
-                 InputStream is2 = new ByteArrayInputStream(templateData);
-                ) {
-                template = Document.create(SpreadsheetMLPackage.load(is));
-                result = Document.create(SpreadsheetMLPackage.load(is2));
+            try (InputStream is = new ByteArrayInputStream(templateData)) {
+                result = Document.create(SpreadsheetMLPackage.load(is));
             }
             result.getWorkbook().getCalcPr().setCalcMode(STCalcMode.AUTO);
             result.getWorkbook().getCalcPr().setFullCalcOnLoad(true);

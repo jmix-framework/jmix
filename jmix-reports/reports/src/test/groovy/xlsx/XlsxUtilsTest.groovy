@@ -24,7 +24,6 @@ import spock.lang.Specification
 class XlsxUtilsTest extends Specification {
 
     def "computeColumnIndex"() throws IOException, URISyntaxException {
-
         when: "Cell names is: A4"
             def cellName1 = "A4"
         then: "The column index must be eq to: 1"

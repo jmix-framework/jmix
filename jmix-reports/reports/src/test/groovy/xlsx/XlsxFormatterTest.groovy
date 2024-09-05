@@ -32,8 +32,7 @@ import java.nio.file.Paths
 class XlsxFormatterTest extends Specification {
 
     def "renderDocument from template with images"() throws IOException, URISyntaxException {
-
-        when: "Data has 7 items, template has 3 band images and 1 non-band"
+        when: "Data has 7 items, template has 3 data images"
             def os = new ByteArrayOutputStream()
             def rootBand = new BandData("Root")
             rootBand.setFirstLevelBandDefinitionNames(["Root", "Users", "Users2"].toSet())
@@ -62,7 +61,7 @@ class XlsxFormatterTest extends Specification {
             template.setContent(readFile("template.xlsx"))
             def formatter = new XlsxFormatter(new FormatterFactoryInput("xlsx", rootBand, template, ReportOutputType.xlsx, os))
             formatter.renderDocument()
-        then: "The result document must have (2 * 4) + (1 * 3) + 1 = 12 images"
+        then: "The result document must have: (2 * 4) + (1 * 3) + 1 = 12 images"
             def byteArray = os.toByteArray()
             def bis = new ByteArrayInputStream(byteArray)
             def workbook = new XSSFWorkbook(bis)

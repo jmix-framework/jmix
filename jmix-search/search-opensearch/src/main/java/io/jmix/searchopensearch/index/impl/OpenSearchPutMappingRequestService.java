@@ -60,7 +60,8 @@ public class OpenSearchPutMappingRequestService implements PutMappingService<Put
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> getPropertiesMap(IndexMappingConfiguration mappingConfiguration) {
-        Map<String, Object> mappingBodyAsMap = objectMapper.convertValue(mappingConfiguration, new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> mappingBodyAsMap = objectMapper.convertValue(mappingConfiguration, new TypeReference<Map<String, Object>>() {
+        });
         return (Map<String, Object>) mappingBodyAsMap.get("properties");
     }
 }

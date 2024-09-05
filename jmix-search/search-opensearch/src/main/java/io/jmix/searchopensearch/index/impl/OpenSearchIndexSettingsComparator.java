@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 @Component("search_OpenSearchIndexSettingsComparator")
 public class OpenSearchIndexSettingsComparator extends IndexSettingsComparator<IndexState, IndexSettings, OpenSearchClient, JsonpSerializable> {
 
-    private final OpenSearchIndexSettingsProvider settingsProvider;
+    protected final OpenSearchIndexSettingsProvider settingsProvider;
 
     public OpenSearchIndexSettingsComparator(OpenSearchJsonpSerializer jsonpSerializer, JsonNodesComparator jsonNodesComparator, OpenSearchIndexSettingsProvider settingsProvider) {
         super(jsonpSerializer, jsonNodesComparator);

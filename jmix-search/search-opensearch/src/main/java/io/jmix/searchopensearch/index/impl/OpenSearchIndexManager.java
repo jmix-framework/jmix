@@ -48,7 +48,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<OpenSearchClient, I
     private static final Logger log = LoggerFactory.getLogger(OpenSearchIndexManager.class);
 
     protected final OpenSearchIndexSettingsProvider indexSettingsProcessor;
-    private final OpenSearchPutMappingRequestService putMappingRequestService;
+    protected final OpenSearchPutMappingRequestService putMappingRequestService;
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
 

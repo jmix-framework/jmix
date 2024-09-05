@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 public abstract class IndexSettingsComparator<TState, TSettings, TClient, TJsonp> {
     private static final Logger log = LoggerFactory.getLogger(IndexSettingsComparator.class);
 
-    private final JsonpSerializer<TJsonp, TClient> jsonpSerializer;
-    private final JsonNodesComparator jsonNodesComparator;
+    protected final JsonpSerializer<TJsonp, TClient> jsonpSerializer;
+    protected final JsonNodesComparator jsonNodesComparator;
 
     public IndexSettingsComparator(JsonpSerializer<TJsonp, TClient> jsonpSerializer, JsonNodesComparator jsonNodesComparator) {
         this.jsonpSerializer = jsonpSerializer;

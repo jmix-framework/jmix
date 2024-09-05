@@ -29,7 +29,7 @@ import java.io.InputStream;
 
 @Component("search_ElasticsearchPutMappingService")
 public class ElasticsearchPutMappingService implements PutMappingService<PutMappingRequest, JsonpMapper> {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public PutMappingRequest buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, JsonpMapper jsonpMapper) {

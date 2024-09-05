@@ -35,7 +35,7 @@ import java.util.Map;
 
 @Component("search_OpenSearchPutMappingRequestService")
 public class OpenSearchPutMappingRequestService implements PutMappingService<PutMappingRequest, JsonpMapper> {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Valid
     public PutMappingRequest buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, JsonpMapper jsonpMapper) {

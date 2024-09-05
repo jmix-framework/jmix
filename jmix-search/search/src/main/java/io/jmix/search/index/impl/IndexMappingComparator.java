@@ -32,9 +32,9 @@ public abstract class IndexMappingComparator<TState, TJsonp, TClient> {
     };
     private static final Logger log = LoggerFactory.getLogger(IndexMappingComparator.class);
 
-    private final MappingFieldComparator mappingFieldComparator;
+    protected final MappingFieldComparator mappingFieldComparator;
     protected final ObjectMapper objectMapper = new ObjectMapper();
-    private final JsonpSerializer<TJsonp, TClient> jsonpSerializer;
+    protected final JsonpSerializer<TJsonp, TClient> jsonpSerializer;
 
 
     public IndexMappingComparator(MappingFieldComparator mappingFieldComparator, JsonpSerializer<TJsonp, TClient> jsonpSerializer) {

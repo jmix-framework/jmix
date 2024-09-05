@@ -46,7 +46,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<ElasticsearchCli
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchIndexManager.class);
 
     protected final ElasticsearchIndexSettingsProvider indexSettingsProcessor;
-    private final ElasticsearchPutMappingService putMappingService;
+    protected final ElasticsearchPutMappingService putMappingService;
 
     public ElasticsearchIndexManager(ElasticsearchClient client,
                                      IndexStateRegistry indexStateRegistry,

@@ -24,8 +24,8 @@ public abstract class IndexConfigurationComparator<
         TState,
         TSettings,
         TJsonp> {
-    private final IndexSettingsComparator<TState, TSettings, TClient, TJsonp> settingsComparator;
-    private final IndexMappingComparator<TState, TJsonp, TClient> mappingComparator;
+    protected final IndexSettingsComparator<TState, TSettings, TClient, TJsonp> settingsComparator;
+    protected final IndexMappingComparator<TState, TJsonp, TClient> mappingComparator;
     protected final MetadataResolver<TClient, TState, TJsonp> metadataResolver;
 
     public IndexConfigurationComparator(
@@ -49,8 +49,8 @@ public abstract class IndexConfigurationComparator<
 
 
     public static class ConfigurationComparingResult {
-        private final IndexMappingComparator.MappingComparingResult mappingComparingResult;
-        private final IndexSettingsComparator.SettingsComparingResult settingsComparingResult;
+        protected final IndexMappingComparator.MappingComparingResult mappingComparingResult;
+        protected final IndexSettingsComparator.SettingsComparingResult settingsComparingResult;
 
         ConfigurationComparingResult(IndexMappingComparator.MappingComparingResult mappingComparingResult, IndexSettingsComparator.SettingsComparingResult settingsComparingResult) {
             this.mappingComparingResult = mappingComparingResult;

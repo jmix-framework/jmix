@@ -150,7 +150,7 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
         if (indexExist) {
             IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
             if (result.isIndexRecreatingRequired()) {
-                status = handleIrrelevantIndex(indexConfiguration, strategy);
+                status = recreateIrrelevantIndex(indexConfiguration, strategy);
             } else {
                 if (result.isConfigurationUpdateRequired()) {
                     status = updateIndexConfiguration(indexConfiguration, strategy, result);
@@ -168,7 +168,7 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
         return status;
     }
 
-    protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationStatus recreateIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
         if (strategy.isIndexRecreationSupported()) {
             boolean created = recreateIndex(indexConfiguration);

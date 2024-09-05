@@ -93,13 +93,13 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
 
             MappingComparingResult currentResult = compare((Map<String, Object>) mapEntry.getValue(), (Map<String, Object>) applicationMapping.get(mapEntry.getKey()));
             if (currentResult == MappingComparingResult.NOT_COMPATIBLE) return MappingComparingResult.NOT_COMPATIBLE;
-            if (currentResult == MappingComparingResult.CAN_BE_UPDATED && result != MappingComparingResult.CAN_BE_UPDATED) {
-                result = MappingComparingResult.CAN_BE_UPDATED;
+            if (currentResult == MappingComparingResult.UPDATABLE && result != MappingComparingResult.UPDATABLE) {
+                result = MappingComparingResult.UPDATABLE;
             }
         }
 
         if (result == MappingComparingResult.EQUAL && applicationMapping.size() > filteredSearchIndexMapping.size()) {
-            return MappingComparingResult.CAN_BE_UPDATED;
+            return MappingComparingResult.UPDATABLE;
         }
 
         return result;
@@ -116,7 +116,7 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
 
     public enum MappingComparingResult implements ConfigurationPartComparingResult {
         EQUAL,
-        CAN_BE_UPDATED,
+        UPDATABLE,
         NOT_COMPATIBLE;
 
         @Override
@@ -126,7 +126,7 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
 
         @Override
         public boolean configurationUpdateIsRequired() {
-            return this == CAN_BE_UPDATED;
+            return this == UPDATABLE;
         }
     }
 }

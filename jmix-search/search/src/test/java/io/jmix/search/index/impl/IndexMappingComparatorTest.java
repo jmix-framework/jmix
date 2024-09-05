@@ -303,7 +303,7 @@ class IndexMappingComparatorTest {
         IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
         IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.CAN_BE_UPDATED, result);
+        assertEquals(IndexMappingComparator.MappingComparingResult.UPDATABLE, result);
     }
 
     @Test

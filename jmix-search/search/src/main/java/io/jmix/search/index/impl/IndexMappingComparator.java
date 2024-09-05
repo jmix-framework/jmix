@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.jmix.search.index.impl.MappingComparingResult.*;
+
 public abstract class IndexMappingComparator<TState, TJsonp> {
     private static final Logger log = LoggerFactory.getLogger(IndexMappingComparator.class);
     protected static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
@@ -74,32 +76,32 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
 
         Map<String, Object> filteredSearchIndexMapping = getFilteredMapping(searchIndexMapping);
         if (!applicationMapping.keySet().containsAll(filteredSearchIndexMapping.keySet())) {
-            return MappingComparingResult.NOT_COMPATIBLE;
+            return NOT_COMPATIBLE;
         }
 
         if (mappingFieldComparator.isLeafField(filteredSearchIndexMapping)) {
             if (mappingFieldComparator.isLeafField(applicationMapping)) {
                 return mappingFieldComparator.compareLeafFields(filteredSearchIndexMapping, applicationMapping);
             } else {
-                return MappingComparingResult.NOT_COMPATIBLE;
+                return NOT_COMPATIBLE;
             }
         }
 
-        MappingComparingResult result = MappingComparingResult.EQUAL;
+        MappingComparingResult result = EQUAL;
         for (Map.Entry<String, Object> mapEntry : filteredSearchIndexMapping.entrySet()) {
             if (!(mapEntry.getValue() instanceof Map)) {
-                return MappingComparingResult.NOT_COMPATIBLE;
+                return NOT_COMPATIBLE;
             }
 
             MappingComparingResult currentResult = compare((Map<String, Object>) mapEntry.getValue(), (Map<String, Object>) applicationMapping.get(mapEntry.getKey()));
-            if (currentResult == MappingComparingResult.NOT_COMPATIBLE) return MappingComparingResult.NOT_COMPATIBLE;
-            if (currentResult == MappingComparingResult.UPDATABLE && result != MappingComparingResult.UPDATABLE) {
-                result = MappingComparingResult.UPDATABLE;
+            if (currentResult == NOT_COMPATIBLE) return NOT_COMPATIBLE;
+            if (currentResult == UPDATABLE && result != UPDATABLE) {
+                result = UPDATABLE;
             }
         }
 
-        if (result == MappingComparingResult.EQUAL && applicationMapping.size() > filteredSearchIndexMapping.size()) {
-            return MappingComparingResult.UPDATABLE;
+        if (result == EQUAL && applicationMapping.size() > filteredSearchIndexMapping.size()) {
+            return UPDATABLE;
         }
 
         return result;

@@ -35,10 +35,10 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
     public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration) {
         TState indexState = getIndexState(indexConfiguration);
         if (indexState == null) {
-            return new ConfigurationComparingResult(MappingComparingResult.NOT_COMPATIBLE, IndexSettingsComparator.SettingsComparingResult.NOT_COMPATIBLE);
+            return new ConfigurationComparingResult(MappingComparingResult.NOT_COMPATIBLE, SettingsComparingResult.NOT_COMPATIBLE);
         }
         MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexState);
-        IndexSettingsComparator.SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexState);
+        SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexState);
         return new ConfigurationComparingResult(mappingState, settingsState);
     }
 
@@ -47,9 +47,9 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
 
     public static class ConfigurationComparingResult {
         protected final MappingComparingResult mappingComparingResult;
-        protected final IndexSettingsComparator.SettingsComparingResult settingsComparingResult;
+        protected final SettingsComparingResult settingsComparingResult;
 
-        ConfigurationComparingResult(MappingComparingResult mappingComparingResult, IndexSettingsComparator.SettingsComparingResult settingsComparingResult) {
+        ConfigurationComparingResult(MappingComparingResult mappingComparingResult, SettingsComparingResult settingsComparingResult) {
             this.mappingComparingResult = mappingComparingResult;
             this.settingsComparingResult = settingsComparingResult;
         }

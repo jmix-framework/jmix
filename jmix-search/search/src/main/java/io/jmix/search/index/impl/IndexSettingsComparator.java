@@ -32,7 +32,7 @@ public abstract class IndexSettingsComparator<IndexStateType, IndexSettingsType,
         this.jsonNodesComparator = jsonNodesComparator;
     }
 
-    public  SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, IndexStateType currentIndexState, ClientType client) {
+    public SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, IndexStateType currentIndexState, ClientType client) {
 
         ObjectNode expectedSettingsNode = jsonpSerializer.toObjectNode(getExpectedIndexSettings(indexConfiguration), client);
         ObjectNode appliedSettingsNode = jsonpSerializer.toObjectNode(getAppliedIndexSettings(currentIndexState, indexConfiguration.getIndexName()), client);
@@ -40,7 +40,7 @@ public abstract class IndexSettingsComparator<IndexStateType, IndexSettingsType,
         log.debug("Settings of index '{}':\nExpected: {}\nApplied: {}",
                 indexConfiguration.getIndexName(), expectedSettingsNode, appliedSettingsNode);
 
-        return jsonNodesComparator.nodeContains(appliedSettingsNode, expectedSettingsNode)? SettingsComparingResult.EQUAL: SettingsComparingResult.NOT_COMPATIBLE;
+        return jsonNodesComparator.nodeContains(appliedSettingsNode, expectedSettingsNode) ? SettingsComparingResult.EQUAL : SettingsComparingResult.NOT_COMPATIBLE;
     }
 
     protected JsonpSerializableType getAppliedIndexSettings(IndexStateType currentIndexState, String indexName) {
@@ -64,11 +64,12 @@ public abstract class IndexSettingsComparator<IndexStateType, IndexSettingsType,
     }
 
     protected abstract IndexSettingsType extractAllAppliedIndexSettings(IndexStateType currentIndexState);
-    protected abstract   IndexSettingsType extractAppliedIndexSettings(IndexSettingsType allAppliedSettings);
+
+    protected abstract IndexSettingsType extractAppliedIndexSettings(IndexSettingsType allAppliedSettings);
 
     protected abstract JsonpSerializableType getExpectedIndexSettings(IndexConfiguration indexConfiguration);
 
-    public enum SettingsComparingResult implements ConfigurationPartComparingResult{
+    public enum SettingsComparingResult implements ConfigurationPartComparingResult {
         EQUAL,
         NOT_COMPATIBLE;
 

@@ -20,9 +20,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public abstract class BaseJsonpSerializer<JsonpSerializableType, ClientType> implements JsonpSerializer<JsonpSerializableType, ClientType>{
+public abstract class BaseJsonpSerializer<JsonpSerializableType, ClientType> implements JsonpSerializer<JsonpSerializableType, ClientType> {
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public ObjectNode toObjectNode(JsonpSerializableType object, ClientType searchClient) {
         JsonNode jsonNode = toJsonNode(object, searchClient);

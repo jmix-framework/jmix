@@ -159,9 +159,9 @@ public abstract class BaseIndexManager<ClientType, IndexStateType, IndexSettings
             if (result.isIndexRecreatingRequired()) {
                 status = handleIrrelevantIndex(indexConfiguration, strategy);
             } else {
-                if (result.isConfigurationUpdateRequired()){
+                if (result.isConfigurationUpdateRequired()) {
                     status = updateIndexConfiguration(indexConfiguration, strategy, result);
-                }else {
+                } else {
                     status = IndexSynchronizationStatus.ACTUAL;
                     indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
                 }
@@ -212,13 +212,13 @@ public abstract class BaseIndexManager<ClientType, IndexStateType, IndexSettings
     }
 
     protected IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
-        if(strategy.isConfigurationUpdateSupported()) {
-            if(result.isMappingUpdateRequired()){
+        if (strategy.isConfigurationUpdateSupported()) {
+            if (result.isMappingUpdateRequired()) {
                 boolean mappingSavingResult = putMapping(indexConfiguration.getIndexName(), indexConfiguration.getMapping());
                 if (mappingSavingResult) {
                     indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
                     return IndexSynchronizationStatus.UPDATED;
-                }else{
+                } else {
                     log.error("Problem with index mapping saving.");
                     indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
                     return IndexSynchronizationStatus.IRRELEVANT;

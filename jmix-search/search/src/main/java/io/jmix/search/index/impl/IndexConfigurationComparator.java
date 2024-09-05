@@ -24,13 +24,13 @@ public abstract class IndexConfigurationComparator<
         IndexStateType,
         IndexSettingsType,
         JsonpSerializableType> {
-    private final IndexSettingsComparator<IndexStateType, IndexSettingsType,ClientType, JsonpSerializableType> settingsComparator;
+    private final IndexSettingsComparator<IndexStateType, IndexSettingsType, ClientType, JsonpSerializableType> settingsComparator;
     private final IndexMappingComparator<IndexStateType, JsonpSerializableType, ClientType> mappingComparator;
     protected final MetadataResolver<ClientType, IndexStateType, JsonpSerializableType> metadataResolver;
 
     public IndexConfigurationComparator(
             IndexMappingComparator<IndexStateType, JsonpSerializableType, ClientType> mappingComparator,
-            IndexSettingsComparator<IndexStateType, IndexSettingsType,ClientType, JsonpSerializableType> settingsComparator, MetadataResolver<ClientType, IndexStateType, JsonpSerializableType> metadataResolver) {
+            IndexSettingsComparator<IndexStateType, IndexSettingsType, ClientType, JsonpSerializableType> settingsComparator, MetadataResolver<ClientType, IndexStateType, JsonpSerializableType> metadataResolver) {
         this.mappingComparator = mappingComparator;
         this.settingsComparator = settingsComparator;
         this.metadataResolver = metadataResolver;
@@ -39,7 +39,7 @@ public abstract class IndexConfigurationComparator<
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration, ClientType client) {
-        IndexStateType indexState  = getIndexState(indexConfiguration, client);
+        IndexStateType indexState = getIndexState(indexConfiguration, client);
         IndexMappingComparator.MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexState, client);
         IndexSettingsComparator.SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexState, client);
         return new ConfigurationComparingResult(mappingState, settingsState);
@@ -57,7 +57,7 @@ public abstract class IndexConfigurationComparator<
             this.settingsComparingResult = settingsComparingResult;
         }
 
-        public boolean isIndexRecreatingRequired(){
+        public boolean isIndexRecreatingRequired() {
             return mappingComparingResult.indexRecreatingIsRequired() || settingsComparingResult.indexRecreatingIsRequired();
         }
 
@@ -69,7 +69,7 @@ public abstract class IndexConfigurationComparator<
             return settingsComparingResult.configurationUpdateIsRequired();
         }
 
-        public boolean isConfigurationUpdateRequired(){
+        public boolean isConfigurationUpdateRequired() {
             return isMappingUpdateRequired() || isSettingsUpdateRequired();
         }
     }

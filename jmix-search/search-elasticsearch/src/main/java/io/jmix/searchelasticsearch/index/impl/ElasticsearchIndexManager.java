@@ -41,7 +41,7 @@ import java.io.*;
 /**
  * Implementation for Elasticsearch
  */
-public class ElasticsearchIndexManager extends BaseIndexManager<ElasticsearchClient, IndexState, IndexSettings, JsonpSerializable>{
+public class ElasticsearchIndexManager extends BaseIndexManager<ElasticsearchClient, IndexState, IndexSettings, JsonpSerializable> {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchIndexManager.class);
 
@@ -56,7 +56,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<ElasticsearchCli
                                      ElasticsearchIndexConfigurationComparator configurationComparator,
                                      ElasticsearchMetadataResolver metadataResolver,
                                      ElasticsearchPutMappingService putMappingService) {
-        super(client, indexConfigurationManager, indexStateRegistry, searchProperties,  configurationComparator, metadataResolver);
+        super(client, indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, metadataResolver);
         this.indexSettingsProcessor = indexSettingsProcessor;
         this.putMappingService = putMappingService;
     }

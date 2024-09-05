@@ -32,7 +32,7 @@ public class ElasticsearchPutMappingService implements PutMappingService<PutMapp
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public PutMappingRequest buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, JsonpMapper jsonpMapper){
+    public PutMappingRequest buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, JsonpMapper jsonpMapper) {
         InputStream mappingBodyStream = getMappingAsStream(indexName, mappingConfiguration);
         return PutMappingRequest.of(builder -> builder.index(indexName).withJson(mappingBodyStream));
     }

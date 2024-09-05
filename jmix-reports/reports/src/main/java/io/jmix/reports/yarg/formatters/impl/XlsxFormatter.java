@@ -254,7 +254,9 @@ public class XlsxFormatter extends AbstractFormatter {
         try {
             PartName partName = new PartName(StringUtils.replaceIgnoreCase(result.getWorksheets().get(0).getWorksheet().getPartName().getName(),
                     "worksheets/sheet", "drawings/drawing"));
-            result.getPackage().getParts().remove(partName);
+            if (result.getPackage().getParts().get(partName) != null) {
+                result.getPackage().getParts().remove(partName);
+            }
         } catch (InvalidFormatException e) {
             throw new RuntimeException(e);
         }

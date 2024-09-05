@@ -18,6 +18,7 @@ package io.jmix.searchopensearch.index.impl;
 
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.IndexConfigurationComparator;
+import jakarta.annotation.Nullable;
 import org.opensearch.client.json.JsonpSerializable;
 import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.opensearch.client.opensearch.indices.IndexState;
@@ -34,8 +35,8 @@ public class OpenSearchIndexConfigurationComparator
     }
 
     @Override
+    @Nullable
     protected IndexState getIndexState(IndexConfiguration indexConfiguration) {
-        //TODO nullable
         return indexStateResolver.getState(indexConfiguration.getIndexName());
     }
 }

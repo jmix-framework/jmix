@@ -18,6 +18,7 @@ package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.search.index.IndexConfiguration;
+import jakarta.annotation.Nullable;
 
 public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
     protected final IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator;
@@ -33,11 +34,15 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
 
     public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration) {
         TState indexState = getIndexState(indexConfiguration);
+        if (indexState == null) {
+            return new ConfigurationComparingResult(MappingComparingResult.NOT_COMPATIBLE, IndexSettingsComparator.SettingsComparingResult.NOT_COMPATIBLE);
+        }
         MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexState);
         IndexSettingsComparator.SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexState);
         return new ConfigurationComparingResult(mappingState, settingsState);
     }
 
+    @Nullable
     protected abstract TState getIndexState(IndexConfiguration indexConfiguration);
 
     public static class ConfigurationComparingResult {

@@ -60,6 +60,7 @@ public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
 
     protected abstract TJsonp getExpectedIndexSettings(IndexConfiguration indexConfiguration);
 
+    //TODO move to upper level
     public enum SettingsComparingResult implements ConfigurationPartComparingResult {
         EQUAL,
         NOT_COMPATIBLE;

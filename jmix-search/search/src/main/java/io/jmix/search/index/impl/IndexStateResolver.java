@@ -41,6 +41,7 @@ public abstract class IndexStateResolver<TState, TJsonp> {
         return jsonpSerializer.toObjectNode((TJsonp) indexState);
     }
 
+    @Nullable
     public TState getState(String indexName) {
         return getIndexMetadataMapInternal(indexName).get(indexName);
     }

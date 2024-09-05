@@ -20,12 +20,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public abstract class BaseJsonpSerializer<JsonpSerializableType, ClientType> implements JsonpSerializer<JsonpSerializableType, ClientType> {
+public abstract class BaseJsonpSerializer<TJsonp, TClient> implements JsonpSerializer<TJsonp, TClient> {
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public ObjectNode toObjectNode(JsonpSerializableType object, ClientType searchClient) {
+    public ObjectNode toObjectNode(TJsonp object, TClient searchClient) {
         JsonNode jsonNode = toJsonNode(object, searchClient);
         if (jsonNode.isObject()) {
             return (ObjectNode) jsonNode;
@@ -34,6 +34,6 @@ public abstract class BaseJsonpSerializer<JsonpSerializableType, ClientType> imp
         }
     }
 
-    protected abstract JsonNode toJsonNode(JsonpSerializableType object, ClientType searchClient);
+    protected abstract JsonNode toJsonNode(TJsonp object, TClient searchClient);
 
 }

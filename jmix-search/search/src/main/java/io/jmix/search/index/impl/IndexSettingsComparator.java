@@ -21,18 +21,18 @@ import io.jmix.search.index.IndexConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class IndexSettingsComparator<IndexStateType, IndexSettingsType, ClientType, JsonpSerializableType> {
+public abstract class IndexSettingsComparator<TState, TSettings, TClient, TJsonp> {
     private static final Logger log = LoggerFactory.getLogger(IndexSettingsComparator.class);
 
-    private final JsonpSerializer<JsonpSerializableType, ClientType> jsonpSerializer;
+    private final JsonpSerializer<TJsonp, TClient> jsonpSerializer;
     private final JsonNodesComparator jsonNodesComparator;
 
-    public IndexSettingsComparator(JsonpSerializer<JsonpSerializableType, ClientType> jsonpSerializer, JsonNodesComparator jsonNodesComparator) {
+    public IndexSettingsComparator(JsonpSerializer<TJsonp, TClient> jsonpSerializer, JsonNodesComparator jsonNodesComparator) {
         this.jsonpSerializer = jsonpSerializer;
         this.jsonNodesComparator = jsonNodesComparator;
     }
 
-    public SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, IndexStateType currentIndexState, ClientType client) {
+    public SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, TState currentIndexState, TClient client) {
 
         ObjectNode expectedSettingsNode = jsonpSerializer.toObjectNode(getExpectedIndexSettings(indexConfiguration), client);
         ObjectNode appliedSettingsNode = jsonpSerializer.toObjectNode(getAppliedIndexSettings(currentIndexState, indexConfiguration.getIndexName()), client);
@@ -43,8 +43,8 @@ public abstract class IndexSettingsComparator<IndexStateType, IndexSettingsType,
         return jsonNodesComparator.nodeContains(appliedSettingsNode, expectedSettingsNode) ? SettingsComparingResult.EQUAL : SettingsComparingResult.NOT_COMPATIBLE;
     }
 
-    protected JsonpSerializableType getAppliedIndexSettings(IndexStateType currentIndexState, String indexName) {
-        IndexSettingsType allAppliedSettings = extractAllAppliedIndexSettings(currentIndexState);
+    protected TJsonp getAppliedIndexSettings(TState currentIndexState, String indexName) {
+        TSettings allAppliedSettings = extractAllAppliedIndexSettings(currentIndexState);
 
         if (allAppliedSettings == null) {
             throw new IllegalArgumentException(
@@ -52,7 +52,7 @@ public abstract class IndexSettingsComparator<IndexStateType, IndexSettingsType,
             );
         }
 
-        IndexSettingsType appliedIndexSettings = extractAppliedIndexSettings(allAppliedSettings);
+        TSettings appliedIndexSettings = extractAppliedIndexSettings(allAppliedSettings);
         if (appliedIndexSettings == null) {
             throw new IllegalArgumentException(
                     "No info about applied index settings for index '" + indexName + "'"
@@ -60,14 +60,14 @@ public abstract class IndexSettingsComparator<IndexStateType, IndexSettingsType,
         }
 
         //TODO cast check
-        return (JsonpSerializableType) appliedIndexSettings;
+        return (TJsonp) appliedIndexSettings;
     }
 
-    protected abstract IndexSettingsType extractAllAppliedIndexSettings(IndexStateType currentIndexState);
+    protected abstract TSettings extractAllAppliedIndexSettings(TState currentIndexState);
 
-    protected abstract IndexSettingsType extractAppliedIndexSettings(IndexSettingsType allAppliedSettings);
+    protected abstract TSettings extractAppliedIndexSettings(TSettings allAppliedSettings);
 
-    protected abstract JsonpSerializableType getExpectedIndexSettings(IndexConfiguration indexConfiguration);
+    protected abstract TJsonp getExpectedIndexSettings(IndexConfiguration indexConfiguration);
 
     public enum SettingsComparingResult implements ConfigurationPartComparingResult {
         EQUAL,

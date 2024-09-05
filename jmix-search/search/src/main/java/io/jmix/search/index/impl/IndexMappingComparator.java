@@ -27,22 +27,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableType, ClientType> {
+public abstract class IndexMappingComparator<TState, TJsonp, TClient> {
     protected final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
     };
     private static final Logger log = LoggerFactory.getLogger(IndexMappingComparator.class);
 
     private final MappingFieldComparator mappingFieldComparator;
     protected final ObjectMapper objectMapper = new ObjectMapper();
-    private final JsonpSerializer<JsonpSerializableType, ClientType> jsonpSerializer;
+    private final JsonpSerializer<TJsonp, TClient> jsonpSerializer;
 
 
-    public IndexMappingComparator(MappingFieldComparator mappingFieldComparator, JsonpSerializer<JsonpSerializableType, ClientType> jsonpSerializer) {
+    public IndexMappingComparator(MappingFieldComparator mappingFieldComparator, JsonpSerializer<TJsonp, TClient> jsonpSerializer) {
         this.mappingFieldComparator = mappingFieldComparator;
         this.jsonpSerializer = jsonpSerializer;
     }
 
-    public MappingComparingResult compare(IndexConfiguration indexConfiguration, IndexStateType currentIndexState, ClientType client) {
+    public MappingComparingResult compare(IndexConfiguration indexConfiguration, TState currentIndexState, TClient client) {
 
         Map<String, Object> appliedMapping = getAppliedMapping(currentIndexState, client);
         Map<String, Object> expectedMapping = getExpectedMapping(indexConfiguration);
@@ -55,8 +55,8 @@ public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableTy
         return objectMapper.convertValue(indexConfiguration.getMapping(), MAP_TYPE_REF);
     }
 
-    private Map<String, Object> getAppliedMapping(IndexStateType currentIndexState, ClientType client) {
-        JsonpSerializableType typeMapping = extractTypeMapping(currentIndexState);
+    private Map<String, Object> getAppliedMapping(TState currentIndexState, TClient client) {
+        TJsonp typeMapping = extractTypeMapping(currentIndexState);
         if (typeMapping == null) {
             return Collections.emptyMap();
         } else {
@@ -66,7 +66,7 @@ public abstract class IndexMappingComparator<IndexStateType, JsonpSerializableTy
     }
 
     //TODO сделать строгую типизацию через TypeMapping
-    protected abstract JsonpSerializableType extractTypeMapping(IndexStateType currentIndexState);
+    protected abstract TJsonp extractTypeMapping(TState currentIndexState);
 
 
     MappingComparingResult compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {

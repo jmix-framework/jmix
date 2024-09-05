@@ -1,17 +1,13 @@
 package io.jmix.search.index.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +16,7 @@ import java.util.Map;
  * Contains non-platform-specific operations.
  * Interaction with indexes is performed in platform-specific implementations.
  */
-public abstract class BaseIndexManager<ClientType, IndexStateType, IndexSettingsType, JsonpSerializableType> implements IndexManager {
+public abstract class BaseIndexManager<TClient, TState, TSettings, TJsonp> implements IndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(BaseIndexManager.class);
 
@@ -30,16 +26,16 @@ public abstract class BaseIndexManager<ClientType, IndexStateType, IndexSettings
 
     protected final ObjectMapper objectMapper;
 
-    protected final ClientType client;
+    protected final TClient client;
 
-    protected final IndexConfigurationComparator<ClientType, IndexStateType, IndexSettingsType, JsonpSerializableType> indexConfigurationComparator;
-    protected final MetadataResolver<ClientType, IndexStateType, JsonpSerializableType> metadataResolver;
+    protected final IndexConfigurationComparator<TClient, TState, TSettings, TJsonp> indexConfigurationComparator;
+    protected final MetadataResolver<TClient, TState, TJsonp> metadataResolver;
 
-    protected BaseIndexManager(ClientType client, IndexConfigurationManager indexConfigurationManager,
+    protected BaseIndexManager(TClient client, IndexConfigurationManager indexConfigurationManager,
                                IndexStateRegistry indexStateRegistry,
                                SearchProperties searchProperties,
-                               IndexConfigurationComparator<ClientType, IndexStateType, IndexSettingsType, JsonpSerializableType> indexConfigurationComparator,
-                               MetadataResolver<ClientType, IndexStateType, JsonpSerializableType> metadataResolver) {
+                               IndexConfigurationComparator<TClient, TState, TSettings, TJsonp> indexConfigurationComparator,
+                               MetadataResolver<TClient, TState, TJsonp> metadataResolver) {
         this.client = client;
         this.indexConfigurationManager = indexConfigurationManager;
         this.indexStateRegistry = indexStateRegistry;

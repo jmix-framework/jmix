@@ -18,6 +18,6 @@ package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public interface JsonpSerializer<JsonpSerializableType, ClientType> {
-    ObjectNode toObjectNode(JsonpSerializableType object, ClientType searchClient);
+public interface JsonpSerializer<TJsonp, TClient> {
+    ObjectNode toObjectNode(TJsonp object, TClient searchClient);
 }

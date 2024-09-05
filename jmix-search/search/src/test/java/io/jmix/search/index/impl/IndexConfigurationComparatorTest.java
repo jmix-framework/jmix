@@ -17,7 +17,9 @@
 package io.jmix.search.index.impl;
 
 import io.jmix.search.index.IndexConfiguration;
+import jakarta.annotation.Nullable;
 import org.junit.jupiter.api.Test;
+import org.mockito.Answers;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -27,12 +29,11 @@ class IndexConfigurationComparatorTest {
 
     @Test
     void compareConfigurations() {
-        IndexConfigurationComparator<?,?,?> comparator = mock(IndexConfigurationComparator.class);
         IndexConfiguration configurationMock = mock(IndexConfiguration.class);
+        IndexConfigurationComparator<?, ?, ?> comparator = mock(IndexConfigurationComparator.class, Answers.CALLS_REAL_METHODS);
         when(comparator.getIndexState(configurationMock)).thenReturn(null);
         IndexConfigurationComparator.ConfigurationComparingResult result = comparator.compareConfigurations(configurationMock);
         assertEquals(result.mappingComparingResult, MappingComparingResult.NOT_COMPATIBLE);
-        assertEquals(result.settingsComparingResult, IndexSettingsComparator.SettingsComparingResult.NOT_COMPATIBLE);
+        assertEquals(result.settingsComparingResult, SettingsComparingResult.NOT_COMPATIBLE);
     }
-
 }

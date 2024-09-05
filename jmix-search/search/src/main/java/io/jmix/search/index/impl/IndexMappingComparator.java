@@ -114,19 +114,4 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
                 .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
     }
 
-    public enum MappingComparingResult implements ConfigurationPartComparingResult {
-        EQUAL,
-        UPDATABLE,
-        NOT_COMPATIBLE;
-
-        @Override
-        public boolean isIndexRecreatingRequired() {
-            return this == NOT_COMPATIBLE;
-        }
-
-        @Override
-        public boolean isConfigurationUpdateRequired() {
-            return this == UPDATABLE;
-        }
-    }
 }

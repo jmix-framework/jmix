@@ -22,8 +22,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static java.util.Objects.isNull;
-
 @Component("search_MappingFieldComparator")
 public class MappingFieldComparator {
     public static final String TYPE_KEY = "type";
@@ -32,9 +30,9 @@ public class MappingFieldComparator {
         return mapping.get(TYPE_KEY) != null && mapping.get(TYPE_KEY) instanceof String;
     }
 
-    public IndexMappingComparator.MappingComparingResult compareLeafFields(@NotNull Map<String, Object> searchIndexMapping, @NotNull Map<String, Object> applicationMapping) {
-        Preconditions.checkNotNullArgument(searchIndexMapping, "\"searchIndexMapping\" parameter value can't be null.");
-        Preconditions.checkNotNullArgument(applicationMapping, "\"applicationMapping\" parameter value can't be null.");
-        return searchIndexMapping.equals(applicationMapping) ? IndexMappingComparator.MappingComparingResult.EQUAL : IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE;
+    public MappingComparingResult compareLeafFields(@NotNull Map<String, Object> searchIndexMapping, @NotNull Map<String, Object> applicationMapping) {
+        Preconditions.checkNotNullArgument(searchIndexMapping, "'searchIndexMapping' parameter value can't be null.");
+        Preconditions.checkNotNullArgument(applicationMapping, "'applicationMapping' parameter value can't be null.");
+        return searchIndexMapping.equals(applicationMapping) ? MappingComparingResult.EQUAL : MappingComparingResult.NOT_COMPATIBLE;
     }
 }

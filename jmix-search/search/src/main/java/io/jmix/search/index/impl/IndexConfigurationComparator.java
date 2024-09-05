@@ -33,7 +33,7 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
 
     public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration) {
         TState indexState = getIndexState(indexConfiguration);
-        IndexMappingComparator.MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexState);
+        MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexState);
         IndexSettingsComparator.SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexState);
         return new ConfigurationComparingResult(mappingState, settingsState);
     }
@@ -41,10 +41,10 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
     protected abstract TState getIndexState(IndexConfiguration indexConfiguration);
 
     public static class ConfigurationComparingResult {
-        protected final IndexMappingComparator.MappingComparingResult mappingComparingResult;
+        protected final MappingComparingResult mappingComparingResult;
         protected final IndexSettingsComparator.SettingsComparingResult settingsComparingResult;
 
-        ConfigurationComparingResult(IndexMappingComparator.MappingComparingResult mappingComparingResult, IndexSettingsComparator.SettingsComparingResult settingsComparingResult) {
+        ConfigurationComparingResult(MappingComparingResult mappingComparingResult, IndexSettingsComparator.SettingsComparingResult settingsComparingResult) {
             this.mappingComparingResult = mappingComparingResult;
             this.settingsComparingResult = settingsComparingResult;
         }

@@ -81,9 +81,9 @@ class IndexMappingComparatorTest {
                 );
 
         IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
+        MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
+        assertEquals(MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -124,9 +124,9 @@ class IndexMappingComparatorTest {
                 );
 
         IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
+        MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
+        assertEquals(MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -169,9 +169,9 @@ class IndexMappingComparatorTest {
                 );
 
         IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
+        MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
+        assertEquals(MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -214,9 +214,9 @@ class IndexMappingComparatorTest {
                 );
 
         IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
+        MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
+        assertEquals(MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -261,9 +261,9 @@ class IndexMappingComparatorTest {
                 );
 
         IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
+        MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
+        assertEquals(MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     @Test
@@ -301,9 +301,9 @@ class IndexMappingComparatorTest {
                 );
 
         IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
+        MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.UPDATABLE, result);
+        assertEquals(MappingComparingResult.UPDATABLE, result);
     }
 
     @Test
@@ -338,9 +338,9 @@ class IndexMappingComparatorTest {
                 );
 
         IndexMappingComparator comparator = new TestIndexMappingComparator(new MappingFieldComparator());
-        IndexMappingComparator.MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
+        MappingComparingResult result = comparator.compare(searchIndexMapping, applicationMapping);
 
-        assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
+        assertEquals(MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
     static class TestIndexMappingComparator extends IndexMappingComparator<Object, Object> {

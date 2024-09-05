@@ -19,13 +19,13 @@ package io.jmix.search.index.impl;
 public class IndexMappingComparatorTestCase {
     private final String name;
     private final String folderWithFiles;
-    private final IndexMappingComparator.MappingComparingResult expectedResult;
+    private final MappingComparingResult expectedResult;
 
-    public static IndexMappingComparatorTestCase testCase(String name, String folderWithFiles, IndexMappingComparator.MappingComparingResult expectedResult){
+    public static IndexMappingComparatorTestCase testCase(String name, String folderWithFiles, MappingComparingResult expectedResult){
         return new IndexMappingComparatorTestCase(name, folderWithFiles, expectedResult);
     }
 
-    private IndexMappingComparatorTestCase(String name, String folderWithFiles, IndexMappingComparator.MappingComparingResult expectedResult) {
+    private IndexMappingComparatorTestCase(String name, String folderWithFiles, MappingComparingResult expectedResult) {
         this.name = name;
         this.folderWithFiles = folderWithFiles;
         this.expectedResult = expectedResult;
@@ -39,7 +39,7 @@ public class IndexMappingComparatorTestCase {
         return folderWithFiles;
     }
 
-    public IndexMappingComparator.MappingComparingResult getExpectedResult() {
+    public MappingComparingResult getExpectedResult() {
         return expectedResult;
     }
 

@@ -16,14 +16,18 @@
 
 package io.jmix.search.index.impl;
 
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.params.converter.ArgumentConversionException;
-import org.junit.jupiter.params.converter.ArgumentConverter;
+public enum MappingComparingResult implements ConfigurationPartComparingResult {
+    EQUAL,
+    UPDATABLE,
+    NOT_COMPATIBLE;
 
-public class IndexMappingComparatorTestCaseConverter implements ArgumentConverter {
     @Override
-    public Object convert(Object source, ParameterContext context) throws ArgumentConversionException {
-        String[] parts = ((String) source).split(";");
-        return IndexMappingComparatorTestCase.testCase(parts[0], parts[1], MappingComparingResult.valueOf(parts[2]));
+    public boolean isIndexRecreatingRequired() {
+        return this == NOT_COMPATIBLE;
+    }
+
+    @Override
+    public boolean isConfigurationUpdateRequired() {
+        return this == UPDATABLE;
     }
 }

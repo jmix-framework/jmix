@@ -33,12 +33,15 @@ import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reports.yarg.structure.BandVisitor;
 import io.jmix.reports.yarg.structure.ReportOutputType;
+import io.jmix.reports.yarg.structure.ReportTemplate;
 import io.jmix.reports.yarg.util.docx4j.XmlCopyUtils;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Picture;
@@ -46,18 +49,16 @@ import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
+import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.XmlCursor;
 import org.docx4j.XmlUtils;
-import org.docx4j.dml.CTBlip;
-import org.docx4j.dml.CTBlipFillProperties;
-import org.docx4j.dml.CTPositiveSize2D;
 import org.docx4j.dml.chart.CTAxDataSource;
 import org.docx4j.dml.chart.CTChart;
 import org.docx4j.dml.chart.CTNumDataSource;
 import org.docx4j.dml.chart.CTPlotArea;
 import org.docx4j.dml.spreadsheetdrawing.*;
-import org.docx4j.dml.spreadsheetdrawing.CTDrawing;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.io3.Save;
@@ -69,7 +70,6 @@ import org.docx4j.openpackaging.parts.SpreadsheetML.PivotCacheDefinition;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
-import org.docx4j.relationships.Relationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlsx4j.jaxb.Context;
@@ -84,9 +84,8 @@ import java.util.regex.Matcher;
 
 import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.attachImageToCell;
 import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.computeColumnIndex;
-import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.createPicture;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.deleteCTAnchor;
 import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.getOrCreateWorksheetDrawing;
-import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.loadTemplateImages;
 
 public class XlsxFormatter extends AbstractFormatter {
 
@@ -107,6 +106,7 @@ public class XlsxFormatter extends AbstractFormatter {
     protected Set<CellWithBand> outerFormulas = new HashSet<>();
 
     protected Map<String, List<XlsxImage>> templateImages = new HashMap<>();
+    protected Set<POIXMLDocumentPart> templateImageRels;
 
     protected Map<String, Range> lastRenderedRangeForBandName = new HashMap<>();
     protected Map<Worksheet, Long> lastRowForSheet = new HashMap<>();
@@ -250,24 +250,55 @@ public class XlsxFormatter extends AbstractFormatter {
         }
     }
 
-    protected void clearTemplateDrawing() {
-        try {
-            PartName partName = new PartName(StringUtils.replaceIgnoreCase(result.getWorksheets().get(0).getWorksheet().getPartName().getName(),
-                    "worksheets/sheet", "drawings/drawing"));
-            if (result.getPackage().getParts().get(partName) != null) {
-                result.getPackage().getParts().remove(partName);
+    public byte[] extractTemplateImages(ReportTemplate reportTemplate) {
+        templateImages = new HashMap<>();
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(reportTemplate.getDocumentContent().readAllBytes());
+            org.apache.poi.ss.usermodel.Workbook workbook = new XSSFWorkbook(bis)) {
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                org.apache.poi.ss.usermodel.Sheet srcSH = workbook.getSheetAt(i);
+                Drawing srcDraw = srcSH.createDrawingPatriarch();
+                if (srcDraw instanceof XSSFDrawing xssfDrawing) {
+                    List<XSSFShape> shapes = xssfDrawing.getShapes();
+                    for (XSSFShape xs : xssfDrawing.getShapes()) {
+                        if (xs instanceof Picture picture) {
+                            XSSFClientAnchor srcanchor = (XSSFClientAnchor) xs.getAnchor();
+                            int col = srcanchor.getCol1();
+                            int row = srcanchor.getRow1();
+                            org.apache.poi.ss.usermodel.Cell srcCell = srcSH.getRow(row).getCell(col);
+                            if (srcCell != null) {
+                                String cellAddress = srcSH.getSheetName() + "_" + srcCell.getAddress().toString();
+                                if (!templateImages.containsKey(cellAddress)) {
+                                    templateImages.put(cellAddress, new ArrayList<>());
+                                }
+                                Dimension size = ImageUtils.getDimensionFromAnchor(picture);
+                                XlsxImage image = new XlsxImage(picture, srcanchor.getDx1(), srcanchor.getDx2(),
+                                        srcanchor.getDy1(), srcanchor.getDy2(), size, xs.getDrawing(), row, col);
+                                templateImages.get(cellAddress).add(image);
+                                deleteCTAnchor((XSSFPicture) picture);
+                            }
+                        }
+                    }
+                }
             }
-        } catch (InvalidFormatException e) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            workbook.write(bos);
+            byte[] barray = bos.toByteArray();
+            return barray;
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     protected void init() {
         try {
-            template = Document.create(SpreadsheetMLPackage.load(reportTemplate.getDocumentContent()));
-            templateImages = loadTemplateImages(reportTemplate);
-            result = Document.create(SpreadsheetMLPackage.load(reportTemplate.getDocumentContent()));
-            clearTemplateDrawing();
+            byte[] templateData = extractTemplateImages(reportTemplate);
+            try (InputStream is = new ByteArrayInputStream(templateData);
+                 InputStream is2 = new ByteArrayInputStream(templateData);
+                ) {
+                template = Document.create(SpreadsheetMLPackage.load(is));
+                result = Document.create(SpreadsheetMLPackage.load(is2));
+            }
             result.getWorkbook().getCalcPr().setCalcMode(STCalcMode.AUTO);
             result.getWorkbook().getCalcPr().setFullCalcOnLoad(true);
             marshaller = XmlCopyUtils.createMarshaller(Context.jcSML);
@@ -656,6 +687,7 @@ public class XlsxFormatter extends AbstractFormatter {
 
     protected void writeHBand(BandData band) {
         Range templateRange = getBandRange(band);
+
         if (templateRange != null) {
             Worksheet resultSheet = result.getSheetByName(templateRange.getSheet());
             List<Row> resultSheetRows = resultSheet.getSheetData().getRow();
@@ -947,7 +979,7 @@ public class XlsxFormatter extends AbstractFormatter {
 
             updateCell(worksheetPart, bandData, newCell);
 
-            copyTemplateImages(worksheetPart, templateCell, newRow, newCell);
+            copyTemplateImages(worksheetPart, templateRange, templateCell, newRow, newCell);
 
             Col templateColumn = template.getColumnForCell(templateRange.getSheet(), tempRef);
             Col resultColumn = result.getColumnForCell(templateRange.getSheet(), newRef);
@@ -967,18 +999,19 @@ public class XlsxFormatter extends AbstractFormatter {
         return resultCells;
     }
 
-    private void copyTemplateImages(WorksheetPart worksheetPart, Cell templateCell, Row newRow, Cell newCell) {
+    private void copyTemplateImages(WorksheetPart worksheetPart, Range templateRange, Cell templateCell, Row newRow, Cell newCell) {
         int newRowNum = newRow.getR().intValue() - 1;
         int newColNum = computeColumnIndex(newCell.getR()) - 1;
 
-        List<XlsxImage> images = templateImages.get(templateCell.getR());
+        List<XlsxImage> images = templateImages.get(templateRange.getSheet() + "_" + templateCell.getR());
 
         if (images != null && images.size() > 0) {
             for (XlsxImage image : images) {
                 try {
                     org.docx4j.openpackaging.parts.DrawingML.Drawing drawing = getOrCreateWorksheetDrawing(result.getPackage(), worksheetPart);
+                    org.docx4j.openpackaging.parts.DrawingML.Drawing exxdrawing = getOrCreateWorksheetDrawing(result.getPackage(), worksheetPart);
                     BinaryPartAbstractImage imagePart = BinaryPartAbstractImage.createImagePart(result.getPackage(), drawing,
-                            image.getPicture().getPictureData().getData());
+                            image.getPictureData());
                     String imageRelID = imagePart.getSourceRelationships().get(0).getId();
                     RelationshipsPart relPart = attachImageToCell(drawing,
                             newColNum, newRowNum, image, imageRelID);

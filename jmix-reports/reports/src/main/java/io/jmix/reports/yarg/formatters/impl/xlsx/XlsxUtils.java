@@ -17,13 +17,16 @@ package io.jmix.reports.yarg.formatters.impl.xlsx;
 
 import io.jmix.reports.yarg.structure.ReportTemplate;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.XmlCursor;
 import org.docx4j.dml.CTBlip;
 import org.docx4j.dml.CTBlipFillProperties;
 import org.docx4j.dml.CTPositiveSize2D;
@@ -123,49 +126,26 @@ public final class XlsxUtils {
     public static RelationshipsPart attachImageToCell(org.docx4j.openpackaging.parts.DrawingML.Drawing drawing,
                                                       Integer col, Integer row, XlsxImage image, String imageRelID) {
         CTPicture picture = createPicture(imageRelID);
-        XSSFClientAnchor srcanchor = (XSSFClientAnchor) image.getPicture().getAnchor();
-        if (image.getXssfDrawing().getCTDrawing().getTwoCellAnchorArray().length > 0) {
-            CTTwoCellAnchor anchor = new CTTwoCellAnchor();
 
-            anchor.setFrom(new CTMarker());
-            anchor.getFrom().setCol(col);
-            long fromCollOff = (long) srcanchor.getDx1();
-            anchor.getFrom().setColOff(srcanchor.getDx1());
-            anchor.getFrom().setRow(row);
-            long fromRowOff = (long) srcanchor.getDy1();
-            anchor.getFrom().setRowOff(srcanchor.getDy1());
+        CTTwoCellAnchor anchor = new CTTwoCellAnchor();
 
-            anchor.setTo(new CTMarker());
-            anchor.getTo().setCol(col);
-            long toColOff = (long) srcanchor.getDx2();
-            anchor.getTo().setColOff(toColOff);
-            anchor.getTo().setRow(row);
-            long toRowOff = (long) srcanchor.getDy2();
-            anchor.getTo().setRowOff(toRowOff);
+        anchor.setFrom(new CTMarker());
+        anchor.getFrom().setCol(col);
+        anchor.getFrom().setColOff(image.getDx1());
+        anchor.getFrom().setRow(row);
+        anchor.getFrom().setRowOff(image.getDy1());
 
-            anchor.setPic(picture);
-            anchor.getPic().setSpPr(picture.getSpPr());
-            anchor.setClientData(new CTAnchorClientData());
-            drawing.getJaxbElement().getEGAnchor().add(anchor);
-        }
-        if (image.getXssfDrawing().getCTDrawing().getOneCellAnchorArray().length > 0) {
-            CTOneCellAnchor anchor = new CTOneCellAnchor();
-            anchor.setFrom(new CTMarker());
-            anchor.getFrom().setCol(col);
-            long fromCollOff = (long) srcanchor.getDx1();
-            anchor.getFrom().setColOff(fromCollOff);
-            anchor.getFrom().setRow(row);
-            long fromRowOff = (long) srcanchor.getDy1();
-            anchor.getFrom().setRowOff(fromRowOff);
+        anchor.setTo(new CTMarker());
+        anchor.getTo().setCol(col);
+        anchor.getTo().setColOff(image.getDx2());
+        anchor.getTo().setRow(row);
+        anchor.getTo().setRowOff(image.getDy2());
 
-            anchor.setExt(new CTPositiveSize2D());
-            anchor.getExt().setCx(Math.round(image.getSize().getWidth()));
-            anchor.getExt().setCy(Math.round(image.getSize().getHeight()));
+        anchor.setPic(picture);
+        anchor.getPic().setSpPr(picture.getSpPr());
+        anchor.setClientData(new CTAnchorClientData());
+        drawing.getJaxbElement().getEGAnchor().add(anchor);
 
-            anchor.setPic(picture);
-            anchor.setClientData(new CTAnchorClientData());
-            drawing.getJaxbElement().getEGAnchor().add(anchor);
-        }
         RelationshipsPart relPart = drawing.getRelationshipsPart();
         return relPart;
     }
@@ -194,35 +174,28 @@ public final class XlsxUtils {
         return drawing;
     }
 
-    public static Map<String, List<XlsxImage>> loadTemplateImages(ReportTemplate reportTemplate) {
-        Map<String, List<XlsxImage>> images = new HashMap<>();
-        try {
-            ByteArrayInputStream bis = new ByteArrayInputStream(reportTemplate.getDocumentContent().readAllBytes());
-            org.apache.poi.ss.usermodel.Workbook workbook = new XSSFWorkbook(bis);
-            org.apache.poi.ss.usermodel.Sheet srcSH = workbook.getSheetAt(0);
-            Drawing srcDraw = srcSH.createDrawingPatriarch();
-            if (srcDraw instanceof XSSFDrawing xssfDrawing) {
-                List<XSSFShape> shapes = xssfDrawing.getShapes();
-                for (XSSFShape xs : xssfDrawing.getShapes()) {
-                    if (xs instanceof Picture picture) {
-                        XSSFClientAnchor srcanchor = (XSSFClientAnchor) xs.getAnchor();
-                        int col = srcanchor.getCol1();
-                        int row = srcanchor.getRow1();
-                        org.apache.poi.ss.usermodel.Cell srcCell = srcSH.getRow(row).getCell(col);
-                        String cellAddress = srcCell.getAddress().toString();
-                        if (!images.containsKey(cellAddress)) {
-                            images.put(cellAddress, new ArrayList<>());
-                        }
-                        Dimension size = ImageUtils.getDimensionFromAnchor(picture);
-                        XlsxImage image = new XlsxImage(picture, size, xs.getDrawing(), row, col);
-                        images.get(cellAddress).add(image);
-                    }
-
+    public static void deleteCTAnchor(XSSFPicture xssfPicture) {
+        XSSFDrawing drawing = xssfPicture.getDrawing();
+        XmlCursor cursor = xssfPicture.getCTPicture().newCursor();
+        cursor.toParent();
+        if (cursor.getObject() instanceof org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor) {
+            for (int i = 0; i < drawing.getCTDrawing().getTwoCellAnchorList().size(); i++) {
+                if (cursor.getObject().equals(drawing.getCTDrawing().getTwoCellAnchorArray(i))) {
+                    drawing.getCTDrawing().removeTwoCellAnchor(i);
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } else if (cursor.getObject() instanceof org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor) {
+            for (int i = 0; i < drawing.getCTDrawing().getOneCellAnchorList().size(); i++) {
+                if (cursor.getObject().equals(drawing.getCTDrawing().getOneCellAnchorArray(i))) {
+                    drawing.getCTDrawing().removeOneCellAnchor(i);
+                }
+            }
+        } else if (cursor.getObject() instanceof org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTAbsoluteAnchor) {
+            for (int i = 0; i < drawing.getCTDrawing().getAbsoluteAnchorList().size(); i++) {
+                if (cursor.getObject().equals(drawing.getCTDrawing().getAbsoluteAnchorArray(i))) {
+                    drawing.getCTDrawing().removeAbsoluteAnchor(i);
+                }
+            }
         }
-        return images;
     }
 }

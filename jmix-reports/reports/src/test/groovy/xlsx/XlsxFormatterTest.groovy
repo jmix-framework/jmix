@@ -33,10 +33,10 @@ class XlsxFormatterTest extends Specification {
 
     def "renderDocument from template with images"() throws IOException, URISyntaxException {
 
-        when: "Data has 4 items, template has 2 images"
+        when: "Data has 7 items, template has 3 band images and 1 non-band"
             def os = new ByteArrayOutputStream()
             def rootBand = new BandData("Root")
-            rootBand.setFirstLevelBandDefinitionNames(["Root", "Users"].toSet())
+            rootBand.setFirstLevelBandDefinitionNames(["Root", "Users", "Users2"].toSet())
             def user1Band = new BandData("Users", rootBand)
             user1Band.setData([id: "1", email: "mail1@example.com"])
             rootBand.addChild(user1Band)
@@ -49,18 +49,30 @@ class XlsxFormatterTest extends Specification {
             def user4Band = new BandData("Users", rootBand)
             user4Band.setData([id: "4", email: "mail4@example.com"])
             rootBand.addChild(user4Band)
+            def user5Band = new BandData("Users2", rootBand)
+            user5Band.setData([id: "5", email: "mail5@example.com"])
+            rootBand.addChild(user5Band)
+            def user6Band = new BandData("Users2", rootBand)
+            user6Band.setData([id: "6", email: "mail6@example.com"])
+            rootBand.addChild(user6Band)
+            def user7Band = new BandData("Users2", rootBand)
+            user7Band.setData([id: "7", email: "mail7@example.com"])
+            rootBand.addChild(user7Band)
             def template = new ReportTemplate()
             template.setContent(readFile("template.xlsx"))
             def formatter = new XlsxFormatter(new FormatterFactoryInput("xlsx", rootBand, template, ReportOutputType.xlsx, os))
             formatter.renderDocument()
-        then: "The result document has 8 images"
+        then: "The result document must have (2 * 4) + (1 * 3) + 1 = 12 images"
             def byteArray = os.toByteArray()
             def bis = new ByteArrayInputStream(byteArray)
             def workbook = new XSSFWorkbook(bis)
-            def srcSH = workbook.getSheetAt(0)
-            def srcDraw = srcSH.createDrawingPatriarch()
-            List<XSSFShape> shapes = srcDraw.getShapes()
-            shapes.size() == 8
+            def cnt = 0;
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                def srcSH = workbook.getSheetAt(i)
+                def srcDraw = srcSH.createDrawingPatriarch()
+                cnt += srcDraw.getShapes().size();
+            }
+            cnt == 12
     }
 
     protected byte[] readFile(String fileName) throws IOException, URISyntaxException {

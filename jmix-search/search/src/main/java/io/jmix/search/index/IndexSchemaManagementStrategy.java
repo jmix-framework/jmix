@@ -17,6 +17,7 @@
 package io.jmix.search.index;
 
 import org.springframework.lang.Nullable;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,15 +79,15 @@ public enum IndexSchemaManagementStrategy {
         return ENUM_MAP.get(key.toLowerCase());
     }
 
-    public boolean isConfigurationUpdateSupported(){
+    public boolean isConfigurationUpdateSupported() {
         return this == CREATE_OR_UPDATE || this == CREATE_OR_RECREATE;
     }
 
-    public boolean isIndexCreationSupported(){
+    public boolean isIndexCreationSupported() {
         return this != NONE;
     }
 
-    public boolean isIndexRecreationSupported(){
+    public boolean isIndexRecreationSupported() {
         return this == CREATE_OR_RECREATE;
     }
 }

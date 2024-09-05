@@ -20,18 +20,18 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.IndexState;
 import co.elastic.clients.json.JsonpSerializable;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.search.index.impl.MetadataResolver;
+import io.jmix.search.index.impl.IndexStateResolver;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map;
 
 @Component("search_ElasticsearchMetadataResolver")
-public class ElasticsearchMetadataResolver extends MetadataResolver<IndexState, JsonpSerializable> {
+public class ElasticsearchIndexStateResolver extends IndexStateResolver<IndexState, JsonpSerializable> {
 
     protected final ElasticsearchClient client;
 
-    public ElasticsearchMetadataResolver(ElasticsearchJsonpSerializer jsonpSerializer, ElasticsearchClient client) {
+    public ElasticsearchIndexStateResolver(ElasticsearchJsonpSerializer jsonpSerializer, ElasticsearchClient client) {
         super(jsonpSerializer);
         this.client = client;
     }

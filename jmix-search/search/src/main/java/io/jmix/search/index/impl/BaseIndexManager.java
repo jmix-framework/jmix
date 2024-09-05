@@ -27,18 +27,18 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
     protected final ObjectMapper objectMapper;
 
     protected final IndexConfigurationComparator<TState, TSettings, TJsonp> indexConfigurationComparator;
-    protected final MetadataResolver<TState, TJsonp> metadataResolver;
+    protected final IndexStateResolver<TState, TJsonp> indexStateResolver;
 
     protected BaseIndexManager(IndexConfigurationManager indexConfigurationManager,
                                IndexStateRegistry indexStateRegistry,
                                SearchProperties searchProperties,
                                IndexConfigurationComparator<TState, TSettings, TJsonp> indexConfigurationComparator,
-                               MetadataResolver<TState, TJsonp> metadataResolver) {
+                               IndexStateResolver<TState, TJsonp> indexStateResolver) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.indexStateRegistry = indexStateRegistry;
         this.searchProperties = searchProperties;
         this.indexConfigurationComparator = indexConfigurationComparator;
-        this.metadataResolver = metadataResolver;
+        this.indexStateResolver = indexStateResolver;
         this.objectMapper = new ObjectMapper();
     }
 

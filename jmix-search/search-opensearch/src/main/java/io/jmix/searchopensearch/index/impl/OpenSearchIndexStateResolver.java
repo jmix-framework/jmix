@@ -17,7 +17,7 @@
 package io.jmix.searchopensearch.index.impl;
 
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.search.index.impl.MetadataResolver;
+import io.jmix.search.index.impl.IndexStateResolver;
 import org.opensearch.client.json.JsonpSerializable;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.indices.IndexState;
@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.util.Map;
 
 @Component("search_OpenSearchMetadataResolver")
-public class OpenSearchMetadataResolver extends MetadataResolver<IndexState, JsonpSerializable> {
+public class OpenSearchIndexStateResolver extends IndexStateResolver<IndexState, JsonpSerializable> {
 
     protected final OpenSearchClient client;
 
-    public OpenSearchMetadataResolver(OpenSearchJsonpSerializer jsonpSerializer, OpenSearchClient client) {
+    public OpenSearchIndexStateResolver(OpenSearchJsonpSerializer jsonpSerializer, OpenSearchClient client) {
         super(jsonpSerializer);
         this.client = client;
     }

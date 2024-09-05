@@ -29,13 +29,13 @@ public class OpenSearchIndexConfigurationComparator
 
     public OpenSearchIndexConfigurationComparator(OpenSearchIndexMappingComparator mappingComparator,
                                                   OpenSearchIndexSettingsComparator settingsComparator,
-                                                  OpenSearchMetadataResolver metadataResolver) {
+                                                  OpenSearchIndexStateResolver metadataResolver) {
         super(mappingComparator, settingsComparator, metadataResolver);
     }
 
     @Override
     protected IndexState getIndexState(IndexConfiguration indexConfiguration) {
         //TODO nullable
-        return metadataResolver.getIndexMetadataInternal(indexConfiguration.getIndexName());
+        return indexStateResolver.getState(indexConfiguration.getIndexName());
     }
 }

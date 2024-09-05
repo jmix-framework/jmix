@@ -22,13 +22,13 @@ import io.jmix.search.index.IndexConfiguration;
 public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
     protected final IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator;
     protected final IndexMappingComparator<TState, TJsonp> mappingComparator;
-    protected final MetadataResolver<TState, TJsonp> metadataResolver;
+    protected final IndexStateResolver<TState, TJsonp> indexStateResolver;
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
-    public IndexConfigurationComparator(IndexMappingComparator<TState, TJsonp> mappingComparator, IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator, MetadataResolver<TState, TJsonp> metadataResolver) {
+    public IndexConfigurationComparator(IndexMappingComparator<TState, TJsonp> mappingComparator, IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator, IndexStateResolver<TState, TJsonp> indexStateResolver) {
         this.mappingComparator = mappingComparator;
         this.settingsComparator = settingsComparator;
-        this.metadataResolver = metadataResolver;
+        this.indexStateResolver = indexStateResolver;
     }
 
     public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration) {

@@ -22,27 +22,26 @@ import jakarta.annotation.Nullable;
 
 import java.util.Map;
 
-public abstract class MetadataResolver<TState, TJsonp> {
+public abstract class IndexStateResolver<TState, TJsonp> {
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     protected final JsonpSerializer<TJsonp> jsonpSerializer;
 
-    protected MetadataResolver(JsonpSerializer<TJsonp> jsonpSerializer) {
+    protected IndexStateResolver(JsonpSerializer<TJsonp> jsonpSerializer) {
         this.jsonpSerializer = jsonpSerializer;
     }
 
     @SuppressWarnings("unchecked")
-    public ObjectNode getIndexMetadata(String indexName) {
-        TState indexState = getIndexMetadataInternal(indexName);
+    public ObjectNode getSerializedState(String indexName) {
+        TState indexState = getState(indexName);
         if (indexState == null) {
             return objectMapper.createObjectNode();
         }
         return jsonpSerializer.toObjectNode((TJsonp) indexState);
     }
 
-    @Nullable
-    public TState getIndexMetadataInternal(String indexName) {
+    public TState getState(String indexName) {
         return getIndexMetadataMapInternal(indexName).get(indexName);
     }
 

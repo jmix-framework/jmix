@@ -59,7 +59,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
                                   SearchProperties searchProperties,
                                   OpenSearchIndexSettingsProvider indexSettingsProcessor,
                                   OpenSearchIndexConfigurationComparator configurationComparator,
-                                  OpenSearchMetadataResolver metadataResolver,
+                                  OpenSearchIndexStateResolver metadataResolver,
                                   OpenSearchPutMappingRequestBuilder putMappingRequestService) {
         super(indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, metadataResolver);
         this.client = client;
@@ -124,7 +124,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
 
     @Override
     public ObjectNode getIndexMetadata(String indexName) {
-        return metadataResolver.getIndexMetadata(indexName);
+        return indexStateResolver.getSerializedState(indexName);
 
     }
 

@@ -55,7 +55,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
                                      SearchProperties searchProperties,
                                      ElasticsearchIndexSettingsProvider indexSettingsProcessor,
                                      ElasticsearchIndexConfigurationComparator configurationComparator,
-                                     ElasticsearchMetadataResolver metadataResolver,
+                                     ElasticsearchIndexStateResolver metadataResolver,
                                      ElasticsearchPutMappingBuilder putMappingService) {
         super(indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, metadataResolver);
         this.client = client;
@@ -120,7 +120,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
 
     @Override
     public ObjectNode getIndexMetadata(String indexName) {
-        return metadataResolver.getIndexMetadata(indexName);
+        return indexStateResolver.getSerializedState(indexName);
     }
 
     @Override

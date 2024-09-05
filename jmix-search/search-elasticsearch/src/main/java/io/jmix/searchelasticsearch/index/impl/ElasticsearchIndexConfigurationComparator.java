@@ -29,13 +29,13 @@ public class ElasticsearchIndexConfigurationComparator
 
     public ElasticsearchIndexConfigurationComparator(ElasticsearchIndexMappingComparator searchMappingChecker,
                                                      ElastisearchIndexSettingsComparator settingsComparator,
-                                                     ElasticsearchMetadataResolver metadataResolver) {
+                                                     ElasticsearchIndexStateResolver metadataResolver) {
         super(searchMappingChecker, settingsComparator, metadataResolver);
     }
 
     @Override
     protected IndexState getIndexState(IndexConfiguration indexConfiguration) {
-        return metadataResolver.getIndexMetadataInternal(indexConfiguration.getIndexName());
+        return indexStateResolver.getState(indexConfiguration.getIndexName());
     }
 
 }

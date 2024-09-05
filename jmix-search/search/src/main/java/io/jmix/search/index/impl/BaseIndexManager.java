@@ -189,7 +189,7 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
     protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
 
-        if (strategy.isIndexCreationSupported()) {
+        if (!strategy.isIndexCreationSupported()) {
             status = IndexSynchronizationStatus.MISSING;
         } else {
             boolean created = createIndex(indexConfiguration);

@@ -25,6 +25,8 @@ import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.opensearch.client.opensearch.indices.IndexState;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component("search_OpenSearchIndexSettingsComparator")
 public class OpenSearchIndexSettingsComparator extends IndexSettingsComparator<IndexState, IndexSettings, JsonpSerializable> {
 
@@ -36,14 +38,15 @@ public class OpenSearchIndexSettingsComparator extends IndexSettingsComparator<I
     }
 
     @Override
-    protected IndexSettings extractAllAppliedIndexSettings(IndexState currentIndexState) {
-        return currentIndexState.settings();
-    }
+    protected Optional<IndexSettings> extractAppliedIndexSettings(IndexState currentIndexState, String indexName) {
+        IndexSettings allAppliedSettings = currentIndexState.settings();
+        if (allAppliedSettings == null) {
+            throw new IllegalArgumentException(
+                    "No info about all applied settings for index '" + indexName + "'"
+            );
+        }
 
-    @Override
-    protected IndexSettings extractAppliedIndexSettings(IndexSettings allAppliedSettings) {
-        //TODO
-        return allAppliedSettings.index();
+        return Optional.ofNullable(allAppliedSettings.index());
     }
 
     @Override

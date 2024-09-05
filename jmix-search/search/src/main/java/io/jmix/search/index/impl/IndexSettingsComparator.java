@@ -21,6 +21,8 @@ import io.jmix.search.index.IndexConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
     private static final Logger log = LoggerFactory.getLogger(IndexSettingsComparator.class);
 
@@ -43,29 +45,18 @@ public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
         return jsonNodesComparator.nodeContains(appliedSettingsNode, expectedSettingsNode) ? SettingsComparingResult.EQUAL : SettingsComparingResult.NOT_COMPATIBLE;
     }
 
+    @SuppressWarnings("unchecked")
     protected TJsonp getAppliedIndexSettings(TState currentIndexState, String indexName) {
-        TSettings allAppliedSettings = extractAllAppliedIndexSettings(currentIndexState);
-
-        if (allAppliedSettings == null) {
-            throw new IllegalArgumentException(
-                    "No info about all applied settings for index '" + indexName + "'"
-            );
-        }
-
-        TSettings appliedIndexSettings = extractAppliedIndexSettings(allAppliedSettings);
-        if (appliedIndexSettings == null) {
+        Optional<TSettings> appliedIndexSettings = extractAppliedIndexSettings(currentIndexState, indexName);
+        if (appliedIndexSettings.isEmpty()) {
             throw new IllegalArgumentException(
                     "No info about applied index settings for index '" + indexName + "'"
             );
         }
-
-        //TODO cast check
         return (TJsonp) appliedIndexSettings;
     }
 
-    protected abstract TSettings extractAllAppliedIndexSettings(TState currentIndexState);
-
-    protected abstract TSettings extractAppliedIndexSettings(TSettings allAppliedSettings);
+    protected abstract Optional<TSettings> extractAppliedIndexSettings(TState currentIndexState, String indexName);
 
     protected abstract TJsonp getExpectedIndexSettings(IndexConfiguration indexConfiguration);
 

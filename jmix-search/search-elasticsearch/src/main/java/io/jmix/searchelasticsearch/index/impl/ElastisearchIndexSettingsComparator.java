@@ -25,6 +25,8 @@ import io.jmix.search.index.impl.JsonNodesComparator;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component("search_ElastisearchIndexSettingsComparator")
 public class ElastisearchIndexSettingsComparator extends IndexSettingsComparator<IndexState, IndexSettings, JsonpSerializable> {
     protected final ElasticsearchIndexSettingsProvider settingsProvider;
@@ -36,14 +38,17 @@ public class ElastisearchIndexSettingsComparator extends IndexSettingsComparator
         this.settingsProvider = settingsProvider;
     }
 
-    @Override
-    protected IndexSettings extractAllAppliedIndexSettings(IndexState currentIndexState) {
-        return currentIndexState.settings();
-    }
 
     @Override
-    protected IndexSettings extractAppliedIndexSettings(IndexSettings allAppliedSettings) {
-        return allAppliedSettings.index();
+    protected Optional<IndexSettings> extractAppliedIndexSettings(IndexState currentIndexState, String indexName) {
+        IndexSettings allAppliedSettings = currentIndexState.settings();
+        if (allAppliedSettings == null) {
+            throw new IllegalArgumentException(
+                    "No info about all applied settings for index '" + indexName + "'"
+            );
+        }
+
+        return Optional.ofNullable(allAppliedSettings.index());
     }
 
     @Override

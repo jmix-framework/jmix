@@ -72,16 +72,16 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
     protected abstract TJsonp extractTypeMapping(TState currentIndexState);
 
 
-    MappingComparingResult compare(Map<String, Object> searchIndexMapping, Map<String, Object> applicationMapping) {
+    MappingComparingResult compare(Map<String, Object> appliedMapping, Map<String, Object> expectedMapping) {
 
-        Map<String, Object> filteredSearchIndexMapping = getFilteredMapping(searchIndexMapping);
-        if (!applicationMapping.keySet().containsAll(filteredSearchIndexMapping.keySet())) {
+        Map<String, Object> filteredSearchIndexMapping = getFilteredMapping(appliedMapping);
+        if (!expectedMapping.keySet().containsAll(filteredSearchIndexMapping.keySet())) {
             return NOT_COMPATIBLE;
         }
 
         if (mappingFieldComparator.isLeafField(filteredSearchIndexMapping)) {
-            if (mappingFieldComparator.isLeafField(applicationMapping)) {
-                return mappingFieldComparator.compareLeafFields(filteredSearchIndexMapping, applicationMapping);
+            if (mappingFieldComparator.isLeafField(expectedMapping)) {
+                return mappingFieldComparator.compareLeafFields(filteredSearchIndexMapping, expectedMapping);
             } else {
                 return NOT_COMPATIBLE;
             }
@@ -93,14 +93,14 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
                 return NOT_COMPATIBLE;
             }
 
-            MappingComparingResult currentResult = compare((Map<String, Object>) mapEntry.getValue(), (Map<String, Object>) applicationMapping.get(mapEntry.getKey()));
+            MappingComparingResult currentResult = compare((Map<String, Object>) mapEntry.getValue(), (Map<String, Object>) expectedMapping.get(mapEntry.getKey()));
             if (currentResult == NOT_COMPATIBLE) return NOT_COMPATIBLE;
             if (currentResult == UPDATABLE && result != UPDATABLE) {
                 result = UPDATABLE;
             }
         }
 
-        if (result == EQUAL && applicationMapping.size() > filteredSearchIndexMapping.size()) {
+        if (result == EQUAL && expectedMapping.size() > filteredSearchIndexMapping.size()) {
             return UPDATABLE;
         }
 

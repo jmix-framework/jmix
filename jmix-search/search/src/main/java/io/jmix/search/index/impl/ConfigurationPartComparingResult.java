@@ -18,7 +18,7 @@ package io.jmix.search.index.impl;
 
 interface ConfigurationPartComparingResult {
 
-    boolean indexRecreatingIsRequired();
+    boolean isIndexRecreatingRequired();
 
-    boolean configurationUpdateIsRequired();
+    boolean isConfigurationUpdateRequired();
 }

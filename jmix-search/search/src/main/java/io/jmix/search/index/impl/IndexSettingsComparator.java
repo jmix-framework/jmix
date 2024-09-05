@@ -65,12 +65,12 @@ public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
         NOT_COMPATIBLE;
 
         @Override
-        public boolean indexRecreatingIsRequired() {
+        public boolean isIndexRecreatingRequired() {
             return this == NOT_COMPATIBLE;
         }
 
         @Override
-        public boolean configurationUpdateIsRequired() {
+        public boolean isConfigurationUpdateRequired() {
             return false;
         }
     }

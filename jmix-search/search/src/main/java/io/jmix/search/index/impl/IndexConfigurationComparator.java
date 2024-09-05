@@ -50,15 +50,15 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
         }
 
         public boolean isIndexRecreatingRequired() {
-            return mappingComparingResult.indexRecreatingIsRequired() || settingsComparingResult.indexRecreatingIsRequired();
+            return mappingComparingResult.isIndexRecreatingRequired() || settingsComparingResult.isIndexRecreatingRequired();
         }
 
         public boolean isMappingUpdateRequired() {
-            return mappingComparingResult.configurationUpdateIsRequired();
+            return mappingComparingResult.isConfigurationUpdateRequired();
         }
 
         public boolean isSettingsUpdateRequired() {
-            return settingsComparingResult.configurationUpdateIsRequired();
+            return settingsComparingResult.isConfigurationUpdateRequired();
         }
 
         public boolean isConfigurationUpdateRequired() {

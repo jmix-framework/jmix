@@ -120,12 +120,12 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
         NOT_COMPATIBLE;
 
         @Override
-        public boolean indexRecreatingIsRequired() {
+        public boolean isIndexRecreatingRequired() {
             return this == NOT_COMPATIBLE;
         }
 
         @Override
-        public boolean configurationUpdateIsRequired() {
+        public boolean isConfigurationUpdateRequired() {
             return this == UPDATABLE;
         }
     }

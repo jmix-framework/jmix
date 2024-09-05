@@ -28,10 +28,15 @@ import org.springframework.stereotype.Component;
 import java.io.StringWriter;
 
 @Component("search_OpenSearchJsonpSerializer")
-public class OpenSearchJsonpSerializer extends BaseJsonpSerializer<JsonpSerializable, OpenSearchClient> {
+public class OpenSearchJsonpSerializer extends BaseJsonpSerializer<JsonpSerializable> {
+    protected final OpenSearchClient searchClient;
+
+    public OpenSearchJsonpSerializer(OpenSearchClient searchClient) {
+        this.searchClient = searchClient;
+    }
 
     @Override
-    protected JsonNode toJsonNode(JsonpSerializable object, OpenSearchClient searchClient) {
+    protected JsonNode toJsonNode(JsonpSerializable object) {
         JsonpMapper jsonpMapper = searchClient._transport().jsonpMapper();
         StringWriter stringWriter = new StringWriter();
         JsonGenerator generator = jsonpMapper.jsonProvider().createGenerator(stringWriter);

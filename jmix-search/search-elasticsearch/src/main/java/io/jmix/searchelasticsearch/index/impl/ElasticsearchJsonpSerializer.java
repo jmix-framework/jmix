@@ -28,9 +28,16 @@ import org.springframework.stereotype.Component;
 import java.io.StringWriter;
 
 @Component("search_ElasticsearchJsonpSerializer")
-public class ElasticsearchJsonpSerializer extends BaseJsonpSerializer<JsonpSerializable, ElasticsearchClient> {
+public class ElasticsearchJsonpSerializer extends BaseJsonpSerializer<JsonpSerializable> {
+
+    protected final ElasticsearchClient searchClient;
+
+    public ElasticsearchJsonpSerializer(ElasticsearchClient searchClient) {
+        this.searchClient = searchClient;
+    }
+
     @Override
-    protected JsonNode toJsonNode(JsonpSerializable object, ElasticsearchClient searchClient) {
+    protected JsonNode toJsonNode(JsonpSerializable object) {
         JsonpMapper jsonpMapper = searchClient._transport().jsonpMapper();
         StringWriter stringWriter = new StringWriter();
         JsonGenerator generator = jsonpMapper.jsonProvider().createGenerator(stringWriter);

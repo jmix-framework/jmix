@@ -16,7 +16,6 @@
 
 package io.jmix.searchelasticsearch.index.impl;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.IndexState;
 import co.elastic.clients.json.JsonpSerializable;
 import io.jmix.search.index.impl.IndexMappingComparator;
@@ -24,13 +23,14 @@ import io.jmix.search.index.impl.MappingFieldComparator;
 import org.springframework.stereotype.Component;
 
 @Component("search_ElasticsearchIndexMappingComparator")
-public class ElasticsearchIndexMappingComparator extends IndexMappingComparator<IndexState, JsonpSerializable, ElasticsearchClient> {
+public class ElasticsearchIndexMappingComparator extends IndexMappingComparator<IndexState, JsonpSerializable> {
     public ElasticsearchIndexMappingComparator(MappingFieldComparator mappingFieldComparator, ElasticsearchJsonpSerializer jsonpSerializer) {
         super(mappingFieldComparator, jsonpSerializer);
     }
 
     @Override
     protected JsonpSerializable extractTypeMapping(IndexState currentIndexState) {
+        //TODO
         return currentIndexState.mappings();
     }
 }

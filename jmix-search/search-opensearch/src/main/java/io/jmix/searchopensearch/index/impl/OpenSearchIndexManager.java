@@ -43,10 +43,11 @@ import java.io.StringReader;
 /**
  * Implementation for OpenSearch
  */
-public class OpenSearchIndexManager extends BaseIndexManager<OpenSearchClient, IndexState, IndexSettings, JsonpSerializable> {
+public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSettings, JsonpSerializable> {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchIndexManager.class);
 
+    protected final OpenSearchClient client;
     protected final OpenSearchIndexSettingsProvider indexSettingsProcessor;
     protected final OpenSearchPutMappingRequestService putMappingRequestService;
 
@@ -60,7 +61,8 @@ public class OpenSearchIndexManager extends BaseIndexManager<OpenSearchClient, I
                                   OpenSearchIndexConfigurationComparator configurationComparator,
                                   OpenSearchMetadataResolver metadataResolver,
                                   OpenSearchPutMappingRequestService putMappingRequestService) {
-        super(client, indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, metadataResolver);
+        super(indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, metadataResolver);
+        this.client = client;
         this.indexSettingsProcessor = indexSettingsProcessor;
         this.putMappingRequestService = putMappingRequestService;
     }
@@ -122,7 +124,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<OpenSearchClient, I
 
     @Override
     public ObjectNode getIndexMetadata(String indexName) {
-        return metadataResolver.getIndexMetadata(indexName, client);
+        return metadataResolver.getIndexMetadata(indexName);
 
     }
 

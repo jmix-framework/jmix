@@ -27,13 +27,17 @@ import java.io.IOException;
 import java.util.Map;
 
 @Component("search_ElasticsearchMetadataResolver")
-public class ElasticsearchMetadataResolver extends MetadataResolver<ElasticsearchClient, IndexState, JsonpSerializable> {
-    protected ElasticsearchMetadataResolver(ElasticsearchJsonpSerializer jsonpSerializer) {
+public class ElasticsearchMetadataResolver extends MetadataResolver<IndexState, JsonpSerializable> {
+
+    protected final ElasticsearchClient client;
+
+    public ElasticsearchMetadataResolver(ElasticsearchJsonpSerializer jsonpSerializer, ElasticsearchClient client) {
         super(jsonpSerializer);
+        this.client = client;
     }
 
     @Override
-    protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName, ElasticsearchClient client) {
+    protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
         try {
             return client.indices().get(builder -> builder.index(indexName).includeDefaults(true)).result();

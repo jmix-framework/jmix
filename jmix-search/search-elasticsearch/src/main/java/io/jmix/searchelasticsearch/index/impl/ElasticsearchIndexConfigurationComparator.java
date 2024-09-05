@@ -16,7 +16,6 @@
 
 package io.jmix.searchelasticsearch.index.impl;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.elasticsearch.indices.IndexState;
 import co.elastic.clients.json.JsonpSerializable;
@@ -26,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Component("search_ElasticsearchIndexConfigurationComparator")
 public class ElasticsearchIndexConfigurationComparator
-        extends IndexConfigurationComparator<ElasticsearchClient, IndexState, IndexSettings, JsonpSerializable> {
+        extends IndexConfigurationComparator<IndexState, IndexSettings, JsonpSerializable> {
 
     public ElasticsearchIndexConfigurationComparator(ElasticsearchIndexMappingComparator searchMappingChecker,
                                                      ElastisearchIndexSettingsComparator settingsComparator,
@@ -35,8 +34,8 @@ public class ElasticsearchIndexConfigurationComparator
     }
 
     @Override
-    protected IndexState getIndexState(IndexConfiguration indexConfiguration, ElasticsearchClient client) {
-        return metadataResolver.getIndexMetadataInternal(indexConfiguration.getIndexName(), client);
+    protected IndexState getIndexState(IndexConfiguration indexConfiguration) {
+        return metadataResolver.getIndexMetadataInternal(indexConfiguration.getIndexName());
     }
 
 }

@@ -27,13 +27,17 @@ import java.io.IOException;
 import java.util.Map;
 
 @Component("search_OpenSearchMetadataResolver")
-public class OpenSearchMetadataResolver extends MetadataResolver<OpenSearchClient, IndexState, JsonpSerializable> {
-    protected OpenSearchMetadataResolver(OpenSearchJsonpSerializer jsonpSerializer) {
+public class OpenSearchMetadataResolver extends MetadataResolver<IndexState, JsonpSerializable> {
+
+    protected final OpenSearchClient client;
+
+    public OpenSearchMetadataResolver(OpenSearchJsonpSerializer jsonpSerializer, OpenSearchClient client) {
         super(jsonpSerializer);
+        this.client = client;
     }
 
     @Override
-    protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName, OpenSearchClient client) {
+    protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
         try {
             return client.indices().get(builder -> builder.index(indexName).includeDefaults(true)).result();

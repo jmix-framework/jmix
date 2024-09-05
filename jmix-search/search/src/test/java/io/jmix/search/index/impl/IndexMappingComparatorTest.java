@@ -35,7 +35,7 @@ class IndexMappingComparatorTest {
     @CsvFileSource(resources = "/mapping/data.csv", numLinesToSkip = 1)
     void testWithCsvData(@ConvertWith(IndexMappingComparatorTestCaseConverter.class) IndexMappingComparatorTestCase testCase) {
 
-        IndexMappingComparator<?, ?, ?> comparator = new TestIndexMappingComparator(new MappingFieldComparator());
+        IndexMappingComparator<?, ?> comparator = new TestIndexMappingComparator(new MappingFieldComparator());
         String folderName = "mapping/" + testCase.getFolderWithFiles();
         Map<String, Object> expectedMapping = getMappingOrNull(folderName + "/application.json");
         Map<String, Object> actualMapping = getMappingOrNull(folderName + "/server.json");
@@ -343,7 +343,7 @@ class IndexMappingComparatorTest {
         assertEquals(IndexMappingComparator.MappingComparingResult.NOT_COMPATIBLE, result);
     }
 
-    static class TestIndexMappingComparator extends IndexMappingComparator<Object, Object, Object> {
+    static class TestIndexMappingComparator extends IndexMappingComparator<Object, Object> {
 
         public TestIndexMappingComparator(MappingFieldComparator mappingFieldComparator) {
             super(mappingFieldComparator, null);

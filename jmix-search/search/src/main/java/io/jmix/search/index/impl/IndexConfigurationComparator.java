@@ -19,18 +19,12 @@ package io.jmix.search.index.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.search.index.IndexConfiguration;
 
-public abstract class IndexConfigurationComparator<
-        TClient,
-        TState,
-        TSettings,
-        TJsonp> {
-    protected final IndexSettingsComparator<TState, TSettings, TClient, TJsonp> settingsComparator;
-    protected final IndexMappingComparator<TState, TJsonp, TClient> mappingComparator;
-    protected final MetadataResolver<TClient, TState, TJsonp> metadataResolver;
+public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
+    protected final IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator;
+    protected final IndexMappingComparator<TState, TJsonp> mappingComparator;
+    protected final MetadataResolver<TState, TJsonp> metadataResolver;
 
-    public IndexConfigurationComparator(
-            IndexMappingComparator<TState, TJsonp, TClient> mappingComparator,
-            IndexSettingsComparator<TState, TSettings, TClient, TJsonp> settingsComparator, MetadataResolver<TClient, TState, TJsonp> metadataResolver) {
+    public IndexConfigurationComparator(IndexMappingComparator<TState, TJsonp> mappingComparator, IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator, MetadataResolver<TState, TJsonp> metadataResolver) {
         this.mappingComparator = mappingComparator;
         this.settingsComparator = settingsComparator;
         this.metadataResolver = metadataResolver;
@@ -38,14 +32,14 @@ public abstract class IndexConfigurationComparator<
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
-    public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration, TClient client) {
-        TState indexState = getIndexState(indexConfiguration, client);
-        IndexMappingComparator.MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexState, client);
-        IndexSettingsComparator.SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexState, client);
+    public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration) {
+        TState indexState = getIndexState(indexConfiguration);
+        IndexMappingComparator.MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexState);
+        IndexSettingsComparator.SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexState);
         return new ConfigurationComparingResult(mappingState, settingsState);
     }
 
-    protected abstract TState getIndexState(IndexConfiguration indexConfiguration, TClient client);
+    protected abstract TState getIndexState(IndexConfiguration indexConfiguration);
 
 
     public static class ConfigurationComparingResult {

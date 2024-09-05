@@ -27,24 +27,24 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class IndexMappingComparator<TState, TJsonp, TClient> {
+public abstract class IndexMappingComparator<TState, TJsonp> {
     protected final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
     };
     private static final Logger log = LoggerFactory.getLogger(IndexMappingComparator.class);
 
     protected final MappingFieldComparator mappingFieldComparator;
     protected final ObjectMapper objectMapper = new ObjectMapper();
-    protected final JsonpSerializer<TJsonp, TClient> jsonpSerializer;
+    protected final JsonpSerializer<TJsonp> jsonpSerializer;
 
 
-    public IndexMappingComparator(MappingFieldComparator mappingFieldComparator, JsonpSerializer<TJsonp, TClient> jsonpSerializer) {
+    public IndexMappingComparator(MappingFieldComparator mappingFieldComparator, JsonpSerializer<TJsonp> jsonpSerializer) {
         this.mappingFieldComparator = mappingFieldComparator;
         this.jsonpSerializer = jsonpSerializer;
     }
 
-    public MappingComparingResult compare(IndexConfiguration indexConfiguration, TState currentIndexState, TClient client) {
+    public MappingComparingResult compare(IndexConfiguration indexConfiguration, TState currentIndexState) {
 
-        Map<String, Object> appliedMapping = getAppliedMapping(currentIndexState, client);
+        Map<String, Object> appliedMapping = getAppliedMapping(currentIndexState);
         Map<String, Object> expectedMapping = getExpectedMapping(indexConfiguration);
         log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
                 indexConfiguration.getIndexName(), appliedMapping, expectedMapping);
@@ -55,12 +55,12 @@ public abstract class IndexMappingComparator<TState, TJsonp, TClient> {
         return objectMapper.convertValue(indexConfiguration.getMapping(), MAP_TYPE_REF);
     }
 
-    private Map<String, Object> getAppliedMapping(TState currentIndexState, TClient client) {
+    private Map<String, Object> getAppliedMapping(TState currentIndexState) {
         TJsonp typeMapping = extractTypeMapping(currentIndexState);
         if (typeMapping == null) {
             return Collections.emptyMap();
         } else {
-            ObjectNode currentMappingNode = jsonpSerializer.toObjectNode(typeMapping, client);
+            ObjectNode currentMappingNode = jsonpSerializer.toObjectNode(typeMapping);
             return objectMapper.convertValue(currentMappingNode, MAP_TYPE_REF);
         }
     }

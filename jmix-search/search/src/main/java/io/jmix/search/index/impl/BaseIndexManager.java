@@ -16,7 +16,7 @@ import java.util.Map;
  * Contains non-platform-specific operations.
  * Interaction with indexes is performed in platform-specific implementations.
  */
-public abstract class BaseIndexManager<TClient, TState, TSettings, TJsonp> implements IndexManager {
+public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements IndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(BaseIndexManager.class);
 
@@ -26,17 +26,14 @@ public abstract class BaseIndexManager<TClient, TState, TSettings, TJsonp> imple
 
     protected final ObjectMapper objectMapper;
 
-    protected final TClient client;
+    protected final IndexConfigurationComparator<TState, TSettings, TJsonp> indexConfigurationComparator;
+    protected final MetadataResolver<TState, TJsonp> metadataResolver;
 
-    protected final IndexConfigurationComparator<TClient, TState, TSettings, TJsonp> indexConfigurationComparator;
-    protected final MetadataResolver<TClient, TState, TJsonp> metadataResolver;
-
-    protected BaseIndexManager(TClient client, IndexConfigurationManager indexConfigurationManager,
+    protected BaseIndexManager(IndexConfigurationManager indexConfigurationManager,
                                IndexStateRegistry indexStateRegistry,
                                SearchProperties searchProperties,
-                               IndexConfigurationComparator<TClient, TState, TSettings, TJsonp> indexConfigurationComparator,
-                               MetadataResolver<TClient, TState, TJsonp> metadataResolver) {
-        this.client = client;
+                               IndexConfigurationComparator<TState, TSettings, TJsonp> indexConfigurationComparator,
+                               MetadataResolver<TState, TJsonp> metadataResolver) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.indexStateRegistry = indexStateRegistry;
         this.searchProperties = searchProperties;
@@ -101,7 +98,7 @@ public abstract class BaseIndexManager<TClient, TState, TSettings, TJsonp> imple
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration, client);
+            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
             if (result.isIndexRecreatingRequired()) {
                 status = IndexValidationStatus.IRRELEVANT;
                 indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
@@ -151,7 +148,7 @@ public abstract class BaseIndexManager<TClient, TState, TSettings, TJsonp> imple
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration, client);
+            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
             if (result.isIndexRecreatingRequired()) {
                 status = handleIrrelevantIndex(indexConfiguration, strategy);
             } else {

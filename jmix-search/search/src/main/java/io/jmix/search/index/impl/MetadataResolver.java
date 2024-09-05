@@ -21,28 +21,28 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.Map;
 
-public abstract class MetadataResolver<TClient, TState, TJsonp> {
+public abstract class MetadataResolver<TState, TJsonp> {
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
-    protected final JsonpSerializer<TJsonp, TClient> jsonpSerializer;
+    protected final JsonpSerializer<TJsonp> jsonpSerializer;
 
-    protected MetadataResolver(JsonpSerializer<TJsonp, TClient> jsonpSerializer) {
+    protected MetadataResolver(JsonpSerializer<TJsonp> jsonpSerializer) {
         this.jsonpSerializer = jsonpSerializer;
     }
 
-    public ObjectNode getIndexMetadata(String indexName, TClient client) {
-        TState indexState = getIndexMetadataInternal(indexName, client);
+    public ObjectNode getIndexMetadata(String indexName) {
+        TState indexState = getIndexMetadataInternal(indexName);
+        //TODO
         if (indexState == null) {
             return objectMapper.createObjectNode();
         }
-        //TODO
-        return jsonpSerializer.toObjectNode((TJsonp) indexState, client);
+        return jsonpSerializer.toObjectNode((TJsonp) indexState);
     }
 
-    public TState getIndexMetadataInternal(String indexName, TClient client) {
-        return getIndexMetadataMapInternal(indexName, client).get(indexName);
+    public TState getIndexMetadataInternal(String indexName) {
+        return getIndexMetadataMapInternal(indexName).get(indexName);
     }
 
-    protected abstract Map<String, TState> getIndexMetadataMapInternal(String indexName, TClient client);
+    protected abstract Map<String, TState> getIndexMetadataMapInternal(String indexName);
 }

@@ -19,14 +19,13 @@ package io.jmix.searchopensearch.index.impl;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.IndexConfigurationComparator;
 import org.opensearch.client.json.JsonpSerializable;
-import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.opensearch.client.opensearch.indices.IndexState;
 import org.springframework.stereotype.Component;
 
 @Component("search_OpenSearchIndexConfigurationComparator")
 public class OpenSearchIndexConfigurationComparator
-        extends IndexConfigurationComparator<OpenSearchClient, IndexState, IndexSettings, JsonpSerializable> {
+        extends IndexConfigurationComparator<IndexState, IndexSettings, JsonpSerializable> {
 
     public OpenSearchIndexConfigurationComparator(OpenSearchIndexMappingComparator mappingComparator,
                                                   OpenSearchIndexSettingsComparator settingsComparator,
@@ -35,7 +34,7 @@ public class OpenSearchIndexConfigurationComparator
     }
 
     @Override
-    protected IndexState getIndexState(IndexConfiguration indexConfiguration, OpenSearchClient client) {
-        return metadataResolver.getIndexMetadataInternal(indexConfiguration.getIndexName(), client);
+    protected IndexState getIndexState(IndexConfiguration indexConfiguration) {
+        return metadataResolver.getIndexMetadataInternal(indexConfiguration.getIndexName());
     }
 }

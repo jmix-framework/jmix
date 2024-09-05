@@ -19,18 +19,18 @@ package io.jmix.searchopensearch.index.impl;
 import io.jmix.search.index.impl.IndexMappingComparator;
 import io.jmix.search.index.impl.MappingFieldComparator;
 import org.opensearch.client.json.JsonpSerializable;
-import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.indices.IndexState;
 import org.springframework.stereotype.Component;
 
 @Component("search_OpenSearchIndexMappingComparator")
-public class OpenSearchIndexMappingComparator extends IndexMappingComparator<IndexState, JsonpSerializable, OpenSearchClient> {
+public class OpenSearchIndexMappingComparator extends IndexMappingComparator<IndexState, JsonpSerializable> {
     public OpenSearchIndexMappingComparator(MappingFieldComparator mappingFieldComparator, OpenSearchJsonpSerializer jsonpSerializer) {
         super(mappingFieldComparator, jsonpSerializer);
     }
 
     @Override
     protected JsonpSerializable extractTypeMapping(IndexState currentIndexState) {
+        //TODO
         return currentIndexState.mappings();
     }
 }

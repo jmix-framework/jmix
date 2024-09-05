@@ -21,21 +21,21 @@ import io.jmix.search.index.IndexConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class IndexSettingsComparator<TState, TSettings, TClient, TJsonp> {
+public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
     private static final Logger log = LoggerFactory.getLogger(IndexSettingsComparator.class);
 
-    protected final JsonpSerializer<TJsonp, TClient> jsonpSerializer;
+    protected final JsonpSerializer<TJsonp> jsonpSerializer;
     protected final JsonNodesComparator jsonNodesComparator;
 
-    public IndexSettingsComparator(JsonpSerializer<TJsonp, TClient> jsonpSerializer, JsonNodesComparator jsonNodesComparator) {
+    public IndexSettingsComparator(JsonpSerializer<TJsonp> jsonpSerializer, JsonNodesComparator jsonNodesComparator) {
         this.jsonpSerializer = jsonpSerializer;
         this.jsonNodesComparator = jsonNodesComparator;
     }
 
-    public SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, TState currentIndexState, TClient client) {
+    public SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, TState currentIndexState) {
 
-        ObjectNode expectedSettingsNode = jsonpSerializer.toObjectNode(getExpectedIndexSettings(indexConfiguration), client);
-        ObjectNode appliedSettingsNode = jsonpSerializer.toObjectNode(getAppliedIndexSettings(currentIndexState, indexConfiguration.getIndexName()), client);
+        ObjectNode expectedSettingsNode = jsonpSerializer.toObjectNode(getExpectedIndexSettings(indexConfiguration));
+        ObjectNode appliedSettingsNode = jsonpSerializer.toObjectNode(getAppliedIndexSettings(currentIndexState, indexConfiguration.getIndexName()));
 
         log.debug("Settings of index '{}':\nExpected: {}\nApplied: {}",
                 indexConfiguration.getIndexName(), expectedSettingsNode, appliedSettingsNode);

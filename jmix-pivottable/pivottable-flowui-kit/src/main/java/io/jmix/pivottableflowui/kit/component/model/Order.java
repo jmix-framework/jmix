@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  * <p>
  * Ordering by value orders by column total.
  */
-public enum Order implements HasEnumId {
+public enum Order implements SerializedEnum {
 
     KEYS_ASCENDING("key_a_to_z"),
     VALUES_ASCENDING("value_a_to_z"),

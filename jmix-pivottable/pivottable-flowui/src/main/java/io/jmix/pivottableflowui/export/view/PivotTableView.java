@@ -68,6 +68,6 @@ public class PivotTableView extends StandardView {
 
     @Subscribe(id = "pivotTable")
     protected void onPivotTableRefreshEvent(PivotTableRefreshEvent event) {
-        exportExcel.setEnabled(pivotTableExtension.isRendererSupported(event.getParams().getRenderer()));
+        exportExcel.setEnabled(pivotTableExtension.isRendererSupported(event.getRenderer()));
     }
 }

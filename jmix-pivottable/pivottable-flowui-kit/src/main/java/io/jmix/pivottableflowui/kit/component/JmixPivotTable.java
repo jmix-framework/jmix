@@ -16,7 +16,9 @@
 
 package io.jmix.pivottableflowui.kit.component;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -26,10 +28,8 @@ import com.vaadin.flow.data.provider.*;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
-import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonArray;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.pivottableflowui.kit.component.model.*;
 import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer;
@@ -37,19 +37,25 @@ import io.jmix.pivottableflowui.kit.data.DataItem;
 import io.jmix.pivottableflowui.kit.data.PivotTableListDataSet;
 import io.jmix.pivottableflowui.kit.event.PivotTableCellClickEvent;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
+import io.jmix.pivottableflowui.kit.event.js.PivotTableCellClickEventParams;
+import io.jmix.pivottableflowui.kit.event.js.PivotTableJsCellClickEvent;
+import io.jmix.pivottableflowui.kit.event.js.PivotTableJsRefreshEvent;
+import io.jmix.pivottableflowui.kit.event.js.PivotTableRefreshEventParams;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Tag("jmix-pivot-table")
 @JsModule("./src/pivot-table/jmix-pivot-table.js")
 public class JmixPivotTable extends Component implements HasEnabled, HasSize {
 
-    protected static final String ITEM_ID_PROPERTY_NAME = "$k";
+    protected static final String DATA_ITEM_ID_PROPERTY_NAME = "$k";
 
     protected DataProvider<DataItem, ?> dataProvider;
     protected Registration dataProviderItemSetChangeRegistration;
+    protected Registration cellClickJsRegistration;
 
     protected PivotTableOptions options;
     protected JmixPivotTableSerializer serializer;
@@ -96,10 +102,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
      * @return subscription
      */
     public Registration addRefreshEventListener(ComponentEventListener<PivotTableRefreshEvent> listener) {
-        Registration eventRegistration = getEventBus().addListener(PivotTableRefreshEvent.class, listener);
-        eventRegistrations.put(PivotTableRefreshEvent.EVENT_NAME, eventRegistration);
-
-        return getRemovalCallback(PivotTableRefreshEvent.EVENT_NAME, PivotTableRefreshEvent.class);
+        return getEventBus().addListener(PivotTableRefreshEvent.class, listener);
     }
 
     /**
@@ -110,10 +113,18 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
      * @return subscription
      */
     public Registration addCellClickListener(ComponentEventListener<PivotTableCellClickEvent> listener) {
-        Registration eventRegistration = getEventBus().addListener(PivotTableCellClickEvent.class, listener);
-        eventRegistrations.put(PivotTableCellClickEvent.EVENT_NAME, eventRegistration);
+        if (cellClickJsRegistration == null) {
+            cellClickJsRegistration = getEventBus().addListener(PivotTableJsCellClickEvent.class, this::onCellClick);
+        }
 
-        return getRemovalCallback(PivotTableCellClickEvent.EVENT_NAME, PivotTableCellClickEvent.class);
+        Registration registration = getEventBus().addListener(PivotTableCellClickEvent.class, listener);
+        return () -> {
+            registration.remove();
+            if (!getEventBus().hasListener(PivotTableCellClickEvent.class)) {
+                cellClickJsRegistration.remove();
+                cellClickJsRegistration = null;
+            }
+        };
     }
 
     public Map<String, String> getProperties() {
@@ -372,6 +383,24 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         return options.isShowColTotals();
     }
 
+    public void setNativeJson(String nativeJson) {
+        if (!StringUtils.equals(getNativeJson(), nativeJson)) {
+            if (nativeJson != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                try {
+                    mapper.readTree(nativeJson);
+                    options.setNativeJson(nativeJson);
+                } catch (JsonProcessingException e) {
+                    throw new IllegalStateException("Unable to parse pivot table json configuration", e);
+                }
+            }
+        }
+    }
+
+    public String getNativeJson() {
+        return options.getNativeJson();
+    }
+
     protected Registration getRemovalCallback(String eventName, Class<? extends ComponentEvent<?>> eventClass) {
         return () -> {
             eventRegistrations.get(eventName).remove();
@@ -388,11 +417,9 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
             dataProviderItemSetChangeRegistration.remove();
             dataProviderItemSetChangeRegistration = null;
         }
-
         if (dataProvider == null) {
             return;
         }
-
         requestUpdateItems();
         dataProviderItemSetChangeRegistration = dataProvider.addDataProviderListener(
                 (DataProviderListener<DataItem>) event -> requestUpdateItems());
@@ -402,7 +429,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         options = createOptions();
         serializer = createSerializer();
 
-        initOptionsChangeListener();
+        initComponentListeners();
 
         Div div = new Div();
         div.setId("div-id");
@@ -418,12 +445,59 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         return new JmixPivotTableSerializer();
     }
 
-    protected void initOptionsChangeListener() {
+    protected void initComponentListeners() {
         options.setPivotTableObjectChangeListener(this::onOptionsChange);
+
+        Registration eventRegistration = getEventBus().addListener(PivotTableJsRefreshEvent.class, this::onRefresh);
+        eventRegistrations.put(PivotTableJsRefreshEvent.EVENT_NAME, eventRegistration);
     }
 
     protected void onOptionsChange(PivotTableOptionsObservable.ObjectChangeEvent event) {
         requestUpdateOptions();
+    }
+
+    protected void onCellClick(PivotTableJsCellClickEvent event) {
+        PivotTableCellClickEventParams cellClickParams =
+                (PivotTableCellClickEventParams) serializer.deserializeJsEventParams(
+                        event.getParams(), PivotTableCellClickEventParams.class);
+
+        PivotTableCellClickEvent cellClickEvent = new PivotTableCellClickEvent(this, cellClickParams.getValue(),
+                cellClickParams.getFilters(), cellClickParams.getUsedDataItems());
+
+        fireEvent(cellClickEvent);
+    }
+
+    protected void onRefresh(PivotTableJsRefreshEvent event) {
+        PivotTableRefreshEventParams refreshParams = (PivotTableRefreshEventParams) serializer.deserializeJsEventParams(
+                event.getParams(), PivotTableRefreshEventParams.class);
+
+        updateOptions(refreshParams);
+        sendRefreshEvent(refreshParams);
+    }
+
+    private void sendRefreshEvent(PivotTableRefreshEventParams refreshParams) {
+        PivotTableRefreshEvent refreshEvent = new PivotTableRefreshEvent(this,
+                refreshParams.getRows(), refreshParams.getCols(),
+                refreshParams.getRenderer(),
+                refreshParams.getAggregationMode(), refreshParams.getAggregationProperties(),
+                refreshParams.getInclusions(), refreshParams.getExclusions(),
+                refreshParams.getColOrder(), refreshParams.getRowOrder());
+
+        fireEvent(refreshEvent);
+    }
+
+    private void updateOptions(PivotTableRefreshEventParams params) {
+        options.setChangedFromClient(true);
+
+        options.setRows(params.getRows());
+        options.setCols(params.getCols());
+        options.setRenderer(params.getRenderer());
+        options.getAggregations().setSelectedAggregation(params.getAggregationMode());
+        options.setAggregationProperties(params.getAggregationProperties());
+        options.setColOrder(params.getColOrder());
+        options.setRowOrder(params.getRowOrder());
+
+        options.setChangedFromClient(false);
     }
 
     protected void requestUpdateOptions() {
@@ -431,7 +505,6 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         if (synchronizeOptionsExecution != null) {
             return;
         }
-
         getUI().ifPresent(ui ->
                 synchronizeOptionsExecution = ui.beforeClientResponse(this, this::performUpdateOptions));
     }
@@ -441,7 +514,6 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         if (synchronizeItemsExecution != null || getDataProvider() == null) {
             return;
         }
-
         getUI().ifPresent(ui ->
                 synchronizeItemsExecution = ui.beforeClientResponse(this, this::performUpdateItems));
     }
@@ -461,7 +533,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         JsonValue dataJson = serializer.serializeItems(dataItems.stream()
                 .map(dataItem -> {
                     Map<String, Object> values = new HashMap<>();
-                    values.put(ITEM_ID_PROPERTY_NAME, dataItem.getId());
+                    values.put(DATA_ITEM_ID_PROPERTY_NAME, dataItem.getId());
                     for (Map.Entry<String, String> property : options.getProperties().entrySet()) {
                         values.put(property.getValue(), dataItem.getValue(property.getKey()));
                     }
@@ -478,22 +550,6 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
     protected void onAttach(AttachEvent attachEvent) {
         requestUpdateOptions();
         requestUpdateItems();
-    }
-
-    @ClientCallable
-    protected void onClientOptionsChanged(String clientChangedOptionsJson) {
-        options.setChangedFromClient(true);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            PivotTableOptions clientOptions = objectMapper.readValue(clientChangedOptionsJson, PivotTableOptions.class);
-            options.setRows(clientOptions.getRows());
-            options.setCols(clientOptions.getCols());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        options.setChangedFromClient(false);
     }
 
     @ClientCallable

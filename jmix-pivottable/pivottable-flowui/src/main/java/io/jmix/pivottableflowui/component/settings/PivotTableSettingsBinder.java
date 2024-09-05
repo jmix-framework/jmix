@@ -30,14 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component("pvttbl_PivotTableSettingsBinder")
 public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTable, PivotTableSettings> {
-
-    private static final Logger log = LoggerFactory.getLogger(PivotTableSettingsBinder.class);
 
     @Override
     public Class<? extends Component> getComponentClass() {
@@ -56,23 +53,13 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
     @Override
     public void applySettings(PivotTable component, PivotTableSettings settings) {
         if (CollectionUtils.isNotEmpty(settings.getRows())) {
-            List<String> newRows = new LinkedList<>();
-            for (String row : settings.getRows()) {
-                if (CollectionUtils.isNotEmpty(component.getRows()) && component.getRows().contains(row)) {
-                    newRows.add(row);
-                }
-            }
-            component.setRows(newRows);
+            updateLocalizedProperties(settings.getRows(), component.getRows(), component.getProperties(),
+                    component::setRows);
         }
 
         if (CollectionUtils.isNotEmpty(settings.getCols())) {
-            List<String> newCols = new LinkedList<>();
-            for (String col : settings.getCols()) {
-                if (CollectionUtils.isNotEmpty(component.getCols()) && component.getCols().contains(col)) {
-                    newCols.add(col);
-                }
-            }
-            component.setCols(newCols);
+            updateLocalizedProperties(settings.getCols(), component.getCols(), component.getProperties(),
+                    component::setCols);
         }
 
         if (!Strings.isNullOrEmpty(settings.getRendererName())) {
@@ -86,7 +73,8 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
                 settingsAggregation.setMode(AggregationMode.fromId(settings.getAggregatorName()));
 
                 if (CollectionUtils.isNotEmpty(settings.getAggregationProperties())) {
-                    component.setAggregationProperties(settings.getAggregationProperties());
+                    updateLocalizedProperties(settings.getAggregationProperties(), component.getAggregationProperties(),
+                            component.getProperties(), component::setAggregationProperties);
                 }
             }
         }
@@ -101,6 +89,33 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
 
         component.setRowOrder(Order.fromId(settings.getRowOrder()));
         component.setColOrder(Order.fromId(settings.getColOrder()));
+    }
+
+    private void updateLocalizedProperties(List<String> settingsProperties,
+                                           List<String> componentLocalizedProperties,
+                                           Map<String, String> propertiesMapping,
+                                           Consumer<List<String>> componentLocalizedPropertiesSetter) {
+        List<String> newLocalizedProperties = new LinkedList<>();
+        List<String> componentProperties = getPropertiesByLocalizedNames(componentLocalizedProperties, propertiesMapping);
+        for (String property : settingsProperties) {
+            if (CollectionUtils.isNotEmpty(componentProperties) && componentProperties.contains(property)) {
+                newLocalizedProperties.add(propertiesMapping.get(property));
+            }
+        }
+        componentLocalizedPropertiesSetter.accept(newLocalizedProperties);
+
+    }
+
+    private List<String> getPropertiesByLocalizedNames(List<String> localizedProperties, Map<String, String> propertiesMapping) {
+        List<String> properties = new LinkedList<>();
+        for (String localizedProperty : localizedProperties) {
+            for (Map.Entry<String, String> entry : propertiesMapping.entrySet()) {
+                if (localizedProperty.equals(entry.getValue())) {
+                    properties.add(entry.getKey());
+                }
+            }
+        }
+        return properties;
     }
 
     @Override

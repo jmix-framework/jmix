@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 /**
  * An enum with predefined aggregations.
  */
-public enum AggregationMode implements HasEnumId {
+public enum AggregationMode implements SerializedEnum {
 
     COUNT("count"),
     COUNT_UNIQUE_VALUES("countUniqueValues"),

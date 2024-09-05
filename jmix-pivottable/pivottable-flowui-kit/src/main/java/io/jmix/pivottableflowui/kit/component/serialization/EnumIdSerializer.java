@@ -18,18 +18,18 @@ package io.jmix.pivottableflowui.kit.component.serialization;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import io.jmix.pivottableflowui.kit.component.model.HasEnumId;
+import io.jmix.pivottableflowui.kit.component.model.SerializedEnum;
 
 import java.io.IOException;
 
-public class EnumIdSerializer extends AbstractSerializer<HasEnumId> {
+public class EnumIdSerializer extends AbstractSerializer<SerializedEnum> {
 
     public EnumIdSerializer() {
-        super(HasEnumId.class);
+        super(SerializedEnum.class);
     }
 
     @Override
-    public void serializeNonNullValue(HasEnumId value, JsonGenerator gen, SerializerProvider provider)
+    public void serializeNonNullValue(SerializedEnum value, JsonGenerator gen, SerializerProvider provider)
             throws IOException {
         gen.writeString(value.getId());
     }

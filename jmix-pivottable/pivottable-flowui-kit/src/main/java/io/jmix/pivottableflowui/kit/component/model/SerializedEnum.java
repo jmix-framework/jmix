@@ -19,7 +19,7 @@ package io.jmix.pivottableflowui.kit.component.model;
 /**
  * Interface for enums supporting JSON serialization.
  */
-public interface HasEnumId {
+public interface SerializedEnum {
 
     String getId();
 }

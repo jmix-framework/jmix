@@ -21,35 +21,35 @@ import java.util.function.Consumer;
 
 public class PivotTableOptions extends PivotTableOptionsObservable {
 
-    protected Map<String, String> properties;                     // Haulmont API
-    protected List<String> rows;                                  // pivot() and pivotUI()
-    protected List<String> cols;                                  // pivot() and pivotUI()
-    protected Aggregation aggregation;                            // pivot()
-    protected Renderer renderer;                                  // pivot()
-    protected List<String> aggregationProperties;                 // pivotUI()
-    protected Aggregations aggregations;                          // pivotUI()
-    protected Renderers renderers;                                // pivotUI()
-    protected List<String> hiddenProperties;                      // pivotUI()
-    protected List<String> hiddenFromAggregations;                // pivotUI()
-    protected List<String> hiddenFromDragDrop;                    // pivotUI()
-    protected Order colOrder;                            // pivot() and pivotUI()
-    protected Order rowOrder;                                  // pivot() and pivotUI()
-    protected Integer menuLimit;                                  // pivotUI()
-    protected Boolean autoSortUnusedProperties;                   // pivotUI()
-    protected UnusedPropertiesVertical unusedPropertiesVertical;  // pivotUI()
-    protected JsFunction filterFunction;                          // pivot() and pivotUI()
-    protected JsFunction sortersFunction;                         // pivot() and pivotUI()
-    protected RendererOptions rendererOptions;                    // pivot() and pivotUI()
-    protected Map<String, List<String>> inclusions;               // pivotUI()
-    protected Map<String, List<String>> exclusions;               // pivotUI()
-    protected DerivedProperties derivedProperties;                // pivot() and pivotUI()
-    protected String localeCode;                                  // Haulmont API
-    protected Boolean showUI;                                     // pivotUI()
-    protected Boolean rowTotals;                                  // pivot() and pivotUI()
-    protected Boolean colTotals;                                  // pivot() and pivotUI()
+    protected Map<String, String> properties;
+    protected List<String> rows;
+    protected List<String> cols;
+    protected Aggregation aggregation;
+    protected Renderer renderer;
+    protected List<String> aggregationProperties;
+    protected Aggregations aggregations;
+    protected Renderers renderers;
+    protected List<String> hiddenProperties;
+    protected List<String> hiddenFromAggregations;
+    protected List<String> hiddenFromDragDrop;
+    protected Order colOrder;
+    protected Order rowOrder;
+    protected Integer menuLimit;
+    protected Boolean autoSortUnusedProperties;
+    protected UnusedPropertiesVertical unusedPropertiesVertical;
+    protected JsFunction filterFunction;
+    protected JsFunction sortersFunction;
+    protected RendererOptions rendererOptions;
+    protected Map<String, List<String>> inclusions;
+    protected Map<String, List<String>> exclusions;
+    protected DerivedProperties derivedProperties;
+    protected String localeCode;
+    protected Boolean showUI;
+    protected Boolean rowTotals;
+    protected Boolean colTotals;
     protected String emptyDataMessage;
     protected Map<String, Object> localizedStrings;
-
+    protected String nativeJson;
 
     @Override
     public void setPivotTableObjectChangeListener(Consumer<ObjectChangeEvent> listener) {
@@ -797,5 +797,13 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
 
     public void setLocalizedStrings(Map<String, Object> localizedStrings) {
         this.localizedStrings = localizedStrings;
+    }
+
+    public String getNativeJson() {
+        return nativeJson;
+    }
+
+    public void setNativeJson(String nativeJson) {
+        this.nativeJson = nativeJson;
     }
 }

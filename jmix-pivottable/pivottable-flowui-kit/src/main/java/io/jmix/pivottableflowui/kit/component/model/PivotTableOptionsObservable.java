@@ -21,7 +21,7 @@ import java.util.EventObject;
 import java.util.function.Consumer;
 
 /**
- * Base class for all chart options objects that are to be serialized.
+ * Base class for all pivot table options objects that are to be serialized.
  * If an object changes, then {@link ObjectChangeEvent} is sent to the PivotTable component.
  * Then the component recreates data on the client.
  */

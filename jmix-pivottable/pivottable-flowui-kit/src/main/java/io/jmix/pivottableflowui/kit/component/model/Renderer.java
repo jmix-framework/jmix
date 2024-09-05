@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 /**
  * An enum with predefined renderers.
  */
-public enum Renderer implements HasEnumId {
+public enum Renderer implements SerializedEnum {
 
     // standard
     TABLE("table"),

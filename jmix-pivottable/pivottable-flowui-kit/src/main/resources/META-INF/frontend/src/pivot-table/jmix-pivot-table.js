@@ -117,14 +117,19 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         this._updateOrderDirection("a.pvtRowOrder", pivotState.rowOrder);
         this._updateOrderDirection("a.pvtColOrder", pivotState.colOrder);
 
+        let renderer = Object.keys(this._options.localizedStrings.renderer)
+            .find(key => this._options.localizedStrings.renderer[key] === pivotState.rendererName);
+        let aggregation = Object.keys(this._options.localizedStrings.aggregation)
+            .find(key => this._options.localizedStrings.aggregation[key] === pivotState.aggregatorName);
+
         const customEvent = new CustomEvent('jmix-pivottable:refresh', {
             detail: {
                 rows: pivotState.rows,
                 cols: pivotState.cols,
-                renderer: pivotState.rendererName,
-                aggregation: pivotState.aggregatorName,
+                renderer: renderer,
+                aggregationMode: aggregation,
                 aggregationProperties: pivotState.vals,
-                inlusions: pivotState.inclusions,
+                inclusions: pivotState.inclusions,
                 exclusions: pivotState.exclusions,
                 rowOrder: pivotState.rowOrder,
                 colOrder: pivotState.colOrder
@@ -178,56 +183,85 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                 $.pivotUtilities.renderers = $.extend($.pivotUtilities.c3_renderers,
                     $.extend($.pivotUtilities.d3_renderers, $.pivotUtilities.renderers));
                 pivotTable._initLocale();
-                let options = pivotTable._options;
                 $("#div-id").pivotUI(
                     pivotTable._dataSet,
-                    {
-                        onRefresh: (function(pivotTableCls){
-                            return function(pivotState) {
-                                pivotTableCls._refreshHandler(pivotState);
-                            };
-                        })(pivotTable),
-                        showUI: options.showUI,
-                        rows: options.rows, //already localized from server
-                        cols: options.cols,
-                        colOrder: options.colOrder,
-                        rowOrder: options.rowOrder,
-                        vals: options.vals,
-                        exclusions: options.exclusions,
-                        inclusions: options.inclusions,
-                        aggregatorName: pivotTable._getLocalizedAggregatorName(),
-                        rendererName: pivotTable._getLocalizedRendererName(),
-                        renderers: pivotTable._getLocalizedRenderers(),
-                        derivedAttributes: options.derivedProperties ? options.derivedProperties.properties : null,
-                        localeStrings: options.localizedStrings,
-                        rendererOptions: options.rendererOptions,
-                        sorters: options.sorters,
-                        rendererOptions: {
-                            table: {
-                                clickCallback: (function(pivotTableCls){
-                                    return function(event, value, filters, pivotData) {
-                                        pivotTableCls._cellClickHandler(value, filters, pivotData);
-                                    };
-                                })(pivotTable),
-                                rowTotals: options.rowTotals ? options.rowTotals : true,
-                                colTotals: options.colTotals ? options.colTotals : true
-                            },
-                            heatmap : {
-                                colorScaleGenerator : pivotTable._getColorScaleGenerator(options.rendererOptions)
-                            }
-                        },
-                        c3: {
-                            size: (function(renderOptions) {
-                                return renderOptions && renderOptions.c3
-                                    ? renderOptions.c3.size
-                                    : null;
-                                })(options.renderOptions)
-                        }
-                    },
+                    pivotTable._preparePivotTableOptions(),
                     false,
-                    options.localeCode
+                    pivotTable._options.localeCode
                 );
             })(this);
+        }
+    }
+
+    _preparePivotTableOptions() {
+        let options = this._options;
+        let aggregationOptions = this._getAggregationOptions();
+        let resultOptions = {
+            onRefresh: (function(pivotTable){
+                return function(pivotState) {
+                    pivotTable._refreshHandler(pivotState);
+                };
+            })(this),
+            showUI: options.showUI,
+            rows: options.rows,
+            cols: options.cols,
+            colOrder: options.colOrder,
+            rowOrder: options.rowOrder,
+            aggregatorName: aggregationOptions.aggregatorName,
+            aggregator: aggregationOptions.aggregator,
+            aggregators: aggregationOptions.aggregators,
+            vals: options.aggregationProperties,
+            exclusions: options.exclusions,
+            inclusions: options.inclusions,
+            rendererName: this._getLocalizedRendererName(),
+            renderers: this._getLocalizedRenderers(),
+            derivedAttributes: options.derivedProperties ? options.derivedProperties.properties : null,
+            localeStrings: options.localizedStrings,
+            rendererOptions: options.rendererOptions,
+            sorters: options.sorters,
+            rendererOptions: {
+                table: {
+                    clickCallback: (function(pivotTable){
+                        return function(event, value, filters, pivotData) {
+                            pivotTable._cellClickHandler(value, filters, pivotData);
+                        };
+                    })(this),
+                    rowTotals: options.rowTotals ? options.rowTotals : true,
+                    colTotals: options.colTotals ? options.colTotals : true
+                },
+                heatmap : {
+                    colorScaleGenerator : this._getColorScaleGenerator(options.rendererOptions)
+                }
+            },
+            c3: {
+                size: (function(renderOptions) {
+                    return renderOptions && renderOptions.c3
+                        ? renderOptions.c3.size
+                        : null;
+                    })(options.renderOptions)
+            }
+        };
+
+        if (this._options.nativeJson) {
+            this._mergeOptionsWithJsonOptions(resultOptions, window.eval("(" + this._options.nativeJson + ")"));
+        }
+
+        return resultOptions;
+    }
+
+    _mergeOptionsWithJsonOptions(dst, src) {
+        for (var property in src) {
+            if (src.hasOwnProperty(property)) {
+                if (src[property] && typeof src[property] === "object") {
+                    if (!dst[property]) {
+                        dst[property] = src[property];
+                    } else {
+                        this._mergeOptionsWithJsonOptions(dst[property], src[property]);
+                    }
+                } else {
+                    dst[property] = src[property];
+                }
+            }
         }
     }
 
@@ -330,7 +364,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         allRenderers[localizedStrings.renderer.treemap] = $.pivotUtilities.d3_renderers["Treemap"];
         allRenderers[localizedStrings.renderer.TSVExport] = $.pivotUtilities.export_renderers["TSV Export"];
 
-        $.pivotUtilities.locales[localizedStrings.localeCode] = {
+        $.pivotUtilities.locales[this._options.localeCode] = {
             localeStrings: {
                 renderError: localizedStrings.renderError,
                 computeError: localizedStrings.computeError,
@@ -352,6 +386,74 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         };
     }
 
+    _getAggregationOptions(resultOptions) {
+        var allAggregators = $.pivotUtilities.locales[this._options.localeCode].aggregators;
+        var localeMapping = $.pivotUtilities.locales[this._options.localeCode].aggregatorsLocaleMapping;
+
+        let aggregationOptions = {
+            aggregatorName: null,
+            aggregator: null,
+            aggregators: []
+        };
+
+        if (this._options.showUI) {
+            if (this._options.aggregations) {
+                if (this._options.aggregations.selectedAggregation) {
+                    aggregationOptions.aggregatorName = localeMapping[this._options.aggregations.selectedAggregation];
+                }
+
+                var aggregations = this._options.aggregations.aggregations;
+                if (aggregations) {
+                    var aggregators = {};
+                    var aggregatorsIds = {};
+                    for (var i = 0; i < aggregations.length; i++) {
+                        var aggregatorCaption = aggregations[i].caption;
+                        var aggregationKey = aggregatorCaption;
+
+                        if (aggregations[i].custom) {
+                            aggregators[aggregationKey] = window.eval("(" + aggregations[i]["function"] + ")");
+                        } else {
+                            var aggregatorName = localeMapping[aggregations[i].mode];
+                            var aggregatorFunc = allAggregators[aggregatorName];
+                            if (aggregatorFunc) {
+                                aggregationKey = aggregatorCaption ? aggregatorCaption : aggregatorName;
+                                aggregators[aggregationKey] = aggregatorFunc;
+                                if (aggregatorCaption && aggregationOptions.aggregatorName == aggregatorName) {
+                                    aggregationOptions.aggregatorName = aggregatorCaption;
+                                }
+                            }
+                        }
+                        aggregatorsIds[aggregationKey] = aggregations[i].id;
+                    }
+                    aggregationOptions.aggregators = aggregators;
+                }
+            }
+        } else {
+            if (this._options.aggregation) {
+                if (this._options.aggregation.custom) {
+                    aggregationOptions.aggregator = window.eval("(" + this._options.aggregation["function"] + ")");
+                } else {
+                    var aggregator = allAggregators[localeMapping[this._options.aggregation.mode]];
+                    if (this._options.aggregation.properties) {
+                        aggregator = aggregator(this._options.aggregation.properties);
+                    } else {
+                        aggregator = aggregator();
+                    }
+                    aggregationOptions.aggregator = aggregator;
+                }
+
+                aggregationOptions.aggregatorName = this._options.aggregation.caption
+                    ? this._options.aggregation.caption
+                    : localeMapping[this._options.aggregation.mode];
+            } else {
+                // Explicitly set default aggregator in order to use localized version
+                aggregationOptions.aggregator = allAggregators[localeMapping["count"]]();
+            }
+        }
+
+        return aggregationOptions;
+    }
+
     _getLocalizedAttributes(attributes) {
         if (!this._options.properties) {
             return null;
@@ -370,6 +472,16 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     }
 
     _getLocalizedAggregatorName() {
+        let aggregatorName;
+        if (this._options.showUI) {
+            if (this._options.aggregations) {
+                if (this._options.aggregations.selectedAggregation) {
+                    aggregatorName = this._options.localizedStrings.aggregation[this._options.aggregations.selectedAggregation];
+                }
+            }
+        }
+
+
         let aggregationMode = this._options.aggregation ? this._options.aggregation.mode : null;
         if (aggregationMode == null) {
             return null;
@@ -394,7 +506,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         for (let selectedRenderer of this._options.renderers.renderers) {
             let localizedKey = this._options.localizedStrings.renderer[selectedRenderer];
 
-            localizedRenderers[localizedKey] = $.pivotUtilities.locales[this._options.localizedStrings.localeCode].renderers[localizedKey];
+            localizedRenderers[localizedKey] = $.pivotUtilities.locales[this._options.localeCode].renderers[localizedKey];
 
         }
         return localizedRenderers;

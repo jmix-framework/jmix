@@ -16,29 +16,56 @@
 
 package io.jmix.pivottableflowui.kit.event;
 
-import com.vaadin.flow.component.DomEvent;
-import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
+import com.vaadin.flow.component.ComponentEvent;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
+import io.jmix.pivottableflowui.kit.data.DataItem;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Describes PivotTable cell click event.
  */
-@DomEvent(PivotTableCellClickEvent.EVENT_NAME)
-public class PivotTableCellClickEvent extends AbstractPivotTableEvent {
+public class PivotTableCellClickEvent extends ComponentEvent<JmixPivotTable> {
 
-    public static final String EVENT_NAME = "jmix-pivottable:cellclick";
+    protected Double value;
+    protected Map<String, String> filters;
+    protected List<DataItem> usedDataItems;
 
-    protected PivotTableCellClickEventParams params;
+    public PivotTableCellClickEvent(JmixPivotTable pivotTable, Double value, Map<String, String> filters,
+                                    List<DataItem> usedDataItems) {
+        super(pivotTable, false);
 
-    public PivotTableCellClickEvent(JmixPivotTable pivotTable, boolean fromClient,  @EventData("event.detail") JsonObject params) {
-        super(pivotTable, fromClient, params);
+        this.value = value;
+        this.filters = filters;
+        this.usedDataItems = usedDataItems;
     }
 
-    public PivotTableCellClickEventParams getParams() {
-        if (params == null) {
-            params = convertDetail(PivotTableCellClickEventParams.class);
-        }
-        return params;
+    /**
+     * @return value of the clicked cell
+     */
+    @Nullable
+    public Double getValue() {
+        return value;
+    }
+
+    /**
+     * @return a map in which keys are localized property names used in columns or rows
+     * and values are localized property values
+     */
+    public Map<String, String> getFilters() {
+        return filters;
+    }
+
+    void setFilters(Map<String, String> filters) {
+        this.filters = filters;
+    }
+
+    /**
+     * @return a list of {@link DataItem} used in the clicked cell value generation
+     */
+    public List<DataItem> getUsedDataItems() {
+        return usedDataItems;
     }
 }

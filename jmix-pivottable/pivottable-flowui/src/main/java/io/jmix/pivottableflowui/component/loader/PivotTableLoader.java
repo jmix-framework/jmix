@@ -241,8 +241,12 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
 
         loadResourceString(aggregationElement, "caption", context.getMessageGroup(), aggregation::setCaption);
         loadBoolean(aggregationElement, "custom", aggregation::setCustom);
-        loadString(aggregationElement, "function", value -> aggregation.setFunction(new JsFunction(value)));
         loadEnum(aggregationElement, AggregationMode.class, "mode", aggregation::setMode);
+
+        Element function = aggregationElement.element("function");
+        if (function != null) {
+            aggregation.setFunction(new JsFunction(function.getText()));
+        }
 
         List<String> properties = loadListOfStrings(aggregationElement, "property", "name", true);
         if (CollectionUtils.isNotEmpty(properties)) {

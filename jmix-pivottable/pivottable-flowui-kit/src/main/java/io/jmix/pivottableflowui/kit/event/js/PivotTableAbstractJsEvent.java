@@ -14,7 +14,21 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.pivottableflowui.component.serialization;
+package io.jmix.pivottableflowui.kit.event.js;
 
-import org.springframework.lang.NonNullApi;
+import com.vaadin.flow.component.ComponentEvent;
+import elemental.json.JsonObject;
+import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
+
+public abstract class PivotTableAbstractJsEvent extends ComponentEvent<JmixPivotTable> {
+    protected JsonObject params;
+
+    public PivotTableAbstractJsEvent(JmixPivotTable source, boolean fromClient, JsonObject params) {
+        super(source, fromClient);
+        this.params = params;
+    }
+
+    public JsonObject getParams() {
+        return params;
+    }
+}

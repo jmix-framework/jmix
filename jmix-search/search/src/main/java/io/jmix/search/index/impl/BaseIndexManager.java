@@ -204,6 +204,7 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
         return status;
     }
 
+    //TODO describe process
     protected IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
         if (strategy.isConfigurationUpdateSupported()) {
             if (result.isMappingUpdateRequired()) {

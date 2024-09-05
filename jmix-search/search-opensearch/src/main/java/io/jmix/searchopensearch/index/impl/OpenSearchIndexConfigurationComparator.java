@@ -35,6 +35,7 @@ public class OpenSearchIndexConfigurationComparator
 
     @Override
     protected IndexState getIndexState(IndexConfiguration indexConfiguration) {
+        //TODO nullable
         return metadataResolver.getIndexMetadataInternal(indexConfiguration.getIndexName());
     }
 }

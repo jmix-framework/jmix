@@ -23,14 +23,13 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
     protected final IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator;
     protected final IndexMappingComparator<TState, TJsonp> mappingComparator;
     protected final MetadataResolver<TState, TJsonp> metadataResolver;
+    protected final ObjectMapper objectMapper = new ObjectMapper();
 
     public IndexConfigurationComparator(IndexMappingComparator<TState, TJsonp> mappingComparator, IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator, MetadataResolver<TState, TJsonp> metadataResolver) {
         this.mappingComparator = mappingComparator;
         this.settingsComparator = settingsComparator;
         this.metadataResolver = metadataResolver;
     }
-
-    protected ObjectMapper objectMapper = new ObjectMapper();
 
     public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration) {
         TState indexState = getIndexState(indexConfiguration);
@@ -40,7 +39,6 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
     }
 
     protected abstract TState getIndexState(IndexConfiguration indexConfiguration);
-
 
     public static class ConfigurationComparingResult {
         protected final IndexMappingComparator.MappingComparingResult mappingComparingResult;

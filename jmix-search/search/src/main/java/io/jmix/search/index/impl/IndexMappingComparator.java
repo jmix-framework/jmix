@@ -105,7 +105,7 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
         return result;
     }
 
-    private static Map<String, Object> getFilteredMapping(Map<String, Object> searchIndexMapping) {
+    protected static Map<String, Object> getFilteredMapping(Map<String, Object> searchIndexMapping) {
         return searchIndexMapping
                 .entrySet()
                 .stream()

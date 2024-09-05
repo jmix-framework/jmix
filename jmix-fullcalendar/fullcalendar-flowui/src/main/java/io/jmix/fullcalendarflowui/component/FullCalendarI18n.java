@@ -18,11 +18,16 @@ package io.jmix.fullcalendarflowui.component;
 
 import com.vaadin.flow.component.UI;
 import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 /**
  * The internationalization properties for {@link FullCalendar} component.
@@ -138,6 +143,8 @@ public class FullCalendarI18n implements Serializable {
     /**
      * The rule how to define the first week of the year. Sets the count of days that should be at least presented
      * in the week to consider it as a first week of the year.
+     * <p>
+     * The default value is taken from locale.
      *
      * @param dayOfYear count of the days
      */
@@ -157,159 +164,328 @@ public class FullCalendarI18n implements Serializable {
         return this;
     }
 
+    /**
+     * @return the long name of the week or {@link null} if not set
+     */
     @Nullable
     public String getWeekTextLong() {
         return weekTextLong;
     }
 
+    /**
+     * Sets the long name of the week.
+     *
+     * @param weekTextLong the long name of the week
+     */
     public void setWeekTextLong(@Nullable String weekTextLong) {
         this.weekTextLong = weekTextLong;
     }
 
+    /**
+     * Sets the long name of the week. See {@link #setWeekTextLong(String)}.
+     *
+     * @param weekTextLong the long name of the week
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withWeekTextLong(String weekTextLong) {
         setWeekTextLong(weekTextLong);
         return this;
     }
 
+    /**
+     * @return the all-day text or {@code null} if not set
+     */
     @Nullable
     public String getAllDayText() {
         return allDayText;
     }
 
+    /**
+     * Sets the all-day text.
+     *
+     * @param allDayText the all-day text
+     */
     public void setAllDayText(@Nullable String allDayText) {
         this.allDayText = allDayText;
     }
 
+    /**
+     * Sets the all-day text. See {@link #setAllDayText(String)}.
+     *
+     * @param allDayText the all-day text
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withAllDayText(@Nullable String allDayText) {
         setAllDayText(allDayText);
         return this;
     }
 
+    /**
+     * @return the "more" link text or {@code null} if not set
+     */
     @Nullable
     public String getMoreLinkText() {
         return moreLinkText;
     }
 
+    /**
+     * Sets the "more" link text. The provided text can be a
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals">
+     * JavaScript Template string</a>. This template takes the {@code count} parameter, for instance:
+     * <pre>
+     * setMoreLinkText("+${count} event(s)");
+     * </pre>
+     * It also takes a string definition of JavaScript function that takes {@code count} as a parameter. For instance:
+     * <pre>
+     * setMoreLinkText(
+     *     """
+     *     function (count) {
+     *         return `See +${count} event` + (count === 1 ? '' : 's');
+     *     }
+     *     """)
+     * </pre>
+     *
+     * @param moreLinkText the "more" link text
+     */
     public void setMoreLinkText(@Nullable String moreLinkText) {
         this.moreLinkText = moreLinkText;
     }
 
+    /**
+     * Sets the "more" link text. See {@link #setMoreLinkText(String)}.
+     *
+     * @param moreLinkText the "more" link text
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withMoreLinkText(@Nullable String moreLinkText) {
         setMoreLinkText(moreLinkText);
         return this;
     }
 
+    /**
+     * @return text that is shown when no events are displayed or {@code null} if not set
+     */
     @Nullable
     public String getNoEventsText() {
         return noEventsText;
     }
 
+    /**
+     * Sets text that will be shown when no events are displayed. The text can be shown in list views,
+     * e.g {@link CalendarViewType#LIST_DAY}.
+     *
+     * @param noEventsText the text to set
+     */
     public void setNoEventsText(@Nullable String noEventsText) {
         this.noEventsText = noEventsText;
     }
 
+    /**
+     * Sets text that will be shown when no events are displayed. See {@link #setNoEventsText(String)}.
+     *
+     * @param noEventsText the text to set
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withNoEventsText(@Nullable String noEventsText) {
         setNoEventsText(noEventsText);
         return this;
     }
 
+    /**
+     * @return the hint for close button or {@code null} if not set
+     */
     @Nullable
     public String getCloseHint() {
         return closeHint;
     }
 
+    /**
+     * Sets the hint for close button.
+     *
+     * @param closeHint the close hint text
+     */
     public void setCloseHint(@Nullable String closeHint) {
         this.closeHint = closeHint;
     }
 
+    /**
+     * Sets the hint for close button. See {@link #setCloseHint(String)}.
+     *
+     * @param closeHint the close hint text
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withCloseHint(@Nullable String closeHint) {
         setCloseHint(closeHint);
         return this;
     }
 
+    /**
+     * @return the event hint
+     */
     @Nullable
     public String getEventHint() {
         return eventHint;
     }
 
+    /**
+     * Sets the hint for event.
+     *
+     * @param eventHint the event hint text
+     */
     public void setEventHint(@Nullable String eventHint) {
         this.eventHint = eventHint;
     }
 
+    /**
+     * Sets the event hint text. See {@link #setEventHint(String)}.
+     *
+     * @param eventHint the even hint text
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withEventHint(@Nullable String eventHint) {
         setEventHint(eventHint);
         return this;
     }
 
+    /**
+     * @return the time hint text or {@code null} if not set
+     */
     @Nullable
     public String getTimeHint() {
         return timeHint;
     }
 
+    /**
+     * Sets the time hint text.
+     *
+     * @param timeHint the time hint text
+     */
     public void setTimeHint(@Nullable String timeHint) {
         this.timeHint = timeHint;
     }
 
+    /**
+     * Sets the time hint text. See {@link #setTimeHint(String)}.
+     *
+     * @param timeHint the time hint text
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withTimeHint(@Nullable String timeHint) {
         setTimeHint(timeHint);
         return this;
     }
 
+    /**
+     * @return the navigation link hint or {@code null} if not set
+     */
     @Nullable
     public String getNavLinkHint() {
         return navLinkHint;
     }
 
+    /**
+     * Sets the hint text of navigation links. The provided text can be a
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals">
+     * JavaScript Template string</a>. This template takes the {@code date} parameter that has String type,
+     * for instance:
+     * <pre>
+     *  setNavLinkHint("Navigate to ${date}");
+     *  </pre>
+     * It also takes a string definition of JavaScript function that takes {@code date} as a parameter with
+     * String type. For instance:
+     * <pre>
+     *  setNavLinkHint(
+     *      """
+     *      function (date) {
+     *          return `Navigate to ${date}`;
+     *      }
+     *      """)
+     *  </pre>
+     *
+     * @param navLinkHint the navigation link hint
+     */
     public void setNavLinkHint(@Nullable String navLinkHint) {
         this.navLinkHint = navLinkHint;
     }
 
+    /**
+     * Sets the hint text of navigation links. See {@link #setNavLinkHint(String)}.
+     *
+     * @param navLinkHint the navigation link hint
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withNavLinkHint(@Nullable String navLinkHint) {
         setNavLinkHint(navLinkHint);
         return this;
     }
 
+    /**
+     * @return the "more" link hint text or {@code null} if not set
+     */
     public String getMoreLinkHint() {
         return moreLinkHint;
     }
 
+    /**
+     * Sets the "more" link hint. The provided text can be a
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals">
+     * JavaScript Template string</a>. This template takes the {@code date} parameter that has String type,
+     * for instance:
+     * <pre>
+     *  setMoreLinkHint("Show ${count} more event${count === 1 ? '' : 's'}");
+     *  </pre>
+     * It also takes a string definition of JavaScript function that takes {@code count} as a parameter. For instance:
+     * <pre>
+     *  setMoreLinkHint(
+     *      """
+     *      function (count) {
+     *          return `Show ${count} more event${count === 1 ? '' : 's'`};
+     *      }
+     *      """)
+     *  </pre>
+     *
+     * @param moreLinkHint the "more" link hint text
+     */
     public void setMoreLinkHint(@Nullable String moreLinkHint) {
         this.moreLinkHint = moreLinkHint;
     }
 
+    /**
+     * Sets the "more" link hint text. See {@link #setMoreLinkHint(String)}.
+     *
+     * @param moreLinkHint the "more" link hint text
+     * @return current instance of i18n
+     */
     public FullCalendarI18n withMoreLinkHint(@Nullable String moreLinkHint) {
         setMoreLinkHint(moreLinkHint);
         return this;
     }
 
+    /**
+     * Creates new i18n object from current instance and copies non-null properties from the provided object to
+     * the new one.
+     *
+     * @param i18n object to copy non-null properties
+     * @return new i18n object
+     */
     public FullCalendarI18n combine(@Nullable FullCalendarI18n i18n) {
         FullCalendarI18n result = new FullCalendarI18n(this);
         if (i18n == null) {
             return result;
         }
-        setProperty(i18n.getDirection(), "direction", result);
-        setProperty(i18n.getDayOfWeek(), "dayOfWeek", result);
-        setProperty(i18n.getDayOfYear(), "dayOfYear", result);
-        setProperty(i18n.getWeekTextLong(), "weekTextLong", result);
-        setProperty(i18n.getAllDayText(), "allDayText", result);
-        setProperty(i18n.getMoreLinkText(), "moreLinkText", result);
-        setProperty(i18n.getNoEventsText(), "noEventsText", result);
-        setProperty(i18n.getCloseHint(), "closeHint", result);
-        setProperty(i18n.getEventHint(), "eventHint", result);
-        setProperty(i18n.getTimeHint(), "timeHint", result);
-        setProperty(i18n.getNavLinkHint(), "navLinkHint", result);
-        setProperty(i18n.getMoreLinkHint(), "moreLinkHint", result);
 
+        result.setDirection(requireNonNullElseGet(i18n.getDirection(), result::getDirection));
+        result.setDayOfWeek(requireNonNullElseGet(i18n.getDayOfWeek(), result::getDayOfWeek));
+        result.setDayOfYear(requireNonNullElseGet(i18n.getDayOfYear(), result::getDayOfYear));
+        result.setWeekTextLong(requireNonNullElseGet(i18n.getWeekTextLong(), result::getWeekTextLong));
+        result.setAllDayText(requireNonNullElseGet(i18n.getAllDayText(), result::getAllDayText));
+        result.setMoreLinkText(requireNonNullElseGet(i18n.getMoreLinkText(), result::getMoreLinkText));
+        result.setNoEventsText(requireNonNullElseGet(i18n.getNoEventsText(), result::getNoEventsText));
+        result.setCloseHint(requireNonNullElseGet(i18n.getCloseHint(), result::getCloseHint));
+        result.setEventHint(requireNonNullElseGet(i18n.getEventHint(), result::getEventHint));
+        result.setTimeHint(requireNonNullElseGet(i18n.getTimeHint(), result::getTimeHint));
+        result.setNavLinkHint(requireNonNullElseGet(i18n.getNavLinkHint(), result::getNavLinkHint));
+        result.setMoreLinkHint(requireNonNullElseGet(i18n.getMoreLinkHint(), result::getMoreLinkHint));
         return result;
-    }
-
-    protected void setProperty(@Nullable Object value, String property, FullCalendarI18n i18n) {
-        if (value != null) {
-            Method method = ReflectionUtils.findMethod(FullCalendarI18n.class, property, value.getClass());
-            if (method == null) {
-                throw new IllegalStateException("Cannot find setter method for property: " + property);
-            }
-            ReflectionUtils.invokeMethod(method, i18n, value);
-        }
     }
 }

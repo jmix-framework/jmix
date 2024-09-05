@@ -66,6 +66,22 @@ public class MoreLinkClassNames extends CalendarOption {
         markAsDirty();
     }
 
+    public void removeClassName(String className) {
+        Objects.requireNonNull(className);
+
+        if (classNames.remove(className)) {
+            markAsDirty();
+        }
+    }
+
+    public void removeAllClassNames() {
+        if (!classNames.isEmpty()) {
+            classNames.clear();
+
+            markAsDirty();
+        }
+    }
+
     public boolean isFunctionEnabled() {
         return functionEnabled;
     }

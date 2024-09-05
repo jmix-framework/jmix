@@ -84,17 +84,32 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         attachMoreLinkClickDomEventListener();
     }
 
+    /**
+     * @return initial calendar view or {@code null} if not set
+     */
     @Nullable
     public CalendarView getInitialCalendarView() {
         return options.getInitialView().getValue();
     }
 
+    /**
+     * Sets initial calendar view that will be shown after attaching component to th UI.
+     * <p>
+     * The default value is {@link CalendarViewType#DAY_GRID_MONTH}.
+     * <p>
+     * The property change is not applied after component attached to the UI.
+     *
+     * @param calendarView initial calendar view
+     */
     public void setInitialCalendarView(CalendarView calendarView) {
         Objects.requireNonNull(calendarView);
 
         options.getInitialView().setValue(calendarView);
     }
 
+    /**
+     * @return current calendar view
+     */
     public CalendarView getCurrentCalendarView() {
         if (calendarView != null) {
             return calendarView;
@@ -107,17 +122,29 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         return Objects.requireNonNull(defaultCalendarView);
     }
 
-    public void changeCalendarView(CalendarView calendarView) {
+    /**
+     * Switches currently shown view to the provider one.
+     *
+     * @param calendarView calendar view to set
+     */
+    public void setCalendarView(CalendarView calendarView) {
         Objects.requireNonNull(calendarView);
 
         getElement().executeJs("this.calendar.changeView($0)", calendarView.getId());
     }
 
     /**
-     * Adds calendar custom view.
-     * <p>
+     * Adds custom view to the calendar. Then custom view can be shown by:
+     * <ul>
+     *     <li>
+     *          {@link #setCalendarView(CalendarView)}
+     *     </li>
+     *     <li>
+     *          {@link #setInitialCalendarView(CalendarView)}.
+     *     </li>
+     * </ul>
      * Note that it is initial option and dynamically changing/adding/removing custom view will not apply after
-     * attaching component to UI.
+     * attaching component to the UI.
      *
      * @param calendarCustomView calendar custom view to add
      */
@@ -141,59 +168,138 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getViews().removeCustomCalendarView(calendarCustomView);
     }
 
+    /**
+     * Returns custom calendar view by its ID.
+     *
+     * @param viewId the ID of custom calendar view
+     * @return custom calendar view or {@code null} if there is no custom calendar view with provded ID
+     */
     @Nullable
     public CustomCalendarView getCustomCalendarView(String viewId) {
         return options.getViews().getCustomCalendarView(viewId);
     }
 
+    /**
+     * @return list of custom calendar views added to the component
+     */
     public List<CustomCalendarView> getCustomCalendarViews() {
         return options.getViews().getCustomCalendarViews();
     }
 
+    /**
+     * Returns properties for the specific calendar view. Almost all calendar views have
+     * a specific set of properties. Moreover, the view properties object can override some properties
+     * from the component.
+     *
+     * @param calendarView calendar view type to get properties
+     * @param <T>          type of view properties
+     * @return view properties object that correspond to the provided calendar view type
+     */
     public <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(CalendarViewType calendarView) {
         return options.getViews().getCalendarViewProperties(calendarView);
     }
 
+    /**
+     * @return {@code true} if week numbers are visible
+     */
     public boolean isWeekNumbersVisible() {
         return options.getWeekNumbers().getNotNullValue();
     }
 
+    /**
+     * Sets whether week numbers should be displayed on the calendar.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param weekNumbersVisible whether to show week numbers
+     */
     public void setWeekNumbersVisible(boolean weekNumbersVisible) {
         options.getWeekNumbers().setValue(weekNumbersVisible);
     }
 
+    /**
+     * @return the start date of valid range or {@code null} if not set
+     */
     @Nullable
     public LocalDate getValidRangeStart() {
         return options.getValidRange().getStart();
     }
 
+    /**
+     * Sets the start date of valid range.
+     * <p>
+     * See for more information {@link #setValidRange(LocalDate, LocalDate)}.
+     *
+     * @param start the start date or {@code null} to reset value
+     */
     public void setValidRangeStart(@Nullable LocalDate start) {
         options.getValidRange().setStart(start);
     }
 
+    /**
+     * @return the end date of valid range or {@code null} if not set
+     */
     @Nullable
     public LocalDate getValidRangeEnd() {
         return options.getValidRange().getEnd();
     }
 
+    /**
+     * Sets the end date of valid range.
+     * <p>
+     * See for more information {@link #setValidRange(LocalDate, LocalDate)}.
+     *
+     * @param end the end date or {@code null} to reset value
+     */
     public void setValidRangeEnd(@Nullable LocalDate end) {
         options.getValidRange().setEnd(end);
     }
 
+
+    /**
+     * Sets the date range where the user can navigate and where events can be displayed.
+     * <p>
+     * Dates outside the valid range will be grayed-out. The user will not be able to drag or resize
+     * events into these areas.
+     * <p>
+     * The end date is exclusive. For example, if valid range is {@code 2024-09-01} to {@code 2024-09-10},
+     * the September 10th day is not included in the range and will be disabled.
+     * <p>
+     * Navigation methods won't navigate to invalid range.
+     *
+     * @param start start date of valid range or {@code null} to reset value
+     * @param end   end date of valid range or {@code null} to reset value
+     */
     public void setValidRange(@Nullable LocalDate start, @Nullable LocalDate end) {
         options.getValidRange().setRange(start, end);
     }
 
+    /**
+     * @return start date of visible range or {@code null} if not set
+     */
     @Nullable
     public LocalDate getVisibleRangeStart() {
         return options.getVisibleRange().getStart();
     }
 
+    /**
+     * @return end date of visible range or {@code null} if not set
+     */
     @Nullable
     public LocalDate getVisibleRangeEnd() {
         return options.getVisibleRange().getEnd();
     }
 
+    /**
+     * The visible date range is applied together with generic calendar views {@link GenericCalendarViewType}.
+     * For instance, you can set {@link GenericCalendarViewType#DAY_GRID}, visible range from {@code 2024-09-01} to
+     * {@code 2024-09-03} and component will show two days.
+     * <p>
+     * Note the end date is exclusive.
+     *
+     * @param start start date of visible range
+     * @param end   end date of visible range
+     */
     public void setVisibleRange(LocalDate start, LocalDate end) {
         Objects.requireNonNull(start);
         Objects.requireNonNull(end);
@@ -202,68 +308,162 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * The default value is user's timezone. If no user's timezone, the system default is used for component.
-     *
-     * @return {@code null} if not set
+     * @return component's timezone or {@code null} if not set
      */
     @Nullable
     public TimeZone getTimeZone() {
         return options.getTimeZone().getValue();
     }
 
+    /**
+     * Sets the timezone to the component.
+     * <p>
+     * The default value is user's timezone. If user does not have a timezone, the system default will be used.
+     *
+     * @param timeZone timezone to set
+     */
     public void setTimeZone(@Nullable TimeZone timeZone) {
         options.getTimeZone().setValue(timeZone != null ? timeZone : TimeZone.getDefault());
     }
 
+    /**
+     * Moves the calendar one step forward. For instance:
+     * <ul>
+     *     <li>
+     *         For {@link CalendarViewType#DAY_GRID_DAY} and other day-views calendar will be moved one day forward.
+     *     </li>
+     *     <li>
+     *         For {@link CalendarViewType#DAY_GRID_WEEK} and other week-views calendar will be moved one week forward.
+     *     </li>
+     *     <li>
+     *         And so on.
+     *     </li>
+     * </ul>
+     * The duration of {@link CustomCalendarView} also will be respected.
+     */
     public void navigateToNext() {
         getElement().callJsFunction("navigateToNext");
     }
 
+    /**
+     * Moves the calendar forward by the specified duration.
+     *
+     * @param duration the duration to forward to
+     */
     public void navigateToNext(CalendarDuration duration) {
         getElement().callJsFunction("incrementDate", serializer.serializeCalendarDuration(duration));
     }
 
+    /**
+     * Moves the calendar one step back. For instance:
+     * <ul>
+     *     <li>
+     *         For {@link CalendarViewType#DAY_GRID_DAY} and other day-views calendar will be moved one day back.
+     *     </li>
+     *     <li>
+     *         For {@link CalendarViewType#DAY_GRID_WEEK} and other week-views calendar will be moved one week back.
+     *     </li>
+     *     <li>
+     *         And so on.
+     *     </li>
+     * </ul>
+     * The duration of {@link CustomCalendarView} also will be respected.
+     */
     public void navigateToPrevious() {
         getElement().callJsFunction("navigateToPrevious");
     }
 
+    /**
+     * Moves the calendar back by the specified duration.
+     *
+     * @param duration the duration to back to
+     */
     public void navigateToPrevious(CalendarDuration duration) {
         getElement().callJsFunction("incrementDate",
                 serializer.serializeCalendarDuration(inverseDuration(duration)));
     }
 
+    /**
+     * Moves calendar to the current date.
+     */
     public void navigateToToday() {
         getElement().callJsFunction("navigateToToday");
     }
 
+    /**
+     * Moves calendar to the specified date.
+     *
+     * @param date the date to move calendar to
+     */
     public void navigateToDate(LocalDate date) {
         Objects.requireNonNull(date);
         getElement().callJsFunction("navigateToDate", date.toString());
     }
 
+    /**
+     * Scrolls to the specified time in milliseconds.
+     * <p>
+     * Scrolling to a specific time works when the calendar view is either {@link CalendarViewType#TIME_GRID_DAY} or
+     * {@link CalendarViewType#TIME_GRID_WEEK}.
+     *
+     * @param duration the time duration
+     */
     public void scrollToTime(Long duration) {
         Objects.requireNonNull(duration);
         getElement().callJsFunction("scrollToTimeMs", duration.toString());
     }
 
+    /**
+     * Scrolls to the specified time.
+     * <p>
+     * Scrolling to a specific time works when the calendar view is either {@link CalendarViewType#TIME_GRID_DAY} or
+     * {@link CalendarViewType#TIME_GRID_WEEK}.
+     *
+     * @param localTime the time to scroll
+     */
     public void scrollToTime(LocalTime localTime) {
         Objects.requireNonNull(localTime);
         getElement().callJsFunction("scrollToTime", localTime.toString());
     }
 
+    /**
+     * Selects a time range that starts from specified time to next 24h.
+     *
+     * @param start date-time to select
+     */
     public void select(LocalDateTime start) {
         select(start, false);
     }
 
+    /**
+     * Selects a time range that starts from specified time to next 24h. If all-day is {@code true} the all-day cell
+     * will be selected.
+     *
+     * @param start  date-time to select
+     * @param allDay whether to select all-day cell
+     */
     public void select(LocalDateTime start, boolean allDay) {
         Objects.requireNonNull(start);
         getElement().callJsFunction("select", allDay, serializer.serializeDateTime(start));
     }
 
+    /**
+     * Selects the date-time range.
+     *
+     * @param start start date-time of selection
+     * @param end   end date-time of selection
+     */
     public void select(LocalDateTime start, LocalDateTime end) {
         select(start, end, false);
     }
 
+    /**
+     * Selects the date-time range. If all-day is {@code true} the all-day cell(s) will be selected.
+     *
+     * @param start  start date-time of selection
+     * @param end    end date-time of selection
+     * @param allDay whether to select all-day cell(s)
+     */
     public void select(LocalDateTime start, LocalDateTime end, boolean allDay) {
         Objects.requireNonNull(start);
         Objects.requireNonNull(end);
@@ -274,28 +474,60 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
                 serializer.serializeDateTime(end));
     }
 
+    /**
+     * Clears the current selection.
+     */
     public void unselect() {
         getElement().executeJs("this.calendar.unselect()");
     }
 
+    /**
+     * @return {@code true} if navigation to date by day and week names is enabled
+     */
     public boolean isNavigationLinksEnabled() {
         return options.getNavLinks().getNotNullValue();
     }
 
+    /**
+     * Enables navigation to date using day names and week names.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param enabled whether to enable navigation
+     */
     public void setNavigationLinksEnabled(boolean enabled) {
         options.getNavLinks().setValue(enabled);
     }
 
+    /**
+     * @return {@code true} if the component should limit the number of events by height of the day cell
+     */
     public boolean isDefaultDayMaxEventRowsEnabled() {
         return options.getDayMaxEventRows().isDefaultEnabled();
     }
 
+    /**
+     * Limits the maximum number of stacked events within a given day.
+     * <ul>
+     *     <li>
+     *         <strong>{@code true}</strong> - limits the number of events by height of the day cell.
+     *     </li>
+     *     <li>
+     *         <strong>{@code false}</strong> - component displays all events as is.
+     *     </li>
+     * </ul>
+     * This property is applied for day-grid calendar views and in all-day cells.
+     * <p>
+     * The default value {@code false}.
+     *
+     * @param enabled whether to limit the number of events
+     */
     public void setDefaultDayMaxEventRowsEnabled(boolean enabled) {
         options.getDayMaxEventRows().setEnabled(enabled);
     }
 
     /**
-     * @return {@code null} if not set
+     * @return the maximum rows count of events including "more" row or {@code null} if not set
      */
     @Nullable
     public Integer getDayMaxEventRows() {
@@ -303,10 +535,12 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets rows count of events in DAY_GRID_xxx views and in "all-day" section in TIME_GRID_xxx.
+     * Sets rows count of events in day-grid views and in "all-day" section in time-grid views.
      * <p>
      * Note that "+x more" row is included to count. For instance, if dayMaxEventRows = 1, only the "+x more" row
      * will be shown.
+     * <p>
+     * Takes precedence over {@link #setDefaultDayMaxEventRowsEnabled(boolean)}.
      *
      * @param maxEventRows maximum value of event rows in cell
      */
@@ -314,16 +548,35 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getDayMaxEventRows().setMax(maxEventRows);
     }
 
+    /**
+     * @return {@code true} if the component should limit the number of events by height of the day cell
+     */
     public boolean isDefaultDayMaxEventsEnabled() {
         return options.getDayMaxEvents().isDefaultEnabled();
     }
 
+    /**
+     * Limits the maximum number of stacked events within a given day.
+     * <ul>
+     *     <li>
+     *         <strong>{@code true}</strong> - limits the number of events by height of the day cell.
+     *     </li>
+     *     <li>
+     *         <strong>{@code false}</strong> - component displays all events as is.
+     *     </li>
+     * </ul>
+     * This property is applied for day-grid calendar views and in all-day cells.
+     * <p>
+     * The default value {@code false}.
+     *
+     * @param enabled whether to limit the number of events
+     */
     public void setDefaultDayMaxEventsEnabled(boolean enabled) {
         options.getDayMaxEvents().setDefaultEnabled(enabled);
     }
 
     /**
-     * @return {@code null} if not set
+     * @return the maximum rows count of events excluding "more" row or {@code null} if not set
      */
     @Nullable
     public Integer getDayMaxEvents() {
@@ -331,10 +584,12 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets rows count of events in DAY_GRID_xxx views and in "all-day" section in TIME_GRID_xxx.
+     * Sets rows count of events in day-grid views and in "all-day" section in time-grid views.
      * <p>
      * Note that "+ more" row <strong>is not included</strong> to count. For instance, if dayMaxEventRows = 1,
      * one event and the "+x more" row will be shown.
+     * <p>
+     * Takes precedence over the {@link #setDefaultDayMaxEventsEnabled(boolean)}.
      *
      * @param maxRows maximum value of event rows in cell excluding "+x more" row
      */
@@ -351,7 +606,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets the maximum number of events that stack top-to-bottom for TIME_GREED_xxx views.
+     * Sets the maximum number of events that stack top-to-bottom for time-grid views.
      *
      * @param eventMaxStack the maximum number of events that stack. The {@code null} or {@code -1}
      *                      values set default behaviour.
@@ -364,128 +619,265 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * @return {@code null} if not set
+     * @return the calendar view that should be shown when "more" more link is clicked or {@code null} if not set
      */
     @Nullable
     public CalendarView getMoreLinkCalendarView() {
         return options.getMoreLinkClick().getCalendarView();
     }
 
-    public void setMoreLinkCalendarView(@Nullable CalendarView navigationView) {
-        options.getMoreLinkClick().setCalendarView(navigationView);
+    /**
+     * Sets the calendar view that should be shown when "more" more link is clicked.
+     *
+     * @param calendarView the view that should be opened
+     */
+    public void setMoreLinkCalendarView(@Nullable CalendarView calendarView) {
+        options.getMoreLinkClick().setCalendarView(calendarView);
     }
 
+    /**
+     * @return list of CSS class names added to "more" link
+     */
     public List<String> getMoreLinkClassNames() {
         return options.getMoreLinkClassNames().getClassNames();
     }
 
+    /**
+     * Sets CSS class names that should be added to "more" link.
+     *
+     * @param classNames class names to set
+     */
     public void setMoreLinkClassNames(@Nullable List<String> classNames) {
         options.getMoreLinkClassNames().setClassNames(classNames);
     }
 
+    /**
+     * Adds CSS class name to "more" link.
+     *
+     * @param className class name to add
+     */
     public void addMoreLinkClassName(String className) {
         Objects.requireNonNull(className);
 
         options.getMoreLinkClassNames().addClassName(className);
     }
 
+    /**
+     * Adds class names to "more" link.
+     *
+     * @param classNames class names to add
+     */
     public void addMoreLinkClassNames(String... classNames) {
         Objects.requireNonNull(classNames);
 
         options.getMoreLinkClassNames().addClassNames(classNames);
     }
 
+    /**
+     * Removes CSS class name from "more" link.
+     *
+     * @param className class name to remove
+     */
+    public void removeMoreLinkClassName(String className) {
+        Objects.requireNonNull(className);
+
+        options.getMoreLinkClassNames().removeClassName(className);
+    }
+
+    /**
+     * Removes all CSS class names from "more" link.
+     */
+    public void removeAllMoreLinkClassName() {
+        options.getMoreLinkClassNames().removeAllClassNames();
+    }
+
+    /**
+     * @return {@code true} if event start time is editable
+     */
     public boolean isEventStartEditable() {
         return options.getEventStartEditable().getNotNullValue();
     }
 
+    /**
+     * Enables to edit event start time using dragging.
+     * <p>
+     * Note, this property can be overridden on per-event by {@code CalendarEvent#getStartEditable()} property.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param editable whether to enable editing event start time
+     */
     public void setEventStartEditable(boolean editable) {
         options.getEventStartEditable().setValue(editable);
     }
 
+    /**
+     * @return {@code true} if event duration is editable
+     */
     public boolean isEventDurationEditable() {
         return options.getEventDurationEditable().getNotNullValue();
     }
 
+    /**
+     * Enables to edit event duration using resizing.
+     * <p>
+     * Note, this property can be overridden on per-event by {@code CalendarEvent#getDurationEditable()} property.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param editable whether to edit event duration
+     */
     public void setEventDurationEditable(boolean editable) {
         options.getEventDurationEditable().setValue(editable);
     }
 
+    /**
+     * @return {@code true} if an event is resizable from start date
+     */
     public boolean isEventResizableFromStart() {
         return options.getEventResizableFromStart().getNotNullValue();
     }
 
+    /**
+     * Enables to resize an event from its starting date.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param resizableFromStart whether to resize an event from start
+     */
     public void setEventResizableFromStart(boolean resizableFromStart) {
         options.getEventResizableFromStart().setValue(resizableFromStart);
     }
 
     /**
-     * @return {@code null} if not set
+     * @return drag minimum distance in pixels or {@code null} if not set
      */
     @Nullable
     public Integer getEventDragMinDistance() {
         return options.getEventDragMinDistance().getValue();
     }
 
+    /**
+     * Sets how many pixels the user’s mouse/touch must move before an event drag activates.
+     * <p>
+     * The default value is {@code 5}.
+     *
+     * @param minDistance minimum distance in pixels
+     */
     public void setEventDragMinDistance(@Nullable Integer minDistance) {
         options.getEventDragMinDistance().setValue(minDistance);
     }
 
     /**
-     * @return {@code null} if not set
+     * @return duration in milliseconds or {@code null} if not set
      */
     @Nullable
     public Integer getDragRevertDuration() {
         return options.getDragRevertDuration().getValue();
     }
 
+    /**
+     * Sets the time it takes for an event to revert to its original position after an unsuccessful drag.
+     * <p>
+     * The default value is {@code 500}.
+     *
+     * @param revertDuration duration in milliseconds
+     */
     public void setDragRevertDuration(@Nullable Integer revertDuration) {
         options.getDragRevertDuration().setValue(revertDuration);
     }
 
+    /**
+     * @return {@code true} if component scrolls content during event drag-and-drop and date selecting
+     */
     public boolean isDragScroll() {
         return options.getDragScroll().getNotNullValue();
     }
 
     /**
-     * Note that this property is supposed to be used at design time. Property changes at runtime may not be applied.
+     * Enables to automatically scroll the scroll-containers during event drag-and-drop and date selecting.
+     * <p>
+     * The default value is {@code true}.
+     * <p>
+     * The property change is not applied after component attached to the UI.
      *
-     * @param enabled
+     * @param enabled whether to enable scrolling
      */
     public void setDragScroll(boolean enabled) {
         options.getDragScroll().setValue(enabled);
     }
 
     /**
-     * @return {@code null} if not set
+     * @return snap duration or {@code null} if not set
      */
     @Nullable
     public CalendarDuration getSnapDuration() {
         return options.getSnapDuration().getValue();
     }
 
+    /**
+     * Sets the time interval at which a dragged event will snap to the time axis. Also affects
+     * the granularity at which selections can be made.
+     * <p>
+     * The default value is taken from {@link #getSlotDuration()}.
+     *
+     * @param snapDuration duration to set
+     */
     public void setSnapDuration(@Nullable CalendarDuration snapDuration) {
         options.getSnapDuration().setValue(snapDuration);
     }
 
+    /**
+     * @return {@code true} if the duration will remain roughly the same before and after
+     * it is dragged to or from an all-day section
+     */
     public boolean isAllMaintainDurationEnabled() {
         return options.getAllDayMaintainDuration().getNotNullValue();
     }
 
+    /**
+     * Determines how an event’s duration should be mutated when it is dragged from a timed section
+     * to an all-day section and vice versa.
+     * <ul>
+     *     <li>
+     *         <strong>{@code true}</strong> - the duration will remain roughly the same before and after
+     *         it is dragged to or from an all-day section. "Roughly" because if an event has a duration
+     *         with hourly precision, it will be rounded down to the nearest whole-day.
+     *     </li>
+     *     <li>
+     *         <strong>{@code false}</strong> - the event’s duration will be reset to
+     *         {@link #getDefaultAllDayEventDuration()} if it is being dropped in an all-day section or
+     *         {@link #getDefaultTimedEventDuration()} if it is being dropped in a timed section
+     *     </li>
+     * </ul>
+     * The default value is {@code false}.
+     *
+     * @param enabled whether to maintain duration
+     */
     public void setAllDayMaintainDurationEnabled(boolean enabled) {
         options.getAllDayMaintainDuration().setValue(enabled);
     }
 
+    /**
+     * @return {@code true} if events can overlap other events during dragging and resizing
+     */
     public boolean isEventOverlap() {
         return options.getEventOverlap().isEnabled();
     }
 
+    /**
+     * Allows events to overlap each other during dragging and resizing.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @param enabled whether to enable event overlap
+     */
     public void setEventOverlap(boolean enabled) {
         options.getEventOverlap().setEnabled(enabled);
     }
 
     /**
-     * @return {@code null} if not set
+     * @return event overlap JavaScript function or {@code null} if not set
      */
     @Nullable
     public JsFunction getEventOverlapJsFunction() {
@@ -497,7 +889,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * to cell with other events. The function should return {@code true} if an event can overlap other event or
      * {@code false} otherwise.
      * <p>
-     * For instance:
+     * For instance, function enables event overlapping if events are all-day:
      * <pre>{@code
      * calendar.setEventOverlapJsFunction(new JsFunction("""
      *         function(stillEvent, movingEvent) {
@@ -505,10 +897,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *         }
      *         """));
      * }</pre>
+     * The {@code stillEvent} is the event underneath the moving event.
+     * <p>
      * The {@code movingEvent} is the event that is being dragged or resized. Its start and end dates will remain
      * at their original values when the function is called.
-     * <p>
-     * The {@code stillEvent} is the event underneath the moving event.
      * <p>
      * The available properties of {@code movingEvent} and {@code stillEvent} you can find in
      * <a href="https://fullcalendar.io/docs/event-object">FullCalendar docs</a>
@@ -522,33 +914,58 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getEventOverlap().setJsFunction(jsFunction);
     }
 
+    /**
+     * @return {@code true} if day or time selection is enabled
+     */
     public boolean isSelectionEnabled() {
         return options.getSelectable().getNotNullValue();
     }
 
+    /**
+     * Allows the user to highlight multiple days or timeslots by clicking and dragging.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param enabled whether to enable selection
+     */
     public void setSelectionEnabled(boolean enabled) {
         options.getSelectable().setValue(enabled);
     }
 
+    /**
+     * @return {@code true} if component draws an event while the users is dragging
+     */
     public boolean isSelectMirror() {
         return options.getSelectMirror().getNotNullValue();
     }
 
+    /**
+     * Enables to draw a "placeholder" event while the user is dragging.
+     * <p>
+     * This property is applied to time-grid views.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param selectMirror whether to draw a placeholder event
+     */
     public void setSelectMirror(boolean selectMirror) {
         options.getSelectMirror().setValue(selectMirror);
     }
 
+    /**
+     * @return {@code true} if selection should be cleared when clicking on the page
+     */
     public boolean isUnselectAuto() {
         return options.getUnselectAuto().getNotNullValue();
     }
 
     /**
      * Sets whether clicking elsewhere on the page will cause the current selection to be cleared.
-     * <p>
      * Works only if {@link #isSelectionEnabled()} is {@code true}.
      * <p>
-     * Note that only initial value is applied to component, i.e. value that is set before attaching component.
-     * Changing option at runtime won't change the initial value.
+     * The default value is {@code true}.
+     * <p>
+     * The property change is not applied after component attached to the UI.
      *
      * @param unselectAuto whether option is unselectAuto
      */
@@ -556,6 +973,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getUnselectAuto().setValue(unselectAuto);
     }
 
+    /**
+     * @return the CSS selector or {@code null} if not set
+     */
     @Nullable
     public String getUnselectCancelSelector() {
         return options.getUnselectCancel().getValue();
@@ -564,10 +984,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     /**
      * Sets the CSS selector that will ignore the {@link #isUnselectAuto()} property. For instance:
      * <p>
-     * {@code vaadin-form-layout .text-input}.
+     * {@code vaadin-form-layout .custom-text-input}.
      * <p>
-     * Note that only initial value is applied to component, i.e. value that is set before attaching component.
-     * Changing property at runtime won't change the initial value.
+     * The property change is not applied after component attached to the UI.
      *
      * @param cssSelector CSS selector, e.g. ".my-element"
      */
@@ -575,45 +994,137 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getUnselectCancel().setValue(cssSelector);
     }
 
+    /**
+     * @return {@code true} if selection of cells with events is enabled
+     */
     public boolean isSelectOverlap() {
         return options.getSelectOverlap().isEnabled();
     }
 
+    /**
+     * Enables to select cells that contains events.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @param selectOverlap whether to enable selecting cells with events
+     */
     public void setSelectOverlap(boolean selectOverlap) {
         options.getSelectOverlap().setEnabled(selectOverlap);
     }
 
+    /**
+     * @return select overlap function or {@code null} if not set
+     */
     @Nullable
     public JsFunction getSelectOverlapJsFunction() {
         return options.getSelectOverlap().getJsFunction();
     }
 
+    /**
+     * Sets JavaScript function definition that will be executed every time when the user selection tries to occupy
+     * cells with events. The function should return {@code true} if a selection can be performed for cell with the
+     * provided event or {@code false} otherwise.
+     * <p>
+     * For instance, function enables selection if event is a background:
+     * <pre>{@code
+     * calendar.setSelectOverlapJsFunction(new JsFunction("""
+     *         function (event) {
+     *             return event.display === 'background';
+     *         }
+     *         """));
+     * }</pre>
+     * The {@code event} is the event in the cell.
+     * <p>
+     * The available properties of {@code event}  you can find in
+     * <a href="https://fullcalendar.io/docs/event-object">FullCalendar docs</a>
+     *
+     * @param jsFunction JavaScript function
+     */
     public void setSelectOverlapJsFunction(@Nullable JsFunction jsFunction) {
         options.getSelectOverlap().setJsFunction(jsFunction);
     }
 
+    /**
+     * @return select allow JavaScript function or {@code null} if not set
+     */
     @Nullable
     public JsFunction getSelectAllowJsFunction() {
         return options.getSelectAllow().getValue();
     }
 
+    /**
+     * Sets JavaScript function definition that will be executed every time when the user drags selection to cells.
+     * The function should return {@code true} if a selection can be performed for cell with the
+     * provided date range or {@code false} otherwise.
+     * <p>
+     * For instance, the function enables selection for today's date and futures:
+     * <pre>{@code
+     * calendar.setSelectAllowJsFunction(new JsFunction("""
+     *         function(selectionInfo) {
+     *             const currentDate = new Date();
+     *             currentDate.setHours(0, 0, 0, 0);
+     *             return currentDate < selectionInfo.end;
+     *         }
+     *         """)
+     * }</pre>
+     * The {@code selectionInfo} is object that contains information about date range.
+     * <p>
+     * The available properties of {@code selectionInfo}  you can find in
+     * <a href="https://fullcalendar.io/docs/selectAllow">FullCalendar docs</a>
+     * <p>
+     *
+     * @param jsFunction JavaScript function
+     */
     public void setSelectAllowJsFunction(@Nullable JsFunction jsFunction) {
         options.getSelectAllow().setValue(jsFunction);
     }
 
+    /**
+     * @return the minimum distance the user’s mouse must travel after a mousedown, before a selection is allowed
+     */
     public int getSelectMinDistance() {
         return options.getSelectMinDistance().getNotNullValue();
     }
 
+    /**
+     * Sets the minimum distance the user’s mouse must travel after a mousedown, before a selection is allowed.
+     * A non-zero value is useful for differentiating a selection from a date click event.
+     * <p>
+     * This setting is only applicable to mouse-related interaction. For touch interaction, see
+     * {@link #setSelectLongPressDelay(Integer)}.
+     * <p>
+     * The default value is {@code 0}.
+     *
+     * @param minDistance minimum distance in pixels
+     */
     public void setSelectMinDistance(int minDistance) {
         options.getSelectMinDistance().setValue(minDistance);
     }
 
+    /**
+     * @return day popover format or {@code null} if not set
+     */
     @Nullable
     public String getDefaultDayPopoverFormat() {
         return options.getDayPopoverFormat().getValue();
     }
 
+    /**
+     * Sets the date format of title of the popover that is shown when "more" link is clicked. By default,
+     * component sets localized format from messages when is created.
+     * <p>
+     * This property act as default format for all views and {@link CustomCalendarView} until specific
+     * property won't be set for these views. However, all views properties by default explicitly specify format.
+     * Thus, they override this property.
+     * <p>
+     * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
+     * we should follow the moment.js formatting rules:
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <p>
+     * For instance, the {@code "MMM D, YY"} produces {@code Sep 9, 24}.
+     *
+     * @param format format to set
+     */
     public void setDefaultDayPopoverFormat(@Nullable String format) {
         options.getDayPopoverFormat().setValue(format);
     }

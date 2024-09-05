@@ -19,7 +19,7 @@ package io.jmix.searchopensearch.index.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jmix.search.index.impl.PutMappingService;
+import io.jmix.search.index.impl.PutMappingBuilder;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonParser;
@@ -33,8 +33,8 @@ import org.springframework.stereotype.Component;
 import java.io.StringReader;
 import java.util.Map;
 
-@Component("search_OpenSearchPutMappingRequestService")
-public class OpenSearchPutMappingRequestService implements PutMappingService<PutMappingRequest, JsonpMapper> {
+@Component("search_OpenSearchPutMappingRequestBuilder")
+public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<PutMappingRequest, JsonpMapper> {
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Valid
@@ -42,7 +42,7 @@ public class OpenSearchPutMappingRequestService implements PutMappingService<Put
         return PutMappingRequest.of(builder -> builder.index(indexName).properties(getPropertiesMap(mappingConfiguration, jsonpMapper)));
     }
 
-    private Map<String, Property> getPropertiesMap(IndexMappingConfiguration mappingConfiguration, JsonpMapper jsonpMapper) {
+    protected Map<String, Property> getPropertiesMap(IndexMappingConfiguration mappingConfiguration, JsonpMapper jsonpMapper) {
 
         JsonpDeserializer<Map<String, Property>> mapJsonpDeserializer = JsonpDeserializer.stringMapDeserializer(Property._DESERIALIZER);
         try {

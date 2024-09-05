@@ -98,7 +98,7 @@ public class SearchOpenSearchAutoConfiguration {
                                                   OpenSearchIndexSettingsProvider indexSettingsProcessor,
                                                   OpenSearchIndexConfigurationComparator configurationComparator,
                                                   OpenSearchMetadataResolver metadataResolver,
-                                                  OpenSearchPutMappingRequestService putMappingRequestService) {
+                                                  OpenSearchPutMappingRequestBuilder putMappingRequestService) {
         return new OpenSearchIndexManager(
                 client,
                 indexStateRegistry,

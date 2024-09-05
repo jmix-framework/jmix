@@ -18,6 +18,7 @@ package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.annotation.Nullable;
 
 import java.util.Map;
 
@@ -31,15 +32,16 @@ public abstract class MetadataResolver<TState, TJsonp> {
         this.jsonpSerializer = jsonpSerializer;
     }
 
+    @SuppressWarnings("unchecked")
     public ObjectNode getIndexMetadata(String indexName) {
         TState indexState = getIndexMetadataInternal(indexName);
-        //TODO
         if (indexState == null) {
             return objectMapper.createObjectNode();
         }
         return jsonpSerializer.toObjectNode((TJsonp) indexState);
     }
 
+    @Nullable
     public TState getIndexMetadataInternal(String indexName) {
         return getIndexMetadataMapInternal(indexName).get(indexName);
     }

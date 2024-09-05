@@ -49,7 +49,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
 
     protected final OpenSearchClient client;
     protected final OpenSearchIndexSettingsProvider indexSettingsProcessor;
-    protected final OpenSearchPutMappingRequestService putMappingRequestService;
+    protected final OpenSearchPutMappingRequestBuilder putMappingRequestService;
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -60,7 +60,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
                                   OpenSearchIndexSettingsProvider indexSettingsProcessor,
                                   OpenSearchIndexConfigurationComparator configurationComparator,
                                   OpenSearchMetadataResolver metadataResolver,
-                                  OpenSearchPutMappingRequestService putMappingRequestService) {
+                                  OpenSearchPutMappingRequestBuilder putMappingRequestService) {
         super(indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, metadataResolver);
         this.client = client;
         this.indexSettingsProcessor = indexSettingsProcessor;

@@ -100,7 +100,7 @@ public class SearchElasticsearchAutoConfiguration {
                                                      ElasticsearchIndexSettingsProvider indexSettingsProcessor,
                                                      ElasticsearchIndexConfigurationComparator configurationComparator,
                                                      ElasticsearchMetadataResolver metadataResolver,
-                                                     ElasticsearchPutMappingService putMappingRequestService) {
+                                                     ElasticsearchPutMappingBuilder putMappingRequestService) {
         return new ElasticsearchIndexManager(client,
                 indexStateRegistry,
                 indexConfigurationManager,

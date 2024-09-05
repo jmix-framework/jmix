@@ -18,6 +18,6 @@ package io.jmix.search.index.impl;
 
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 
-public interface PutMappingService<PutMappingRequestType, JsonpMapperType> {
-    PutMappingRequestType buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, JsonpMapperType jsonpMapper);
+public interface PutMappingBuilder<TRequest, TJsponp> {
+    TRequest buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, TJsponp jsonpMapper);
 }

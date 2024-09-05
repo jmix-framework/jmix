@@ -20,15 +20,15 @@ import co.elastic.clients.elasticsearch.indices.PutMappingRequest;
 import co.elastic.clients.json.JsonpMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jmix.search.index.impl.PutMappingService;
+import io.jmix.search.index.impl.PutMappingBuilder;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-@Component("search_ElasticsearchPutMappingService")
-public class ElasticsearchPutMappingService implements PutMappingService<PutMappingRequest, JsonpMapper> {
+@Component("search_ElasticsearchPutMappingBuilder")
+public class ElasticsearchPutMappingBuilder implements PutMappingBuilder<PutMappingRequest, JsonpMapper> {
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -37,7 +37,7 @@ public class ElasticsearchPutMappingService implements PutMappingService<PutMapp
         return PutMappingRequest.of(builder -> builder.index(indexName).withJson(mappingBodyStream));
     }
 
-    private InputStream getMappingAsStream(String indexName, IndexMappingConfiguration mapping) {
+    protected InputStream getMappingAsStream(String indexName, IndexMappingConfiguration mapping) {
         InputStream mappingBodyStream;
         try {
             String mappingBody = objectMapper.writeValueAsString(mapping);

@@ -47,7 +47,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
 
     private final ElasticsearchClient client;
     protected final ElasticsearchIndexSettingsProvider indexSettingsProcessor;
-    protected final ElasticsearchPutMappingService putMappingService;
+    protected final ElasticsearchPutMappingBuilder putMappingService;
 
     public ElasticsearchIndexManager(ElasticsearchClient client,
                                      IndexStateRegistry indexStateRegistry,
@@ -56,7 +56,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
                                      ElasticsearchIndexSettingsProvider indexSettingsProcessor,
                                      ElasticsearchIndexConfigurationComparator configurationComparator,
                                      ElasticsearchMetadataResolver metadataResolver,
-                                     ElasticsearchPutMappingService putMappingService) {
+                                     ElasticsearchPutMappingBuilder putMappingService) {
         super(indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, metadataResolver);
         this.client = client;
         this.indexSettingsProcessor = indexSettingsProcessor;

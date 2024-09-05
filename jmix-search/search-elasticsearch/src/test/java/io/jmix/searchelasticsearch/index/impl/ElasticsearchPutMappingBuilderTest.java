@@ -34,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ElasticsearchPutMappingServiceTest {
+class ElasticsearchPutMappingBuilderTest {
 
     public static final String INDEX_NAME = "indexName";
 
     @Test
     void buildRequest() {
-        ElasticsearchPutMappingService builder = new ElasticsearchPutMappingService();
+        ElasticsearchPutMappingBuilder builder = new ElasticsearchPutMappingBuilder();
         PutMappingRequest request = builder.buildRequest(createMappingConfiguration(), INDEX_NAME, new JacksonJsonpMapper());
         assertEquals(1, request.index().size());
         assertEquals(INDEX_NAME, request.index().get(0));

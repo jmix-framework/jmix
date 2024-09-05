@@ -40,7 +40,7 @@ class OpenSearchPutMappingRequestServiceTest {
 
     @Test
     void buildRequest() {
-        OpenSearchPutMappingRequestService builder = new OpenSearchPutMappingRequestService();
+        OpenSearchPutMappingRequestBuilder builder = new OpenSearchPutMappingRequestBuilder();
         PutMappingRequest request = builder.buildRequest(createMappingConfiguration(), INDEX_NAME, new JacksonJsonpMapper());
         assertEquals(1, request.index().size());
         assertEquals(INDEX_NAME, request.index().get(0));

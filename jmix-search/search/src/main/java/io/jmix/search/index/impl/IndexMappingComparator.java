@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.search.index.IndexConfiguration;
+import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class IndexMappingComparator<TState, TJsonp> {
-    protected final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
-    };
     private static final Logger log = LoggerFactory.getLogger(IndexMappingComparator.class);
+    protected static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
+    };
 
     protected final MappingFieldComparator mappingFieldComparator;
     protected final ObjectMapper objectMapper = new ObjectMapper();
@@ -51,11 +52,11 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
         return compare(appliedMapping, expectedMapping);
     }
 
-    private Map<String, Object> getExpectedMapping(IndexConfiguration indexConfiguration) {
+    protected Map<String, Object> getExpectedMapping(IndexConfiguration indexConfiguration) {
         return objectMapper.convertValue(indexConfiguration.getMapping(), MAP_TYPE_REF);
     }
 
-    private Map<String, Object> getAppliedMapping(TState currentIndexState) {
+    protected Map<String, Object> getAppliedMapping(TState currentIndexState) {
         TJsonp typeMapping = extractTypeMapping(currentIndexState);
         if (typeMapping == null) {
             return Collections.emptyMap();
@@ -65,7 +66,7 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
         }
     }
 
-    //TODO сделать строгую типизацию через TypeMapping
+    @Nullable
     protected abstract TJsonp extractTypeMapping(TState currentIndexState);
 
 

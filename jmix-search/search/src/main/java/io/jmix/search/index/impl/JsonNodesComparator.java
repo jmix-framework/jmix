@@ -29,7 +29,7 @@ import java.util.Map;
 public class JsonNodesComparator {
     private static final Logger log = LoggerFactory.getLogger(JsonNodesComparator.class);
 
-    protected boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) {
+    public boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) {
         log.trace("Check if node {} contains {}", containerNode, contentNode);
         Iterator<Map.Entry<String, JsonNode>> fieldsIterator = contentNode.fields();
         while (fieldsIterator.hasNext()) {

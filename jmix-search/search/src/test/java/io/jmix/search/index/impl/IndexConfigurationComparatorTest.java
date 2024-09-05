@@ -33,7 +33,6 @@ class IndexConfigurationComparatorTest {
         IndexConfigurationComparator.ConfigurationComparingResult result = comparator.compareConfigurations(configurationMock);
         assertEquals(result.mappingComparingResult, MappingComparingResult.NOT_COMPATIBLE);
         assertEquals(result.settingsComparingResult, IndexSettingsComparator.SettingsComparingResult.NOT_COMPATIBLE);
-
     }
 
 }

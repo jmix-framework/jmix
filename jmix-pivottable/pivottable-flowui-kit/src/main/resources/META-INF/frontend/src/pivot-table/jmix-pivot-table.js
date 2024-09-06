@@ -139,7 +139,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     }
 
     _cellClickHandler(value, filters, pivotData) {
-        var dataItemKeys = [];
+        let dataItemKeys = [];
         (function(pivotTable) {
             pivotData.forEachMatchingRecord(filters, function(record) {
                 let itemIndex = pivotTable._dataSet.indexOf(record);
@@ -250,7 +250,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     }
 
     _mergeOptionsWithJsonOptions(dst, src) {
-        for (var property in src) {
+        for (let property in src) {
             if (src.hasOwnProperty(property)) {
                 if (src[property] && typeof src[property] === "object") {
                     if (!dst[property]) {
@@ -273,9 +273,8 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     }
 
     _heatmapColorScaleGeneratorForDarkTheme(values) {
-        var max, min;
-        min = Math.min.apply(Math, values);
-        max = Math.max.apply(Math, values);
+        let min = Math.min.apply(Math, values);
+        let max = Math.max.apply(Math, values);
         return function(x) {
             let fromR = 255, fromG = 192, fromB = 192;
             let toR = 255, toG = 0, toB = 0;
@@ -288,7 +287,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     }
 
     _initLocale() {
-        var formatFloat, formatInt, formatPercent, numberFormat, aggregatorTemplates;
+        let formatFloat, formatInt, formatPercent, numberFormat, aggregatorTemplates;
         numberFormat = $.pivotUtilities.numberFormat;
         aggregatorTemplates = $.pivotUtilities.aggregatorTemplates;
         let localizedStrings = this._options.localizedStrings;
@@ -320,7 +319,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
             showZero: localizedStrings.percentFormat.showZero
         });
 
-        var allAggregators = {};
+        let allAggregators = {};
         allAggregators[localizedStrings.aggregation.count] = aggregatorTemplates.count(formatInt);
         allAggregators[localizedStrings.aggregation.countUniqueValues] = aggregatorTemplates.countUnique(formatInt);
         allAggregators[localizedStrings.aggregation.listUniqueValues] = aggregatorTemplates.listUnique(", ");
@@ -345,7 +344,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         allAggregators[localizedStrings.aggregation.countAsFractionOfColumns] =
             aggregatorTemplates.fractionOf(aggregatorTemplates.count(), "col", formatPercent);
 
-        var allRenderers = {};
+        let allRenderers = {};
         allRenderers[localizedStrings.renderer.table] = $.pivotUtilities.renderers["Table"];
         allRenderers[localizedStrings.renderer.tableBarchart] = $.pivotUtilities.renderers["Table Barchart"];
         allRenderers[localizedStrings.renderer.heatmap] = $.pivotUtilities.renderers["Heatmap"];
@@ -386,9 +385,9 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         };
     }
 
-    _getAggregationOptions(resultOptions) {
-        var allAggregators = $.pivotUtilities.locales[this._options.localeCode].aggregators;
-        var localeMapping = $.pivotUtilities.locales[this._options.localeCode].aggregatorsLocaleMapping;
+    _getAggregationOptions() {
+        let allAggregators = $.pivotUtilities.locales[this._options.localeCode].aggregators;
+        let localeMapping = $.pivotUtilities.locales[this._options.localeCode].aggregatorsLocaleMapping;
 
         let aggregationOptions = {
             aggregatorName: null,
@@ -402,19 +401,19 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                     aggregationOptions.aggregatorName = localeMapping[this._options.aggregations.selectedAggregation];
                 }
 
-                var aggregations = this._options.aggregations.aggregations;
+                let aggregations = this._options.aggregations.aggregations;
                 if (aggregations) {
-                    var aggregators = {};
-                    var aggregatorsIds = {};
-                    for (var i = 0; i < aggregations.length; i++) {
-                        var aggregatorCaption = aggregations[i].caption;
-                        var aggregationKey = aggregatorCaption;
+                    let aggregators = {};
+                    let aggregatorsIds = {};
+                    for (let i = 0; i < aggregations.length; i++) {
+                        let aggregatorCaption = aggregations[i].caption;
+                        let aggregationKey = aggregatorCaption;
 
                         if (aggregations[i].custom) {
                             aggregators[aggregationKey] = window.eval("(" + aggregations[i]["function"] + ")");
                         } else {
-                            var aggregatorName = localeMapping[aggregations[i].mode];
-                            var aggregatorFunc = allAggregators[aggregatorName];
+                            let aggregatorName = localeMapping[aggregations[i].mode];
+                            let aggregatorFunc = allAggregators[aggregatorName];
                             if (aggregatorFunc) {
                                 aggregationKey = aggregatorCaption ? aggregatorCaption : aggregatorName;
                                 aggregators[aggregationKey] = aggregatorFunc;
@@ -427,13 +426,15 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                     }
                     aggregationOptions.aggregators = aggregators;
                 }
+            } else {
+                aggregationOptions.aggregators = allAggregators;
             }
         } else {
             if (this._options.aggregation) {
                 if (this._options.aggregation.custom) {
                     aggregationOptions.aggregator = window.eval("(" + this._options.aggregation["function"] + ")");
                 } else {
-                    var aggregator = allAggregators[localeMapping[this._options.aggregation.mode]];
+                    let aggregator = allAggregators[localeMapping[this._options.aggregation.mode]];
                     if (this._options.aggregation.properties) {
                         aggregator = aggregator(this._options.aggregation.properties);
                     } else {
@@ -472,42 +473,37 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     }
 
     _getLocalizedAggregatorName() {
-        let aggregatorName;
+        let localizedAggregation = this._options.localizedStrings.aggregation;
         if (this._options.showUI) {
             if (this._options.aggregations) {
                 if (this._options.aggregations.selectedAggregation) {
-                    aggregatorName = this._options.localizedStrings.aggregation[this._options.aggregations.selectedAggregation];
+                    return localizedAggregation[this._options.aggregations.selectedAggregation];
                 }
             }
         }
 
-
         let aggregationMode = this._options.aggregation ? this._options.aggregation.mode : null;
         if (aggregationMode == null) {
-            return null;
+            return localizedAggregation.count;
         }
-        return this._options.localizedStrings.aggregation[aggregationMode];
+        return localizedAggregation[aggregationMode];
     }
 
     _getLocalizedRendererName() {
-        let renderMode = this._options.renderer ? this._options.renderer : null;
-        if (renderMode == null) {
-            return null;
+        if (!this._options.renderer) {
+            return this._options.localizedStrings.renderer.table;
         }
-        return this._options.localizedStrings.renderer[renderMode];
+        return this._options.localizedStrings.renderer[this._options.renderer];
     }
 
     _getLocalizedRenderers() {
         if (!this._options.renderers) {
-            return null;
+            return $.pivotUtilities.locales[this._options.localeCode].renderers;
         }
-
         let localizedRenderers = {};
         for (let selectedRenderer of this._options.renderers.renderers) {
             let localizedKey = this._options.localizedStrings.renderer[selectedRenderer];
-
             localizedRenderers[localizedKey] = $.pivotUtilities.locales[this._options.localeCode].renderers[localizedKey];
-
         }
         return localizedRenderers;
     }

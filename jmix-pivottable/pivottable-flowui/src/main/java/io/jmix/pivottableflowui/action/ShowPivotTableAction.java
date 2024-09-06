@@ -28,6 +28,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +36,8 @@ import java.util.Collections;
 import java.util.List;
 
 @ActionType(ShowPivotTableAction.ID)
-public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTableAction, Object> {
+public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTableAction, Object>
+        implements ApplicationContextAware {
 
     public static final String ID = "pvttbl_showPivotTable";
 
@@ -58,7 +60,6 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
         super(id);
     }
 
-    @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }

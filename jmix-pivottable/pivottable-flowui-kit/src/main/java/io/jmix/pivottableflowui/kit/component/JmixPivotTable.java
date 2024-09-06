@@ -389,11 +389,11 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
                 ObjectMapper mapper = new ObjectMapper();
                 try {
                     mapper.readTree(nativeJson);
-                    options.setNativeJson(nativeJson);
                 } catch (JsonProcessingException e) {
                     throw new IllegalStateException("Unable to parse pivot table json configuration", e);
                 }
             }
+            options.setNativeJson(nativeJson);
         }
     }
 
@@ -492,7 +492,9 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         options.setRows(params.getRows());
         options.setCols(params.getCols());
         options.setRenderer(params.getRenderer());
-        options.getAggregations().setSelectedAggregation(params.getAggregationMode());
+        if (options.getAggregations() != null) {
+            options.getAggregations().setSelectedAggregation(params.getAggregationMode());
+        }
         options.setAggregationProperties(params.getAggregationProperties());
         options.setColOrder(params.getColOrder());
         options.setRowOrder(params.getRowOrder());

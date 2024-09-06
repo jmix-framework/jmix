@@ -16,9 +16,11 @@
 
 package io.jmix.pivottableflowui.action;
 
-import com.nimbusds.jose.shaded.gson.JsonSyntaxException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.*;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -31,9 +33,11 @@ import io.jmix.pivottableflowui.data.item.EntityDataItem;
 import io.jmix.pivottableflowui.export.view.PivotTableView;
 import io.jmix.pivottableflowui.kit.data.DataItem;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -230,17 +234,15 @@ public class PivotTableViewBuilder {
      * @return current instance of action
      */
     public PivotTableViewBuilder withNativeJson(String nativeJson) {
-        if (nativeJson != null) {
+        if (!StringUtils.equals(this.nativeJson, nativeJson)) {
+            ObjectMapper mapper = new ObjectMapper();
             try {
-//                JsonParser parser = new JsonParser();
-//                parser.parse(nativeJson);
-            } catch (JsonSyntaxException e) {
-                throw new IllegalStateException("Unable to parse JSON chart configuration");
+                mapper.readTree(nativeJson);
+            } catch (JsonProcessingException e) {
+                throw new IllegalStateException("Unable to parse pivot table json configuration", e);
             }
+            this.nativeJson = nativeJson;
         }
-
-        this.nativeJson = nativeJson;
-
         return this;
     }
 

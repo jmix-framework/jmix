@@ -151,14 +151,11 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
             IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
             if (result.isIndexRecreatingRequired()) {
                 status = recreateIrrelevantIndex(indexConfiguration, strategy);
+            } else if (result.isConfigurationUpdateRequired()) {
+                status = updateIndexConfiguration(indexConfiguration, strategy, result);
             } else {
-                if (result.isConfigurationUpdateRequired()) {
-                    status = updateIndexConfiguration(indexConfiguration, strategy, result);
-                } else {
-                    status = IndexSynchronizationStatus.ACTUAL;
-                    indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-                }
-
+                status = IndexSynchronizationStatus.ACTUAL;
+                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             }
         } else {
             status = handleMissingIndex(indexConfiguration, strategy);

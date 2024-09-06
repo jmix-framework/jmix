@@ -84,7 +84,7 @@ public class JmixFullCalendarOptions {
         optionsMap.put(EVENT_ORDER_STRICT, new SimpleOption<>(EVENT_ORDER_STRICT, false));
         optionsMap.put(EVENT_ORDER, new EventOrder());
         optionsMap.put(FORCE_EVENT_DURATION, new SimpleOption<>(FORCE_EVENT_DURATION, false));
-        optionsMap.put(LONG_PRESS_DELAY, new SimpleOption<>(LONG_PRESS_DELAY, 1000));
+        optionsMap.put(EVENT_LONG_PRESS_DELAY, new SimpleOption<>(EVENT_LONG_PRESS_DELAY, 1000));
         optionsMap.put(MORE_LINK_CLASS_NAMES, new MoreLinkClassNames());
         optionsMap.put(MORE_LINK_CLICK, new MoreLinkClick());
         optionsMap.put(NAV_LINKS, new SimpleOption<>(NAV_LINKS, false));
@@ -353,8 +353,8 @@ public class JmixFullCalendarOptions {
         return get(EVENT_INTERACTIVE);
     }
 
-    public SimpleOption<Integer> getLongPressDelay() {
-        return get(LONG_PRESS_DELAY);
+    public SimpleOption<Integer> getEventLongPressDelay() {
+        return get(EVENT_LONG_PRESS_DELAY);
     }
 
     public SimpleOption<Integer> getSelectLongPressDelay() {

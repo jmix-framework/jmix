@@ -1102,7 +1102,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * @return day popover format or {@code null} if not set
+     * @return the day popover format or {@code null} if not set
      */
     @Nullable
     public String getDefaultDayPopoverFormat() {
@@ -1114,8 +1114,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * component sets localized format from messages when is created.
      * <p>
      * This property act as default format for all views and {@link CustomCalendarView} until specific
-     * property won't be set for these views. However, all views properties by default explicitly specify format.
-     * Thus, they override this property.
+     * property won't be set for these views. However, all views properties by default explicitly specify the format,
+     * thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
@@ -1129,315 +1129,855 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getDayPopoverFormat().setValue(format);
     }
 
+    /**
+     * @return the day header format or {@code null} if not set
+     */
     @Nullable
     public String getDefaultDayHeaderFormat() {
         return options.getDayHeaderFormat().getValue();
     }
 
+    /**
+     * Sets the format of the text that will be displayed on the calendar’s column headings. By default,
+     * component sets localized format from messages when is created.
+     * <p>
+     * This property act as default format for all views and {@link CustomCalendarView} until specific
+     * property won't be set for these views. However, all views properties by default explicitly specify the format,
+     * thus they override this property.
+     * <p>
+     * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
+     * we should follow the moment.js formatting rules:
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <p>
+     * For instance, the {@code "dd"} produces {@code Mo}.
+     *
+     * @param format format to set
+     */
     public void setDefaultDayHeaderFormat(@Nullable String format) {
         options.getDayHeaderFormat().setValue(format);
     }
 
+    /**
+     * @return the format of the week number or {@code null} if not set
+     */
     @Nullable
     public String getDefaultWeekNumberFormat() {
         return options.getWeekNumberFormat().getValue();
     }
 
     /**
-     * Note that it override the {@code weekText} value in i18n object.
+     * Sets the format of the week number that will be displayed when {@link #isWeekNumbersVisible()} is {@code true}.
+     * By default, component sets localized format from messages when is created.
+     * <p>
+     * This property act as default format for all views and {@link CustomCalendarView} until specific
+     * property won't be set for these views. However, all views properties by default explicitly specify the format,
+     * thus they override this property.
+     * <p>
+     * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
+     * we should follow the moment.js formatting rules:
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <p>
+     * For instance, the {@code "[Week] w"} produces {@code Week 1} (1, 2, ... 52, 53).
      *
-     * @param format
+     * @param format format to set
      */
     public void setDefaultWeekNumberFormat(@Nullable String format) {
         options.getWeekNumberFormat().setValue(format);
     }
 
+    /**
+     * @return the slot label format or {@code null} if not set
+     */
     @Nullable
-    public String getDefaultSlotNumberFormat() {
+    public String getDefaultSlotLabelFormat() {
         return options.getSlotLabelFormat().getValue();
     }
 
-    public void setDefaultSlotNumberFormat(@Nullable String format) {
+    /**
+     * Sets the format of the text that will be displayed within a time slot. By default, component sets
+     * localized format from messages when is created.
+     * <p>
+     * This property act as default format for all views and {@link CustomCalendarView} until specific
+     * property won't be set for these views. However, all views properties by default explicitly specify the format,
+     * thus they override this property.
+     * <p>
+     * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
+     * we should follow the moment.js formatting rules:
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <p>
+     * For instance, the {@code "ha"} produces {@code 1 am} (1, 2, ... 12 am/pm).
+     *
+     * @param format format to set
+     */
+    public void setDefaultSlotLabelFormat(@Nullable String format) {
         options.getSlotLabelFormat().setValue(format);
     }
 
+    /**
+     * @return the event time format or {@code null} if not set
+     */
     @Nullable
     public String getDefaultEventTimeFormat() {
         return options.getEventTimeFormat().getValue();
     }
 
+    /**
+     * Sets the format of the time-text that will be displayed on each event. By default, component sets
+     * localized format from messages when is created.
+     * <p>
+     * This property act as default format for all views and {@link CustomCalendarView} until specific
+     * property won't be set for these views. However, all views properties by default explicitly specify the format,
+     * thus they override this property.
+     * <p>
+     * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
+     * we should follow the moment.js formatting rules:
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <p>
+     * For instance, the {@code "HH:mm"} produces {@code 00:00} (01, 2, ... 24 : 01, 02 ... 59).
+     *
+     * @param format format to set
+     */
     public void setDefaultEventTimeFormat(@Nullable String format) {
         options.getEventTimeFormat().setValue(format);
     }
 
+    /**
+     * @return {@code true} if weekends are visible
+     */
     public boolean isWeekendsVisible() {
         return options.getWeekends().getNotNullValue();
     }
 
+    /**
+     * Sets whether to include Saturday/Sunday columns in any of the calendar views.
+     * <p>
+     * The default value is {@code true}
+     *
+     * @param visible whether to show weekends
+     */
     public void setWeekendsVisible(boolean visible) {
         options.getWeekends().setValue(visible);
     }
 
+    /**
+     * @return {@code true} if day headers are visible
+     */
     public boolean isDayHeadersVisible() {
         return options.getDayHeaders().getNotNullValue();
     }
 
+    /**
+     * Sets whether the day headers should appear. It works for day-grid, time-grid and month views.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @param visible whether to show day headers
+     */
     public void setDayHeadersVisible(boolean visible) {
         options.getDayHeaders().setValue(visible);
     }
 
+    /**
+     * @return the interval for displaying time slots or {@code null} if not set
+     */
     @Nullable
     public CalendarDuration getSlotDuration() {
         return options.getSlotDuration().getValue();
     }
 
+    /**
+     * Sets the interval for displaying time slots.
+     * <p>
+     * The default value is 30 minutes.
+     *
+     * @param duration the interval to set
+     */
     public void setSlotDuration(@Nullable CalendarDuration duration) {
         options.getSlotDuration().setValue(duration);
     }
 
+    /**
+     * @return the frequency for labeling time slots with text or {@code null} if not set
+     */
     @Nullable
     public CalendarDuration getSlotLabelInterval() {
         return options.getSlotLabelInterval().getValue();
     }
 
+    /**
+     * Sets the frequency for labeling time slots with text.
+     * <p>
+     * If not specified, a reasonable value will be automatically computed based on {@link #getSlotDuration()}.
+     * <p>
+     * When specifying this property, give the {@code CalendarDuration.ofHours(1)}, this will cause the header
+     * labels to appear on the hour marks, even if {@link #getSlotDuration()} was hypothetically 15 or 30 minutes long.
+     *
+     * @param duration the interval to set
+     */
     public void setSlotLabelInterval(@Nullable CalendarDuration duration) {
         options.getSlotLabelInterval().setValue(duration);
     }
 
+    /**
+     * @return thr slot minimum time or {@code null} if not set
+     */
     @Nullable
     public CalendarDuration getSlotMinTime() {
         return options.getSlotMinTime().getValue();
     }
 
+    /**
+     * Sets the first time slot that will be displayed for each day.
+     * <p>
+     * The default value is {@code 00:00:00}. It means the start time will be at the very beginning of
+     * the day (midnight). Determines the first time slot, even when the scrollbars have been scrolled
+     * all the way back.
+     *
+     * @param slotMinTime slot minimum time to set
+     */
     public void setSlotMinTime(@Nullable CalendarDuration slotMinTime) {
         options.getSlotMinTime().setValue(slotMinTime);
     }
 
+    /**
+     * @return the slot maximum time or {@code null} if not set
+     */
     @Nullable
     public CalendarDuration getSlotMaxTime() {
         return options.getSlotMaxTime().getValue();
     }
 
+    /**
+     * Sets the last time slot that will be displayed for each day. The specified value is an exclusive end time.
+     * <p>
+     * The default value is {@code 24:00:00}. It means that the end time will be at the very end of the day (midnight).
+     * Determines the last slot, even when the scrollbars have been scrolled all the way back.
+     *
+     * @param slotMaxTime the slot maximum time
+     */
     public void setSlotMaxTime(@Nullable CalendarDuration slotMaxTime) {
         options.getSlotMaxTime().setValue(slotMaxTime);
     }
 
+    /**
+     * @return the scroll time or {@code null} if not set
+     */
     @Nullable
     public CalendarDuration getScrollTime() {
         return options.getScrollTime().getValue();
     }
 
+    /**
+     * Sets the initial scroll position to a specific time.
+     * <p>
+     * The user will be able to scroll back to see events before this time. If you want to prevent users
+     * from doing this, use the {@link #setSlotMinTime(CalendarDuration)} instead.
+     * <p>
+     * By default, scroll time is reapplied to the view whenever the date range changes. To disable this,
+     * set {@link #setScrollTimeReset(boolean)} to {@code false}.
+     * <p>
+     * The default value is {@code 06:00:00}.
+     *
+     * @param scrollTime the time to scroll to
+     */
     public void setScrollTime(@Nullable CalendarDuration scrollTime) {
         options.getScrollTime().setValue(scrollTime);
     }
 
+    /**
+     * @return {@code true} if the scroll position should be reset every time
+     */
     public boolean isScrollTimeReset() {
         return options.getScrollTimeReset().getNotNullValue();
     }
 
+    /**
+     * Sets whether the calendar view should scroll to {@link #getScrollTime()} every time the date range changes.
+     * <p>
+     * By default, whenever the date range changes either via calendar methods or the user actions,
+     * the scroll is reset. Set the property to {@code false} to disable this behaviour.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @param scrollTimeReset whether to reset scroll
+     */
     public void setScrollTimeReset(boolean scrollTimeReset) {
         options.getScrollTimeReset().setValue(scrollTimeReset);
     }
 
+    /**
+     * @return {@code true} if events without {@code allDay} property is shown as all-day
+     */
     public boolean isDefaultAllDay() {
         return options.getDefaultAllDay().getNotNullValue();
     }
 
     /**
-     * Note, events without allDay property will be shown as all-day events. If such event will be changed by dragging
-     * or resizing calendar will set allDay = true to entity instance.
+     * Sets the default value for each calendar event's {@code allDay} property when it is unspecified.
+     * <p>
+     * If the property is set to {@code true}, all events without {@code allDay} property (e.g. is not specified
+     * mapping in event provider or calendar event returns {@code null} for {@code getAllDay()}) will be considered
+     * as all-day events.
+     * <p>
+     * Note, in this case, events without {@code allDay} property will be shown as all-day events. If such event
+     * will be changed by dragging or resizing, and you have listeners for these events, the component will set to
+     * calendar event {@code setAllDay()}, which can lead to modifying entity/DTO instance.
+     * <p>
+     * The default value is {@code false}.
      *
-     * @param defaultAllDay
+     * @param defaultAllDay whether to show events as all-day
      */
     public void setDefaultAllDay(boolean defaultAllDay) {
         options.getDefaultAllDay().setValue(defaultAllDay);
     }
 
+    /**
+     * @return the default all-day duration or {@code null} if not set
+     */
     @Nullable
     public CalendarDuration getDefaultAllDayEventDuration() {
         return options.getDefaultAllDayEventDuration().getValue();
     }
 
+    /**
+     * Sets the default duration of all-day events if they don't specify {@code end} property.
+     * <p>
+     * For instance, the property is set to {@code 2 days}. The event that has {@code allDay = true} and do not
+     * have {@code end} property, will be shown in all-day section and will occupy two days.
+     * <p>
+     * Note, calendar event's end property will remain unset, unless {@link #setForceEventDuration(boolean)} has been
+     * set to {@code true}. In this case, the calendar will explicitly assign end date to an event. If such event
+     * will be changed by dragging or resizing, and you have listeners for these events, the component will set to
+     * calendar event {@code setEndDateTime()}, which can lead to modifying entity/DTO instance.
+     * <p>
+     * This property only affects events with {@code allDay = true}.
+     * <p>
+     * The default value is {@code 1 day}.
+     *
+     * @param duration the default all-day duration
+     */
     public void setDefaultAllDayEventDuration(@Nullable CalendarDuration duration) {
         options.getDefaultAllDayEventDuration().setValue(duration);
     }
 
+    /**
+     * @return the default time duration or {@code null} if not set
+     */
     @Nullable
     public CalendarDuration getDefaultTimedEventDuration() {
         return options.getDefaultTimedEventDuration().getValue();
     }
 
+    /**
+     * Sets the default duration for timed events if they don't specify {@code end} property.
+     * <p>
+     * For instance, the property is set to {@code 2 hours}. The event that has {@code allDay = false} and do not
+     * have {@code end} property, will occupy two hours in time slots.
+     * <p>
+     * Note, calendar event's end property will remain unset, unless {@link #setForceEventDuration(boolean)} has been
+     * set to {@code true}. In this case, the calendar will explicitly assign end date to an event. If such event
+     * will be changed by dragging or resizing, and you have listeners for these events, the component will set to
+     * calendar event {@code setEndDateTime()}, which can lead to modifying entity/DTO instance.
+     * <p>
+     * This property only affects events with {@code allDay = false}.
+     * <p>
+     * The default value is {@code 1 hour}.
+     *
+     * @param duration the default time duration
+     */
     public void setDefaultTimedEventDuration(@Nullable CalendarDuration duration) {
         options.getDefaultTimedEventDuration().setValue(duration);
     }
 
+    /**
+     * @return {@code true} if {@code end} property value is assigned by component to events that do not have it,
+     * or returns {@code null} if not set
+     */
     public boolean isForceEventDuration() {
         return options.getForceEventDuration().getNotNullValue();
     }
 
     /**
-     * Note, if event does not have end date, calendar will set it explicitly. For instance, if event is entity
-     * instance the `endDate` property will be changed after dragging or resizing event.
+     * Makes the component to assign {@code end} property value to events if they do not have it.
+     * <p>
+     * Note, if event does not specify {@code end} property, the component will set it explicitly. If such event
+     * will be changed by dragging or resizing, and you have listeners for these events, the component will set to
+     * calendar event {@code setEndDateTime()}, which can lead to modifying entity/DTO instance.
+     * <p>
+     * The default value is {@code false}.
      *
-     * @param forceEventDuration
+     * @param forceEventDuration whether to assign end date to events
      */
     public void setForceEventDuration(boolean forceEventDuration) {
         options.getForceEventDuration().setValue(forceEventDuration);
     }
 
+    /**
+     * @return the initial date to show or {@code null} if not set
+     */
     @Nullable
     public LocalDate getInitialDate() {
         return options.getInitialDate().getValue();
     }
 
+    /**
+     * Sets the initial date that will be displayed when the component is attached to UI.
+     * <p>
+     * If not specified, the current date will be used.
+     *
+     * @param initialDate initial date to show
+     */
     public void setInitialDate(@Nullable LocalDate initialDate) {
         options.getInitialDate().setValue(initialDate);
     }
 
+    /**
+     * @return the step duration or {@code null} if not set
+     */
     @Nullable
     public CalendarDuration getDateIncrement() {
         return options.getDateIncrement().getValue();
     }
 
+    /**
+     * Defines the step of {@link #navigateToNext()}/{@link #navigateToPrevious()} methods.
+     * <p>
+     * It is unnecessary to define this property if predefined views are used, because the step is calculated
+     * automatically based on view type.
+     * <p>
+     * For {@link CustomCalendarView} the {@link CustomCalendarView#getDuration()} will be used as step if specified.
+     *
+     * @param dateIncrement the step duration
+     */
     public void setDateIncrement(CalendarDuration dateIncrement) {
         options.getDateIncrement().setValue(dateIncrement);
     }
 
+    /**
+     * @return the first visible date of {@link CustomCalendarView} or {@code null} if not set
+     */
     @Nullable
     public String getDateAlignment() {
         return options.getDateAlignment().getValue();
     }
 
+    /**
+     * Sets the first visible date of {@link CustomCalendarView}.
+     * <p>
+     * When a custom view is being used, and you’d like to guarantee that the view begins at a certain interval,
+     * like the start-of-week or start-of-month, specify a value like {@code "week"} or {@code "month"}. If the
+     * property is not specified, a reasonable default will be generated based on the view’s duration.
+     * <p>
+     * If a view’s range is explicitly defined with {@link #setVisibleRange(LocalDate, LocalDate)}, this property
+     * will be ignored.
+     *
+     * @param alignment the first visible date, like {@code "week"} or {@code "month"}
+     */
     public void setDateAlignment(@Nullable String alignment) {
         options.getDateAlignment().setValue(alignment);
     }
 
+    /**
+     * @return {@code true} if all events are focusable/tabbable
+     */
     public boolean isEventInteractive() {
         return options.getEventInteractive().getNotNullValue();
     }
 
+    /**
+     * Enables all events to be focusable/tabbable.
+     * <p>
+     * Note, calendar events can override this value if they specify {@code getInteractive()}.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param interactive whether events should be focusable/tabbable
+     */
     public void setEventInteractive(boolean interactive) {
         options.getEventInteractive().setValue(interactive);
     }
 
+    /**
+     * @return the event long press delay or {@code null} if not set
+     */
     @Nullable
-    public Integer getLongPressDelay() {
-        return options.getLongPressDelay().getValue();
+    public Integer getEventLongPressDelay() {
+        return options.getEventLongPressDelay().getValue();
     }
 
-    public void setLongPressDelay(@Nullable Integer delay) {
-        options.getLongPressDelay().setValue(delay);
+    /**
+     * Sets amount of time the user must hold down before an event becomes draggable.
+     * <p>
+     * For touch devices.
+     * <p>
+     * The default value is {@code 1000} milliseconds.
+     *
+     * @param delay the delay to set
+     * @see #setSelectLongPressDelay(Integer)
+     */
+    public void setEventLongPressDelay(@Nullable Integer delay) {
+        options.getEventLongPressDelay().setValue(delay);
     }
 
+    /**
+     * @return the select long press delay or {@code null} if not set
+     */
     @Nullable
     public Integer getSelectLongPressDelay() {
         return options.getSelectLongPressDelay().getValue();
     }
 
+    /**
+     * Sets amount of time the user must hold down before a date becomes selectable.
+     * <p>
+     * For touch devices.
+     * <p>
+     * The default value is {@code 1000} milliseconds.
+     *
+     * @param delay the delay to set
+     * @see #setEventLongPressDelay(Integer)
+     */
     public void setSelectLongPressDelay(@Nullable Integer delay) {
         options.getSelectLongPressDelay().setValue(delay);
     }
 
+    /**
+     * @return {@code true} if now indicator is visible
+     */
     public boolean isNowIndicatorVisible() {
         return options.getNowIndicator().getNotNullValue();
     }
 
+    /**
+     * Enables displaying a marker indicating the current time. The property applies in time-grid views.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param nowIndicatorVisible whether to display a now indicator
+     */
     public void setNowIndicatorVisible(boolean nowIndicatorVisible) {
         options.getNowIndicator().setValue(nowIndicatorVisible);
     }
 
+    /**
+     * @return {@code true} if rows are expanded in time-grid views
+     */
     public boolean isExpandRows() {
         return options.getExpandRows().getNotNullValue();
     }
 
+    /**
+     * Enables to expand rows of time-grid views if they don’t take up the entire height.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param expandRows whether to expand rows
+     */
     public void setExpandRows(boolean expandRows) {
         options.getExpandRows().setValue(expandRows);
     }
 
+    /**
+     * @return the delay or {@code null} if not set
+     */
     @Nullable
     public Integer getWindowResizeDelay() {
         return options.getWindowResizeDelay().getValue();
     }
 
+    /**
+     * Sets the delay that the calendar will wait to adjust its size after a window resize occurs.
+     * <p>
+     * The default value is {@code 100}.
+     *
+     * @param windowResizeDelay the delay in milliseconds
+     */
     public void setWindowResizeDelay(@Nullable Integer windowResizeDelay) {
         options.getWindowResizeDelay().setValue(windowResizeDelay);
     }
 
+    /**
+     * @return event background color or {@code null} if not set
+     */
     @Nullable
     public String getEventBackgroundColor() {
         return options.getEventBackgroundColor().getValue();
     }
 
+    /**
+     * Sets the background color for all events on the calendar.
+     * <p>
+     * Note, calendar events can override this value if they specify {@code getBackgroundColor()}.
+     * <p>
+     * Supported values are:
+     * <ul>
+     *     <li>
+     *         <code>#f00</code>
+     *     </li>
+     *     <li>
+     *         <code>#ff0000</code>
+     *     </li>
+     *     <li>
+     *         <code>rgb(255,0,0)</code>
+     *     </li>
+     *     <li>
+     *         Color name - <code>red</code>
+     *     </li>
+     * </ul>
+     *
+     * @param eventBackgroundColor background color to set
+     */
     public void setEventBackgroundColor(@Nullable String eventBackgroundColor) {
         options.getEventBackgroundColor().setValue(eventBackgroundColor);
     }
 
+    /**
+     * @return the event border color or {@code null} if not set
+     */
     @Nullable
     public String getEventBorderColor() {
         return options.getEventBorderColor().getValue();
     }
 
+    /**
+     * Sets the border color for all events on the calendar.
+     * <p>
+     * Note, calendar events can override this value if they specify {@code getBorderColor()}.
+     * <p>
+     * Supported values are:
+     * <ul>
+     *     <li>
+     *         <code>#f00</code>
+     *     </li>
+     *     <li>
+     *         <code>#ff0000</code>
+     *     </li>
+     *     <li>
+     *         <code>rgb(255,0,0)</code>
+     *     </li>
+     *     <li>
+     *         Color name - <code>red</code>
+     *     </li>
+     * </ul>
+     *
+     * @param borderColor event border color
+     */
     public void setEventBorderColor(@Nullable String borderColor) {
         options.getEventBorderColor().setValue(borderColor);
     }
 
+    /**
+     * @return the event text color or {@code null} if not set
+     */
     @Nullable
     public String getEventTextColor() {
         return options.getEventTextColor().getValue();
     }
 
-    public void setEventTextColor(@Nullable String eventTextColor) {
-        options.getEventTextColor().setValue(eventTextColor);
+    /**
+     * Sets the text color for all events on the calendar.
+     * <p>
+     * Note, calendar events can override this value if they specify {@code getTextColor()}.
+     * <p>
+     * Supported values are:
+     * <ul>
+     *     <li>
+     *         <code>#f00</code>
+     *     </li>
+     *     <li>
+     *         <code>#ff0000</code>
+     *     </li>
+     *     <li>
+     *         <code>rgb(255,0,0)</code>
+     *     </li>
+     *     <li>
+     *         Color name - <code>red</code>
+     *     </li>
+     * </ul>
+     *
+     * @param textColor event text color
+     */
+    public void setEventTextColor(@Nullable String textColor) {
+        options.getEventTextColor().setValue(textColor);
     }
 
+    /**
+     * @return {@code true} if time-text of events is shown
+     */
     public boolean isDisplayEventTime() {
         return options.getDisplayEventTime().getNotNullValue();
     }
 
+    /**
+     * Determines visibility of time text of each event.
+     * <p>
+     * The property applies to timed-events (not all-day). If set to {@code true}, time text will always be
+     * displayed on the event. If set to {@code false}, time text will never be displayed on the event. Events
+     * that are all-day will never display time text anyhow.
+     * <p>
+     * The default value is {@code true}.
+     *
+     * @param displayEventTime whether to display time text of events
+     */
     public void setDisplayEventTime(boolean displayEventTime) {
         options.getDisplayEventTime().setValue(displayEventTime);
     }
 
+    /**
+     * @return the next day threshold time or {@code null} if not set
+     */
     @Nullable
     public CalendarDuration getNextDayThreshold() {
         return options.getNextDayThreshold().getValue();
     }
 
+    /**
+     * Sets the minimum time that event's end date should achieve to render event as it if were on that day.
+     * <p>
+     * For instance, the property is set to {@code 09:00:00}. And there is an event with dates:
+     * <ul>
+     *     <li>
+     *         start - {@code 2024-09-01T20:00:00};
+     *     </li>
+     *     <li>
+     *         end - {@code 2024-09-02T02:00:00};
+     *     </li>
+     * </ul>
+     * <p>
+     * So, the event spans to another day, but it will be rendered as a one-day event, because we specified the
+     * {@code nextDayThreshold} property. However, If the event has end date - {@code 2024-09-02T10:00:00}, it will be
+     * rendered as two-day event.
+     * <p>
+     * Only affects timed events that appear on whole-days cells. Whole-day cells occur in day-grid views and
+     * the all-day slots in the time-grid views.
+     * <p>
+     * Note that this property is ignored when event's {@code allDay} property is set to {@code true}.
+     * <p>
+     * The default value is {@code 00:00:00}.
+     *
+     * @param nextDayThreshold the next day threshold time
+     * @see <a href="https://fullcalendar.io/docs/nextDayThreshold">FullCalendar docs :: nextDayThreshold</a>
+     */
     public void setNextDayThreshold(@Nullable CalendarDuration nextDayThreshold) {
         options.getNextDayThreshold().setValue(nextDayThreshold);
     }
 
+    /**
+     * @return {@code true} if the component strictly follows the specified event order
+     */
     public boolean isEventOrderStrict() {
         return options.getEventOrderStrict().getNotNullValue();
     }
 
+    /**
+     * Enables the component to strictly follow the specified event order.
+     * <p>
+     * By default, this property is {@code false}, meaning the event order is not strict and compactness
+     * will be prioritized over following event order exactly.
+     *
+     * @param eventOrderStrict whether to strictly follow event order
+     * @see #setEventOrder(List)
+     * @see #setEventOrderJsFunction(JsFunction)
+     */
     public void setEventOrderStrict(boolean eventOrderStrict) {
         options.getEventOrderStrict().setValue(eventOrderStrict);
     }
 
-    public boolean isProgressiveEventRendering() {
-        return options.getProgressiveEventRendering().getNotNullValue();
-    }
-
-    public void setProgressiveEventRendering(boolean progressiveEventRendering) {
-        options.getProgressiveEventRendering().setValue(progressiveEventRendering);
-    }
-
+    /**
+     * @return list of properties involved in the sorting process
+     */
     public List<String> getEventOrder() {
         return options.getEventOrder().getEventOrder();
     }
 
+    /**
+     * Sets the list of calendar event properties that should participate in sorting. It is also available to specify
+     * properties from {@code getAdditionalProperties()}.
+     * <p>
+     * For most calendar views, this property determines the vertical ordering of events within the same day.
+     * For time-grid views however, it determines the horizontal ordering of events within the same time slot.
+     * <p>
+     * The default value puts earlier events first. If tied, it puts longer events first. If still tied, it puts
+     * all-day events first. If still tied, orders events by title, alphabetically.
+     * <p>
+     * If putting a lower-precedent event before a higher-precedent improves compactness, the algorithm will do so.
+     * To disable this behavior, set {@link #setEventOrderStrict(boolean)} to {@code true}.
+     * <p>
+     * The provided properties are sorted in ascending order. If a property is prefixed with a minus sign like "-title",
+     * sorting will be in descending order.
+     *
+     * @param eventOrder list of properties
+     * @see <a href="https://fullcalendar.io/docs/eventOrder">FullCalendar documentation :: eventOrder</a>
+     */
     public void setEventOrder(@Nullable List<String> eventOrder) {
         options.getEventOrder().setEventOrder(eventOrder);
     }
 
+    /**
+     * @return event order JavaScript function or {@code null} if not set
+     */
     @Nullable
     public JsFunction getEventOrderJsFunction() {
         return options.getEventOrder().getJsFunction();
     }
 
+    /**
+     * Sets JavaScript function definition that should sort event in the same day cell or time slot.
+     * The function should return {@code -1} if first event is "less" than second one, and {@code 1} if the first
+     * event is "greater" than second one.
+     * <p>
+     * For instance, function sorts by additional property:
+     * <pre>{@code
+     *  calendar.setEventOrderJsFunction(new JsFunction("""
+     *     function (event1, event2) {
+     *         if (event1.priority === event2.priority) {
+     *             return 0;
+     *         }
+     *         return event1.priority > event2.priority ? 1 : -1;
+     *     }
+     *     """));
+     *  }</pre>
+     * The {@code event1} is the first event to be compared.
+     * <p>
+     * The {@code event2} is the second event to be compared.
+     * <p>
+     * The available properties of {@code event1} and {@code event2} you can find in
+     * <a href="https://fullcalendar.io/docs/event-object">FullCalendar docs</a>
+     * <p>
+     * Note that JavaScript function takes precedence over the {@link #setEventOrder(List)}.
+     *
+     * @param jsFunction JavaScript function
+     * @see <a href="https://fullcalendar.io/docs/eventOrder">FullCalendar documentation :: eventOrder</a>
+     */
     public void setEventOrderJsFunction(@Nullable JsFunction jsFunction) {
         options.getEventOrder().setJsFunction(jsFunction);
+    }
+
+    /**
+     * @return {@code true} if progressive event rendering is enabled
+     */
+    public boolean isProgressiveEventRendering() {
+        return options.getProgressiveEventRendering().getNotNullValue();
+    }
+
+    /**
+     * Enables rendering events from the event provider immediately when events are loaded.
+     * <ul>
+     *     <li>
+     *         {@code true} - renders each event provider as it is received. Will result in more renders.
+     *     </li>
+     *     <li>
+     *         {@code false} - waits until all event providers have been received and renders them all at once.
+     *         Results in less renders.
+     *     </li>
+     * </ul>
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param progressiveEventRendering whether to enable progressive event rendering
+     */
+    public void setProgressiveEventRendering(boolean progressiveEventRendering) {
+        options.getProgressiveEventRendering().setValue(progressiveEventRendering);
     }
 
     protected JmixFullCalendarSerializer createSerializer() {

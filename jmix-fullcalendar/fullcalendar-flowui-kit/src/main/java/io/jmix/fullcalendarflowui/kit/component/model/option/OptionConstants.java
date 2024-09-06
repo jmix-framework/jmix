@@ -70,7 +70,7 @@ public final class OptionConstants {
     public static final String FIRST_DAY = "firstDay";
     public static final String FORCE_EVENT_DURATION = "forceEventDuration";
     public static final String HIDDEN_DAYS = "hiddenDays";
-    public static final String LONG_PRESS_DELAY = "longPressDelay";
+    public static final String EVENT_LONG_PRESS_DELAY = "eventLongPressDelay";
     public static final String MORE_LINK_CLICK = "moreLinkClick";
     public static final String MORE_LINK_CLASS_NAMES = "moreLinkClassNames";
     public static final String NAV_LINKS = "navLinks";

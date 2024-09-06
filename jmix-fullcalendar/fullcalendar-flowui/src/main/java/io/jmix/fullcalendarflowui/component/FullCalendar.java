@@ -1311,10 +1311,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         if (!Strings.isNullOrEmpty(clientEvent.getEnd())) {
             calendarEvent.setEndDateTime(transformToLocalDateTime(clientEvent.getEnd()));
         }
-        Boolean allDay = clientEvent.isAllDay();
-        if (!Objects.equals(calendarEvent.getAllDay(), allDay)
-                && (calendarEvent.getAllDay() != null || allDay)) {
-            calendarEvent.setAllDay(allDay);
+        if (!Objects.equals(calendarEvent.getAllDay(), clientEvent.isAllDay())) {
+            calendarEvent.setAllDay(clientEvent.isAllDay());
         }
     }
 
@@ -1499,7 +1497,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         setDefaultDayPopoverFormat(getMessage("dayPopoverFormat"));
         setDefaultDayHeaderFormat(getMessage("dayHeaderFormat"));
         setDefaultWeekNumberFormat(getMessage("weekNumberFormat"));
-        setDefaultSlotNumberFormat(getMessage("slotLabelFormat"));
+        setDefaultSlotLabelFormat(getMessage("slotLabelFormat"));
         setDefaultEventTimeFormat(getMessage("eventTimeFormat"));
     }
 

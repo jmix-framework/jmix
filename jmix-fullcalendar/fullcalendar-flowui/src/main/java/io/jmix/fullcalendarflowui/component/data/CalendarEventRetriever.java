@@ -18,22 +18,21 @@ package io.jmix.fullcalendarflowui.component.data;
 
 /**
  * Base class for simple event retrievers. For instance:
- * <pre>
- * &#064;ViewComponent
+ * <pre>{@code
+ * @ViewComponent
  * private FullCalendar calendar;
- * &#064;Autowired
+ * @Autowired
  * private CalendarEventService eventService;
- *
- * &#064;Subscribe
+ * @Subscribe
  * public void onInit(final InitEvent event) {
  *     calendar.addEventProvider(new CalendarEventRetriever() {
- *         &#064;Override
+ *         @Override
  *         public List<CalendarEvent> onItemsFetch(ItemsFetchContext context) {
  *             return eventService.fetchEvents(context);
  *         }
  *     });
  * }
- * </pre>
+ * }</pre>
  */
 public abstract class CalendarEventRetriever implements LazyCalendarEventProvider {
 

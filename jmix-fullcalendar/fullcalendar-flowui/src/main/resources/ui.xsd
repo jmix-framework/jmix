@@ -58,6 +58,7 @@
                     <xs:attribute name="eventDragMinDistance" type="xs:integer"/>
                     <xs:attribute name="eventDurationEditable" type="xs:boolean"/>
                     <xs:attribute name="eventInteractive" type="xs:boolean"/>
+                    <xs:attribute name="eventLongPressDelay" type="xs:integer"/>
                     <xs:attribute name="eventMaxStack" type="xs:integer"/>
                     <xs:attribute name="eventOrder" type="xs:string"/>
                     <xs:attribute name="eventOrderStrict" type="xs:boolean"/>
@@ -70,7 +71,6 @@
                     <xs:attribute name="forceEventDuration" type="xs:boolean"/>
                     <xs:attribute name="initialDate" type="xs:string"/>
                     <xs:attribute name="initialView" type="calendarViewType"/>
-                    <xs:attribute name="longPressDelay" type="xs:integer"/>
                     <xs:attribute name="moreLinkClassNames" type="xs:string"/>
                     <xs:attribute name="moreLinkView" type="calendarViewType"/>
                     <xs:attribute name="navigationLinksEnabled" type="xs:boolean"/>

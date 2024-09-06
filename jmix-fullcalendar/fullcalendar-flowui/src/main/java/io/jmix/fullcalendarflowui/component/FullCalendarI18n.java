@@ -165,7 +165,7 @@ public class FullCalendarI18n implements Serializable {
     }
 
     /**
-     * @return the long name of the week or {@link null} if not set
+     * @return the long name of the week or {@code null} if not set
      */
     @Nullable
     public String getWeekTextLong() {

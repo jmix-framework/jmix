@@ -69,7 +69,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadResourceString(element, "defaultEventTimeFormat", context.getMessageGroup(),
                 resultComponent::setDefaultEventTimeFormat);
         loadResourceString(element, "defaultSlotLabelFormat", context.getMessageGroup(),
-                resultComponent::setDefaultSlotNumberFormat);
+                resultComponent::setDefaultSlotLabelFormat);
         loadDuration(element, "defaultTimedEventDuration", resultComponent::setDefaultTimedEventDuration);
         loadResourceString(element, "defaultWeekNumberFormat", context.getMessageGroup(),
                 resultComponent::setDefaultWeekNumberFormat);
@@ -86,6 +86,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadInteger(element, "eventDragMinDistance", resultComponent::setEventDragMinDistance);
         loadBoolean(element, "eventDurationEditable", resultComponent::setEventDurationEditable);
         loadBoolean(element, "eventInteractive", resultComponent::setEventInteractive);
+        loadInteger(element, "eventLongPressDelay", resultComponent::setEventLongPressDelay);
         loadInteger(element, "eventMaxStack", resultComponent::setEventMaxStack);
         loadStringList(element, "eventOrder", resultComponent::setEventOrder);
         loadBoolean(element, "eventOrderStrict", resultComponent::setEventOrderStrict);
@@ -99,8 +100,6 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadBoolean(element, "forceEventDuration", resultComponent::setForceEventDuration);
 
         loadString(element, "initialDate", (s) -> resultComponent.setInitialDate(LocalDate.parse(s)));
-
-        loadInteger(element, "longPressDelay", resultComponent::setLongPressDelay);
 
         loadStringList(element, "moreLinkClassNames", resultComponent::setMoreLinkClassNames);
         loadMoreLinkView(element, resultComponent::setMoreLinkCalendarView);

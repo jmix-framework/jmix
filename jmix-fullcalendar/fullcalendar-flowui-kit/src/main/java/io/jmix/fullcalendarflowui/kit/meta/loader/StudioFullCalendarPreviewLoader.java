@@ -127,7 +127,7 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
 
         loadBoolean(element, "eventInteractive", resultComponent::setEventInteractive);
 
-        loadInteger(element, "longPressDelay", resultComponent::setLongPressDelay);
+        loadInteger(element, "longPressDelay", resultComponent::setEventLongPressDelay);
         loadInteger(element, "selectLongPressDelay", resultComponent::setSelectLongPressDelay);
 
         loadBoolean(element, "nowIndicatorVisible", resultComponent::setNowIndicatorVisible);

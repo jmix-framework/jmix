@@ -256,7 +256,7 @@ public interface CalendarEvent {
      *         <code>rgb(255,0,0)</code>
      *     </li>
      *     <li>
-     *         Color name - <code>red</code>, etc
+     *         Color name - <code>red</code>
      *     </li>
      * </ul>
      *  Note, if the background color is {@code null}, color will be managed by component's
@@ -280,7 +280,7 @@ public interface CalendarEvent {
      *         <code>rgb(255,0,0)</code>
      *     </li>
      *     <li>
-     *         Color name - <code>red</code>, etc
+     *         Color name - <code>red</code>
      *     </li>
      * </ul>
      *  Note, if the border color is {@code null}, color will be managed by component's
@@ -304,7 +304,7 @@ public interface CalendarEvent {
      *         <code>rgb(255,0,0)</code>
      *     </li>
      *     <li>
-     *         Color name - <code>red</code>, etc
+     *         Color name - <code>red</code>
      *     </li>
      * </ul>
      *  Note, if the text color is {@code null}, color will be managed by component's

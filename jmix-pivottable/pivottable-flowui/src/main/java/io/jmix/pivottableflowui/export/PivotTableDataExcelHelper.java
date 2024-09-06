@@ -308,6 +308,6 @@ public class PivotTableDataExcelHelper {
                 pivotDataCell.getRowSpan(),
                 pivotDataCell.getColSpan(),
                 pivotDataCell.getType(),
-                pivotDataCell.getBold());
+                pivotDataCell.isBold());
     }
 }

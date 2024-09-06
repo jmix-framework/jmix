@@ -16,16 +16,14 @@
 
 package io.jmix.pivottableflowui.kit.event.js;
 
-import io.jmix.pivottableflowui.kit.data.DataItem;
-
 import java.util.List;
 import java.util.Map;
 
 public class PivotTableCellClickEventParams {
 
-    Double value;
-    Map<String, String> filters;
-    List<DataItem> usedDataItems;
+    private Double value;
+    private Map<String, String> filters;
+    private List<Object> dataItemKeys;
 
     public Double getValue() {
         return value;
@@ -43,11 +41,11 @@ public class PivotTableCellClickEventParams {
         this.filters = filters;
     }
 
-    public List<DataItem> getUsedDataItems() {
-        return usedDataItems;
+    public List<Object> getDataItemKeys() {
+        return dataItemKeys;
     }
 
-    public void setUsedDataItems(List<DataItem> usedDataItems) {
-        this.usedDataItems = usedDataItems;
+    public void setDataItemKeys(List<Object> dataItemKeys) {
+        this.dataItemKeys = dataItemKeys;
     }
 }

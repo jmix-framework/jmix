@@ -26,7 +26,8 @@ import io.jmix.pivottableflowui.kit.component.model.SerializedEnum;
 import java.io.IOException;
 import java.util.EnumSet;
 
-public class EnumIdDeserializer<E extends Enum> extends JsonDeserializer<E> {
+public class EnumIdDeserializer<E extends Enum<E>> extends JsonDeserializer<E> {
+
     private final Class<E> serializedEnumClass;
 
     public EnumIdDeserializer(Class<E> serializedEnumClass) {
@@ -40,10 +41,12 @@ public class EnumIdDeserializer<E extends Enum> extends JsonDeserializer<E> {
         if (token == JsonToken.VALUE_STRING) {
             String textId = jsonParser.getText();
 
-            return (E) EnumSet.allOf(serializedEnumClass)
+            return EnumSet.allOf(serializedEnumClass)
                     .stream()
-                    .filter(value -> value instanceof SerializedEnum serializedEnum && serializedEnum.getId().equals(textId))
-                    .findFirst().orElse(null);
+                    .filter(value -> value instanceof SerializedEnum serializedEnum &&
+                            serializedEnum.getId().equals(textId))
+                    .findFirst()
+                    .orElse(null);
         }
         return null;
     }

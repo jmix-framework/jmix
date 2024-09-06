@@ -25,6 +25,7 @@ import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.pivottableflowui.kit.component.model.*;
+import io.jmix.pivottableflowui.kit.data.DataItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,9 +53,9 @@ public class JmixPivotTableSerializer {
         SimpleModule module = createModule();
         getSerializers().forEach(module::addSerializer);
 
-        module.addDeserializer(Enum.class, new EnumIdDeserializer(Renderer.class));
-        module.addDeserializer(Enum.class, new EnumIdDeserializer(AggregationMode.class));
-        module.addDeserializer(Enum.class, new EnumIdDeserializer(Order.class));
+        module.addDeserializer(Renderer.class, new EnumIdDeserializer<>(Renderer.class));
+        module.addDeserializer(AggregationMode.class, new EnumIdDeserializer<>(AggregationMode.class));
+        module.addDeserializer(Order.class, new EnumIdDeserializer<>(Order.class));
 
         objectMapper.registerModule(module);
         objectMapper.setFilterProvider(createFilterProvider());
@@ -89,7 +90,7 @@ public class JmixPivotTableSerializer {
         return serialize(dataItems, dataItems.getClass());
     }
 
-    public <T> Object deserializeJsEventParams(JsonObject jsonObject, Class<T> objectClass) {
+    public <T> Object deserialize(JsonObject jsonObject, Class<T> objectClass) {
         T deserializedObject;
 
         log.debug("Starting deserialize {}", objectClass.getSimpleName());

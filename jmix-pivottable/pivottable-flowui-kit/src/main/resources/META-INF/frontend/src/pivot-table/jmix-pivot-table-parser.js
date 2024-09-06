@@ -1,8 +1,12 @@
-class PivotTableParser {
+export class PivotTableParser {
 
     floatFormatAggregationIds = ['sum', 'average', 'minimum', 'maximum', 'sumOverSum', 'upperBound80', 'lowerBound80'];
     integerFormatAggregationIds = ['count', 'countUniqueValues', 'integerSum'];
     boldClassNames = ['pvtTotal rowTotal', 'pvtTotal colTotal', 'pvtGrandTotal'];
+
+    constructor(pivotMessages) {
+        this.pivotMessages = pivotMessages;
+    }
 
     getTable(pivotElement) {
         var tableElements = pivotElement.getElementsByClassName('pvtTable');
@@ -158,8 +162,8 @@ class PivotTableParser {
         return modelCell.value;
     }
 
-    parsePivotTableToJson(pivotElement) {
-        let parser = new PivotTableParser();
+    static parseToJson(pivotElement, pivotMessages) {
+        let parser = new PivotTableParser(pivotMessages);
 
         var resultObject = {};
 
@@ -177,6 +181,6 @@ class PivotTableParser {
         var tableBody = table.tBodies[0];
         resultObject.bodyRows = parser.getRows(tableBody.rows, resultObject.headRows.length);
 
-        return JSON.stringify(resultObject);
+        return resultObject;
     }
 }

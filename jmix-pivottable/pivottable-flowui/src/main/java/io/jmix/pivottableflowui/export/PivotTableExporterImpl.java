@@ -31,13 +31,9 @@ public class PivotTableExporterImpl implements PivotTableExporter {
     public static final Set<Renderer> supportedRenderers = Collections.unmodifiableSet(Sets.newHashSet(
             Renderer.TABLE, Renderer.TABLE_BAR_CHART, Renderer.HEATMAP, Renderer.ROW_HEATMAP, Renderer.COL_HEATMAP));
 
-//    protected JmixPivotTableExtension pivotTableExtension;
-
-    protected String fileName;
-
     protected PivotTableExcelExporter excelExporter;
-
     protected PivotTable pivotTable;
+    protected String fileName;
 
     public PivotTableExporterImpl(PivotTable pivotTable, PivotTableExcelExporter exporter) {
         Preconditions.checkNotNullArgument(pivotTable);
@@ -46,9 +42,6 @@ public class PivotTableExporterImpl implements PivotTableExporter {
         this.pivotTable = pivotTable;
         this.excelExporter = exporter;
         this.excelExporter.init(pivotTable);
-
-//        JmixPivotTable jmixPivotTable = pivotTable.unwrap(JmixPivotTable.class);
-//        this.pivotTableExtension = new JmixPivotTableExtension(jmixPivotTable);
     }
 
     @Override
@@ -57,7 +50,7 @@ public class PivotTableExporterImpl implements PivotTableExporter {
 
         setupParseFormats();
 
-        excelExporter.exportPivotTable(new PivotData(), fileName);
+        pivotTable.getPivotData(data -> excelExporter.exportPivotTable(data, fileName));
     }
 
     @Override
@@ -66,7 +59,7 @@ public class PivotTableExporterImpl implements PivotTableExporter {
 
         setupParseFormats();
 
-        excelExporter.exportPivotTable(null, /*pivotTableExtension.getPivotData(),*/ fileName, downloader);
+        pivotTable.getPivotData(data -> excelExporter.exportPivotTable(data, fileName, downloader));
     }
 
     @Override

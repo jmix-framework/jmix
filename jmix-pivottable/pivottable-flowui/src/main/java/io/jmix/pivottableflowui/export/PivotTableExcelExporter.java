@@ -113,8 +113,8 @@ public class PivotTableExcelExporter {
     protected String timeParseFormat;
     protected SimpleDateFormat timeFormatter;
 
+    @Autowired
     protected Notifications notifications;
-
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
@@ -133,11 +133,6 @@ public class PivotTableExcelExporter {
     public PivotTableExcelExporter() {
     }
 
-    public void init(PivotTable pivotTable) {
-        entityMetaClass = pivotTable.getDataProvider() instanceof EntityDataUnit
-                ? ((EntityDataUnit) pivotTable.getDataProvider()).getEntityMetaClass() : null;
-    }
-
     @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
@@ -146,6 +141,11 @@ public class PivotTableExcelExporter {
     @Autowired
     public void setDownloader(Downloader downloader) {
         this.downloader = downloader;
+    }
+
+    public void init(PivotTable pivotTable) {
+        entityMetaClass = pivotTable.getDataProvider() instanceof EntityDataUnit
+                ? ((EntityDataUnit) pivotTable.getDataProvider()).getEntityMetaClass() : null;
     }
 
     /**

@@ -16,10 +16,14 @@
 
 package io.jmix.pivottableflowui.component;
 
+import com.vaadin.flow.function.SerializableConsumer;
+import elemental.json.JsonObject;
+import elemental.json.JsonValue;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.pivottableflowui.export.model.PivotData;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
 import io.jmix.pivottableflowui.kit.component.model.AggregationMode;
 import io.jmix.pivottableflowui.kit.component.model.Renderer;
@@ -32,6 +36,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class PivotTable extends JmixPivotTable implements ApplicationContextAware, InitializingBean {
 
@@ -52,7 +57,15 @@ public class PivotTable extends JmixPivotTable implements ApplicationContextAwar
         initLocalization();
     }
 
-    private void initLocalization() {
+    public void getPivotData(Consumer<PivotData> consumer) {
+        getElement().executeJs("return this._getTableElementData();")
+                .then((SerializableConsumer<JsonValue>) jsonValue -> {
+                    PivotData pivotData = (PivotData) serializer.deserialize((JsonObject) jsonValue, PivotData.class);
+                    consumer.accept(pivotData);
+                });
+    }
+
+    protected void initLocalization() {
         options.setLocaleCode(currentAuthentication.getLocale().getLanguage());
         options.setLocalizedStrings(getLocalizedStrings());
     }

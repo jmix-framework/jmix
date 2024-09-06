@@ -25,7 +25,6 @@ import './pivot/tips_data.min.js';
 import './pivot/c3_renderers.min.js';
 import './pivot/d3_renderers.min.js';
 import './pivot/export_renderers.min.js';
-import './jmix-pivot-table-parser.js';
 import './jmix-pivot-table.css';
 
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
@@ -34,6 +33,8 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 
 import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {jmixPivotTableStyles} from './jmix-pivot-table-styles.js';
+
+import {PivotTableParser} from './jmix-pivot-table-parser.js';
 
 registerStyles('jmix-pivot-table', [jmixPivotTableStyles], {moduleId: 'jmix-pivot-table-styles'});
 
@@ -113,6 +114,10 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         this._recreatePivot();
     }
 
+    _getTableElementData() {
+        return PivotTableParser.parseToJson(this, this._options.localizedStrings);
+    }
+
     _refreshHandler(pivotState) {
         this._updateOrderDirection("a.pvtRowOrder", pivotState.rowOrder);
         this._updateOrderDirection("a.pvtColOrder", pivotState.colOrder);
@@ -121,6 +126,20 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
             .find(key => this._options.localizedStrings.renderer[key] === pivotState.rendererName);
         let aggregation = Object.keys(this._options.localizedStrings.aggregation)
             .find(key => this._options.localizedStrings.aggregation[key] === pivotState.aggregatorName);
+
+        if (!aggregation && this._options.aggregations && this._options.aggregations.aggregations) {
+            for (let aggregator of this._options.aggregations.aggregations) {
+                if (pivotState.aggregatorName === aggregator.caption) {
+                    aggregation = aggregator.mode;
+                    break;
+                }
+            }
+        }
+
+        if (!aggregation && this._options.aggregation &&
+                pivotState.aggregatorName === this._options.aggregation.caption) {
+            aggregation = this._options.aggregation.mode;
+        }
 
         const customEvent = new CustomEvent('jmix-pivottable:refresh', {
             detail: {

@@ -72,11 +72,11 @@ public class PivotDataCell implements Serializable {
         this.type = type;
     }
 
-    public Boolean getBold() {
+    public Boolean isBold() {
         return isBold;
     }
 
-    public void setBold(Boolean bold) {
+    public void setIsBold(Boolean bold) {
         isBold = bold;
     }
 }

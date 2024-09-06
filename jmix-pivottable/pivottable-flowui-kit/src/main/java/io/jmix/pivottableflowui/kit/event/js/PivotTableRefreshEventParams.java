@@ -25,15 +25,15 @@ import java.util.Map;
 
 public class PivotTableRefreshEventParams {
 
-    List<String> rows;
-    List<String> cols;
-    Renderer renderer;
-    AggregationMode aggregationMode;
-    List<String> aggregationProperties;
-    Map<String, List<String>> inclusions;
-    Map<String, List<String>> exclusions;
-    Order colOrder;
-    Order rowOrder;
+    private List<String> rows;
+    private List<String> cols;
+    private Renderer renderer;
+    private AggregationMode aggregationMode;
+    private List<String> aggregationProperties;
+    private Map<String, List<String>> inclusions;
+    private Map<String, List<String>> exclusions;
+    private Order colOrder;
+    private Order rowOrder;
 
     public List<String> getRows() {
         return rows;

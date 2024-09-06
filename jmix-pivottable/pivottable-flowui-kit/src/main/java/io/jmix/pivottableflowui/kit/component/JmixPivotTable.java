@@ -16,15 +16,16 @@
 
 package io.jmix.pivottableflowui.kit.component;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.shared.SlotUtils;
-import com.vaadin.flow.data.provider.*;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.DataProviderListener;
+import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
@@ -44,7 +45,7 @@ import io.jmix.pivottableflowui.kit.event.js.PivotTableRefreshEventParams;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Tag("jmix-pivot-table")
@@ -458,17 +459,28 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
 
     protected void onCellClick(PivotTableJsCellClickEvent event) {
         PivotTableCellClickEventParams cellClickParams =
-                (PivotTableCellClickEventParams) serializer.deserializeJsEventParams(
+                (PivotTableCellClickEventParams) serializer.deserialize(
                         event.getParams(), PivotTableCellClickEventParams.class);
 
-        PivotTableCellClickEvent cellClickEvent = new PivotTableCellClickEvent(this, cellClickParams.getValue(),
-                cellClickParams.getFilters(), cellClickParams.getUsedDataItems());
+        List<DataItem> dataItems = getDataProvider().fetch(new Query<>()).toList();
+        List<DataItem> clickedDataItems = cellClickParams.getDataItemKeys() != null
+                ? cellClickParams.getDataItemKeys().stream().map(
+                        key -> {
+                            for (DataItem dataItem : dataItems) {
+                                if (dataItem.getId().equals(key)) {
+                                    return dataItem;
+                                }
+                            }
+                            return null;
+                        }).toList()
+                : null;
 
-        fireEvent(cellClickEvent);
+        fireEvent(new PivotTableCellClickEvent(this, cellClickParams.getValue(),
+                cellClickParams.getFilters(), clickedDataItems));
     }
 
     protected void onRefresh(PivotTableJsRefreshEvent event) {
-        PivotTableRefreshEventParams refreshParams = (PivotTableRefreshEventParams) serializer.deserializeJsEventParams(
+        PivotTableRefreshEventParams refreshParams = (PivotTableRefreshEventParams) serializer.deserialize(
                 event.getParams(), PivotTableRefreshEventParams.class);
 
         updateOptions(refreshParams);
@@ -486,7 +498,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         fireEvent(refreshEvent);
     }
 
-    private void updateOptions(PivotTableRefreshEventParams params) {
+    protected void updateOptions(PivotTableRefreshEventParams params) {
         options.setChangedFromClient(true);
 
         options.setRows(params.getRows());
@@ -615,4 +627,3 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         }
     }
 }
-

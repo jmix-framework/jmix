@@ -22,6 +22,7 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.exception.FileParseException;
+import io.jmix.search.exception.UnsupportedFileFormatException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.tika.metadata.Metadata;
@@ -36,7 +37,6 @@ import org.apache.tika.parser.txt.TXTParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
@@ -48,10 +48,13 @@ public class FileProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(FileProcessor.class);
 
-    @Autowired
     protected FileStorageLocator fileStorageLocator;
 
-    public String extractFileContent(FileRef fileRef) throws FileParseException {
+    public FileProcessor(FileStorageLocator fileStorageLocator) {
+        this.fileStorageLocator = fileStorageLocator;
+    }
+
+    public String extractFileContent(FileRef fileRef) throws FileParseException, UnsupportedFileFormatException {
         Preconditions.checkNotNullArgument(fileRef);
         log.debug("Extract content of file {}", fileRef);
         FileStorage fileStorage = fileStorageLocator.getByName(fileRef.getStorageName());
@@ -80,9 +83,9 @@ public class FileProcessor {
         return stringWriter.toString();
     }
 
-    protected Parser getParser(FileRef fileRef) throws FileParseException {
+    protected Parser getParser(FileRef fileRef) throws UnsupportedFileFormatException {
         Optional<Parser> parserOpt = getParserOpt(fileRef);
-        return parserOpt.orElseThrow(() -> new FileParseException(fileRef.getFileName(), "Parser not found"));
+        return parserOpt.orElseThrow(() -> new UnsupportedFileFormatException(fileRef.getFileName()));
     }
 
     protected Optional<Parser> getParserOpt(FileRef fileRef) {

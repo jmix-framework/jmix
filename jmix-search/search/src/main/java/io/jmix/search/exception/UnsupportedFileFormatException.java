@@ -20,7 +20,7 @@ import org.apache.commons.io.FilenameUtils;
 
 public class UnsupportedFileFormatException extends Exception {
 
-    public static final String MESSAGE = "The file %s with the '%s' extension is not supported.";
+    public static final String MESSAGE = "The file %s with '%s' extension is not supported.";
 
     public UnsupportedFileFormatException(String fileName) {
         super(String.format(MESSAGE, fileName, FilenameUtils.getExtension(fileName)));

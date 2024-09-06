@@ -38,6 +38,6 @@ class FileProcessorTest {
         FileRef fileRefMock = mock(FileRef.class);
         when(fileRefMock.getFileName()).thenReturn(FILE_NAME_EXAMPLE);
         UnsupportedFileFormatException exception = assertThrows(UnsupportedFileFormatException.class, () -> fileProcessor.extractFileContent(fileRefMock));
-        assertEquals("The file the-file-with-not-supported-extension.sql with \"sql\" extension is not supported. Parser was not found. Only following formats are supported: pdf, doc, docx, xls, xlsx, odt, ods, rtf, txt.", exception.getMessage());
+        assertEquals("The file the-file-with-not-supported-extension.sql with 'sql' extension is not supported. Only following formats are supported: pdf, doc, docx, xls, xlsx, odt, ods, rtf, txt.", exception.getMessage());
     }
 }

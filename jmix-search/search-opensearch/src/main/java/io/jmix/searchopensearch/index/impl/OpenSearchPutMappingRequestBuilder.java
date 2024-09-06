@@ -35,6 +35,8 @@ import java.util.Map;
 
 @Component("search_OpenSearchPutMappingRequestBuilder")
 public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<PutMappingRequest, JsonpMapper> {
+    public static final TypeReference<Map<String, Object>> TYPE_REF = new TypeReference<>() {
+    };
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Valid
@@ -60,8 +62,7 @@ public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<Put
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> getPropertiesMap(IndexMappingConfiguration mappingConfiguration) {
-        Map<String, Object> mappingBodyAsMap = objectMapper.convertValue(mappingConfiguration, new TypeReference<Map<String, Object>>() {
-        });
+        Map<String, Object> mappingBodyAsMap = objectMapper.convertValue(mappingConfiguration, TYPE_REF);
         return (Map<String, Object>) mappingBodyAsMap.get("properties");
     }
 }

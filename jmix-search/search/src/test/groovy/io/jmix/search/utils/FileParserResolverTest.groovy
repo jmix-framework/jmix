@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * You may obtain fileName copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -31,7 +31,7 @@ class FileParserResolverTest extends Specification {
     def "should throw EmptyFileExtensionException when the given file name has no extension"() {
         given:
         FileRef fileRef = Mock()
-        fileRef.getFileName() >> a
+        fileRef.getFileName() >> fileName
 
         and:
         def parserResolver = new FileParserResolver()
@@ -43,13 +43,13 @@ class FileParserResolverTest extends Specification {
         thrown(EmptyFileExtensionException)
 
         where:
-        a << ["abc", "def", "abc.", "abc.."]
+        fileName << ["abc", "def", "abc.", "abc.."]
     }
 
     def "should throw EmptyFileExtensionException when the given file name with unsupported extension"() {
         given:
         FileRef fileRef = Mock()
-        fileRef.getFileName() >> a
+        fileRef.getFileName() >> fileName
 
         and:
         def parserResolver = new FileParserResolver()
@@ -61,7 +61,7 @@ class FileParserResolverTest extends Specification {
         thrown(UnsupportedFileExtensionException)
 
         where:
-        a << ["abc.def", "def.zxc"]
+        fileName << ["abc.def", "def.zxc"]
     }
 
     def "should throw EmptyFileExtensionException with detailed description of the problem"() {
@@ -97,14 +97,14 @@ class FileParserResolverTest extends Specification {
 
         where:
         fileExtension | parserClass
-        "pdf"| PDFParser
-        "doc"| OfficeParser
-        "xls"| OfficeParser
-        "docx"| OOXMLParser
-        "xlsx"| OOXMLParser
-        "odt"| OpenDocumentParser
-        "ods"| OpenDocumentParser
-        "rtf"| RTFParser
-        "txt"| TXTParser
+        "pdf"         | PDFParser
+        "doc"         | OfficeParser
+        "xls"         | OfficeParser
+        "docx"        | OOXMLParser
+        "xlsx"        | OOXMLParser
+        "odt"         | OpenDocumentParser
+        "ods"         | OpenDocumentParser
+        "rtf"         | RTFParser
+        "txt"         | TXTParser
     }
 }

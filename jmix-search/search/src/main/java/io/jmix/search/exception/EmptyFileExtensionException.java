@@ -16,13 +16,13 @@
 
 package io.jmix.search.exception;
 
-import org.apache.commons.io.FilenameUtils;
+import io.jmix.core.FileRef;
 
-public class UnsupportedFileFormatException extends Exception {
+public class EmptyFileExtensionException extends ParserResolvingException {
 
-    public static final String MESSAGE = "The file %s with '%s' extension is not supported.";
+    public static final String MESSAGE = "Extension of the file %s is empty";
 
-    public UnsupportedFileFormatException(String fileName) {
-        super(String.format(MESSAGE, fileName, FilenameUtils.getExtension(fileName)));
+    public EmptyFileExtensionException(String fileName) {
+        super(String.format(MESSAGE, fileName));
     }
 }

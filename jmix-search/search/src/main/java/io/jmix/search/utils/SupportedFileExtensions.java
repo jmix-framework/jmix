@@ -35,7 +35,7 @@ public enum SupportedFileExtensions {
     ODT("odt", OpenDocumentParser::new),
     ODS("ods", OpenDocumentParser::new),
     RTF("rtf", RTFParser::new),
-    TXT("rtf", TXTParser::new);
+    TXT("txt", TXTParser::new);
 
     private final String symbols;
     private final Supplier<? extends Parser> parserSupplier;

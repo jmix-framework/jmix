@@ -23,9 +23,9 @@ class UnsupportedFileExtensionExceptionTest extends Specification {
 
     public static final String MESSAGE_1 = "The file the-file-with-not-supported-extension.sql with 'sql' extension " +
             "is not supported. " +
-            "Only following file extensions are supported pdf, doc, xls, docx, xlsx, odt, ods, rtf, rtf."
+            "Only following file extensions are supported pdf, doc, xls, docx, xlsx, odt, ods, rtf, txt."
     public static final String MESSAGE_2 = "The file another-file.smt with 'smt' extension is not supported. " +
-            "Only following file extensions are supported pdf, doc, xls, docx, xlsx, odt, ods, rtf, rtf."
+            "Only following file extensions are supported pdf, doc, xls, docx, xlsx, odt, ods, rtf, txt."
 
     def "message test"() {
         when:
@@ -35,7 +35,7 @@ class UnsupportedFileExtensionExceptionTest extends Specification {
         exception.getMessage() == b
 
         where:
-        fileName | b
+        fileName                                    | b
         "the-file-with-not-supported-extension.sql" | MESSAGE_1
         "another-file.smt"                          | MESSAGE_2
     }

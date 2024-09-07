@@ -46,7 +46,7 @@ class FileParserResolverTest extends Specification {
         fileName << ["abc", "def", "abc.", "abc.."]
     }
 
-    def "should throw EmptyFileExtensionException when the given file name with unsupported extension"() {
+    def "should throw UnsupportedFileExtensionException when the given file name with unsupported extension"() {
         given:
         FileRef fileRef = Mock()
         fileRef.getFileName() >> fileName
@@ -58,30 +58,13 @@ class FileParserResolverTest extends Specification {
         parserResolver.getParser(fileRef)
 
         then:
-        thrown(UnsupportedFileExtensionException)
-
+        def exception = thrown(UnsupportedFileExtensionException)
+        exception.getMessage().contains(fileName)
         where:
         fileName << ["abc.def", "def.zxc"]
     }
 
-    def "should throw EmptyFileExtensionException with detailed description of the problem"() {
-        given:
-        FileRef fileRef = Mock()
-        fileRef.getFileName() >> "abc.def"
-
-        and:
-        def parserResolver = new FileParserResolver()
-
-        when:
-        parserResolver.getParser(fileRef)
-
-        then:
-        def exception = thrown(UnsupportedFileExtensionException)
-        exception.getMessage() == "The file abc.def with 'def' extension is not supported. " +
-                "Only following file extensions are supported pdf, doc, xls, docx, xlsx, odt, ods, rtf, txt."
-    }
-
-    def "should return parser of "() {
+    def "should return parser of the type that corresponds to the file extension"() {
         given:
         FileRef fileRef = Mock()
         fileRef.getFileName() >> "filename." + fileExtension

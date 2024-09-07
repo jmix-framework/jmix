@@ -16,8 +16,6 @@
 
 package io.jmix.search.exception;
 
-import io.jmix.core.FileRef;
-
 public class EmptyFileExtensionException extends ParserResolvingException {
 
     public static final String MESSAGE = "Extension of the file %s is empty";

@@ -26,7 +26,6 @@ import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.exception.FileParseException;
 import io.jmix.search.exception.ParserResolvingException;
-import io.jmix.search.exception.UnsupportedFileExtensionException;
 import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.utils.BooleanParser;
 import io.jmix.search.utils.FileProcessor;

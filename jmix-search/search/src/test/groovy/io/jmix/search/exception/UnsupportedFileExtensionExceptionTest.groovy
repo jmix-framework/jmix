@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * You may obtain fileName copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -27,16 +27,16 @@ class UnsupportedFileExtensionExceptionTest extends Specification {
     public static final String MESSAGE_2 = "The file another-file.smt with 'smt' extension is not supported. " +
             "Only following file extensions are supported pdf, doc, xls, docx, xlsx, odt, ods, rtf, rtf."
 
-    def "message test"(){
+    def "message test"() {
         when:
-        def exception = new UnsupportedFileExtensionException(a)
+        def exception = new UnsupportedFileExtensionException(fileName)
 
         then:
         exception.getMessage() == b
 
         where:
-        a | b
+        fileName | b
         "the-file-with-not-supported-extension.sql" | MESSAGE_1
-        "another-file.smt" | MESSAGE_2
+        "another-file.smt"                          | MESSAGE_2
     }
 }

@@ -17,8 +17,10 @@
 package io.jmix.search.index.mapping.fieldmapper.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,12 +42,13 @@ public abstract class AbstractFieldMapper implements FieldMapper {
 
     /**
      * Creates map of input parameters supported by this mapper.
+     *
      * @param rawParameters input parameters
      * @return supported parameters only
      */
-    protected Map<String, Object> createEffectiveParameters(Map<String, Object> rawParameters) {
+    protected Map<String, Object> createEffectiveNativeParameters(Map<String, Object> rawParameters) {
         return rawParameters.entrySet().stream()
                 .filter((entry) -> getSupportedMappingParameters().contains(entry.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
     }
 }

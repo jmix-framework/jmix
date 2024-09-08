@@ -16,7 +16,11 @@
 
 package io.jmix.search.index.mapping.fieldmapper.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
+import io.jmix.search.index.mapping.AdvancedSearchSettings;
 import io.jmix.search.index.mapping.ParameterKeys;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +40,33 @@ public class TextFieldMapper extends SimpleFieldMapper {
     @Override
     public Set<String> getSupportedMappingParameters() {
         return supportedParameters;
+    }
+
+    @Override
+    boolean isAdvancedSearchSupported() {
+        return true;
+    }
+
+    @Override
+    protected ObjectNode applyAdvancedSearch(ObjectNode config, AdvancedSearchSettings advancedSearchSettings) {
+        JsonNode currentFieldsNode = config.path("fields");
+        ObjectNode fieldsNode;
+        if (currentFieldsNode.isObject()) {
+            fieldsNode = (ObjectNode) currentFieldsNode;
+        } else {
+            fieldsNode = config.objectNode();
+        }
+
+        JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
+
+        ObjectNode edgeSubFieldNode = nodeFactory.objectNode();
+        edgeSubFieldNode.put("type", "text");
+        edgeSubFieldNode.put("analyzer", "_jmix_edge_analyzer"); //todo
+        edgeSubFieldNode.put("search_analyzer", "_jmix_edge_search_analyzer"); //todo
+
+        fieldsNode.set("edge", edgeSubFieldNode); //todo name
+
+        return config;
     }
 
     @Override

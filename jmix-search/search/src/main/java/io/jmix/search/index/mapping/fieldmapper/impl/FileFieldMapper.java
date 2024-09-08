@@ -41,7 +41,7 @@ public class FileFieldMapper extends AbstractFieldMapper {
 
     @Override
     public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
-        Map<String, Object> effectiveParameters = createEffectiveParameters(parameters);
+        Map<String, Object> effectiveParameters = createEffectiveNativeParameters(parameters);
         effectiveParameters.put("type", "text");
 
         JsonNode config = objectMapper.valueToTree(effectiveParameters);

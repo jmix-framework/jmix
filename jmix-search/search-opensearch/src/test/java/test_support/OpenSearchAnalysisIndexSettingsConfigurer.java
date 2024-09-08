@@ -19,6 +19,7 @@ package test_support;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurationContext;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurer;
 import org.opensearch.client.opensearch.indices.IndexSettings;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import test_support.entity.TestRootEntity;
 
@@ -26,7 +27,7 @@ import test_support.entity.TestRootEntity;
 public class OpenSearchAnalysisIndexSettingsConfigurer implements OpenSearchIndexSettingsConfigurer {
 
     @Override
-    public void configure(OpenSearchIndexSettingsConfigurationContext context) {
+    public void configure(@NonNull OpenSearchIndexSettingsConfigurationContext context) {
         IndexSettings.Builder commonSettingsBuilder = context.getCommonSettingsBuilder();
         commonSettingsBuilder
                 .maxResultWindow(15000)

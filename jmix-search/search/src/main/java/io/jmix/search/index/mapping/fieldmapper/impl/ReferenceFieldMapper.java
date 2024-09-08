@@ -42,7 +42,7 @@ public class ReferenceFieldMapper extends AbstractFieldMapper {
 
     @Override
     public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
-        Map<String, Object> effectiveParameters = createEffectiveParameters(parameters);
+        Map<String, Object> effectiveParameters = createEffectiveNativeParameters(parameters);
         effectiveParameters.put("type", "text");
 
         ObjectNode root = JsonNodeFactory.instance.objectNode();

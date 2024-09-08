@@ -29,6 +29,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.annotation.AdvancedSearch;
 import io.jmix.search.index.annotation.FieldMappingAnnotation;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
@@ -83,7 +84,6 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final SearchProperties searchProperties;
     protected final MethodArgumentsProvider methodArgumentsProvider;
-    //protected final IndexAnalysisElementsRegistry indexAnalysisElementsRegistry;
 
     @Autowired
     public AnnotatedIndexDefinitionProcessor(Metadata metadata,
@@ -94,8 +94,7 @@ public class AnnotatedIndexDefinitionProcessor {
                                              InstanceNameProvider instanceNameProvider,
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
-                                             ContextArgumentResolverComposite resolvers/*,
-                                             IndexAnalysisElementsRegistry indexAnalysisElementsRegistry*/) {
+                                             ContextArgumentResolverComposite resolvers) {
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
@@ -105,7 +104,6 @@ public class AnnotatedIndexDefinitionProcessor {
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
         this.searchProperties = searchProperties;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
-        //this.indexAnalysisElementsRegistry = indexAnalysisElementsRegistry;
     }
 
     /**
@@ -136,7 +134,8 @@ public class AnnotatedIndexDefinitionProcessor {
                 indexName,
                 indexMappingConfiguration,
                 affectedEntityClasses,
-                indexablePredicate
+                indexablePredicate,
+                indexDef.getAdvancedSearchSettings()
         );
     }
 
@@ -160,6 +159,9 @@ public class AnnotatedIndexDefinitionProcessor {
         result.setEntityClass(entityClass);
         result.setMetaClass(metaClass);
         result.setIndexName(indexAnnotation.indexName());
+
+        AdvancedSearchSettings advancedSearchSettings = createAdvancedSearchSettings(indexDefinitionClass);
+        result.setAdvancedSearchSettings(advancedSearchSettings);
 
         Method[] methods = indexDefinitionClass.getDeclaredMethods();
         for (Method method : methods) {
@@ -191,6 +193,20 @@ public class AnnotatedIndexDefinitionProcessor {
             indexName = searchProperties.getSearchIndexNamePrefix() + parsedIndexDefinition.getMetaClass().getName();
         }
         return indexName.toLowerCase();
+    }
+
+    @Nullable
+    protected AdvancedSearchSettings createAdvancedSearchSettings(Class<?> indexDefinitionClass) {
+        AdvancedSearch advancedSearchAnnotation = indexDefinitionClass.getAnnotation(AdvancedSearch.class);
+        AdvancedSearchSettings advancedSearchSettings = null;
+        if (advancedSearchAnnotation != null) {
+            advancedSearchSettings = AdvancedSearchSettings.builder()
+                    .setEdgeNGramMin(advancedSearchAnnotation.prefixMinSize())
+                    .setEdgeNGramMax(advancedSearchAnnotation.prefixMaxSize())
+                    .setEnabled(advancedSearchAnnotation.enabled())
+                    .build();
+        }
+        return advancedSearchSettings;
     }
 
     protected IndexMappingConfiguration createIndexMappingConfig(ParsedIndexDefinition parsedIndexDefinition) {
@@ -583,7 +599,7 @@ public class AnnotatedIndexDefinitionProcessor {
         return fieldMappingStrategyProvider.getFieldMappingStrategyByClass(fieldMappingStrategyClass);
     }
 
-    private static class ParsedIndexDefinition {
+    protected static class ParsedIndexDefinition {
         private final Class<?> indexDefinitionClass;
         private Class<?> entityClass;
         private MetaClass metaClass;
@@ -591,6 +607,7 @@ public class AnnotatedIndexDefinitionProcessor {
         private final List<Annotation> fieldAnnotations = new ArrayList<>();
         private final List<Method> indexablePredicateMethods = new ArrayList<>();
         private Method mappingDefinitionImplementationMethod = null;
+        private AdvancedSearchSettings advancedSearchSettings;
 
         private ParsedIndexDefinition(Class<?> indexDefinitionClass) {
             this.indexDefinitionClass = indexDefinitionClass;
@@ -647,6 +664,15 @@ public class AnnotatedIndexDefinitionProcessor {
 
         private void setMappingDefinitionImplementationMethod(@Nullable Method mappingDefinitionImplementationMethod) {
             this.mappingDefinitionImplementationMethod = mappingDefinitionImplementationMethod;
+        }
+
+        @Nullable
+        private AdvancedSearchSettings getAdvancedSearchSettings() {
+            return advancedSearchSettings;
+        }
+
+        private void setAdvancedSearchSettings(@Nullable AdvancedSearchSettings advancedSearchSettings) {
+            this.advancedSearchSettings = advancedSearchSettings;
         }
     }
 

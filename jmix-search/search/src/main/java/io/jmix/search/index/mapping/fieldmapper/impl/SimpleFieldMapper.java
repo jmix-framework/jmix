@@ -17,6 +17,7 @@
 package io.jmix.search.index.mapping.fieldmapper.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.search.index.mapping.AdvancedSearchSettings;
 
 import java.util.Map;
 
@@ -24,10 +25,27 @@ public abstract class SimpleFieldMapper extends AbstractFieldMapper {
 
     @Override
     public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
-        Map<String, Object> effectiveParameters = createEffectiveParameters(parameters);
-        effectiveParameters.put("type", getSearchPlatformDatatype());
+        Map<String, Object> nativeParameters = createEffectiveNativeParameters(parameters);
+        nativeParameters.put("type", getSearchPlatformDatatype());
+        ObjectNode baseConfig = objectMapper.convertValue(nativeParameters, ObjectNode.class);
 
-        return objectMapper.convertValue(effectiveParameters, ObjectNode.class);
+        ObjectNode resultConfig = baseConfig;
+        if(isAdvancedSearchSupported()) {
+            AdvancedSearchSettings advancedSearchSettings = (AdvancedSearchSettings) parameters.get("sys_AdvancedSearchSettings"); //todo constant
+            if (advancedSearchSettings != null) {
+                if(advancedSearchSettings.isEnabled()) {
+                    resultConfig = applyAdvancedSearch(baseConfig.deepCopy(), advancedSearchSettings);
+                }
+            }
+        }
+
+        return resultConfig;
+    }
+
+    abstract boolean isAdvancedSearchSupported();
+
+    protected ObjectNode applyAdvancedSearch(ObjectNode config, AdvancedSearchSettings advancedSearchSettings) {
+        return config;
     }
 
     protected abstract String getSearchPlatformDatatype();

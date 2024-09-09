@@ -17,8 +17,8 @@
 package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.HasPlaceholder;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
@@ -457,6 +457,12 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
     public Optional<String> loadShortcutCombination(Element element) {
         return loadShortcut(element, "shortcutCombination");
+    }
+
+    public void loadShortcutCombination(HasShortcutCombination component, Element element) {
+        loadShortcutCombination(element)
+                .map(KeyCombination::create)
+                .ifPresent(component::setShortcutCombination);
     }
 
     public Optional<String> loadShortcut(Element element, String attributeName) {

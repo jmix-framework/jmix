@@ -2223,6 +2223,10 @@
         <xs:attribute name="icon" type="vaadinIconEnum"/>
     </xs:attributeGroup>
 
+    <xs:attributeGroup name="hasShortcutCombination">
+        <xs:attribute name="shortcutCombination" type="xs:string"/>
+    </xs:attributeGroup>
+
     <xs:attributeGroup name="hasAriaLabel">
         <xs:attribute name="ariaLabel" type="resourceString"/>
         <xs:attribute name="ariaLabelledBy" type="resourceString"/>
@@ -2323,13 +2327,13 @@
         </xs:sequence>
 
         <xs:attribute name="type" type="actionTypeEnum"/>
-        <xs:attribute name="shortcutCombination" type="xs:string"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="text" type="resourceString"/>
         <xs:attribute name="description" type="resourceString"/>
         <xs:attribute name="actionVariant" type="actionVariant"/>
 
         <xs:attributeGroup ref="hasIcon"/>
+        <xs:attributeGroup ref="hasShortcutCombination"/>
         <xs:attributeGroup ref="requiresId"/>
         <xs:attributeGroup ref="hasEnabled"/>
     </xs:complexType>
@@ -2869,6 +2873,7 @@
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
+                <xs:attributeGroup ref="hasShortcutCombination"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
@@ -2912,8 +2917,8 @@
         <xs:attributeGroup ref="hasIcon"/>
         <xs:attributeGroup ref="hasTitle"/>
         <xs:attributeGroup ref="hasClassNames"/>
+        <xs:attributeGroup ref="hasShortcutCombination"/>
 
-        <xs:attribute name="shortcutCombination" type="xs:string"/>
         <xs:attribute name="themeNames" type="buttonThemeNames"/>
         <xs:attribute name="iconAfterText" type="xs:boolean"/>
     </xs:complexType>
@@ -3221,6 +3226,8 @@
             <xs:extension base="baseDropdownButtonComponent">
                 <xs:attribute name="action" type="xs:string"/>
                 <xs:attribute name="dropdownIcon" type="vaadinIconEnum"/>
+
+                <xs:attributeGroup ref="hasShortcutCombination"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

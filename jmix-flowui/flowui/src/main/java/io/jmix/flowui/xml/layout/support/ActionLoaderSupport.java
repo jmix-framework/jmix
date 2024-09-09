@@ -162,10 +162,7 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         if (shortcutCombinationElement != null) {
             loadShortcutCombination(shortcutCombinationElement, targetAction);
         } else {
-            componentLoader().loadShortcutCombination(element)
-                    .ifPresent(shortcutCombination ->
-                            targetAction.setShortcutCombination(KeyCombination.create(shortcutCombination))
-                    );
+            componentLoader().loadShortcutCombination(targetAction, element);
         }
 
         Element propertiesEl = element.element("properties");

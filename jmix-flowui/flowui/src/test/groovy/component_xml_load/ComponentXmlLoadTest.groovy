@@ -28,6 +28,7 @@ import com.vaadin.flow.dom.ElementConstants
 import component_xml_load.screen.ComponentView
 import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer
 import io.jmix.flowui.data.items.EnumDataProvider
+import io.jmix.flowui.kit.component.KeyCombination
 import io.jmix.flowui.kit.component.dropdownbutton.ActionItem
 import io.jmix.flowui.kit.component.dropdownbutton.ComponentItem
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant
@@ -139,6 +140,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             enabled
             height == "50px"
             iconAfterText
+            shortcutCombination == KeyCombination.create("ALT-L")
             maxHeight == "55px"
             maxWidth == "120px"
             minHeight == "40px"
@@ -286,6 +288,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             height == "50px"
             icon.element.getAttribute("icon") ==
                     VaadinIcon.GAMEPAD.create().element.getAttribute("icon")
+            shortcutCombination == KeyCombination.create("ALT-L")
             maxHeight == "55px"
             maxWidth == "120px"
             minHeight == "40px"

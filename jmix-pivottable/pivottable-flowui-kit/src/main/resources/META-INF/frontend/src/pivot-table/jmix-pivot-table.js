@@ -200,7 +200,6 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                 $.pivotUtilities.renderers = $.extend($.pivotUtilities.c3_renderers,
                     $.extend($.pivotUtilities.d3_renderers, $.pivotUtilities.renderers));
                 pivotTable._initLocale();
-//                $("#div-id").pivotUI(
                 $("div.pivot-table-output").pivotUI(
                     pivotTable._dataSet,
                     pivotTable._preparePivotTableOptions(),
@@ -260,21 +259,17 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
             }
         };
 
-        if (this._options.nativeJson) {
-            this._mergeOptionsWithJsonOptions(resultOptions, window.eval("(" + this._options.nativeJson + ")"));
-        }
-
         return resultOptions;
     }
 
-    _mergeOptionsWithJsonOptions(dst, src) {
+    _mergeOptionsWithNativeJsonOptions(dst, src) {
         for (let property in src) {
             if (src.hasOwnProperty(property)) {
                 if (src[property] && typeof src[property] === "object") {
                     if (!dst[property]) {
                         dst[property] = src[property];
                     } else {
-                        this._mergeOptionsWithJsonOptions(dst[property], src[property]);
+                        this._mergeOptionsWithNativeJsonOptions(dst[property], src[property]);
                     }
                 } else {
                     dst[property] = src[property];
@@ -508,6 +503,15 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     }
 
     _getLocalizedRendererName() {
+        let localizedRenderers = this._options.localizedStrings.renderer;
+        if (this._options.showUI) {
+            if (this._options.renderers) {
+                if (this._options.renderers.selectedRenderer) {
+                    return localizedRenderers[this._options.renderers.selectedRenderer];
+                }
+            }
+        }
+
         if (!this._options.renderer) {
             return this._options.localizedStrings.renderer.table;
         }
@@ -538,6 +542,9 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
 
     _updateOptions(changes) {
         this._options = changes.options;
+        if (this._options.nativeJson) {
+            this._mergeOptionsWithNativeJsonOptions(this._options, window.eval("(" + this._options.nativeJson + ")"));
+        }
         this._updateDerivedPropertiesPropertyName();
         this._processNativeJsFunctions(this._options)
         this._recreatePivot();

@@ -190,6 +190,6 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
         showPivotManager.withItems(items)
                 .withIncludedProperties(parseProperties(includedProperties))
                 .withExcludedProperties(parseProperties(excludedProperties))
-                .build();
+                .show();
     }
 }

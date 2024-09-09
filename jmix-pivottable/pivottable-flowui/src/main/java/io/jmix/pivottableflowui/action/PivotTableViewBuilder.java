@@ -258,7 +258,7 @@ public class PivotTableViewBuilder {
         return this;
     }
 
-    public void build() {
+    public void show() {
         if (!(target instanceof Grid<?> grid) || UiComponentUtils.findView(grid) == null) {
             throw new IllegalStateException(
                     String.format("Component '%s' is null or not added to a view", ((Grid) target).getId()));
@@ -274,6 +274,7 @@ public class PivotTableViewBuilder {
                 .withAfterNavigationHandler(event -> {
                     PivotTableView pivotTableView = event.getView();
                     pivotTableView.setProperties(properties);
+                    pivotTableView.setNativeJson(nativeJson);
                     pivotTableView.setDataItems(dataItems);
                 })
                 .navigate();

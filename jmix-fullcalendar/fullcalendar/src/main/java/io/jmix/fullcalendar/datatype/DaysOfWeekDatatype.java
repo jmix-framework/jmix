@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * The datatype that enables containing days of week in one field.
  */
-@DatatypeDef(id = "daysOfWeek", javaClass = DaysOfWeek.class, defaultForClass = true, value = "fclndr_DaysOfWeek")
+@DatatypeDef(id = "daysOfWeek", javaClass = DaysOfWeek.class, defaultForClass = true, value = "fcalen_DaysOfWeek")
 @Ddl("varchar(200)")
 public class DaysOfWeekDatatype implements Datatype<DaysOfWeek> {
 

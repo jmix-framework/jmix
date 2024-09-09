@@ -16,6 +16,9 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+/**
+ * Supported component's views.
+ */
 public enum CalendarViewType implements CalendarView {
 
     DAY_GRID_DAY("dayGridDay"),

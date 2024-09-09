@@ -710,7 +710,6 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             dateTime = new Date(dateTime);
         }
 
-        // todo use moment.js and move to utils
         const dateFormatter = this.calendar.formatIso.bind(this.calendar);
 
         return dateFormatter(dateTime, omitTime);

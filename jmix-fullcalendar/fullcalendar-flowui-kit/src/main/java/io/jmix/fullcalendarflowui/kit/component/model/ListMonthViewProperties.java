@@ -16,6 +16,17 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
+
+/**
+ * Configuration properties of list month view {@link CalendarViewType#LIST_MONTH}.
+ * <p>
+ * The view properties can be retrieved from {@link JmixFullCalendar#getCalendarViewProperties(CalendarViewType)}.
+ * For instance:
+ * <pre>{@code
+ * calendar.getCalendarViewProperties(CalendarViewType.LIST_MONTH);
+ * }</pre>
+ */
 public class ListMonthViewProperties extends AbstractListViewProperties {
 
     public ListMonthViewProperties() {

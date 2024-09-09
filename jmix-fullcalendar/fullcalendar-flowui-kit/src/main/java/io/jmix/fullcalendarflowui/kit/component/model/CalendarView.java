@@ -16,5 +16,13 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
+
+/**
+ * Base interface for views in {@link JmixFullCalendar}.
+ *
+ * @see CalendarViewType
+ * @see <a href="https://fullcalendar.io/docs/view-object">FullCalendar docs :: view-object</a>
+ */
 public interface CalendarView extends HasEnumId<String> {
 }

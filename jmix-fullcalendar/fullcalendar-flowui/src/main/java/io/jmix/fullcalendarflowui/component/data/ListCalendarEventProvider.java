@@ -134,7 +134,6 @@ public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEven
      * Removes all events from event provider.
      */
     public void removeAllItems() {
-        // todo rp discuss
         List<CalendarEvent> removedItems = new ArrayList<>(items);
         items.clear();
 

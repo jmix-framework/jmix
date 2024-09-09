@@ -174,18 +174,27 @@ public class StudioViewPropertiesLoader implements HasLoaderSupport {
 
     protected void loadListDayViewProperties(Element listElement, ListDayViewProperties view) {
         loadBaseViewProperties(listElement, view);
+        loadBaseListViewProperties(listElement, view);
     }
 
     protected void loadListWeekViewProperties(Element listElement, ListWeekViewProperties view) {
         loadBaseViewProperties(listElement, view);
+        loadBaseListViewProperties(listElement, view);
     }
 
     protected void loadListMonthViewProperties(Element listElement, ListMonthViewProperties view) {
         loadBaseViewProperties(listElement, view);
+        loadBaseListViewProperties(listElement, view);
     }
 
     protected void loadListYearViewProperties(Element listElement, ListYearViewProperties view) {
         loadBaseViewProperties(listElement, view);
+        loadBaseListViewProperties(listElement, view);
+    }
+
+    protected void loadBaseListViewProperties(Element listElement, AbstractListViewProperties view) {
+        loadBoolean(listElement, "listDaySideVisible", view::setListDaySideVisible);
+        loadBoolean(listElement, "listDayVisible", view::setListDayVisible);
     }
 
     protected void loadMultiMonthViewProperties(Element multiMonthElement, JmixFullCalendar resultComponent) {

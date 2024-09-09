@@ -16,6 +16,17 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
+
+/**
+ * Configuration properties of time-grid week view {@link CalendarViewType#TIME_GRID_WEEK}.
+ * <p>
+ * The view properties can be retrieved from {@link JmixFullCalendar#getCalendarViewProperties(CalendarViewType)}.
+ * For instance:
+ * <pre>{@code
+ * calendar.getCalendarViewProperties(CalendarViewType.TIME_GRID_WEEK);
+ * }</pre>
+ */
 public class TimeGridWeekViewProperties extends AbstractTimeGridViewProperties {
 
     public TimeGridWeekViewProperties() {

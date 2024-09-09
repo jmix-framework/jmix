@@ -6,7 +6,7 @@ import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 
 /**
- * The class describes a calendar event click event. The event is fired when the calendar event is clicked.
+ * The event is fired when the calendar event is clicked.
  */
 public class EventClickEvent extends AbstractClickEvent {
 

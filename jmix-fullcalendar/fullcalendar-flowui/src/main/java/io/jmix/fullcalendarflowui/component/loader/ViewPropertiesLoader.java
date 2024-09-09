@@ -243,6 +243,8 @@ public class ViewPropertiesLoader {
                 context.getMessageGroup(), view::setListDayFormat);
         loaderSupport.loadResourceString(listElement, "listDaySideFormat",
                 context.getMessageGroup(), view::setListDaySideFormat);
+        loaderSupport.loadBoolean(listElement, "listDaySideVisible", view::setListDaySideVisible);
+        loaderSupport.loadBoolean(listElement, "listDayVisible", view::setListDayVisible);
     }
 
     protected void loadMultiMonthViewProperties(Element multiMonthElement, FullCalendar resultComponent) {

@@ -18,6 +18,8 @@
 package io.jmix.fullcalendarflowui.kit.component.model;
 
 /**
+ * Marker interface for serializing enums.
+ *
  * @param <T> id type, {@link String} or {@link Integer}
  */
 public interface HasEnumId<T> {

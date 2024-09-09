@@ -31,11 +31,13 @@ public final class CalendarDateTimeUtils {
 
     /**
      * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToType()
+     * <p>
+     * Converts a date instance to the passed java type corresponding to one of the date types.
      *
-     * @param date
-     * @param javaType
-     * @param zoneId
-     * @return
+     * @param date     the date object, not {@code null}
+     * @param javaType the java type to convert to
+     * @param zoneId   the zone ID to use or {@code null} to use default system timezone
+     * @return the date object converted to the passed java type, not {@code null}
      */
     public static Object transformToType(Object date, Class javaType, @Nullable ZoneId zoneId) {
         Objects.requireNonNull(date);
@@ -47,10 +49,13 @@ public final class CalendarDateTimeUtils {
 
     /**
      * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToZDT()
+     * <p>
+     * Obtains an instance of {@link ZonedDateTime} from Date or LocalDate or LocalDateTime or OffsetDateTime
+     * ZonedDateTime is created for LocalDate, LocalDateTime with default system timezone
      *
-     * @param date
-     * @param fromZoneId
-     * @return
+     * @param date date object, not null
+     * @return the ZonedDateTime, not null
+     * @throws IllegalArgumentException if the type of the provided date is not supported
      */
     public static ZonedDateTime transformToZDT(Object date, @Nullable ZoneId fromZoneId) {
         Objects.requireNonNull(date);
@@ -70,10 +75,93 @@ public final class CalendarDateTimeUtils {
     }
 
     /**
-     * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformFromZdtInternal()
+     * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToLocalTime()
      *
-     * @param zonedDateTime
-     * @param javaType
+     * @param time the time object to transform
+     * @return local time instance
+     * @throws IllegalArgumentException if the type of the provided time is not supported
+     */
+    public static LocalTime transformToLocalTime(Object time) {
+        Preconditions.checkNotNull(time);
+        if (time instanceof java.sql.Time) {
+            return ((java.sql.Time) time).toLocalTime();
+        } else if (time instanceof Date) {
+            return ((Date) time).toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalTime();
+        } else if (time instanceof LocalTime) {
+            return (LocalTime) time;
+        } else if (time instanceof OffsetTime) {
+            return ((OffsetTime) time).toLocalTime();
+        }
+        throw newUnsupportedTypeException(time.getClass());
+    }
+
+    /**
+     * Parses date from ISO string.
+     *
+     * @param isoDate date in ISO format
+     * @return local date instance
+     * @throws DateTimeParseException if the provided date cannot be parsed
+     */
+    public static LocalDate parseIsoDate(String isoDate) {
+        try {
+            return LocalDate.parse(isoDate);
+        } catch (DateTimeParseException e) {
+            throw new IllegalStateException("Cannot parse date: " + isoDate, e);
+        }
+    }
+
+    /**
+     * Parses date-time or date from ISO string.
+     *
+     * @param isoDateTime date-time in ISO format
+     * @param zoneId      zoneId if the provided date-time does contain time zone
+     * @return {@link ZonedDateTime} instance
+     * @throws DateTimeParseException if the provided date-time cannot be parsed
+     */
+    public static ZonedDateTime parseIsoDateTime(String isoDateTime, ZoneId zoneId) {
+        try {
+            return ZonedDateTime.parse(isoDateTime);
+        } catch (DateTimeParseException e) {
+            // Exception means that offset part is missed
+        }
+        try {
+            return LocalDateTime.parse(isoDateTime).atZone(zoneId);
+        } catch (DateTimeParseException e) {
+            // Exception means that time part is missed
+        }
+        try {
+            return LocalDate.parse(isoDateTime).atStartOfDay(zoneId);
+        } catch (DateTimeParseException e) {
+            throw new IllegalStateException("Cannot parse date: " + isoDateTime, e);
+        }
+    }
+
+    /**
+     * Parses raw ISO date time to {@link ZonedDateTime} with the zoneId and then transform this value
+     * to {@link LocalDateTime} with system default time zone.
+     *
+     * @param isoDateTime raw ISO date time
+     * @param zoneId      zoneId to transform
+     * @return local date time
+     */
+    public static LocalDateTime parseAndTransform(String isoDateTime, ZoneId zoneId) {
+        ZonedDateTime zonedDateTime = parseIsoDateTime(isoDateTime, zoneId);
+        return transformAsSystemDefault(zonedDateTime);
+    }
+
+    private static LocalDateTime transformAsSystemDefault(ZonedDateTime zonedDateTime) {
+        return zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    /**
+     * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformFromZdtInternal()
+     * <p>
+     * Transforms {@link ZonedDateTime} to the provided type.
+     *
+     * @param zonedDateTime date-time to transform
+     * @param javaType      java type to transform
      * @return
      */
     private static Object transformFromZdtInternal(ZonedDateTime zonedDateTime, Class javaType) {
@@ -95,69 +183,7 @@ public final class CalendarDateTimeUtils {
         throw newUnsupportedTypeException(javaType);
     }
 
-    /**
-     * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToLocalTime()
-     */
-    public static LocalTime transformToLocalTime(Object date) {
-        Preconditions.checkNotNull(date);
-        if (date instanceof java.sql.Time) {
-            return ((java.sql.Time) date).toLocalTime();
-        } else if (date instanceof Date) {
-            return ((Date) date).toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalTime();
-        } else if (date instanceof LocalTime) {
-            return (LocalTime) date;
-        } else if (date instanceof OffsetTime) {
-            return ((OffsetTime) date).toLocalTime();
-        }
-        throw newUnsupportedTypeException(date.getClass());
-    }
-
     private static RuntimeException newUnsupportedTypeException(Class javaType) {
         throw new IllegalArgumentException(String.format("Unsupported date type %s", javaType));
-    }
-
-    public static LocalDate parseIsoDate(String isoDate) {
-        try {
-            return LocalDate.parse(isoDate);
-        } catch (DateTimeParseException e) {
-            throw new IllegalStateException("Cannot parse date: " + isoDate, e);
-        }
-    }
-
-    /**
-     * Parses raw ISO date time to {@link ZonedDateTime} with component zoneId and then transform this value
-     * to {@link LocalDateTime} with system default time zone.
-     *
-     * @param isoDateTime     raw ISO date time
-     * @param componentZoneId {@link JmixFullCalendar}'s zoneId
-     * @return local date time
-     */
-    public static LocalDateTime parseAndTransform(String isoDateTime, ZoneId componentZoneId) {
-        ZonedDateTime zonedDateTime = parseIsoDateTime(isoDateTime, componentZoneId);
-        return transformAsSystemDefault(zonedDateTime);
-    }
-
-    private static LocalDateTime transformAsSystemDefault(ZonedDateTime zonedDateTime) {
-        return zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
-    }
-
-    public static ZonedDateTime parseIsoDateTime(String isoDateTime, ZoneId zoneId) {
-        try {
-            return ZonedDateTime.parse(isoDateTime);
-        } catch (DateTimeParseException e) {
-            // Exception means that offset part is missed
-        }
-        try {
-            return LocalDateTime.parse(isoDateTime).atZone(zoneId);
-        } catch (DateTimeParseException e) {
-            // Exception means that time part is missed
-        }
-        try {
-            return LocalDate.parse(isoDateTime).atStartOfDay(zoneId);
-        } catch (DateTimeParseException e) {
-            throw new IllegalStateException("Cannot parse date: " + isoDateTime, e);
-        }
     }
 }

@@ -209,25 +209,33 @@
                     </calendar:properties>
                 </calendar:timeGridWeek>
                 <calendar:listDay listDayFormat="listDayFormat"
-                                  listDaySideFormat="listDaySideFormat">
+                                  listDaySideFormat="listDaySideFormat"
+                                  listDaySideVisible="false"
+                                  listDayVisible="false">
                     <calendar:properties>
                         <calendar:property name="test" value="1"/>
                     </calendar:properties>
                 </calendar:listDay>
                 <calendar:listWeek listDayFormat="listDayFormat"
-                                   listDaySideFormat="listDaySideFormat">
+                                   listDaySideFormat="listDaySideFormat"
+                                   listDaySideVisible="false"
+                                   listDayVisible="false">
                     <calendar:properties>
                         <calendar:property name="test" value="1"/>
                     </calendar:properties>
                 </calendar:listWeek>
                 <calendar:listMonth listDayFormat="listDayFormat"
-                                    listDaySideFormat="listDaySideFormat">
+                                    listDaySideFormat="listDaySideFormat"
+                                    listDaySideVisible="false"
+                                    listDayVisible="false">
                     <calendar:properties>
                         <calendar:property name="test" value="1"/>
                     </calendar:properties>
                 </calendar:listMonth>
                 <calendar:listYear listDayFormat="listDayFormat"
-                                  listDaySideFormat="listDaySideFormat">
+                                   listDaySideFormat="listDaySideFormat"
+                                   listDaySideVisible="false"
+                                   listDayVisible="false">
                     <calendar:properties>
                         <calendar:property name="test" value="1"/>
                     </calendar:properties>

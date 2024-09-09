@@ -16,6 +16,17 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
+
+/**
+ * Configuration properties of day-grid day view {@link CalendarViewType#DAY_GRID_DAY}.
+ * <p>
+ * The view properties can be retrieved from {@link JmixFullCalendar#getCalendarViewProperties(CalendarViewType)}.
+ * For instance:
+ * <pre>{@code
+ * calendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_DAY);
+ * }</pre>
+ */
 public class DayGridDayViewProperties extends AbstractDayGridViewProperties {
 
     public DayGridDayViewProperties() {

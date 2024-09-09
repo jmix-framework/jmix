@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Base class for configuring properties of calendar views ({@link CalendarViewType}).
+ */
 public abstract class AbstractCalendarViewProperties extends CalendarOption {
 
     protected Map<String, Object> properties;
@@ -30,10 +33,19 @@ public abstract class AbstractCalendarViewProperties extends CalendarOption {
         super(name);
     }
 
+    /**
+     * @return unmodifiable map of properties
+     */
     public Map<String, Object> getProperties() {
         return properties == null ? Collections.emptyMap() : Collections.unmodifiableMap(properties);
     }
 
+    /**
+     * Adds property to calendar view
+     *
+     * @param name  property name
+     * @param value property value
+     */
     public void addProperty(String name, Object value) {
         if (properties == null) {
             properties = new HashMap<>();
@@ -43,6 +55,11 @@ public abstract class AbstractCalendarViewProperties extends CalendarOption {
         markAsDirty();
     }
 
+    /**
+     * Removes property from calendar view.
+     *
+     * @param name property name to remove
+     */
     public void removeProperty(String name) {
         if (properties == null) {
             return;

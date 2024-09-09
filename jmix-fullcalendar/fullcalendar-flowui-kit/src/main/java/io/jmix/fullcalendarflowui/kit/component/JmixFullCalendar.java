@@ -25,6 +25,7 @@ import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import elemental.json.impl.JreJsonFactory;
+import io.jmix.flowui.kit.meta.StudioIgnore;
 import io.jmix.fullcalendarflowui.kit.component.event.dom.*;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
 import io.jmix.fullcalendarflowui.kit.component.model.AbstractCalendarViewProperties;
@@ -101,6 +102,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *
      * @param calendarView initial calendar view
      */
+    @StudioIgnore
     public void setInitialCalendarView(CalendarView calendarView) {
         Objects.requireNonNull(calendarView);
 
@@ -127,6 +129,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *
      * @param calendarView calendar view to set
      */
+    @StudioIgnore
     public void setCalendarView(CalendarView calendarView) {
         Objects.requireNonNull(calendarView);
 
@@ -631,6 +634,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *
      * @param calendarView the view that should be opened
      */
+    @StudioIgnore
     public void setMoreLinkCalendarView(@Nullable CalendarView calendarView) {
         options.getMoreLinkClick().setCalendarView(calendarView);
     }

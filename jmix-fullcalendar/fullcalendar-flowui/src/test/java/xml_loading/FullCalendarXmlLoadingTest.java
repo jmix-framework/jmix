@@ -333,6 +333,8 @@ public class FullCalendarXmlLoadingTest {
     private static void assertBaseListProperties(AbstractListViewProperties viewProperties) {
         assertEquals("listDayFormat", viewProperties.getListDayFormat());
         assertEquals("listDaySideFormat", viewProperties.getListDaySideFormat());
+        assertFalse(viewProperties.isListDaySideVisible());
+        assertFalse(viewProperties.isListDayVisible());
     }
 
     private static void assertViewProperty(AbstractCalendarViewProperties viewProperties) {

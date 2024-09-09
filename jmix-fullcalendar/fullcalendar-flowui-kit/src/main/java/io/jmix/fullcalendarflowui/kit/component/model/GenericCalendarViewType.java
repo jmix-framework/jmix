@@ -16,8 +16,13 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
+
+import java.time.LocalDate;
+
 /**
- * A "generic" value, can be used as a type for {@link CustomCalendarView}, or with "visibleRange" option.
+ * A "generic" value, can be used as a type for {@link CustomCalendarView}, or with
+ * {@link JmixFullCalendar#setVisibleRange(LocalDate, LocalDate)}.
  */
 public enum GenericCalendarViewType implements CalendarView {
 

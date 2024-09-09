@@ -41,7 +41,7 @@ import java.util.Collections;
 @JmixModule(dependsOn = {CoreConfiguration.class, FlowuiConfiguration.class, FullCalendarConfiguration.class})
 public class FullCalendarFlowuiConfiguration {
 
-    @Bean("fclndr_UiActions")
+    @Bean("fcalen_UiActions")
     public ActionsConfiguration actions(ApplicationContext applicationContext,
                                         AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);

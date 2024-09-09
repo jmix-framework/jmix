@@ -16,8 +16,16 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import jakarta.annotation.Nullable;
 
+import java.time.LocalDate;
+
+/**
+ * Custom calendar view properties. It enables to create new view with custom date range and use it along with other
+ * views. If date range is not specified it can be managed by
+ * {@link JmixFullCalendar#setVisibleRange(LocalDate, LocalDate)}.
+ */
 public class CustomCalendarView extends AbstractCalendarViewProperties {
 
     protected CalendarView calendarView;
@@ -28,10 +36,22 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
 
     protected Integer dayCount;
 
+    /**
+     * Creates new instance of custom views with the specified view ID. The type of custom view will be
+     * {@link GenericCalendarViewType#DAY_GRID}.
+     *
+     * @param id ID to pass
+     */
     public CustomCalendarView(String id) {
         this(id, null);
     }
 
+    /**
+     * Creates new instance of custom views with the specified view ID and view type: {@link GenericCalendarViewType}.
+     *
+     * @param id   ID to pass
+     * @param type the type of custom view
+     */
     public CustomCalendarView(String id, @Nullable CalendarView type) {
         super(id);
 
@@ -39,10 +59,16 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
         this.type = type;
     }
 
+    /**
+     * @return calendar view object from the view ID
+     */
     public CalendarView getCalendarView() {
         return calendarView;
     }
 
+    /**
+     * @return the type of custom calendar view
+     */
     public CalendarView getType() {
         return type == null ? GenericCalendarViewType.DAY_GRID : type;
     }
@@ -52,8 +78,25 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
         return duration;
     }
 
-    public CustomCalendarView withDuration(@Nullable CalendarDuration duration) {
+    /**
+     * Sets the exact duration of a custom view.
+     * <p>
+     * Takes precedence over the {@link #setDayCount(Integer)}.
+     *
+     * @param duration the duration to set
+     */
+    public void setDuration(@Nullable CalendarDuration duration) {
         this.duration = duration;
+    }
+
+    /**
+     * Sets the exact duration of a custom view. See {@link #setDuration(CalendarDuration)}.
+     *
+     * @param duration the duration to set
+     * @return current instance of custom view
+     */
+    public CustomCalendarView withDuration(@Nullable CalendarDuration duration) {
+        setDuration(duration);
         return this;
     }
 
@@ -62,6 +105,23 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
         return dayCount;
     }
 
+    /**
+     * Sets the exact number of days displayed in a custom view, regardless of
+     * {@link JmixFullCalendar#isWeekendsVisible()} or hidden days.
+     *
+     * @param dayCount day count to set
+     */
+    public void setDayCount(@Nullable Integer dayCount) {
+        this.dayCount = dayCount;
+    }
+
+    /**
+     * Sets the exact number of days displayed in a custom view, regardless of
+     * {@link JmixFullCalendar#isWeekendsVisible()} or hidden days. See {@link #setDayCount(Integer)}.
+     *
+     * @param dayCount day count to set
+     * @return current instance of custom view
+     */
     public CustomCalendarView withDayCount(@Nullable Integer dayCount) {
         this.dayCount = dayCount;
         return this;

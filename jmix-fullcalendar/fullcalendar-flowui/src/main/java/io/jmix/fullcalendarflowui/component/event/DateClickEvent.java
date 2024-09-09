@@ -6,7 +6,7 @@ import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import java.time.LocalDateTime;
 
 /**
- * Describes date click. The event is fired when day cell or time cell is clicked.
+ * The event is fired when day cell or time cell is clicked.
  */
 public class DateClickEvent extends AbstractClickEvent {
 

@@ -16,8 +16,18 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import jakarta.annotation.Nullable;
 
+/**
+ * Configuration properties of day-grid year view {@link CalendarViewType#DAY_GRID_YEAR}.
+ * <p>
+ * The view properties can be retrieved from {@link JmixFullCalendar#getCalendarViewProperties(CalendarViewType)}.
+ * For instance:
+ * <pre>{@code
+ * calendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_YEAR);
+ * }</pre>
+ */
 public class DayGridYearViewProperties extends AbstractDayGridViewProperties {
 
     protected String monthStartFormat;
@@ -26,13 +36,30 @@ public class DayGridYearViewProperties extends AbstractDayGridViewProperties {
         super(CalendarViewType.DAY_GRID_YEAR.getId());
     }
 
+    /**
+     * @return the text format for the first cell of each month or {@code null} if not set
+     */
     @Nullable
     public String getMonthStartFormat() {
         return monthStartFormat;
     }
 
-    public void setMonthStartFormat(@Nullable String monthStartFormat) {
-        this.monthStartFormat = monthStartFormat;
+    /**
+     * Sets the format of the text format for the first cell of each month. By default,
+     * component sets localized format from messages when is created.
+     * <p>
+     * The {@code null} value resets day format to FullCalendar's default.
+     * <p>
+     * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
+     * we should follow the moment.js formatting rules:
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <p>
+     * For instance, the {@code "MMMM"} produces {@code September} ({@code November}, {@code December}, etc.).
+     *
+     * @param format format to set
+     */
+    public void setMonthStartFormat(@Nullable String format) {
+        this.monthStartFormat = format;
 
         markAsDirty();
     }

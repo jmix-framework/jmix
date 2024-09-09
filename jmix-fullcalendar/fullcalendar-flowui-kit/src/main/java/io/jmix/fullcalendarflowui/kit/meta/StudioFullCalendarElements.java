@@ -229,7 +229,10 @@ public interface StudioFullCalendarElements {
             icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDayVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+
             }
     )
     void listDay();
@@ -245,7 +248,9 @@ public interface StudioFullCalendarElements {
             icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDayVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )
     void listWeek();
@@ -261,7 +266,9 @@ public interface StudioFullCalendarElements {
             icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDayVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )
     void listMonth();
@@ -277,7 +284,9 @@ public interface StudioFullCalendarElements {
             icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "listDaySideVisible", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "listDayVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )
     void listYear();

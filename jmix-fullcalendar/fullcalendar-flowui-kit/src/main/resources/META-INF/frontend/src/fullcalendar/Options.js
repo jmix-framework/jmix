@@ -54,6 +54,13 @@ function processViews(viewsObject) {
         if (view === 'customCalendarViews') {
             continue;
         }
+        if (view === 'listDay'
+            || view === 'listWeek'
+            || view === 'listMonth'
+            || view === 'listYear') {
+            viewsObject[view] = processListView(viewsObject[view]);
+            continue;
+        }
         viewsObject[view] = {...viewsObject[view], ...viewsObject[view].properties && {...viewsObject[view].properties}};
         viewsObject[view] = utils.deleteNullProperties(viewsObject[view]);
         delete viewsObject[view].properties;
@@ -72,6 +79,28 @@ function processViews(viewsObject) {
     delete viewsObject.customCalendarViews;
 
     return viewsObject;
+}
+
+function processListView(listView) {
+    let newListView = {...listView, ...listView.properties && {...listView.properties}};
+
+    // Delete null properties and 'properties' property
+    newListView = utils.deleteNullProperties(newListView);
+    delete newListView.properties;
+
+    // Handle listDayFormat
+    if (newListView.listDayVisible === false) {
+        newListView.listDayFormat = false;
+        delete newListView.listDayVisible;
+    }
+
+    // Handle listDaySideFormat
+    if (newListView.listDaySideVisible === false) {
+        newListView.listDaySideFormat = false;
+        delete newListView.listDaySideVisible;
+    }
+
+    return newListView;
 }
 
 class Options {

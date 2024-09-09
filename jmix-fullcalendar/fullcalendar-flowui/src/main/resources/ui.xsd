@@ -166,6 +166,8 @@
             <xs:extension base="baseViewType">
                 <xs:attribute name="listDayFormat" type="layout:resourceString"/>
                 <xs:attribute name="listDaySideFormat" type="layout:resourceString"/>
+                <xs:attribute name="listDaySideVisible" type="xs:boolean"/>
+                <xs:attribute name="listDayVisible" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

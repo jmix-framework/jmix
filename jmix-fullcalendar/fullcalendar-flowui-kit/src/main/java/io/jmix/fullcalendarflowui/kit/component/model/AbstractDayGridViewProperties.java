@@ -16,8 +16,12 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import jakarta.annotation.Nullable;
 
+/**
+ * Base class for configuring properties of day-grid views.
+ */
 public abstract class AbstractDayGridViewProperties extends AbstractCalendarViewProperties {
 
     protected String dayPopoverFormat;
@@ -34,54 +38,132 @@ public abstract class AbstractDayGridViewProperties extends AbstractCalendarView
         super(name);
     }
 
+    /**
+     * @return the day header format or {@code null} if not set
+     */
     @Nullable
     public String getDayHeaderFormat() {
         return dayHeaderFormat;
     }
 
-    public void setDayHeaderFormat(@Nullable String dayHeaderFormat) {
-        this.dayHeaderFormat = dayHeaderFormat;
+    /**
+     * Sets the format of the text that will be displayed on the calendar’s column headings. By default,
+     * component sets localized format from messages when is created.
+     * <p>
+     * The {@code null} value makes component to use value from {@link JmixFullCalendar#getDefaultDayHeaderFormat()}.
+     * <p>
+     * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
+     * we should follow the moment.js formatting rules:
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <p>
+     * For instance, the {@code "dd"} produces {@code Mo}.
+     *
+     * @param format format to set
+     */
+    public void setDayHeaderFormat(@Nullable String format) {
+        this.dayHeaderFormat = format;
 
         markAsDirty();
     }
 
+    /**
+     * @return the format of the week number or {@code null} if not set
+     */
     @Nullable
     public String getWeekNumberFormat() {
         return weekNumberFormat;
     }
 
-    public void setWeekNumberFormat(@Nullable String weekNumberFormat) {
-        this.weekNumberFormat = weekNumberFormat;
+    /**
+     * Sets the format of the week number that will be displayed when {@link JmixFullCalendar#isWeekNumbersVisible()}
+     * is {@code true}.By default, component sets localized format from messages when is created.
+     * <p>
+     * The {@code null} value makes component to use value from {@link JmixFullCalendar#getDefaultWeekNumberFormat()}.
+     * <p>
+     * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
+     * we should follow the moment.js formatting rules:
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <p>
+     * For instance, the {@code "[Week] w"} produces {@code Week 1} (1, 2, ... 52, 53).
+     *
+     * @param format format to set
+     */
+    public void setWeekNumberFormat(@Nullable String format) {
+        this.weekNumberFormat = format;
 
         markAsDirty();
     }
 
+    /**
+     * @return the event time format or {@code null} if not set
+     */
     @Nullable
     public String getEventTimeFormat() {
         return eventTimeFormat;
     }
 
-    public void setEventTimeFormat(@Nullable String eventTimeFormat) {
-        this.eventTimeFormat = eventTimeFormat;
+    /**
+     * Sets the format of the time-text that will be displayed on each event. By default, component sets
+     * localized format from messages when is created.
+     * <p>
+     * The {@code null} value makes component to use value from {@link JmixFullCalendar#getDefaultEventTimeFormat()}.
+     * <p>
+     * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
+     * we should follow the moment.js formatting rules:
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <p>
+     * For instance, the {@code "HH:mm"} produces {@code 00:00} (01, 2, ... 24 : 01, 02 ... 59).
+     *
+     * @param format format to set
+     */
+    public void setEventTimeFormat(@Nullable String format) {
+        this.eventTimeFormat = format;
 
         markAsDirty();
     }
 
+    /**
+     * @return the day popover format or {@code null} if not set
+     */
     @Nullable
     public String getDayPopoverFormat() {
         return dayPopoverFormat;
     }
 
-    public void setDayPopoverFormat(@Nullable String dayPopoverFormat) {
-        this.dayPopoverFormat = dayPopoverFormat;
+    /**
+     * Sets the date format of title of the popover that is shown when "more" link is clicked. By default,
+     * component sets localized format from messages when is created.
+     * <p>
+     * The {@code null} value makes component to use value from {@link JmixFullCalendar#getDefaultDayPopoverFormat()}.
+     * <p>
+     * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
+     * we should follow the moment.js formatting rules:
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <p>
+     * For instance, the {@code "MMM D, YY"} produces {@code Sep 9, 24}.
+     *
+     * @param format format to set
+     */
+    public void setDayPopoverFormat(@Nullable String format) {
+        this.dayPopoverFormat = format;
 
         markAsDirty();
     }
 
+    /**
+     * @return {@code true} if an event's end time is visible
+     */
     public boolean isDisplayEventEnd() {
         return displayEventEnd;
     }
 
+    /**
+     * Determines an event's end time visibility.
+     * <p>
+     * By default {@code true} for {@link CalendarViewType#DAY_GRID_DAY} and {@code false} for other day-grid views.
+     *
+     * @param displayEventEnd whether to display end time
+     */
     public void setDisplayEventEnd(boolean displayEventEnd) {
         this.displayEventEnd = displayEventEnd;
 

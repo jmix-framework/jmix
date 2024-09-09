@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * Event provider for loading entities by request. It is created when calendar's XML description defines
  * lazy event provider.
  */
-@Component("fclndr_LazyCalendarItems")
+@Component("fcalen_LazyCalendarItems")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class LazyEntityCalendarEventRetriever extends AbstractEntityEventProvider<ItemsFetchContext>
         implements LazyCalendarEventProvider, ApplicationContextAware {

@@ -232,7 +232,7 @@ jmix-pivot-table {
     }
 
     .pvtFilteredAttribute {
-        font-style: italic
+        font-style: italic;
     }
 
     .pvtFilterBox button {
@@ -338,6 +338,10 @@ jmix-pivot-table {
 
     select.pvtAttrDropdown {
         margin-right: var(--lumo-space-xs);
+    }
+
+    a.pvtRowOrder, a.pvtColOrder {
+        color: #FFFFFF00;
     }
 
     a.pvtRowOrder::before, a.pvtColOrder::before {

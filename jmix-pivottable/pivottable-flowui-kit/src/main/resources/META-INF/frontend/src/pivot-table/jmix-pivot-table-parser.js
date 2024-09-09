@@ -114,26 +114,25 @@ export class PivotTableParser {
             return 'STRING';
         } else {
         // it is generated cell by aggregation, check cell type by current aggregation
+            if (this.floatFormatAggregationIds.indexOf(this.aggregation) > -1) {
+                var prefix = this.pivotMessages.floatFormat.prefix;
+                var suffix = this.pivotMessages.floatFormat.suffix;
+                if ((prefix && prefix.length > 0) || (suffix && suffix.length > 0)
+                        || value == Number.POSITIVE_INFINITY || value == Number.NEGATIVE_INFINITY) {
+                        return 'STRING';
+                }
+                return 'DECIMAL';
 
-        if (this.floatFormatAggregationIds.indexOf(this.aggregation) > -1) {
-            var prefix = this.pivotMessages.floatFormat.prefix;
-            var suffix = this.pivotMessages.floatFormat.suffix;
-            if ((prefix && prefix.length > 0) || (suffix && suffix.length > 0)
-                    || value == Number.POSITIVE_INFINITY || value == Number.NEGATIVE_INFINITY) {
-                    return 'STRING';
+            } else if (this.integerFormatAggregationIds.indexOf(this.aggregation) > -1) {
+                var prefix = this.pivotMessages.integerFormat.prefix;
+                var suffix = this.pivotMessages.integerFormat.suffix;
+                if ((prefix && prefix.length > 0) || (suffix && suffix.length > 0)) {
+                        return 'STRING';
+                }
+                return 'INTEGER';
+            } else if (!isNaN(value)) {
+                return value % 1 == 0 ? 'INTEGER' : 'DECIMAL';
             }
-            return 'DECIMAL';
-
-        } else if (this.integerFormatAggregationIds.indexOf(this.aggregation) > -1) {
-            var prefix = this.pivotMessages.integerFormat.prefix;
-            var suffix = this.pivotMessages.integerFormat.suffix;
-            if ((prefix && prefix.length > 0) || (suffix && suffix.length > 0)) {
-                    return 'STRING';
-            }
-            return 'INTEGER';
-        } else if (!isNaN(value)) {
-            return value % 1 == 0 ? 'INTEGER' : 'DECIMAL';
-        }
         }
         return 'STRING';
     }

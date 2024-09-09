@@ -171,15 +171,15 @@ jmix-pivot-table {
         font-weight: 500;
         font-family: var(--lumo-font-family);
         border: 1px solid transparent;
-        background-image: url('icon/angle-down.svg');
-        background-size: calc(var(--lumo-size-m) * 1) calc(var(--lumo-size-m) * 0.5);
+        background-image: url('../../../../angle-down.svg');
+        background-size: calc(var(--lumo-size-m) * 1) calc(var(--lumo-size-m) * 0.55);
         background-position: center right;
         background-repeat: no-repeat;
     }
 
     select:hover {
         background-color: var(--lumo-contrast-20pct);
-        background-image: url('icon/angle-down-hover.svg');
+        background-image: url('../../../../angle-down-hover.svg');
     }
 
     select:focus {
@@ -381,11 +381,11 @@ html[theme~="dark"] jmix-pivot-table {
     }
 
     select {
-        background-image: url('angle-down.svg');
+        background-image: url('../../../../angle-down-dark.svg');
     }
 
     select:hover {
-        background-image: url('angle-down-hover.svg');
+        background-image: url('../../../../angle-down-hover-dark.svg');
     }
 
     select {

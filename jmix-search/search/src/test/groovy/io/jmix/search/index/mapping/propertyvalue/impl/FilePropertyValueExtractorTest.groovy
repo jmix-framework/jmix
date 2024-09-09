@@ -16,14 +16,28 @@
 
 package io.jmix.search.index.mapping.propertyvalue.impl
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
 import io.jmix.core.FileRef
 import io.jmix.search.exception.EmptyFileExtensionException
 import io.jmix.search.exception.UnsupportedFileExtensionException
 import io.jmix.search.utils.FileProcessor
 import spock.lang.Specification
 
+import static io.jmix.search.utils.LogbackMocker.cleanUpAppender
+import static io.jmix.search.utils.LogbackMocker.createAttachedAppender
+
+
 class FilePropertyValueExtractorTest extends Specification {
 
+    private ListAppender<ILoggingEvent> appender
+
+    void setup() {
+        appender = createAttachedAppender(
+                FilePropertyValueExtractor.class,
+                Level.WARN)
+    }
 
     def "nothing should be thrown if fileProcessor throws a ParserResolvingException"() {
         given:
@@ -40,9 +54,16 @@ class FilePropertyValueExtractorTest extends Specification {
         extractor.addFileContent(null, fileRef)
 
         then:
-        true
+        this.appender.list.size() == 1
+        def loggingEvent = this.appender.list.get(0)
+        loggingEvent.getLevel() == Level.WARN
+        loggingEvent.getMessage() == exception.getMessage()
 
         where:
         exception<<[new UnsupportedFileExtensionException("any.file"), new EmptyFileExtensionException("any")]
+    }
+
+    void cleanup() {
+        cleanUpAppender(FilePropertyValueExtractor.class, appender)
     }
 }

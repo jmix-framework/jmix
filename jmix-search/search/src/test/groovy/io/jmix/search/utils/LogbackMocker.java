@@ -21,7 +21,6 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.read.ListAppender;
-import io.jmix.search.index.mapping.propertyvalue.impl.FilePropertyValueExtractor;
 import org.slf4j.LoggerFactory;
 
 public class LogbackMocker {

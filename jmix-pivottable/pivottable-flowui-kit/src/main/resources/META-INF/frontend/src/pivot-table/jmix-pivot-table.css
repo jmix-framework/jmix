@@ -171,7 +171,7 @@ jmix-pivot-table {
         font-weight: 500;
         font-family: var(--lumo-font-family);
         border: 1px solid transparent;
-        background-image: url('angle-down.svg');
+        background-image: url('icon/angle-down.svg');
         background-size: calc(var(--lumo-size-m) * 1) calc(var(--lumo-size-m) * 0.5);
         background-position: center right;
         background-repeat: no-repeat;
@@ -179,7 +179,7 @@ jmix-pivot-table {
 
     select:hover {
         background-color: var(--lumo-contrast-20pct);
-        background-image: url('angle-down-hover.svg');
+        background-image: url('icon/angle-down-hover.svg');
     }
 
     select:focus {
@@ -187,13 +187,7 @@ jmix-pivot-table {
         outline: none;
     }
 
-    .pvtAggregator,
     .pvtAttrDropdown {
-        height: var(--lumo-size-s);
-    }
-
-    .pvtAttrDropdown {
-        height: var(--lumo-size-s);
         margin-top: var(--lumo-space-xs);
     }
 
@@ -376,6 +370,7 @@ jmix-pivot-table {
     }
 
     .pvtRenderer {
+        min-width: 7em;
         width: 100%;
     }
 }

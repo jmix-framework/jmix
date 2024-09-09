@@ -18,6 +18,9 @@ package io.jmix.pivottableflowui.kit.data;
 
 import java.io.Serializable;
 
+/**
+ * Base interface for {@link PivotTableDataSet} items
+ */
 public interface DataItem extends Serializable {
     /**
      * @param property name of property
@@ -29,4 +32,12 @@ public interface DataItem extends Serializable {
      * @return unique identifier of DataItem
      */
     Object getId();
+
+    /**
+     * Represents the {@link #getId()} as String. It helps to identify data items sent from the client to the server.
+     * @return unique data item id as String
+     */
+    default String getIdAsString() {
+        return getId().toString();
+    }
 }

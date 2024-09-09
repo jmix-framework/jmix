@@ -45,10 +45,8 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
 
     static get template() {
         return html`
-            <div class="jmix-pivot-table-wrapper">
-                <div part="output" style="height: inherit; width: inherit;">
-                    <slot name="output"></slot>
-                </div>
+            <div class="jmix-pivot-table-wrapper" style="height: inherit; width: inherit;">
+                <slot name="pivot-table-slot"></slot>
             </div>
 
             <style>
@@ -202,7 +200,8 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                 $.pivotUtilities.renderers = $.extend($.pivotUtilities.c3_renderers,
                     $.extend($.pivotUtilities.d3_renderers, $.pivotUtilities.renderers));
                 pivotTable._initLocale();
-                $("#div-id").pivotUI(
+//                $("#div-id").pivotUI(
+                $("div.pivot-table-output").pivotUI(
                     pivotTable._dataSet,
                     pivotTable._preparePivotTableOptions(),
                     false,

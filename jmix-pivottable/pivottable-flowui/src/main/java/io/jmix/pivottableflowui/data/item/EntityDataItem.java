@@ -16,6 +16,7 @@
 
 package io.jmix.pivottableflowui.data.item;
 
+import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.pivottableflowui.kit.data.DataItem;
 

@@ -25,7 +25,6 @@ import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.DataProviderListener;
 import com.vaadin.flow.data.provider.Query;
-import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
@@ -45,7 +44,6 @@ import io.jmix.pivottableflowui.kit.event.js.PivotTableRefreshEventParams;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Tag("jmix-pivot-table")
@@ -432,10 +430,13 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
 
         initComponentListeners();
 
-        Div div = new Div();
-        div.setId("div-id");
+        SlotUtils.addToSlot(this, "pivot-table-slot", createPivotTablePlaceHolder());
+    }
 
-        SlotUtils.addToSlot(this, "output", div);
+    protected Div createPivotTablePlaceHolder() {
+        Div div = new Div();
+        div.addClassName("pivot-table-output");
+        return div;
     }
 
     protected PivotTableOptions createOptions() {
@@ -467,7 +468,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
                 ? cellClickParams.getDataItemKeys().stream().map(
                         key -> {
                             for (DataItem dataItem : dataItems) {
-                                if (dataItem.getId().equals(key)) {
+                                if (dataItem.getIdAsString().equals(key)) {
                                     return dataItem;
                                 }
                             }

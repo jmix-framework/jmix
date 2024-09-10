@@ -156,7 +156,7 @@ class BaseIndexManagerTest extends Specification {
         BaseIndexManager indexManagerSpy = Spy(indexManager)
         indexManagerSpy.isIndexExist(INDEX_NAME) >> true
 
-        indexManagerSpy.putMapping(INDEX_NAME, mappingConfiguration) >> putMappingResult
+        putMappingExecutes * indexManagerSpy.putMapping(INDEX_NAME, mappingConfiguration) >> putMappingResult
 
         when:
         IndexSynchronizationStatus status = indexManagerSpy.synchronizeIndexSchema(indexConfigurationMock)
@@ -167,19 +167,19 @@ class BaseIndexManagerTest extends Specification {
         markAsUnavailableExecutes * indexStateRegistry.markIndexAsUnavailable(ENTITY_NAME)
 
         where:
-        strategy           | isMappingUpdateRequired | putMappingResult | resultStatus | markAsAvailableExecutes | markAsUnavailableExecutes
-        NONE               | null                    | null             | IRRELEVANT   | 0                       | 1
-        CREATE_ONLY        | null                    | null             | IRRELEVANT   | 0                       | 1
-        CREATE_OR_UPDATE   | true                    | true             | UPDATED      | 1                       | 0
-        CREATE_OR_UPDATE   | true                    | false            | IRRELEVANT   | 0                       | 1
-        CREATE_OR_RECREATE | true                    | true             | UPDATED      | 1                       | 0
-        CREATE_OR_RECREATE | true                    | false            | IRRELEVANT   | 0                       | 1
+        strategy           | isMappingUpdateRequired | putMappingResult | resultStatus | putMappingExecutes | markAsAvailableExecutes | markAsUnavailableExecutes
+        NONE               | null                    | null             | IRRELEVANT   | 0                  | 0                       | 1
+        CREATE_ONLY        | null                    | null             | IRRELEVANT   | 0                  | 0                       | 1
+        CREATE_OR_UPDATE   | true                    | true             | UPDATED      | 1                  | 1                       | 0
+        CREATE_OR_UPDATE   | true                    | false            | IRRELEVANT   | 1                  | 0                       | 1
+        CREATE_OR_RECREATE | true                    | true             | UPDATED      | 1                  | 1                       | 0
+        CREATE_OR_RECREATE | true                    | false            | IRRELEVANT   | 1                  | 0                       | 1
 //These cases are not supported yet. The exception trowing is checked in the next test.
 //        CREATE_OR_UPDATE | false
 //        CREATE_OR_RECREATE | false
     }
 
-    def "settings update don't supported"() {
+    def "settings update is not supported yet"() {
         given:
         SearchProperties searchPropertiesMock = Mock()
         searchPropertiesMock.getIndexSchemaManagementStrategy() >> strategy

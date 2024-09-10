@@ -72,7 +72,6 @@ dependencies {
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'org.spockframework:spock-core'
-    testImplementation 'ch.qos.logback:logback-classic'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

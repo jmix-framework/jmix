@@ -22,11 +22,8 @@ import io.jmix.search.index.IndexSchemaManagementStrategy
 import io.jmix.search.index.IndexSynchronizationStatus
 import spock.lang.Specification
 
-import static io.jmix.search.index.IndexSchemaManagementStrategy.CREATE_ONLY
-import static io.jmix.search.index.IndexSchemaManagementStrategy.CREATE_OR_RECREATE
-import static io.jmix.search.index.IndexSchemaManagementStrategy.CREATE_OR_UPDATE
-import static io.jmix.search.index.IndexSynchronizationStatus.CREATED
-import static io.jmix.search.index.IndexSynchronizationStatus.MISSING
+import static io.jmix.search.index.IndexSchemaManagementStrategy.*
+import static io.jmix.search.index.IndexSynchronizationStatus.*
 
 class BaseIndexManagerTest extends Specification {
 
@@ -113,6 +110,52 @@ class BaseIndexManagerTest extends Specification {
         CREATE_OR_RECREATE | false          | MISSING      | 0                       | 1
         CREATE_OR_UPDATE   | true           | CREATED      | 1                       | 0
         CREATE_OR_UPDATE   | false          | MISSING      | 0                       | 1
+    }
+
+    def "index exists but index recreating required"() {
+        given:
+        SearchProperties searchPropertiesMock = Mock()
+        searchPropertiesMock.getIndexSchemaManagementStrategy() >> strategy
+
+        and:
+        IndexConfiguration indexConfigurationMock = Mock()
+        indexConfigurationMock.getIndexName() >> INDEX_NAME
+        indexConfigurationMock.getEntityName() >> ENTITY_NAME
+
+        and:
+        IndexStateRegistry indexStateRegistry = Mock()
+
+        and:
+        ConfigurationComparingResult comparingResult = Mock()
+        comparingResult.isIndexRecreatingRequired() >> true
+
+        and:
+        IndexConfigurationComparator configurationComparator = Mock()
+        configurationComparator.compareConfigurations(indexConfigurationMock) >> comparingResult
+
+        and:
+        BaseIndexManager indexManager = new BaseIndexManagerTestImpl(null, indexStateRegistry, searchPropertiesMock, configurationComparator, null)
+        BaseIndexManager indexManagerSpy = Spy(indexManager)
+        indexManagerSpy.isIndexExist(INDEX_NAME) >> true
+        indexManagerSpy.dropIndex(INDEX_NAME) >> droppingResult
+        indexManagerSpy.createIndex(indexConfigurationMock) >> creatingResult
+
+        when:
+        IndexSynchronizationStatus status = indexManagerSpy.synchronizeIndexSchema(indexConfigurationMock)
+
+        then:
+        status == resultStatus
+        markAsAvailableExecutes * indexStateRegistry.markIndexAsAvailable(ENTITY_NAME)
+        markAsUnavailableExecutes * indexStateRegistry.markIndexAsUnavailable(ENTITY_NAME)
+
+        where:
+        strategy           | droppingResult | creatingResult | resultStatus | markAsAvailableExecutes | markAsUnavailableExecutes
+        NONE               | null           | null           | IRRELEVANT   | 0                       | 1
+        CREATE_ONLY        | null           | null           | IRRELEVANT   | 0                       | 1
+        CREATE_OR_UPDATE   | null           | null           | IRRELEVANT   | 0                       | 1
+        CREATE_OR_RECREATE | true           | true           | RECREATED    | 1                       | 0
+        CREATE_OR_RECREATE | true           | false          | IRRELEVANT   | 0                       | 1
+        CREATE_OR_RECREATE | false          | null           | IRRELEVANT   | 0                       | 1
     }
 
 }

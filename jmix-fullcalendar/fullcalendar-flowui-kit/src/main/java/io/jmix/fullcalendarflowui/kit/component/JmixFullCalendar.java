@@ -1098,6 +1098,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * {@link #setSelectLongPressDelay(Integer)}.
      * <p>
      * The default value is {@code 0}.
+     * <p>
+     * The property change is not applied after component attached to the UI.
      *
      * @param minDistance minimum distance in pixels
      */
@@ -1123,9 +1125,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
-     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
+     * the {@code "MMM D, YY"} produces {@code Sep 9, 24}.
      * <p>
-     * For instance, the {@code "MMM D, YY"} produces {@code Sep 9, 24}.
+     * The property change is not applied after component attached to the UI.
      *
      * @param format format to set
      */
@@ -1151,9 +1154,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
-     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
+     * the {@code "dd"} produces {@code Mo}.
      * <p>
-     * For instance, the {@code "dd"} produces {@code Mo}.
+     * The property change is not applied after component attached to the UI.
      *
      * @param format format to set
      */
@@ -1179,9 +1183,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
-     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
+     * the {@code "[Week] w"} produces {@code Week 1} (1, 2, ... 52, 53).
      * <p>
-     * For instance, the {@code "[Week] w"} produces {@code Week 1} (1, 2, ... 52, 53).
+     * The property change is not applied after component attached to the UI.
      *
      * @param format format to set
      */
@@ -1207,9 +1212,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
-     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
+     * the {@code "ha"} produces {@code 1 am} (1, 2, ... 12 am/pm).
      * <p>
-     * For instance, the {@code "ha"} produces {@code 1 am} (1, 2, ... 12 am/pm).
+     * The property change is not applied after component attached to the UI.
      *
      * @param format format to set
      */
@@ -1235,9 +1241,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
-     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>
+     * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
+     * the {@code "HH:mm"} produces {@code 00:00} (01, 2, ... 24 : 01, 02 ... 59).
      * <p>
-     * For instance, the {@code "HH:mm"} produces {@code 00:00} (01, 2, ... 24 : 01, 02 ... 59).
+     * The property change is not applied after component attached to the UI.
      *
      * @param format format to set
      */
@@ -1381,6 +1388,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * set {@link #setScrollTimeReset(boolean)} to {@code false}.
      * <p>
      * The default value is {@code 06:00:00}.
+     * <p>
+     * The property change is not applied after component attached to the UI.
      *
      * @param scrollTime the time to scroll to
      */
@@ -1528,6 +1537,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the initial date that will be displayed when the component is attached to UI.
      * <p>
      * If not specified, the current date will be used.
+     * <p>
+     * The property change is not applied after component attached to the UI.
      *
      * @param initialDate initial date to show
      */
@@ -1656,6 +1667,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Enables displaying a marker indicating the current time. The property applies in time-grid views.
      * <p>
      * The default value is {@code false}.
+     * <p>
+     * The property change is not applied after component attached to the UI.
      *
      * @param nowIndicatorVisible whether to display a now indicator
      */

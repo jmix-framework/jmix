@@ -23,9 +23,11 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
+import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.pivottableflowui.component.PivotTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -35,6 +37,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Jmix action to show {@link PivotTable} component.
+ * When the action executes, the pivot table shows data from the component that implements {@link ListDataComponent}.
+ */
 @ActionType(ShowPivotTableAction.ID)
 public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTableAction, Object>
         implements ApplicationContextAware {
@@ -74,6 +80,9 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
         this.dialogs = dialogs;
     }
 
+    /**
+     * Executes the action to show the pivot table.
+     */
     @Override
     public void execute() {
         if (target == null) {
@@ -100,30 +109,6 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
                     .withWidth("32em")
                     .open();
         }
-    }
-
-    protected boolean needShowAll() {
-        if (target.getSelectedItems().isEmpty()
-                || !(target.getItems() instanceof ContainerDataUnit)) {
-            return true;
-        }
-
-        CollectionContainer container = ((ContainerDataUnit) target.getItems()).getContainer();
-        return container != null && container.getItems().size() <= 1;
-    }
-
-    protected List<String> parseProperties(String properties) {
-        if (Strings.isNullOrEmpty(properties)) {
-            return Collections.emptyList();
-        }
-
-        properties = properties.replace(" ", "");
-        if (properties.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        String[] propertiesArray = properties.split(",");
-        return Arrays.asList(propertiesArray);
     }
 
     /**
@@ -170,6 +155,35 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
             return Collections.emptyList();
         }
         return parseProperties(includedProperties);
+    }
+
+    /**
+     *  Specifies whether to show all rows or prompt the user to select rows.
+     *
+     *  @return true if all rows should be displayed, false otherwise
+     */
+    protected boolean needShowAll() {
+        if (target.getSelectedItems().isEmpty()
+                || !(target.getItems() instanceof ContainerDataUnit)) {
+            return true;
+        }
+
+        CollectionContainer container = ((ContainerDataUnit) target.getItems()).getContainer();
+        return container != null && container.getItems().size() <= 1;
+    }
+
+    protected List<String> parseProperties(String properties) {
+        if (Strings.isNullOrEmpty(properties)) {
+            return Collections.emptyList();
+        }
+
+        properties = properties.replace(" ", "");
+        if (properties.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String[] propertiesArray = properties.split(",");
+        return Arrays.asList(propertiesArray);
     }
 
     @SuppressWarnings("unchecked")

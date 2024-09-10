@@ -179,7 +179,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * Sets a descriptor of an object which will aggregate results per cell
      * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Aggregators">documentation</a>).
      * <p>
-     * Applies only when {@code editable=false}.
+     * Applies only when {@code showUI=false}.
      *
      * @param aggregation an object which will aggregate results per cell
      */
@@ -199,7 +199,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * Sets a descriptor of an object which will generate output from pivot data structure
      * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Renderers">documentation</a>).
      * <p>
-     * Applies only when {@code editable=false}.
+     * Applies only when {@code showUI=false}.
      *
      * @param renderer an object which will generate output from pivot data structure
      */
@@ -220,7 +220,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * <p>
      * Sets attribute names to prepopulate in vals area (gets passed to aggregator generating function).
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param aggregationProperties attribute names to prepopulate in vals area
      */
@@ -234,7 +234,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * <p>
      * Adds attribute names to prepopulate in vals area (gets passed to aggregator generating function).
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param aggregationProperties attribute names to prepopulate in vals area
      */
@@ -261,7 +261,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * Sets an object that represents a list of generators for aggregation functions in dropdown
      * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Aggregators">documentation</a>).
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param aggregations an object that represents a list of generators for aggregation functions in dropdown
      */
@@ -281,7 +281,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * Sets an object that represents a list of rendering functions
      * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Renderers">documentation</a>).
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param renderers n object that represents a list of rendering functions
      */
@@ -300,7 +300,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     /**
      * Sets attribute names to omit from the UI.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param hiddenProperties attribute names to omit from the UI
      */
@@ -312,7 +312,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     /**
      * Adds attribute names to omit from the UI.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param hiddenProperties attribute names to omit from the UI
      */
@@ -336,7 +336,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     /**
      * Sets attribute names to omit from the aggregation arguments dropdowns.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param hiddenFromAggregations attribute names to omit from the aggregation arguments dropdowns
      */
@@ -348,7 +348,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     /**
      * Adds attribute names to omit from the aggregation arguments dropdowns.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param hiddenFromAggregations attribute names to omit from the aggregation arguments dropdowns
      */
@@ -372,7 +372,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     /**
      * Sets attribute names to omit from the drag'n'drop portion of the UI.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param hiddenFromDragDrop attribute names to omit from the drag'n'drop portion of the UI
      */
@@ -384,7 +384,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     /**
      * Adds attribute names to omit from the drag'n'drop portion of the UI.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param hiddenFromDragDrop attribute names to omit from the drag'n'drop portion of the UI
      */
@@ -446,7 +446,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     /**
      * Sets the maximum number of values to list in the double click menu.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param menuLimit the maximum number of values to list in the double click menu
      */
@@ -467,7 +467,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * <p>
      * Sets whether unused attributes are kept sorted in the UI.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param autoSortUnusedProperties whether unused attributes are kept sorted in the UI
      */
@@ -492,7 +492,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * a number (as is the default) then if the attributes' names' combined
      * length in characters exceeds the number then the attributes will be shown vertically.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param unusedPropertiesVertical whether unused attributes are shown vertically
      */
@@ -573,7 +573,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * which denote records to include in rendering; used to prepopulate the filter menus
      * that appear on double-click (overrides {@link #exclusions}).
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param inclusions a map whose keys are attribute names and values are arrays of attribute values
      * @see #setExclusions(Map)
@@ -588,7 +588,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * which denote records to include in rendering; used to prepopulate the filter menus
      * that appear on double-click (overrides {@link #exclusions}).
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param property   a property for which set inclusions
      * @param inclusions a list of property values
@@ -607,7 +607,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * which denote records to include in rendering; used to prepopulate the filter menus
      * that appear on double-click (overrides {@link #exclusions}).
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param property   a property for which set inclusions
      * @param inclusions an array of property values
@@ -639,7 +639,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * which denote records to exclude from rendering; used to prepopulate the filter menus
      * that appear on double-click.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param exclusions a map whose keys are attribute names and values are arrays of attribute values
      * @see #setInclusions(Map)
@@ -654,7 +654,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * which denote records to exclude from rendering; used to prepopulate the filter menus
      * that appear on double-click.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param property   a property for which set exclusions
      * @param exclusions a map whose keys are attribute names and values are arrays of attribute values
@@ -673,7 +673,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * which denote records to exclude from rendering; used to prepopulate the filter menus
      * that appear on double-click.
      * <p>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param property   a property for which set exclusions
      * @param exclusions a map whose keys are attribute names and values are arrays of attribute values
@@ -731,7 +731,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     /**
      * Shows or hides UI. {@code true} by default.
      * <br>
-     * Applies only when {@code editable=true}.
+     * Applies only when {@code showUI=true}.
      *
      * @param showUI show UI option
      */

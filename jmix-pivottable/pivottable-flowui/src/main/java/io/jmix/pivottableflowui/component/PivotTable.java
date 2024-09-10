@@ -38,6 +38,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * Integration of an open-source Javascript Pivot Table written by <a href="https://nicolas.kruchten.com/">Nicolas Kruchten</a>.
+ * A pivot table component is a powerful data analysis tool that allows users to summarize, analyze and present
+ * datasets in a flexible and interactive manner.
+ * @see <a href="https://github.com/nicolaskruchten/pivottable/wiki">Pivot table documentation</a>
+ */
 public class PivotTable extends JmixPivotTable implements ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;

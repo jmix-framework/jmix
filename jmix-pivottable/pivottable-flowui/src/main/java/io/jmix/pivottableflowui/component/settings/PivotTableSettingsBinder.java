@@ -26,11 +26,11 @@ import io.jmix.pivottableflowui.kit.component.model.AggregationMode;
 import io.jmix.pivottableflowui.kit.component.model.Order;
 import io.jmix.pivottableflowui.kit.component.model.Renderer;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component("pvttbl_PivotTableSettingsBinder")

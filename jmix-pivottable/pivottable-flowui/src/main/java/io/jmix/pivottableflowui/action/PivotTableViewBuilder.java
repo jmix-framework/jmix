@@ -28,6 +28,7 @@ import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.ContainerDataUnit;
+import io.jmix.pivottableflowui.component.PivotTable;
 import io.jmix.pivottableflowui.data.item.EntityDataItem;
 import io.jmix.pivottableflowui.export.view.PivotTableView;
 import io.jmix.pivottableflowui.kit.data.DataItem;
@@ -69,41 +70,6 @@ public class PivotTableViewBuilder {
 
     public PivotTableViewBuilder(ListDataComponent target) {
         this.target = target;
-    }
-
-    @Autowired
-    protected void setViewNavigators(ViewNavigators viewNavigators) {
-        this.viewNavigators = viewNavigators;
-    }
-
-    @Autowired
-    protected void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
-
-    @Autowired
-    protected void setFetchPlanRepository(FetchPlanRepository fetchPlanRepository) {
-        this.fetchPlanRepository = fetchPlanRepository;
-    }
-
-    @Autowired
-    protected void setMessages(Messages messages) {
-        this.messages = messages;
-    }
-
-    @Autowired
-    protected void setAccessManager(AccessManager accessManager) {
-        this.accessManager = accessManager;
-    }
-
-    @Autowired
-    public void setMetadataTools(MetadataTools metadataTools) {
-        this.metadataTools = metadataTools;
-    }
-
-    @Autowired
-    public void setMessageTools(MessageTools messageTools) {
-        this.messageTools = messageTools;
     }
 
     /**
@@ -258,6 +224,9 @@ public class PivotTableViewBuilder {
         return this;
     }
 
+    /**
+     * Navigate to {@link PivotTableView} and show {@link PivotTable} component with the set parameters
+     */
     public void show() {
         if (!(target instanceof Grid<?> grid) || UiComponentUtils.findView(grid) == null) {
             throw new IllegalStateException(
@@ -278,6 +247,41 @@ public class PivotTableViewBuilder {
                     pivotTableView.setDataItems(dataItems);
                 })
                 .navigate();
+    }
+
+    @Autowired
+    protected void setViewNavigators(ViewNavigators viewNavigators) {
+        this.viewNavigators = viewNavigators;
+    }
+
+    @Autowired
+    protected void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    protected void setFetchPlanRepository(FetchPlanRepository fetchPlanRepository) {
+        this.fetchPlanRepository = fetchPlanRepository;
+    }
+
+    @Autowired
+    protected void setMessages(Messages messages) {
+        this.messages = messages;
+    }
+
+    @Autowired
+    protected void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    protected void setMessageTools(MessageTools messageTools) {
+        this.messageTools = messageTools;
     }
 
     protected Map<String, String> getPropertiesWithLocale() {

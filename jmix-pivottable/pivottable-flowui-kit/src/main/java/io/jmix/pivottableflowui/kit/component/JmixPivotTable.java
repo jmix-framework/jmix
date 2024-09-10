@@ -75,6 +75,12 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         return dataProvider;
     }
 
+    /**
+     * Sets a data provider to the pivot table or replaces existing one.
+     * Using the {@link DataProvider}, the component can easily retrieve data from any data source.
+     *
+     * @param dataProvider data source to set
+     */
     public void setDataProvider(DataProvider<DataItem, ?> dataProvider) {
         if (Objects.equals(dataProvider, this.dataProvider)) {
             return;
@@ -84,14 +90,22 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         onDataProviderChange();
     }
 
+    /**
+     * Init component data with varargs of {@link DataItem}
+     * @param dataItems
+     */
     public void setData(DataItem... dataItems) {
         if (dataItems != null) {
             setDataProvider(new PivotTableListDataSet<>(Arrays.asList(dataItems)));
         }
     }
 
-    public void setItems(List<DataItem> items) {
-        setDataProvider(new PivotTableListDataSet<>(items));
+    /**
+     * Init component data with the list of {@link DataItem}
+     * @param dataItems
+     */
+    public void setItems(List<DataItem> dataItems) {
+        setDataProvider(new PivotTableListDataSet<>(dataItems));
     }
 
     /**
@@ -126,226 +140,562 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         };
     }
 
+    /**
+     * @return map of properties and their localized values
+     */
     public Map<String, String> getProperties() {
         return options.getProperties();
     }
 
+    /**
+     * Sets properties and their localized values
+     * @param properties map with properties and their localized values
+     */
     public void setProperties(Map<String, String> properties) {
         options.setProperties(properties);
     }
 
+    /**
+     * Adds properties and their localized values
+     * @param properties map with properties and their localized values
+     */
     public void addProperties(Map<String, String> properties) {
         options.addProperties(properties);
     }
 
+    /**
+     * Adds property and its localized value
+     * @param property property name
+     * @param value property localized value
+     */
     public void addProperty(String property, String value) {
         options.addProperty(property, value);
     }
 
+    /**
+     * @return a collection of attribute names to use as rows
+     */
     public List<String> getRows() {
         return options.getRows();
     }
 
+    /**
+     * Sets a collection of attribute names to use as rows.
+     *
+     * @param rows a collection of attribute names to use as rows
+     */
     public void setRows(List<String> rows) {
         options.setRows(rows);
     }
 
+    /**
+     * Adds an array of attribute names to use as rows.
+     *
+     * @param rows an array of attribute names to add
+     */
     public void addRows(String... rows) {
         options.addRows(rows);
     }
 
+    /**
+     * @return a collection of attribute names to use as cols
+     */
     public List<String> getCols() {
         return options.getCols();
     }
 
+    /**
+     * Sets a collection of attribute names to use as cols.
+     *
+     * @param cols a collection of attribute names to use as cols
+     */
     public void setCols(List<String> cols) {
         options.setCols(cols);
     }
 
+    /**
+     * Adds an array of attribute names to use as cols.
+     *
+     * @param cols an array of attribute names to add
+     */
     public void addColumns(String... cols) {
         options.addCols(cols);
     }
 
+    /**
+     * @return an object which will aggregate results per cell
+     */
     public Aggregation getAggregation() {
         return options.getAggregation();
     }
 
+    /**
+     * Original property name: {@code aggregator}.
+     * <p>
+     * Sets a descriptor of an object which will aggregate results per cell
+     * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Aggregators">documentation</a>).
+     * <p>
+     * Applies only when {@code this.isShowUI() == false}.
+     *
+     * @param aggregation an object which will aggregate results per cell
+     */
     public void setAggregation(Aggregation aggregation) {
         options.setAggregation(aggregation);
     }
 
+    /**
+     * @return an object which will generate output from pivot data structure
+     */
     public Renderer getRenderer() {
         return options.getRenderer();
     }
 
+    /**
+     * Sets a descriptor of an object which will generate output from pivot data structure
+     * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Renderers">documentation</a>).
+     * <p>
+     * Applies only when {@code this.isShowUI() == false}.
+     *
+     * @param renderer an object which will generate output from pivot data structure
+     */
     public void setRenderer(Renderer renderer) {
         options.setRenderer(renderer);
     }
 
+    /**
+     * @return attribute names to prepopulate in vals area
+     */
     public List<String> getAggregationProperties() {
         return options.getAggregationProperties();
     }
 
+    /**
+     * Original property name: {@code vals}.
+     * <p>
+     * Sets attribute names to prepopulate in vals area (gets passed to aggregator generating function).
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param aggregationProperties attribute names to prepopulate in vals area
+     */
     public void setAggregationProperties(List<String> aggregationProperties) {
         options.setAggregationProperties(aggregationProperties);
     }
 
+    /**
+     * Original property name: {@code vals}.
+     * <p>
+     * Adds attribute names to prepopulate in vals area (gets passed to aggregator generating function).
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param aggregationProperties attribute names to prepopulate in vals area
+     */
     public void addAggregationProperties(String... aggregationProperties) {
         options.addAggregationProperties(aggregationProperties);
     }
 
+    /**
+     * @return an object that represents a list of generators for aggregation functions in dropdown
+     */
     public Aggregations getAggregations() {
         return options.getAggregations();
     }
 
+    /**
+     * Original property name: {@code aggregators}.
+     * <p>
+     * Sets an object that represents a list of generators for aggregation functions in dropdown
+     * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Aggregators">documentation</a>).
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param aggregations an object that represents a list of generators for aggregation functions in dropdown
+     */
     public void setAggregations(Aggregations aggregations) {
         options.setAggregations(aggregations);
     }
 
+    /**
+     * @return n object that represents a list of rendering functions
+     */
     public Renderers getRenderers() {
         return options.getRenderers();
     }
 
+    /**
+     * Sets an object that represents a list of rendering functions
+     * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Renderers">documentation</a>).
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param renderers n object that represents a list of rendering functions
+     */
     public void setRenderers(Renderers renderers) {
         options.setRenderers(renderers);
     }
 
+    /**
+     * @return attribute names to omit from the UI
+     */
     public List<String> getHiddenProperties() {
         return options.getHiddenProperties();
     }
 
+    /**
+     * Sets attribute names to omit from the UI.
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param hiddenProperties attribute names to omit from the UI
+     */
     public void setHiddenProperties(List<String> hiddenProperties) {
         options.setHiddenProperties(hiddenProperties);
     }
 
+    /**
+     * Adds attribute names to omit from the UI.
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param hiddenProperties attribute names to omit from the UI
+     */
     public void addHiddenProperties(String... hiddenProperties) {
         options.addHiddenProperties(hiddenProperties);
     }
 
+    /**
+     * @return attribute names to omit from the aggregation arguments dropdowns
+     */
     public List<String> getHiddenFromAggregations() {
         return options.getHiddenFromAggregations();
     }
 
+    /**
+     * Sets attribute names to omit from the aggregation arguments dropdowns.
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param hiddenFromAggregations attribute names to omit from the aggregation arguments dropdowns
+     */
     public void setHiddenFromAggregations(List<String> hiddenFromAggregations) {
         options.setHiddenFromAggregations(hiddenFromAggregations);
     }
 
+    /**
+     * Adds attribute names to omit from the aggregation arguments dropdowns.
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param hiddenFromAggregations attribute names to omit from the aggregation arguments dropdowns
+     */
     public void addHiddenFromAggregations(String... hiddenFromAggregations) {
         options.addHiddenFromAggregations(hiddenFromAggregations);
     }
 
+    /**
+     * @return attribute names to omit from the drag'n'drop portion of the UI
+     */
     public List<String> getHiddenFromDragDrop() {
         return options.getHiddenFromDragDrop();
     }
 
+    /**
+     * Sets attribute names to omit from the drag'n'drop portion of the UI.
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param hiddenFromDragDrop attribute names to omit from the drag'n'drop portion of the UI
+     */
     public void setHiddenFromDragDrop(List<String> hiddenFromDragDrop) {
         options.setHiddenFromDragDrop(hiddenFromDragDrop);
     }
 
+    /**
+     * Adds attribute names to omit from the drag'n'drop portion of the UI.
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param hiddenFromDragDrop attribute names to omit from the drag'n'drop portion of the UI
+     */
     public void addHiddenFromDragDrop(String... hiddenFromDragDrop) {
         options.addHiddenFromDragDrop(hiddenFromDragDrop);
     }
 
+    /**
+     * @return the order in which column data is provided to the renderer
+     */
     public Order getColOrder() {
         return options.getColOrder();
     }
 
+    /**
+     * Sets the order in which column data is provided to the renderer.
+     * <p>
+     * Ordering by value orders by column total.
+     *
+     * @param colOrder the order in which column data is provided to the renderer
+     */
     public void setColOrder(Order colOrder) {
         options.setColOrder(colOrder);
     }
 
+    /**
+     * @return the order in which row data is provided to the renderer
+     */
     public Order getRowOrder() {
         return options.getRowOrder();
     }
 
+    /**
+     * Sets the order in which row data is provided to the renderer.
+     * <p>
+     * Ordering by value orders by row total.
+     *
+     * @param rowOrder the order in which row data is provided to the renderer
+     */
     public void setRowOrder(Order rowOrder) {
         options.setRowOrder(rowOrder);
     }
 
+    /**
+     * @return the maximum number of values to list in the attribute values dialog
+     */
     public Integer getMenuLimit() {
         return options.getMenuLimit();
     }
 
+    /**
+     * Sets the maximum number of values to list in the attribute values dialog
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param menuLimit the maximum number of values to list in the attribute values dialog
+     * @return a reference to this object
+     */
     public void setMenuLimit(Integer menuLimit) {
         options.setMenuLimit(menuLimit);
     }
 
+    /**
+     * @return whether or not unused attributes are kept sorted in the UI
+     */
     public Boolean getAutoSortUnusedProperties() {
         return options.getAutoSortUnusedProperties();
     }
 
+    /**
+     * Original property name: {@code autoSortUnusedAttrs}.
+     * <p>
+     * Sets whether or not unused attributes are kept sorted in the UI.
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param autoSortUnusedProperties whether or not unused attributes are kept sorted in the UI
+     */
     public void setAutoSortUnusedProperties(Boolean autoSortUnusedProperties) {
         options.setAutoSortUnusedProperties(autoSortUnusedProperties);
     }
 
+    /**
+     * @return whether or not unused attributes are shown vertically
+     */
     public UnusedPropertiesVertical getUnusedPropertiesVertical() {
         return options.getUnusedPropertiesVertical();
     }
 
+    /**
+     * Original property name: {@code unusedAttrsVertical}.
+     * <p>
+     * Sets whether or not unused attributes are shown vertically
+     * instead of the default which is horizontally. {@code true} means
+     * always vertical, {@code false} means always horizontal. If set to
+     * a number (as is the default) then if the attributes' names' combined
+     * length in characters exceeds the number then the attributes will be shown vertically.
+     * <p>
+     * Applies only when  {@code this.isShowUI() == true}.
+     *
+     * @param unusedPropertiesVertical whether or not unused attributes are shown vertically
+     */
     public void setUnusedPropertiesVertical(UnusedPropertiesVertical unusedPropertiesVertical) {
         options.setUnusedPropertiesVertical(unusedPropertiesVertical);
     }
 
+    /**
+     * @return a filter function that is called on each record
+     */
     public JsFunction getFilterFunction() {
         return options.getFilterFunction();
     }
 
+    /**
+     * Original property name: {@code filter}.
+     * <p>
+     * Sets a filter function that is called on each record, returns {@code false} if the record
+     * is to be excluded from the input before rendering or {@code true} otherwise.
+     *
+     * @param filter a filter function that is called on each record
+     */
     public void setFilterFunction(JsFunction filter) {
         options.setFilterFunction(filter);
     }
 
+    /**
+     * @return a sorter function
+     */
     public JsFunction getSortersFunction() {
         return options.getSortersFunction();
     }
 
+    /**
+     * Original property name: {@code sorters}.
+     * <p>
+     * Sets a sorter function that is called with an attribute name and can return
+     * a function which can be used as an argument to {@code Array.sort} for output
+     * purposes. If no function is returned, the default sorting mechanism is a built-in
+     * "natural sort" implementation. Useful for sorting attributes like month names.
+     *
+     * @param sorters a sorter function
+     * @return a reference to this object
+     */
     public void setSortersFunction(JsFunction sorters) {
         options.setSortersFunction(sorters);
     }
 
+    /**
+     * @return an object that is passed through to renderer as options
+     */
     public RendererOptions getRendererOptions() {
         return options.getRendererOptions();
     }
 
+    /**
+     * Sets an object that is passed through to renderer as options.
+     *
+     * @param rendererOptions an object that is passed through to renderer as options
+     */
     public void setRendererOptions(RendererOptions rendererOptions) {
         options.setRendererOptions(rendererOptions);
     }
 
+    /**
+     * @return a map whose keys are attribute names and values are arrays of attribute values
+     * @see #getExclusions()
+     */
     public Map<String, List<String>> getInclusions() {
         return options.getInclusions();
     }
 
+    /**
+     * Sets a map whose keys are attribute names and values are arrays of attribute values
+     * which denote records to include in rendering; used to prepopulate the filter menus
+     * that appear on double-click (overrides {@link #getExclusions()}).
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param inclusions a map whose keys are attribute names and values are arrays of attribute values
+     * @see #setExclusions(Map)
+     */
     public void setInclusions(Map<String, List<String>> inclusions) {
         options.setInclusions(inclusions);
     }
 
+    /**
+     * Sets a list whose values are arrays of attribute values
+     * which denote records to include in rendering; used to prepopulate the filter menus
+     * that appear on double-click (overrides {@link #getExclusions()}).
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param property   a property for which set inclusions
+     * @param inclusions a list of property values
+     * @see #setExclusions(String, List)
+     */
     public void setInclusions(String property, List<String> inclusions) {
         options.setInclusions(property, inclusions);
     }
 
+    /**
+     * Adds property values to a given property
+     * which denote records to include in rendering; used to prepopulate the filter menus
+     * that appear on double-click (overrides {@link #getExclusions()}).
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param property   a property for which set inclusions
+     * @param inclusions an array of property values
+     * @see #addExclusions(String, String...)
+     */
     public void addInclusions(String property, String... inclusions) {
         options.addInclusions(property, inclusions);
     }
 
+    /**
+     * @return a map whose keys are attribute names and values are arrays of attribute values
+     */
     public Map<String, List<String>> getExclusions() {
         return options.getExclusions();
     }
 
+    /**
+     * Sets a map whose keys are attribute names and values are arrays of attribute values
+     * which denote records to exclude from rendering; used to prepopulate the filter menus
+     * that appear on double-click.
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param exclusions a map whose keys are attribute names and values are arrays of attribute values
+     * @see #setInclusions(Map)
+     */
     public void setExclusions(Map<String, List<String>> exclusions) {
         options.setExclusions(exclusions);
     }
 
+    /**
+     * Sets a list whose values are arrays of attribute values
+     * which denote records to exclude from rendering; used to prepopulate the filter menus
+     * that appear on double-click.
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param property   a property for which set exclusions
+     * @param exclusions a map whose keys are attribute names and values are arrays of attribute values
+     * @see #setInclusions(Map)
+     */
     public void setExclusions(String property, List<String> exclusions) {
         options.setExclusions(property, exclusions);
     }
 
+    /**
+     * Adds property values to a given property
+     * which denote records to exclude from rendering; used to prepopulate the filter menus
+     * that appear on double-click.
+     * <p>
+     * Applies only when {@code this.isShowUI() == true}.
+     *
+     * @param property   a property for which set exclusions
+     * @param exclusions a map whose keys are attribute names and values are arrays of attribute values
+     * @see #setInclusions(Map)
+     */
     public void addExclusions(String property, String... exclusions) {
         options.addExclusions(property, exclusions);
     }
 
+    /**
+     * @return an object that represents derived properties
+     */
     public DerivedProperties getDerivedProperties() {
         return options.getDerivedProperties();
     }
 
+    /**
+     * Original property name: {@code derivedAttributes}.
+     * <p>
+     * Sets an object that represents derived properties
+     * (see <a href="https://github.com/nicolaskruchten/pivottable/wiki/Derived-Attributes">documentation</a>).
+     *
+     * @param derivedProperties an object that represents derived properties
+     */
     public void setDerivedProperties(DerivedProperties derivedProperties) {
         options.setDerivedProperties(derivedProperties);
     }

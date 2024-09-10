@@ -22,6 +22,9 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Pojo class to store pivot table data in the settings facet
+ */
 public class PivotTableSettings implements Settings {
 
     protected String id;

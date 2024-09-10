@@ -45,29 +45,4 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
     @Nullable
     protected abstract TState getIndexState(IndexConfiguration indexConfiguration);
 
-    public static class ConfigurationComparingResult {
-        protected final MappingComparingResult mappingComparingResult;
-        protected final SettingsComparingResult settingsComparingResult;
-
-        ConfigurationComparingResult(MappingComparingResult mappingComparingResult, SettingsComparingResult settingsComparingResult) {
-            this.mappingComparingResult = mappingComparingResult;
-            this.settingsComparingResult = settingsComparingResult;
-        }
-
-        public boolean isIndexRecreatingRequired() {
-            return mappingComparingResult.isIndexRecreatingRequired() || settingsComparingResult.isIndexRecreatingRequired();
-        }
-
-        public boolean isMappingUpdateRequired() {
-            return mappingComparingResult.isConfigurationUpdateRequired();
-        }
-
-        public boolean isSettingsUpdateRequired() {
-            return settingsComparingResult.isConfigurationUpdateRequired();
-        }
-
-        public boolean isConfigurationUpdateRequired() {
-            return isMappingUpdateRequired() || isSettingsUpdateRequired();
-        }
-    }
 }

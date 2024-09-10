@@ -31,14 +31,16 @@ public class FileParserResolver {
     public Parser getParser(FileRef fileRef) throws ParserResolvingException {
         String fileName = fileRef.getFileName();
         String fileExtension = FilenameUtils.getExtension(fileName);
-        if (Strings.isNullOrEmpty(fileExtension)){
+        if (Strings.isNullOrEmpty(fileExtension)) {
             throw new EmptyFileExtensionException(fileName);
         }
+
         for (SupportedFileExtensions extension : SupportedFileExtensions.values()) {
             if (extension.getSymbols().equals(fileExtension)) {
                 return extension.getParser();
             }
         }
+
         throw new UnsupportedFileExtensionException(fileName);
     }
 }

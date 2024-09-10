@@ -129,14 +129,14 @@ public class CodeEditor extends JmixCodeEditor
     public void setRequired(boolean required) {
         super.setRequired(required);
 
-        fieldDelegate.updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     @Override
     public void setRequiredIndicatorVisible(boolean required) {
         super.setRequiredIndicatorVisible(required);
 
-        fieldDelegate.updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
 

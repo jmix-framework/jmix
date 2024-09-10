@@ -24,7 +24,6 @@ import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationDetail;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-
 import org.springframework.lang.Nullable;
 
 import java.util.Collections;
@@ -115,6 +114,11 @@ public class UiComponentProperties {
     boolean showErrorMessageBelowField;
 
     /**
+     * Whether error message should be shown immediately after the form is opened.
+     */
+    boolean immediateRequiredValidationEnabled;
+
+    /**
      * Whether to trim the entered string by default for {@link SupportsTrimming} components.
      */
     boolean defaultTrimEnabled;
@@ -142,6 +146,7 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean filterShowNonJpaProperties,
             @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled,
             @DefaultValue("true") boolean showErrorMessageBelowField,
+            @DefaultValue("true") boolean immediateRequiredValidationEnabled,
             @DefaultValue("true") boolean defaultTrimEnabled) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
@@ -170,6 +175,7 @@ public class UiComponentProperties {
         this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
 
         this.showErrorMessageBelowField = showErrorMessageBelowField;
+        this.immediateRequiredValidationEnabled = immediateRequiredValidationEnabled;
 
         this.defaultTrimEnabled = defaultTrimEnabled;
     }
@@ -296,6 +302,13 @@ public class UiComponentProperties {
      */
     public boolean isShowErrorMessageBelowField() {
         return showErrorMessageBelowField;
+    }
+
+    /**
+     * @see #immediateRequiredValidationEnabled
+     */
+    public boolean isImmediateRequiredValidationEnabled() {
+        return immediateRequiredValidationEnabled;
     }
 
     /**

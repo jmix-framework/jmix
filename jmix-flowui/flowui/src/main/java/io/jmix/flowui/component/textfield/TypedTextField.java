@@ -30,6 +30,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.delegate.TextInputFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
@@ -39,6 +40,7 @@ import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.HasTitle;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -52,13 +54,16 @@ import java.util.stream.Collectors;
 public class TypedTextField<V> extends TextField
         implements SupportsValidation<V>, SupportsStatusChangeHandler<TypedTextField<V>>, SupportsDatatype<V>,
         SupportsTypedValue<TypedTextField<V>, ComponentValueChangeEvent<TextField, String>, V, String>,
-        SupportsValueSource<V>, HasLengthLimited, HasRequired, HasTitle, ApplicationContextAware, InitializingBean {
+        SupportsValueSource<V>, HasLengthLimited, HasRequired, HasTitle, SupportsTrimming,
+        ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
     protected TextInputFieldDelegate<TypedTextField<V>, V> fieldDelegate;
 
     protected V internalValue;
+
+    protected boolean trimEnabled;
 
     /**
      * Component manually handles Vaadin value change event: when programmatically sets value
@@ -81,6 +86,7 @@ public class TypedTextField<V> extends TextField
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
         fieldDelegate.setToModelConverter(this::convertToModel);
+        trimEnabled = applicationContext.getBean(UiComponentProperties.class).isDefaultTrimEnabled();
 
         attachValueChangeListener();
     }
@@ -176,6 +182,10 @@ public class TypedTextField<V> extends TextField
 
     protected void setValueInternal(@Nullable V modelValue, String presentationValue, boolean fromClient) {
         try {
+            if (isTrimEnabled()) {
+                presentationValue = StringUtils.trimToEmpty(presentationValue);
+            }
+
             if (modelValue == null) {
                 modelValue = convertToModel(presentationValue);
             }
@@ -218,6 +228,16 @@ public class TypedTextField<V> extends TextField
     @Override
     public void setRequiredMessage(@Nullable String requiredMessage) {
         fieldDelegate.setRequiredMessage(requiredMessage);
+    }
+
+    @Override
+    public boolean isTrimEnabled() {
+        return trimEnabled;
+    }
+
+    @Override
+    public void setTrimEnabled(boolean trimEnabled) {
+        this.trimEnabled = trimEnabled;
     }
 
     @Override

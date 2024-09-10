@@ -33,6 +33,8 @@ public class ComboButtonLoader extends AbstractDropdownButtonLoader<ComboButton>
     public void loadComponent() {
         super.loadComponent();
 
+        componentLoader().loadShortcutCombination(resultComponent, element);
+
         loadDropdownIcon(resultComponent, element);
         loadAction(resultComponent, element);
     }

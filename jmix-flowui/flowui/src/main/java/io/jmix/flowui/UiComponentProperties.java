@@ -18,6 +18,7 @@ package io.jmix.flowui;
 
 import com.vaadin.flow.component.notification.Notification;
 import io.jmix.flowui.app.filter.condition.AddConditionView;
+import io.jmix.flowui.component.SupportsTrimming;
 import io.jmix.flowui.component.factory.EntityFieldCreationSupport;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationDetail;
@@ -117,6 +118,11 @@ public class UiComponentProperties {
      */
     boolean immediateRequiredValidationEnabled;
 
+    /**
+     * Whether to trim the entered string by default for {@link SupportsTrimming} components.
+     */
+    boolean defaultTrimEnabled;
+
     public UiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -140,7 +146,8 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean filterShowNonJpaProperties,
             @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled,
             @DefaultValue("true") boolean showErrorMessageBelowField,
-            @DefaultValue("true") boolean immediateRequiredValidationEnabled) {
+            @DefaultValue("true") boolean immediateRequiredValidationEnabled,
+            @DefaultValue("true") boolean defaultTrimEnabled) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -169,6 +176,8 @@ public class UiComponentProperties {
 
         this.showErrorMessageBelowField = showErrorMessageBelowField;
         this.immediateRequiredValidationEnabled = immediateRequiredValidationEnabled;
+
+        this.defaultTrimEnabled = defaultTrimEnabled;
     }
 
     public String getGridCreateShortcut() {
@@ -300,5 +309,12 @@ public class UiComponentProperties {
      */
     public boolean isImmediateRequiredValidationEnabled() {
         return immediateRequiredValidationEnabled;
+    }
+
+    /**
+     * @see #defaultTrimEnabled
+     */
+    public boolean isDefaultTrimEnabled() {
+        return defaultTrimEnabled;
     }
 }

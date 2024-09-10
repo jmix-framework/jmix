@@ -301,10 +301,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
             componentLoader().loadTitle(button, buttonElement, context);
             componentLoader().loadClassNames(button, buttonElement);
             componentLoader().loadThemeNames(button, buttonElement);
+            componentLoader().loadShortcutCombination(button, buttonElement);
             loadBoolean(buttonElement, "iconAfterText", button::setIconAfterText);
-            componentLoader().loadShortcutCombination(buttonElement)
-                    .map(KeyCombination::create)
-                    .ifPresent(button::setShortcutCombination);
 
             return button;
         }

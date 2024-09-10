@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Describes PivotTable refresh event.
+ * Describes the PivotTable refresh event. Fires each time the state of the pivot table changes.
  */
 public class PivotTableRefreshEvent extends ComponentEvent<JmixPivotTable> {
 

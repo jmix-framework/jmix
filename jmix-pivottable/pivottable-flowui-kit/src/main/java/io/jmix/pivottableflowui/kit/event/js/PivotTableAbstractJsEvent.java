@@ -20,6 +20,9 @@ import com.vaadin.flow.component.ComponentEvent;
 import elemental.json.JsonObject;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
 
+/**
+ * Base class for a pivot table js event. Contains JsonObject with event data returned from the client.
+ */
 public abstract class PivotTableAbstractJsEvent extends ComponentEvent<JmixPivotTable> {
     protected JsonObject params;
 

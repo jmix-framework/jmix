@@ -700,38 +700,76 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         options.setDerivedProperties(derivedProperties);
     }
 
+    /**
+     * Sets the message that will be displayed in case of empty data.
+     *
+     * @param emptyDataMessage the message that will be displayed in case of empty data
+     */
     public void setEmptyDataMessage(String emptyDataMessage) {
         options.setEmptyDataMessage(emptyDataMessage);
     }
 
+    /**
+     * @return the message that will be displayed in case of empty data
+     */
     public String getEmptyDataMessage() {
         return options.getEmptyDataMessage();
     }
 
+    /**
+     * Show pivot table in the UI mode.
+     *
+     * @param showUI {@code true} if pivot table UI is shown, {@code false} if not.
+     */
     public void setShowUI(Boolean showUI) {
         options.setShowUI(showUI);
     }
 
+    /**
+     * @return {@code true} if pivot table UI is shown, {@code false} if not.
+     */
     public Boolean isShowUI() {
         return options.isShowUI();
     }
 
+    /**
+     * Shows an additional column of totals for each row
+     *
+     * @param showRowTotals {@code true} if row totals are shown, {@code false} if not.
+     */
     public void setShowRowTotals(Boolean showRowTotals) {
         options.setShowRowTotals(showRowTotals);
     }
 
+    /**
+     * @return {@code true} if row totals are shown, {@code false} if not.
+     */
     public Boolean isRowTotalsShown() {
         return options.isShowRowTotals();
     }
 
+    /**
+     * Shows an additional column of totals for each col
+     *
+     * @param showColTotals {@code true} if col totals are shown, {@code false} if not.
+     */
     public void setShowColTotals(Boolean showColTotals) {
         options.setShowColTotals(showColTotals);
     }
 
+    /**
+     * @return {@code true} if col totals are shown, {@code false} if not.
+     */
     public Boolean isColTotalsShown() {
         return options.isShowColTotals();
     }
 
+    /**
+     * Set pivot table configuration params in Json format.
+     * Json property overrides component property if they match by name
+     *
+     * @param nativeJson json as string
+     */
     public void setNativeJson(String nativeJson) {
         if (!StringUtils.equals(getNativeJson(), nativeJson)) {
             if (nativeJson != null) {
@@ -746,6 +784,9 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         }
     }
 
+    /**
+     * @return string with valid json
+     */
     public String getNativeJson() {
         return options.getNativeJson();
     }

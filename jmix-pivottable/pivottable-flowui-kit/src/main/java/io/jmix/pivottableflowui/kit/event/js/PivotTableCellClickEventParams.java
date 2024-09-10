@@ -19,6 +19,9 @@ package io.jmix.pivottableflowui.kit.event.js;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Contains deserialized json data from {@link PivotTableJsCellClickEvent}
+ */
 public class PivotTableCellClickEventParams {
 
     private Double value;

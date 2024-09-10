@@ -58,10 +58,6 @@ public class PivotTableCellClickEvent extends ComponentEvent<JmixPivotTable> {
         return filters;
     }
 
-    void setFilters(Map<String, String> filters) {
-        this.filters = filters;
-    }
-
     /**
      * @return a list of {@link DataItem} used in the clicked cell value generation
      */

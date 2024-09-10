@@ -20,6 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Describes pivot table data that is retrieved from the client and used in the {@link io.jmix.pivottableflowui.export.PivotTableExporter}
+ */
 public class PivotData implements Serializable {
 
     protected Integer dataNumRows;

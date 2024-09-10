@@ -21,6 +21,9 @@ import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
 
+/**
+ * Pivot table refresh event sent from the client.
+ */
 @DomEvent(PivotTableJsRefreshEvent.EVENT_NAME)
 public class PivotTableJsRefreshEvent extends PivotTableAbstractJsEvent {
 

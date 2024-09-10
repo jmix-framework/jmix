@@ -23,6 +23,9 @@ import io.jmix.pivottableflowui.kit.component.model.Renderer;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Contains deserialized json data from {@link PivotTableJsRefreshEvent}
+ */
 public class PivotTableRefreshEventParams {
 
     private List<String> rows;

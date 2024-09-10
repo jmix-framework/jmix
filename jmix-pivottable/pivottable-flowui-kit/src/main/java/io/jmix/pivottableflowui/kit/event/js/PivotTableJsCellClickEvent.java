@@ -21,6 +21,9 @@ import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
 
+/**
+ * Pivot table cell click event sent from the client.
+ */
 @DomEvent(PivotTableJsCellClickEvent.EVENT_NAME)
 public class PivotTableJsCellClickEvent extends PivotTableAbstractJsEvent {
 

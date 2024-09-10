@@ -110,14 +110,14 @@ public class EntityPicker<V> extends ValuePickerBase<EntityPicker<V>, V>
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
-        fieldDelegate.updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     @Override
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
 
-        fieldDelegate.updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     @Nullable

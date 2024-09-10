@@ -26,8 +26,8 @@ import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.flowui.UiComponentProperties;
-import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsStatusChangeHandler.StatusContext;
+import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.ConversionException;
 import io.jmix.flowui.data.EntityValueSource;
@@ -39,7 +39,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     protected String requiredMessage;
     protected boolean explicitlyInvalid = false;
     protected boolean conversionInvalid = false;
-    protected boolean showInitialFormValidation = true;
+    protected boolean immediateRequiredValidationEnabled = true;
 
     public AbstractFieldDelegate(C component) {
         super(component);
@@ -102,7 +101,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
     @Autowired
     public void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
         this.uiComponentProperties = uiComponentProperties;
-        showInitialFormValidation = uiComponentProperties.isShowInitialFormValidation();
+        immediateRequiredValidationEnabled = uiComponentProperties.isImmediateRequiredValidationEnabled();
     }
 
     public void setToModelConverter(@Nullable Function<V, T> toModelConverter) {
@@ -253,13 +252,13 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         }
     }
 
-    public void updateInvalidState() {
-        // skip initial validation when the form is opened
-        if (!showInitialFormValidation) {
-            showInitialFormValidation = true;
-            return;
+    public void updateRequiredState() {
+        if (immediateRequiredValidationEnabled) {
+            updateInvalidState();
         }
+    }
 
+    public void updateInvalidState() {
         boolean invalid = explicitlyInvalid || conversionInvalid || !validatorsPassed();
 
         setInvalidInternal(invalid);

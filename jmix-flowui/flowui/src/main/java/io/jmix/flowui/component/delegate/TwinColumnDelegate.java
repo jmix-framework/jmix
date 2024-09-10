@@ -27,6 +27,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * @deprecated use {@link FieldDelegate} instead
+ */
+@Deprecated(since = "2.4", forRemoval = true)
 @Component("flowui_TwinColumnDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class TwinColumnDelegate<C extends AbstractField<?, V>, T, V> extends AbstractFieldDelegate<C, T, V> {

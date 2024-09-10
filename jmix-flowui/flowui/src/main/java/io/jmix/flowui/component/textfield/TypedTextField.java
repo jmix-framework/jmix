@@ -245,14 +245,14 @@ public class TypedTextField<V> extends TextField
     public void setRequired(boolean required) {
         super.setRequired(required);
 
-        fieldDelegate.updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     @Override
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
-        fieldDelegate.updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     protected void fireAllValueChangeEvents(@Nullable V value, @Nullable V oldValue, boolean isFromClient) {

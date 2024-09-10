@@ -115,7 +115,7 @@ public class UiComponentProperties {
     /**
      * Whether error message should be shown immediately after the form is opened.
      */
-    boolean showInitialFormValidation;
+    boolean immediateRequiredValidationEnabled;
 
     public UiComponentProperties(
             String gridCreateShortcut,
@@ -140,7 +140,7 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean filterShowNonJpaProperties,
             @DefaultValue("true") boolean filterConfigurationUniqueNamesEnabled,
             @DefaultValue("true") boolean showErrorMessageBelowField,
-            @DefaultValue("true") boolean showInitialFormValidation) {
+            @DefaultValue("true") boolean immediateRequiredValidationEnabled) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -168,7 +168,7 @@ public class UiComponentProperties {
         this.filterConfigurationUniqueNamesEnabled = filterConfigurationUniqueNamesEnabled;
 
         this.showErrorMessageBelowField = showErrorMessageBelowField;
-        this.showInitialFormValidation = showInitialFormValidation;
+        this.immediateRequiredValidationEnabled = immediateRequiredValidationEnabled;
     }
 
     public String getGridCreateShortcut() {
@@ -296,9 +296,9 @@ public class UiComponentProperties {
     }
 
     /**
-     * @see #showInitialFormValidation
+     * @see #immediateRequiredValidationEnabled
      */
-    public boolean isShowInitialFormValidation() {
-        return showInitialFormValidation;
+    public boolean isImmediateRequiredValidationEnabled() {
+        return immediateRequiredValidationEnabled;
     }
 }

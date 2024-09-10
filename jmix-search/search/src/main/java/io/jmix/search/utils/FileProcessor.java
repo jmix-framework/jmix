@@ -54,7 +54,7 @@ public class FileProcessor {
         Preconditions.checkNotNullArgument(fileRef);
         log.debug("Extract content of file {}", fileRef);
         FileStorage fileStorage = fileStorageLocator.getByName(fileRef.getStorageName());
-        Parser parser = fileParserResolver.getParser(fileRef);
+        Parser parser = getParser(fileRef);
         log.debug("Parser for file {}: {}", fileRef, parser);
 
         StringWriter stringWriter = new StringWriter();
@@ -78,5 +78,9 @@ public class FileProcessor {
             throw new FileParseException(fileRef.getFileName(), e);
         }
         return stringWriter.toString();
+    }
+
+    protected Parser getParser(FileRef fileRef) throws ParserResolvingException {
+        return fileParserResolver.getParser(fileRef);
     }
 }

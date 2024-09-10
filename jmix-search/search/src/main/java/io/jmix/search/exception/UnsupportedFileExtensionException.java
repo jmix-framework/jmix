@@ -23,9 +23,12 @@ import java.util.Arrays;
 
 import static java.util.stream.Collectors.joining;
 
+/**
+ * An exception that is thrown when a user added some file with extension that there are no any known parser for.
+ */
 public class UnsupportedFileExtensionException extends ParserResolvingException {
 
-    public static final String MESSAGE = "The file %s with '%s' extension is not supported. " +
+    private static final String MESSAGE = "The file %s with '%s' extension is not supported. " +
             "Only following file extensions are supported %s.";
 
     public UnsupportedFileExtensionException(String fileName) {

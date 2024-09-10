@@ -16,9 +16,13 @@
 
 package io.jmix.search.exception;
 
+/**
+ * An exception that is thrown when a user added some file without any extension.
+ * In this case any parser for this file couldn't be resolved.
+ */
 public class EmptyFileExtensionException extends ParserResolvingException {
 
-    public static final String MESSAGE = "Extension of the file %s is empty";
+    private static final String MESSAGE = "Extension of the file %s is empty";
 
     public EmptyFileExtensionException(String fileName) {
         super(String.format(MESSAGE, fileName));

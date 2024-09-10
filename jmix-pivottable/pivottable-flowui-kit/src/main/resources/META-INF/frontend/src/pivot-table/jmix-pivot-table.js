@@ -195,17 +195,21 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     }
 
     _recreatePivot() {
+        let outputDiv = $("div.pivot-table-output");
         if (this._options) {
-            (function(pivotTable){
+            if (!this._dataSet || Object.keys(this._dataSet).length == 0) {
+                outputDiv.html(this._options.emptyDataMessage);
+                return;
+            }
+            (function(pivotTable) {
                 $.pivotUtilities.renderers = $.extend($.pivotUtilities.c3_renderers,
                     $.extend($.pivotUtilities.d3_renderers, $.pivotUtilities.renderers));
                 pivotTable._initLocale();
-                $("div.pivot-table-output").pivotUI(
-                    pivotTable._dataSet,
+                let showPivotFunction = pivotTable._options.showUI ? outputDiv.pivotUI : outputDiv.pivot;
+                showPivotFunction.call(outputDiv, pivotTable._dataSet,
                     pivotTable._preparePivotTableOptions(),
                     false,
-                    pivotTable._options.localeCode
-                );
+                    pivotTable._options.localeCode);
             })(this);
         }
     }

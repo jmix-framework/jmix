@@ -17,11 +17,13 @@
 package io.jmix.reports.yarg.formatters.impl.xlsx;
 
 import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 
 import java.awt.*;
 
+/**
+ * XlsxFormatter image information DTO
+ */
 public class XlsxImage {
     protected Picture picture;
     protected byte[] pictureData;

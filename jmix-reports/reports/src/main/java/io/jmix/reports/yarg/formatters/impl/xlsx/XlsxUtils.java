@@ -15,42 +15,25 @@
  */
 package io.jmix.reports.yarg.formatters.impl.xlsx;
 
-import io.jmix.reports.yarg.structure.ReportTemplate;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ooxml.POIXMLDocumentPart;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.util.ImageUtils;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFPicture;
-import org.apache.poi.xssf.usermodel.XSSFShape;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlCursor;
 import org.docx4j.dml.CTBlip;
 import org.docx4j.dml.CTBlipFillProperties;
-import org.docx4j.dml.CTPositiveSize2D;
 import org.docx4j.dml.spreadsheetdrawing.CTAnchorClientData;
 import org.docx4j.dml.spreadsheetdrawing.CTDrawing;
 import org.docx4j.dml.spreadsheetdrawing.CTMarker;
-import org.docx4j.dml.spreadsheetdrawing.CTOneCellAnchor;
 import org.docx4j.dml.spreadsheetdrawing.CTPicture;
 import org.docx4j.dml.spreadsheetdrawing.CTTwoCellAnchor;
+import org.docx4j.dml.spreadsheetdrawing.ObjectFactory;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
+import org.docx4j.openpackaging.parts.DrawingML.Drawing;
 import org.docx4j.openpackaging.parts.PartName;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
 import org.docx4j.relationships.Relationship;
-
-import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public final class XlsxUtils {
 
@@ -95,7 +78,7 @@ public final class XlsxUtils {
 
         String columnLetters = cellName.replaceAll("\\d", "");
 
-        double sum = Double.valueOf(0);
+        double sum = 0;
         int len = columnLetters.length();
         for (int i = 0; i < len; i++) {
             sum += (columnLetters.charAt(i) - 'A' + 1) * Math.pow(26, len - i - 1);
@@ -106,25 +89,24 @@ public final class XlsxUtils {
 
     public static CTPicture createPicture(String imageRelID) {
 
-        org.docx4j.dml.spreadsheetdrawing.ObjectFactory dmlspreadsheetdrawingObjectFactory = new org.docx4j.dml.spreadsheetdrawing.ObjectFactory();
+        ObjectFactory dmlSpreadsheetDrawingObjectFactory = new ObjectFactory();
 
-        CTPicture picture = dmlspreadsheetdrawingObjectFactory.createCTPicture();
+        CTPicture picture = dmlSpreadsheetDrawingObjectFactory.createCTPicture();
 
         org.docx4j.dml.ObjectFactory dmlObjectFactory = new org.docx4j.dml.ObjectFactory();
 
-        CTBlipFillProperties blipfillproperties = dmlObjectFactory.createCTBlipFillProperties();
-        picture.setBlipFill(blipfillproperties);
+        CTBlipFillProperties blipFillProperties = dmlObjectFactory.createCTBlipFillProperties();
+        picture.setBlipFill(blipFillProperties);
 
         CTBlip blip = dmlObjectFactory.createCTBlip();
-        blipfillproperties.setBlip(blip);
+        blipFillProperties.setBlip(blip);
         blip.setCstate(org.docx4j.dml.STBlipCompression.NONE);
         blip.setEmbed(imageRelID);
 
         return picture;
     }
 
-    public static RelationshipsPart attachImageToCell(org.docx4j.openpackaging.parts.DrawingML.Drawing drawing,
-                                                      Integer col, Integer row, XlsxImage image, String imageRelID) {
+    public static RelationshipsPart attachImageToCell(Drawing drawing, Integer col, Integer row, XlsxImage image, String imageRelID) {
         CTPicture picture = createPicture(imageRelID);
 
         CTTwoCellAnchor anchor = new CTTwoCellAnchor();
@@ -146,54 +128,57 @@ public final class XlsxUtils {
         anchor.setClientData(new CTAnchorClientData());
         drawing.getJaxbElement().getEGAnchor().add(anchor);
 
-        RelationshipsPart relPart = drawing.getRelationshipsPart();
-        return relPart;
+        return drawing.getRelationshipsPart();
     }
 
-    public static org.docx4j.openpackaging.parts.DrawingML.Drawing getOrCreateWorksheetDrawing(SpreadsheetMLPackage pkg, WorksheetPart worksheetPart) {
-        org.docx4j.openpackaging.parts.DrawingML.Drawing drawing = null;
+    public static Drawing getOrCreateWorksheetDrawing(SpreadsheetMLPackage pkg, WorksheetPart worksheetPart) {
+        Drawing drawing = null;
         try {
             PartName partName = new PartName(StringUtils.replaceIgnoreCase(worksheetPart.getPartName().getName(),
                     "worksheets/sheet", "drawings/drawing"));
-            drawing = (org.docx4j.openpackaging.parts.DrawingML.Drawing) pkg.getParts().get(partName);
+            drawing = (Drawing) pkg.getParts().get(partName);
             if (drawing == null) {
-                drawing = new org.docx4j.openpackaging.parts.DrawingML.Drawing(partName);
-                drawing.setContents(new CTDrawing());
-                Relationship relationship = worksheetPart.addTargetPart(drawing);
-                org.xlsx4j.sml.CTDrawing smlDrawing = new org.xlsx4j.sml.CTDrawing();
-                smlDrawing.setId(relationship.getId());
-                smlDrawing.setParent(worksheetPart.getContents());
-                worksheetPart.getContents().setDrawing(smlDrawing);
+                drawing = addCTDrawing(worksheetPart, partName);
                 worksheetPart.addTargetPart(drawing);
             }
-        } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
         } catch (Docx4JException e) {
             throw new RuntimeException(e);
         }
         return drawing;
     }
 
+    public static Drawing addCTDrawing(WorksheetPart worksheetPart, PartName drawingPart) throws Docx4JException {
+        Drawing drawing = new Drawing(drawingPart);
+        drawing.setContents(new CTDrawing());
+        Relationship relationship = worksheetPart.addTargetPart(drawing);
+        org.xlsx4j.sml.CTDrawing smlDrawing = new org.xlsx4j.sml.CTDrawing();
+        smlDrawing.setId(relationship.getId());
+        smlDrawing.setParent(worksheetPart.getContents());
+        worksheetPart.getContents().setDrawing(smlDrawing);
+        return drawing;
+    }
+
     public static void deleteCTAnchor(XSSFPicture xssfPicture) {
         XSSFDrawing drawing = xssfPicture.getDrawing();
-        XmlCursor cursor = xssfPicture.getCTPicture().newCursor();
-        cursor.toParent();
-        if (cursor.getObject() instanceof org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor) {
-            for (int i = 0; i < drawing.getCTDrawing().getTwoCellAnchorList().size(); i++) {
-                if (cursor.getObject().equals(drawing.getCTDrawing().getTwoCellAnchorArray(i))) {
-                    drawing.getCTDrawing().removeTwoCellAnchor(i);
+        try (XmlCursor cursor = xssfPicture.getCTPicture().newCursor()) {
+            cursor.toParent();
+            if (cursor.getObject() instanceof org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor) {
+                for (int i = 0; i < drawing.getCTDrawing().getTwoCellAnchorList().size(); i++) {
+                    if (cursor.getObject().equals(drawing.getCTDrawing().getTwoCellAnchorArray(i))) {
+                        drawing.getCTDrawing().removeTwoCellAnchor(i);
+                    }
                 }
-            }
-        } else if (cursor.getObject() instanceof org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor) {
-            for (int i = 0; i < drawing.getCTDrawing().getOneCellAnchorList().size(); i++) {
-                if (cursor.getObject().equals(drawing.getCTDrawing().getOneCellAnchorArray(i))) {
-                    drawing.getCTDrawing().removeOneCellAnchor(i);
+            } else if (cursor.getObject() instanceof org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor) {
+                for (int i = 0; i < drawing.getCTDrawing().getOneCellAnchorList().size(); i++) {
+                    if (cursor.getObject().equals(drawing.getCTDrawing().getOneCellAnchorArray(i))) {
+                        drawing.getCTDrawing().removeOneCellAnchor(i);
+                    }
                 }
-            }
-        } else if (cursor.getObject() instanceof org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTAbsoluteAnchor) {
-            for (int i = 0; i < drawing.getCTDrawing().getAbsoluteAnchorList().size(); i++) {
-                if (cursor.getObject().equals(drawing.getCTDrawing().getAbsoluteAnchorArray(i))) {
-                    drawing.getCTDrawing().removeAbsoluteAnchor(i);
+            } else if (cursor.getObject() instanceof org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTAbsoluteAnchor) {
+                for (int i = 0; i < drawing.getCTDrawing().getAbsoluteAnchorList().size(); i++) {
+                    if (cursor.getObject().equals(drawing.getCTDrawing().getAbsoluteAnchorArray(i))) {
+                        drawing.getCTDrawing().removeAbsoluteAnchor(i);
+                    }
                 }
             }
         }

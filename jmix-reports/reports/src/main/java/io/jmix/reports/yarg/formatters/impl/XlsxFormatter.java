@@ -39,9 +39,7 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Picture;
@@ -52,7 +50,6 @@ import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.xmlbeans.XmlCursor;
 import org.docx4j.XmlUtils;
 import org.docx4j.dml.chart.CTAxDataSource;
 import org.docx4j.dml.chart.CTChart;
@@ -251,9 +248,10 @@ public class XlsxFormatter extends AbstractFormatter {
 
     protected boolean isCellInBand(String sheetName, int row, int col) {
         boolean isInBand = false;
+        CellReference cellReference = new CellReference(sheetName, row + 1, col + 1);
         for (BandData childBand : rootBand.getChildrenList()) {
             Range range = getBandRange(childBand);
-            if (range.contains(new CellReference(sheetName, row + 1, col + 1))) {
+            if (range.contains(cellReference)) {
                 isInBand = true;
             }
         }
@@ -265,27 +263,25 @@ public class XlsxFormatter extends AbstractFormatter {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(reportTemplate.getDocumentContent().readAllBytes());
             org.apache.poi.ss.usermodel.Workbook workbook = new XSSFWorkbook(bis)) {
             for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-                org.apache.poi.ss.usermodel.Sheet srcSH = workbook.getSheetAt(i);
-                Drawing srcDraw = srcSH.createDrawingPatriarch();
-                if (srcDraw instanceof XSSFDrawing xssfDrawing) {
-                    List<XSSFShape> shapes = xssfDrawing.getShapes();
+                org.apache.poi.ss.usermodel.Sheet srcSheet = workbook.getSheetAt(i);
+                if (srcSheet.createDrawingPatriarch() instanceof XSSFDrawing xssfDrawing) {
                     for (XSSFShape xs : xssfDrawing.getShapes()) {
                         if (xs instanceof Picture picture) {
-                            XSSFClientAnchor srcanchor = (XSSFClientAnchor) xs.getAnchor();
-                            int col = srcanchor.getCol1();
-                            int row = srcanchor.getRow1();
-                            org.apache.poi.ss.usermodel.Cell srcCell = srcSH.getRow(row).getCell(col);
+                            XSSFClientAnchor srcAnchor = (XSSFClientAnchor) xs.getAnchor();
+                            int col = srcAnchor.getCol1();
+                            int row = srcAnchor.getRow1();
+                            org.apache.poi.ss.usermodel.Cell srcCell = srcSheet.getRow(row).getCell(col);
                             if (srcCell != null) {
-                                if (!isCellInBand(srcSH.getSheetName(), row, col)) {
+                                if (!isCellInBand(srcSheet.getSheetName(), row, col)) {
                                     break;
                                 }
-                                String cellAddress = srcSH.getSheetName() + "_" + srcCell.getAddress().toString();
+                                String cellAddress = srcSheet.getSheetName() + "_" + srcCell.getAddress().toString();
                                 if (!templateImages.containsKey(cellAddress)) {
                                     templateImages.put(cellAddress, new ArrayList<>());
                                 }
                                 Dimension size = ImageUtils.getDimensionFromAnchor(picture);
-                                XlsxImage image = new XlsxImage(picture, srcanchor.getDx1(), srcanchor.getDx2(),
-                                        srcanchor.getDy1(), srcanchor.getDy2(), size, xs.getDrawing(), row, col);
+                                XlsxImage image = new XlsxImage(picture, srcAnchor.getDx1(), srcAnchor.getDx2(),
+                                        srcAnchor.getDy1(), srcAnchor.getDy2(), size, xs.getDrawing(), row, col);
                                 templateImages.get(cellAddress).add(image);
                                 deleteCTAnchor((XSSFPicture) picture);
                             }
@@ -295,8 +291,7 @@ public class XlsxFormatter extends AbstractFormatter {
             }
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             workbook.write(bos);
-            byte[] barray = bos.toByteArray();
-            return barray;
+            return bos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -1016,21 +1011,18 @@ public class XlsxFormatter extends AbstractFormatter {
 
         List<XlsxImage> images = templateImages.get(templateRange.getSheet() + "_" + templateCell.getR());
 
-        if (images != null && images.size() > 0) {
+        if (images != null && !images.isEmpty()) {
             for (XlsxImage image : images) {
                 try {
                     org.docx4j.openpackaging.parts.DrawingML.Drawing drawing = getOrCreateWorksheetDrawing(result.getPackage(), worksheetPart);
-                    org.docx4j.openpackaging.parts.DrawingML.Drawing exxdrawing = getOrCreateWorksheetDrawing(result.getPackage(), worksheetPart);
                     BinaryPartAbstractImage imagePart = BinaryPartAbstractImage.createImagePart(result.getPackage(), drawing,
                             image.getPictureData());
                     String imageRelID = imagePart.getSourceRelationships().get(0).getId();
                     RelationshipsPart relPart = attachImageToCell(drawing,
                             newColNum, newRowNum, image, imageRelID);
                     result.getPackage().getParts().put(relPart);
-                } catch (InvalidFormatException e) {
-                    throw new RuntimeException(e);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("Error importing images from xlsx template", e);
                 }
             }
         }

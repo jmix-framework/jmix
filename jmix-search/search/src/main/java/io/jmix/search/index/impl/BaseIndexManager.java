@@ -215,7 +215,7 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
                     return IndexSynchronizationStatus.IRRELEVANT;
                 }
             }
-            throw new IllegalStateException("Only index mapping update is supported currently");
+            throw new IllegalStateException("Only index mapping update is already supported.");
         } else {
             indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
             return IndexSynchronizationStatus.IRRELEVANT;

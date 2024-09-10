@@ -308,7 +308,8 @@ public interface CalendarEvent {
      *     </li>
      * </ul>
      *  Note, if the text color is {@code null}, color will be managed by component's
-     *  {@link FullCalendar#getEventTextColor()}.
+     *  {@link FullCalendar#getEventTextColor()}. The color applies in time-grid views and for
+     *  all-day events in day-grid views.
      *
      * @return text color or {@code null} if not set
      */

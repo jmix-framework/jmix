@@ -1811,6 +1811,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *         Color name - <code>red</code>
      *     </li>
      * </ul>
+     * <p>
+     * The color applies in time-grid views and for all-day events in day-grid views.
      *
      * @param textColor event text color
      */

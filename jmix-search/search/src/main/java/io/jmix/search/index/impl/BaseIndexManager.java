@@ -98,7 +98,7 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
+            ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
             if (result.isIndexRecreatingRequired()) {
                 status = IndexValidationStatus.IRRELEVANT;
                 indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
@@ -148,7 +148,7 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            IndexConfigurationComparator.ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
+            ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
             if (result.isIndexRecreatingRequired()) {
                 status = recreateIrrelevantIndex(indexConfiguration, strategy);
             } else if (result.isConfigurationUpdateRequired()) {
@@ -202,7 +202,7 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
     }
 
     //TODO describe process
-    protected IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, IndexConfigurationComparator.ConfigurationComparingResult result) {
+    protected IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, ConfigurationComparingResult result) {
         if (strategy.isConfigurationUpdateSupported()) {
             if (result.isMappingUpdateRequired()) {
                 boolean mappingSavingResult = putMapping(indexConfiguration.getIndexName(), indexConfiguration.getMapping());

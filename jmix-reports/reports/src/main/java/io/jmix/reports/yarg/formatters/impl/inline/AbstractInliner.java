@@ -110,16 +110,10 @@ public abstract class AbstractInliner implements ContentInliner {
         Part part = pkg.getParts().get(drawingPart);
         if (part != null && !(part instanceof Drawing))
             throw new ReportFormattingException("Wrong Class: not a Drawing");
-        Drawing drawing = (Drawing) part;
         int currentId = 0;
+        Drawing drawing = (Drawing) part;
         if (drawing == null) {
-            drawing = new Drawing(drawingPart);
-            drawing.setContents(new CTDrawing());
-            Relationship relationship = worksheetPart.addTargetPart(drawing);
-            org.xlsx4j.sml.CTDrawing smlDrawing = new org.xlsx4j.sml.CTDrawing();
-            smlDrawing.setId(relationship.getId());
-            smlDrawing.setParent(worksheetPart.getContents());
-            worksheetPart.getContents().setDrawing(smlDrawing);
+            drawing = XlsxUtils.addCTDrawing(worksheetPart, drawingPart);
         } else {
             currentId = drawing.getContents().getEGAnchor().size();
         }

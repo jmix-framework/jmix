@@ -21,12 +21,19 @@ import com.opencsv.CSVWriter;
 import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverter;
-import io.jmix.reports.yarg.formatters.impl.xlsx.*;
+import io.jmix.reports.yarg.formatters.impl.xlsx.BandsForRanges;
+import io.jmix.reports.yarg.formatters.impl.xlsx.CellReference;
+import io.jmix.reports.yarg.formatters.impl.xlsx.ChartUtils;
+import io.jmix.reports.yarg.formatters.impl.xlsx.Document;
+import io.jmix.reports.yarg.formatters.impl.xlsx.Range;
+import io.jmix.reports.yarg.formatters.impl.xlsx.RangeDependencies;
+import io.jmix.reports.yarg.formatters.impl.xlsx.XlsxImage;
 import io.jmix.reports.yarg.formatters.impl.xlsx.hints.XslxHintProcessor;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reports.yarg.structure.BandVisitor;
 import io.jmix.reports.yarg.structure.ReportOutputType;
+import io.jmix.reports.yarg.structure.ReportTemplate;
 import io.jmix.reports.yarg.util.docx4j.XmlCopyUtils;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
@@ -34,15 +41,21 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.util.ImageUtils;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
+import org.apache.poi.xssf.usermodel.XSSFPicture;
+import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.docx4j.XmlUtils;
 import org.docx4j.dml.chart.CTAxDataSource;
 import org.docx4j.dml.chart.CTChart;
 import org.docx4j.dml.chart.CTNumDataSource;
 import org.docx4j.dml.chart.CTPlotArea;
-import org.docx4j.dml.spreadsheetdrawing.CTOneCellAnchor;
-import org.docx4j.dml.spreadsheetdrawing.CTTwoCellAnchor;
+import org.docx4j.dml.spreadsheetdrawing.*;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.io3.Save;
@@ -52,15 +65,24 @@ import org.docx4j.openpackaging.parts.Parts;
 import org.docx4j.openpackaging.parts.SpreadsheetML.CalcChain;
 import org.docx4j.openpackaging.parts.SpreadsheetML.PivotCacheDefinition;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
+import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
+import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlsx4j.jaxb.Context;
 import org.xlsx4j.sml.*;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
+
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.attachImageToCell;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.computeColumnIndex;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.deleteCTAnchor;
+import static io.jmix.reports.yarg.formatters.impl.xlsx.XlsxUtils.getOrCreateWorksheetDrawing;
 
 public class XlsxFormatter extends AbstractFormatter {
 
@@ -79,6 +101,8 @@ public class XlsxFormatter extends AbstractFormatter {
 
     protected Set<CellWithBand> innerFormulas = new HashSet<>();
     protected Set<CellWithBand> outerFormulas = new HashSet<>();
+
+    protected Map<String, List<XlsxImage>> templateImages = new HashMap<>();
 
     protected Map<String, Range> lastRenderedRangeForBandName = new HashMap<>();
     protected Map<Worksheet, Long> lastRowForSheet = new HashMap<>();
@@ -133,6 +157,8 @@ public class XlsxFormatter extends AbstractFormatter {
         hintProcessor.apply();
 
         saveAndClose();
+
+        templateImages.clear();
     }
 
     protected void validateTemplateContainsNamedRange() {
@@ -220,10 +246,63 @@ public class XlsxFormatter extends AbstractFormatter {
         }
     }
 
+    protected boolean isCellInBand(String sheetName, int row, int col) {
+        boolean isInBand = false;
+        CellReference cellReference = new CellReference(sheetName, row + 1, col + 1);
+        for (BandData childBand : rootBand.getChildrenList()) {
+            Range range = getBandRange(childBand);
+            if (range.contains(cellReference)) {
+                isInBand = true;
+            }
+        }
+        return isInBand;
+    }
+
+    public byte[] extractTemplateImages(ReportTemplate reportTemplate) {
+        templateImages = new HashMap<>();
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(reportTemplate.getDocumentContent().readAllBytes());
+            org.apache.poi.ss.usermodel.Workbook workbook = new XSSFWorkbook(bis)) {
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                org.apache.poi.ss.usermodel.Sheet srcSheet = workbook.getSheetAt(i);
+                for (XSSFShape xs : ((XSSFDrawing) srcSheet.createDrawingPatriarch()).getShapes()) {
+                    if (xs instanceof Picture picture) {
+                        XSSFClientAnchor srcAnchor = (XSSFClientAnchor) xs.getAnchor();
+                        int col = srcAnchor.getCol1();
+                        int row = srcAnchor.getRow1();
+                        org.apache.poi.ss.usermodel.Cell srcCell = srcSheet.getRow(row).getCell(col);
+                        if (srcCell != null) {
+                            if (!isCellInBand(srcSheet.getSheetName(), row, col)) {
+                                break;
+                            }
+                            String cellAddress = srcSheet.getSheetName() + "_" + srcCell.getAddress().toString();
+                            if (!templateImages.containsKey(cellAddress)) {
+                                templateImages.put(cellAddress, new ArrayList<>());
+                            }
+                            Dimension size = ImageUtils.getDimensionFromAnchor(picture);
+                            XlsxImage image = new XlsxImage(picture, srcAnchor.getDx1(), srcAnchor.getDx2(),
+                                    srcAnchor.getDy1(), srcAnchor.getDy2(), size, xs.getDrawing(), row, col);
+                            templateImages.get(cellAddress).add(image);
+                            deleteCTAnchor((XSSFPicture) picture);
+                        }
+                    }
+                }
+            }
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            workbook.write(bos);
+            return bos.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     protected void init() {
         try {
             template = Document.create(SpreadsheetMLPackage.load(reportTemplate.getDocumentContent()));
-            result = Document.create(SpreadsheetMLPackage.load(reportTemplate.getDocumentContent()));
+            byte[] templateData = extractTemplateImages(reportTemplate);
+            try (InputStream is = new ByteArrayInputStream(templateData)) {
+                result = Document.create(SpreadsheetMLPackage.load(is));
+            }
             result.getWorkbook().getCalcPr().setCalcMode(STCalcMode.AUTO);
             result.getWorkbook().getCalcPr().setFullCalcOnLoad(true);
             marshaller = XmlCopyUtils.createMarshaller(Context.jcSML);
@@ -612,6 +691,7 @@ public class XlsxFormatter extends AbstractFormatter {
 
     protected void writeHBand(BandData band) {
         Range templateRange = getBandRange(band);
+
         if (templateRange != null) {
             Worksheet resultSheet = result.getSheetByName(templateRange.getSheet());
             List<Row> resultSheetRows = resultSheet.getSheetData().getRow();
@@ -857,14 +937,16 @@ public class XlsxFormatter extends AbstractFormatter {
         return newRow;
     }
 
+
+
     protected List<Cell> copyCells(Range templateRange, BandData bandData, Row newRow, List<Cell> templateCells) {
         List<Cell> resultCells = new ArrayList<>();
 
         Worksheet resultWorksheet = getWorksheet(newRow);
+
         for (Cell templateCell : templateCells) {
             checkThreadInterrupted();
             Cell newCell = copyCell(templateCell);
-
             if (newCell.getF() != null) {
                 addFormulaForPostProcessing(templateRange, bandData, newRow, templateCell, newCell);
             }
@@ -884,6 +966,7 @@ public class XlsxFormatter extends AbstractFormatter {
             newRow.getC().add(newCell);
             newCell.setParent(newRow);
 
+            WorksheetPart worksheet = result.getWorksheets().get(0).getWorksheet();
             WorksheetPart worksheetPart = null;
             for (Document.SheetWrapper sheetWrapper : result.getWorksheets()) {
                 Worksheet contents;
@@ -899,6 +982,8 @@ public class XlsxFormatter extends AbstractFormatter {
             }
 
             updateCell(worksheetPart, bandData, newCell);
+
+            copyTemplateImages(worksheetPart, templateRange, templateCell, newRow, newCell);
 
             Col templateColumn = template.getColumnForCell(templateRange.getSheet(), tempRef);
             Col resultColumn = result.getColumnForCell(templateRange.getSheet(), newRef);
@@ -916,6 +1001,29 @@ public class XlsxFormatter extends AbstractFormatter {
 
         }
         return resultCells;
+    }
+
+    private void copyTemplateImages(WorksheetPart worksheetPart, Range templateRange, Cell templateCell, Row newRow, Cell newCell) {
+        int newRowNum = newRow.getR().intValue() - 1;
+        int newColNum = computeColumnIndex(newCell.getR()) - 1;
+
+        List<XlsxImage> images = templateImages.get(templateRange.getSheet() + "_" + templateCell.getR());
+
+        if (images != null && !images.isEmpty()) {
+            for (XlsxImage image : images) {
+                try {
+                    org.docx4j.openpackaging.parts.DrawingML.Drawing drawing = getOrCreateWorksheetDrawing(result.getPackage(), worksheetPart);
+                    BinaryPartAbstractImage imagePart = BinaryPartAbstractImage.createImagePart(result.getPackage(), drawing,
+                            image.getPictureData());
+                    String imageRelID = imagePart.getSourceRelationships().get(0).getId();
+                    RelationshipsPart relPart = attachImageToCell(drawing,
+                            newColNum, newRowNum, image, imageRelID);
+                    result.getPackage().getParts().put(relPart);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error importing images from xlsx template", e);
+                }
+            }
+        }
     }
 
     protected Cell copyCell(Cell cell) {

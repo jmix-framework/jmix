@@ -53,7 +53,6 @@ class ElasticsearchPutMappingBuilderTest {
     }
 
 
-    //TODO move to search module
     private IndexMappingConfiguration createMappingConfiguration() {
         DisplayedNameDescriptor displayedNameDescriptorMock = getDisplayedNameDescriptor();
         return new IndexMappingConfiguration(mock(MetaClass.class), getFields(), displayedNameDescriptorMock);

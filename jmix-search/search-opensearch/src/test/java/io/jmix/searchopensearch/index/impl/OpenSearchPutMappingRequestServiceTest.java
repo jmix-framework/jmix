@@ -52,7 +52,6 @@ class OpenSearchPutMappingRequestServiceTest {
         return request.properties().get(propertyName).object();
     }
 
-    //TODO move to search module
     private IndexMappingConfiguration createMappingConfiguration() {
         DisplayedNameDescriptor displayedNameDescriptorMock = getDisplayedNameDescriptor();
         return new IndexMappingConfiguration(mock(MetaClass.class), getFields(), displayedNameDescriptorMock);

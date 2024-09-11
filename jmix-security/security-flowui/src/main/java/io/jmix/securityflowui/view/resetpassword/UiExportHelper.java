@@ -20,10 +20,9 @@ import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.download.Downloader;
-import io.jmix.gridexportflowui.GridExportFlowuiConfiguration;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import io.jmix.gridexportflowui.exporter.excel.ExcelExporter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,7 +30,7 @@ import org.springframework.stereotype.Component;
  */
 @Internal
 @Component("sec_ExportUiHelper")
-@ConditionalOnClass(GridExportFlowuiConfiguration.class)
+@ConditionalOnBean(ExcelExporter.class)
 public class UiExportHelper {
 
     protected Downloader downloader;

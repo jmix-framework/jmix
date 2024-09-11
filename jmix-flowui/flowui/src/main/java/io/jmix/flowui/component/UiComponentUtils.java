@@ -648,14 +648,12 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Copies the value to the clipboard using an asynchronous JavaScript function call from the DOM element of the
-     * passed component.
+     * Copies the value to the clipboard using an asynchronous JavaScript function call from the UI DOM element.
      *
-     * @param component   component whose element will be used to call a JavaScript copy function
      * @param valueToCopy the value to copy
      */
-    public static PendingJavaScriptResult copyToClipboard(Component component, String valueToCopy) {
-        return component.getElement().executeJs(getCopyToClipboardScript(), valueToCopy);
+    public static PendingJavaScriptResult copyToClipboard(String valueToCopy) {
+        return UI.getCurrent().getElement().executeJs(getCopyToClipboardScript(), valueToCopy);
     }
 
     /**

@@ -19,10 +19,14 @@ package io.jmix.securityflowui.view.resetpassword.model;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.securityflowui.view.resetpassword.ResetPasswordView;
 import jakarta.persistence.Id;
 
 import java.util.UUID;
 
+/**
+ * The entity is used to display and export generated passwords on the {@link ResetPasswordView}.
+ */
 @JmixEntity(name = "sec_UserPasswordValue")
 @SystemLevel
 public class UserPasswordValue {

@@ -19,6 +19,7 @@ package io.jmix.securitydata.user;
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.EntityChangedEvent;
@@ -201,6 +202,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         Preconditions.checkNotNullArgument(newPassword, "Null new password");
         T userDetails = loadUserByUsername(userName);
         changePassword(userDetails, oldPassword, newPassword);
+        dataManager.save(userDetails);
         eventPublisher.publishEvent(new SingleUserPasswordChangeEvent(userName, newPassword));
     }
 
@@ -210,7 +212,6 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
             throw new PasswordNotMatchException();
         }
         EntityValues.setValue(userDetails, "password", passwordEncoder.encode(newPassword));
-        dataManager.save(userDetails);
     }
 
     @Override
@@ -222,7 +223,9 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
             do {
                 newPassword = generateRandomPassword();
                 try {
-                    changePassword(loadUserByUsername(user.getUsername()), null, newPassword);
+                    T userDetails = loadUserByUsername(user.getUsername());
+                    changePassword(userDetails, null, newPassword);
+                    dataManager.save(userDetails);
                 } catch (PasswordNotMatchException e) {
                     continue;
                 }
@@ -234,6 +237,25 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         eventPublisher.publishEvent(new UserPasswordResetEvent(usernamePasswordMap.entrySet().stream()
                 .collect(Collectors.toMap(entry -> entry.getKey().getUsername(), Map.Entry::getValue))));
         return usernamePasswordMap;
+    }
+
+    public Pair<UserDetails, String> resetPasswordWithoutSave(UserDetails user) {
+        boolean success = false;
+        String newPassword;
+        T userDetails = null;
+
+        do {
+            newPassword = generateRandomPassword();
+            try {
+                userDetails = loadUserByUsername(user.getUsername());
+                changePassword(userDetails, null, newPassword);
+            } catch (PasswordNotMatchException e) {
+                continue;
+            }
+            success = true;
+        } while (!success);
+
+        return new Pair<>(userDetails, newPassword);
     }
 
     public void resetRememberMe(Collection<UserDetails> users) {

@@ -16,9 +16,10 @@
 
 package io.jmix.core.security;
 
+import io.jmix.core.common.datastruct.Pair;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -41,13 +42,20 @@ public interface UserManager {
 
 
     /**
-     * Changes the password for the specific user.
+     * Changes the password for the passed users.
      *
-     * @param users - users which need reset passwords
-     * @return map which contains new password for specific user
+     * @param users users which need reset passwords
+     * @return map which contains new password for the passed users
      */
     Map<UserDetails, String> resetPasswords(Set<UserDetails> users);
 
+    /**
+     * Changes the password for a specific user without saving it to the database.
+     *
+     * @param user user which need reset password
+     * @return pair witch contains new password for specific user
+     */
+    Pair<UserDetails, String> resetPasswordWithoutSave(UserDetails user);
 
     /**
      * Resets 'remember me' token for the specific user.

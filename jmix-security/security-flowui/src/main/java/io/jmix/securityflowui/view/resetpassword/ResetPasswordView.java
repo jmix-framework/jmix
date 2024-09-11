@@ -19,31 +19,44 @@ package io.jmix.securityflowui.view.resetpassword;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.progressbar.ProgressBar;
+import com.vaadin.flow.component.progressbar.ProgressBarVariant;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
-import com.vaadin.flow.data.renderer.TextRenderer;
-import io.jmix.core.LoadContext;
-import io.jmix.core.Metadata;
+import io.jmix.core.DataManager;
+import io.jmix.core.SaveContext;
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.security.UserManager;
+import io.jmix.core.security.event.UserPasswordResetEvent;
+import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.asynctask.UiAsyncTasks;
+import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
+import io.jmix.flowui.backgroundtask.BackgroundWorker;
+import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.JmixPasswordField;
+import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
 import io.jmix.securityflowui.view.resetpassword.model.UserPasswordValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @ViewController("resetPasswordView")
@@ -61,9 +74,15 @@ public class ResetPasswordView extends StandardView {
     @Autowired
     protected UserManager userManager;
     @Autowired
-    protected Metadata metadata;
+    protected DataManager dataManager;
+    @Autowired
+    protected ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     protected UiAsyncTasks uiAsyncTasks;
+    @Autowired
+    protected BackgroundWorker backgroundWorker;
+    @Autowired
+    protected Dialogs dialogs;
 
     @Autowired
     protected MessageBundle messageBundle;
@@ -74,6 +93,10 @@ public class ResetPasswordView extends StandardView {
     protected UiExportHelper uiExportHelper;
 
     @ViewComponent
+    protected VerticalLayout resetPasswordLayout;
+    @ViewComponent
+    protected JmixButton generateBtn;
+    @ViewComponent
     protected HorizontalLayout buttonPanel;
     @ViewComponent
     protected DataGrid<UserPasswordValue> passwordsDataGrid;
@@ -81,30 +104,58 @@ public class ResetPasswordView extends StandardView {
     protected JmixButton closeBtn;
 
     @ViewComponent
-    protected CollectionLoader<UserPasswordValue> userPasswordValueDl;
+    protected VerticalLayout progressBarLayout;
+    @ViewComponent
+    protected JmixButton generationCancelBtn;
+    @ViewComponent
+    protected ProgressBar resetProgressBar;
+    @ViewComponent
+    protected Span progressBarLabel;
+    @ViewComponent
+    protected Span progressSpan;
+
+    @ViewComponent
+    protected CollectionContainer<UserPasswordValue> userPasswordValueDc;
+
+    protected BackgroundTaskHandler<List<UserPasswordValue>> generationTaskHandler;
 
     protected JmixButton exportActionButton;
 
     protected Set<? extends UserDetails> users;
+    protected Dialog cancelDialog;
 
     @Subscribe
     public void onInit(InitEvent event) {
         initExportAction();
     }
 
-    @Install(to = "passwordsDataGrid.username", subject = "tooltipGenerator")
-    protected String passwordsDataGridUsernameTooltipGenerator(UserPasswordValue userPasswordValue) {
-        return userPasswordValue.getUsername();
-    }
+    @Subscribe
+    public void onBeforeClose(final BeforeCloseEvent event) {
+        if (generationTaskHandler != null && generationTaskHandler.isAlive()
+                && !event.closedWith(StandardOutcome.DISCARD)) {
+            UnknownOperationResult result = new UnknownOperationResult();
 
-    @Supply(to = "passwordsDataGrid.username", subject = "renderer")
-    protected Renderer<UserPasswordValue> passwordsDataGridUsernameRenderer() {
-        return new TextRenderer<>(UserPasswordValue::getUsername);
+            cancelDialog = dialogs.createOptionDialog()
+                    .withHeader(messageBundle.getMessage("resetPasswordView.cancelDialog.title"))
+                    .withText(messageBundle.getMessage("resetPasswordView.cancelDialog.message"))
+                    .withActions(
+                            new DialogAction(DialogAction.Type.YES)
+                                    .withHandler(__ -> result.resume(close(StandardOutcome.DISCARD))),
+                            new DialogAction(DialogAction.Type.NO)
+                                    .withHandler(__ -> result.fail())
+                                    .withVariant(ActionVariant.PRIMARY)
+                    )
+                    .build();
+            cancelDialog.addDialogCloseActionListener(__ -> cancelDialog.close());
+            cancelDialog.open();
+
+            event.preventClose(result);
+        }
     }
 
     @Supply(to = "passwordsDataGrid.password", subject = "renderer")
     protected Renderer<UserPasswordValue> passwordsDataGridPasswordRenderer() {
-        return new ComponentRenderer<>(this::layoutFactory, this::passwordFieldInitializer);
+        return new ComponentRenderer<>(this::passwordLayoutFactory, this::passwordFieldInitializer);
     }
 
     protected void initExportAction() {
@@ -133,38 +184,114 @@ public class ResetPasswordView extends StandardView {
                 : messageBundle.getMessage("resetPasswordView.resetPasswordsTitle");
     }
 
-    @SuppressWarnings("unchecked")
-    @Install(to = "userPasswordValueDl", target = Target.DATA_LOADER)
-    protected List<UserPasswordValue> userPasswordValuesDlLoadDelegate(LoadContext<UserPasswordValue> loadContext) {
-        if (!passwordsDataGrid.isVisible()) {
-            passwordsDataGrid.setVisible(true);
-
-            if (exportActionButton != null) {
-                exportActionButton.setVisible(true);
-            }
-        }
-
-        return userManager.resetPasswords((Set<UserDetails>) users)
-                .entrySet()
-                .stream()
-                .map(this::userPasswordValueMapper)
-                .toList();
-    }
-
     @Subscribe("generateBtn")
     protected void onGenerateBtnClick(ClickEvent<JmixButton> event) {
-        userPasswordValueDl.load();
+        configureComponentsBeforeGeneration();
+
+        generationTaskHandler = backgroundWorker.handle(createBackgroundTask());
+        generationTaskHandler.execute();
     }
 
-    protected UserPasswordValue userPasswordValueMapper(Map.Entry<UserDetails, String> entry) {
-        UserPasswordValue userPasswordValue = metadata.create(UserPasswordValue.class);
-        userPasswordValue.setUsername(entry.getKey().getUsername());
-        userPasswordValue.setPassword(entry.getValue());
+    protected void configureComponentsBeforeGeneration() {
+        resetPasswordLayout.setVisible(false);
+        progressBarLayout.setVisible(true);
+
+        generateBtn.setEnabled(false);
+        generationCancelBtn.setEnabled(true);
+
+        progressBarLabel.setText(messageBundle.getMessage("resetPasswordView.progressBarLabel.text"));
+        resetProgressBar.setValue(0);
+        resetProgressBar.removeThemeVariants(ProgressBarVariant.LUMO_ERROR);
+        progressSpan.setText("%s/%s".formatted(0, users.size()));
+    }
+
+    protected void configureComponentOnProgress(Integer progress) {
+        resetProgressBar.setValue(progress);
+        progressSpan.setText("%s/%s".formatted(progress, users.size()));
+    }
+
+    protected void configureComponentsAfterCanceling() {
+        generationCancelBtn.setEnabled(false);
+        generateBtn.setEnabled(true);
+
+        resetProgressBar.addThemeVariants(ProgressBarVariant.LUMO_ERROR);
+        progressBarLabel.setText(messageBundle.getMessage("resetPasswordView.progressBarLabel.cancelText"));
+    }
+
+    protected void configureComponentsAfterGeneration() {
+        passwordsDataGrid.setVisible(true);
+        progressBarLayout.setVisible(false);
+
+        if (exportActionButton != null) {
+            exportActionButton.setVisible(true);
+        }
+    }
+
+    @Subscribe("generationCancelBtn")
+    protected void onGenerationCancelBtnClick(ClickEvent<JmixButton> event) {
+        cancelGenerationProcess();
+        configureComponentsAfterCanceling();
+    }
+
+    protected BackgroundTask<Integer, List<UserPasswordValue>> createBackgroundTask() {
+        return new BackgroundTask<>(30, this) {
+
+            private final Map<String, String> usernamePasswordMap = new LinkedHashMap<>();
+            private final SaveContext saveContext = new SaveContext();
+
+            @Override
+            public List<UserPasswordValue> run(TaskLifeCycle<Integer> taskLifeCycle) throws Exception {
+                ArrayList<UserPasswordValue> result = new ArrayList<>(users.size());
+                int i = 0;
+
+                for (UserDetails userDetails : users) {
+                    Pair<UserDetails, String> userPassword = userManager.resetPasswordWithoutSave(userDetails);
+                    String username = userPassword.getFirst().getUsername();
+                    String password = userPassword.getSecond();
+
+                    usernamePasswordMap.put(username, password);
+                    saveContext.saving(userPassword.getFirst());
+                    result.add(createPasswordValue(username, password));
+
+                    taskLifeCycle.publish(++i);
+                }
+
+                return result;
+            }
+
+            @Override
+            public void progress(List<Integer> changes) {
+                Integer lastElement = changes.get(changes.size() - 1);
+                configureComponentOnProgress(lastElement);
+            }
+
+            @Override
+            public void done(List<UserPasswordValue> result) {
+                if (cancelDialog != null) {
+                    cancelDialog.close();
+                }
+
+                dataManager.save(saveContext);
+
+                //noinspection unchecked
+                userManager.resetRememberMe((Collection<UserDetails>) users);
+                applicationEventPublisher.publishEvent(new UserPasswordResetEvent(usernamePasswordMap));
+
+                userPasswordValueDc.setItems(result);
+                configureComponentsAfterGeneration();
+            }
+        };
+    }
+
+    protected UserPasswordValue createPasswordValue(String username, String password) {
+        UserPasswordValue userPasswordValue = dataManager.create(UserPasswordValue.class);
+        userPasswordValue.setUsername(username);
+        userPasswordValue.setPassword(password);
 
         return userPasswordValue;
     }
 
-    protected HorizontalLayout layoutFactory() {
+    protected HorizontalLayout passwordLayoutFactory() {
         HorizontalLayout layout = uiComponents.create(HorizontalLayout.class);
         layout.setWidthFull();
         layout.setPadding(false);
@@ -197,35 +324,44 @@ public class ResetPasswordView extends StandardView {
 
     protected void copyButtonInitializer(JmixButton button, String valueToCopy) {
         button.addClickListener(__ ->
-                UiComponentUtils.copyToClipboard(button, valueToCopy)
+                UiComponentUtils.copyToClipboard(valueToCopy)
                         .then(successResult -> {
-                            applySuccessButtonStyles(button);
-
-                            uiAsyncTasks.runnableConfigurer(() -> {
-                                        try {
-                                            // timer
-                                            TimeUnit.SECONDS.sleep(2);
-                                        } catch (InterruptedException e) {
-                                            log.debug("{} exception in background task", e.getClass().getName(), e);
-                                        }
-                                    })
-                                    .withResultHandler(() -> applyDefaultButtonStyles(button))
-                                    .withTimeout(3, TimeUnit.SECONDS)
-                                    .runAsync();
+                            applyCopyButtonSuccessStyles(button);
+                            runAsync(() -> applyCopyButtonDefaultStyles(button));
                         })
         );
     }
 
-    protected void applySuccessButtonStyles(JmixButton button) {
+    protected void applyCopyButtonSuccessStyles(JmixButton button) {
         button.removeThemeVariants(ButtonVariant.LUMO_CONTRAST);
         button.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         button.setIcon(VaadinIcon.CHECK.create());
     }
 
-    protected void applyDefaultButtonStyles(JmixButton button) {
+    protected void applyCopyButtonDefaultStyles(JmixButton button) {
         button.removeThemeVariants(ButtonVariant.LUMO_SUCCESS);
         button.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         button.setIcon(VaadinIcon.COPY.create());
+    }
+
+    protected void runAsync(Runnable runnable) {
+        uiAsyncTasks.runnableConfigurer(() -> {
+                    try {
+                        // timer
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException e) {
+                        log.debug("{} exception in background task", e.getClass().getName(), e);
+                    }
+                })
+                .withResultHandler(runnable)
+                .withTimeout(3, TimeUnit.SECONDS)
+                .runAsync();
+    }
+
+    protected void cancelGenerationProcess() {
+        if (generationTaskHandler != null && generationTaskHandler.isAlive()) {
+            generationTaskHandler.cancel();
+        }
     }
 
     protected boolean isSingleSelected() {
@@ -235,8 +371,6 @@ public class ResetPasswordView extends StandardView {
     public void setUsers(Set<? extends UserDetails> users) {
         this.users = users;
 
-        if (isSingleSelected()) {
-            passwordsDataGrid.setMinHeight("4em");
-        }
+        resetProgressBar.setMax(users.size());
     }
 }

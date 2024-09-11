@@ -20,7 +20,7 @@ import org.apache.commons.io.FilenameUtils;
 
 public class UnsupportedFileFormatException extends Exception {
 
-    public static final String MESSAGE = "The file the-file-with-not-supported-extension.sql with 'sql' extension is not supported. Only following formats are supported: pdf, doc, docx, xls, xlsx, odt, ods, rtf, txt.";
+    public static final String MESSAGE = "The file %s with '%s' extension is not supported.";
 
     public UnsupportedFileFormatException(String fileName) {
         super(String.format(MESSAGE, fileName, FilenameUtils.getExtension(fileName)));

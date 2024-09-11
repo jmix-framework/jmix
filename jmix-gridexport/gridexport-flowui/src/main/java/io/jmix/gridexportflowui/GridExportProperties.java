@@ -16,8 +16,11 @@
 
 package io.jmix.gridexportflowui;
 
+import io.jmix.gridexportflowui.action.ExportAction;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+
+import java.util.List;
 
 /**
  * Export actions configuration interface
@@ -36,9 +39,25 @@ public class GridExportProperties {
     String exportAllPaginationStrategy;
 
     /**
+     * A list of mods that used by default in the {@link ExportAction}
+     */
+    List<String> defaultExportModes;
+
+    /**
      * Excel exporting configuration.
      */
     ExcelExporterProperties excel;
+
+    public GridExportProperties(@DefaultValue("1000") int exportAllBatchSize,
+                                @DefaultValue("keyset") String exportAllPaginationStrategy,
+                                @DefaultValue({"ALL_ROWS", "CURRENT_PAGE", "SELECTED_ROWS"})
+                                List<String> defaultExportModes,
+                                @DefaultValue ExcelExporterProperties excel) {
+        this.exportAllBatchSize = exportAllBatchSize;
+        this.exportAllPaginationStrategy = exportAllPaginationStrategy;
+        this.defaultExportModes = defaultExportModes;
+        this.excel = excel;
+    }
 
     /**
      * @see #exportAllBatchSize
@@ -54,12 +73,11 @@ public class GridExportProperties {
         return exportAllPaginationStrategy;
     }
 
-    public GridExportProperties(@DefaultValue("1000") int exportAllBatchSize,
-                                @DefaultValue("keyset") String exportAllPaginationStrategy,
-                                @DefaultValue ExcelExporterProperties excel) {
-        this.exportAllBatchSize = exportAllBatchSize;
-        this.exportAllPaginationStrategy = exportAllPaginationStrategy;
-        this.excel = excel;
+    /**
+     * @see #defaultExportModes
+     */
+    public List<String> getDefaultExportModes() {
+        return defaultExportModes;
     }
 
     public ExcelExporterProperties getExcel() {

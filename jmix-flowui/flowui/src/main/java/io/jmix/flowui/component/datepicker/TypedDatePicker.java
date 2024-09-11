@@ -225,14 +225,14 @@ public class TypedDatePicker<V extends Comparable> extends DatePicker
     public void setRequired(boolean required) {
         super.setRequired(required);
 
-        fieldDelegate.updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     @Override
     public void setRequiredIndicatorVisible(boolean required) {
         super.setRequiredIndicatorVisible(required);
 
-        fieldDelegate.updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     @Nullable

@@ -26,7 +26,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
-import io.jmix.flowui.component.delegate.TwinColumnDelegate;
+import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
@@ -53,7 +53,7 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
     protected Messages messages;
     protected MetadataTools metadataTools;
 
-    protected TwinColumnDelegate<TwinColumn<V>, Collection<V>, Collection<V>> fieldDelegate;
+    protected FieldDelegate<TwinColumn<V>, Collection<V>, Collection<V>> fieldDelegate;
     protected DataViewDelegate<TwinColumn<V>, V> dataViewDelegate;
 
     @Override
@@ -108,7 +108,7 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
         bindDataProvider(dataProvider);
 
         TwinColumnListDataView<V> twinColumnListDataView = super.setItems(dataProvider);
-        updateInvalidState();
+        fieldDelegate.updateInvalidState();
         return twinColumnListDataView;
     }
 
@@ -155,14 +155,14 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
 
-        updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     @Override
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
-        updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     @Override
@@ -196,14 +196,14 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
 
-        updateInvalidState();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
 
-        updateInvalidState();
+        fieldDelegate.updateInvalidState();
     }
 
     @Override
@@ -224,12 +224,6 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
         dataViewDelegate = createDataViewDelegate();
     }
 
-    protected void updateInvalidState() {
-        if (fieldDelegate != null) {
-            fieldDelegate.updateInvalidState();
-        }
-    }
-
     protected void initComponentMessages() {
         selectItems.setTooltipText(messages.getMessage("twinColumn.selectItems.tooltip"));
         deselectItems.setTooltipText(messages.getMessage("twinColumn.deselectItems.tooltip"));
@@ -237,14 +231,14 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
 
     protected void createValueChangeListener() {
         addValueChangeListener((ValueChangeListener<ComponentValueChangeEvent<JmixTwinColumn<V>, Collection<V>>>)
-                event -> updateInvalidState());
+                event -> fieldDelegate.updateInvalidState());
     }
 
     @Override
     protected void onDataChange(DataChangeEvent<V> event) {
         super.onDataChange(event);
 
-        updateInvalidState();
+        fieldDelegate.updateInvalidState();
     }
 
     protected void bindDataProvider(DataProvider<V, ?> dataProvider) {
@@ -254,10 +248,12 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
         }
     }
 
-    protected TwinColumnDelegate<TwinColumn<V>, Collection<V>, Collection<V>>  createFieldDelegate() {
-        return applicationContext.getBean(TwinColumnDelegate.class, this);
+    @SuppressWarnings("unchecked")
+    protected FieldDelegate<TwinColumn<V>, Collection<V>, Collection<V>> createFieldDelegate() {
+        return applicationContext.getBean(FieldDelegate.class, this);
     }
 
+    @SuppressWarnings("unchecked")
     protected DataViewDelegate<TwinColumn<V>, V> createDataViewDelegate() {
         return applicationContext.getBean(DataViewDelegate.class, this);
     }

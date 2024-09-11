@@ -28,32 +28,36 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.inputdialog.InputDialogAction;
 import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.app.inputdialog.InputParameter;
+import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
+import io.jmix.flowui.backgroundtask.BackgroundWorker;
+import io.jmix.flowui.backgroundtask.LocalizedTaskWrapper;
 import io.jmix.flowui.component.validation.ValidationErrors;
-import io.jmix.flowui.backgroundtask.*;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
-
 import org.springframework.lang.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -61,6 +65,7 @@ import java.util.function.Function;
 public class DialogsImpl implements Dialogs {
 
     protected static final String MIN_WIDTH = "25em";
+    protected static final String BUTTON_CLASS_NAMES_POSTFIX = "-button";
 
     protected Messages messages;
     protected UiViewProperties flowUiViewProperties;
@@ -104,8 +109,10 @@ public class DialogsImpl implements Dialogs {
     protected Button createButton(Action action, Dialog dialog) {
         Button button = new Button();
 
-        if (action instanceof DialogAction) {
-            DialogAction.Type type = ((DialogAction) action).getType();
+        if (action instanceof DialogAction dialogAction) {
+            DialogAction.Type type = dialogAction.getType();
+
+            button.addClassName(type.getId() + BUTTON_CLASS_NAMES_POSTFIX);
             button.setText(messages.getMessage(type.getMsgKey()));
             button.setIcon(type.getVaadinIcon().create());
         }
@@ -316,7 +323,7 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public void open() {
+        public Dialog build() {
             actionButtons.forEach(dialog.getFooter()::remove);
             actionButtons.clear();
 
@@ -360,7 +367,14 @@ public class DialogsImpl implements Dialogs {
                 focusComponent.focus();
             }
 
+            return dialog;
+        }
+
+        @Override
+        public Dialog open() {
+            Dialog dialog = build();
             dialog.open();
+            return dialog;
         }
 
         protected void initKeyCombination(@Nullable DialogAction firstOkAction,
@@ -412,19 +426,6 @@ public class DialogsImpl implements Dialogs {
             dialog.setDraggable(true);
             dialog.setCloseOnOutsideClick(false);
             dialog.setMinWidth(MIN_WIDTH);
-
-            HorizontalLayout buttonsContainer = new HorizontalLayout();
-            buttonsContainer.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
-
-            DialogAction okAction = new DialogAction(DialogAction.Type.OK);
-            okButton = createButton(okAction, dialog);
-
-            KeyCombination saveShortcut = KeyCombination.create(flowUiViewProperties.getSaveShortcut());
-            if (saveShortcut != null) {
-                okButton.addClickShortcut(saveShortcut.getKey(), saveShortcut.getKeyModifiers());
-            }
-
-            dialog.getFooter().add(okButton);
         }
 
         @Override
@@ -613,8 +614,27 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public void open() {
+        public Dialog build() {
+            dialog.getFooter().removeAll();
+
+            DialogAction okAction = new DialogAction(DialogAction.Type.OK);
+            okButton = createButton(okAction, dialog);
+
+            KeyCombination saveShortcut = KeyCombination.create(flowUiViewProperties.getSaveShortcut());
+            if (saveShortcut != null) {
+                okButton.addClickShortcut(saveShortcut.getKey(), saveShortcut.getKeyModifiers());
+            }
+
+            dialog.getFooter().add(okButton);
+
+            return dialog;
+        }
+
+        @Override
+        public Dialog open() {
+            build();
             dialog.open();
+            return dialog;
         }
     }
 
@@ -774,6 +794,8 @@ public class DialogsImpl implements Dialogs {
         protected Number total;
         protected boolean showProgressInPercentage;
         protected boolean cancelAllowed = false;
+
+        protected Registration openedRegistration;
 
         protected BackgroundTaskHandler<V> taskHandler;
 
@@ -989,8 +1011,7 @@ public class DialogsImpl implements Dialogs {
             return dialog.getMaxHeight();
         }
 
-        @Override
-        public void open() {
+        public Dialog build() {
             if (isIndeterminateMode()) {
                 progressTextSpan.setVisible(false);
                 progressBar.setIndeterminate(true);
@@ -999,9 +1020,28 @@ public class DialogsImpl implements Dialogs {
             }
             updateProgress(0);
 
-            dialog.open();
+            // removing the previous listener, makes sense in case of dialog rebuilding
+            if (openedRegistration != null) {
+                openedRegistration.remove();
+            }
 
-            startExecution();
+            openedRegistration = dialog.addOpenedChangeListener(event -> {
+                // self-remove
+                event.unregisterListener();
+
+                if (event.isOpened()) {
+                    startExecution();
+                }
+            });
+
+            return dialog;
+        }
+
+        @Override
+        public Dialog open() {
+            build();
+            dialog.open();
+            return dialog;
         }
 
         protected boolean isIndeterminateMode() {

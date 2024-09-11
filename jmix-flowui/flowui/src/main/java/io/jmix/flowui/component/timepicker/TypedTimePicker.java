@@ -160,14 +160,14 @@ public class TypedTimePicker<V extends Comparable> extends TimePicker implements
     public void setRequired(boolean required) {
         super.setRequired(required);
 
-        fieldDelegate.updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     @Override
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
-        fieldDelegate.updateInvalidState();
+        fieldDelegate.updateRequiredState();
     }
 
     @Nullable

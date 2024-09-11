@@ -57,6 +57,7 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
         componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
+        componentLoader().loadShortcutCombination(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
 
         loadAction(resultComponent, element);

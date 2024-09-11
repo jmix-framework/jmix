@@ -25,10 +25,11 @@ dependencies {
 
     api project(':core')
     api project(':data')
-    api project(':gridexport-flowui')
     api project(':flowui')
 
     api 'com.google.code.gson:gson'
+
+    compileOnly project(':gridexport-flowui')
     compileOnly project(':security-flowui')
 
     testImplementation 'org.spockframework:spock-core'

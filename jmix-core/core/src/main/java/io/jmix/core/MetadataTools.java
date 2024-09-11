@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.annotation.Secret;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityPreconditions;
@@ -489,6 +490,14 @@ public class MetadataTools {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
         Map<String, Object> metaAnnotationAttributes = getMetaAnnotationAttributes(metaProperty.getAnnotations(), SystemLevel.class);
         return Boolean.TRUE.equals(metaAnnotationAttributes.get("value"));
+    }
+
+    /**
+     * Determine whether the given property is marked as {@link Secret}.
+     */
+    public boolean isSecret(MetaProperty metaProperty) {
+        Objects.requireNonNull(metaProperty, "metaProperty is null");
+        return Boolean.TRUE.equals(metaProperty.getAnnotatedElement().isAnnotationPresent(Secret.class));
     }
 
     public Map<String, Object> getMetaAnnotationAttributes(Map<String, Object> metaAnnotations, Class metaAnnotationClass) {

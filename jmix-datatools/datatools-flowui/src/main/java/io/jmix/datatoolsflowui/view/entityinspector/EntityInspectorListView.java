@@ -49,6 +49,7 @@ import io.jmix.data.PersistenceHints;
 import io.jmix.datatools.EntityRestore;
 import io.jmix.datatoolsflowui.action.ShowEntityInfoAction;
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorDataGridBuilder;
+import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorExportHelper;
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorFetchPlanBuilder;
 import io.jmix.flowui.*;
 import io.jmix.flowui.accesscontext.UiEntityContext;
@@ -81,7 +82,6 @@ import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
-import io.jmix.gridexportflowui.action.ExcelExportAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,6 +177,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected RouteSupport routeSupport;
     @Autowired
     protected Downloader downloader;
+    @Autowired(required = false)
+    protected InspectorExportHelper exportHelper;
 
     protected DataGrid<Object> entitiesDataGrid;
     protected GenericFilter entitiesGenericFilter;
@@ -500,10 +502,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
         dataGrid.addAction(refreshAction);
         refreshButton.setAction(refreshAction);
 
-        JmixButton excelExportButton = uiComponents.create(JmixButton.class);
-        ExcelExportAction excelExportAction = createExcelExportAction(dataGrid);
-        excelExportButton.setAction(excelExportAction);
-
         DropdownButton exportDropdownButton = uiComponents.create(DropdownButton.class);
         exportDropdownButton.setText(messages.getMessage(EntityInspectorListView.class, "export"));
         exportDropdownButton.setIcon(VaadinIcon.DOWNLOAD.create());
@@ -568,8 +566,10 @@ public class EntityInspectorListView extends StandardListView<Object> {
         Action showEntityInfoAction = createShowEntityInfoAction(dataGrid);
         dataGrid.addAction(showEntityInfoAction);
 
-        buttonsPanel.add(createButton, editButton, removeButton, refreshButton, excelExportButton,
-                exportDropdownButton, importUpload);
+        buttonsPanel.add(createButton, editButton, removeButton, refreshButton, exportDropdownButton, importUpload);
+
+        initExcelExportAction(dataGrid, button ->
+                buttonsPanel.addComponentAtIndex(buttonsPanel.indexOf(exportDropdownButton), button));
 
         if (metadataTools.isSoftDeletable(selectedMeta.getJavaClass())) {
             JmixButton restoreButton = createRestoreButton(dataGrid);
@@ -581,6 +581,12 @@ public class EntityInspectorListView extends StandardListView<Object> {
         buttonsPanel.add(pagination);
     }
 
+    protected void initExcelExportAction(DataGrid<Object> dataGrid, Consumer<Component> addMethod) {
+        if (exportHelper != null) {
+            exportHelper.assignExcelExportAction(dataGrid, addMethod);
+        }
+    }
+
     protected void updateSelectAction(DataGrid<Object> dataGrid) {
         LookupSelectAction selectAction = createLookupSelectAction(dataGrid);
         selectButton.setAction(selectAction);
@@ -590,13 +596,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
         LookupSelectAction lookupSelectAction = actions.create(LookupSelectAction.ID);
         lookupSelectAction.setTarget(this);
         return lookupSelectAction;
-    }
-
-    protected ExcelExportAction createExcelExportAction(DataGrid<Object> dataGrid) {
-        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.ID);
-        excelExportAction.setTarget(dataGrid);
-
-        return excelExportAction;
     }
 
     protected ShowEntityInfoAction createShowEntityInfoAction(DataGrid<Object> dataGrid) {

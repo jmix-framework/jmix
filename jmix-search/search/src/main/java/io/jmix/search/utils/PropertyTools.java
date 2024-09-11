@@ -166,7 +166,8 @@ public class PropertyTools {
     }
 
     protected boolean isPropertySuitableToWildcardDeclaration(MetaProperty property) {
-        return isPersistentProperty(property) && !isSystemProperty(property);
+        return isPersistentProperty(property) && !isSystemProperty(property)
+                && !isSystemLevelProperty(property) && !isSecretProperty(property);
     }
 
 
@@ -184,6 +185,14 @@ public class PropertyTools {
 
     protected boolean isSystemProperty(MetaProperty property) {
         return metadataTools.isSystem(property);
+    }
+
+    protected boolean isSystemLevelProperty(MetaProperty property) {
+        return metadataTools.isSystemLevel(property);
+    }
+
+    protected boolean isSecretProperty(MetaProperty property) {
+        return metadataTools.isSecret(property);
     }
 
     protected boolean hasWildcard(String path) {

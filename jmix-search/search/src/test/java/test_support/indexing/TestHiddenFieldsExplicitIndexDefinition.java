@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-@NonNullApi
-@Deprecated(forRemoval = true, since = "2.3")
-package io.jmix.flowui.component.validation.group;
+package test_support.indexing;
 
-import org.springframework.lang.NonNullApi;
+import io.jmix.search.index.annotation.AutoMappedField;
+import io.jmix.search.index.annotation.JmixEntitySearchIndex;
+import test_support.entity.indexing.TestExplicitHiddenFieldsEntity;
+
+@JmixEntitySearchIndex(entity = TestExplicitHiddenFieldsEntity.class)
+public interface TestHiddenFieldsExplicitIndexDefinition {
+
+    @AutoMappedField(includeProperties = {"name", "secret", "createdBy", "systemLevel"})
+    void mapping();
+}

@@ -87,6 +87,7 @@ class TextAreaXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredMessage == "requiredMessageString"
             tabIndex == 3
+            !trimEnabled
             themeNames.containsAll([TextAreaVariant.LUMO_SMALL.getVariantName(),
                                     TextAreaVariant.MATERIAL_ALWAYS_FLOAT_LABEL.getVariantName()])
             value == "textAreaValue"

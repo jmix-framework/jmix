@@ -201,7 +201,6 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
         return status;
     }
 
-    //TODO describe process
     protected IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, ConfigurationComparingResult result) {
         if (strategy.isConfigurationUpdateSupported()) {
             if (result.isMappingUpdateRequired()) {
@@ -215,7 +214,7 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
                     return IndexSynchronizationStatus.IRRELEVANT;
                 }
             }
-            throw new IllegalStateException("Only index mapping update is already supported.");
+            throw new IllegalStateException("An index settings update is not supported yet. Only index recreating is supported.");
         } else {
             indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
             return IndexSynchronizationStatus.IRRELEVANT;

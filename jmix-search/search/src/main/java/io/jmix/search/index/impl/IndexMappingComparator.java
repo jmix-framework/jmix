@@ -107,6 +107,11 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
         return result;
     }
 
+    /**
+     * Removes not necessary tag from serialized mapping. This tag is added by the 'client' of the search engine.
+     * @param searchIndexMapping - serialized mapping with not necessary 'type: object' elements
+     * @return filtered mapping without 'type: object' elements
+     */
     protected static Map<String, Object> getFilteredMapping(Map<String, Object> searchIndexMapping) {
         return searchIndexMapping
                 .entrySet()

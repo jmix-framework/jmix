@@ -214,6 +214,10 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
                     return IndexSynchronizationStatus.IRRELEVANT;
                 }
             }
+            //Such exception throwing is because we have a potential possibility when the
+            //strategy.isConfigurationUpdateSupported()==true and the result.isMappingUpdateRequired()==false.
+            //But actually it is an impossible situation because actually the result.isSettingsUpdateRequired() method
+            //always returns false. The ability to update settings will be implemented later.
             throw new IllegalStateException("An index settings update is not supported yet. Only index recreating is supported.");
         } else {
             indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());

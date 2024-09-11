@@ -19,6 +19,7 @@ package io.jmix.restds.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jmix.restds.exception.InvalidRefreshTokenException;
 import io.jmix.restds.exception.RestDataStoreAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -132,6 +134,9 @@ public class RestPasswordAuthenticator implements RestAuthenticator {
                     })
                     .body(params)
                     .retrieve()
+                    .onStatus(statusCode -> statusCode == HttpStatus.BAD_REQUEST, (request, response) -> {
+                        throw new InvalidRefreshTokenException(dataStoreName);
+                    })
                     .toEntity(String.class);
         } catch (ResourceAccessException e) {
             throw new RestDataStoreAccessException(dataStoreName, e);

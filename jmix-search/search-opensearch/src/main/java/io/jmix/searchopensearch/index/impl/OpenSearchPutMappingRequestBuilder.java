@@ -37,6 +37,8 @@ import java.util.Map;
 public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<PutMappingRequest, JsonpMapper> {
     public static final TypeReference<Map<String, Object>> TYPE_REF = new TypeReference<>() {
     };
+    private static final String MAPPING_CONFIGURATION_PARSING_EXCEPTION_TEXT = "Unable to parse the mapping of the index.";
+    private static final String PROPERTIES_KEY = "properties";
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Valid
@@ -56,13 +58,20 @@ public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<Put
                 return mapJsonpDeserializer.deserialize(parser, jsonpMapper);
             }
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to parse mapping of index", e);
+            throw new RuntimeException(MAPPING_CONFIGURATION_PARSING_EXCEPTION_TEXT, e);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> getPropertiesMap(IndexMappingConfiguration mappingConfiguration) {
+    protected Map<String, Object> getPropertiesMap(IndexMappingConfiguration mappingConfiguration) {
         Map<String, Object> mappingBodyAsMap = objectMapper.convertValue(mappingConfiguration, TYPE_REF);
-        return (Map<String, Object>) mappingBodyAsMap.get("properties");
+        if (mappingBodyAsMap != null && mappingBodyAsMap.containsKey(PROPERTIES_KEY)) {
+            Object properties = mappingBodyAsMap.get(PROPERTIES_KEY);
+            if (properties instanceof Map<?, ?>) {
+                return (Map<String, Object>) properties;
+            }
+        }
+
+        throw new RuntimeException(MAPPING_CONFIGURATION_PARSING_EXCEPTION_TEXT);
     }
 }

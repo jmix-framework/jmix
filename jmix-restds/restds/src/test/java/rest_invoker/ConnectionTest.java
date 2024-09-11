@@ -21,11 +21,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import test_support.SampleServiceConnection;
-
-import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,15 +37,17 @@ class ConnectionTest {
     private RestClient restClient;
 
     @Test
-    void testAuthentication() throws JsonProcessingException {
+    void testClientCredentialsAuthentication() throws JsonProcessingException {
         restClient = RestClient.builder()
                 .baseUrl(SampleServiceConnection.getInstance().getBaseUrl())
                 .build();
 
         ResponseEntity<String> authResponse = restClient.post()
                 .uri("/oauth2/token")
-                .header("Authorization", "Basic " + getBasicAuthCredentials())
-                .header("Content-Type", "application/x-www-form-urlencoded")
+                .headers(headers -> {
+                    headers.setBasicAuth(SampleServiceConnection.CLIENT_ID, SampleServiceConnection.CLIENT_SECRET);
+                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                })
                 .body("grant_type=client_credentials")
                 .retrieve()
                 .toEntity(String.class);
@@ -55,9 +58,30 @@ class ConnectionTest {
         assertThat(authToken).isNotNull();
     }
 
-    private static String getBasicAuthCredentials() {
-        return Base64.getEncoder().encodeToString(
-                (SampleServiceConnection.CLIENT_ID + ":" + SampleServiceConnection.CLIENT_SECRET).getBytes()
-        );
+    @Test
+    void testPasswordAuthentication() throws JsonProcessingException {
+        restClient = RestClient.builder()
+                .baseUrl(SampleServiceConnection.getInstance().getBaseUrl())
+                .build();
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "password");
+        params.add("username", "admin");
+        params.add("password", "admin");
+
+        ResponseEntity<String> authResponse = restClient.post()
+                .uri("/oauth2/token")
+                .headers(headers -> {
+                    headers.setBasicAuth("myclient2", "mysecret2");
+                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                })
+                .body(params)
+                .retrieve()
+                .toEntity(String.class);
+
+        JsonNode rootNode = objectMapper.readTree(authResponse.getBody());
+        String authToken = rootNode.get("access_token").asText();
+
+        assertThat(authToken).isNotNull();
     }
 }

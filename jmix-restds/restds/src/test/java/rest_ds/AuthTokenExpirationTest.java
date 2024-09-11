@@ -18,7 +18,7 @@ package rest_ds;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.impl.DataStoreFactory;
-import io.jmix.restds.auth.JmixRestClientCredentialsAuthenticator;
+import io.jmix.restds.impl.RestClientCredentialsAuthenticator;
 import io.jmix.restds.impl.RestDataStore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class AuthTokenExpirationTest extends BaseRestDsIntegrationTest {
         assertThat(customer).isNotNull();
 
         RestDataStore restDataStore = (RestDataStore) dataStoreFactory.get("restService1");
-        ((JmixRestClientCredentialsAuthenticator) restDataStore.getRestInvoker().getAuthenticator()).revokeAuthenticationToken();
+        ((RestClientCredentialsAuthenticator) restDataStore.getRestInvoker().getAuthenticator()).revokeAuthenticationToken();
         // not calling restDataStore.getRestInvoker().getAuthenticator().resetAuthToken() here to check retry
 
         try {

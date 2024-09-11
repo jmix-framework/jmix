@@ -19,6 +19,7 @@ archivesBaseName = 'jmix-restds-starter'
 
 dependencies {
     api project(':restds')
+    compileOnly project(':security')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

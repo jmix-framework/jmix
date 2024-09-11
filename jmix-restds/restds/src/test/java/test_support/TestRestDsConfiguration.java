@@ -23,6 +23,7 @@ import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
+import io.jmix.core.security.AddonAuthenticationManagerSupplier;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
@@ -30,20 +31,29 @@ import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.restds.RestDsConfiguration;
+import io.jmix.restds.impl.RestAuthenticationManagerSupplier;
+import io.jmix.restds.impl.RestPasswordAuthenticator;
+import io.jmix.restds.impl.RestTokenHolder;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.authentication.StandardAuthenticationProvidersProducer;
 import jakarta.persistence.EntityManagerFactory;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import test_support.security.TestInMemoryUserRepository;
+import test_support.security.TestRestUserRepository;
 
 import javax.sql.DataSource;
 
@@ -54,6 +64,28 @@ import javax.sql.DataSource;
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = {RestDsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class})
 public class TestRestDsConfiguration {
+
+    // In production code created by autoconfiguration
+    @Bean("restds_RestAuthenticationManagerSupplier")
+    @Order(100)
+    AddonAuthenticationManagerSupplier restAuthenticationManagerSupplier(StandardAuthenticationProvidersProducer providersProducer,
+                                                                                ApplicationEventPublisher publisher,
+                                                                                UserDetailsService userDetailsService,
+                                                                                ApplicationContext applicationContext) {
+
+        String storeName = applicationContext.getEnvironment().getRequiredProperty("jmix.restds.authentication-provider-store");
+
+        RestPasswordAuthenticator restAuthenticator = applicationContext.getBean(RestPasswordAuthenticator.class);
+        restAuthenticator.setDataStoreName(storeName);
+
+        return new RestAuthenticationManagerSupplier(providersProducer, publisher, restAuthenticator, userDetailsService);
+    }
+
+    @Bean
+    @Primary
+    RestTokenHolder restTokenHolder() {
+        return new ThreadLocalRestTokenHolder();
+    }
 
     @Bean
     DataSource dataSource() {
@@ -92,9 +124,16 @@ public class TestRestDsConfiguration {
         return new TransactionTemplate(transactionManager);
     }
 
+    @Profile("!passwordGrant")
     @Bean
-    public UserRepository userRepository() {
+    public UserRepository inMemoryUserRepository() {
         return new TestInMemoryUserRepository();
+    }
+
+    @Profile("passwordGrant")
+    @Bean
+    public UserRepository restUserRepository() {
+        return new TestRestUserRepository();
     }
 
     @Bean

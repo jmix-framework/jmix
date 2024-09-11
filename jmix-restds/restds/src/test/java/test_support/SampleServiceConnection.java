@@ -26,8 +26,8 @@ import java.nio.file.Path;
 
 public class SampleServiceConnection {
 
-    public static final String CLIENT_ID = "myclient";
-    public static final String CLIENT_SECRET = "mysecret";
+    public static final String CLIENT_ID = "myclient1";
+    public static final String CLIENT_SECRET = "mysecret1";
 
     private static final SampleServiceConnection INSTANCE = new SampleServiceConnection();
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.restds.auth;
+package io.jmix.restds.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,15 +40,15 @@ import java.io.IOException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-@Component("restds_JmixRestClientCredentialsAuthenticator")
+@Component("restds_RestClientCredentialsAuthenticator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class JmixRestClientCredentialsAuthenticator implements RestAuthenticator {
+public class RestClientCredentialsAuthenticator implements RestAuthenticator {
 
-    private static final Logger log = LoggerFactory.getLogger(JmixRestClientCredentialsAuthenticator.class);
+    private static final Logger log = LoggerFactory.getLogger(RestClientCredentialsAuthenticator.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private RestClient authClient;
+    private RestClient client;
 
     private String dataStoreName;
     private String clientId;
@@ -62,17 +62,24 @@ public class JmixRestClientCredentialsAuthenticator implements RestAuthenticator
     private Environment environment;
 
     @Override
-    public ClientHttpRequestInterceptor getAuthenticationInterceptor(String dataStoreName) {
-        this.dataStoreName = dataStoreName;
+    public void setDataStoreName(String name) {
+        this.dataStoreName = name;
+        initClient();
+    }
+
+    private void initClient() {
         String baseUrl = environment.getRequiredProperty(dataStoreName + ".baseUrl");
         clientId = environment.getRequiredProperty(dataStoreName + ".clientId");
         clientSecret = environment.getRequiredProperty(dataStoreName + ".clientSecret");
 
-        authClient = RestClient.builder()
+        client = RestClient.builder()
                 .baseUrl(baseUrl)
                 .requestInterceptor(new LoggingClientHttpRequestInterceptor())
                 .build();
+    }
 
+    @Override
+    public ClientHttpRequestInterceptor getAuthenticationInterceptor() {
         return new RetryingClientHttpRequestInterceptor();
     }
 
@@ -109,7 +116,7 @@ public class JmixRestClientCredentialsAuthenticator implements RestAuthenticator
     private String obtainAuthToken(String clientId, String clientSecret) {
         ResponseEntity<String> authResponse = null;
         try {
-            authResponse = authClient.post()
+            authResponse = client.post()
                     .uri("/oauth2/token")
                     .headers(httpHeaders -> {
                         httpHeaders.setBasicAuth(clientId, clientSecret);
@@ -136,7 +143,7 @@ public class JmixRestClientCredentialsAuthenticator implements RestAuthenticator
                 log.warn("No auth token in use");
                 return;
             }
-            authClient.post()
+            client.post()
                     .uri("/oauth2/revoke")
                     .headers(httpHeaders -> {
                         httpHeaders.setBasicAuth(clientId, clientSecret);

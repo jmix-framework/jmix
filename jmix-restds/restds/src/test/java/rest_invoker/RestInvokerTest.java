@@ -17,8 +17,6 @@
 package rest_invoker;
 
 import io.jmix.core.Metadata;
-import io.jmix.restds.auth.JmixRestClientCredentialsAuthenticator;
-import io.jmix.restds.auth.RestAuthenticator;
 import io.jmix.restds.impl.RestInvoker;
 import io.jmix.restds.impl.RestSerialization;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,8 +44,7 @@ class RestInvokerTest extends BaseRestDsIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        RestAuthenticator authenticator = applicationContext.getBean(JmixRestClientCredentialsAuthenticator.class);
-        restInvoker = applicationContext.getBean(RestInvoker.class, "restService1", authenticator);
+        restInvoker = applicationContext.getBean(RestInvoker.class, "restService1");
     }
 
     @Test

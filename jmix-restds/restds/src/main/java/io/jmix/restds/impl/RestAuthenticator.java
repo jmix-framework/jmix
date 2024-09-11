@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.restds;
+package io.jmix.restds.impl;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.annotation.JmixModule;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 
-@Configuration
-@ComponentScan
-@ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class})
-public class RestDsConfiguration {
+/**
+ * Provides authentication for {@link io.jmix.restds.impl.RestDataStore}.
+ */
+public interface RestAuthenticator {
+
+    /**
+     * Sets data store name of this authenticator.
+     */
+    void setDataStoreName(String name);
+
+    /**
+     * Creates authentication interceptor to be used by {@link io.jmix.restds.impl.RestInvoker}.
+     */
+    ClientHttpRequestInterceptor getAuthenticationInterceptor();
 }

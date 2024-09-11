@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.restds.auth;
+package io.jmix.restds.impl;
 
-import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.lang.Nullable;
 
-/**
- * Provides authentication for {@link io.jmix.restds.impl.RestDataStore}.
- */
-public interface RestAuthenticator {
+public interface RestTokenHolder {
 
-    /**
-     * Creates authentication interceptor to be used by {@link io.jmix.restds.impl.RestInvoker}.
-     * @param dataStoreName name of the data store
-     * @return authentication interceptor instance
-     */
-    ClientHttpRequestInterceptor getAuthenticationInterceptor(String dataStoreName);
+    @Nullable
+    String getAccessToken();
+
+    @Nullable
+    String getRefreshToken();
+
+    void setTokens(String accessToken, String refreshToken);
 }

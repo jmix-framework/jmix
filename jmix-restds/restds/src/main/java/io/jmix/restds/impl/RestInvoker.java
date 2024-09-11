@@ -19,15 +19,14 @@ package io.jmix.restds.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.jmix.restds.auth.RestAuthenticator;
 import io.jmix.restds.exception.RestDataStoreAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
@@ -51,15 +50,18 @@ public class RestInvoker implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(RestInvoker.class);
 
+    public static final String DEFAULT_AUTHENTICATOR = "restds_RestClientCredentialsAuthenticator";
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final String dataStoreName;
-    private final RestAuthenticator authenticator;
+
+    private RestAuthenticator authenticator;
 
     private RestClient restClient;
 
     @Autowired
-    private Environment environment;
+    private ApplicationContext applicationContext;
 
     public record LoadParams(String entityName,
                                  Object id,
@@ -82,18 +84,23 @@ public class RestInvoker implements InitializingBean {
         }
     }
 
-    public RestInvoker(String dataStoreName, RestAuthenticator authenticator) {
+    public RestInvoker(String dataStoreName) {
         this.dataStoreName = dataStoreName;
-        this.authenticator = authenticator;
     }
 
     @Override
     public void afterPropertiesSet() {
-        String baseUrl = environment.getRequiredProperty(dataStoreName + ".baseUrl");
+        String authenticatorBeanName = applicationContext.getEnvironment().getProperty(
+                dataStoreName + ".authenticator", DEFAULT_AUTHENTICATOR);
+
+        authenticator = (RestAuthenticator) applicationContext.getBean(authenticatorBeanName);
+        authenticator.setDataStoreName(dataStoreName);
+
+        String baseUrl = applicationContext.getEnvironment().getRequiredProperty(dataStoreName + ".baseUrl");
 
         restClient = RestClient.builder()
                 .baseUrl(baseUrl)
-                .requestInterceptor(authenticator.getAuthenticationInterceptor(dataStoreName))
+                .requestInterceptor(authenticator.getAuthenticationInterceptor())
                 .requestInterceptor(new LoggingClientHttpRequestInterceptor())
                 .build();
     }
@@ -246,6 +253,19 @@ public class RestInvoker implements InitializingBean {
                     .uri("/rest/entities/{entityName}/{id}", entityName, entityId)
                     .retrieve()
                     .toBodilessEntity();
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
+        }
+    }
+
+    public String permissions() {
+        try {
+            String resultJson = restClient.get()
+                    .uri("/rest/permissions")
+                    .retrieve()
+                    .body(String.class);
+
+            return resultJson;
         } catch (ResourceAccessException e) {
             throw new RestDataStoreAccessException(dataStoreName, e);
         }

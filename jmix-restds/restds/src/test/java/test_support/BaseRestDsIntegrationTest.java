@@ -30,5 +30,7 @@ public class BaseRestDsIntegrationTest {
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("restService1.baseUrl", () ->
                 SampleServiceConnection.getInstance().getBaseUrl());
+        registry.add("restService2.baseUrl", () ->
+                SampleServiceConnection.getInstance().getBaseUrl());
     }
 }

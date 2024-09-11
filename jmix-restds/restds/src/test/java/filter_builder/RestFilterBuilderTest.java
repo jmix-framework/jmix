@@ -22,14 +22,26 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.restds.impl.RestFilterBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import test_support.TestRestDsConfiguration;
+import test_support.entity.Customer;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ContextConfiguration(classes = TestRestDsConfiguration.class)
+@ExtendWith({SpringExtension.class})
 class RestFilterBuilderTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    RestFilterBuilder builder;
 
     private void assertThatJsonEquals(String actual, String expected) throws JsonProcessingException {
         assertThat(objectMapper.readTree(actual)).isEqualTo(objectMapper.readTree(expected));
@@ -37,8 +49,6 @@ class RestFilterBuilderTest {
 
     @Test
     void testCondition() throws JsonProcessingException {
-        RestFilterBuilder builder = new RestFilterBuilder();
-
         LogicalCondition condition = LogicalCondition.and(
                 PropertyCondition.equal("name", "alpha").skipNullOrEmpty(),
                 PropertyCondition.startsWith("email", "beta").skipNullOrEmpty()
@@ -66,8 +76,6 @@ class RestFilterBuilderTest {
 
     @Test
     void testConditionSkipNull() throws JsonProcessingException {
-        RestFilterBuilder builder = new RestFilterBuilder();
-
         PropertyCondition firstCondition = PropertyCondition.equal("name", "alpha")
                 .skipNullOrEmpty();
 
@@ -98,8 +106,6 @@ class RestFilterBuilderTest {
 
     @Test
     void testQuery() throws JsonProcessingException {
-        RestFilterBuilder builder = new RestFilterBuilder();
-
         String result = builder.build("""
                 {
                   "property": "name",
@@ -188,8 +194,6 @@ class RestFilterBuilderTest {
 
     @Test
     void testQueryAndCondition() throws JsonProcessingException {
-        RestFilterBuilder builder = new RestFilterBuilder();
-
         String jsonConditions = """
                 {
                   "property": "field1",
@@ -230,8 +234,6 @@ class RestFilterBuilderTest {
 
     @Test
     void testQueryWithParameters() throws JsonProcessingException {
-        RestFilterBuilder builder = new RestFilterBuilder();
-
         String query = """
                 {
                   "property": "field1",
@@ -248,6 +250,40 @@ class RestFilterBuilderTest {
                       "property": "field1",
                       "operator": "=",
                       "value": "value1"
+                    }
+                  ]
+                }""");
+    }
+
+    @Test
+    void testQueryWithEntityParameter() throws JsonProcessingException {
+        String query = """
+                {
+                  "property": "field1",
+                  "operator": "=",
+                  "parameterName": "param1"
+                }""";
+
+        Customer customer = new Customer();
+        customer.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+        customer.setFirstName("John");
+        customer.setLastName("Doe");
+        customer.setEmail("john@example.com");
+
+        String result = builder.build(query, null, Map.of("param1", customer));
+
+        assertThatJsonEquals(result, """
+                {
+                  "conditions": [
+                    {
+                      "property": "field1",
+                      "operator": "=",
+                      "value": {
+                        "_entityName": "Customer",
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "firstName": "John",
+                        "lastName": "Doe"
+                      }
                     }
                   ]
                 }""");

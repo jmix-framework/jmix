@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -35,7 +35,6 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component("restds_RestFilterBuilder")
 public class RestFilterBuilder {
@@ -48,6 +47,10 @@ public class RestFilterBuilder {
 
     @Autowired
     private MetadataTools metadataTools;
+    @Autowired
+    private FetchPlans fetchPlans;
+    @Autowired
+    private EntitySerialization entitySerialization;
 
     @Nullable
     public String build(MetaClass metaClass, List<?> ids) {
@@ -125,12 +128,20 @@ public class RestFilterBuilder {
         if (node.has(PARAMETER_FIELD)) {
             String parameterName = node.get(PARAMETER_FIELD).asText();
             if (parameters.containsKey(parameterName)) {
-                // put the parameter value as a string without quotes
-                String parameterValue = objectMapper.writeValueAsString(parameters.get(parameterName));
-                if (parameterValue.startsWith("\"") && parameterValue.endsWith("\"")) {
-                    parameterValue = parameterValue.substring(1, parameterValue.length() - 1);
+                Object parameterValue = parameters.get(parameterName);
+                if (parameterValue instanceof Entity entity) {
+                    // set the parameter value as JsonNode
+                    FetchPlan fetchPlan = fetchPlans.builder(entity.getClass()).addFetchPlan(FetchPlan.INSTANCE_NAME).build();
+                    String jsonString = entitySerialization.toJson(entity, fetchPlan);
+                    ((ObjectNode) node).set("value", objectMapper.readTree(jsonString));
+                } else {
+                    // put the parameter value as a string without quotes
+                    String stringValue = objectMapper.writeValueAsString(parameterValue);
+                    if (stringValue.startsWith("\"") && stringValue.endsWith("\"")) {
+                        stringValue = stringValue.substring(1, stringValue.length() - 1);
+                    }
+                    ((ObjectNode) node).put("value", stringValue);
                 }
-                ((ObjectNode) node).put("value", parameterValue);
                 // remove the parameter node
                 ((ObjectNode) node).remove(PARAMETER_FIELD);
             }

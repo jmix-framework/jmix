@@ -134,8 +134,7 @@ public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSe
         try {
             return client.indices().putMapping(request).acknowledged();
         } catch (IOException e) {
-            //TODO specify correct exception message
-            throw new RuntimeException(e);
+            throw new RuntimeException("A problem with sending with the 'putMapping' sending.", e);
         }
     }
 

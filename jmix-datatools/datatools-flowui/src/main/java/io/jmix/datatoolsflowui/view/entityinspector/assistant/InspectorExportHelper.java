@@ -21,11 +21,9 @@ import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.gridexportflowui.GridExportFlowuiConfiguration;
 import io.jmix.gridexportflowui.action.ExcelExportAction;
 import io.jmix.gridexportflowui.exporter.excel.ExcelExporter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 
 import java.util.function.Consumer;
 

@@ -264,27 +264,25 @@ public class XlsxFormatter extends AbstractFormatter {
             org.apache.poi.ss.usermodel.Workbook workbook = new XSSFWorkbook(bis)) {
             for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
                 org.apache.poi.ss.usermodel.Sheet srcSheet = workbook.getSheetAt(i);
-                if (srcSheet.createDrawingPatriarch() instanceof XSSFDrawing xssfDrawing) {
-                    for (XSSFShape xs : xssfDrawing.getShapes()) {
-                        if (xs instanceof Picture picture) {
-                            XSSFClientAnchor srcAnchor = (XSSFClientAnchor) xs.getAnchor();
-                            int col = srcAnchor.getCol1();
-                            int row = srcAnchor.getRow1();
-                            org.apache.poi.ss.usermodel.Cell srcCell = srcSheet.getRow(row).getCell(col);
-                            if (srcCell != null) {
-                                if (!isCellInBand(srcSheet.getSheetName(), row, col)) {
-                                    break;
-                                }
-                                String cellAddress = srcSheet.getSheetName() + "_" + srcCell.getAddress().toString();
-                                if (!templateImages.containsKey(cellAddress)) {
-                                    templateImages.put(cellAddress, new ArrayList<>());
-                                }
-                                Dimension size = ImageUtils.getDimensionFromAnchor(picture);
-                                XlsxImage image = new XlsxImage(picture, srcAnchor.getDx1(), srcAnchor.getDx2(),
-                                        srcAnchor.getDy1(), srcAnchor.getDy2(), size, xs.getDrawing(), row, col);
-                                templateImages.get(cellAddress).add(image);
-                                deleteCTAnchor((XSSFPicture) picture);
+                for (XSSFShape xs : ((XSSFDrawing) srcSheet.createDrawingPatriarch()).getShapes()) {
+                    if (xs instanceof Picture picture) {
+                        XSSFClientAnchor srcAnchor = (XSSFClientAnchor) xs.getAnchor();
+                        int col = srcAnchor.getCol1();
+                        int row = srcAnchor.getRow1();
+                        org.apache.poi.ss.usermodel.Cell srcCell = srcSheet.getRow(row).getCell(col);
+                        if (srcCell != null) {
+                            if (!isCellInBand(srcSheet.getSheetName(), row, col)) {
+                                break;
                             }
+                            String cellAddress = srcSheet.getSheetName() + "_" + srcCell.getAddress().toString();
+                            if (!templateImages.containsKey(cellAddress)) {
+                                templateImages.put(cellAddress, new ArrayList<>());
+                            }
+                            Dimension size = ImageUtils.getDimensionFromAnchor(picture);
+                            XlsxImage image = new XlsxImage(picture, srcAnchor.getDx1(), srcAnchor.getDx2(),
+                                    srcAnchor.getDy1(), srcAnchor.getDy2(), size, xs.getDrawing(), row, col);
+                            templateImages.get(cellAddress).add(image);
+                            deleteCTAnchor((XSSFPicture) picture);
                         }
                     }
                 }

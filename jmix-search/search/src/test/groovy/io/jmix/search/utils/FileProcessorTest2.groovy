@@ -38,8 +38,8 @@ class FileProcessorTest2 extends Specification {
 
         where:
         fileName                     | message
-        "file-name.sql"              | "The file file-name.sql with 'sql' extension is not supported."
-        "any-file.abc"               | "The file any-file.abc with 'abc' extension is not supported."
-        "any-file-without-extension" | "The file any-file-without-extension with '' extension is not supported."
+        "file-name.sql"              | "The file file-name.sql with the 'sql' extension is not supported."
+        "any-file.abc"               | "The file any-file.abc with the 'abc' extension is not supported."
+        "any-file-without-extension" | "The file any-file-without-extension with the '' extension is not supported."
     }
 }

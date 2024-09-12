@@ -105,6 +105,10 @@ public class RestInvoker implements InitializingBean {
                 .build();
     }
 
+    public RestClient getRestClient() {
+        return restClient;
+    }
+
     @Nullable
     public String load(LoadParams params) {
         try {

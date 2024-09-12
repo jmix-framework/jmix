@@ -218,7 +218,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         let options = this._options;
         let aggregationOptions = this._getAggregationOptions();
         let resultOptions = {
-            onRefresh: (function(pivotTable){
+            onRefresh: (function(pivotTable) {
                 return function(pivotState) {
                     pivotTable._refreshHandler(pivotState);
                 };
@@ -459,14 +459,18 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                     }
                     aggregationOptions.aggregator = aggregator;
                 }
-
-                aggregationOptions.aggregatorName = this._options.aggregation.caption
-                    ? this._options.aggregation.caption
-                    : localeMapping[this._options.aggregation.mode];
             } else {
                 // Explicitly set default aggregator in order to use localized version
                 aggregationOptions.aggregator = allAggregators[localeMapping["count"]]();
             }
+        }
+
+        // If selected aggregator name is not initialized, try to get value from options.aggregation.
+        // It may have an aggregator name if the pivot table is shown in read-only mode or its state is saved in settings.
+        if (!aggregationOptions.aggregatorName) {
+            aggregationOptions.aggregatorName = this._options.aggregation.caption
+                    ? this._options.aggregation.caption
+                    : localeMapping[this._options.aggregation.mode];
         }
 
         return aggregationOptions;

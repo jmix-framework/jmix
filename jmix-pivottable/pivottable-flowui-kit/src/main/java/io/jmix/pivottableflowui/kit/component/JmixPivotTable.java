@@ -875,7 +875,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         PivotTableRefreshEventParams refreshParams = (PivotTableRefreshEventParams) serializer.deserialize(
                 event.getParams(), PivotTableRefreshEventParams.class);
 
-        updateOptions(refreshParams);
+        updateOptionsAfterRefresh(refreshParams);
         sendRefreshEvent(refreshParams);
     }
 
@@ -890,7 +890,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         fireEvent(refreshEvent);
     }
 
-    protected void updateOptions(PivotTableRefreshEventParams params) {
+    protected void updateOptionsAfterRefresh(PivotTableRefreshEventParams params) {
         options.setChangedFromClient(true);
 
         options.setRows(params.getRows());
@@ -898,6 +898,14 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         options.setRenderer(params.getRenderer());
         if (options.getAggregations() != null) {
             options.getAggregations().setSelectedAggregation(params.getAggregationMode());
+        } else {
+
+            // If we get a refresh event, the component shows with UI.
+            // So create an empty aggregation to store the aggregation mode received from the client.
+            // Now it can be saved in the settings.
+            Aggregation aggregation = new Aggregation();
+            aggregation.setMode(params.getAggregationMode());
+            options.setAggregation(aggregation);
         }
         options.setAggregationProperties(params.getAggregationProperties());
         options.setColOrder(params.getColOrder());

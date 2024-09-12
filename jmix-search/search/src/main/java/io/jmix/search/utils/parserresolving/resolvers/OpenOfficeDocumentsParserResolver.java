@@ -20,11 +20,13 @@ import io.jmix.search.utils.parserresolving.FileParserResolver;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
 import org.apache.tika.parser.odf.OpenDocumentParser;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component("search_OfficeDocumentsResolver")
+@Order(100)
 public class OpenOfficeDocumentsParserResolver implements FileParserResolver {
     @Override
     public List<String> getExtension() {

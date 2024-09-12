@@ -19,11 +19,13 @@ package io.jmix.search.utils.parserresolving.resolvers;
 import io.jmix.search.utils.parserresolving.FileParserResolver;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.rtf.RTFParser;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component("search_PDFParserResolver")
+@Order(100)
 public class PDFParserResolver implements FileParserResolver {
     @Override
     public List<String> getExtension() {

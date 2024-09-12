@@ -32,7 +32,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.gridexportflowui.GridExportProperties;
-import io.jmix.gridexportflowui.exporter.ColumnExportFilter;
+import io.jmix.gridexportflowui.exporter.ColumnsToExport;
 import io.jmix.gridexportflowui.exporter.DataGridExporter;
 import io.jmix.gridexportflowui.exporter.ExportMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +67,8 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     protected DataGridExporter dataGridExporter;
     protected List<ExportMode> availableExportModes;
 
-    protected ColumnExportFilter columnExportFilter;
-    protected Predicate<Grid.Column<Object>> columnExportPredicate;
+    protected ColumnsToExport columnsToExport;
+    protected Predicate<Grid.Column<Object>> columnsExportFilter;
     protected List<String> columnKeysToExport;
 
     public ExportAction() {
@@ -104,46 +104,46 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
         this.availableExportModes = gridExportProperties.getDefaultExportModes().stream()
                 .map(ExportMode::valueOf)
                 .toList();
-        this.columnExportFilter = ColumnExportFilter.valueOf(gridExportProperties.getDefaultColumnExportFilter());
+        this.columnsToExport = ColumnsToExport.valueOf(gridExportProperties.getDefaultColumnsToExport());
     }
 
     /**
-     * Sets the {@link ColumnExportFilter} that is used to filter columns to export. This is a simple, predefined
-     * alternative to {@link #setColumnExportPredicate(Predicate)}. Has the lowest filtering priority.
+     * Sets the {@link ColumnsToExport} that is used to filter columns to export. This is a simple, predefined
+     * alternative to {@link #setColumnsExportFilter(Predicate)}. Has the lowest filtering priority.
      * <p>
-     * The default value depends on {@link GridExportProperties#getDefaultColumnExportFilter()}.
+     * The default value depends on {@link GridExportProperties#getDefaultColumnsToExport()}.
      *
-     * @param columnExportFilter column export filter to set
+     * @param columnsToExport column export filter to set
      */
-    public void setColumnExportFilter(ColumnExportFilter columnExportFilter) {
-        this.columnExportFilter = columnExportFilter;
+    public void setColumnsToExport(ColumnsToExport columnsToExport) {
+        this.columnsToExport = columnsToExport;
     }
 
     /**
      * @return this
-     * @see #setColumnExportFilter(ColumnExportFilter)
+     * @see #setColumnsToExport(ColumnsToExport)
      */
-    public ExportAction withColumnExportFilter(ColumnExportFilter columnExportFilter) {
-        setColumnExportFilter(columnExportFilter);
+    public ExportAction withColumnsToExport(ColumnsToExport columnsToExport) {
+        setColumnsToExport(columnsToExport);
         return this;
     }
 
     /**
      * Sets the {@link Predicate} that is used to filter columns to export. This is a flexible alternative to
-     * {@link #setColumnExportFilter(ColumnExportFilter)}. Has secondary filtering priority.
+     * {@link #setColumnsToExport(ColumnsToExport)}. Has secondary filtering priority.
      *
-     * @param columnExportPredicate column export predicate to set
+     * @param columnsExportFilter column export predicate to set
      */
-    public void setColumnExportPredicate(Predicate<Grid.Column<Object>> columnExportPredicate) {
-        this.columnExportPredicate = columnExportPredicate;
+    public void setColumnsExportFilter(Predicate<Grid.Column<Object>> columnsExportFilter) {
+        this.columnsExportFilter = columnsExportFilter;
     }
 
     /**
      * @return this
-     * @see #setColumnExportPredicate(Predicate)
+     * @see #setColumnsExportFilter(Predicate)
      */
-    public ExportAction withColumnExportPredicate(Predicate<Grid.Column<Object>> columnExportPredicate) {
-        setColumnExportPredicate(columnExportPredicate);
+    public ExportAction withColumnsExportFilter(Predicate<Grid.Column<Object>> columnsExportFilter) {
+        setColumnsExportFilter(columnsExportFilter);
         return this;
     }
 
@@ -296,8 +296,8 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
         if (!CollectionUtils.isEmpty(columnKeysToExport)) {
             return column -> columnKeysToExport.contains(column.getKey());
         } else {
-            return Objects.requireNonNullElse(columnExportPredicate,
-                    columnExportFilter.getFilterPredicate());
+            return Objects.requireNonNullElse(columnsExportFilter,
+                    columnsToExport.getFilterPredicate());
         }
     }
 

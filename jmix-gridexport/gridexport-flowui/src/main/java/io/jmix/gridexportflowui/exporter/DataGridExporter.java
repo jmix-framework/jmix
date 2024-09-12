@@ -48,7 +48,7 @@ public interface DataGridExporter {
      * @param exportMode exportMode
      */
     default void exportDataGrid(Downloader downloader, Grid<Object> dataGrid, ExportMode exportMode) {
-        exportDataGrid(downloader, dataGrid, exportMode, ColumnExportFilter.VISIBLE_COLUMNS.getFilterPredicate());
+        exportDataGrid(downloader, dataGrid, exportMode, ColumnsToExport.VISIBLE_COLUMNS.getFilterPredicate());
     }
 
     /**

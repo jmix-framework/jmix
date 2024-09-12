@@ -50,7 +50,7 @@ public interface StudioGridExportActions {
             items = {
                     @StudioPropertiesItem(xmlAttribute = "availableExportModes", type = StudioPropertyType.VALUES_LIST,
                             options = {"ALL_ROWS", "CURRENT_PAGE", "SELECTED_ROWS"}),
-                    @StudioPropertiesItem(xmlAttribute = "columnExportFilter", type = StudioPropertyType.ENUMERATION,
+                    @StudioPropertiesItem(xmlAttribute = "columnsToExport", type = StudioPropertyType.ENUMERATION,
                             options = {"ALL_COLUMNS", "VISIBLE_COLUMNS"}),
                     @StudioPropertiesItem(xmlAttribute = "columnKeysToExport", type = StudioPropertyType.VALUES_LIST)
             }
@@ -82,7 +82,7 @@ public interface StudioGridExportActions {
             items = {
                     @StudioPropertiesItem(xmlAttribute = "availableExportModes", type = StudioPropertyType.VALUES_LIST,
                             options = {"ALL_ROWS", "CURRENT_PAGE", "SELECTED_ROWS"}),
-                    @StudioPropertiesItem(xmlAttribute = "columnExportFilter", type = StudioPropertyType.ENUMERATION,
+                    @StudioPropertiesItem(xmlAttribute = "columnsToExport", type = StudioPropertyType.ENUMERATION,
                             options = {"ALL_COLUMNS", "VISIBLE_COLUMNS"}),
                     @StudioPropertiesItem(xmlAttribute = "columnKeysToExport", type = StudioPropertyType.VALUES_LIST)
             }

@@ -21,9 +21,9 @@ import com.vaadin.flow.component.grid.Grid;
 import java.util.function.Predicate;
 
 /**
- * Column filtering mode for export.
+ * Columns that will be used for export.
  */
-public enum ColumnExportFilter {
+public enum ColumnsToExport {
 
     /**
      * Export all columns.
@@ -37,7 +37,7 @@ public enum ColumnExportFilter {
 
     private final Predicate<Grid.Column<Object>> filterPredicate;
 
-    ColumnExportFilter(Predicate<Grid.Column<Object>> filterPredicate) {
+    ColumnsToExport(Predicate<Grid.Column<Object>> filterPredicate) {
         this.filterPredicate = filterPredicate;
     }
 

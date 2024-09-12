@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.utils;
+package io.jmix.search.utils.parserresolving;
 
 import com.google.common.base.Strings;
 import io.jmix.core.FileRef;
@@ -25,8 +25,16 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.parser.Parser;
 import org.springframework.stereotype.Component;
 
-@Component("search_FileParserResolver")
-public class FileParserResolver {
+import java.util.List;
+
+@Component("search_FileParserResolverManager")
+public class FileParserResolverManager {
+
+    protected List<FileParserResolver> fileParserResolvers;
+
+    public FileParserResolverManager(List<FileParserResolver> fileParserResolvers) {
+        this.fileParserResolvers = fileParserResolvers;
+    }
 
     public Parser getParser(FileRef fileRef) throws ParserResolvingException {
         String fileName = fileRef.getFileName();
@@ -35,12 +43,19 @@ public class FileParserResolver {
             throw new EmptyFileExtensionException(fileName);
         }
 
-        for (SupportedFileExtensions extension : SupportedFileExtensions.values()) {
-            if (extension.getSymbols().equals(fileExtension)) {
-                return extension.getParser();
+        for (FileParserResolver resolver : fileParserResolvers) {
+            if (resolver.getExtension().contains(fileExtension)) {
+                return resolver.getParser();
             }
         }
 
-        throw new UnsupportedFileExtensionException(fileName);
+        throw new UnsupportedFileExtensionException(fileName, getSupportedExtensions());
+    }
+
+    private List<String> getSupportedExtensions() {
+        return fileParserResolvers
+                .stream()
+                .flatMap(fileParserResolver -> fileParserResolver.getExtension().stream())
+                .toList();
     }
 }

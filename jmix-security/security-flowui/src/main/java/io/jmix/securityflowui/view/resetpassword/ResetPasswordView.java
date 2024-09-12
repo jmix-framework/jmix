@@ -145,9 +145,7 @@ public class ResetPasswordView extends StandardView {
                                     .withHandler(__ -> result.fail())
                                     .withVariant(ActionVariant.PRIMARY)
                     )
-                    .build();
-            cancelDialog.addDialogCloseActionListener(__ -> cancelDialog.close());
-            cancelDialog.open();
+                    .open();
 
             event.preventClose(result);
         }
@@ -234,53 +232,7 @@ public class ResetPasswordView extends StandardView {
     }
 
     protected BackgroundTask<Integer, List<UserPasswordValue>> createBackgroundTask() {
-        return new BackgroundTask<>(30, this) {
-
-            private final Map<String, String> usernamePasswordMap = new LinkedHashMap<>();
-            private final SaveContext saveContext = new SaveContext();
-
-            @Override
-            public List<UserPasswordValue> run(TaskLifeCycle<Integer> taskLifeCycle) throws Exception {
-                ArrayList<UserPasswordValue> result = new ArrayList<>(users.size());
-                int i = 0;
-
-                for (UserDetails userDetails : users) {
-                    Pair<UserDetails, String> userPassword = userManager.resetPasswordWithoutSave(userDetails);
-                    String username = userPassword.getFirst().getUsername();
-                    String password = userPassword.getSecond();
-
-                    usernamePasswordMap.put(username, password);
-                    saveContext.saving(userPassword.getFirst());
-                    result.add(createPasswordValue(username, password));
-
-                    taskLifeCycle.publish(++i);
-                }
-
-                return result;
-            }
-
-            @Override
-            public void progress(List<Integer> changes) {
-                Integer lastElement = changes.get(changes.size() - 1);
-                configureComponentOnProgress(lastElement);
-            }
-
-            @Override
-            public void done(List<UserPasswordValue> result) {
-                if (cancelDialog != null) {
-                    cancelDialog.close();
-                }
-
-                dataManager.save(saveContext);
-
-                //noinspection unchecked
-                userManager.resetRememberMe((Collection<UserDetails>) users);
-                applicationEventPublisher.publishEvent(new UserPasswordResetEvent(usernamePasswordMap));
-
-                userPasswordValueDc.setItems(result);
-                configureComponentsAfterGeneration();
-            }
-        };
+        return new ResetPasswordBackgroundTask();
     }
 
     protected UserPasswordValue createPasswordValue(String username, String password) {
@@ -372,5 +324,57 @@ public class ResetPasswordView extends StandardView {
         this.users = users;
 
         resetProgressBar.setMax(users.size());
+    }
+
+    protected class ResetPasswordBackgroundTask extends BackgroundTask<Integer, List<UserPasswordValue>> {
+
+        protected final Map<String, String> usernamePasswordMap = new LinkedHashMap<>();
+        protected final SaveContext saveContext = new SaveContext();
+
+        public ResetPasswordBackgroundTask() {
+            super(30, ResetPasswordView.this);
+        }
+
+        @Override
+        public List<UserPasswordValue> run(TaskLifeCycle<Integer> taskLifeCycle) throws Exception {
+            ArrayList<UserPasswordValue> result = new ArrayList<>(users.size());
+            int i = 0;
+
+            for (UserDetails userDetails : users) {
+                Pair<UserDetails, String> userPassword = userManager.resetPasswordWithoutSave(userDetails);
+                String username = userPassword.getFirst().getUsername();
+                String password = userPassword.getSecond();
+
+                usernamePasswordMap.put(username, password);
+                saveContext.saving(userPassword.getFirst());
+                result.add(createPasswordValue(username, password));
+
+                taskLifeCycle.publish(++i);
+            }
+
+            return result;
+        }
+
+        @Override
+        public void progress(List<Integer> changes) {
+            Integer lastElement = changes.get(changes.size() - 1);
+            configureComponentOnProgress(lastElement);
+        }
+
+        @Override
+        public void done(List<UserPasswordValue> result) {
+            if (cancelDialog != null) {
+                cancelDialog.close();
+            }
+
+            dataManager.save(saveContext);
+
+            //noinspection unchecked
+            userManager.resetRememberMe((Collection<UserDetails>) users);
+            applicationEventPublisher.publishEvent(new UserPasswordResetEvent(usernamePasswordMap));
+
+            userPasswordValueDc.setItems(result);
+            configureComponentsAfterGeneration();
+        }
     }
 }

@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.search.utils;
+package io.jmix.search.utils.parserresolving;
 
 import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.microsoft.OfficeParser;
-import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
-import org.apache.tika.parser.odf.OpenDocumentParser;
-import org.apache.tika.parser.pdf.PDFParser;
-import org.apache.tika.parser.rtf.RTFParser;
-import org.apache.tika.parser.txt.TXTParser;
 
-import java.util.function.Supplier;
+import java.util.List;
 
-public enum SupportedFileExtensions {
-    PDF("pdf", PDFParser::new),
+public interface FileParserResolver {
+  /*  PDF("pdf", PDFParser::new),
     DOC("doc", OfficeParser::new),
     XLS("xls", OfficeParser::new),
     DOCX("docx", OOXMLParser::new),
@@ -35,21 +29,17 @@ public enum SupportedFileExtensions {
     ODT("odt", OpenDocumentParser::new),
     ODS("ods", OpenDocumentParser::new),
     RTF("rtf", RTFParser::new),
-    TXT("txt", TXTParser::new);
+    TXT("txt", TXTParser::new);*/
 
-    private final String symbols;
+    /*private final String symbols;
     private final Supplier<? extends Parser> parserSupplier;
 
-    SupportedFileExtensions(String symbols, Supplier<? extends Parser> parserSupplier) {
+    FileParserResolver(String symbols, Supplier<? extends Parser> parserSupplier) {
         this.symbols = symbols;
         this.parserSupplier = parserSupplier;
     }
+*/
+    List<String> getExtension();
 
-    public String getSymbols() {
-        return symbols;
-    }
-
-    public Parser getParser() {
-        return parserSupplier.get();
-    }
+    Parser getParser();
 }

@@ -168,7 +168,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
         }
     }
 
-    private boolean hasPropertyPermission(MetaClass metaClass, String property) {
+    protected boolean hasPropertyPermission(MetaClass metaClass, String property) {
         MetaPropertyPath metaPropertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, property);
         UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaPropertyPath);
         getAccessManager().applyRegisteredConstraints(attributeContext);

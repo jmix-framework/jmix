@@ -912,6 +912,8 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
             options.setAggregation(aggregation);
         }
         options.setAggregationProperties(params.getAggregationProperties());
+        options.setInclusions(params.getInclusions());
+        options.setExclusions(params.getExclusions());
         options.setColOrder(params.getColOrder());
         options.setRowOrder(params.getRowOrder());
 

@@ -521,9 +521,9 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         }
 
         if (!this._options.renderer) {
-            return this._options.localizedStrings.renderer.table;
+            return localizedRenderers.table;
         }
-        return this._options.localizedStrings.renderer[this._options.renderer];
+        return localizedRenderers[this._options.renderer];
     }
 
     _getLocalizedRenderers() {

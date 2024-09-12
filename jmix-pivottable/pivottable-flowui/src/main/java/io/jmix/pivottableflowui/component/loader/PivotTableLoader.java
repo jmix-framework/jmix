@@ -17,11 +17,16 @@
 package io.jmix.pivottableflowui.component.loader;
 
 import com.google.common.base.Strings;
+import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -38,7 +43,9 @@ import java.util.*;
 
 public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
 
+    protected AccessManager accessManager;
     protected MessageTools messageTools;
+    protected MetadataTools metadataTools;
 
     @Override
     public void loadComponent() {
@@ -51,11 +58,25 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
         loadOptions(element);
     }
 
+    protected AccessManager getAccessManager() {
+        if (accessManager == null) {
+            accessManager = applicationContext.getBean(AccessManager.class, context);
+        }
+        return accessManager;
+    }
+
     protected MessageTools getMessageTools() {
         if (messageTools == null) {
             messageTools = applicationContext.getBean(MessageTools.class, context);
         }
         return messageTools;
+    }
+
+    protected MetadataTools getMetadataTools() {
+        if (metadataTools == null) {
+            metadataTools = applicationContext.getBean(MetadataTools.class, context);
+        }
+        return metadataTools;
     }
 
     @Override
@@ -139,10 +160,19 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
                     } else {
                         localizedName = name;
                     }
-                    resultComponent.addProperty(name, localizedName);
+                    if (metaClass == null || hasPropertyPermission(metaClass, name)) {
+                        resultComponent.addProperty(name, localizedName);
+                    }
                 }
             }
         }
+    }
+
+    private boolean hasPropertyPermission(MetaClass metaClass, String property) {
+        MetaPropertyPath metaPropertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, property);
+        UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaPropertyPath);
+        getAccessManager().applyRegisteredConstraints(attributeContext);
+        return attributeContext.canView();
     }
 
     protected void checkValidProperty(@Nullable MetaClass metaClass, String name) {

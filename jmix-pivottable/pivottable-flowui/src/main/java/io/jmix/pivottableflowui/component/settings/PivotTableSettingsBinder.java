@@ -58,7 +58,11 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
         }
 
         if (!Strings.isNullOrEmpty(settings.getRendererName())) {
-            component.setRenderer(Renderer.fromId(settings.getRendererName()));
+            if (component.getRenderers() != null) {
+                component.getRenderers().setSelectedRenderer(Renderer.fromId(settings.getRendererName()));
+            } else {
+                component.setRenderer(Renderer.fromId(settings.getRendererName()));
+            }
         }
 
         if (!Strings.isNullOrEmpty(settings.getAggregatorName())) {
@@ -134,8 +138,15 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
             settings.setCols(colProperties);
             changed = true;
         }
-        if (component.getRenderer() != null && !component.getRenderer().getId().equals(settings.getRendererName())) {
-            settings.setRendererName(component.getRenderer().getId());
+        Renderer selectedRenderer = null;
+        if (component.getRenderers() != null) {
+            selectedRenderer = component.getRenderers().getSelectedRenderer();
+        }
+        if (selectedRenderer == null) {
+            selectedRenderer = component.getRenderer();
+        }
+        if (selectedRenderer != null && !selectedRenderer.getId().equals(settings.getRendererName())) {
+            settings.setRendererName(selectedRenderer.getId());
             changed = true;
         }
         AggregationMode selectedAggregation = null;

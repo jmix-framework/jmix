@@ -20,6 +20,7 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
  * INTERNAL.
  */
 public final class OptionConstants {
+
     private OptionConstants() {
     }
 

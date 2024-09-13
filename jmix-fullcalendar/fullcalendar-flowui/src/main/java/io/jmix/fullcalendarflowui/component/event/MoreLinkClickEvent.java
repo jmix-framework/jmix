@@ -2,7 +2,7 @@ package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
-import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.data.CalendarDataProvider;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 
 import java.time.LocalDateTime;
@@ -38,14 +38,14 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
 
     protected final List<CalendarEvent> hiddenCalendarEvents;
 
-    protected final List<EventProviderContext> eventProviderContexts;
+    protected final List<DataProviderContext> dataProviderContexts;
 
     public MoreLinkClickEvent(FullCalendar fullCalendar, boolean fromClient,
                               boolean allDay,
                               LocalDateTime dateTime,
                               List<CalendarEvent> visibleCalendarEvents,
                               List<CalendarEvent> hiddenCalendarEvents,
-                              List<EventProviderContext> eventProviderContexts,
+                              List<DataProviderContext> dataProviderContexts,
                               MouseEventDetails mouseEventDetails,
                               ViewInfo viewInfo) {
         super(fullCalendar, fromClient, mouseEventDetails);
@@ -54,7 +54,7 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
         this.viewInfo = viewInfo;
         this.visibleCalendarEvents = visibleCalendarEvents;
         this.hiddenCalendarEvents = hiddenCalendarEvents;
-        this.eventProviderContexts = eventProviderContexts;
+        this.dataProviderContexts = dataProviderContexts;
     }
 
     /**
@@ -77,8 +77,8 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
     }
 
     /**
-     * Returns all visible calendar events event if they are from different event providers. To get visible calendar
-     * events by event providers use {@link #getEventProviderContexts()}.
+     * Returns all visible calendar events event if they are from different data providers. To get visible calendar
+     * events by data providers use {@link #getDataProviderContexts()}.
      *
      * @return visible calendar events
      */
@@ -87,8 +87,8 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
     }
 
     /**
-     * Returns all hidden calendar events event if they are from different event providers. To get hidden calendar
-     * events by event providers use {@link #getEventProviderContexts()}.
+     * Returns all hidden calendar events event if they are from different data providers. To get hidden calendar
+     * events by data providers use {@link #getDataProviderContexts()}.
      *
      * @return hidden calendar events
      */
@@ -97,10 +97,10 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
     }
 
     /**
-     * @return list of event providers contexts that contain information about calendar events
+     * @return list of data providers contexts that contain information about calendar events
      */
-    public List<EventProviderContext> getEventProviderContexts() {
-        return eventProviderContexts;
+    public List<DataProviderContext> getDataProviderContexts() {
+        return dataProviderContexts;
     }
 
     /**
@@ -111,26 +111,29 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
     }
 
     /**
-     * Groups visible and hidden calendar events by event provider.
+     * Groups visible and hidden calendar events by data provider.
      */
-    public static class EventProviderContext {
-        protected final BaseCalendarEventProvider eventProvider;
+    public static class DataProviderContext {
+
+        protected final CalendarDataProvider dataProvider;
+
         protected final List<CalendarEvent> visibleEvents;
+
         protected final List<CalendarEvent> hiddenEvents;
 
-        public EventProviderContext(BaseCalendarEventProvider eventProvider,
-                                    List<CalendarEvent> visibleEvents,
-                                    List<CalendarEvent> hiddenEvents) {
-            this.eventProvider = eventProvider;
+        public DataProviderContext(CalendarDataProvider dataProvider,
+                                   List<CalendarEvent> visibleEvents,
+                                   List<CalendarEvent> hiddenEvents) {
+            this.dataProvider = dataProvider;
             this.visibleEvents = visibleEvents;
             this.hiddenEvents = hiddenEvents;
         }
 
         /**
-         * @return event provider
+         * @return data provider
          */
-        public BaseCalendarEventProvider getEventProvider() {
-            return eventProvider;
+        public CalendarDataProvider getDataProvider() {
+            return dataProvider;
         }
 
         /**

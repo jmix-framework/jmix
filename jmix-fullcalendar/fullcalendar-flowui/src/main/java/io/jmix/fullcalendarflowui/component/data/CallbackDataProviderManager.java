@@ -9,26 +9,26 @@ import java.util.List;
 
 /**
  * INTERNAL.
- * Event provider manager that works with {@link LazyCalendarEventProvider}.
+ * Data provider manager that works with {@link CallbackCalendarDataProvider}.
  */
 @Internal
-public class LazyEventProviderManager extends AbstractEventProviderManager {
+public class CallbackDataProviderManager extends AbstractDataProviderManager {
 
     protected List<CalendarEvent> lastFetchedEvents;
 
-    public LazyEventProviderManager(LazyCalendarEventProvider eventProvider,
-                                    FullCalendarSerializer serializer,
-                                    FullCalendar fullCalendar) {
-        super(eventProvider, serializer, fullCalendar, "_addLazyEventSource");
+    public CallbackDataProviderManager(CallbackCalendarDataProvider dataProvider,
+                                       FullCalendarSerializer serializer,
+                                       FullCalendar fullCalendar) {
+        super(dataProvider, serializer, fullCalendar, "_addLazyEventSource");
     }
 
     @Override
-    public LazyCalendarEventProvider getEventProvider() {
-        return (LazyCalendarEventProvider) super.getEventProvider();
+    public CallbackCalendarDataProvider getDataProvider() {
+        return (CallbackCalendarDataProvider) super.getDataProvider();
     }
 
-    public JsonArray fetchAndSerialize(LazyCalendarEventProvider.ItemsFetchContext context) {
-        lastFetchedEvents = getEventProvider().onItemsFetch(context);
+    public JsonArray fetchAndSerialize(CallbackCalendarDataProvider.ItemsFetchContext context) {
+        lastFetchedEvents = getDataProvider().onItemsFetch(context);
 
         return serializeData(lastFetchedEvents);
     }

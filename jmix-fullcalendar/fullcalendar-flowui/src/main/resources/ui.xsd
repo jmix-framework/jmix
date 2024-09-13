@@ -24,7 +24,7 @@
             <xs:complexContent>
                 <xs:extension base="layout:baseComponent">
                     <xs:all minOccurs="0">
-                        <xs:element name="eventProviders" type="eventProvidersType"/>
+                        <xs:element name="dataProviders" type="dataProvidersType"/>
                         <xs:element name="businessHours" type="businessHoursType"/>
                         <xs:element name="viewProperties" type="viewProperties"/>
                         <xs:element name="customViews" type="customViews"/>
@@ -331,10 +331,10 @@
         </xs:choice>
     </xs:complexType>
 
-    <xs:complexType name="eventProvidersType">
+    <xs:complexType name="dataProvidersType">
         <xs:all minOccurs="0">
-            <xs:element name="containerEventProvider" type="containerProviderType"/>
-            <xs:element name="lazyEventProvider" type="lazyProviderType"/>
+            <xs:element name="containerDataProvider" type="containerProviderType"/>
+            <xs:element name="callbackDataProvider" type="lazyProviderType"/>
         </xs:all>
     </xs:complexType>
 

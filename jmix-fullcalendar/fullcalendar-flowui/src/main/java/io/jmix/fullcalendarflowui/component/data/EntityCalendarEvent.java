@@ -25,21 +25,22 @@ import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.*;
  * Calendar event that wraps an entity.
  *
  * @param <E> entity type
- * @see ContainerCalendarEventProvider
- * @see LazyEntityCalendarEventRetriever
+ * @see ContainerCalendarDataProvider
+ * @see EntityCalendarDataRetriever
  */
 public class EntityCalendarEvent<E> implements CalendarEvent {
+
     private static final Logger log = LoggerFactory.getLogger(EntityCalendarEvent.class);
 
     protected final E entity;
     protected final Object id;
-    protected AbstractEntityEventProvider<?> eventProvider;
+    protected AbstractEntityCalendarDataProvider<?> dataProvider;
 
-    public EntityCalendarEvent(E entity, AbstractEntityEventProvider<?> eventProvider) {
+    public EntityCalendarEvent(E entity, AbstractEntityCalendarDataProvider<?> dataProvider) {
         Preconditions.checkNotNullArgument(entity);
-        Preconditions.checkNotNullArgument(eventProvider);
+        Preconditions.checkNotNullArgument(dataProvider);
         this.entity = entity;
-        this.eventProvider = eventProvider;
+        this.dataProvider = dataProvider;
 
         id = EntityValues.getId(entity);
         if (id == null) {
@@ -62,22 +63,22 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     @Override
     public Object getGroupId() {
-        return getValue(eventProvider.getGroupIdProperty());
+        return getValue(dataProvider.getGroupIdProperty());
     }
 
     @Override
     public Boolean getAllDay() {
-        return getValue(eventProvider.getAllDayProperty());
+        return getValue(dataProvider.getAllDayProperty());
     }
 
     @Override
     public void setAllDay(@Nullable Boolean allDay) {
-        EntityValues.setValue(entity, eventProvider.getAllDayProperty(), allDay);
+        EntityValues.setValue(entity, dataProvider.getAllDayProperty(), allDay);
     }
 
     @Override
     public LocalDateTime getStartDateTime() {
-        Object value = getValue(eventProvider.getStartDateTimeProperty());
+        Object value = getValue(dataProvider.getStartDateTimeProperty());
 
         return value != null
                 ? (LocalDateTime) transformToType(value, LocalDateTime.class, null)
@@ -86,19 +87,19 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     @Override
     public void setStartDateTime(@Nullable LocalDateTime start) {
-        Class<?> propertyJavaType = eventProvider.getStartPropertyJavaType();
+        Class<?> propertyJavaType = dataProvider.getStartPropertyJavaType();
         if (propertyJavaType == null) {
             log.warn("Cannot set start date since no Java type specified");
             return;
         }
         Object transformed = transformToType(start, propertyJavaType, null);
 
-        EntityValues.setValue(entity, eventProvider.getStartDateTimeProperty(), transformed);
+        EntityValues.setValue(entity, dataProvider.getStartDateTimeProperty(), transformed);
     }
 
     @Override
     public LocalDateTime getEndDateTime() {
-        Object value = getValue(eventProvider.getEndDateTimeProperty());
+        Object value = getValue(dataProvider.getEndDateTimeProperty());
 
         return value != null
                 ? (LocalDateTime) transformToType(value, LocalDateTime.class, null)
@@ -107,82 +108,82 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     @Override
     public void setEndDateTime(@Nullable LocalDateTime end) {
-        Class<?> propertyJavaType = eventProvider.getEndPropertyJavaType();
+        Class<?> propertyJavaType = dataProvider.getEndPropertyJavaType();
         if (propertyJavaType == null) {
             log.warn("Cannot set end date since no Java type specified");
             return;
         }
         Object transformed = transformToType(end, propertyJavaType, null);
 
-        EntityValues.setValue(entity, eventProvider.getEndDateTimeProperty(), transformed);
+        EntityValues.setValue(entity, dataProvider.getEndDateTimeProperty(), transformed);
     }
 
     @Override
     public String getTitle() {
-        return getValue(eventProvider.getTitleProperty());
+        return getValue(dataProvider.getTitleProperty());
     }
 
     @Override
     public String getDescription() {
-        return getValue(eventProvider.getDescriptionProperty());
+        return getValue(dataProvider.getDescriptionProperty());
     }
 
     @Override
     public Boolean getInteractive() {
-        return getValue(eventProvider.getInteractiveProperty());
+        return getValue(dataProvider.getInteractiveProperty());
     }
 
     @Override
     public String getClassNames() {
-        return getValue(eventProvider.getClassNamesProperty());
+        return getValue(dataProvider.getClassNamesProperty());
     }
 
     @Override
     public Boolean getStartEditable() {
-        return getValue(eventProvider.getStartEditableProperty());
+        return getValue(dataProvider.getStartEditableProperty());
     }
 
     @Nullable
     @Override
     public Boolean getDurationEditable() {
-        return getValue(eventProvider.getDurationEditableProperty());
+        return getValue(dataProvider.getDurationEditableProperty());
     }
 
     @Override
     public Display getDisplay() {
-        return getValue(eventProvider.getDisplayProperty());
+        return getValue(dataProvider.getDisplayProperty());
     }
 
     @Override
     public Boolean getOverlap() {
-        return getValue(eventProvider.getOverlapProperty());
+        return getValue(dataProvider.getOverlapProperty());
     }
 
     @Nullable
     @Override
     public Object getConstraint() {
-        return getValue(eventProvider.getConstraintProperty());
+        return getValue(dataProvider.getConstraintProperty());
     }
 
     @Override
     public String getBackgroundColor() {
-        return getValue(eventProvider.getBackgroundColorProperty());
+        return getValue(dataProvider.getBackgroundColorProperty());
     }
 
     @Override
     public String getBorderColor() {
-        return getValue(eventProvider.getBorderColorProperty());
+        return getValue(dataProvider.getBorderColorProperty());
     }
 
     @Override
     public String getTextColor() {
-        return getValue(eventProvider.getTextColorProperty());
+        return getValue(dataProvider.getTextColorProperty());
     }
 
     @Override
     public Map<String, Object> getAdditionalProperties() {
-        List<String> additionalProperties = eventProvider.getAdditionalProperties();
-        if (CollectionUtils.isEmpty(eventProvider.getAdditionalProperties())) {
+        List<String> additionalProperties = dataProvider.getAdditionalProperties();
+        if (CollectionUtils.isEmpty(dataProvider.getAdditionalProperties())) {
             return Map.of();
         }
 
@@ -196,12 +197,12 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     @Override
     public DaysOfWeek getRecurringDaysOfWeek() {
-        return getValue(eventProvider.getRecurringDaysOfWeekProperty());
+        return getValue(dataProvider.getRecurringDaysOfWeekProperty());
     }
 
     @Override
     public LocalDate getRecurringStartDate() {
-        Object value = getValue(eventProvider.getRecurringStartDateProperty());
+        Object value = getValue(dataProvider.getRecurringStartDateProperty());
 
         return value != null
                 ? (LocalDate) transformToType(value, LocalDate.class, null)
@@ -210,7 +211,7 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     @Override
     public LocalDate getRecurringEndDate() {
-        Object value = getValue(eventProvider.getRecurringEndDateProperty());
+        Object value = getValue(dataProvider.getRecurringEndDateProperty());
 
         return value != null
                 ? (LocalDate) transformToType(value, LocalDate.class, null)
@@ -219,14 +220,14 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     @Override
     public LocalTime getRecurringStartTime() {
-        Object value = getValue(eventProvider.getRecurringStartTimeProperty());
+        Object value = getValue(dataProvider.getRecurringStartTimeProperty());
 
         return value != null ? transformToLocalTime(value) : null;
     }
 
     @Override
     public LocalTime getRecurringEndTime() {
-        Object value = getValue(eventProvider.getRecurringEndTimeProperty());
+        Object value = getValue(dataProvider.getRecurringEndTimeProperty());
 
         return value != null ? transformToLocalTime(value) : null;
     }

@@ -30,8 +30,6 @@ import java.util.Objects;
 public final class CalendarDateTimeUtils {
 
     /**
-     * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToType()
-     * <p>
      * Converts a date instance to the passed java type corresponding to one of the date types.
      *
      * @param date     the date object, not {@code null}
@@ -40,6 +38,9 @@ public final class CalendarDateTimeUtils {
      * @return the date object converted to the passed java type, not {@code null}
      */
     public static Object transformToType(Object date, Class javaType, @Nullable ZoneId zoneId) {
+        /*
+         * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToType()
+         */
         Objects.requireNonNull(date);
         Objects.requireNonNull(javaType);
 
@@ -48,8 +49,6 @@ public final class CalendarDateTimeUtils {
     }
 
     /**
-     * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToZDT()
-     * <p>
      * Obtains an instance of {@link ZonedDateTime} from Date or LocalDate or LocalDateTime or OffsetDateTime
      * ZonedDateTime is created for LocalDate, LocalDateTime with default system timezone
      *
@@ -58,6 +57,9 @@ public final class CalendarDateTimeUtils {
      * @throws IllegalArgumentException if the type of the provided date is not supported
      */
     public static ZonedDateTime transformToZDT(Object date, @Nullable ZoneId fromZoneId) {
+        /*
+         * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToZDT()
+         */
         Objects.requireNonNull(date);
         ZoneId zoneId = fromZoneId != null ? fromZoneId : ZoneId.systemDefault();
         if (date instanceof java.sql.Date) {
@@ -75,13 +77,16 @@ public final class CalendarDateTimeUtils {
     }
 
     /**
-     * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToLocalTime()
+     * Obtains an instance of LocalTime from Time or Date or LocalTime or OffsetTime
      *
      * @param time the time object to transform
      * @return local time instance
      * @throws IllegalArgumentException if the type of the provided time is not supported
      */
     public static LocalTime transformToLocalTime(Object time) {
+        /*
+         * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformToLocalTime()
+         */
         Preconditions.checkNotNull(time);
         if (time instanceof java.sql.Time) {
             return ((java.sql.Time) time).toLocalTime();
@@ -156,15 +161,16 @@ public final class CalendarDateTimeUtils {
     }
 
     /**
-     * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformFromZdtInternal()
-     * <p>
      * Transforms {@link ZonedDateTime} to the provided type.
      *
      * @param zonedDateTime date-time to transform
      * @param javaType      java type to transform
-     * @return
+     * @return the transformed date with the provider type
      */
     private static Object transformFromZdtInternal(ZonedDateTime zonedDateTime, Class javaType) {
+        /**
+         * CAUTION! Copied from io.jmix.core.DateTimeTransformations#transformFromZdtInternal()
+         */
         if (java.sql.Date.class.equals(javaType)) {
             return java.sql.Date.valueOf(zonedDateTime.toLocalDate());
         } else if (Date.class.equals(javaType)) {

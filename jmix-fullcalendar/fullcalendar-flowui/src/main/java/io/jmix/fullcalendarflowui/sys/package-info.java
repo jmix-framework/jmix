@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendarflowui.component.data;
+@NonNullApi
+@Internal
+package io.jmix.fullcalendarflowui.sys;
 
-import io.jmix.fullcalendarflowui.component.FullCalendar;
-
-/**
- * Base interface of event providers in {@link FullCalendar}.
- */
-public interface BaseCalendarEventProvider {
-
-    /**
-     * @return an ID of event provider
-     */
-    String getId();
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

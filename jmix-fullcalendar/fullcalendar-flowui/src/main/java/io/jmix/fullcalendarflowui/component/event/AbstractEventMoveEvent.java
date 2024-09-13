@@ -1,7 +1,7 @@
 package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.data.CalendarDataProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import org.springframework.lang.Nullable;
@@ -15,7 +15,7 @@ import java.util.TimeZone;
  */
 public class AbstractEventMoveEvent extends AbstractClickEvent {
 
-    protected final List<RelatedEventProviderContext> relatedEventProviderContexts;
+    protected final List<RelatedDataProviderContext> relatedDataProviderContexts;
 
     protected final List<CalendarEvent> relatedCalendarEvents;
 
@@ -23,21 +23,21 @@ public class AbstractEventMoveEvent extends AbstractClickEvent {
 
     public AbstractEventMoveEvent(FullCalendar fullCalendar, boolean fromClient,
                                   MouseEventDetails mouseEventDetails,
-                                  List<RelatedEventProviderContext> relatedEventProviderContexts,
+                                  List<RelatedDataProviderContext> relatedDataProviderContexts,
                                   List<CalendarEvent> relatedCalendarEvents,
                                   OldValues oldValues) {
         super(fullCalendar, fromClient, mouseEventDetails);
 
-        this.relatedEventProviderContexts = relatedEventProviderContexts;
+        this.relatedDataProviderContexts = relatedDataProviderContexts;
         this.relatedCalendarEvents = relatedCalendarEvents;
         this.oldValues = oldValues;
     }
 
     /**
-     * @return event provider contexts of related calendar events
+     * @return data provider contexts of related calendar events
      */
-    public List<RelatedEventProviderContext> getRelatedEventProviderContexts() {
-        return relatedEventProviderContexts;
+    public List<RelatedDataProviderContext> getRelatedDataProviderContexts() {
+        return relatedDataProviderContexts;
     }
 
     /**
@@ -96,24 +96,24 @@ public class AbstractEventMoveEvent extends AbstractClickEvent {
     }
 
     /**
-     * Provides related calendar events and their event provider.
+     * Provides related calendar events and their data provider.
      */
-    public static class RelatedEventProviderContext {
+    public static class RelatedDataProviderContext {
 
-        protected final BaseCalendarEventProvider eventProvider;
+        protected final CalendarDataProvider dataProvider;
         protected final List<CalendarEvent> calendarEvents;
 
-        public RelatedEventProviderContext(BaseCalendarEventProvider eventProvider,
-                                           List<CalendarEvent> calendarEvents) {
-            this.eventProvider = eventProvider;
+        public RelatedDataProviderContext(CalendarDataProvider dataProvider,
+                                          List<CalendarEvent> calendarEvents) {
+            this.dataProvider = dataProvider;
             this.calendarEvents = calendarEvents;
         }
 
         /**
-         * @return event provider
+         * @return data provider
          */
-        public BaseCalendarEventProvider getEventProvider() {
-            return eventProvider;
+        public CalendarDataProvider getDataProvider() {
+            return dataProvider;
         }
 
         /**

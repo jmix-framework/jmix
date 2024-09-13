@@ -13,13 +13,13 @@ import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendar.Display;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.component.data.AbstractEntityEventProvider;
-import io.jmix.fullcalendarflowui.component.data.ContainerCalendarEventProvider;
-import io.jmix.fullcalendarflowui.component.data.LazyEntityCalendarEventRetriever;
+import io.jmix.fullcalendarflowui.component.data.AbstractEntityCalendarDataProvider;
+import io.jmix.fullcalendarflowui.component.data.ContainerCalendarDataProvider;
+import io.jmix.fullcalendarflowui.component.data.EntityCalendarDataRetriever;
 import io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours;
-import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
-import io.jmix.fullcalendarflowui.component.data.CalendarEventProvider;
-import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.data.CalendarDataProvider;
+import io.jmix.fullcalendarflowui.component.data.ItemsCalendarDataProvider;
+import io.jmix.fullcalendarflowui.component.data.CallbackCalendarDataProvider;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
 import org.dom4j.Element;
 import org.springframework.lang.Nullable;
@@ -140,101 +140,101 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadBusinessHours(element, resultComponent::setBusinessHours);
         loadHiddenDays(element, resultComponent);
 
-        loadEventProviders(element, "containerEventProvider",
-                (ep) -> resultComponent.addEventProvider((CalendarEventProvider) ep));
-        loadEventProviders(element, "lazyEventProvider",
-                (ep) -> resultComponent.addEventProvider((LazyCalendarEventProvider) ep));
+        loadDataProviders(element, "containerDataProvider",
+                (dp) -> resultComponent.addDataProvider((ItemsCalendarDataProvider) dp));
+        loadDataProviders(element, "callbackDataProvider",
+                (dp) -> resultComponent.addDataProvider((CallbackCalendarDataProvider) dp));
     }
 
-    protected void loadEventProviders(Element element, String providerTag,
-                                      Consumer<BaseCalendarEventProvider> setter) {
-        Element eventProvidersElement = element.element("eventProviders");
-        if (eventProvidersElement != null) {
-            eventProvidersElement.elements(providerTag)
-                    .forEach(provider -> setter.accept(loadEventProvider(provider)));
+    protected void loadDataProviders(Element element, String providerTag,
+                                     Consumer<CalendarDataProvider> setter) {
+        Element dataProvidersElement = element.element("dataProviders");
+        if (dataProvidersElement != null) {
+            dataProvidersElement.elements(providerTag)
+                    .forEach(provider -> setter.accept(loadDataProvider(provider)));
         }
     }
 
-    protected AbstractEntityEventProvider<?> loadEventProvider(Element eventProviderElement) {
-        AbstractEntityEventProvider<?> calendarItems;
-        if (eventProviderElement.getName().equals("containerEventProvider")) {
-            InstanceContainer<?> container = loadDataContainer(eventProviderElement);
-            calendarItems = createCalendarItems(eventProviderElement, container);
+    protected AbstractEntityCalendarDataProvider<?> loadDataProvider(Element dataProviderElement) {
+        AbstractEntityCalendarDataProvider<?> calendarItems;
+        if (dataProviderElement.getName().equals("containerDataProvider")) {
+            InstanceContainer<?> container = loadDataContainer(dataProviderElement);
+            calendarItems = createCalendarItems(dataProviderElement, container);
 
-            loadBaseContainerProperties(eventProviderElement, calendarItems);
-        } else if (eventProviderElement.getName().equals("lazyEventProvider")) {
-            calendarItems = createLazyCalendarItems(eventProviderElement);
+            loadBaseContainerProperties(dataProviderElement, calendarItems);
+        } else if (dataProviderElement.getName().equals("callbackDataProvider")) {
+            calendarItems = createLazyCalendarItems(dataProviderElement);
 
-            loadBaseContainerProperties(eventProviderElement, calendarItems);
+            loadBaseContainerProperties(dataProviderElement, calendarItems);
 
-            Element itemsQueryElement = eventProviderElement.element("itemsQuery");
+            Element itemsQueryElement = dataProviderElement.element("itemsQuery");
             if (itemsQueryElement != null) {
-                loadItemsQuery(itemsQueryElement, (LazyEntityCalendarEventRetriever) calendarItems);
+                loadItemsQuery(itemsQueryElement, (EntityCalendarDataRetriever) calendarItems);
             }
         } else {
-            throw new GuiDevelopmentException("Unknown event provider tag:" + eventProviderElement.getName(), context);
+            throw new GuiDevelopmentException("Unknown data provider tag:" + dataProviderElement.getName(), context);
         }
 
         return calendarItems;
     }
 
-    protected void loadBaseContainerProperties(Element eventProviderElement,
-                                               AbstractEntityEventProvider<?> calendarItems) {
-        loadString(eventProviderElement, "groupId", calendarItems::setGroupIdProperty);
-        loadString(eventProviderElement, "allDay", calendarItems::setAllDayProperty);
-        loadString(eventProviderElement, "startDateTime", calendarItems::setStartDateTimeProperty);
-        loadString(eventProviderElement, "endDateTime", calendarItems::setEndDateTimeProperty);
-        loadString(eventProviderElement, "title", calendarItems::setTitleProperty);
-        loadString(eventProviderElement, "description", calendarItems::setDescriptionProperty);
-        loadString(eventProviderElement, "interactive", calendarItems::setInteractiveProperty);
-        loadString(eventProviderElement, "classNames", calendarItems::setClassNamesProperty);
-        loadString(eventProviderElement, "startEditable", calendarItems::setStartEditableProperty);
-        loadString(eventProviderElement, "durationEditable", calendarItems::setDurationEditableProperty);
-        loadString(eventProviderElement, "display", calendarItems::setDisplayProperty);
-        loadString(eventProviderElement, "overlap", calendarItems::setOverlapProperty);
-        loadString(eventProviderElement, "constraint", calendarItems::setConstraintProperty);
-        loadString(eventProviderElement, "backgroundColor", calendarItems::setBackgroundColorProperty);
-        loadString(eventProviderElement, "borderColor", calendarItems::setBorderColorProperty);
-        loadString(eventProviderElement, "textColor", calendarItems::setTextColorProperty);
+    protected void loadBaseContainerProperties(Element dataProviderElement,
+                                               AbstractEntityCalendarDataProvider<?> calendarItems) {
+        loadString(dataProviderElement, "groupId", calendarItems::setGroupIdProperty);
+        loadString(dataProviderElement, "allDay", calendarItems::setAllDayProperty);
+        loadString(dataProviderElement, "startDateTime", calendarItems::setStartDateTimeProperty);
+        loadString(dataProviderElement, "endDateTime", calendarItems::setEndDateTimeProperty);
+        loadString(dataProviderElement, "title", calendarItems::setTitleProperty);
+        loadString(dataProviderElement, "description", calendarItems::setDescriptionProperty);
+        loadString(dataProviderElement, "interactive", calendarItems::setInteractiveProperty);
+        loadString(dataProviderElement, "classNames", calendarItems::setClassNamesProperty);
+        loadString(dataProviderElement, "startEditable", calendarItems::setStartEditableProperty);
+        loadString(dataProviderElement, "durationEditable", calendarItems::setDurationEditableProperty);
+        loadString(dataProviderElement, "display", calendarItems::setDisplayProperty);
+        loadString(dataProviderElement, "overlap", calendarItems::setOverlapProperty);
+        loadString(dataProviderElement, "constraint", calendarItems::setConstraintProperty);
+        loadString(dataProviderElement, "backgroundColor", calendarItems::setBackgroundColorProperty);
+        loadString(dataProviderElement, "borderColor", calendarItems::setBorderColorProperty);
+        loadString(dataProviderElement, "textColor", calendarItems::setTextColorProperty);
 
-        loadStringList(eventProviderElement, "additionalProperties", calendarItems::setAdditionalProperties);
+        loadStringList(dataProviderElement, "additionalProperties", calendarItems::setAdditionalProperties);
 
-        loadString(eventProviderElement, "recurringDaysOfWeek",
+        loadString(dataProviderElement, "recurringDaysOfWeek",
                 calendarItems::setRecurringDaysOfWeekProperty);
-        loadString(eventProviderElement, "recurringStartDate",
+        loadString(dataProviderElement, "recurringStartDate",
                 calendarItems::setRecurringStartDateProperty);
-        loadString(eventProviderElement, "recurringEndDate",
+        loadString(dataProviderElement, "recurringEndDate",
                 calendarItems::setRecurringEndDateProperty);
-        loadString(eventProviderElement, "recurringStartTime",
+        loadString(dataProviderElement, "recurringStartTime",
                 calendarItems::setRecurringStartTimeProperty);
-        loadString(eventProviderElement, "recurringEndTime",
+        loadString(dataProviderElement, "recurringEndTime",
                 calendarItems::setRecurringEndTimeProperty);
     }
 
-    protected AbstractEntityEventProvider<?> createCalendarItems(Element eventProviderElement,
-                                                                 InstanceContainer<?> container) {
-        String id = loadString(eventProviderElement, "id").orElse(null);
+    protected AbstractEntityCalendarDataProvider<?> createCalendarItems(Element dataProviderElement,
+                                                                        InstanceContainer<?> container) {
+        String id = loadString(dataProviderElement, "id").orElse(null);
         return Strings.isNullOrEmpty(id)
-                ? new ContainerCalendarEventProvider<>(container)
-                : new ContainerCalendarEventProvider<>(id, container);
+                ? new ContainerCalendarDataProvider<>(container)
+                : new ContainerCalendarDataProvider<>(id, container);
     }
 
-    protected AbstractEntityEventProvider<?> createLazyCalendarItems(Element eventProviderElement) {
-        String id = loadString(eventProviderElement, "id").orElse(null);
+    protected AbstractEntityCalendarDataProvider<?> createLazyCalendarItems(Element dataProviderElement) {
+        String id = loadString(dataProviderElement, "id").orElse(null);
         return Strings.isNullOrEmpty(id)
-                ? applicationContext.getBean(LazyEntityCalendarEventRetriever.class)
-                : applicationContext.getBean(LazyEntityCalendarEventRetriever.class, id);
+                ? applicationContext.getBean(EntityCalendarDataRetriever.class)
+                : applicationContext.getBean(EntityCalendarDataRetriever.class, id);
     }
 
-    protected InstanceContainer<?> loadDataContainer(Element eventProviderElement) {
-        String dataContainer = eventProviderElement.attributeValue("dataContainer");
+    protected InstanceContainer<?> loadDataContainer(Element dataProviderElement) {
+        String dataContainer = dataProviderElement.attributeValue("dataContainer");
         if (Strings.isNullOrEmpty(dataContainer)) {
-            throw new GuiDevelopmentException("Event provider must specify a dataContainer attribute", context);
+            throw new GuiDevelopmentException("Data provider must specify a dataContainer attribute", context);
         }
         return context.getDataHolder().getContainer(dataContainer);
     }
 
-    protected void loadItemsQuery(Element itemsQueryElement, LazyEntityCalendarEventRetriever lazyCalendarItems) {
+    protected void loadItemsQuery(Element itemsQueryElement, EntityCalendarDataRetriever lazyCalendarItems) {
         Class<?> entityClass = loaderSupport.loadString(itemsQueryElement, "class")
                 .map(ReflectionHelper::getClass)
                 .orElseThrow(() -> new GuiDevelopmentException("Entity class must be specified", context));

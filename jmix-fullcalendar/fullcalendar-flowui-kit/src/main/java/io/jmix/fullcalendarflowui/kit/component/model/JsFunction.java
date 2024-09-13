@@ -27,13 +27,14 @@ import java.util.Objects;
  * For instance:
  * <pre>{@code
  * new JsFunction("""
- *         function(content) {
+ *         function (content) {
  *             return "Title: " content.title;
  *         }
  *         """);
  * }</pre>
  */
 public class JsFunction implements Serializable {
+
     private final String code;
 
     public JsFunction(String code) {

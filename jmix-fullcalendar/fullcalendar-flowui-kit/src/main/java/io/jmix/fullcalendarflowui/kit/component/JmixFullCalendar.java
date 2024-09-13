@@ -58,7 +58,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     protected CalendarView calendarView;
 
-    protected Map<String, StateTree.ExecutionRegistration> itemsEventProvidersExecutionMap = new HashMap<>(2);
+    protected Map<String, StateTree.ExecutionRegistration> itemsDataProvidersExecutionMap = new HashMap<>(2);
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
     protected StateTree.ExecutionRegistration incrementalUpdateExecution;
 
@@ -1429,7 +1429,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the default value for each calendar event's {@code allDay} property when it is unspecified.
      * <p>
      * If the property is set to {@code true}, all events without {@code allDay} property (e.g. is not specified
-     * mapping in event provider or calendar event returns {@code null} for {@code getAllDay()}) will be considered
+     * mapping in data provider or calendar event returns {@code null} for {@code getAllDay()}) will be considered
      * as all-day events.
      * <p>
      * Note, in this case, events without {@code allDay} property will be shown as all-day events. If such event
@@ -1980,13 +1980,13 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Enables rendering events from the event provider immediately when events are loaded.
+     * Enables rendering events from the data provider immediately when events are loaded.
      * <ul>
      *     <li>
-     *         {@code true} - renders each event provider as it is received. Will result in more renders.
+     *         {@code true} - renders each data provider as it is received. Will result in more renders.
      *     </li>
      *     <li>
-     *         {@code false} - waits until all event providers have been received and renders them all at once.
+     *         {@code false} - waits until all data providers have been received and renders them all at once.
      *         Results in less renders.
      *     </li>
      * </ul>
@@ -2271,7 +2271,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         return new JreJsonFactory().createArray();
     }
 
-    protected void addEventProvidersOnAttach() {
+    protected void addDataProvidersOnAttach() {
         // Stub, is used in inheritors
     }
 
@@ -2286,7 +2286,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
         requestUpdateOptions(false);
 
-        addEventProvidersOnAttach();
+        addDataProvidersOnAttach();
 
         performCompleteInit();
     }

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 /**
- * Interface to be implemented by event providers that should load items by request.
+ * Interface to be implemented by data providers that should load items by request.
  * <p>
  * The {@link #onItemsFetch(ItemsFetchContext)} is called in the following cases:
  * <ul>
@@ -41,10 +41,10 @@ import java.util.TimeZone;
  * the provider. If calendar is not attached to the UI, loading will be performed after attaching component
  * to the UI.
  *
- * @see LazyEntityCalendarEventRetriever
- * @see CalendarEventRetriever
+ * @see EntityCalendarDataRetriever
+ * @see CalendarDataRetriever
  */
-public interface LazyCalendarEventProvider extends BaseCalendarEventProvider {
+public interface CallbackCalendarDataProvider extends CalendarDataProvider {
 
     /**
      * A callback method that is invoked by {@link FullCalendar}, for instance, when the user navigates to
@@ -59,7 +59,8 @@ public interface LazyCalendarEventProvider extends BaseCalendarEventProvider {
      * A fetch context that is used for loading events.
      */
     class ItemsFetchContext {
-        protected LazyCalendarEventProvider eventProvider;
+
+        protected CallbackCalendarDataProvider dataProvider;
 
         protected LocalDate startDate;
 
@@ -67,18 +68,18 @@ public interface LazyCalendarEventProvider extends BaseCalendarEventProvider {
 
         protected TimeZone componentTimeZone;
 
-        public ItemsFetchContext(LazyCalendarEventProvider eventProvider,
+        public ItemsFetchContext(CallbackCalendarDataProvider dataProvider,
                                  LocalDate startDate,
                                  LocalDate endDate,
                                  TimeZone componentTimeZone) {
-            this.eventProvider = eventProvider;
+            this.dataProvider = dataProvider;
             this.startDate = startDate;
             this.endDate = endDate;
             this.componentTimeZone = componentTimeZone;
         }
 
-        public LazyCalendarEventProvider getEventProvider() {
-            return eventProvider;
+        public CallbackCalendarDataProvider getDataProvider() {
+            return dataProvider;
         }
 
         /**

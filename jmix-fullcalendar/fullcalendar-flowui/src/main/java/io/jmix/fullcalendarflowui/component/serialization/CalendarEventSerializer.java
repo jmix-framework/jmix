@@ -21,9 +21,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.vaadin.flow.data.provider.KeyMapper;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
-import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
@@ -36,22 +34,22 @@ import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.tra
 public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
 
     protected Supplier<TimeZone> timeZoneSupplier = TimeZone::getDefault;
-    protected final KeyMapper<Object> crossEventProviderKeyMapper;
+    protected final KeyMapper<Object> crossDataProviderKeyMapper;
     protected KeyMapper<Object> idMapper;
     protected String sourceId;
 
     public CalendarEventSerializer(String sourceId,
                                    KeyMapper<Object> idMapper,
-                                   KeyMapper<Object> crossEventProviderKeyMapper) {
+                                   KeyMapper<Object> crossDataProviderKeyMapper) {
         super(CalendarEvent.class);
 
         Preconditions.checkNotNullArgument(idMapper);
         Preconditions.checkNotNullArgument(sourceId);
-        Preconditions.checkNotNullArgument(crossEventProviderKeyMapper);
+        Preconditions.checkNotNullArgument(crossDataProviderKeyMapper);
 
         this.idMapper = idMapper;
         this.sourceId = sourceId;
-        this.crossEventProviderKeyMapper = crossEventProviderKeyMapper;
+        this.crossDataProviderKeyMapper = crossDataProviderKeyMapper;
     }
 
     public void setTimeZoneSupplier(Supplier<TimeZone> timeZoneSupplier) {
@@ -64,8 +62,8 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         gen.writeStartObject();
 
         gen.writeObjectField("id", idMapper.key(value.getId()));
-        serializeCrossEventProviderField("groupId", value.getGroupId(), gen, provider);
-        serializeCrossEventProviderField("constraint", value.getConstraint(), gen, provider);
+        serializeCrossDataProviderField("groupId", value.getGroupId(), gen, provider);
+        serializeCrossDataProviderField("constraint", value.getConstraint(), gen, provider);
 
         serializeNullableValue("allDay", value.getAllDay(), gen, provider);
 
@@ -104,14 +102,14 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         gen.writeEndObject();
     }
 
-    protected void serializeCrossEventProviderField(String property, @Nullable Object value, JsonGenerator gen,
-                                                    SerializerProvider provider) throws IOException {
+    protected void serializeCrossDataProviderField(String property, @Nullable Object value, JsonGenerator gen,
+                                                   SerializerProvider provider) throws IOException {
         if (value == null) {
             return;
         }
 
         String rawValue = getRawGroupIdOrConstraint(value);
-        rawValue = rawValue == null ? crossEventProviderKeyMapper.key(value) : rawValue;
+        rawValue = rawValue == null ? crossDataProviderKeyMapper.key(value) : rawValue;
 
         serializeNullableValue(property, rawValue, gen, provider);
     }

@@ -26,13 +26,13 @@ import org.springframework.lang.Nullable;
 /**
  * INTERNAL.
  * <p>
- * The manager of concrete event provider. It is a connector between event source in client-side and server's
- * {@link BaseCalendarEventProvider}.
+ * The manager of concrete data provider. It is a connector between event source in client-side and server's
+ * {@link CalendarDataProvider}.
  */
 @Internal
-public abstract class AbstractEventProviderManager {
+public abstract class AbstractDataProviderManager {
 
-    protected final BaseCalendarEventProvider eventProvider;
+    protected final CalendarDataProvider dataProvider;
     protected final String sourceId;
 
     protected final String jsFunctionName;
@@ -41,36 +41,36 @@ public abstract class AbstractEventProviderManager {
     protected FullCalendarDataSerializer dataSerializer;
     protected FullCalendar fullCalendar;
 
-    public AbstractEventProviderManager(BaseCalendarEventProvider eventProvider,
-                                        FullCalendarSerializer serializer,
-                                        FullCalendar fullCalendar,
-                                        String jsFunctionName) {
-        this.eventProvider = eventProvider;
+    public AbstractDataProviderManager(CalendarDataProvider dataProvider,
+                                       FullCalendarSerializer serializer,
+                                       FullCalendar fullCalendar,
+                                       String jsFunctionName) {
+        this.dataProvider = dataProvider;
         this.fullCalendar = fullCalendar;
         this.jsFunctionName = jsFunctionName;
 
-        this.sourceId = generateSourceId(eventProvider);
+        this.sourceId = generateSourceId(dataProvider);
 
         this.dataSerializer = serializer.createDataSerializer(sourceId, eventKeyMapper);
         this.dataSerializer.setTimeZoneSupplier(fullCalendar::getTimeZone);
     }
 
     /**
-     * @return event provider
+     * @return data provider
      */
-    public BaseCalendarEventProvider getEventProvider() {
-        return eventProvider;
+    public CalendarDataProvider getDataProvider() {
+        return dataProvider;
     }
 
     /**
-     * @return event provider's ID that is used in client-side
+     * @return data provider's ID that is used in client-side
      */
     public String getSourceId() {
         return sourceId;
     }
 
     /**
-     * @return a JS function that should be invoked to add event provider to component at the client-side
+     * @return a JS function that should be invoked to add data provider to component at the client-side
      */
     public String getJsFunctionName() {
         return this.jsFunctionName;
@@ -83,7 +83,7 @@ public abstract class AbstractEventProviderManager {
     @Nullable
     public abstract CalendarEvent getCalendarEvent(String clientId);
 
-    protected String generateSourceId(BaseCalendarEventProvider eventProvider) {
-        return eventProvider.getId() + "-" + EventProviderUtils.generateId();
+    protected String generateSourceId(CalendarDataProvider dataProvider) {
+        return dataProvider.getId() + "-" + DataProviderUtils.generateId();
     }
 }

@@ -1,7 +1,7 @@
 package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.data.CalendarDataProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
@@ -16,7 +16,7 @@ public class EventResizeEvent extends AbstractEventMoveEvent {
 
     protected final CalendarEvent calendarEvent;
 
-    protected final BaseCalendarEventProvider eventProvider;
+    protected final CalendarDataProvider dataProvider;
 
     protected final CalendarDuration startDelta;
 
@@ -26,19 +26,19 @@ public class EventResizeEvent extends AbstractEventMoveEvent {
 
     public EventResizeEvent(FullCalendar fullCalendar, boolean fromClient,
                             CalendarEvent calendarEvent,
-                            BaseCalendarEventProvider eventProvider,
-                            List<RelatedEventProviderContext> relatedEventProviderContexts,
+                            CalendarDataProvider dataProvider,
+                            List<RelatedDataProviderContext> relatedDataProviderContexts,
                             List<CalendarEvent> relatedCalendarEvents,
                             OldValues oldValues,
                             @Nullable CalendarDuration startDelta,
                             @Nullable CalendarDuration endDelta,
                             MouseEventDetails mouseEventDetails,
                             ViewInfo viewInfo) {
-        super(fullCalendar, fromClient, mouseEventDetails, relatedEventProviderContexts, relatedCalendarEvents,
+        super(fullCalendar, fromClient, mouseEventDetails, relatedDataProviderContexts, relatedCalendarEvents,
                 oldValues);
 
         this.calendarEvent = calendarEvent;
-        this.eventProvider = eventProvider;
+        this.dataProvider = dataProvider;
         this.viewInfo = viewInfo;
         this.startDelta = startDelta;
         this.endDelta = endDelta;
@@ -52,8 +52,8 @@ public class EventResizeEvent extends AbstractEventMoveEvent {
     }
 
     /**
-     * Returns all related calendar events even if they are from different event providers. To get related calendar
-     * events by event provider, use {@link #getRelatedEventProviderContexts()}.
+     * Returns all related calendar events even if they are from different data providers. To get related calendar
+     * events by data provider, use {@link #getRelatedDataProviderContexts()}.
      * <p>
      * An event might have other recurring event instances or might be linked to other events with the same group ID.
      * So these events will be related with resized one.
@@ -65,10 +65,10 @@ public class EventResizeEvent extends AbstractEventMoveEvent {
     }
 
     /**
-     * @return event provider of resized calendar event
+     * @return data provider of resized calendar event
      */
-    public BaseCalendarEventProvider getEventProvider() {
-        return eventProvider;
+    public CalendarDataProvider getDataProvider() {
+        return dataProvider;
     }
 
     /**

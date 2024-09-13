@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-package xml_loading.view;
+package io.jmix.fullcalendarflowui.component.data;
 
-import com.vaadin.flow.router.Route;
-import io.jmix.flowui.view.*;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 
-@Route("FullCalendarXmlLoadingTestView")
-@ViewDescriptor("fullcalendar-xml-loading-test-view.xml")
-@ViewController("FullCalendarXmlLoadingTestView")
-public class FullCalendarXmlLoadingTestView extends StandardView {
+/**
+ * Base interface of data providers in {@link FullCalendar}.
+ */
+public interface CalendarDataProvider {
 
-    @ViewComponent
-    public FullCalendar calendar;
-    @ViewComponent
-    public FullCalendar calendarViewProperties;
-    @ViewComponent
-    public FullCalendar calendarDataProviders;
-    @ViewComponent
-    public FullCalendar calendarBusinessHours;
-    @ViewComponent
-    public FullCalendar calendarCustomViews;
+    /**
+     * @return an ID of data provider
+     */
+    String getId();
 }

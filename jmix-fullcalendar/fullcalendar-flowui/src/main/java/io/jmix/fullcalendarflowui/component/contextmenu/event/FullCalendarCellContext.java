@@ -1,6 +1,6 @@
 package io.jmix.fullcalendarflowui.component.contextmenu.event;
 
-import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.data.CalendarDataProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
@@ -15,17 +15,17 @@ public class FullCalendarCellContext {
 
     protected final CalendarEvent calendarEvent;
 
-    protected final BaseCalendarEventProvider eventProvider;
+    protected final CalendarDataProvider dataProvider;
 
     protected final MouseEventDetails mouseDetails;
 
     public FullCalendarCellContext(@Nullable DayCell dayCell,
                                    @Nullable CalendarEvent calendarEvent,
-                                   @Nullable BaseCalendarEventProvider eventProvider,
+                                   @Nullable CalendarDataProvider dataProvider,
                                    MouseEventDetails mouseDetails) {
         this.dayCell = dayCell;
         this.calendarEvent = calendarEvent;
-        this.eventProvider = eventProvider;
+        this.dataProvider = dataProvider;
         this.mouseDetails = mouseDetails;
     }
 
@@ -47,11 +47,11 @@ public class FullCalendarCellContext {
     }
 
     /**
-     * @return calendar event's provider if context menu is invoked from an event
+     * @return calendar event's data provider if context menu is invoked from an event
      */
     @Nullable
-    public BaseCalendarEventProvider getEventProvider() {
-        return eventProvider;
+    public CalendarDataProvider getDataProvider() {
+        return dataProvider;
     }
 
     /**

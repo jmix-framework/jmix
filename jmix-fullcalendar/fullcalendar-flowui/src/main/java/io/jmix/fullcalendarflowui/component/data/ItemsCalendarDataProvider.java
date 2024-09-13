@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Interface to be implemented by event providers that should load a list of event.
+ * Interface to be implemented by data providers that should load a list of events.
  */
-public interface CalendarEventProvider extends BaseCalendarEventProvider {
+public interface ItemsCalendarDataProvider extends CalendarDataProvider {
 
     /**
      * @return loaded calendar events
@@ -45,7 +45,7 @@ public interface CalendarEventProvider extends BaseCalendarEventProvider {
      * Adds an item set change listener.
      *
      * @param listener listener to add
-     * @return a registration object for removing an event listener added to an event provider
+     * @return a registration object for removing an event listener added to a data provider
      */
     Registration addItemSetChangeListener(Consumer<ItemSetChangeEvent> listener);
 
@@ -57,7 +57,7 @@ public interface CalendarEventProvider extends BaseCalendarEventProvider {
         protected final DataChangeOperation operation;
         protected final Collection<CalendarEvent> items;
 
-        public ItemSetChangeEvent(BaseCalendarEventProvider source,
+        public ItemSetChangeEvent(CalendarDataProvider source,
                                   DataChangeOperation operation,
                                   Collection<CalendarEvent> items) {
             super(source);
@@ -67,8 +67,8 @@ public interface CalendarEventProvider extends BaseCalendarEventProvider {
         }
 
         @Override
-        public BaseCalendarEventProvider getSource() {
-            return (BaseCalendarEventProvider) super.getSource();
+        public CalendarDataProvider getSource() {
+            return (CalendarDataProvider) super.getSource();
         }
 
         /**

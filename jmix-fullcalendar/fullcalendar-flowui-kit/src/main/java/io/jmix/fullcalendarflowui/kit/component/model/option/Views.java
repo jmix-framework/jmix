@@ -30,7 +30,8 @@ import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConsta
  * INTERNAL.
  */
 public class Views extends CalendarOption {
-        protected DayGridDayViewProperties dayGridDay;
+
+    protected DayGridDayViewProperties dayGridDay;
     protected DayGridWeekViewProperties dayGridWeek;
     protected DayGridMonthViewProperties dayGridMonth;
     protected DayGridYearViewProperties dayGridYear;

@@ -19,8 +19,8 @@ import io.jmix.fullcalendar.Display;
 import io.jmix.fullcalendarflowui.component.data.*;
 import io.jmix.fullcalendarflowui.component.event.*;
 import io.jmix.fullcalendarflowui.component.event.AbstractEventMoveEvent;
-import io.jmix.fullcalendarflowui.component.event.AbstractEventMoveEvent.RelatedEventProviderContext;
-import io.jmix.fullcalendarflowui.component.event.MoreLinkClickEvent.EventProviderContext;
+import io.jmix.fullcalendarflowui.component.event.AbstractEventMoveEvent.RelatedDataProviderContext;
+import io.jmix.fullcalendarflowui.component.event.MoreLinkClickEvent.DataProviderContext;
 import io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours;
 import io.jmix.fullcalendarflowui.component.model.option.FullCalendarOptions;
 import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer;
@@ -54,6 +54,7 @@ import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.par
  * Component provides event rendering, drag-and-drop functionality, event editing, and customizable views.
  */
 public class FullCalendar extends JmixFullCalendar implements ApplicationContextAware, InitializingBean {
+
     private static final Logger log = LoggerFactory.getLogger(FullCalendar.class);
 
     protected ApplicationContext applicationContext;
@@ -61,7 +62,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected Messages messages;
 
     protected JsonFactory jsonFactory;
-    protected Map<String, AbstractEventProviderManager> eventProvidersMap = new HashMap<>(2);
+    protected Map<String, AbstractDataProviderManager> dataProvidersMap = new HashMap<>(2);
 
     protected Function<MoreLinkClassNamesContext, List<String>> linkMoreClassNamesGenerator;
     protected Function<DayHeaderClassNamesContext, List<String>> dayHeaderClassNamesGenerator;
@@ -101,116 +102,116 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
-     * @return a list of event providers
+     * @return a list of data providers
      */
-    public List<BaseCalendarEventProvider> getEventProviders() {
-        return eventProvidersMap != null && !eventProvidersMap.isEmpty()
-                ? eventProvidersMap.values().stream().map(AbstractEventProviderManager::getEventProvider).toList()
+    public List<CalendarDataProvider> getDataProviders() {
+        return dataProvidersMap != null && !dataProvidersMap.isEmpty()
+                ? dataProvidersMap.values().stream().map(AbstractDataProviderManager::getDataProvider).toList()
                 : Collections.emptyList();
     }
 
     /**
-     * Returns an event provider by its ID.
+     * Returns a data provider by its ID.
      *
-     * @param id  event provider ID
-     * @param <T> type of event provider
-     * @return event provider or {@code null} if there is no event provider with passed ID
+     * @param id  data provider ID
+     * @param <T> type of data provider
+     * @return data provider or {@code null} if there is no data provider with passed ID
      */
     @Nullable
     @SuppressWarnings("unchecked")
-    public <T extends BaseCalendarEventProvider> T getEventProvider(String id) {
+    public <T extends CalendarDataProvider> T getDataProvider(String id) {
         Preconditions.checkNotEmptyString(id);
 
-        AbstractEventProviderManager eventProviderManager = eventProvidersMap.get(id);
-        if (eventProviderManager != null) {
-            return (T) eventProviderManager.getEventProvider();
+        AbstractDataProviderManager dataProviderManager = dataProvidersMap.get(id);
+        if (dataProviderManager != null) {
+            return (T) dataProviderManager.getDataProvider();
         }
         return null;
     }
 
     /**
-     * Adds new lazy event provider.
+     * Adds new lazy data provider.
      *
-     * @param eventProvider lazy event provider to add
+     * @param dataProvider lazy data provider to add
      */
-    public void addEventProvider(LazyCalendarEventProvider eventProvider) {
-        Preconditions.checkNotNullArgument(eventProvider);
+    public void addDataProvider(CallbackCalendarDataProvider dataProvider) {
+        Preconditions.checkNotNullArgument(dataProvider);
 
-        if (eventProvidersMap.containsKey(eventProvider.getId())) {
-            log.warn("Lazy event provider with the same '{}' ID already added", eventProvider.getId());
+        if (dataProvidersMap.containsKey(dataProvider.getId())) {
+            log.warn("Lazy data provider with the same '{}' ID already added", dataProvider.getId());
             return;
         }
 
-        LazyEventProviderManager eventProviderManager = createLazyEventProviderManager(eventProvider);
+        CallbackDataProviderManager dataProviderManager = createCallbackDataProviderManager(dataProvider);
 
-        eventProvidersMap.put(eventProvider.getId(), eventProviderManager);
+        dataProvidersMap.put(dataProvider.getId(), dataProviderManager);
 
         if (initialized) {
-            addEventProviderInternal(eventProviderManager);
+            addDataProviderInternal(dataProviderManager);
         }
     }
 
     /**
-     * Adds new event provider.
+     * Adds new data provider.
      *
-     * @param eventProvider event provider to add
+     * @param dataProvider data provider to add
      */
-    public void addEventProvider(CalendarEventProvider eventProvider) {
-        Preconditions.checkNotNullArgument(eventProvider);
+    public void addDataProvider(ItemsCalendarDataProvider dataProvider) {
+        Preconditions.checkNotNullArgument(dataProvider);
 
-        if (eventProvidersMap.containsKey(eventProvider.getId())) {
-            log.warn("Item event provider with the same '{}' ID already added", eventProvider.getId());
+        if (dataProvidersMap.containsKey(dataProvider.getId())) {
+            log.warn("Item data provider with the same '{}' ID already added", dataProvider.getId());
             return;
         }
 
-        EventProviderManager eventProviderManager = createEventProviderManager(eventProvider);
-        eventProviderManager.setItemSetChangeListener(this::onItemSetChangeListener);
+        ItemsDataProviderManager dataProviderManager = createDataProviderManager(dataProvider);
+        dataProviderManager.setItemSetChangeListener(this::onItemSetChangeListener);
 
-        eventProvidersMap.put(eventProvider.getId(), eventProviderManager);
+        dataProvidersMap.put(dataProvider.getId(), dataProviderManager);
 
         if (initialized) {
-            addEventProviderInternal(eventProviderManager);
+            addDataProviderInternal(dataProviderManager);
 
-            if (eventProvider.getItems().isEmpty()) {
-                requestUpdateItemEventProvider(eventProvider.getId());
+            if (dataProvider.getItems().isEmpty()) {
+                requestUpdateItemDataProvider(dataProvider.getId());
             }
         }
     }
 
     /**
-     * Removes an event provider from component.
+     * Removes a data provider from the component.
      *
-     * @param eventProvider event provider to remove
+     * @param dataProvider data provider to remove
      */
-    public void removeEventProvider(BaseCalendarEventProvider eventProvider) {
-        Preconditions.checkNotNullArgument(eventProvider);
+    public void removeDataProvider(CalendarDataProvider dataProvider) {
+        Preconditions.checkNotNullArgument(dataProvider);
 
-        removeEventProvider(eventProvider.getId());
+        removeDataProvider(dataProvider.getId());
     }
 
     /**
-     * Removes an event provider from component by ID.
+     * Removes a data provider from the component by ID.
      *
-     * @param id ID of event provider to remove
+     * @param id ID of data provider to remove
      */
-    public void removeEventProvider(String id) {
+    public void removeDataProvider(String id) {
         Preconditions.checkNotEmptyString(id);
 
-        AbstractEventProviderManager epManager = eventProvidersMap.get(id);
-        if (epManager != null) {
-            if (epManager instanceof EventProviderManager itemProvider) {
+        AbstractDataProviderManager dataProviderManager = dataProvidersMap.get(id);
+        if (dataProviderManager != null) {
+            if (dataProviderManager instanceof ItemsDataProviderManager itemProvider) {
                 itemProvider.setItemSetChangeListener(null);
             }
-            getElement().callJsFunction("_removeEventSource", epManager.getSourceId());
+            getElement().callJsFunction("_removeEventSource", dataProviderManager.getSourceId());
         }
-        eventProvidersMap.remove(id);
+        dataProvidersMap.remove(id);
     }
 
     /**
-     * Removes all event providers from component.
+     * Removes all data providers from the component.
      */
-    public void removeAllEventProviders() {
-        getEventProviders().forEach(this::removeEventProvider);
+    public void removeAllDataProviders() {
+        getDataProviders().forEach(this::removeDataProvider);
     }
 
     /**
@@ -815,33 +816,33 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     @Override
     protected JsonArray fetchCalendarItems(String sourceId, String start, String end) {
-        LazyEventProviderManager epManager = (LazyEventProviderManager) getEventProviderManager(sourceId);
+        CallbackDataProviderManager dataProviderManager = (CallbackDataProviderManager) getDataProviderManager(sourceId);
 
-        return epManager.fetchAndSerialize(
-                new LazyCalendarEventProvider.ItemsFetchContext(
-                        epManager.getEventProvider(),
+        return dataProviderManager.fetchAndSerialize(
+                new CallbackCalendarDataProvider.ItemsFetchContext(
+                        dataProviderManager.getDataProvider(),
                         parseIsoDate(start),
                         parseIsoDate(end),
                         getComponentTimeZone()));
     }
 
-    protected void addEventProviderInternal(AbstractEventProviderManager epManager) {
-        log.debug("Perform add event provider");
+    protected void addDataProviderInternal(AbstractDataProviderManager dataProviderManager) {
+        log.debug("Perform add data provider");
 
-        getElement().callJsFunction(epManager.getJsFunctionName(), epManager.getSourceId());
+        getElement().callJsFunction(dataProviderManager.getJsFunctionName(), dataProviderManager.getSourceId());
     }
 
-    protected void onItemSetChangeListener(CalendarEventProvider.ItemSetChangeEvent event) {
+    protected void onItemSetChangeListener(ItemsCalendarDataProvider.ItemSetChangeEvent event) {
         String providerId = event.getSource().getId();
-        EventProviderManager eventProviderManager =
-                (EventProviderManager) eventProvidersMap.get(providerId);
+        ItemsDataProviderManager dataProviderManager =
+                (ItemsDataProviderManager) dataProvidersMap.get(providerId);
 
         switch (event.getOperation()) {
             case ADD, REMOVE, UPDATE -> {
-                eventProviderManager.addIncrementalChange(event);
+                dataProviderManager.addIncrementalChange(event);
                 requestIncrementalDataUpdate();
             }
-            default -> requestUpdateItemEventProvider(providerId);
+            default -> requestUpdateItemDataProvider(providerId);
         }
     }
 
@@ -855,15 +856,15 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected void performIncrementalDataUpdate(ExecutionContext context) {
-        List<EventProviderManager> eventProviders = eventProvidersMap.values().stream()
-                .filter(ep -> ep instanceof EventProviderManager)
-                .map(ep -> (EventProviderManager) ep)
+        List<ItemsDataProviderManager> dataProviders = dataProvidersMap.values().stream()
+                .filter(ep -> ep instanceof ItemsDataProviderManager)
+                .map(ep -> (ItemsDataProviderManager) ep)
                 .toList();
 
         List<JsonValue> jsonValues = new ArrayList<>();
-        for (EventProviderManager epManger : eventProviders) {
-            jsonValues.addAll(epManger.serializeIncrementalData());
-            epManger.clearIncrementalData();
+        for (ItemsDataProviderManager dataProviderManger : dataProviders) {
+            jsonValues.addAll(dataProviderManger.serializeIncrementalData());
+            dataProviderManger.clearIncrementalData();
         }
 
         getElement().callJsFunction("_updateSourcesWithIncrementalData",
@@ -872,32 +873,32 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         incrementalUpdateExecution = null;
     }
 
-    protected void requestUpdateItemEventProvider(String eventProviderId) {
+    protected void requestUpdateItemDataProvider(String dataProviderId) {
         // Do not call if it's still updating
-        if (itemsEventProvidersExecutionMap.containsKey(eventProviderId)) {
+        if (itemsDataProvidersExecutionMap.containsKey(dataProviderId)) {
             return;
         }
         getUI().ifPresent(ui -> {
             StateTree.ExecutionRegistration executionRegistration = ui.beforeClientResponse(this,
-                    (context) -> performUpdateItemEventProvider(eventProviderId));
-            itemsEventProvidersExecutionMap.put(eventProviderId, executionRegistration);
+                    (context) -> performUpdateItemDataProvider(dataProviderId));
+            itemsDataProvidersExecutionMap.put(dataProviderId, executionRegistration);
         });
     }
 
-    protected void performUpdateItemEventProvider(String eventProviderId) {
+    protected void performUpdateItemDataProvider(String dataProviderId) {
         JsonObject resultJson = new JreJsonFactory().createObject();
 
-        EventProviderManager eventProviderManager =
-                (EventProviderManager) eventProvidersMap.get(eventProviderId);
+        ItemsDataProviderManager dataProviderManager =
+                (ItemsDataProviderManager) dataProvidersMap.get(dataProviderId);
 
-        JsonValue dataJson = eventProviderManager.serializeData();
+        JsonValue dataJson = dataProviderManager.serializeData();
 
         resultJson.put("data", dataJson);
-        resultJson.put("sourceId", eventProviderManager.getSourceId());
+        resultJson.put("sourceId", dataProviderManager.getSourceId());
 
         getElement().callJsFunction("_updateSyncSourcesData", resultJson);
 
-        itemsEventProvidersExecutionMap.remove(eventProviderId);
+        itemsDataProvidersExecutionMap.remove(dataProviderId);
     }
 
     @Override
@@ -917,7 +918,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected void onMoreLinkClick(MoreLinkClickDomEvent event) {
         DomMoreLinkClick clientContext = deserializer.deserialize(event.getContext(), DomMoreLinkClick.class);
 
-        List<EventProviderContext> eventProviderContexts = createMoreLinkEventProviderContexts(clientContext);
+        List<DataProviderContext> dataProviderContexts = createMoreLinkDataProviderContexts(clientContext);
 
         List<CalendarEvent> hiddenCalendarEvents = toCalendarEvents(clientContext.getHiddenEvents());
         List<CalendarEvent> visibleCalendarEvents = toCalendarEvents(clientContext.getAllEvents());
@@ -929,7 +930,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         toLocalDateTime(clientContext.getDateTime()),
                         visibleCalendarEvents,
                         hiddenCalendarEvents,
-                        eventProviderContexts,
+                        dataProviderContexts,
                         new MouseEventDetails(clientContext.getMouseDetails()),
                         createViewInfo(clientContext.getView()))
         );
@@ -939,14 +940,14 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected void onEventClick(EventClickDomEvent event) {
         DomEventMouse clientContext = deserializer.deserialize(event.getContext(), DomEventMouse.class);
 
-        AbstractEventProviderManager eventProviderManager = getEventProviderManager(clientContext.getEvent().getSourceId());
-        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), eventProviderManager);
+        AbstractDataProviderManager dataProviderManager = getDataProviderManager(clientContext.getEvent().getSourceId());
+        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), dataProviderManager);
 
         getEventBus().fireEvent(
                 new EventClickEvent(this, event.isFromClient(),
                         new MouseEventDetails(clientContext.getMouseDetails()),
                         calendarEvent,
-                        eventProviderManager.getEventProvider(),
+                        dataProviderManager.getDataProvider(),
                         createViewInfo(clientContext.getView()))
         );
     }
@@ -955,14 +956,14 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected void onEventMouseEnter(EventMouseEnterDomEvent event) {
         DomEventMouse clientContext = deserializer.deserialize(event.getContext(), DomEventMouse.class);
 
-        AbstractEventProviderManager eventProviderManager = getEventProviderManager(clientContext.getEvent().getSourceId());
-        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), eventProviderManager);
+        AbstractDataProviderManager dataProviderManager = getDataProviderManager(clientContext.getEvent().getSourceId());
+        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), dataProviderManager);
 
         getEventBus().fireEvent(
                 new EventMouseEnterEvent(this, event.isFromClient(),
                         new MouseEventDetails(clientContext.getMouseDetails()),
                         calendarEvent,
-                        eventProviderManager.getEventProvider(),
+                        dataProviderManager.getDataProvider(),
                         createViewInfo(clientContext.getView())));
     }
 
@@ -970,14 +971,14 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected void onEventMouseLeave(EventMouseLeaveDomEvent event) {
         DomEventMouse clientContext = deserializer.deserialize(event.getContext(), DomEventMouse.class);
 
-        AbstractEventProviderManager eventProviderManager = getEventProviderManager(clientContext.getEvent().getSourceId());
-        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), eventProviderManager);
+        AbstractDataProviderManager dataProviderManager = getDataProviderManager(clientContext.getEvent().getSourceId());
+        CalendarEvent calendarEvent = getCalendarEvent(clientContext.getEvent(), dataProviderManager);
 
         getEventBus().fireEvent(
                 new EventMouseLeaveEvent(this, event.isFromClient(),
                         new MouseEventDetails(clientContext.getMouseDetails()),
                         calendarEvent,
-                        eventProviderManager.getEventProvider(),
+                        dataProviderManager.getDataProvider(),
                         createViewInfo(clientContext.getView())));
     }
 
@@ -985,16 +986,16 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected void onEventDrop(EventDropDomEvent event) {
         DomEventDrop clientEvent = deserializer.deserialize(event.getContext(), DomEventDrop.class);
 
-        AbstractEventProviderManager epManager = getEventProviderManager(clientEvent.getEvent().getSourceId());
+        AbstractDataProviderManager dataProviderManager = getDataProviderManager(clientEvent.getEvent().getSourceId());
 
-        CalendarEvent droppedEvent = getCalendarEvent(clientEvent.getEvent(), epManager);
+        CalendarEvent droppedEvent = getCalendarEvent(clientEvent.getEvent(), dataProviderManager);
         applyChangesToCalendarEvent(droppedEvent, clientEvent.getEvent());
 
         getEventBus().fireEvent(
                 new EventDropEvent(this, event.isFromClient(),
                         droppedEvent,
-                        epManager.getEventProvider(),
-                        getRelatedEventProviderContexts(clientEvent.getRelatedEvents()),
+                        dataProviderManager.getDataProvider(),
+                        getRelatedDataProviderContexts(clientEvent.getRelatedEvents()),
                         getRelatedEvents(clientEvent.getRelatedEvents()),
                         createOldValues(clientEvent.getOldEvent()),
                         createDelta(clientEvent.getDelta()),
@@ -1007,16 +1008,16 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected void onEventResize(EventResizeDomEvent event) {
         DomEventResize clientEvent = deserializer.deserialize(event.getContext(), DomEventResize.class);
 
-        AbstractEventProviderManager epManager = getEventProviderManager(clientEvent.getEvent().getSourceId());
+        AbstractDataProviderManager dataProviderManager = getDataProviderManager(clientEvent.getEvent().getSourceId());
 
-        CalendarEvent resizedEvent = getCalendarEvent(clientEvent.getEvent(), epManager);
+        CalendarEvent resizedEvent = getCalendarEvent(clientEvent.getEvent(), dataProviderManager);
         applyChangesToCalendarEvent(resizedEvent, clientEvent.getEvent());
 
         getEventBus().fireEvent(
                 new EventResizeEvent(this, event.isFromClient(),
                         resizedEvent,
-                        epManager.getEventProvider(),
-                        getRelatedEventProviderContexts(clientEvent.getRelatedEvents()),
+                        dataProviderManager.getDataProvider(),
+                        getRelatedDataProviderContexts(clientEvent.getRelatedEvents()),
                         getRelatedEvents(clientEvent.getRelatedEvents()),
                         createOldValues(clientEvent.getOldEvent()),
                         clientEvent.getStartDelta() == null ? null : createDelta(clientEvent.getStartDelta()),
@@ -1199,12 +1200,12 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return classNamesJson;
     }
 
-    protected EventProviderManager createEventProviderManager(CalendarEventProvider eventProvider) {
-        return new EventProviderManager(eventProvider, getSerializer(), this);
+    protected ItemsDataProviderManager createDataProviderManager(ItemsCalendarDataProvider dataProvider) {
+        return new ItemsDataProviderManager(dataProvider, getSerializer(), this);
     }
 
-    protected LazyEventProviderManager createLazyEventProviderManager(LazyCalendarEventProvider eventProvider) {
-        return new LazyEventProviderManager(eventProvider, getSerializer(), this);
+    protected CallbackDataProviderManager createCallbackDataProviderManager(CallbackCalendarDataProvider dataProvider) {
+        return new CallbackDataProviderManager(dataProvider, getSerializer(), this);
     }
 
     protected void initTimeZone() {
@@ -1253,15 +1254,15 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return TimeZone.getDefault();
     }
 
-    protected AbstractEventProviderManager getEventProviderManager(String sourceId) {
-        return eventProvidersMap.values().stream()
+    protected AbstractDataProviderManager getDataProviderManager(String sourceId) {
+        return dataProvidersMap.values().stream()
                 .filter(epm -> epm.getSourceId().equals(sourceId))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("There is no event provider with ID:" + sourceId));
+                .orElseThrow(() -> new IllegalStateException("There is no data provider with ID:" + sourceId));
     }
 
     /**
-     * Returns all related calendar events, even if they are from different event providers.
+     * Returns all related calendar events, even if they are from different data providers.
      * <p>
      * Note, it applies changes to {@link CalendarEvent}.
      *
@@ -1271,8 +1272,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected List<CalendarEvent> getRelatedEvents(List<DomCalendarEvent> relatedEvents) {
         List<CalendarEvent> calendarEvents = new ArrayList<>(relatedEvents.size());
         for (DomCalendarEvent changedEvent : relatedEvents) {
-            AbstractEventProviderManager epManager = getEventProviderManager(changedEvent.getSourceId());
-            CalendarEvent relatedEvent = getCalendarEvent(changedEvent, epManager);
+            AbstractDataProviderManager dataProviderManager = getDataProviderManager(changedEvent.getSourceId());
+            CalendarEvent relatedEvent = getCalendarEvent(changedEvent, dataProviderManager);
 
             calendarEvents.add(relatedEvent);
 
@@ -1281,23 +1282,24 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         return calendarEvents;
     }
 
-    protected List<RelatedEventProviderContext> getRelatedEventProviderContexts(List<DomCalendarEvent> relatedEvents) {
-        List<RelatedEventProviderContext> contexts = new ArrayList<>(eventProvidersMap.size());
+    protected List<RelatedDataProviderContext> getRelatedDataProviderContexts(List<DomCalendarEvent> relatedEvents) {
+        List<RelatedDataProviderContext> contexts = new ArrayList<>(dataProvidersMap.size());
 
-        for (AbstractEventProviderManager epManager : eventProvidersMap.values()) {
+        for (AbstractDataProviderManager dataProviderManager : dataProvidersMap.values()) {
             List<CalendarEvent> calendarEvents = relatedEvents.stream()
-                    .filter(e -> epManager.getSourceId().equals(e.getSourceId()))
-                    .map(e -> epManager.getCalendarEvent(e.getId()))
+                    .filter(e -> dataProviderManager.getSourceId().equals(e.getSourceId()))
+                    .map(e -> dataProviderManager.getCalendarEvent(e.getId()))
                     .toList();
             if (!calendarEvents.isEmpty()) {
-                contexts.add(new RelatedEventProviderContext(epManager.getEventProvider(), calendarEvents));
+                contexts.add(new RelatedDataProviderContext(dataProviderManager.getDataProvider(), calendarEvents));
             }
         }
         return contexts;
     }
 
-    protected CalendarEvent getCalendarEvent(DomCalendarEvent clientEvent, AbstractEventProviderManager epManager) {
-        CalendarEvent calendarEvent = epManager.getCalendarEvent(clientEvent.getId());
+    protected CalendarEvent getCalendarEvent(DomCalendarEvent clientEvent,
+                                             AbstractDataProviderManager dataProviderManager) {
+        CalendarEvent calendarEvent = dataProviderManager.getCalendarEvent(clientEvent.getId());
         if (calendarEvent == null) {
             throw new IllegalStateException("Cannot find calendar event by client ID: " + clientEvent.getId());
         }
@@ -1316,51 +1318,51 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         }
     }
 
-    protected List<EventProviderContext> createMoreLinkEventProviderContexts(DomMoreLinkClick context) {
-        List<EventProviderContext> eventProviderContexts = new ArrayList<>();
-
-        for (AbstractEventProviderManager epManager : eventProvidersMap.values()) {
-            EventProviderContext eventProviderContext =
-                    createMoreLinkEventProviderContext(epManager, context.getAllEvents(), context.getHiddenEvents());
-
-            if (eventProviderContext != null) {
-                eventProviderContexts.add(eventProviderContext);
+    protected List<DataProviderContext> createMoreLinkDataProviderContexts(DomMoreLinkClick context) {
+        List<DataProviderContext> dataProviderContexts = new ArrayList<>();
+        for (AbstractDataProviderManager dataProviderManager : dataProvidersMap.values()) {
+            DataProviderContext dataProviderContext = createMoreLinkDataProviderContext(
+                    dataProviderManager, context.getAllEvents(), context.getHiddenEvents());
+            if (dataProviderContext != null) {
+                dataProviderContexts.add(dataProviderContext);
             }
         }
-        return eventProviderContexts;
+        return dataProviderContexts;
     }
 
     @Nullable
-    protected EventProviderContext createMoreLinkEventProviderContext(AbstractEventProviderManager epWrapper,
-                                                                      List<DomCalendarEvent> allEvents,
-                                                                      List<DomCalendarEvent> hiddenEvents) {
+    protected DataProviderContext createMoreLinkDataProviderContext(AbstractDataProviderManager dataProviderManager,
+                                                                    List<DomCalendarEvent> allEvents,
+                                                                    List<DomCalendarEvent> hiddenEvents) {
         List<DomCalendarEvent> visibleEvents = new ArrayList<>();
         allEvents.stream().filter(s -> !hiddenEvents.contains(s)).forEach(visibleEvents::add);
 
-        List<CalendarEvent> visibleCalendarEvents = toCalendarEvents(epWrapper, visibleEvents);
-        List<CalendarEvent> hiddenCalendarEvents = toCalendarEvents(epWrapper, hiddenEvents);
+        List<CalendarEvent> visibleCalendarEvents = toCalendarEvents(dataProviderManager, visibleEvents);
+        List<CalendarEvent> hiddenCalendarEvents = toCalendarEvents(dataProviderManager, hiddenEvents);
 
         if (CollectionUtils.isEmpty(visibleCalendarEvents)
                 && CollectionUtils.isEmpty(hiddenCalendarEvents)) {
             return null;
         }
 
-        return new EventProviderContext(epWrapper.getEventProvider(), visibleCalendarEvents, hiddenCalendarEvents);
+        return new DataProviderContext(dataProviderManager.getDataProvider(), visibleCalendarEvents,
+                hiddenCalendarEvents);
     }
 
     protected List<CalendarEvent> toCalendarEvents(List<DomCalendarEvent> events) {
         List<CalendarEvent> calendarEvents = new ArrayList<>(events.size());
         for (DomCalendarEvent changedEvent : events) {
-            AbstractEventProviderManager epManager = getEventProviderManager(changedEvent.getSourceId());
-            calendarEvents.add(getCalendarEvent(changedEvent, epManager));
+            AbstractDataProviderManager dataProviderManager = getDataProviderManager(changedEvent.getSourceId());
+            calendarEvents.add(getCalendarEvent(changedEvent, dataProviderManager));
         }
         return calendarEvents;
     }
 
-    protected List<CalendarEvent> toCalendarEvents(AbstractEventProviderManager epWrapper, List<DomCalendarEvent> segments) {
+    protected List<CalendarEvent> toCalendarEvents(AbstractDataProviderManager dataProviderManager,
+                                                   List<DomCalendarEvent> segments) {
         return segments.stream()
-                .filter(e -> e.getSourceId().equals(epWrapper.getSourceId()))
-                .map(e -> epWrapper.getCalendarEvent(e.getId()))
+                .filter(e -> e.getSourceId().equals(dataProviderManager.getSourceId()))
+                .map(e -> dataProviderManager.getCalendarEvent(e.getId()))
                 .toList();
     }
 
@@ -1502,16 +1504,16 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     @Override
-    protected void addEventProvidersOnAttach() {
-        // Add all event providers using beforeClientResponse to respect the
+    protected void addDataProvidersOnAttach() {
+        // Add all data providers using beforeClientResponse to respect the
         // order of calling requests from onAttach.
         getUI().ifPresent(ui ->
                 ui.beforeClientResponse(this, (context) ->
-                        eventProvidersMap.values().forEach(this::addEventProviderInternal)));
+                        dataProvidersMap.values().forEach(this::addDataProviderInternal)));
 
-        eventProvidersMap.values().forEach(ep -> {
-            if (ep instanceof EventProviderManager) {
-                requestUpdateItemEventProvider(ep.getEventProvider().getId());
+        dataProvidersMap.values().forEach(dataProviderManager -> {
+            if (dataProviderManager instanceof ItemsDataProviderManager) {
+                requestUpdateItemDataProvider(dataProviderManager.getDataProvider().getId());
             }
         });
     }

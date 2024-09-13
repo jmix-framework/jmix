@@ -248,32 +248,32 @@
             </calendar:viewProperties>
         </calendar:calendar>
 
-        <calendar:calendar id="calendarEventProviders">
-            <calendar:eventProviders>
-                <calendar:containerEventProvider id="containerEventProvider"
-                                                 dataContainer="localDateTimeEventsDc"
-                                                 groupId="groupId"
-                                                 allDay="allDay"
-                                                 startDateTime="startDateTime"
-                                                 endDateTime="endDateTime"
-                                                 title="title"
-                                                 description="description"
-                                                 interactive="interactive"
-                                                 classNames="classNames"
-                                                 startEditable="startEditable"
-                                                 durationEditable="durationEditable"
-                                                 display="display"
-                                                 overlap="overlap"
-                                                 constraint="constraint"
-                                                 backgroundColor="backgroundColor"
-                                                 borderColor="borderColor"
-                                                 textColor="textColor"
-                                                 recurringDaysOfWeek="recurringDaysOfWeek"
-                                                 recurringStartTime="recurringStartTime"
-                                                 recurringEndTime="recurringEndTime"
-                                                 recurringStartDate="recurringStartDate"
-                                                 recurringEndDate="recurringEndDate"/>
-                <calendar:lazyEventProvider id="lazyEventProvider"
+        <calendar:calendar id="calendarDataProviders">
+            <calendar:dataProviders>
+                <calendar:containerDataProvider id="containerDataProvider"
+                                                dataContainer="localDateTimeEventsDc"
+                                                groupId="groupId"
+                                                allDay="allDay"
+                                                startDateTime="startDateTime"
+                                                endDateTime="endDateTime"
+                                                title="title"
+                                                description="description"
+                                                interactive="interactive"
+                                                classNames="classNames"
+                                                startEditable="startEditable"
+                                                durationEditable="durationEditable"
+                                                display="display"
+                                                overlap="overlap"
+                                                constraint="constraint"
+                                                backgroundColor="backgroundColor"
+                                                borderColor="borderColor"
+                                                textColor="textColor"
+                                                recurringDaysOfWeek="recurringDaysOfWeek"
+                                                recurringStartTime="recurringStartTime"
+                                                recurringEndTime="recurringEndTime"
+                                                recurringStartDate="recurringStartDate"
+                                                recurringEndDate="recurringEndDate"/>
+                <calendar:callbackDataProvider id="callbackDataProvider"
                                             groupId="groupId"
                                             allDay="allDay"
                                             startDateTime="startDateTime"
@@ -302,8 +302,8 @@
                                                                           and e.endDate < :fetchEndDate]]>
                         </calendar:query>
                     </calendar:itemsQuery>
-                </calendar:lazyEventProvider>
-            </calendar:eventProviders>
+                </calendar:callbackDataProvider>
+            </calendar:dataProviders>
         </calendar:calendar>
     </layout>
 </view>

@@ -24,6 +24,7 @@ import java.util.Objects;
  * INTERNAL.
  */
 public class SimpleOption<V> extends CalendarOption {
+
     protected boolean isValueSet = false;
 
     protected V value;

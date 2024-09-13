@@ -17,15 +17,16 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 /**
- * Base class for simple event retrievers. For instance:
+ * Base class for simple data retrievers. For instance:
  * <pre>{@code
  * @ViewComponent
  * private FullCalendar calendar;
  * @Autowired
  * private CalendarEventService eventService;
+ *
  * @Subscribe
  * public void onInit(final InitEvent event) {
- *     calendar.addEventProvider(new CalendarEventRetriever() {
+ *     calendar.addDataProvider(new CalendarDataRetriever() {
  *         @Override
  *         public List<CalendarEvent> onItemsFetch(ItemsFetchContext context) {
  *             return eventService.fetchEvents(context);
@@ -34,15 +35,15 @@ package io.jmix.fullcalendarflowui.component.data;
  * }
  * }</pre>
  */
-public abstract class CalendarEventRetriever implements LazyCalendarEventProvider {
+public abstract class CalendarDataRetriever implements CallbackCalendarDataProvider {
 
     protected String id;
 
-    public CalendarEventRetriever() {
-        this(EventProviderUtils.generateId());
+    public CalendarDataRetriever() {
+        this(DataProviderUtils.generateId());
     }
 
-    public CalendarEventRetriever(String id) {
+    public CalendarDataRetriever(String id) {
         this.id = id;
     }
 

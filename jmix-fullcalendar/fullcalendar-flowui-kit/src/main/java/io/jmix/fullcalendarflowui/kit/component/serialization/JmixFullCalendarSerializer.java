@@ -38,6 +38,7 @@ import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.tra
  * INTERNAL.
  */
 public class JmixFullCalendarSerializer extends AbstractFullCalendarSerializer {
+
     private static final Logger log = LoggerFactory.getLogger(JmixFullCalendarSerializer.class);
 
     public JsonObject serializeObject(Object value) {

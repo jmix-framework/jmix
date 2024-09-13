@@ -19,7 +19,6 @@ package io.jmix.fullcalendarflowui.action;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.Icon;
@@ -30,7 +29,6 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.PickerComponent;
-import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -39,7 +37,7 @@ import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendar.DaysOfWeek;
 import io.jmix.fullcalendar.datatype.DaysOfWeekDatatypeUtils;
-import io.jmix.fullcalendarflowui.FullCalendarFlowuiProperties;
+import io.jmix.fullcalendarflowui.FullCalendarProperties;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -53,10 +51,11 @@ import java.util.*;
 @ActionType(DaysOfWeekEditAction.ID)
 public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, PickerComponent<DaysOfWeek>, DaysOfWeek>
         implements InitializingBean {
+
     public static final String ID = "fullcalendar_daysOfWeekEdit";
 
     protected Messages messages;
-    protected FullCalendarFlowuiProperties calendarFlowuiProperties;
+    protected FullCalendarProperties calendarFlowuiProperties;
     protected CurrentAuthentication currentAuthentication;
     protected UiComponents uiComponents;
 
@@ -79,7 +78,7 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
     }
 
     @Autowired
-    public void setCalendarFlowuiProperties(FullCalendarFlowuiProperties calendarFlowuiProperties) {
+    public void setCalendarFlowuiProperties(FullCalendarProperties calendarFlowuiProperties) {
         this.calendarFlowuiProperties = calendarFlowuiProperties;
     }
 

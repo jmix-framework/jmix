@@ -134,7 +134,7 @@ public class FullCalendarViewInstallDependencyInjector implements DependencyInje
                     .filter(c -> c instanceof FullCalendar)
                     .map(c -> ((FullCalendar) c));
 
-            return calendar.map(fullCalendar -> fullCalendar.getEventProvider(path[1])).orElse(null);
+            return calendar.map(fullCalendar -> fullCalendar.getDataProvider(path[1])).orElse(null);
         }
         return null;
     }

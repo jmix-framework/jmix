@@ -19,12 +19,12 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * Event provider that loads entities from containers.
+ * Data provider that loads entities from containers.
  *
  * @param <E> entity type
  */
-public class ContainerCalendarEventProvider<E> extends AbstractEntityEventProvider<Void> implements EntityDataUnit,
-        CalendarEventProvider {
+public class ContainerCalendarDataProvider<E> extends AbstractEntityCalendarDataProvider<Void> implements EntityDataUnit,
+        ItemsCalendarDataProvider {
 
     protected Set<CalendarEvent> itemsCache;
 
@@ -32,11 +32,11 @@ public class ContainerCalendarEventProvider<E> extends AbstractEntityEventProvid
 
     private EventBus eventBus;
 
-    public ContainerCalendarEventProvider(InstanceContainer<E> container) {
-        this(EventProviderUtils.generateId(), container);
+    public ContainerCalendarDataProvider(InstanceContainer<E> container) {
+        this(DataProviderUtils.generateId(), container);
     }
 
-    public ContainerCalendarEventProvider(String id, InstanceContainer<E> container) {
+    public ContainerCalendarDataProvider(String id, InstanceContainer<E> container) {
         super(id);
 
         Preconditions.checkNotNullArgument(container);

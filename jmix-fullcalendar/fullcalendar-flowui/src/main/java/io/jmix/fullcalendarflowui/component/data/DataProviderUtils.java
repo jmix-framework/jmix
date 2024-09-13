@@ -21,16 +21,16 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * INTERNAL.
- * Utility class for event providers.
+ * Utility class for data providers.
  */
 @Internal
-public final class EventProviderUtils {
+public final class DataProviderUtils {
 
-    private EventProviderUtils() {
+    private DataProviderUtils() {
     }
 
     /**
-     * Generates an ID for event providers
+     * Generates an ID for data providers
      *
      * @return a string ID
      */

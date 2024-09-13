@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 
 public class FullCalendarSerializer extends JmixFullCalendarSerializer {
 
-    protected KeyMapper<Object> crossEventProviderKeyMapper = new KeyMapper<>();
+    protected KeyMapper<Object> crossDataProviderKeyMapper = new KeyMapper<>();
 
     @Override
     protected List<JsonSerializer<?>> getSerializers() {
@@ -58,7 +58,7 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
 
         String rawValue = getRawGroupIdOrConstraint(value);
 
-        return rawValue != null ? rawValue : crossEventProviderKeyMapper.key(value);
+        return rawValue != null ? rawValue : crossDataProviderKeyMapper.key(value);
     }
 
     public FullCalendarDataSerializer createDataSerializer(String sourceId,
@@ -84,7 +84,7 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
     }
 
     /**
-     * Data serializer is used per event provider manager.
+     * Data serializer is used per data provider manager.
      */
     public class FullCalendarDataSerializer extends FullCalendarSerializer {
         private static final Logger log = LoggerFactory.getLogger(FullCalendarDataSerializer.class);
@@ -141,7 +141,7 @@ public class FullCalendarSerializer extends JmixFullCalendarSerializer {
 
         protected CalendarEventSerializer createCalendarEventSerializer() {
             return new CalendarEventSerializer(sourceId, eventKeyMapper,
-                    FullCalendarSerializer.this.crossEventProviderKeyMapper);
+                    FullCalendarSerializer.this.crossDataProviderKeyMapper);
         }
 
         protected void setupCalendarEventSerializer(ObjectMapper objectMapper,

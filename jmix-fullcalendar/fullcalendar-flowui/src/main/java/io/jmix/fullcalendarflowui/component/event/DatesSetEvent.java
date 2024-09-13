@@ -27,6 +27,7 @@ import java.time.LocalDate;
 public class DatesSetEvent extends ComponentEvent<FullCalendar> {
 
     protected final LocalDate startDate;
+
     protected final LocalDate endDate;
 
     protected final ViewInfo viewInfo;

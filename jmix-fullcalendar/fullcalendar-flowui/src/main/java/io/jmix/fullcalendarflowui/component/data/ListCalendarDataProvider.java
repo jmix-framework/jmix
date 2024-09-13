@@ -28,29 +28,29 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * Event provider that set events from {@link List}.
+ * Data provider that set events from {@link List}.
  */
-public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEvent, Void>
-        implements CalendarEventProvider {
+public class ListCalendarDataProvider extends AbstractDataProvider<CalendarEvent, Void>
+        implements ItemsCalendarDataProvider {
 
     protected final String id;
     protected List<CalendarEvent> items = new ArrayList<>();
 
     protected EventBus eventBus = new EventBus();
 
-    public ListCalendarEventProvider() {
-        this.id = EventProviderUtils.generateId();
+    public ListCalendarDataProvider() {
+        this.id = DataProviderUtils.generateId();
     }
 
-    public ListCalendarEventProvider(String id) {
+    public ListCalendarDataProvider(String id) {
         this.id = id;
     }
 
-    public ListCalendarEventProvider(List<CalendarEvent> items) {
-        this(EventProviderUtils.generateId(), items);
+    public ListCalendarDataProvider(List<CalendarEvent> items) {
+        this(DataProviderUtils.generateId(), items);
     }
 
-    public ListCalendarEventProvider(String id, List<CalendarEvent> items) {
+    public ListCalendarDataProvider(String id, List<CalendarEvent> items) {
         this.id = id;
         this.items = new ArrayList<>(items);
     }
@@ -108,7 +108,7 @@ public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEven
      * Replaces previous event by new one, if exists.
      *
      * @param item item to update
-     * @throws IllegalArgumentException if event provider does not contain provided event
+     * @throws IllegalArgumentException if data provider does not contain provided event
      */
     public void updateItem(CalendarEvent item) {
         if (items.contains(item)) {
@@ -131,7 +131,7 @@ public class ListCalendarEventProvider extends AbstractDataProvider<CalendarEven
     }
 
     /**
-     * Removes all events from event provider.
+     * Removes all events from data provider.
      */
     public void removeAllItems() {
         List<CalendarEvent> removedItems = new ArrayList<>(items);

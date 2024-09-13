@@ -6,7 +6,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.fullcalendarflowui.component.data.LazyCalendarEventProvider.ItemsFetchContext;
+import io.jmix.fullcalendarflowui.component.data.CallbackCalendarDataProvider.ItemsFetchContext;
 import io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +27,15 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * Event provider for loading entities by request. It is created when calendar's XML description defines
- * lazy event provider.
+ * Data provider for loading entities by request. It is created when calendar's XML description defines
+ * callback data provider.
  */
-@Component("fcalen_LazyCalendarItems")
+@Component("fcalen_CallbackCalendarDataRetriever")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class LazyEntityCalendarEventRetriever extends AbstractEntityEventProvider<ItemsFetchContext>
-        implements LazyCalendarEventProvider, ApplicationContextAware {
-    private static final Logger log = LoggerFactory.getLogger(LazyEntityCalendarEventRetriever.class);
+public class EntityCalendarDataRetriever extends AbstractEntityCalendarDataProvider<ItemsFetchContext>
+        implements CallbackCalendarDataProvider, ApplicationContextAware {
+
+    private static final Logger log = LoggerFactory.getLogger(EntityCalendarDataRetriever.class);
 
     protected static final String START_DATE_PARAMETER = "fetchStartDate";
     protected static final String END_DATE_PARAMETER = "fetchEndDate";
@@ -49,10 +50,10 @@ public class LazyEntityCalendarEventRetriever extends AbstractEntityEventProvide
 
     protected Function<ItemsFetchContext, List<CalendarEvent>> loadDelegate;
 
-    public LazyEntityCalendarEventRetriever() {
+    public EntityCalendarDataRetriever() {
     }
 
-    public LazyEntityCalendarEventRetriever(String id) {
+    public EntityCalendarDataRetriever(String id) {
         super(id);
     }
 

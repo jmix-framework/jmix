@@ -16,17 +16,27 @@
 
 package io.jmix.fullcalendarflowui;
 
+import io.jmix.fullcalendarflowui.action.DaysOfWeekEditAction;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "jmix.ui.fullcalendarflowui")
-public class FullCalendarFlowuiProperties {
+@ConfigurationProperties(prefix = "jmix.ui.fullcalendar")
+public class FullCalendarProperties {
 
+    /**
+     * The shortcut triggers the execution of the {@link DaysOfWeekEditAction}. This applies to all actions within
+     * the application.
+     */
     String pickerDaysOfWeekEditShortcut;
 
-    public FullCalendarFlowuiProperties(String pickerDaysOfWeekEditShortcut) {
+    public FullCalendarProperties(String pickerDaysOfWeekEditShortcut) {
         this.pickerDaysOfWeekEditShortcut = pickerDaysOfWeekEditShortcut;
     }
 
+    /**
+     * See {@link #pickerDaysOfWeekEditShortcut}.
+     *
+     * @return the shortcut for triggering {@link DaysOfWeekEditAction}
+     */
     public String getPickerDaysOfWeekEditShortcut() {
         return pickerDaysOfWeekEditShortcut;
     }

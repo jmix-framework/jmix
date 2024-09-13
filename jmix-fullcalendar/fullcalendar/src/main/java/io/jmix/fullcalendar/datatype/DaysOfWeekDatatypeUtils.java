@@ -29,6 +29,7 @@ import java.util.List;
  */
 @Internal
 public final class DaysOfWeekDatatypeUtils {
+
     private DaysOfWeekDatatypeUtils() {
     }
 

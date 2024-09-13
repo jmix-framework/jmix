@@ -22,9 +22,9 @@ import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendar.Display;
-import io.jmix.fullcalendarflowui.component.data.ContainerCalendarEventProvider;
-import io.jmix.fullcalendarflowui.component.data.EntityCalendarEventProvider;
-import io.jmix.fullcalendarflowui.component.data.LazyEntityCalendarEventRetriever;
+import io.jmix.fullcalendarflowui.component.data.ContainerCalendarDataProvider;
+import io.jmix.fullcalendarflowui.component.data.EntityCalendarDataProvider;
+import io.jmix.fullcalendarflowui.component.data.EntityCalendarDataRetriever;
 import io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
 import org.junit.jupiter.api.Assertions;
@@ -254,55 +254,55 @@ public class FullCalendarXmlLoadingTest {
     }
 
     @Test
-    @DisplayName("Load FullCalendar event providers from XML")
-    public void loadFullCalendarEventProvidersFromXml() {
+    @DisplayName("Load FullCalendar data providers from XML")
+    public void loadFullCalendarDataProvidersFromXml() {
         viewNavigators.view(UiTestUtils.getCurrentView(), FullCalendarXmlLoadingTestView.class)
                 .navigate();
 
         FullCalendarXmlLoadingTestView testView = UiTestUtils.getCurrentView();
-        var calendar = testView.calendarEventProviders;
+        var calendar = testView.calendarDataProviders;
 
-        ContainerCalendarEventProvider<LocalDateTimeEvent> containerEventProvider =
-                calendar.getEventProvider("containerEventProvider");
-        assertNotNull(containerEventProvider);
+        ContainerCalendarDataProvider<LocalDateTimeEvent> containerDataProvider =
+                calendar.getDataProvider("containerDataProvider");
+        assertNotNull(containerDataProvider);
 
-        assertBaseEntityEventProviderProperties(containerEventProvider);
-        assertNotNull(containerEventProvider.getContainer());
+        assertBaseEntityDataProviderProperties(containerDataProvider);
+        assertNotNull(containerDataProvider.getContainer());
 
-        LazyEntityCalendarEventRetriever lazyEventProvider = calendar.getEventProvider("lazyEventProvider");
-        assertNotNull(lazyEventProvider);
+        EntityCalendarDataRetriever calendarDataRetriever = calendar.getDataProvider("callbackDataProvider");
+        assertNotNull(calendarDataRetriever);
 
-        assertBaseEntityEventProviderProperties(lazyEventProvider);
+        assertBaseEntityDataProviderProperties(calendarDataRetriever);
         Assertions.assertAll(
-                () -> assertEquals(LocalDateTimeEvent.class, lazyEventProvider.getEntityClass()),
-                () -> assertNotNull(lazyEventProvider.getFetchPlan()),
-                () -> assertNotNull(lazyEventProvider.getQueryString())
+                () -> assertEquals(LocalDateTimeEvent.class, calendarDataRetriever.getEntityClass()),
+                () -> assertNotNull(calendarDataRetriever.getFetchPlan()),
+                () -> assertNotNull(calendarDataRetriever.getQueryString())
         );
     }
 
-    private static void assertBaseEntityEventProviderProperties(EntityCalendarEventProvider eventProvider) {
+    private static void assertBaseEntityDataProviderProperties(EntityCalendarDataProvider dataProvider) {
         Assertions.assertAll(
-                () -> assertEquals("groupId", eventProvider.getGroupIdProperty()),
-                () -> assertEquals("allDay", eventProvider.getAllDayProperty()),
-                () -> assertEquals("startDateTime", eventProvider.getStartDateTimeProperty()),
-                () -> assertEquals("endDateTime", eventProvider.getEndDateTimeProperty()),
-                () -> assertEquals("title", eventProvider.getTitleProperty()),
-                () -> assertEquals("description", eventProvider.getDescriptionProperty()),
-                () -> assertEquals("interactive", eventProvider.getInteractiveProperty()),
-                () -> assertEquals("classNames", eventProvider.getClassNamesProperty()),
-                () -> assertEquals("startEditable", eventProvider.getStartEditableProperty()),
-                () -> assertEquals("durationEditable", eventProvider.getDurationEditableProperty()),
-                () -> assertEquals("display", eventProvider.getDisplayProperty()),
-                () -> assertEquals("overlap", eventProvider.getOverlapProperty()),
-                () -> assertEquals("constraint", eventProvider.getConstraintProperty()),
-                () -> assertEquals("backgroundColor", eventProvider.getBackgroundColorProperty()),
-                () -> assertEquals("borderColor", eventProvider.getBorderColorProperty()),
-                () -> assertEquals("textColor", eventProvider.getTextColorProperty()),
-                () -> assertEquals("recurringDaysOfWeek", eventProvider.getRecurringDaysOfWeekProperty()),
-                () -> assertEquals("recurringStartTime", eventProvider.getRecurringStartTimeProperty()),
-                () -> assertEquals("recurringEndTime", eventProvider.getRecurringEndTimeProperty()),
-                () -> assertEquals("recurringStartDate", eventProvider.getRecurringStartDateProperty()),
-                () -> assertEquals("recurringEndDate", eventProvider.getRecurringEndDateProperty())
+                () -> assertEquals("groupId", dataProvider.getGroupIdProperty()),
+                () -> assertEquals("allDay", dataProvider.getAllDayProperty()),
+                () -> assertEquals("startDateTime", dataProvider.getStartDateTimeProperty()),
+                () -> assertEquals("endDateTime", dataProvider.getEndDateTimeProperty()),
+                () -> assertEquals("title", dataProvider.getTitleProperty()),
+                () -> assertEquals("description", dataProvider.getDescriptionProperty()),
+                () -> assertEquals("interactive", dataProvider.getInteractiveProperty()),
+                () -> assertEquals("classNames", dataProvider.getClassNamesProperty()),
+                () -> assertEquals("startEditable", dataProvider.getStartEditableProperty()),
+                () -> assertEquals("durationEditable", dataProvider.getDurationEditableProperty()),
+                () -> assertEquals("display", dataProvider.getDisplayProperty()),
+                () -> assertEquals("overlap", dataProvider.getOverlapProperty()),
+                () -> assertEquals("constraint", dataProvider.getConstraintProperty()),
+                () -> assertEquals("backgroundColor", dataProvider.getBackgroundColorProperty()),
+                () -> assertEquals("borderColor", dataProvider.getBorderColorProperty()),
+                () -> assertEquals("textColor", dataProvider.getTextColorProperty()),
+                () -> assertEquals("recurringDaysOfWeek", dataProvider.getRecurringDaysOfWeekProperty()),
+                () -> assertEquals("recurringStartTime", dataProvider.getRecurringStartTimeProperty()),
+                () -> assertEquals("recurringEndTime", dataProvider.getRecurringEndTimeProperty()),
+                () -> assertEquals("recurringStartDate", dataProvider.getRecurringStartDateProperty()),
+                () -> assertEquals("recurringEndDate", dataProvider.getRecurringEndDateProperty())
         );
     }
 

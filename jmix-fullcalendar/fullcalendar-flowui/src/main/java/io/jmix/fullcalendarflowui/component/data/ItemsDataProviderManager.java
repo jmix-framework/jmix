@@ -3,7 +3,7 @@ package io.jmix.fullcalendarflowui.component.data;
 import elemental.json.JsonValue;
 import io.jmix.core.annotation.Internal;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.component.data.CalendarEventProvider.ItemSetChangeEvent;
+import io.jmix.fullcalendarflowui.component.data.ItemsCalendarDataProvider.ItemSetChangeEvent;
 import io.jmix.fullcalendarflowui.component.model.IncrementalData;
 import io.jmix.fullcalendarflowui.component.serialization.FullCalendarSerializer;
 import org.springframework.lang.Nullable;
@@ -15,35 +15,35 @@ import java.util.function.Consumer;
 
 /**
  * INTERNAL.
- * Event provider manager that works with {@link CalendarEventProvider}.
+ * Data provider manager that works with {@link ItemsCalendarDataProvider}.
  */
 @Internal
-public class EventProviderManager extends AbstractEventProviderManager {
+public class ItemsDataProviderManager extends AbstractDataProviderManager {
 
     protected Consumer<ItemSetChangeEvent> itemSetChangeListener;
     protected List<ItemSetChangeEvent> pendingIncrementalChanges = new ArrayList<>();
 
-    public EventProviderManager(CalendarEventProvider eventProvider,
-                                FullCalendarSerializer serializer,
-                                FullCalendar fullCalendar) {
-        super(eventProvider, serializer, fullCalendar, "_addItemEventSource");
+    public ItemsDataProviderManager(ItemsCalendarDataProvider dataProvider,
+                                    FullCalendarSerializer serializer,
+                                    FullCalendar fullCalendar) {
+        super(dataProvider, serializer, fullCalendar, "_addItemEventSource");
 
-        eventProvider.addItemSetChangeListener(this::onItemSetChangeListener);
+        dataProvider.addItemSetChangeListener(this::onItemSetChangeListener);
     }
 
     @Override
-    public CalendarEventProvider getEventProvider() {
-        return (CalendarEventProvider) super.getEventProvider();
+    public ItemsCalendarDataProvider getDataProvider() {
+        return (ItemsCalendarDataProvider) super.getDataProvider();
     }
 
     @Override
     public CalendarEvent getCalendarEvent(String clientId) {
         Object itemId = eventKeyMapper.get(clientId);
-        return itemId == null ? null : getEventProvider().getItem(itemId);
+        return itemId == null ? null : getDataProvider().getItem(itemId);
     }
 
     public JsonValue serializeData() {
-        return dataSerializer.serializeData(((CalendarEventProvider) eventProvider).getItems());
+        return dataSerializer.serializeData(((ItemsCalendarDataProvider) dataProvider).getItems());
     }
 
     public List<JsonValue> serializeIncrementalData() {

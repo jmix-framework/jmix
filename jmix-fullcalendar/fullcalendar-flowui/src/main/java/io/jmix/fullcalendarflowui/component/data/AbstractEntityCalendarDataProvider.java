@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Abstract class for entity based event providers.
+ * Abstract class for entity based data providers.
  *
  * @param <F> type of filter object
  */
-public abstract class AbstractEntityEventProvider<F> extends AbstractDataProvider<CalendarEvent, F>
-        implements EntityCalendarEventProvider {
+public abstract class AbstractEntityCalendarDataProvider<F> extends AbstractDataProvider<CalendarEvent, F>
+        implements EntityCalendarDataProvider {
 
     protected String id;
 
@@ -44,11 +44,11 @@ public abstract class AbstractEntityEventProvider<F> extends AbstractDataProvide
     protected String recurringStartTimeProperty;
     protected String recurringEndTimeProperty;
 
-    public AbstractEntityEventProvider() {
-        this(EventProviderUtils.generateId());
+    public AbstractEntityCalendarDataProvider() {
+        this(DataProviderUtils.generateId());
     }
 
-    public AbstractEntityEventProvider(String id) {
+    public AbstractEntityCalendarDataProvider(String id) {
         Preconditions.checkNotEmptyString(id);
         this.id = id;
     }

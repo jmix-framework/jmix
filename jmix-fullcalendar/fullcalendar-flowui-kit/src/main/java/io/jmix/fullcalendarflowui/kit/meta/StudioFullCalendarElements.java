@@ -22,11 +22,10 @@ import io.jmix.flowui.kit.meta.*;
 public interface StudioFullCalendarElements {
 
     @StudioElement(
-            name = "ContainerEventProvider",
-            xmlElement = "containerEventProvider",
+            xmlElement = "containerDataProvider",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
-            classFqn = "io.jmix.fullcalendarflowui.component.data.ContainerCalendarEventProvider",
+            classFqn = "io.jmix.fullcalendarflowui.component.data.ContainerCalendarDataProvider",
             icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id",
@@ -61,14 +60,13 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.PROPERTY_REF),
             }
     )
-    void containerEventProvider();
+    void containerDataProvider();
 
     @StudioElement(
-            name = "LazyEventProvider",
-            xmlElement = "lazyEventProvider",
+            xmlElement = "callbackDataProvider",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
-            classFqn = "io.jmix.fullcalendarflowui.component.data.LazyEntityCalendarEventRetriever",
+            classFqn = "io.jmix.fullcalendarflowui.component.data.EntityCalendarDataRetriever",
             icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id",
@@ -98,10 +96,9 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.PROPERTY_REF),
             }
     )
-    void lazyEventProvider();
+    void callbackDataProvider();
 
     @StudioElement(
-            name = "ItemsQuery",
             xmlElement = "itemsQuery",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -117,7 +114,6 @@ public interface StudioFullCalendarElements {
     void entityItemsQuery();
 
     @StudioElement(
-            name = "View",
             xmlElement = "view",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -148,7 +144,6 @@ public interface StudioFullCalendarElements {
     void viewProperties();
 
     @StudioElement(
-            name = "DayGridDay",
             xmlElement = "dayGridDay",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -167,7 +162,6 @@ public interface StudioFullCalendarElements {
     void dayGridDay();
 
     @StudioElement(
-            name = "DayGridWeek",
             xmlElement = "dayGridWeek",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -186,7 +180,6 @@ public interface StudioFullCalendarElements {
     void dayGridWeek();
 
     @StudioElement(
-            name = "DayGridMonth",
             xmlElement = "dayGridMonth",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -207,7 +200,6 @@ public interface StudioFullCalendarElements {
     void dayGridMonth();
 
     @StudioElement(
-            name = "DayGridYear",
             xmlElement = "dayGridYear",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -227,7 +219,6 @@ public interface StudioFullCalendarElements {
     void dayGridYear();
 
     @StudioElement(
-            name = "ListDay",
             xmlElement = "listDay",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -246,7 +237,6 @@ public interface StudioFullCalendarElements {
     void listDay();
 
     @StudioElement(
-            name = "ListWeek",
             xmlElement = "listWeek",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -264,7 +254,6 @@ public interface StudioFullCalendarElements {
     void listWeek();
 
     @StudioElement(
-            name = "ListMonth",
             xmlElement = "listMonth",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -282,7 +271,6 @@ public interface StudioFullCalendarElements {
     void listMonth();
 
     @StudioElement(
-            name = "ListYear",
             xmlElement = "listYear",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -300,7 +288,6 @@ public interface StudioFullCalendarElements {
     void listYear();
 
     @StudioElement(
-            name = "TimeGridDay",
             xmlElement = "timeGridDay",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -324,7 +311,6 @@ public interface StudioFullCalendarElements {
     void timeGridDay();
 
     @StudioElement(
-            name = "TimeGridWeek",
             xmlElement = "timeGridWeek",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -348,7 +334,6 @@ public interface StudioFullCalendarElements {
     void timeGridWeek();
 
     @StudioElement(
-            name = "MultiMonthYear",
             xmlElement = "multiMonthYear",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -367,7 +352,6 @@ public interface StudioFullCalendarElements {
     void multiMonthYear();
 
     @StudioElement(
-            name = "Duration",
             xmlElement = "duration",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -389,7 +373,6 @@ public interface StudioFullCalendarElements {
     void calendarDuration();
 
     @StudioElement(
-            name = "Property",
             xmlElement = "property",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -403,7 +386,6 @@ public interface StudioFullCalendarElements {
     void property();
 
     @StudioElement(
-            name = "Entry",
             xmlElement = "entry",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -417,7 +399,6 @@ public interface StudioFullCalendarElements {
     void businessHoursEntry();
 
     @StudioElement(
-            name = "Day",
             xmlElement = "day",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",

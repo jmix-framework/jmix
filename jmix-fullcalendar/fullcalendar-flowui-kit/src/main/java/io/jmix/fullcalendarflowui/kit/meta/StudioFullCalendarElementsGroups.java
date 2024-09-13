@@ -23,15 +23,15 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 public interface StudioFullCalendarElementsGroups {
 
     @StudioElementsGroup(
-            name = "Event providers",
-            xmlElement = "eventProviders",
+            name = "Data providers",
+            xmlElement = "dataProviders",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
-            elementClassFqn = "io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider",
+            elementClassFqn = "io.jmix.fullcalendarflowui.component.data.CalendarDataProvider",
             target = "io.jmix.fullcalendarflowui.component.FullCalendar",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg"
     )
-    void eventProviders();
+    void dataProviders();
 
     @StudioElementsGroup(
             name = "Custom views",

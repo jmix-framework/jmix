@@ -1,7 +1,7 @@
 package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.component.data.BaseCalendarEventProvider;
+import io.jmix.fullcalendarflowui.component.data.CalendarDataProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
@@ -15,7 +15,7 @@ public class EventDropEvent extends AbstractEventMoveEvent {
 
     protected final CalendarEvent calendarEvent;
 
-    protected final BaseCalendarEventProvider eventProvider;
+    protected final CalendarDataProvider dataProvider;
 
     protected final CalendarDuration delta;
 
@@ -23,18 +23,18 @@ public class EventDropEvent extends AbstractEventMoveEvent {
 
     public EventDropEvent(FullCalendar fullCalendar, boolean fromClient,
                           CalendarEvent calendarEvent,
-                          BaseCalendarEventProvider eventProvider,
-                          List<RelatedEventProviderContext> relatedEventProviderContexts,
+                          CalendarDataProvider dataProvider,
+                          List<RelatedDataProviderContext> relatedDataProviderContexts,
                           List<CalendarEvent> relatedCalendarEvents,
                           OldValues oldValues,
                           CalendarDuration delta,
                           MouseEventDetails mouseEventDetails,
                           ViewInfo viewInfo) {
-        super(fullCalendar, fromClient, mouseEventDetails, relatedEventProviderContexts, relatedCalendarEvents,
+        super(fullCalendar, fromClient, mouseEventDetails, relatedDataProviderContexts, relatedCalendarEvents,
                 oldValues);
 
         this.calendarEvent = calendarEvent;
-        this.eventProvider = eventProvider;
+        this.dataProvider = dataProvider;
         this.viewInfo = viewInfo;
         this.delta = delta;
     }
@@ -47,8 +47,8 @@ public class EventDropEvent extends AbstractEventMoveEvent {
     }
 
     /**
-     * Returns all related calendar events even if they are from different event providers. To get related calendar
-     * events by event provider, use {@link #getRelatedEventProviderContexts()}.
+     * Returns all related calendar events even if they are from different data providers. To get related calendar
+     * events by data provider, use {@link #getRelatedDataProviderContexts()}.
      * <p>
      * An event might have other recurring event instances or might be linked to other events with the same group ID.
      * So these events will be related with dropped one.
@@ -60,10 +60,10 @@ public class EventDropEvent extends AbstractEventMoveEvent {
     }
 
     /**
-     * @return event provider of dropped calendar event
+     * @return data provider of dropped calendar event
      */
-    public BaseCalendarEventProvider getEventProvider() {
-        return eventProvider;
+    public CalendarDataProvider getDataProvider() {
+        return dataProvider;
     }
 
     /**

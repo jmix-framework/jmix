@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("search_OldOfficeDocumentsResolver")
+@Component("search_OldOfficeDocumentsParserResolver")
 @Order(100)
 public class OldOfficeDocumentsParserResolver implements FileParserResolver {
     @Override

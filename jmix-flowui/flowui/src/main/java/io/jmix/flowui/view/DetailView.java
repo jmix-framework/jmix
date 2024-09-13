@@ -17,6 +17,7 @@
 package io.jmix.flowui.view;
 
 import io.jmix.flowui.util.OperationResult;
+import org.springframework.lang.Nullable;
 
 /**
  * Interface of views that display an entity instance and can save changes made by the user.
@@ -45,6 +46,12 @@ public interface DetailView<E> extends ChangeTracker {
      * @throws IllegalStateException if the edited entity isn't initialized yet, for example in {@link View.InitEvent}
      */
     E getEditedEntity();
+
+    /**
+     * @return currently edited entity instance or {@code null} if not set
+     */
+    @Nullable
+    E getEditedEntityOrNull();
 
     /**
      * Sets entity instance to the view.

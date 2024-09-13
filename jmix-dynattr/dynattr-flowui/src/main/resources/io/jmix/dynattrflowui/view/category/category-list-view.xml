@@ -40,7 +40,7 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout spacing="true">
-        <split id="split" orientation="HORIZONTAL" width="100%" minHeight="25em" height="100%">
+        <split id="split" orientation="HORIZONTAL" width="100%" minHeight="25em" height="100%" themeNames="splitter-spacing">
             <vbox id="categoryBox" padding="false" height="100%" expand="categoriesGrid">
                 <hbox id="buttonsPanel" classNames="buttons-panel">
                     <button id="createBtn" action="categoriesGrid.create"/>

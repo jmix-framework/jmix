@@ -29,7 +29,7 @@ import java.util.List;
 public class OldOfficeDocumentsParserResolver implements FileParserResolver {
     @Override
     public List<String> getExtension() {
-        return List.of("doc, xls");
+        return List.of("doc", "xls");
     }
 
     @Override

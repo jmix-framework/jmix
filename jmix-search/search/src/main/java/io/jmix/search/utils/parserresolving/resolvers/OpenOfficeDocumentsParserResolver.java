@@ -30,7 +30,7 @@ import java.util.List;
 public class OpenOfficeDocumentsParserResolver implements FileParserResolver {
     @Override
     public List<String> getExtension() {
-        return List.of("odt, ods");
+        return List.of("odt", "ods");
     }
 
     @Override

@@ -71,6 +71,8 @@ class FileParserResolverManagerTest extends Specification {
         resolver.getExtension() >> List.of("docx", "xlsx")
         def parser1 = Mock(Parser)
         resolver.getParser() >> parser1
+
+        and:
         def resolver2 = Mock(FileParserResolver)
         resolver2.getExtension() >> List.of("doc", "xls")
         def parser2 = Mock(Parser)

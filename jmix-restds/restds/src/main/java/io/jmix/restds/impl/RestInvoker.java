@@ -262,6 +262,19 @@ public class RestInvoker implements InitializingBean {
         }
     }
 
+    public String userInfo() {
+        try {
+            String resultJson = restClient.get()
+                    .uri("/rest/userInfo")
+                    .retrieve()
+                    .body(String.class);
+
+            return resultJson;
+        } catch (ResourceAccessException e) {
+            throw new RestDataStoreAccessException(dataStoreName, e);
+        }
+    }
+
     public String permissions() {
         try {
             String resultJson = restClient.get()

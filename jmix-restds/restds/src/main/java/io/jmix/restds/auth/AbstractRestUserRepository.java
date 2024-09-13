@@ -20,9 +20,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.Metadata;
-import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.UserRepository;
 import io.jmix.restds.impl.RestInvoker;
 import io.jmix.security.authentication.AcceptsGrantedAuthorities;
@@ -39,6 +39,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,8 +52,6 @@ public abstract class AbstractRestUserRepository<T extends UserDetails> implemen
 
     @Autowired
     protected ApplicationContext applicationContext;
-    @Autowired
-    protected UnconstrainedDataManager dataManager;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -87,27 +86,53 @@ public abstract class AbstractRestUserRepository<T extends UserDetails> implemen
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<T> users = loadUsersByUsername(username);
-        if (!users.isEmpty()) {
-            T user = users.get(0);
-            if (user instanceof AcceptsGrantedAuthorities) {
-                ((AcceptsGrantedAuthorities) user).setAuthorities(createAuthorities());
+        String dataStoreName = metadata.getClass(getUserClass()).getStore().getName();
+        RestInvoker restInvoker = applicationContext.getBean(RestInvoker.class, dataStoreName);
+
+        T user = loadUser(restInvoker, username);
+        if (user instanceof AcceptsGrantedAuthorities) {
+            ((AcceptsGrantedAuthorities) user).setAuthorities(createAuthorities(restInvoker));
+        }
+        return user;
+    }
+
+    private T loadUser(RestInvoker restInvoker, String username) {
+        String json = restInvoker.userInfo();
+
+        try {
+            JsonNode rootNode = objectMapper.readTree(json);
+
+            JsonNode usernameNode = rootNode.get("username");
+            if (!username.equals(usernameNode.asText()))
+                throw new IllegalStateException("userInfo endpoint returned different user: " + usernameNode.asText());
+
+            T user = metadata.create(getUserClass());
+
+            JsonNode attributesNode = rootNode.get("attributes");
+            if (attributesNode != null) {
+                MetaClass userMetaClass = metadata.getClass(getUserClass());
+                for (MetaProperty metaProperty : userMetaClass.getProperties()) {
+                    String propertyName = metaProperty.getName();
+                    if (metaProperty.getRange().isDatatype() && attributesNode.has(propertyName)) {
+                        String text = attributesNode.path(propertyName).asText(null);
+                        try {
+                            Object value = metaProperty.getRange().asDatatype().parse(text);
+                            EntityValues.setValue(user, propertyName, value);
+                        } catch (ParseException e) {
+                            log.warn("Unable to parse {} value: {}", propertyName, text);
+                        }
+                    }
+                }
+            } else {
+                log.warn("userInfo endpoint didn't return attributes");
             }
             return user;
-        } else {
-            throw new UsernameNotFoundException("User not found");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error parsing userInfo JSON", e);
         }
     }
 
-    private List<T> loadUsersByUsername(String username) {
-        return dataManager.load(getUserClass())
-                .condition(PropertyCondition.equal("username", username))
-                .list();
-    }
-
-    protected Collection<? extends GrantedAuthority> createAuthorities() {
-        String dataStoreName = metadata.getClass(getUserClass()).getStore().getName();
-        RestInvoker restInvoker = applicationContext.getBean(RestInvoker.class, dataStoreName);
+    protected Collection<? extends GrantedAuthority> createAuthorities(RestInvoker restInvoker) {
         String json = restInvoker.permissions();
 
         List<GrantedAuthority> authorities = new ArrayList<>();

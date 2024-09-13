@@ -68,6 +68,19 @@ public class RestInvokerPasswordGrantTest extends BaseRestDsIntegrationTest {
     }
 
     @Test
+    void testUserInfo() throws IOException {
+        String json = restInvoker.userInfo();
+
+        JsonNode rootNode = objectMapper.readTree(json);
+        assertThat(rootNode.get("username").asText()).isEqualTo("admin");
+
+        JsonNode authoritiesNode = rootNode.get("attributes");
+        assertThat(authoritiesNode).isNotNull();
+        assertThat(authoritiesNode.get("id").asText()).isEqualTo("60885987-1b61-4247-94c7-dff348347f93");
+        assertThat(authoritiesNode.get("active").asBoolean()).isEqualTo(true);
+    }
+
+    @Test
     void testPermissions() throws IOException {
         String json = restInvoker.permissions();
 

@@ -21,6 +21,7 @@ import io.jmix.core.FileStorageLocator
 import io.jmix.search.exception.EmptyFileExtensionException
 import io.jmix.search.exception.ParserResolvingException
 import io.jmix.search.exception.UnsupportedFileExtensionException
+import io.jmix.search.utils.parserresolving.FileParserResolverManager
 import spock.lang.Specification
 
 class FileProcessorTest extends Specification {
@@ -29,7 +30,7 @@ class FileProcessorTest extends Specification {
         FileStorageLocator storageLocatorMock = Mock()
 
         and:
-        FileParserResolver fileParserResolver = Mock()
+        FileParserResolverManager fileParserResolver = Mock()
         FileRef fileRefMock = Mock()
         fileParserResolver.getParser(fileRefMock) >> { throw exception }
         FileProcessor fileProcessor = new FileProcessor(storageLocatorMock, fileParserResolver)
@@ -42,6 +43,7 @@ class FileProcessorTest extends Specification {
         throwable == exception
 
         where:
-        exception << [new UnsupportedFileExtensionException("any.name"), new EmptyFileExtensionException("any")]
+        exception << [new UnsupportedFileExtensionException("any.name", List.of("txt, rtf")),
+                      new EmptyFileExtensionException("any")]
     }
 }

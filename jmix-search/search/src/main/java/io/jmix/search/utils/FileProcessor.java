@@ -22,6 +22,7 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.exception.FileParseException;
 import io.jmix.search.exception.ParserResolvingException;
+import io.jmix.search.utils.parserresolving.FileParserResolverManager;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -43,11 +44,11 @@ public class FileProcessor {
     private static final Logger log = LoggerFactory.getLogger(FileProcessor.class);
 
     protected FileStorageLocator fileStorageLocator;
-    protected FileParserResolver fileParserResolver;
+    protected FileParserResolverManager fileParserResolverManager;
 
-    public FileProcessor(FileStorageLocator fileStorageLocator, FileParserResolver fileParserResolver) {
+    public FileProcessor(FileStorageLocator fileStorageLocator, FileParserResolverManager fileParserResolverManager) {
         this.fileStorageLocator = fileStorageLocator;
-        this.fileParserResolver = fileParserResolver;
+        this.fileParserResolverManager = fileParserResolverManager;
     }
 
     public String extractFileContent(FileRef fileRef) throws FileParseException, ParserResolvingException {
@@ -81,6 +82,6 @@ public class FileProcessor {
     }
 
     protected Parser getParser(FileRef fileRef) throws ParserResolvingException {
-        return fileParserResolver.getParser(fileRef);
+        return fileParserResolverManager.getParser(fileRef);
     }
 }

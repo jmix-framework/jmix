@@ -21,24 +21,7 @@ import org.apache.tika.parser.Parser;
 import java.util.List;
 
 public interface FileParserResolver {
-  /*  PDF("pdf", PDFParser::new),
-    DOC("doc", OfficeParser::new),
-    XLS("xls", OfficeParser::new),
-    DOCX("docx", OOXMLParser::new),
-    XLSX("xlsx", OOXMLParser::new),
-    ODT("odt", OpenDocumentParser::new),
-    ODS("ods", OpenDocumentParser::new),
-    RTF("rtf", RTFParser::new),
-    TXT("txt", TXTParser::new);*/
 
-    /*private final String symbols;
-    private final Supplier<? extends Parser> parserSupplier;
-
-    FileParserResolver(String symbols, Supplier<? extends Parser> parserSupplier) {
-        this.symbols = symbols;
-        this.parserSupplier = parserSupplier;
-    }
-*/
     List<String> getExtension();
 
     Parser getParser();

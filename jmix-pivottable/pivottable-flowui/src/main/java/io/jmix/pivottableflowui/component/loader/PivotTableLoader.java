@@ -26,7 +26,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -35,7 +34,6 @@ import io.jmix.pivottableflowui.data.PivotTableContainerDataset;
 import io.jmix.pivottableflowui.kit.component.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
@@ -87,27 +85,24 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
     protected void loadDataContainer(Element element) {
         loadString(element, "dataContainer")
                 .ifPresent(dataContainerId -> {
-                    InstanceContainer container = context.getDataHolder().getContainer(dataContainerId);
+                    InstanceContainer<?> container = context.getDataHolder().getContainer(dataContainerId);
 
-                    if (container instanceof CollectionContainer collectionContainer) {
-                        resultComponent.setDataProvider(new PivotTableContainerDataset<>(collectionContainer));
+                    if (container instanceof CollectionContainer<?> collectionContainer) {
+                        resultComponent.setDataProvider(new PivotTableContainerDataset(collectionContainer));
                     } else {
                         throw new GuiDevelopmentException("Not a CollectionContainer: " + container, context);
                     }
                 });
     }
 
-    protected List<String> loadListOfStrings(Element itemsElement, String elementName, String attributeName, boolean resource) {
+    protected List<String> loadListOfStrings(Element itemsElement, String elementName, String attributeName,
+                                             boolean resource) {
         List<String> items = new ArrayList<>();
         for (Element itemElement : itemsElement.elements(elementName)) {
             if (resource) {
                 loadResourceString(itemElement, attributeName, context.getMessageGroup(), items::add);
             } else {
-                loadString(itemElement, attributeName, value -> {
-                    if (StringUtils.isNotEmpty(value)) {
-                        items.add(value);
-                    }
-                });
+                loadString(itemElement, attributeName, items::add);
             }
         }
         return items;
@@ -148,22 +143,21 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
         Element propertiesElement = element.element("properties");
         if (propertiesElement != null) {
             for (Element propertyElement : propertiesElement.elements("property")) {
-                String name = loadString(propertyElement, "name").orElse(null);
-                if (StringUtils.isNotEmpty(name)) {
-                    MetaClass metaClass = resultComponent.getDataProvider() instanceof EntityDataUnit ?
-                            ((EntityDataUnit) resultComponent.getDataProvider()).getEntityMetaClass() : null;
-                    checkValidProperty(metaClass, name);
-                    String localizedName = loadResourceString(propertyElement, "localizedName",
-                            context.getMessageGroup()).orElse(null);
-                    if (Strings.isNullOrEmpty(localizedName) && metaClass != null) {
-                        localizedName = getMessageTools().getPropertyCaption(metaClass, name);
-                    } else {
-                        localizedName = name;
+                loadString(propertyElement, "name").ifPresent(name -> {
+                    if (!Strings.isNullOrEmpty(name)) {
+                        MetaClass metaClass = resultComponent.getDataProvider() instanceof EntityDataUnit ?
+                                ((EntityDataUnit) resultComponent.getDataProvider()).getEntityMetaClass() : null;
+                        checkValidProperty(metaClass, name);
+                        if (metaClass == null || hasPropertyPermission(metaClass, name)) {
+                            resultComponent.addProperty(name, loadResourceString(propertyElement, "localizedName",
+                                    context.getMessageGroup()).orElseGet(
+                                            () -> metaClass != null
+                                                    ? getMessageTools().getPropertyCaption(metaClass, name)
+                                                    : name
+                            ));
+                        }
                     }
-                    if (metaClass == null || hasPropertyPermission(metaClass, name)) {
-                        resultComponent.addProperty(name, localizedName);
-                    }
-                }
+                });
             }
         }
     }
@@ -180,7 +174,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
             MetaProperty property = metaClass.findProperty(name);
             if (property != null && property.getRange().getCardinality().isMany()) {
                 throw new IllegalStateException(String.format("'%s' cannot be added as a property, because " +
-                        "PivotTable doesn't support collections as properties", name));
+                        "%s doesn't support collection as property", name, PivotTable.class.getSimpleName()));
             }
         }
     }
@@ -200,7 +194,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
         if (colsElement != null) {
             List<String> cols = loadListOfStrings(colsElement, "col", "value", true);
             if (CollectionUtils.isNotEmpty(cols)) {
-                resultComponent.setCols(cols);
+                resultComponent.setColumns(cols);
             }
         }
     }
@@ -332,7 +326,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
         if (heatmapElement != null) {
             HeatmapRendererOptions heatmap = new HeatmapRendererOptions();
             String colorScaleGeneratorFunction = heatmapElement.elementText("colorScaleGeneratorFunction");
-            if (StringUtils.isNotBlank(colorScaleGeneratorFunction)) {
+            if (!Strings.isNullOrEmpty(colorScaleGeneratorFunction)) {
                 heatmap.setColorScaleGeneratorFunction(new JsFunction(colorScaleGeneratorFunction));
             }
             rendererOptions.setHeatmap(heatmap);
@@ -401,7 +395,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
                         derivedAttributeElement, "caption", context.getMessageGroup());
                 if (captionOptional.isPresent()) {
                     String code = derivedAttributeElement.elementText("function");
-                    if (StringUtils.isNotEmpty(code)) {
+                    if (!Strings.isNullOrEmpty(code)) {
                         derivedProperties.addAttribute(captionOptional.get(), new JsFunction(code));
                     }
                 }

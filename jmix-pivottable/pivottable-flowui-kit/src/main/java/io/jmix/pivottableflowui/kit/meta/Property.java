@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.pivottableflowui.kit.component.model.meta;
+package io.jmix.pivottableflowui.kit.meta;
 
 public interface Property {
 

@@ -57,7 +57,7 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
         }
 
         if (CollectionUtils.isNotEmpty(settings.getCols())) {
-            component.setCols(getLocalizedPropertiesByNames(settings.getCols(), component.getProperties()));
+            component.setColumns(getLocalizedPropertiesByNames(settings.getCols(), component.getProperties()));
         }
 
         if (!Strings.isNullOrEmpty(settings.getRendererName())) {
@@ -70,7 +70,8 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
 
         if (!Strings.isNullOrEmpty(settings.getAggregatorName())) {
             if (component.getAggregations() != null) {
-                component.getAggregations().setSelectedAggregation(AggregationMode.fromId(settings.getAggregatorName()));
+                component.getAggregations().setSelectedAggregation(
+                        AggregationMode.fromId(settings.getAggregatorName()));
             } else {
                 Aggregation aggregation = component.getAggregation();
                 if (aggregation == null) {
@@ -117,18 +118,20 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
     @Override
     public boolean saveSettings(PivotTable component, PivotTableSettings settings) {
         Map<String, String> localizedNameToProperty = reflectProperties(component.getProperties());
-
         boolean changed = false;
+
         List<String> rowProperties = getPropertiesByLocalizedNames(component.getRows(), localizedNameToProperty);
         if (!listsEqual(rowProperties, settings.getRows())) {
             settings.setRows(rowProperties);
             changed = true;
         }
-        List<String> colProperties = getPropertiesByLocalizedNames(component.getCols(), localizedNameToProperty);
+
+        List<String> colProperties = getPropertiesByLocalizedNames(component.getColumns(), localizedNameToProperty);
         if (!listsEqual(colProperties, settings.getCols())) {
             settings.setCols(colProperties);
             changed = true;
         }
+
         Renderer selectedRenderer = null;
         if (component.getRenderers() != null) {
             selectedRenderer = component.getRenderers().getSelectedRenderer();
@@ -140,6 +143,7 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
             settings.setRendererName(selectedRenderer.getId());
             changed = true;
         }
+
         AggregationMode selectedAggregation = null;
         if (component.getAggregations() != null) {
             selectedAggregation = component.getAggregations().getSelectedAggregation();
@@ -151,32 +155,38 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
             settings.setAggregatorName(selectedAggregation.getId());
             changed = true;
         }
+
         List<String> aggregationProperties = getPropertiesByLocalizedNames(
                 component.getAggregationProperties(), localizedNameToProperty);
         if (!listsEqual(aggregationProperties, settings.getAggregationProperties())) {
             settings.setAggregationProperties(aggregationProperties);
             changed = true;
         }
+
         Map<String, List<String>> inclusions = changeLocalizedNamesToPropertiesWithValues(
                 component.getInclusions(), localizedNameToProperty);
         if (!mapsEqual(inclusions, settings.getInclusions())) {
             settings.setInclusions(inclusions);
             changed = true;
         }
+
         Map<String, List<String>> exclusions = changeLocalizedNamesToPropertiesWithValues(
                 component.getExclusions(), localizedNameToProperty);
         if (!mapsEqual(exclusions, settings.getExclusions())) {
             settings.setExclusions(exclusions);
             changed = true;
         }
+
         if (component.getRowOrder() != Order.fromId(settings.getRowOrder())) {
             settings.setRowOrder(component.getRowOrder().getId());
             changed = true;
         }
+
         if (component.getColOrder() != Order.fromId(settings.getColOrder())) {
             settings.setColOrder(component.getColOrder().getId());
             changed = true;
         }
+
         return changed;
     }
 
@@ -190,7 +200,8 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
 
     @Nullable
     private Map<String, List<String>> changeLocalizedNamesToPropertiesWithValues(
-            @Nullable Map<String, List<String>> localizedPropertyToValues, Map<String, String> localizedNameToProperty) {
+            @Nullable Map<String, List<String>> localizedPropertyToValues,
+            Map<String, String> localizedNameToProperty) {
         if (localizedPropertyToValues == null) {
             return null;
         }
@@ -246,7 +257,7 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
         PivotTableSettings settings = createSettings();
         settings.setId(component.getId().orElse(null));
 
-        settings.setCols(component.getCols());
+        settings.setCols(component.getColumns());
         settings.setRows(component.getRows());
         settings.setRendererName(component.getRenderers().getSelectedRenderer().getId());
         settings.setAggregatorName(component.getAggregations().getSelectedAggregation().getId());

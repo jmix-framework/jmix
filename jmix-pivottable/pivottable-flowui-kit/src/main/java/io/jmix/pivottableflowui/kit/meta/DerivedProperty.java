@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.pivottableflowui.kit.component.model.meta;
+package io.jmix.pivottableflowui.kit.meta;
 
-public interface Renderer {
-    void setType(io.jmix.pivottableflowui.kit.component.model.Renderer rendererType);
+public interface DerivedProperty {
+
+    void setCaption(String caption);
+
+    void setFunction(String function);
 }

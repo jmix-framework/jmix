@@ -37,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -66,9 +67,9 @@ public class PivotTableViewBuilder {
     protected List<DataItem> dataItems;
     protected String nativeJson;
 
-    protected ListDataComponent target;
+    protected ListDataComponent<?> target;
 
-    public PivotTableViewBuilder(ListDataComponent target) {
+    public PivotTableViewBuilder(ListDataComponent<?> target) {
         this.target = target;
     }
 
@@ -76,10 +77,7 @@ public class PivotTableViewBuilder {
      * @return list of included properties
      */
     public List<String> getIncludedProperties() {
-        if (includedProperties == null) {
-            return Collections.emptyList();
-        }
-        return includedProperties;
+        return Objects.requireNonNullElse(includedProperties, Collections.emptyList());
     }
 
     /**
@@ -100,10 +98,7 @@ public class PivotTableViewBuilder {
      * @return list of excluded properties
      */
     public List<String> getExcludedProperties() {
-        if (excludedProperties == null) {
-            return Collections.emptyList();
-        }
-        return excludedProperties;
+        return Objects.requireNonNullElse(excludedProperties, Collections.emptyList());
     }
 
     /**
@@ -138,10 +133,7 @@ public class PivotTableViewBuilder {
      * @return list of additionally included properties
      */
     public List<String> getAdditionalProperties() {
-        if (additionalProperties == null) {
-            return Collections.emptyList();
-        }
-        return additionalProperties;
+        return Objects.requireNonNullElse(additionalProperties, Collections.emptyList());
     }
 
     /**
@@ -216,9 +208,9 @@ public class PivotTableViewBuilder {
      * @param items collection of entities
      * @return current instance
      */
-    public PivotTableViewBuilder withItems(Collection<? extends Entity> items) {
+    public PivotTableViewBuilder withItems(Collection<?> items) {
         dataItems = new ArrayList<>(items.size());
-        for (Entity entity : items) {
+        for (Object entity : items) {
             dataItems.add(new EntityDataItem(entity));
         }
         return this;
@@ -230,7 +222,7 @@ public class PivotTableViewBuilder {
     public void show() {
         if (!(target instanceof Grid<?> grid) || UiComponentUtils.findView(grid) == null) {
             throw new IllegalStateException(
-                    String.format("Component '%s' is null or not added to a view", ((Grid) target).getId()));
+                    String.format("Component '%s' is null or not added to a view", ((Grid<?>) target).getId()));
         }
 
         if (dataItems == null) {
@@ -239,7 +231,8 @@ public class PivotTableViewBuilder {
 
         Map<String, String> properties = getPropertiesWithLocale();
 
-        viewNavigators.view(UiComponentUtils.findView((Grid) target), PivotTableView.class)
+        viewNavigators.view(Objects.requireNonNull(UiComponentUtils.findView((Grid<?>) target),
+                        "View cannot be null for target"), PivotTableView.class)
                 .withAfterNavigationHandler(event -> {
                     PivotTableView pivotTableView = event.getView();
                     pivotTableView.setProperties(properties);
@@ -275,7 +268,7 @@ public class PivotTableViewBuilder {
     }
 
     @Autowired
-    public void setMetadataTools(MetadataTools metadataTools) {
+    protected void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }
 
@@ -287,13 +280,19 @@ public class PivotTableViewBuilder {
     protected Map<String, String> getPropertiesWithLocale() {
         Map<String, String> resultMap = new HashMap<>();
 
-        ContainerDataUnit containerDataUnit = (ContainerDataUnit) target.getItems();
+        ContainerDataUnit<?> containerDataUnit = (ContainerDataUnit<?>) target.getItems();
+        if (containerDataUnit == null) {
+            return resultMap;
+        }
+
         FetchPlan fetchPlan = containerDataUnit.getContainer().getFetchPlan();
         MetaClass metaClass = containerDataUnit.getEntityMetaClass();
+        if (fetchPlan == null) {
+            fetchPlan = getBaseFetchPlan(metaClass);
+        }
 
         List<String> appliedProperties = includedProperties == null ?
                 new ArrayList<>() : new ArrayList<>(includedProperties);
-
         if (appliedProperties.isEmpty()) {
             appliedProperties.addAll(getPropertiesFromView(metaClass, fetchPlan));
             appliedProperties.addAll(getEmbeddedIdProperties(metaClass));
@@ -319,7 +318,7 @@ public class PivotTableViewBuilder {
             Class<?> declaringClass = metaProperty.getDeclaringClass();
             MetaClass propertyMetaClass = declaringClass == null ? null : metadata.getClass(declaringClass);
 
-            if (!isManagedProperty(metaProperty, propertyMetaClass)) {
+            if (propertyMetaClass != null && !isManagedProperty(metaProperty, propertyMetaClass)) {
                 continue;
             }
 
@@ -340,16 +339,12 @@ public class PivotTableViewBuilder {
             return false;
         }
 
-        // id is system property, so it should be checked before isSystem() checking
+        // id is a system property, so it should be checked before isSystem() checking
         if (isIdProperty(metaProperty.getName(), metaClass)) {
             return true;
         }
 
-        if (metadataTools.isSystem(metaProperty)) {
-            return false;
-        }
-
-        return true;
+        return !metadataTools.isSystem(metaProperty);
     }
 
     protected boolean isPermitted(MetaClass metaClass, MetaProperty metaProperty) {
@@ -375,7 +370,6 @@ public class PivotTableViewBuilder {
                     .collect(Collectors.toList());
         }
 
-        fetchPlan = fetchPlan == null ? getBaseFetchPlan(metaClass) : fetchPlan;
         if (fetchPlan.getProperties().isEmpty()) {
             return Collections.emptyList();
         }
@@ -395,7 +389,7 @@ public class PivotTableViewBuilder {
         if (hasEmbeddedId(metaClass)) {
             MetaClass embeddedMetaClass = getEmbeddedIdMetaClass(metaClass);
             if (embeddedMetaClass == null) {
-                return null;
+                return result;
             }
 
             String primaryKey = metadataTools.getPrimaryKeyName(metaClass);
@@ -410,6 +404,7 @@ public class PivotTableViewBuilder {
         return metadataTools.hasCompositePrimaryKey(metaClass);
     }
 
+    @Nullable
     protected MetaClass getEmbeddedIdMetaClass(MetaClass metaClass) {
         String primaryKey = metadataTools.getPrimaryKeyName(metaClass);
         if (primaryKey == null) {
@@ -417,6 +412,7 @@ public class PivotTableViewBuilder {
         }
 
         MetaProperty metaProperty = metaClass.getProperty(primaryKey);
+
         // in this case we should use `metaProperty.getJavaType()` because
         // we need to get class type of EmbeddedId property and then get MetaClass of it
         return metadataTools.isEmbedded(metaProperty) ? metadata.getClass(metaProperty.getJavaType()) : null;
@@ -430,24 +426,26 @@ public class PivotTableViewBuilder {
         }
 
         List<String> result = new ArrayList<>();
-        fetchPlan = fetchPlan == null ? getBaseFetchPlan(metaClass) : fetchPlan;
-
         for (String property : properties) {
             MetaPropertyPath mpp = metaClass.getPropertyPath(property);
-            // is nested property and fetch plan contains it
 
+            // is nested property and fetch plan contains it
             if (mpp != null && metadataTools.fetchPlanContainsProperty(fetchPlan, mpp)) {
                 result.add(property);
+
                 // simple property
             } else if (fetchPlan.containsProperty(property)) {
                 result.add(property);
+
                 // id property
             } else if (isIdProperty(property, metaClass)) {
                 result.add(property);
+
                 // EmbeddedId's property
             } else if (hasEmbeddedId(metaClass)
                     && isEmbeddedIdProperty(property, metaClass)) {
                 result.add(property);
+
                 // if metaClass contains property path, we need to check nested entities in fetch plan
             } else if (mpp != null) {
                 for (MetaProperty metaProperty : mpp.getMetaProperties()) {
@@ -455,9 +453,11 @@ public class PivotTableViewBuilder {
                     if (propertyMetaClass == null) {
                         propertyMetaClass = metaClass;
                     }
+
                     // EmbeddedId's property
                     if (isEmbeddedIdProperty(property, propertyMetaClass)) {
                         result.add(property);
+
                         // Id property
                     } else if (isIdProperty(metaProperty.getName(), propertyMetaClass)) {
                         result.add(property);
@@ -488,12 +488,12 @@ public class PivotTableViewBuilder {
 
         String[] propertyPathParts = property.split("\\.");
         String propertyName = propertyPathParts[propertyPathParts.length - 1];
-
         MetaProperty metaProperty = embeddedMetaClass.getProperty(propertyName);
 
         return embeddedMetaClass.getOwnProperties().contains(metaProperty);
     }
 
+    @Nullable
     protected MetaClass getPropertyMetaClass(MetaProperty metaProperty) {
         Class<?> declaringClass = metaProperty.getDeclaringClass();
         if (declaringClass == null) {
@@ -502,4 +502,3 @@ public class PivotTableViewBuilder {
         return metadata.getClass(declaringClass);
     }
 }
-

@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.pivottableflowui.kit.component.model.meta;
+package io.jmix.pivottableflowui.kit.meta;
 
-public interface DerivedProperty {
+public interface NamedProperty {
 
-    void setCaption(String caption);
-
-    void setFunction(String function);
+    void setName(String name);
 }

@@ -17,6 +17,7 @@
 package io.jmix.pivottableflowui.action;
 
 import com.google.common.base.Strings;
+import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.ActionType;
@@ -32,17 +33,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Jmix action to show {@link PivotTable} component.
  * When the action executes, the pivot table shows data from the component that implements {@link ListDataComponent}.
  */
 @ActionType(ShowPivotTableAction.ID)
-public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTableAction, Object>
+public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTableAction, Entity>
         implements ApplicationContextAware {
 
     public static final String ID = "pvttbl_showPivotTable";
@@ -68,16 +66,6 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
 
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    @Autowired
-    public void setMessages(Messages messages) {
-        this.messages = messages;
-    }
-
-    @Autowired
-    public void setDialogs(Dialogs dialogs) {
-        this.dialogs = dialogs;
     }
 
     /**
@@ -157,6 +145,16 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
         return parseProperties(includedProperties);
     }
 
+    @Autowired
+    protected void setMessages(Messages messages) {
+        this.messages = messages;
+    }
+
+    @Autowired
+    protected void setDialogs(Dialogs dialogs) {
+        this.dialogs = dialogs;
+    }
+
     /**
      *  Specifies whether to show all rows or prompt the user to select rows.
      *
@@ -168,8 +166,7 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
             return true;
         }
 
-        CollectionContainer container = ((ContainerDataUnit) target.getItems()).getContainer();
-        return container != null && container.getItems().size() <= 1;
+        return ((ContainerDataUnit<?>) target.getItems()).getContainer().getItems().size() <= 1;
     }
 
     protected List<String> parseProperties(String properties) {
@@ -186,12 +183,11 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
         return Arrays.asList(propertiesArray);
     }
 
-    @SuppressWarnings("unchecked")
     protected void showPivotTable(ShowPivotTableMode mode) {
-        Collection items;
+        Collection<?> items;
         if (ShowPivotTableMode.ALL_ROWS.equals(mode)) {
-            if (target.getItems() instanceof ContainerDataUnit) {
-                CollectionContainer container = ((ContainerDataUnit) target.getItems()).getContainer();
+            if (target.getItems() instanceof ContainerDataUnit<?> containerDataUnit) {
+                CollectionContainer<?> container = containerDataUnit.getContainer();
                 items = container.getItems();
             } else {
                 items = Collections.emptyList();

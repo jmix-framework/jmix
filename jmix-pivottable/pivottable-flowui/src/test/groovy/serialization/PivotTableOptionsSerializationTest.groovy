@@ -16,13 +16,12 @@
 
 package serialization
 
-import elemental.json.JsonValue
+
 import io.jmix.pivottableflowui.kit.component.model.PivotTableOptions
 import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer
 import org.json.JSONException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.skyscreamer.jsonassert.JSONAssert
 
 class PivotTableOptionsSerializationTest {
 

@@ -25,7 +25,8 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.pivottableflowui.export.model.PivotData;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
-import io.jmix.pivottableflowui.kit.component.model.*;
+import io.jmix.pivottableflowui.kit.component.model.AggregationMode;
+import io.jmix.pivottableflowui.kit.component.model.Renderer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -34,7 +35,6 @@ import org.springframework.context.ApplicationContextAware;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -61,201 +61,6 @@ public class PivotTable extends JmixPivotTable implements ApplicationContextAwar
         autowireDependencies();
 
         initLocalization();
-    }
-
-    public PivotTable withPropertiesOnly(Map<String, String> properties) {
-        setProperties(properties);
-        return this;
-    }
-
-    public PivotTable withProperties(Map<String, String> properties) {
-        options.addProperties(properties);
-        return this;
-    }
-
-    public PivotTable withProperty(String property, String value) {
-        options.addProperty(property, value);
-        return this;
-    }
-
-    public PivotTable withRows(List<String> rows) {
-        options.setRows(rows);
-        return this;
-    }
-
-    public PivotTable withRows(String... rows) {
-        options.addRows(rows);
-        return this;
-    }
-
-    public PivotTable withCols(List<String> cols) {
-        options.setCols(cols);
-        return this;
-    }
-
-    public PivotTable withCols(String... cols) {
-        options.addCols(cols);
-        return this;
-    }
-
-    public PivotTable withAggregation(Aggregation aggregation) {
-        options.setAggregation(aggregation);
-        return this;
-    }
-
-    public PivotTable withRenderer(Renderer renderer) {
-        options.setRenderer(renderer);
-        return this;
-    }
-
-    public PivotTable withAggregationProperties(List<String> aggregationProperties) {
-        options.setAggregationProperties(aggregationProperties);
-        return this;
-    }
-
-    public PivotTable withAggregationProperties(String... aggregationProperties) {
-        options.addAggregationProperties(aggregationProperties);
-        return this;
-    }
-
-    public PivotTable withAggregations(Aggregations aggregations) {
-        options.setAggregations(aggregations);
-        return this;
-    }
-
-    public PivotTable withRenderers(Renderers renderers) {
-        options.setRenderers(renderers);
-        return this;
-    }
-
-    public PivotTable withHiddenProperties(List<String> hiddenProperties) {
-        options.setHiddenProperties(hiddenProperties);
-        return this;
-    }
-
-    public PivotTable withHiddenProperties(String... hiddenProperties) {
-        options.addHiddenProperties(hiddenProperties);
-        return this;
-    }
-
-    public PivotTable withHiddenFromAggregations(List<String> hiddenFromAggregations) {
-        options.setHiddenFromAggregations(hiddenFromAggregations);
-        return this;
-    }
-
-    public PivotTable withHiddenFromAggregations(String... hiddenFromAggregations) {
-        options.addHiddenFromAggregations(hiddenFromAggregations);
-        return this;
-    }
-
-    public PivotTable withHiddenFromDragDrop(List<String> hiddenFromDragDrop) {
-        options.setHiddenFromDragDrop(hiddenFromDragDrop);
-        return this;
-    }
-
-    public PivotTable withHiddenFromDragDrop(String... hiddenFromDragDrop) {
-        options.addHiddenFromDragDrop(hiddenFromDragDrop);
-        return this;
-    }
-
-    public PivotTable withColOrder(Order colOrder) {
-        options.setColOrder(colOrder);
-        return this;
-    }
-
-    public PivotTable withRowOrder(Order rowOrder) {
-        options.setRowOrder(rowOrder);
-        return this;
-    }
-
-    public PivotTable withMenuLimit(Integer menuLimit) {
-        setMenuLimit(menuLimit);
-        return this;
-    }
-
-    public PivotTable withAutoSortUnusedProperties(Boolean autoSortUnusedProperties) {
-        setAutoSortUnusedProperties(autoSortUnusedProperties);
-        return this;
-    }
-
-    public PivotTable withUnusedPropertiesVertical(UnusedPropertiesVertical unusedPropertiesVertical) {
-        setUnusedPropertiesVertical(unusedPropertiesVertical);
-        return this;
-    }
-
-    public PivotTable withFilterFunction(JsFunction filter) {
-        options.setFilterFunction(filter);
-        return this;
-    }
-
-    public PivotTable withSortersFunction(JsFunction sorters) {
-        options.setSortersFunction(sorters);
-        return this;
-    }
-
-    public PivotTable withRendererOptions(RendererOptions rendererOptions) {
-        setRendererOptions(rendererOptions);
-        return this;
-    }
-
-    public PivotTable withInclusions(Map<String, List<String>> inclusions) {
-        setInclusions(inclusions);
-        return this;
-    }
-
-    public PivotTable withInclusions(String property, List<String> inclusions) {
-        setInclusions(property, inclusions);
-        return this;
-    }
-
-    public PivotTable withInclusions(String property, String... inclusions) {
-        addInclusions(property, inclusions);
-        return this;
-    }
-
-    public PivotTable withExclusions(Map<String, List<String>> exclusions) {
-        setExclusions(exclusions);
-        return this;
-    }
-
-    public PivotTable withExclusions(String property, List<String> exclusions) {
-        options.setExclusions(property, exclusions);
-        return this;
-    }
-
-    public PivotTable withExclusions(String property, String... exclusions) {
-        addExclusions(property, exclusions);
-        return this;
-    }
-
-    public PivotTable withDerivedProperties(DerivedProperties derivedProperties) {
-        setDerivedProperties(derivedProperties);
-        return this;
-    }
-
-    public PivotTable withEmptyDataMessage(String emptyDataMessage) {
-        options.setEmptyDataMessage(emptyDataMessage);
-        return this;
-    }
-
-    public PivotTable withShowUI(Boolean showUI) {
-        options.setShowUI(showUI);
-        return this;
-    }
-
-    public PivotTable withShowRowTotals(Boolean showRowTotals) {
-        setShowRowTotals(showRowTotals);
-        return this;
-    }
-
-    public PivotTable withShowColTotals(Boolean showColTotals) {
-        setShowColTotals(showColTotals);
-        return this;
-    }
-
-    public PivotTable withNativeJson(String nativeJson) {
-        setNativeJson(nativeJson);
-        return this;
     }
 
     public void getPivotData(Consumer<PivotData> consumer) {
@@ -292,25 +97,15 @@ public class PivotTable extends JmixPivotTable implements ApplicationContextAwar
             typeMessages.put("suffix", messages.getMessage("pivottable." + type + ".suffix"));
             typeMessages.put("showZero", messages.getMessage("pivottable." + type + ".showZero"));
 
-            if (formatStrings != null) {
-                DecimalFormatSymbols formatSymbols = formatStrings.getFormatSymbols();
-
-                typeMessages.put("thousandsSep", Character.toString(formatSymbols.getGroupingSeparator()));
-                typeMessages.put("decimalSep", Character.toString(formatSymbols.getDecimalSeparator()));
-            } else {
-                typeMessages.put("thousandsSep",
-                        messages.getMessage("pivottable." + type + ".thousandsSep"));
-                typeMessages.put("decimalSep",
-                        messages.getMessage("pivottable." + type + ".decimalSep"));
-            }
+            DecimalFormatSymbols formatSymbols = formatStrings.getFormatSymbols();
+            typeMessages.put("thousandsSep", Character.toString(formatSymbols.getGroupingSeparator()));
+            typeMessages.put("decimalSep", Character.toString(formatSymbols.getDecimalSeparator()));
 
             localizedStrings.put(type, typeMessages);
         }
 
-        if (formatStrings != null) {
-            DecimalFormatSymbols formatSymbols = formatStrings.getFormatSymbols();
-            localizedStrings.put("percentFormat.suffix", Character.toString(formatSymbols.getPercent()));
-        }
+        DecimalFormatSymbols formatSymbols = formatStrings.getFormatSymbols();
+        localizedStrings.put("percentFormat.suffix", Character.toString(formatSymbols.getPercent()));
 
         localizedStrings.put("renderError", messages.getMessage("pivottable.renderError"));
         localizedStrings.put("computeError", messages.getMessage("pivottable.computeError"));

@@ -42,8 +42,7 @@ public class PivotTableContainerDataset<T> extends AbstractDataProvider<EntityDa
         implements ContainerDataUnit<T>, PivotTableDataSet<EntityDataItem> {
 
     protected CollectionContainer<T> container;
-
-    private EventBus eventBus;
+    protected EventBus eventBus;
 
     public PivotTableContainerDataset(CollectionContainer<T> container) {
         Preconditions.checkNotNullArgument(container);
@@ -52,11 +51,11 @@ public class PivotTableContainerDataset<T> extends AbstractDataProvider<EntityDa
         initContainer(container);
     }
 
-    protected void initContainer(CollectionContainer<T> container) {
+    protected void initContainer(CollectionContainer<?> container) {
         container.addCollectionChangeListener(this::onContainerCollectionChanged);
     }
 
-    protected void onContainerCollectionChanged(CollectionContainer.CollectionChangeEvent<T> event) {
+    protected void onContainerCollectionChanged(CollectionContainer.CollectionChangeEvent<?> event) {
         List<EntityDataItem> changes = mapToEntityDataItem(event.getChanges());
 
         getEventBus().fireEvent(new DataSetChangeEvent<>(this, changes));
@@ -125,7 +124,7 @@ public class PivotTableContainerDataset<T> extends AbstractDataProvider<EntityDa
         return getEventBus().addListener(StateChangeEvent.class, listener);
     }
 
-    protected List<EntityDataItem> mapToEntityDataItem(Collection<? extends T> collection) {
+    protected List<EntityDataItem> mapToEntityDataItem(Collection<?> collection) {
         return collection.stream()
                 .map(EntityDataItem::new)
                 .toList();

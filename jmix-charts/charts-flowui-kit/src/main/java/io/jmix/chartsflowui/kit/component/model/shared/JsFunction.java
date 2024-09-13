@@ -24,16 +24,5 @@ import java.io.Serializable;
  * Example:
  * <pre>{@code new JsFunction("function(value) { return \"Value is \" + value };")}</pre>
  */
-@SuppressWarnings("ClassCanBeRecord")
-public class JsFunction implements Serializable {
-
-    protected final String code;
-
-    public JsFunction(String code) {
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
+public record JsFunction(String code) implements Serializable {
 }

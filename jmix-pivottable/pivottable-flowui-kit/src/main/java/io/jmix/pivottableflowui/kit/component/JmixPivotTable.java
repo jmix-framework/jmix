@@ -91,8 +91,8 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
     }
 
     /**
-     * Init component data with varargs of {@link DataItem}
-     * @param dataItems
+     * Init component data with array of {@link DataItem}
+     * @param dataItems items array
      */
     public void setData(DataItem... dataItems) {
         if (dataItems != null) {
@@ -200,26 +200,26 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
     /**
      * @return a collection of attribute names to use as cols
      */
-    public List<String> getCols() {
+    public List<String> getColumns() {
         return options.getCols();
     }
 
     /**
      * Sets a collection of attribute names to use as cols.
      *
-     * @param cols a collection of attribute names to use as cols
+     * @param columns a collection of attribute names to use as cols
      */
-    public void setCols(List<String> cols) {
-        options.setCols(cols);
+    public void setColumns(List<String> columns) {
+        options.setCols(columns);
     }
 
     /**
      * Adds an array of attribute names to use as cols.
      *
-     * @param cols an array of attribute names to add
+     * @param columns an array of attribute names to add
      */
-    public void addColumns(String... cols) {
-        options.addCols(cols);
+    public void addColumns(String... columns) {
+        options.addCols(columns);
     }
 
     /**
@@ -791,17 +791,6 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         return options.getNativeJson();
     }
 
-    protected Registration getRemovalCallback(String eventName, Class<? extends ComponentEvent<?>> eventClass) {
-        return () -> {
-            eventRegistrations.get(eventName).remove();
-            if (!getEventBus().hasListener(eventClass)
-                    && eventRegistrations.get(eventName) != null) {
-                eventRegistrations.get(eventName).remove();
-                eventRegistrations.remove(eventName);
-            }
-        };
-    }
-
     protected void onDataProviderChange() {
         if (dataProviderItemSetChangeRegistration != null) {
             dataProviderItemSetChangeRegistration.remove();
@@ -856,15 +845,13 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
 
         List<DataItem> dataItems = getDataProvider().fetch(new Query<>()).toList();
         List<DataItem> clickedDataItems = cellClickParams.getDataItemKeys() != null
-                ? cellClickParams.getDataItemKeys().stream().map(
-                        key -> {
-                            for (DataItem dataItem : dataItems) {
-                                if (dataItem.getIdAsString().equals(key)) {
-                                    return dataItem;
-                                }
-                            }
-                            return null;
-                        }).toList()
+                ? cellClickParams.getDataItemKeys()
+                        .stream()
+                        .map(key -> dataItems.stream()
+                                .filter(i -> i.getIdAsString().equals(key))
+                                .findFirst()
+                                .orElse(null))
+                        .toList()
                 : null;
 
         fireEvent(new PivotTableCellClickEvent(this, cellClickParams.getValue(),
@@ -950,16 +937,15 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
     protected void performUpdateItems(ExecutionContext context) {
         JsonObject resultJson = new JreJsonFactory().createObject();
         List<DataItem> dataItems = getDataProvider().fetch(new Query<>()).toList();
-        JsonValue dataJson = serializer.serializeItems(dataItems.stream()
-                .map(dataItem -> {
-                    Map<String, Object> values = new HashMap<>();
-                    values.put(DATA_ITEM_ID_PROPERTY_NAME, dataItem.getId());
-                    for (Map.Entry<String, String> property : options.getProperties().entrySet()) {
-                        values.put(property.getValue(), dataItem.getValue(property.getKey()));
-                    }
-                    return values;
+        JsonValue dataJson = serializer.serializeItems(dataItems.stream().map(dataItem -> {
+                    Map<String, Object> propertyWithValue = options.getProperties()
+                            .entrySet()
+                            .stream()
+                            .collect(Collectors.toMap(Map.Entry::getValue, e -> dataItem.getValue(e.getKey())));
+                    propertyWithValue.put(DATA_ITEM_ID_PROPERTY_NAME, dataItem.getId());
+                    return propertyWithValue;
                 })
-                .collect(Collectors.toList()));
+                .toList());
         resultJson.put("dataSet", dataJson);
         callPendingJsFunction("_updateDataSet", resultJson);
 
@@ -977,7 +963,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         synchronized (functions) {
             while (!functions.isEmpty()) {
                 PendingJsFunction function = functions.remove(0);
-                callJsFunction(function.getFunction(), function.getResultJson());
+                callJsFunction(function.function(), function.resultJson());
             }
             clientReady = true;
         }
@@ -1014,22 +1000,6 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         getElement().callJsFunction(function, resultJson);
     }
 
-    @SuppressWarnings("ClassCanBeRecord")
-    protected static class PendingJsFunction {
-        protected final String function;
-        protected final JsonObject resultJson;
-
-        public PendingJsFunction(String function, JsonObject resultJson) {
-            this.function = function;
-            this.resultJson = resultJson;
-        }
-
-        public String getFunction() {
-            return function;
-        }
-
-        public JsonObject getResultJson() {
-            return resultJson;
-        }
+    protected record PendingJsFunction(String function, JsonObject resultJson) {
     }
 }

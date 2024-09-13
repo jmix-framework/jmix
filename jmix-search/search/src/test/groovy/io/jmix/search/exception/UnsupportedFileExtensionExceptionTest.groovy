@@ -22,9 +22,9 @@ class UnsupportedFileExtensionExceptionTest extends Specification {
 
 
     private static final String MESSAGE_1 = "The file the-file-with-not-supported-extension.sql with 'sql' " +
-            "extension is not supported. Only following file extensions are supported txt, rtf."
+            "extension is not supported. Only following file extensions are supported: txt, rtf."
     private static final String MESSAGE_2 = "The file another-file.smt with 'smt' extension is not supported. " +
-            "Only following file extensions are supported abc, def."
+            "Only following file extensions are supported: abc, def."
 
     def "message test"() {
         when:

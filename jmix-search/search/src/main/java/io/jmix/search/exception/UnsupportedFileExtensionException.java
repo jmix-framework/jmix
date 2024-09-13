@@ -26,7 +26,7 @@ import java.util.List;
 public class UnsupportedFileExtensionException extends ParserResolvingException {
 
     private static final String MESSAGE = "The file %s with '%s' extension is not supported. " +
-            "Only following file extensions are supported %s.";
+            "Only following file extensions are supported: %s.";
 
     /**
      * @param fileName - the name of the file which type is not supported

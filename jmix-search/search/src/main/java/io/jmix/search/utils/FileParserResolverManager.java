@@ -28,6 +28,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * The service that searches appropriate file parsers for the supported file types.
+ * Search principle is based on a file extension analysing.
+ */
 @Component("search_FileParserResolverManager")
 public class FileParserResolverManager {
 

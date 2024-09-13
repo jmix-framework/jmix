@@ -113,7 +113,7 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
      * <p>
      * The default value depends on {@link GridExportProperties#getDefaultColumnsToExport()}.
      *
-     * @param columnsToExport column export filter to set
+     * @param columnsToExport {@link ColumnsToExport} that is used to filter columns to export
      */
     public void setColumnsToExport(ColumnsToExport columnsToExport) {
         this.columnsToExport = columnsToExport;

@@ -16,12 +16,9 @@
 
 package io.jmix.search.exception;
 
-import io.jmix.search.utils.SupportedFileExtensions;
 import org.apache.commons.io.FilenameUtils;
 
-import java.util.Arrays;
-
-import static java.util.stream.Collectors.joining;
+import java.util.List;
 
 /**
  * An exception that is thrown when a user added some file with extension that there are no any known parser for.
@@ -31,13 +28,15 @@ public class UnsupportedFileExtensionException extends ParserResolvingException 
     private static final String MESSAGE = "The file %s with '%s' extension is not supported. " +
             "Only following file extensions are supported %s.";
 
-    public UnsupportedFileExtensionException(String fileName) {
+    /**
+     * @param fileName - the name of the file which type is not supported
+     * @param supportedExtensions - the list of the supported extensions
+     */
+    public UnsupportedFileExtensionException(String fileName, List<String> supportedExtensions) {
         super(String.format(
                 MESSAGE,
                 fileName,
                 FilenameUtils.getExtension(fileName),
-                Arrays.stream(SupportedFileExtensions.values())
-                        .map(SupportedFileExtensions::getSymbols)
-                        .collect(joining(", "))));
+                String.join(", ", supportedExtensions)));
     }
 }

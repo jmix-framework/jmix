@@ -41,7 +41,7 @@
     </facets>
     <layout spacing="true">
         <split id="split" orientation="HORIZONTAL" width="100%" minHeight="25em" height="100%">
-            <vbox id="categoryBox" margin="false" padding="false" height="100%" expand="categoriesGrid">
+            <vbox id="categoryBox" padding="false" height="100%" expand="categoriesGrid">
                 <hbox id="buttonsPanel" classNames="buttons-panel">
                     <button id="createBtn" action="categoriesGrid.create"/>
                     <button id="editBtn" action="categoriesGrid.edit"/>
@@ -75,7 +75,7 @@
                     </columns>
                 </dataGrid>
             </vbox>
-            <vbox id="attributesBox" margin="false" padding="false" height="100%" expand="attributesTable">
+            <vbox id="attributesBox" padding="false" height="100%" expand="attributesTable">
                 <h3 text="msg://categoryAttributes.text"/>
                 <dataGrid id="attributesTable"
                           width="100%"

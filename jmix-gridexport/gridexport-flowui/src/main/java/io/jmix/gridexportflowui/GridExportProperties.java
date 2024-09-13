@@ -17,6 +17,7 @@
 package io.jmix.gridexportflowui;
 
 import io.jmix.gridexportflowui.action.ExportAction;
+import io.jmix.gridexportflowui.exporter.ColumnsToExport;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -44,6 +45,11 @@ public class GridExportProperties {
     List<String> defaultExportModes;
 
     /**
+     * A {@link ColumnsToExport} that used by default in the {@link ExportAction}
+     */
+    String defaultColumnsToExport;
+
+    /**
      * Excel exporting configuration.
      */
     ExcelExporterProperties excel;
@@ -52,10 +58,12 @@ public class GridExportProperties {
                                 @DefaultValue("keyset") String exportAllPaginationStrategy,
                                 @DefaultValue({"ALL_ROWS", "CURRENT_PAGE", "SELECTED_ROWS"})
                                 List<String> defaultExportModes,
+                                @DefaultValue("VISIBLE_COLUMNS") String defaultColumnsToExport,
                                 @DefaultValue ExcelExporterProperties excel) {
         this.exportAllBatchSize = exportAllBatchSize;
         this.exportAllPaginationStrategy = exportAllPaginationStrategy;
         this.defaultExportModes = defaultExportModes;
+        this.defaultColumnsToExport = defaultColumnsToExport;
         this.excel = excel;
     }
 
@@ -78,6 +86,13 @@ public class GridExportProperties {
      */
     public List<String> getDefaultExportModes() {
         return defaultExportModes;
+    }
+
+    /**
+     * @see #defaultColumnsToExport
+     */
+    public String getDefaultColumnsToExport() {
+        return defaultColumnsToExport;
     }
 
     public ExcelExporterProperties getExcel() {

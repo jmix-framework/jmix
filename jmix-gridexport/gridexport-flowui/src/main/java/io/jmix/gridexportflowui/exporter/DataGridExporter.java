@@ -18,19 +18,38 @@ package io.jmix.gridexportflowui.exporter;
 
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.download.Downloader;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public interface DataGridExporter {
 
     void setFileName(String fileName);
 
     /**
-     * download <code>dataGrid</code> content via <code>downloader</code>
+     * Exports {@link DataGrid} content using {@link Downloader}.
+     *
+     * @param downloader   {@link Downloader} instance
+     * @param dataGrid     {@link DataGrid} to get content
+     * @param exportMode   exportMode
+     * @param columnFilter filter of the {@link Grid.Column}
      */
-    void exportDataGrid(Downloader downloader, Grid<Object> dataGrid, ExportMode exportMode);
+    void exportDataGrid(Downloader downloader, Grid<Object> dataGrid, ExportMode exportMode,
+                        Predicate<Grid.Column<Object>> columnFilter);
+
+    /**
+     * Exports {@link DataGrid} content using {@link Downloader}.
+     *
+     * @param downloader {@link Downloader} instance
+     * @param dataGrid   {@link DataGrid} to get content
+     * @param exportMode exportMode
+     */
+    default void exportDataGrid(Downloader downloader, Grid<Object> dataGrid, ExportMode exportMode) {
+        exportDataGrid(downloader, dataGrid, exportMode, ColumnsToExport.VISIBLE_COLUMNS.getFilterPredicate());
+    }
 
     /**
      * @return exporter label

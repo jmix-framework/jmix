@@ -16,11 +16,19 @@
 
 package io.jmix.search.exception;
 
+import java.util.List;
+
 /**
  * An exception that is thrown when the problem with parser resolving is occurred. The parser is need for
  * the fields of the "File" type indexing.
  */
 public abstract class ParserResolvingException extends Exception {
+
+    protected static String getSupportedExtensionsString(List<String> supportedExtensions){
+        return String.join(", ", supportedExtensions);
+
+    }
+
     public ParserResolvingException(String message) {
         super(message);
     }

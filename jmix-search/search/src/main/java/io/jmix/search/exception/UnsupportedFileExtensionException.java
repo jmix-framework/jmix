@@ -37,6 +37,7 @@ public class UnsupportedFileExtensionException extends ParserResolvingException 
                 MESSAGE,
                 fileName,
                 FilenameUtils.getExtension(fileName),
-                String.join(", ", supportedExtensions)));
+                getSupportedExtensionsString(supportedExtensions)));
     }
+
 }

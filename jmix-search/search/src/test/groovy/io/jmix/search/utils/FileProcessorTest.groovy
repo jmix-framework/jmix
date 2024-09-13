@@ -43,6 +43,6 @@ class FileProcessorTest extends Specification {
 
         where:
         exception << [new UnsupportedFileExtensionException("any.name", List.of("txt, rtf")),
-                      new EmptyFileExtensionException("any")]
+                      new EmptyFileExtensionException("any", ["txt"])]
     }
 }

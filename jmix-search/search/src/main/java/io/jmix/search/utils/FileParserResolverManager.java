@@ -41,7 +41,7 @@ public class FileParserResolverManager {
         String fileName = fileRef.getFileName();
         String fileExtension = FilenameUtils.getExtension(fileName);
         if (Strings.isNullOrEmpty(fileExtension)) {
-            throw new EmptyFileExtensionException(fileName);
+            throw new EmptyFileExtensionException(fileName, getSupportedExtensions());
         }
 
         for (FileParserResolver resolver : fileParserResolvers) {

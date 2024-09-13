@@ -60,7 +60,7 @@ class FilePropertyValueExtractorTest extends Specification {
         loggingEvent.getMessage() == exception.getMessage()
 
         where:
-        exception<<[new UnsupportedFileExtensionException("any.file", ["txt"]), new EmptyFileExtensionException("any")]
+        exception<<[new UnsupportedFileExtensionException("any.file", ["txt"]), new EmptyFileExtensionException("any", ["txt"])]
     }
 
     void cleanup() {

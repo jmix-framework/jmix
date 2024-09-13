@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package io.jmix.search.utils.parserresolving.resolvers;
+package io.jmix.search.index.fileparsing.resolvers;
 
-import io.jmix.search.utils.parserresolving.FileParserResolver;
+import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
+import org.apache.tika.parser.rtf.RTFParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("search_OfficeDocumentsParserResolver")
+@Component("search_PDFParserResolver")
 @Order(100)
-public class OfficeDocumentsParserResolver implements FileParserResolver {
+public class PDFParserResolver implements FileParserResolver {
     @Override
     public List<String> getExtension() {
-        return List.of("docx", "xlsx");
+        return List.of("rtf");
     }
 
     @Override
     public Parser getParser() {
-        return new OOXMLParser();
+        return new RTFParser();
     }
 }

@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package io.jmix.search.utils.parserresolving.resolvers;
+package io.jmix.search.index.fileparsing.resolvers;
 
-import io.jmix.search.utils.parserresolving.FileParserResolver;
+import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
-import org.apache.tika.parser.odf.OpenDocumentParser;
+import org.apache.tika.parser.pdf.PDFParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("search_OpenOfficeDocumentsParserResolver")
+@Component("search_TXTParserResolver")
 @Order(100)
-public class OpenOfficeDocumentsParserResolver implements FileParserResolver {
+public class TXTParserResolver implements FileParserResolver {
     @Override
     public List<String> getExtension() {
-        return List.of("odt", "ods");
+        return List.of("txt");
     }
 
     @Override
     public Parser getParser() {
-        return new OpenDocumentParser();
+        return new PDFParser();
     }
 }

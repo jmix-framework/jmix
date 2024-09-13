@@ -19,6 +19,8 @@ package io.jmix.search.utils.parserresolving
 import io.jmix.core.FileRef
 import io.jmix.search.exception.EmptyFileExtensionException
 import io.jmix.search.exception.UnsupportedFileExtensionException
+import io.jmix.search.index.fileparsing.FileParserResolver
+import io.jmix.search.utils.FileParserResolverManager
 import org.apache.tika.parser.Parser
 import spock.lang.Specification
 

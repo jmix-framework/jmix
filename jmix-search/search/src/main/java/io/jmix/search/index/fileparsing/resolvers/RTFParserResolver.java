@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.search.utils.parserresolving.resolvers;
+package io.jmix.search.index.fileparsing.resolvers;
 
-import io.jmix.search.utils.parserresolving.FileParserResolver;
+import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.pdf.PDFParser;
 import org.springframework.core.annotation.Order;
@@ -24,12 +24,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("search_TXTParserResolver")
+@Component("search_RTFParserResolver")
 @Order(100)
-public class TXTParserResolver implements FileParserResolver {
+public class RTFParserResolver implements FileParserResolver {
     @Override
     public List<String> getExtension() {
-        return List.of("txt");
+        return List.of("pdf");
     }
 
     @Override

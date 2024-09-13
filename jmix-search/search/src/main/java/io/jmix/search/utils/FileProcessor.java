@@ -22,7 +22,6 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.exception.FileParseException;
 import io.jmix.search.exception.ParserResolvingException;
-import io.jmix.search.utils.parserresolving.FileParserResolverManager;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;

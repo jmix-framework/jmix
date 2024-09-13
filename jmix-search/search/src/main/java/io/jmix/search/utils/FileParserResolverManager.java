@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.search.utils.parserresolving;
+package io.jmix.search.utils;
 
 import com.google.common.base.Strings;
 import io.jmix.core.FileRef;
 import io.jmix.search.exception.EmptyFileExtensionException;
 import io.jmix.search.exception.ParserResolvingException;
 import io.jmix.search.exception.UnsupportedFileExtensionException;
+import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.parser.Parser;
 import org.springframework.stereotype.Component;
@@ -52,7 +53,7 @@ public class FileParserResolverManager {
         throw new UnsupportedFileExtensionException(fileName, getSupportedExtensions());
     }
 
-    private List<String> getSupportedExtensions() {
+    protected List<String> getSupportedExtensions() {
         return fileParserResolvers
                 .stream()
                 .flatMap(fileParserResolver -> fileParserResolver.getExtension().stream())

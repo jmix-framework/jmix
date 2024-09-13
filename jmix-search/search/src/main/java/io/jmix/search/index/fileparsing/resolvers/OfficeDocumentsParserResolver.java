@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-package io.jmix.search.utils.parserresolving;
+package io.jmix.search.index.fileparsing.resolvers;
 
+import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-public interface FileParserResolver {
+@Component("search_OfficeDocumentsParserResolver")
+@Order(100)
+public class OfficeDocumentsParserResolver implements FileParserResolver {
+    @Override
+    public List<String> getExtension() {
+        return List.of("docx", "xlsx");
+    }
 
-    List<String> getExtension();
-
-    Parser getParser();
+    @Override
+    public Parser getParser() {
+        return new OOXMLParser();
+    }
 }

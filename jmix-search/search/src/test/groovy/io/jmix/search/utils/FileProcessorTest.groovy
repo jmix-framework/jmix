@@ -21,7 +21,6 @@ import io.jmix.core.FileStorageLocator
 import io.jmix.search.exception.EmptyFileExtensionException
 import io.jmix.search.exception.ParserResolvingException
 import io.jmix.search.exception.UnsupportedFileExtensionException
-import io.jmix.search.utils.parserresolving.FileParserResolverManager
 import spock.lang.Specification
 
 class FileProcessorTest extends Specification {

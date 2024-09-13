@@ -30,7 +30,6 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.DataManager;
 import io.jmix.core.SaveContext;
-import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.event.UserPasswordResetEvent;
 import io.jmix.flowui.Dialogs;
@@ -95,6 +94,10 @@ public class ResetPasswordView extends StandardView {
     @ViewComponent
     protected VerticalLayout resetPasswordLayout;
     @ViewComponent
+    protected Span resetPasswordLabel;
+    @ViewComponent
+    protected Span resetPasswordSubLabel;
+    @ViewComponent
     protected JmixButton generateBtn;
     @ViewComponent
     protected HorizontalLayout buttonPanel;
@@ -127,6 +130,13 @@ public class ResetPasswordView extends StandardView {
     @Subscribe
     public void onInit(InitEvent event) {
         initExportAction();
+    }
+
+    @Subscribe
+    public void onReady(ReadyEvent event) {
+        if (!isSingleSelected()) {
+            updateMultiSelectComponentsLabels();
+        }
     }
 
     @Subscribe
@@ -320,6 +330,12 @@ public class ResetPasswordView extends StandardView {
         return users != null && users.size() == 1;
     }
 
+    protected void updateMultiSelectComponentsLabels() {
+        resetPasswordLabel.setText(messageBundle.getMessage("resetPasswordView.multiSelection.resetPasswordLabel.text"));
+        resetPasswordSubLabel.setText(messageBundle.getMessage("resetPasswordView.multiSelection.resetPasswordSubLabel.text"));
+        generateBtn.setText(messageBundle.getMessage("resetPasswordView.multiSelection.generateBtn.text"));
+    }
+
     public void setUsers(Set<? extends UserDetails> users) {
         this.users = users;
 
@@ -341,12 +357,15 @@ public class ResetPasswordView extends StandardView {
             int i = 0;
 
             for (UserDetails userDetails : users) {
-                Pair<UserDetails, String> userPassword = userManager.resetPasswordWithoutSave(userDetails);
-                String username = userPassword.getFirst().getUsername();
-                String password = userPassword.getSecond();
+                Map<UserDetails, String> userPasswordMap =
+                        userManager.resetPasswords(Collections.singleton(userDetails), false);
+                Map.Entry<UserDetails, String> userPassword = userPasswordMap.entrySet().iterator().next();
+
+                String username = userPassword.getKey().getUsername();
+                String password = userPassword.getValue();
 
                 usernamePasswordMap.put(username, password);
-                saveContext.saving(userPassword.getFirst());
+                saveContext.saving(userPassword.getKey());
                 result.add(createPasswordValue(username, password));
 
                 taskLifeCycle.publish(++i);

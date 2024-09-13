@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.restds.exception.InvalidRefreshTokenException;
 import io.jmix.restds.exception.RestDataStoreAccessException;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -42,6 +44,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Component("restds_RestPasswordAuthenticator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -102,6 +105,9 @@ public class RestPasswordAuthenticator implements RestAuthenticator {
                     })
                     .body(params)
                     .retrieve()
+                    .onStatus(statusCode -> statusCode == HttpStatus.BAD_REQUEST, (request, response) -> {
+                        throw new BadCredentialsException(IOUtils.toString(response.getBody(), StandardCharsets.UTF_8));
+                    })
                     .toEntity(String.class);
         } catch (ResourceAccessException e) {
             throw new RestDataStoreAccessException(dataStoreName, e);

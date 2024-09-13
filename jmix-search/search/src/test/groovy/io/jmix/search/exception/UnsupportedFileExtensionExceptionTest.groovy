@@ -21,22 +21,21 @@ import spock.lang.Specification
 class UnsupportedFileExtensionExceptionTest extends Specification {
 
 
-    public static final String MESSAGE_1 = "The file the-file-with-not-supported-extension.sql with 'sql' extension " +
-            "is not supported. " +
-            "Only following file extensions are supported pdf, doc, xls, docx, xlsx, odt, ods, rtf, txt."
-    public static final String MESSAGE_2 = "The file another-file.smt with 'smt' extension is not supported. " +
-            "Only following file extensions are supported pdf, doc, xls, docx, xlsx, odt, ods, rtf, txt."
+    private static final String MESSAGE_1 = "The file the-file-with-not-supported-extension.sql with 'sql' " +
+            "extension is not supported. Only following file extensions are supported txt, rtf."
+    private static final String MESSAGE_2 = "The file another-file.smt with 'smt' extension is not supported. " +
+            "Only following file extensions are supported abc, def."
 
     def "message test"() {
         when:
-        def exception = new UnsupportedFileExtensionException(fileName)
+        def exception = new UnsupportedFileExtensionException(fileName, supportedTypes)
 
         then:
-        exception.getMessage() == b
+        exception.getMessage() == message
 
         where:
-        fileName                                    | b
-        "the-file-with-not-supported-extension.sql" | MESSAGE_1
-        "another-file.smt"                          | MESSAGE_2
+        fileName                                    |supportedTypes| message
+        "the-file-with-not-supported-extension.sql" |["txt", "rtf"]| MESSAGE_1
+        "another-file.smt"                          |["abc", "def"]| MESSAGE_2
     }
 }

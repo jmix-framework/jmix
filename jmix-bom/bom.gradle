@@ -163,11 +163,9 @@ dependencies {
         api "io.jmix.flowui:jmix-flowui-devserver:$freeVersion"
         api "io.jmix.flowui:jmix-flowui-test-assist:$freeVersion"
 
-        api "io.jmix.fullcalendar:jmix-fullcalendar:$freeVersion"
         api "io.jmix.fullcalendar:jmix-fullcalendar-starter:$freeVersion"
         api "io.jmix.fullcalendar:jmix-fullcalendar-flowui:$freeVersion"
         api "io.jmix.fullcalendar:jmix-fullcalendar-flowui-starter:$freeVersion"
-        api "io.jmix.fullcalendar:jmix-fullcalendar-flowui-kit:$freeVersion"
 
         api "io.jmix.gridexport:jmix-gridexport-flowui-starter:$freeVersion"
 

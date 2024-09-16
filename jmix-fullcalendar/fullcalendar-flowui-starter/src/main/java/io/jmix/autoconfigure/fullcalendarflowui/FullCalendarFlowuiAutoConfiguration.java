@@ -18,12 +18,11 @@ package io.jmix.autoconfigure.fullcalendarflowui;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
-import io.jmix.fullcalendar.FullCalendarConfiguration;
 import io.jmix.fullcalendarflowui.FullCalendarFlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
-@Import({CoreConfiguration.class, FlowuiConfiguration.class, FullCalendarConfiguration.class, FullCalendarFlowuiConfiguration.class})
+@Import({CoreConfiguration.class, FlowuiConfiguration.class, FullCalendarFlowuiConfiguration.class})
 public class FullCalendarFlowuiAutoConfiguration {
 }

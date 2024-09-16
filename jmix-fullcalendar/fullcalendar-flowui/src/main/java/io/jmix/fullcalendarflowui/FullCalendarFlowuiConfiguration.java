@@ -24,7 +24,6 @@ import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.registration.ComponentRegistration;
 import io.jmix.flowui.sys.registration.ComponentRegistrationBuilder;
-import io.jmix.fullcalendar.FullCalendarConfiguration;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.loader.FullCalendarLoader;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -38,7 +37,7 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, FlowuiConfiguration.class, FullCalendarConfiguration.class})
+@JmixModule(dependsOn = {CoreConfiguration.class, FlowuiConfiguration.class})
 public class FullCalendarFlowuiConfiguration {
 
     @Bean("fcalen_UiActions")

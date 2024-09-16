@@ -15,6 +15,8 @@
  */
 
 @NonNullApi
-package io.jmix.fullcalendar;
+@Internal
+package io.jmix.fullcalendarflowui.converter;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

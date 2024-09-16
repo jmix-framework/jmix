@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendar;
+@NonNullApi
+package io.jmix.fullcalendarflowui.datatype;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.annotation.JmixModule;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-@ComponentScan
-@JmixModule(dependsOn = CoreConfiguration.class)
-public class FullCalendarConfiguration {
-}
+import org.springframework.lang.NonNullApi;

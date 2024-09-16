@@ -18,7 +18,7 @@ package io.jmix.fullcalendarflowui.component.serialization;
 
 import elemental.json.JsonObject;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.FullCalendarUtils;
 import io.jmix.fullcalendarflowui.component.contextmenu.event.DayCell;

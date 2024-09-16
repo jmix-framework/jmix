@@ -19,8 +19,8 @@ package io.jmix.fullcalendarflowui.component.serialization;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import io.jmix.fullcalendar.DayOfWeek;
-import io.jmix.fullcalendar.DaysOfWeek;
+import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
+import io.jmix.fullcalendarflowui.component.model.DaysOfWeek;
 
 import java.io.IOException;
 

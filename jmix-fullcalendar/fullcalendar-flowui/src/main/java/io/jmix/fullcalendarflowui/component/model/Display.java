@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendar;
+package io.jmix.fullcalendarflowui.component.model;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 import jakarta.annotation.Nullable;

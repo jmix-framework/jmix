@@ -16,8 +16,8 @@
 
 package io.jmix.fullcalendarflowui.component.data;
 
-import io.jmix.fullcalendar.DaysOfWeek;
-import io.jmix.fullcalendar.Display;
+import io.jmix.fullcalendarflowui.component.model.DaysOfWeek;
+import io.jmix.fullcalendarflowui.component.model.Display;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;

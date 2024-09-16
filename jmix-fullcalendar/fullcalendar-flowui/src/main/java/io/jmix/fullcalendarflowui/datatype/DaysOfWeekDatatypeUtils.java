@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendar.datatype;
+package io.jmix.fullcalendarflowui.datatype;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 
 import java.util.ArrayList;
 import java.util.Collection;

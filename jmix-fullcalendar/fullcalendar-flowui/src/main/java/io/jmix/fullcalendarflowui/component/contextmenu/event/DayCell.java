@@ -1,6 +1,6 @@
 package io.jmix.fullcalendarflowui.component.contextmenu.event;
 
-import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 

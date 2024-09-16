@@ -1,7 +1,6 @@
 package io.jmix.fullcalendarflowui.component.model;
 
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import org.springframework.lang.Nullable;
 

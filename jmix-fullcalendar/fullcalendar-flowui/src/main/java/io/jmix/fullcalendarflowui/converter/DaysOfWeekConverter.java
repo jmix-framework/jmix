@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.fullcalendar.converter;
+package io.jmix.fullcalendarflowui.converter;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import io.jmix.fullcalendar.DayOfWeek;
-import io.jmix.fullcalendar.DaysOfWeek;
+import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
+import io.jmix.fullcalendarflowui.component.model.DaysOfWeek;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import org.springframework.lang.Nullable;

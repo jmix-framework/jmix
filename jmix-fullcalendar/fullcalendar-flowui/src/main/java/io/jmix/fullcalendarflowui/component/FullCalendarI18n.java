@@ -17,7 +17,7 @@
 package io.jmix.fullcalendarflowui.component;
 
 import com.vaadin.flow.component.UI;
-import io.jmix.fullcalendar.DayOfWeek;
+import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 import org.springframework.lang.Nullable;
 

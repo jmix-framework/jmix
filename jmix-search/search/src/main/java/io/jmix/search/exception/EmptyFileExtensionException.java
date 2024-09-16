@@ -16,13 +16,18 @@
 
 package io.jmix.search.exception;
 
-import org.apache.commons.io.FilenameUtils;
+import java.util.List;
 
-public class UnsupportedFileFormatException extends Exception {
+/**
+ * An exception that is thrown when a user added some file without any extension.
+ * In this case any parser for this file couldn't be resolved.
+ */
+public class EmptyFileExtensionException extends ParserResolvingException {
 
-    public static final String MESSAGE = "The file the-file-with-not-supported-extension.sql with 'sql' extension is not supported. Only following formats are supported: pdf, doc, docx, xls, xlsx, odt, ods, rtf, txt.";
+    private static final String MESSAGE = "Extension of the file %s is empty. " +
+            "Only following file extensions are supported: %s.";
 
-    public UnsupportedFileFormatException(String fileName) {
-        super(String.format(MESSAGE, fileName, FilenameUtils.getExtension(fileName)));
+    public EmptyFileExtensionException(String fileName, List<String> supportedExtensions) {
+        super(String.format(MESSAGE, fileName, getSupportedExtensionsString(supportedExtensions)));
     }
 }

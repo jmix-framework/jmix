@@ -29,7 +29,7 @@ import java.util.Set;
 public interface UserManager {
 
     /**
-     * Changes the password for the specific user. The changes will be saved to the database.
+     * Changes the password for the specific user and saves changes to the database immediately.
      *
      * @param userName    user login
      * @param oldPassword non-encoded old user password
@@ -60,7 +60,7 @@ public interface UserManager {
                                boolean saveChanges) throws PasswordNotMatchException;
 
     /**
-     * Changes the password for the passed users. The changes will be saved to the database.
+     * Generates new passwords for passed users and saves changes to the database immediately.
      *
      * @param users users which need reset passwords
      * @return map which contains new passwords for the passed users
@@ -70,7 +70,7 @@ public interface UserManager {
     }
 
     /**
-     * Changes the password for the passed users.
+     * Generates new passwords for passed users.
      *
      * @param users       users which need reset passwords
      * @param saveChanges whether to save changes to the database

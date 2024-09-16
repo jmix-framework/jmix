@@ -2947,6 +2947,7 @@
         <xs:sequence minOccurs="0">
             <xs:element name="aggregation" type="gridAggregationType"/>
             <xs:group ref="renderers"/>
+            <xs:element name="fragmentRenderer" type="fragmentComponent"/>
         </xs:sequence>
 
         <xs:attribute name="key" type="xs:string"/>
@@ -3273,6 +3274,7 @@
                     <xs:element name="itemsQuery" type="multiSelectComboBoxItemsQueryType"/>
                     <xs:element name="tooltip" type="tooltipElement"/>
                     <xs:element name="validators" type="collectionValidatorType"/>
+                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -3328,6 +3330,7 @@
                 <xs:sequence>
                     <xs:element name="itemsQuery" minOccurs="0" type="entityComboBoxItemsQueryType"/>
                     <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="metaClass" type="xs:string"/>
@@ -3446,9 +3449,10 @@
     <xs:complexType name="radioButtonGroupComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
+                <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                </xs:sequence>
 
                 <xs:attribute name="themeNames" type="radioButtonGroupThemeNames"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
@@ -3473,9 +3477,10 @@
     <xs:complexType name="checkboxGroupComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
+                <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                </xs:sequence>
 
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
@@ -3500,9 +3505,10 @@
     <xs:complexType name="listBoxComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
+                <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                </xs:sequence>
 
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
@@ -3520,9 +3526,10 @@
     <xs:complexType name="multiSelectListBoxComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
+                <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                </xs:choice>
+                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                </xs:sequence>
 
                 <xs:attribute name="itemsContainer" type="xs:string"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
@@ -3789,6 +3796,7 @@
                 <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
                     <xs:element name="prefix" type="prefixOrSuffixComponent"/>
+                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="autofocus" type="xs:boolean"/>
@@ -4110,6 +4118,9 @@
     <xs:complexType name="virtualListComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                </xs:choice>
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasEnabled"/>

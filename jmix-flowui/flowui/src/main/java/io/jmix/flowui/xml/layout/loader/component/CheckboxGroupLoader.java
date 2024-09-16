@@ -45,6 +45,8 @@ public class CheckboxGroupLoader extends AbstractComponentLoader<JmixCheckboxGro
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
         componentLoader().loadAriaLabel(resultComponent, element);
+
+        componentLoader().loadFragmentRenderer(element, resultComponent::setRenderer);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

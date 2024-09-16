@@ -48,7 +48,6 @@ import io.jmix.flowui.data.aggregation.AggregationStrategy;
 import io.jmix.flowui.data.provider.EmptyValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasActions;
-import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.model.*;
@@ -401,17 +400,24 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
     }
 
     @SuppressWarnings("rawtypes")
-    protected Optional<Renderer> loadRenderer(Element columnElement, @Nullable MetaPropertyPath metaPropertyPath) {
-        if (columnElement.elements().isEmpty()
-                || metaPropertyPath == null) {
+    protected Optional<? extends Renderer> loadRenderer(Element columnElement,
+                                                        @Nullable MetaPropertyPath metaPropertyPath) {
+        if (columnElement.elements().isEmpty()) {
             return Optional.empty();
         }
 
-        Map<String, RendererProvider> providers = applicationContext.getBeansOfType(RendererProvider.class);
-        for (RendererProvider<?> provider : providers.values()) {
-            for (Element element : columnElement.elements()) {
-                if (provider.supports(element.getName())) {
-                    return Optional.of(provider.createRenderer(element, metaPropertyPath, context));
+        Optional<? extends Renderer> fragmentRenderer = componentLoader().loadFragmentRenderer(columnElement);
+        if (fragmentRenderer.isPresent()) {
+            return fragmentRenderer;
+
+        } else if (metaPropertyPath != null) {
+            Map<String, RendererProvider> providers = applicationContext.getBeansOfType(RendererProvider.class);
+
+            for (RendererProvider<?> provider : providers.values()) {
+                for (Element element : columnElement.elements()) {
+                    if (provider.supports(element.getName())) {
+                        return Optional.of(provider.createRenderer(element, metaPropertyPath, context));
+                    }
                 }
             }
         }

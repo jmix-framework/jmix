@@ -37,10 +37,10 @@
                             </xs:complexType>
                         </xs:element>
 
-                        <xs:element name="cols" minOccurs="0">
+                        <xs:element name="columns" minOccurs="0">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element name="col" minOccurs="0" maxOccurs="unbounded">
+                                    <xs:element name="column" minOccurs="0" maxOccurs="unbounded">
                                         <xs:complexType>
                                             <xs:attribute name="value" type="layout:resourceString"/>
                                         </xs:complexType>
@@ -171,15 +171,15 @@
 
                     <xs:attribute name="dataContainer" type="xs:string"/>
                     <xs:attribute name="renderer" type="renderer"/>
-                    <xs:attribute name="colOrder" type="colOrder"/>
-                    <xs:attribute name="rowOrder" type="rowOrder"/>
+                    <xs:attribute name="columnOrder" type="order"/>
+                    <xs:attribute name="rowOrder" type="order"/>
                     <xs:attribute name="menuLimit" type="xs:integer"/>
                     <xs:attribute name="autoSortUnusedProperties" type="xs:boolean"/>
                     <xs:attribute name="unusedPropertiesVertical" type="xs:string"/>
                     <xs:attribute name="emptyDataMessage" type="layout:resourceString"/>
                     <xs:attribute name="showUI" type="xs:boolean"/>
                     <xs:attribute name="showRowTotals" type="xs:boolean"/>
-                    <xs:attribute name="showColTotals" type="xs:boolean"/>
+                    <xs:attribute name="showColumnTotals" type="xs:boolean"/>
 
                     <xs:attributeGroup ref="layout:hasClassNames"/>
                     <xs:attributeGroup ref="layout:hasEnabled"/>
@@ -230,15 +230,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="colOrder">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="KEYS_ASCENDING"/>
-            <xs:enumeration value="VALUES_ASCENDING"/>
-            <xs:enumeration value="VALUES_DESCENDING"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="rowOrder">
+    <xs:simpleType name="order">
         <xs:restriction base="xs:string">
             <xs:enumeration value="KEYS_ASCENDING"/>
             <xs:enumeration value="VALUES_ASCENDING"/>

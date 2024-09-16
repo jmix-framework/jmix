@@ -201,7 +201,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
      * @return a collection of attribute names to use as cols
      */
     public List<String> getColumns() {
-        return options.getCols();
+        return options.getColumns();
     }
 
     /**
@@ -210,7 +210,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
      * @param columns a collection of attribute names to use as cols
      */
     public void setColumns(List<String> columns) {
-        options.setCols(columns);
+        options.setColumns(columns);
     }
 
     /**
@@ -219,7 +219,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
      * @param columns an array of attribute names to add
      */
     public void addColumns(String... columns) {
-        options.addCols(columns);
+        options.addColumns(columns);
     }
 
     /**
@@ -425,8 +425,8 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
     /**
      * @return the order in which column data is provided to the renderer
      */
-    public Order getColOrder() {
-        return options.getColOrder();
+    public Order getColumnOrder() {
+        return options.getColumnOrder();
     }
 
     /**
@@ -434,10 +434,10 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
      * <p>
      * Ordering by value orders by column total.
      *
-     * @param colOrder the order in which column data is provided to the renderer
+     * @param columnOrder the order in which column data is provided to the renderer
      */
-    public void setColOrder(Order colOrder) {
-        options.setColOrder(colOrder);
+    public void setColumnOrder(Order columnOrder) {
+        options.setColumnOrder(columnOrder);
     }
 
     /**
@@ -744,24 +744,24 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
     /**
      * @return {@code true} if row totals are shown, {@code false} if not.
      */
-    public Boolean isRowTotalsShown() {
+    public Boolean isShowRowTotals() {
         return options.isShowRowTotals();
     }
 
     /**
      * Shows an additional column of totals for each col
      *
-     * @param showColTotals {@code true} if col totals are shown, {@code false} if not.
+     * @param showColumnTotals {@code true} if col totals are shown, {@code false} if not.
      */
-    public void setShowColTotals(Boolean showColTotals) {
-        options.setShowColTotals(showColTotals);
+    public void setShowColumnTotals(Boolean showColumnTotals) {
+        options.setShowColumnTotals(showColumnTotals);
     }
 
     /**
      * @return {@code true} if col totals are shown, {@code false} if not.
      */
-    public Boolean isColTotalsShown() {
-        return options.isShowColTotals();
+    public Boolean isShowColumnTotals() {
+        return options.isShowColumnTotals();
     }
 
     /**
@@ -868,11 +868,11 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
 
     private void sendRefreshEvent(PivotTableRefreshEventParams refreshParams) {
         PivotTableRefreshEvent refreshEvent = new PivotTableRefreshEvent(this,
-                refreshParams.getRows(), refreshParams.getCols(),
+                refreshParams.getRows(), refreshParams.getColumns(),
                 refreshParams.getRenderer(),
                 refreshParams.getAggregationMode(), refreshParams.getAggregationProperties(),
                 refreshParams.getInclusions(), refreshParams.getExclusions(),
-                refreshParams.getColOrder(), refreshParams.getRowOrder());
+                refreshParams.getColumnOrder(), refreshParams.getRowOrder());
 
         fireEvent(refreshEvent);
     }
@@ -881,7 +881,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         options.setChangedFromClient(true);
 
         options.setRows(params.getRows());
-        options.setCols(params.getCols());
+        options.setColumns(params.getColumns());
         if (options.getRenderers() != null) {
             options.getRenderers().setSelectedRenderer(params.getRenderer());
         } else {
@@ -901,7 +901,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         options.setAggregationProperties(params.getAggregationProperties());
         options.setInclusions(params.getInclusions());
         options.setExclusions(params.getExclusions());
-        options.setColOrder(params.getColOrder());
+        options.setColumnOrder(params.getColumnOrder());
         options.setRowOrder(params.getRowOrder());
 
         options.setChangedFromClient(false);

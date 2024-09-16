@@ -23,7 +23,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
 
     protected Map<String, String> properties;
     protected List<String> rows;
-    protected List<String> cols;
+    protected List<String> columns;
     protected Aggregation aggregation;
     protected Renderer renderer;
     protected List<String> aggregationProperties;
@@ -32,7 +32,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     protected List<String> hiddenProperties;
     protected List<String> hiddenFromAggregations;
     protected List<String> hiddenFromDragDrop;
-    protected Order colOrder;
+    protected Order columnOrder;
     protected Order rowOrder;
     protected Integer menuLimit;
     protected Boolean autoSortUnusedProperties;
@@ -45,8 +45,8 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     protected DerivedProperties derivedProperties;
     protected String localeCode;
     protected Boolean showUI;
-    protected Boolean rowTotals;
-    protected Boolean colTotals;
+    protected Boolean showRowTotals;
+    protected Boolean showColumnTotals;
     protected String emptyDataMessage;
     protected Map<String, Object> localizedStrings;
     protected String nativeJson;
@@ -137,31 +137,31 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     /**
      * @return a collection of attribute names to use as columns
      */
-    public List<String> getCols() {
-        return cols;
+    public List<String> getColumns() {
+        return columns;
     }
 
     /**
      * Sets a collection of attribute names to use as columns.
      *
-     * @param cols a collection of attribute names to use as columns
+     * @param columns a collection of attribute names to use as columns
      */
-    public void setCols(List<String> cols) {
-        this.cols = cols;
+    public void setColumns(List<String> columns) {
+        this.columns = columns;
         markAsChanged();
     }
 
     /**
      * Adds an array of attribute names to use as columns.
      *
-     * @param cols an array of attribute names to add
+     * @param columns an array of attribute names to add
      */
-    public void addCols(String... cols) {
-        if (cols != null) {
-            if (this.cols == null) {
-                this.cols = new ArrayList<>();
+    public void addColumns(String... columns) {
+        if (columns != null) {
+            if (this.columns == null) {
+                this.columns = new ArrayList<>();
             }
-            this.cols.addAll(Arrays.asList(cols));
+            this.columns.addAll(Arrays.asList(columns));
             markAsChanged();
         }
     }
@@ -401,8 +401,8 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     /**
      * @return the order in which column data is provided to the renderer
      */
-    public Order getColOrder() {
-        return colOrder;
+    public Order getColumnOrder() {
+        return columnOrder;
     }
 
     /**
@@ -410,10 +410,10 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * <p>
      * Ordering by value orders by column total.
      *
-     * @param colOrder the order in which column data is provided to the renderer
+     * @param columnOrder the order in which column data is provided to the renderer
      */
-    public void setColOrder(Order colOrder) {
-        this.colOrder = colOrder;
+    public void setColumnOrder(Order columnOrder) {
+        this.columnOrder = columnOrder;
         markAsChanged();
     }
 
@@ -744,33 +744,33 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
      * @return whether to show row totals
      */
     public Boolean isShowRowTotals() {
-        return rowTotals;
+        return showRowTotals;
     }
 
     /**
      * Shows or hides row totals. {@code true} by default.
      *
-     * @param rowTotals row totals option
+     * @param showRowTotals row totals option
      */
-    public void setShowRowTotals(Boolean rowTotals) {
-        this.rowTotals = rowTotals;
+    public void setShowRowTotals(Boolean showRowTotals) {
+        this.showRowTotals = showRowTotals;
         markAsChanged();
     }
 
     /**
      * @return whether to show col totals is shown
      */
-    public Boolean isShowColTotals() {
-        return colTotals;
+    public Boolean isShowColumnTotals() {
+        return showColumnTotals;
     }
 
     /**
      * Shows or hides col totals. {@code true} by default.
      *
-     * @param colTotals col total options
+     * @param showColumnTotals column total options
      */
-    public void setShowColTotals(Boolean colTotals) {
-        this.colTotals = colTotals;
+    public void setShowColumnTotals(Boolean showColumnTotals) {
+        this.showColumnTotals = showColumnTotals;
         markAsChanged();
     }
 

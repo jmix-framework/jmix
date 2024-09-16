@@ -142,14 +142,14 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         const customEvent = new CustomEvent('jmix-pivottable:refresh', {
             detail: {
                 rows: pivotState.rows,
-                cols: pivotState.cols,
+                columns: pivotState.cols,
                 renderer: renderer,
                 aggregationMode: aggregation,
                 aggregationProperties: pivotState.vals,
                 inclusions: pivotState.inclusions,
                 exclusions: pivotState.exclusions,
                 rowOrder: pivotState.rowOrder,
-                colOrder: pivotState.colOrder
+                columnOrder: pivotState.colOrder
             }
         });
         this.dispatchEvent(customEvent);
@@ -225,8 +225,8 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
             })(this),
             showUI: options.showUI,
             rows: options.rows,
-            cols: options.cols,
-            colOrder: options.colOrder,
+            cols: options.columns,
+            colOrder: options.columnOrder,
             rowOrder: options.rowOrder,
             aggregatorName: aggregationOptions.aggregatorName,
             aggregator: aggregationOptions.aggregator,
@@ -247,8 +247,8 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                             pivotTable._cellClickHandler(value, filters, pivotData);
                         };
                     })(this),
-                    rowTotals: options.rowTotals ? options.rowTotals : true,
-                    colTotals: options.colTotals ? options.colTotals : true
+                    rowTotals: options.showRowTotals ? options.showRowTotals : true,
+                    colTotals: options.showColumnTotals ? options.showColumnTotals : true
                 },
                 heatmap : {
                     colorScaleGenerator : this._getColorScaleGenerator(options.rendererOptions)

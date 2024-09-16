@@ -98,7 +98,7 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
         }
 
         component.setRowOrder(Order.fromId(settings.getRowOrder()));
-        component.setColOrder(Order.fromId(settings.getColOrder()));
+        component.setColumnOrder(Order.fromId(settings.getColOrder()));
     }
 
     @Nullable
@@ -182,8 +182,8 @@ public class PivotTableSettingsBinder implements ComponentSettingsBinder<PivotTa
             changed = true;
         }
 
-        if (component.getColOrder() != Order.fromId(settings.getColOrder())) {
-            settings.setColOrder(component.getColOrder().getId());
+        if (component.getColumnOrder() != Order.fromId(settings.getColOrder())) {
+            settings.setColOrder(component.getColumnOrder().getId());
             changed = true;
         }
 

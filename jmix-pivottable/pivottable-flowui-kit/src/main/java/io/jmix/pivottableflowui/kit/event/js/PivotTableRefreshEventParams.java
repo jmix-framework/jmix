@@ -29,13 +29,13 @@ import java.util.Map;
 public class PivotTableRefreshEventParams {
 
     private List<String> rows;
-    private List<String> cols;
+    private List<String> columns;
     private Renderer renderer;
     private AggregationMode aggregationMode;
     private List<String> aggregationProperties;
     private Map<String, List<String>> inclusions;
     private Map<String, List<String>> exclusions;
-    private Order colOrder;
+    private Order columnOrder;
     private Order rowOrder;
 
     public List<String> getRows() {
@@ -46,12 +46,12 @@ public class PivotTableRefreshEventParams {
         this.rows = rows;
     }
 
-    public List<String> getCols() {
-        return cols;
+    public List<String> getColumns() {
+        return columns;
     }
 
-    public void setCols(List<String> cols) {
-        this.cols = cols;
+    public void setColumns(List<String> columns) {
+        this.columns = columns;
     }
 
     public Renderer getRenderer() {
@@ -94,12 +94,12 @@ public class PivotTableRefreshEventParams {
         this.exclusions = exclusions;
     }
 
-    public Order getColOrder() {
-        return colOrder;
+    public Order getColumnOrder() {
+        return columnOrder;
     }
 
-    public void setColOrder(Order colOrder) {
-        this.colOrder = colOrder;
+    public void setColumnOrder(Order columnOrder) {
+        this.columnOrder = columnOrder;
     }
 
     public Order getRowOrder() {

@@ -127,7 +127,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
         loadResourceString(element, "emptyDataMessage", context.getMessageGroup(), resultComponent::setEmptyDataMessage);
         loadEnum(element, Renderer.class, "renderer", resultComponent::setRenderer);
         loadEnum(element, Order.class, "rowOrder", resultComponent::setRowOrder);
-        loadEnum(element, Order.class, "colOrder", resultComponent::setColOrder);
+        loadEnum(element, Order.class, "colOrder", resultComponent::setColumnOrder);
         loadInteger(element, "menuLimit", resultComponent::setMenuLimit);
         loadString(element, "unusedPropertiesVertical",
                 value -> resultComponent.setUnusedPropertiesVertical(UnusedPropertiesVertical.valueOf(value)));
@@ -136,7 +136,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
         loadBoolean(element, "autoSortUnusedProperties", resultComponent::setAutoSortUnusedProperties);
         loadBoolean(element, "showUI", resultComponent::setShowUI);
         loadBoolean(element, "showRowTotals", resultComponent::setShowRowTotals);
-        loadBoolean(element, "showColTotals", resultComponent::setShowColTotals);
+        loadBoolean(element, "showColTotals", resultComponent::setShowColumnTotals);
     }
 
     protected void loadProperties(Element element) {

@@ -23,7 +23,7 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 public interface StudioFullCalendarElementsGroups {
 
     @StudioElementsGroup(
-            name = "Data providers",
+            name = "Data Providers",
             xmlElement = "dataProviders",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -34,15 +34,15 @@ public interface StudioFullCalendarElementsGroups {
     void dataProviders();
 
     @StudioElementsGroup(
-            name = "Custom views",
-            xmlElement = "customViews",
+            name = "Custom Display Modes",
+            xmlElement = "customDisplayModes",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
-            elementClassFqn = "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarView",
+            elementClassFqn = "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarDisplayMode",
             target = "io.jmix.fullcalendarflowui.component.FullCalendar",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg"
     )
-    void customViews();
+    void customDisplayModes();
 
     @StudioElementsGroup(
             name = "Properties",
@@ -51,25 +51,25 @@ public interface StudioFullCalendarElementsGroups {
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.kit.meta.group.StudioFullCalendarProperties",
             target = {
-                    "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarView",
-                    "io.jmix.fullcalendarflowui.kit.component.model.DayGridDayViewProperties",
-                    "io.jmix.fullcalendarflowui.kit.component.model.DayGridWeekViewProperties",
-                    "io.jmix.fullcalendarflowui.kit.component.model.DayGridMonthViewProperties",
-                    "io.jmix.fullcalendarflowui.kit.component.model.DayGridYearViewProperties",
-                    "io.jmix.fullcalendarflowui.kit.component.model.ListDayViewProperties",
-                    "io.jmix.fullcalendarflowui.kit.component.model.ListWeekViewProperties",
-                    "io.jmix.fullcalendarflowui.kit.component.model.ListMonthViewProperties",
-                    "io.jmix.fullcalendarflowui.kit.component.model.ListYearViewProperties",
-                    "io.jmix.fullcalendarflowui.kit.component.model.TimeGridDayViewProperties",
-                    "io.jmix.fullcalendarflowui.kit.component.model.TimeGridWeekViewProperties",
-                    "io.jmix.fullcalendarflowui.kit.component.model.MultiMonthYearViewProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarDisplayMode",
+                    "io.jmix.fullcalendarflowui.kit.component.model.DayGridDayProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.DayGridWeekProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.DayGridMonthProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.DayGridYearProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.ListDayProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.ListWeekProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.ListMonthProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.ListYearProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.TimeGridDayProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.TimeGridWeekProperties",
+                    "io.jmix.fullcalendarflowui.kit.component.model.MultiMonthYearProperties",
             },
             icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg"
     )
     void properties();
 
     @StudioElementsGroup(
-            name = "Business hours",
+            name = "Business Hours",
             xmlElement = "businessHours",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
@@ -80,7 +80,7 @@ public interface StudioFullCalendarElementsGroups {
     void businessHours();
 
     @StudioElementsGroup(
-            name = "Hidden days",
+            name = "Hidden Days",
             xmlElement = "hiddenDays",
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",

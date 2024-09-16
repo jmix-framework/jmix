@@ -32,7 +32,7 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
 
     protected final LocalDateTime dateTime;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     protected final List<CalendarEvent> visibleCalendarEvents;
 
@@ -47,11 +47,11 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
                               List<CalendarEvent> hiddenCalendarEvents,
                               List<DataProviderContext> dataProviderContexts,
                               MouseEventDetails mouseEventDetails,
-                              ViewInfo viewInfo) {
+                              DisplayModeInfo displayModeInfo) {
         super(fullCalendar, fromClient, mouseEventDetails);
         this.allDay = allDay;
         this.dateTime = dateTime;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
         this.visibleCalendarEvents = visibleCalendarEvents;
         this.hiddenCalendarEvents = hiddenCalendarEvents;
         this.dataProviderContexts = dataProviderContexts;
@@ -104,10 +104,10 @@ public class MoreLinkClickEvent extends AbstractClickEvent {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 
     /**

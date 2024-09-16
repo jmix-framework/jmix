@@ -8,7 +8,7 @@ import io.jmix.fullcalendarflowui.component.FullCalendar;
 import java.io.Serializable;
 
 /**
- * Interface to be implemented by content menu that works with {@link FullCalendar}.
+ * Interface to be implemented by context menu that works with {@link FullCalendar}.
  */
 public interface HasFullCalendarMenuItems extends Serializable {
 

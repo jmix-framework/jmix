@@ -9,14 +9,14 @@ public class MoreLinkClassNamesContext extends AbstractFullCalendarContext {
 
     protected final Integer eventsCount;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public MoreLinkClassNamesContext(FullCalendar fullCalendar,
                                      Integer eventsCount,
-                                     ViewInfo viewInfo) {
+                                     DisplayModeInfo displayModeInfo) {
         super(fullCalendar);
         this.eventsCount = eventsCount;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
     }
 
     /**
@@ -27,9 +27,9 @@ public class MoreLinkClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 }

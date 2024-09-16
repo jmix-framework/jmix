@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 
 /**
  * INTERNAL.
+ * <p>
  * Data provider manager that works with {@link ItemsCalendarDataProvider}.
  */
 @Internal

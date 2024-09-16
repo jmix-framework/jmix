@@ -24,8 +24,8 @@ import elemental.json.impl.JreJsonFactory;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayMode;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 import jakarta.annotation.Nullable;
 import org.dom4j.Element;
 
@@ -49,7 +49,7 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
             "SATURDAY", 6);
     private static final JsonFactory jsonFactory = new JreJsonFactory();
 
-    protected StudioViewPropertiesLoader viewPropertiesLoader;
+    protected StudioDisplayModePropertiesLoader displayModePropertiesLoader;
 
     @Override
     public boolean isSupported(Element element) {
@@ -68,9 +68,9 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
         loadSizeAttributes(resultComponent, element);
         loadClassNames(resultComponent, element);
 
-        viewProperties().loadCalendarViewProperties(element, resultComponent);
-        viewProperties().loadCustomCalendarViews(element, resultComponent);
-        loadInitialView(element, resultComponent);
+        displayModeProperties().loadCalendarDisplayModeProperties(element, resultComponent);
+        displayModeProperties().loadCustomCalendarDisplayModes(element, resultComponent);
+        loadInitialDisplayMode(element, resultComponent);
 
         loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
@@ -80,7 +80,7 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
         loadInteger(element, "dayMaxEvents", resultComponent::setDayMaxEvents);
         loadInteger(element, "eventMaxStack", resultComponent::setEventMaxStack);
 
-        loadMoreLinkView(element, resultComponent::setMoreLinkCalendarView);
+        loadMoreLinkDisplayMode(element, resultComponent::setMoreLinkCalendarDisplayMode);
         loadStringList(element, "moreLinkClassNames", resultComponent::setMoreLinkClassNames);
 
         loadBoolean(element, "eventStartEditable", resultComponent::setEventStartEditable);
@@ -151,15 +151,15 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
                 });
     }
 
-    protected void loadMoreLinkView(Element element, Consumer<CalendarView> setter) {
-        loadString(element, "moreLinkView")
+    protected void loadMoreLinkDisplayMode(Element element, Consumer<CalendarDisplayMode> setter) {
+        loadString(element, "moreLinkDisplayMode")
                 .ifPresent(t -> {
-                    List<Enum<?>> calendarViews = List.of(CalendarViewType.values());
+                    List<Enum<?>> displayModes = List.of(CalendarDisplayModes.values());
 
-                    calendarViews.stream().filter(e -> e.name().contains(t))
+                    displayModes.stream().filter(e -> e.name().contains(t))
                             .findFirst()
                             .ifPresentOrElse(
-                                    e -> setter.accept((CalendarView) e),
+                                    e -> setter.accept((CalendarDisplayMode) e),
                                     () -> setter.accept(() -> t));
                 });
     }
@@ -169,10 +169,10 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
                 .ifPresent(names -> setter.accept(split(names)));
     }
 
-    protected void loadInitialView(Element element, JmixFullCalendar resultComponent) {
-        loadString(element, "initialView", (view) -> {
-            CalendarView calendarView = viewProperties().getView(view, resultComponent);
-            resultComponent.setInitialCalendarView(calendarView);
+    protected void loadInitialDisplayMode(Element element, JmixFullCalendar resultComponent) {
+        loadString(element, "initialDisplayMode", (displayModeId) -> {
+            CalendarDisplayMode displayMode = displayModeProperties().getDisplayMode(displayModeId, resultComponent);
+            resultComponent.setInitialCalendarDisplayMode(displayMode);
         });
     }
 
@@ -276,10 +276,10 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
         return NoOpBusinessHours.of(startTime, endTime, businessDays.toArray(new Integer[0]));
     }
 
-    protected StudioViewPropertiesLoader viewProperties() {
-        if (viewPropertiesLoader == null) {
-            viewPropertiesLoader = new StudioViewPropertiesLoader();
+    protected StudioDisplayModePropertiesLoader displayModeProperties() {
+        if (displayModePropertiesLoader == null) {
+            displayModePropertiesLoader = new StudioDisplayModePropertiesLoader();
         }
-        return viewPropertiesLoader;
+        return displayModePropertiesLoader;
     }
 }

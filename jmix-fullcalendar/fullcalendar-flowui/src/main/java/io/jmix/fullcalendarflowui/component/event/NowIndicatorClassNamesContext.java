@@ -17,13 +17,13 @@
 package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 
 import java.time.LocalDateTime;
 
 /**
- * The context for generating class names for "now" indicator in time views: {@link CalendarViewType#TIME_GRID_DAY}
- * and {@link CalendarViewType#TIME_GRID_WEEK}.
+ * The context for generating class names for "now" indicator in timed display modes:
+ * {@link CalendarDisplayModes#TIME_GRID_DAY} and {@link CalendarDisplayModes#TIME_GRID_WEEK}.
  */
 public class NowIndicatorClassNamesContext extends AbstractFullCalendarContext {
 
@@ -31,16 +31,16 @@ public class NowIndicatorClassNamesContext extends AbstractFullCalendarContext {
 
     protected final LocalDateTime dateTime;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public NowIndicatorClassNamesContext(FullCalendar fullCalendar,
                                          boolean isAxis,
                                          LocalDateTime dateTime,
-                                         ViewInfo viewInfo) {
+                                         DisplayModeInfo displayModeInfo) {
         super(fullCalendar);
         this.isAxis = isAxis;
         this.dateTime = dateTime;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
     }
 
     /**
@@ -64,9 +64,9 @@ public class NowIndicatorClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 }

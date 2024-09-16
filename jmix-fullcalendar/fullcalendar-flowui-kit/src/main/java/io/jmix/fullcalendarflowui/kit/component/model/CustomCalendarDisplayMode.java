@@ -22,55 +22,56 @@ import jakarta.annotation.Nullable;
 import java.time.LocalDate;
 
 /**
- * Custom calendar view properties. It enables to create new view with custom date range and use it along with other
- * views. If date range is not specified it can be managed by
+ * Custom calendar display mode properties. It enables to create new display mode with custom date range and use it
+ * along with other display modes. If a date range is not specified it can be managed by
  * {@link JmixFullCalendar#setVisibleRange(LocalDate, LocalDate)}.
  */
-public class CustomCalendarView extends AbstractCalendarViewProperties {
+public class CustomCalendarDisplayMode extends AbstractCalendarDisplayModeProperties {
 
-    protected CalendarView calendarView;
+    protected CalendarDisplayMode displayMode;
 
-    protected CalendarView type;
+    protected CalendarDisplayMode baseDisplayMode;
 
     protected CalendarDuration duration;
 
     protected Integer dayCount;
 
     /**
-     * Creates new instance of custom views with the specified view ID. The type of custom view will be
-     * {@link GenericCalendarViewType#DAY_GRID}.
+     * Creates new instance of custom display mode with the specified ID. The created custom display mode will be
+     * based on {@link GenericCalendarDisplayModes#DAY_GRID}.
      *
      * @param id ID to pass
      */
-    public CustomCalendarView(String id) {
+    public CustomCalendarDisplayMode(String id) {
         this(id, null);
     }
 
     /**
-     * Creates new instance of custom views with the specified view ID and view type: {@link GenericCalendarViewType}.
+     * Creates new instance of custom display mode with the specified ID and base display mode:
+     * {@link GenericCalendarDisplayModes}.
      *
      * @param id   ID to pass
-     * @param type the type of custom view
+     * @param baseDisplayMode the display mode to base on
      */
-    public CustomCalendarView(String id, @Nullable CalendarView type) {
+    public CustomCalendarDisplayMode(String id, @Nullable CalendarDisplayMode baseDisplayMode) {
         super(id);
 
-        this.calendarView = () -> id;
-        this.type = type;
+        this.displayMode = () -> id;
+        this.baseDisplayMode = baseDisplayMode;
     }
 
     /**
-     * @return calendar view object from the view ID
+     * @return calendar display mode object from the ID
      */
-    public CalendarView getCalendarView() {
-        return calendarView;
+    public CalendarDisplayMode getDisplayMode() {
+        return displayMode;
     }
 
     /**
-     * @return the type of custom calendar view
+     * @return the type of custom calendar display mode
      */
-    public CalendarView getType() {
-        return type == null ? GenericCalendarViewType.DAY_GRID : type;
+    public CalendarDisplayMode getBaseDisplayMode() {
+        return baseDisplayMode == null ? GenericCalendarDisplayModes.DAY_GRID : baseDisplayMode;
     }
 
     @Nullable
@@ -79,7 +80,7 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
     }
 
     /**
-     * Sets the exact duration of a custom view.
+     * Sets the exact duration of a custom display mode.
      * <p>
      * Takes precedence over the {@link #setDayCount(Integer)}.
      *
@@ -90,12 +91,12 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
     }
 
     /**
-     * Sets the exact duration of a custom view. See {@link #setDuration(CalendarDuration)}.
+     * Sets the exact duration of a custom display mode. See {@link #setDuration(CalendarDuration)}.
      *
      * @param duration the duration to set
-     * @return current instance of custom view
+     * @return current instance of custom display mode
      */
-    public CustomCalendarView withDuration(@Nullable CalendarDuration duration) {
+    public CustomCalendarDisplayMode withDuration(@Nullable CalendarDuration duration) {
         setDuration(duration);
         return this;
     }
@@ -106,7 +107,7 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
     }
 
     /**
-     * Sets the exact number of days displayed in a custom view, regardless of
+     * Sets the exact number of days displayed in a custom display mode, regardless of
      * {@link JmixFullCalendar#isWeekendsVisible()} or hidden days.
      *
      * @param dayCount day count to set
@@ -116,13 +117,13 @@ public class CustomCalendarView extends AbstractCalendarViewProperties {
     }
 
     /**
-     * Sets the exact number of days displayed in a custom view, regardless of
+     * Sets the exact number of days displayed in a custom display mode, regardless of
      * {@link JmixFullCalendar#isWeekendsVisible()} or hidden days. See {@link #setDayCount(Integer)}.
      *
      * @param dayCount day count to set
-     * @return current instance of custom view
+     * @return current instance of custom display mode
      */
-    public CustomCalendarView withDayCount(@Nullable Integer dayCount) {
+    public CustomCalendarDisplayMode withDayCount(@Nullable Integer dayCount) {
         this.dayCount = dayCount;
         return this;
     }

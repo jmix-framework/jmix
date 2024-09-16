@@ -9,7 +9,6 @@ import io.jmix.fullcalendarflowui.component.contextmenu.HasFullCalendarMenuItems
 
 /**
  * Menu item of context menu - {@link FullCalendarContextMenu}.
- *
  */
 public class FullCalendarMenuItem extends MenuItemBase<FullCalendarContextMenu, FullCalendarMenuItem, FullCalendarSubMenu> {
 
@@ -27,7 +26,7 @@ public class FullCalendarMenuItem extends MenuItemBase<FullCalendarContextMenu, 
      * Adds menu item click listener.
      *
      * @param clickListener click listener to add
-     * @return A registration object for removing an event listener added to menu item
+     * @return a registration object for removing an event listener added to menu item
      */
     public Registration addMenuItemClickListener(
             ComponentEventListener<FullCalendarClickContextMenuItemEvent> clickListener) {

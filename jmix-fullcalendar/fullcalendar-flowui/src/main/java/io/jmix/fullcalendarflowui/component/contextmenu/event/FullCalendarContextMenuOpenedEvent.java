@@ -23,7 +23,7 @@ public class FullCalendarContextMenuOpenedEvent extends ContextMenuBase.OpenedCh
     }
 
     /**
-     * @return a cell context that contains information about cell and event
+     * @return a cell context that contains information about the cell and its associated event
      */
     public FullCalendarCellContext getCellContext() {
         return cellContext;

@@ -9,7 +9,7 @@ import io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration;
 import java.util.List;
 
 /**
- * The event is fired when dragging stops and the event has moved to a different day/time cell.
+ * The event is fired when the dragging stops and the event has been moved to a different day or time slot.
  */
 public class EventDropEvent extends AbstractEventMoveEvent {
 
@@ -19,7 +19,7 @@ public class EventDropEvent extends AbstractEventMoveEvent {
 
     protected final CalendarDuration delta;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public EventDropEvent(FullCalendar fullCalendar, boolean fromClient,
                           CalendarEvent calendarEvent,
@@ -29,13 +29,13 @@ public class EventDropEvent extends AbstractEventMoveEvent {
                           OldValues oldValues,
                           CalendarDuration delta,
                           MouseEventDetails mouseEventDetails,
-                          ViewInfo viewInfo) {
+                          DisplayModeInfo displayModeInfo) {
         super(fullCalendar, fromClient, mouseEventDetails, relatedDataProviderContexts, relatedCalendarEvents,
                 oldValues);
 
         this.calendarEvent = calendarEvent;
         this.dataProvider = dataProvider;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
         this.delta = delta;
     }
 
@@ -50,8 +50,8 @@ public class EventDropEvent extends AbstractEventMoveEvent {
      * Returns all related calendar events even if they are from different data providers. To get related calendar
      * events by data provider, use {@link #getRelatedDataProviderContexts()}.
      * <p>
-     * An event might have other recurring event instances or might be linked to other events with the same group ID.
-     * So these events will be related with dropped one.
+     * An event might be linked to other events with the same group ID. So these events will be related
+     * with dropped one.
      *
      * @return related calendar events that were also dropped
      */
@@ -74,9 +74,9 @@ public class EventDropEvent extends AbstractEventMoveEvent {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 }

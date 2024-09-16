@@ -16,29 +16,24 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
+
+import java.time.LocalDate;
+
 /**
- * Supported component's views.
+ * A "generic" value, can be used as a base mode for {@link CustomCalendarDisplayMode}, or with
+ * {@link JmixFullCalendar#setVisibleRange(LocalDate, LocalDate)}.
  */
-public enum CalendarViewType implements CalendarView {
+public enum GenericCalendarDisplayModes implements CalendarDisplayMode {
 
-    DAY_GRID_DAY("dayGridDay"),
-    DAY_GRID_WEEK("dayGridWeek"),
-    DAY_GRID_MONTH("dayGridMonth"),
-    DAY_GRID_YEAR("dayGridYear"),
+    DAY_GRID("dayGrid"),
+    TIME_GRID("timeGrid"),
+    LIST("list"),
+    MULTI_MONTH("multiMonth");
 
-    TIME_GRID_DAY("timeGridDay"),
-    TIME_GRID_WEEK("timeGridWeek"),
+    private String id;
 
-    LIST_DAY("listDay"),
-    LIST_WEEK("listWeek"),
-    LIST_MONTH("listMonth"),
-    LIST_YEAR("listYear"),
-
-    MULTI_MONTH_YEAR("multiMonthYear");
-
-    private final String id;
-
-    CalendarViewType(String id) {
+    GenericCalendarDisplayModes(String id) {
         this.id = id;
     }
 
@@ -47,10 +42,10 @@ public enum CalendarViewType implements CalendarView {
         return id;
     }
 
-    public static CalendarViewType fromId(String id) {
-        for (CalendarViewType calendarView : CalendarViewType.values()) {
-            if (calendarView.getId().equals(id)) {
-                return calendarView;
+    public static GenericCalendarDisplayModes fromId(String id) {
+        for (GenericCalendarDisplayModes mode : GenericCalendarDisplayModes.values()) {
+            if (mode.getId().equals(id)) {
+                return mode;
             }
         }
         return null;

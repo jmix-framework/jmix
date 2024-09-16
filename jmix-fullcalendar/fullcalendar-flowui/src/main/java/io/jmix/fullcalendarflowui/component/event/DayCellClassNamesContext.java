@@ -40,7 +40,7 @@ public class DayCellClassNamesContext extends AbstractFullCalendarContext {
 
     protected final boolean isToday;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public DayCellClassNamesContext(FullCalendar fullCalendar,
                                     LocalDate date,
@@ -50,7 +50,7 @@ public class DayCellClassNamesContext extends AbstractFullCalendarContext {
                                     boolean isOther,
                                     boolean isPast,
                                     boolean isToday,
-                                    ViewInfo viewInfo) {
+                                    DisplayModeInfo displayModeInfo) {
         super(fullCalendar);
         this.date = date;
         this.dayOfWeek = dayOfWeek;
@@ -59,7 +59,7 @@ public class DayCellClassNamesContext extends AbstractFullCalendarContext {
         this.isOther = isOther;
         this.isPast = isPast;
         this.isToday = isToday;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
     }
 
     /**
@@ -115,9 +115,9 @@ public class DayCellClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 }

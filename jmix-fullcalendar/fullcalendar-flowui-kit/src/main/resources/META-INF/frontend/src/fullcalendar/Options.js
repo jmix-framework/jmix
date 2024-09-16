@@ -51,7 +51,7 @@ export function processInitialOptions(serverOptions) {
 
 function processViews(viewsObject) {
     for (let view in viewsObject) {
-        if (view === 'customCalendarViews') {
+        if (view === 'customCalendarDisplayModes') {
             continue;
         }
         if (view === 'listDay'
@@ -66,17 +66,17 @@ function processViews(viewsObject) {
         delete viewsObject[view].properties;
     }
 
-    if (viewsObject.customCalendarViews) {
-        for (const view of viewsObject.customCalendarViews) {
-            viewsObject[view.calendarView] = {
-                type: view.type,
+    if (viewsObject.customCalendarDisplayModes) {
+        for (const view of viewsObject.customCalendarDisplayModes) {
+            viewsObject[view.displayMode] = {
+                type: view.baseDisplayMode,
                 ...(view.dayCount) && {dayCount: view.dayCount},
                 ...(view.duration) && {duration: view.duration},
                 ...view.properties && {...view.properties}
             };
         }
     }
-    delete viewsObject.customCalendarViews;
+    delete viewsObject.customCalendarDisplayModes;
 
     return viewsObject;
 }

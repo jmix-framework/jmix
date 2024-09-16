@@ -19,17 +19,17 @@ package io.jmix.fullcalendarflowui.kit.component.model;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 
 /**
- * Configuration properties of list day view {@link CalendarViewType#LIST_DAY}.
+ * Configuration properties of time-grid week display mode {@link CalendarDisplayModes#TIME_GRID_WEEK}.
  * <p>
- * The view properties can be retrieved from {@link JmixFullCalendar#getCalendarViewProperties(CalendarViewType)}.
+ * The properties can be retrieved from {@link JmixFullCalendar#getCalendarDisplayModeProperties(CalendarDisplayModes)}.
  * For instance:
  * <pre>{@code
- * calendar.getCalendarViewProperties(CalendarViewType.LIST_DAY);
+ * calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.TIME_GRID_WEEK);
  * }</pre>
  */
-public class ListDayViewProperties extends AbstractListViewProperties {
+public class TimeGridWeekProperties extends AbstractTimeGridProperties {
 
-    public ListDayViewProperties() {
-        super(CalendarViewType.LIST_DAY.getId());
+    public TimeGridWeekProperties() {
+        super(CalendarDisplayModes.TIME_GRID_WEEK.getId());
     }
 }

@@ -107,10 +107,10 @@ public class FullCalendarXmlLoadingTest {
                 () -> assertEquals(DayOfWeek.TUESDAY, calendar.getFirstDayOfWeek()),
                 () -> assertTrue(calendar.isForceEventDuration()),
                 () -> assertEquals(LocalDate.of(2024, 9, 1), calendar.getInitialDate()),
-                () -> assertEquals(CalendarViewType.TIME_GRID_WEEK, calendar.getInitialCalendarView()),
+                () -> assertEquals(CalendarDisplayModes.TIME_GRID_WEEK, calendar.getInitialCalendarDisplayMode()),
                 () -> assertEquals(1, calendar.getEventLongPressDelay()),
                 () -> assertLinesMatch(List.of("moreLinkClassNames", "moreLinkClassNames1"), calendar.getMoreLinkClassNames()),
-                () -> assertEquals(CalendarViewType.LIST_DAY, calendar.getMoreLinkCalendarView()),
+                () -> assertEquals(CalendarDisplayModes.LIST_DAY, calendar.getMoreLinkCalendarDisplayMode()),
                 () -> assertTrue(calendar.isNavigationLinksEnabled()),
                 () -> assertEquals(CalendarDuration.ofHours(9), calendar.getNextDayThreshold()),
                 () -> assertTrue(calendar.isNowIndicatorVisible()),
@@ -169,15 +169,15 @@ public class FullCalendarXmlLoadingTest {
                 .navigate();
 
         FullCalendarXmlLoadingTestView testView = UiTestUtils.getCurrentView();
-        var calendar = testView.calendarCustomViews;
+        var calendar = testView.calendarCustomDisplayMode;
 
-        List<CustomCalendarView> customCalendarViews = calendar.getCustomCalendarViews();
+        List<CustomCalendarDisplayMode> customCalendarDisplayModes = calendar.getCustomCalendarDisplayModes();
 
-        assertEquals(1, customCalendarViews.size());
+        assertEquals(1, customCalendarDisplayModes.size());
 
-        CustomCalendarView customView = customCalendarViews.get(0);
-        assertEquals(GenericCalendarViewType.DAY_GRID, customView.getType());
-        assertEquals(1, customView.getDayCount());
+        CustomCalendarDisplayMode customMode = customCalendarDisplayModes.get(0);
+        assertEquals(GenericCalendarDisplayModes.DAY_GRID, customMode.getBaseDisplayMode());
+        assertEquals(1, customMode.getDayCount());
         assertEquals(CalendarDuration.ofYears(1)
                 .plusMonths(1)
                 .plusWeeks(1)
@@ -185,67 +185,67 @@ public class FullCalendarXmlLoadingTest {
                 .plusHours(1)
                 .plusMinutes(1)
                 .plusSeconds(1)
-                .plusMilliseconds(1), customView.getDuration());
-        assertViewProperty(customView);
+                .plusMilliseconds(1), customMode.getDuration());
+        assertDisplayModeProperty(customMode);
     }
 
     @Test
-    @DisplayName("Load FullCalendar views properties from XML")
+    @DisplayName("Load FullCalendar display mode properties from XML")
     public void loadFullCalendarViewsPropertiesFromXml() {
         viewNavigators.view(UiTestUtils.getCurrentView(), FullCalendarXmlLoadingTestView.class)
                 .navigate();
 
         FullCalendarXmlLoadingTestView testView = UiTestUtils.getCurrentView();
-        var calendar = testView.calendarViewProperties;
+        var calendar = testView.calendarDisplayModeProperties;
 
-        DayGridDayViewProperties dayGridDay = calendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_DAY);
+        DayGridDayProperties dayGridDay = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_DAY);
         assertBaseDayGridProperties(dayGridDay);
-        assertViewProperty(dayGridDay);
+        assertDisplayModeProperty(dayGridDay);
         assertFalse(dayGridDay.isDisplayEventEnd());
 
-        DayGridWeekViewProperties dayGridWeek = calendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_WEEK);
+        DayGridWeekProperties dayGridWeek = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_WEEK);
         assertBaseDayGridProperties(dayGridWeek);
-        assertViewProperty(dayGridWeek);
+        assertDisplayModeProperty(dayGridWeek);
         assertTrue(dayGridWeek.isDisplayEventEnd());
 
-        DayGridMonthViewProperties dayGridMonth = calendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_MONTH);
+        DayGridMonthProperties dayGridMonth = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_MONTH);
         assertBaseDayGridProperties(dayGridMonth);
-        assertViewProperty(dayGridMonth);
+        assertDisplayModeProperty(dayGridMonth);
         assertFalse(dayGridMonth.isFixedWeekCount());
         assertFalse(dayGridMonth.isShowNonCurrentDates());
         assertTrue(dayGridMonth.isDisplayEventEnd());
 
-        DayGridYearViewProperties dayGridYear = calendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_YEAR);
+        DayGridYearProperties dayGridYear = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_YEAR);
         assertBaseDayGridProperties(dayGridYear);
-        assertViewProperty(dayGridYear);
+        assertDisplayModeProperty(dayGridYear);
         assertEquals("weekNumberFormat", dayGridYear.getMonthStartFormat());
         assertTrue(dayGridYear.isDisplayEventEnd());
 
-        TimeGridDayViewProperties timeGridDay = calendar.getCalendarViewProperties(CalendarViewType.TIME_GRID_DAY);
+        TimeGridDayProperties timeGridDay = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.TIME_GRID_DAY);
         assertBaseTimeGridProperties(timeGridDay);
-        assertViewProperty(timeGridDay);
+        assertDisplayModeProperty(timeGridDay);
 
-        TimeGridWeekViewProperties timeGridWeek = calendar.getCalendarViewProperties(CalendarViewType.TIME_GRID_WEEK);
+        TimeGridWeekProperties timeGridWeek = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.TIME_GRID_WEEK);
         assertBaseTimeGridProperties(timeGridWeek);
-        assertViewProperty(timeGridWeek);
+        assertDisplayModeProperty(timeGridWeek);
 
-        ListDayViewProperties listDay = calendar.getCalendarViewProperties(CalendarViewType.LIST_DAY);
+        ListDayProperties listDay = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.LIST_DAY);
         assertBaseListProperties(listDay);
-        assertViewProperty(listDay);
+        assertDisplayModeProperty(listDay);
 
-        ListWeekViewProperties listWeek = calendar.getCalendarViewProperties(CalendarViewType.LIST_WEEK);
+        ListWeekProperties listWeek = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.LIST_WEEK);
         assertBaseListProperties(listWeek);
-        assertViewProperty(listWeek);
+        assertDisplayModeProperty(listWeek);
 
-        ListMonthViewProperties listMonth = calendar.getCalendarViewProperties(CalendarViewType.LIST_MONTH);
+        ListMonthProperties listMonth = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.LIST_MONTH);
         assertBaseListProperties(listMonth);
-        assertViewProperty(listMonth);
+        assertDisplayModeProperty(listMonth);
 
-        ListYearViewProperties listYear = calendar.getCalendarViewProperties(CalendarViewType.LIST_YEAR);
+        ListYearProperties listYear = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.LIST_YEAR);
         assertBaseListProperties(listYear);
-        assertViewProperty(listYear);
+        assertDisplayModeProperty(listYear);
 
-        MultiMonthYearViewProperties multiMonthYear = calendar.getCalendarViewProperties(CalendarViewType.MULTI_MONTH_YEAR);
+        MultiMonthYearProperties multiMonthYear = calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.MULTI_MONTH_YEAR);
         assertFalse(multiMonthYear.isFixedWeekCount());
         assertEquals(1, multiMonthYear.getMultiMonthMaxColumns());
         assertEquals(1, multiMonthYear.getMultiMonthMinWidth());
@@ -306,39 +306,39 @@ public class FullCalendarXmlLoadingTest {
         );
     }
 
-    private static void assertBaseDayGridProperties(AbstractDayGridViewProperties viewProperties) {
+    private static void assertBaseDayGridProperties(AbstractDayGridProperties displayModeProperties) {
         Assertions.assertAll(
-                () -> assertEquals("dayPopoverFormat", viewProperties.getDayPopoverFormat()),
-                () -> assertEquals("dayHeaderFormat", viewProperties.getDayHeaderFormat()),
-                () -> assertEquals("eventTimeFormat", viewProperties.getEventTimeFormat()),
-                () -> assertEquals("weekNumberFormat", viewProperties.getWeekNumberFormat())
+                () -> assertEquals("dayPopoverFormat", displayModeProperties.getDayPopoverFormat()),
+                () -> assertEquals("dayHeaderFormat", displayModeProperties.getDayHeaderFormat()),
+                () -> assertEquals("eventTimeFormat", displayModeProperties.getEventTimeFormat()),
+                () -> assertEquals("weekNumberFormat", displayModeProperties.getWeekNumberFormat())
         );
     }
 
-    private static void assertBaseTimeGridProperties(AbstractTimeGridViewProperties viewProperties) {
+    private static void assertBaseTimeGridProperties(AbstractTimeGridProperties displayModeProperties) {
         Assertions.assertAll(
-                () -> assertEquals("dayPopoverFormat", viewProperties.getDayPopoverFormat()),
-                () -> assertEquals("dayHeaderFormat", viewProperties.getDayHeaderFormat()),
-                () -> assertEquals("eventTimeFormat", viewProperties.getEventTimeFormat()),
-                () -> assertEquals("weekNumberFormat", viewProperties.getWeekNumberFormat()),
-                () -> assertFalse(viewProperties.isDisplayEventEnd()),
-                () -> assertFalse(viewProperties.isAllDaySlot()),
-                () -> assertEquals(1, viewProperties.getEventMinHeight()),
-                () -> assertEquals(1, viewProperties.getEventShortHeight()),
-                () -> assertFalse(viewProperties.isSlotEventOverlap()),
-                () -> assertEquals("slotLabelFormat", viewProperties.getSlotLabelFormat())
+                () -> assertEquals("dayPopoverFormat", displayModeProperties.getDayPopoverFormat()),
+                () -> assertEquals("dayHeaderFormat", displayModeProperties.getDayHeaderFormat()),
+                () -> assertEquals("eventTimeFormat", displayModeProperties.getEventTimeFormat()),
+                () -> assertEquals("weekNumberFormat", displayModeProperties.getWeekNumberFormat()),
+                () -> assertFalse(displayModeProperties.isDisplayEventEnd()),
+                () -> assertFalse(displayModeProperties.isAllDaySlot()),
+                () -> assertEquals(1, displayModeProperties.getEventMinHeight()),
+                () -> assertEquals(1, displayModeProperties.getEventShortHeight()),
+                () -> assertFalse(displayModeProperties.isSlotEventOverlap()),
+                () -> assertEquals("slotLabelFormat", displayModeProperties.getSlotLabelFormat())
         );
     }
 
-    private static void assertBaseListProperties(AbstractListViewProperties viewProperties) {
-        assertEquals("listDayFormat", viewProperties.getListDayFormat());
-        assertEquals("listDaySideFormat", viewProperties.getListDaySideFormat());
-        assertFalse(viewProperties.isListDaySideVisible());
-        assertFalse(viewProperties.isListDayVisible());
+    private static void assertBaseListProperties(AbstractListProperties displayModeProperties) {
+        assertEquals("listDayFormat", displayModeProperties.getListDayFormat());
+        assertEquals("listDaySideFormat", displayModeProperties.getListDaySideFormat());
+        assertFalse(displayModeProperties.isListDaySideVisible());
+        assertFalse(displayModeProperties.isListDayVisible());
     }
 
-    private static void assertViewProperty(AbstractCalendarViewProperties viewProperties) {
-        Map<String, Object> properties = viewProperties.getProperties();
+    private static void assertDisplayModeProperty(AbstractCalendarDisplayModeProperties displayModeProperties) {
+        Map<String, Object> properties = displayModeProperties.getProperties();
         assertEquals(1, properties.size());
         assertTrue(properties.containsKey("test"));
 

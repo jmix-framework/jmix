@@ -37,7 +37,7 @@ public class FullCalendarContextMenu extends ContextMenuBase<FullCalendarContext
     /**
      * Creates new instance of context menu with provided {@link FullCalendar} target.
      *
-     * @param target calendar to bound with context menu
+     * @param target calendar to bound with a context menu
      * @return new instance of context menu
      */
     public static FullCalendarContextMenu create(FullCalendar target) {
@@ -65,7 +65,7 @@ public class FullCalendarContextMenu extends ContextMenuBase<FullCalendarContext
 
     /**
      * Sets a handler to configure content of context menu. For instance:
-     * <pre>
+     * <pre>{@code
      * contextMenu.setContentMenuHandler(context -> {
      *     contextMenu.removeAll();
      *     if (context.getCalendarEvent() != null) {
@@ -82,7 +82,7 @@ public class FullCalendarContextMenu extends ContextMenuBase<FullCalendarContext
      *         return false;
      *     }
      * });
-     * </pre>
+     * }</pre>
      *
      * @param contentMenuHandler handler to add
      */

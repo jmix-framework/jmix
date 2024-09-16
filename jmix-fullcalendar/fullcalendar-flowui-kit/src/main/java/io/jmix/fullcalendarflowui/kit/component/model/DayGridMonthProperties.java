@@ -19,22 +19,22 @@ package io.jmix.fullcalendarflowui.kit.component.model;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 
 /**
- * Configuration properties of day-grid month view {@link CalendarViewType#DAY_GRID_MONTH}.
+ * Configuration properties of day-grid month display mode {@link CalendarDisplayModes#DAY_GRID_MONTH}.
  * <p>
- * The view properties can be retrieved from {@link JmixFullCalendar#getCalendarViewProperties(CalendarViewType)}.
+ * The properties can be retrieved from {@link JmixFullCalendar#getCalendarDisplayModeProperties(CalendarDisplayModes)}.
  * For instance:
  * <pre>{@code
- * calendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_MONTH);
+ * calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_MONTH);
  * }</pre>
  */
-public class DayGridMonthViewProperties extends AbstractDayGridViewProperties {
+public class DayGridMonthProperties extends AbstractDayGridProperties {
 
     protected boolean fixedWeekCount = true;
 
     protected boolean showNonCurrentDates = true;
 
-    public DayGridMonthViewProperties() {
-        super(CalendarViewType.DAY_GRID_MONTH.getId());
+    public DayGridMonthProperties() {
+        super(CalendarDisplayModes.DAY_GRID_MONTH.getId());
     }
 
     /**

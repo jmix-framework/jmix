@@ -16,5 +16,5 @@
 
 package io.jmix.fullcalendarflowui.kit.meta.element;
 
-public interface StudioFullCalendarViewProperties {
+public interface StudioFullCalendarDisplayModeProperties {
 }

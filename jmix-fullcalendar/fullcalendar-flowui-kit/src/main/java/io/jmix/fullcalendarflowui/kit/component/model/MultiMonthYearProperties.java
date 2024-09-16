@@ -20,15 +20,15 @@ import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import jakarta.annotation.Nullable;
 
 /**
- * Configuration properties of multi-month year view {@link CalendarViewType#MULTI_MONTH_YEAR}.
+ * Configuration properties of multi-month year display mode {@link CalendarDisplayModes#MULTI_MONTH_YEAR}.
  * <p>
- * The view properties can be retrieved from {@link JmixFullCalendar#getCalendarViewProperties(CalendarViewType)}.
+ * The properties can be retrieved from {@link JmixFullCalendar#getCalendarDisplayModeProperties(CalendarDisplayModes)}.
  * For instance:
  * <pre>{@code
- * calendar.getCalendarViewProperties(CalendarViewType.MULTI_MONTH_YEAR);
+ * calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.MULTI_MONTH_YEAR);
  * }</pre>
  */
-public class MultiMonthYearViewProperties extends AbstractCalendarViewProperties {
+public class MultiMonthYearProperties extends AbstractCalendarDisplayModeProperties {
 
     protected Integer multiMonthMaxColumns;
 
@@ -40,8 +40,8 @@ public class MultiMonthYearViewProperties extends AbstractCalendarViewProperties
 
     protected boolean showNonCurrentDates = true;
 
-    public MultiMonthYearViewProperties() {
-        super(CalendarViewType.MULTI_MONTH_YEAR.getId());
+    public MultiMonthYearProperties() {
+        super(CalendarDisplayModes.MULTI_MONTH_YEAR.getId());
     }
 
     /**
@@ -53,9 +53,9 @@ public class MultiMonthYearViewProperties extends AbstractCalendarViewProperties
     }
 
     /**
-     * Sets the maximum columns of months that the view will attempt to render.
+     * Sets the maximum columns of months that the display mode will attempt to render.
      * <p>
-     * By default, the view will attempt to display 3 columns of mini-months. If there is insufficient
+     * By default, the display mode will attempt to display 3 columns of mini-months. If there is insufficient
      * space, requiring each month to be smaller than {@link #getMultiMonthMinWidth()}, fewer columns
      * will be displayed.
      * <p>

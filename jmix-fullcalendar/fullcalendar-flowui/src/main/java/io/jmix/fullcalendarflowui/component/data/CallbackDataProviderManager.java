@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * INTERNAL.
+ * <p>
  * Data provider manager that works with {@link CallbackCalendarDataProvider}.
  */
 @Internal

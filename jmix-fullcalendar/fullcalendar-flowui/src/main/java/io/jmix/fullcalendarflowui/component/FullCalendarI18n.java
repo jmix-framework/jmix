@@ -18,14 +18,10 @@ package io.jmix.fullcalendarflowui.component;
 
 import com.vaadin.flow.component.UI;
 import io.jmix.fullcalendar.DayOfWeek;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 import org.springframework.lang.Nullable;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNullElseGet;
 
@@ -271,8 +267,8 @@ public class FullCalendarI18n implements Serializable {
     }
 
     /**
-     * Sets text that will be shown when no events are displayed. The text can be shown in list views,
-     * e.g {@link CalendarViewType#LIST_DAY}.
+     * Sets text that will be shown when no events are displayed. The text can be shown in list modes,
+     * e.g {@link CalendarDisplayModes#LIST_DAY}.
      *
      * @param noEventsText the text to set
      */

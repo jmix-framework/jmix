@@ -28,7 +28,7 @@ import elemental.json.impl.JreJsonFactory;
 import io.jmix.flowui.kit.meta.StudioIgnore;
 import io.jmix.fullcalendarflowui.kit.component.event.dom.*;
 import io.jmix.fullcalendarflowui.kit.component.model.*;
-import io.jmix.fullcalendarflowui.kit.component.model.AbstractCalendarViewProperties;
+import io.jmix.fullcalendarflowui.kit.component.model.AbstractCalendarDisplayModeProperties;
 import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOptions;
 import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarDeserializer;
 import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarSerializer;
@@ -56,7 +56,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected JmixFullCalendarDeserializer deserializer;
     protected JmixFullCalendarOptions options;
 
-    protected CalendarView calendarView;
+    protected CalendarDisplayMode displayMode;
 
     protected Map<String, StateTree.ExecutionRegistration> itemsDataProvidersExecutionMap = new HashMap<>(2);
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
@@ -86,120 +86,121 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * @return initial calendar view or {@code null} if not set
+     * @return initial calendar display mode or {@code null} if not set
      */
     @Nullable
-    public CalendarView getInitialCalendarView() {
-        return options.getInitialView().getValue();
+    public CalendarDisplayMode getInitialCalendarDisplayMode() {
+        return options.getInitialDisplayMode().getValue();
     }
 
     /**
-     * Sets initial calendar view that will be shown after attaching component to th UI.
+     * Sets initial calendar display mode that will be shown after attaching component to th UI.
      * <p>
-     * The default value is {@link CalendarViewType#DAY_GRID_MONTH}.
+     * The default value is {@link CalendarDisplayModes#DAY_GRID_MONTH}.
      * <p>
      * The property change is not applied after component attached to the UI.
      *
-     * @param calendarView initial calendar view
+     * @param displayMode initial calendar display mode
      */
     @StudioIgnore
-    public void setInitialCalendarView(CalendarView calendarView) {
-        Objects.requireNonNull(calendarView);
+    public void setInitialCalendarDisplayMode(CalendarDisplayMode displayMode) {
+        Objects.requireNonNull(displayMode);
 
-        options.getInitialView().setValue(calendarView);
+        options.getInitialDisplayMode().setValue(displayMode);
     }
 
     /**
-     * @return current calendar view
+     * @return current calendar display mode
      */
-    public CalendarView getCurrentCalendarView() {
-        if (calendarView != null) {
-            return calendarView;
+    public CalendarDisplayMode getCurrentCalendarDisplayMode() {
+        if (displayMode != null) {
+            return displayMode;
         }
-        CalendarView initialCalendarView = options.getInitialView().getValue();
-        if (initialCalendarView != null) {
-            return initialCalendarView;
+        CalendarDisplayMode initialDisplayMode = options.getInitialDisplayMode().getValue();
+        if (initialDisplayMode != null) {
+            return initialDisplayMode;
         }
-        CalendarView defaultCalendarView = options.getInitialView().getDefaultValue();
-        return Objects.requireNonNull(defaultCalendarView);
+        CalendarDisplayMode defaultDisplayMode = options.getInitialDisplayMode().getDefaultValue();
+        return Objects.requireNonNull(defaultDisplayMode);
     }
 
     /**
-     * Switches currently shown view to the provider one.
+     * Switches currently shown display mode to the provided one.
      *
-     * @param calendarView calendar view to set
+     * @param displayMode calendar display mode to set
      */
     @StudioIgnore
-    public void setCalendarView(CalendarView calendarView) {
-        Objects.requireNonNull(calendarView);
+    public void setCalendarDisplayMode(CalendarDisplayMode displayMode) {
+        Objects.requireNonNull(displayMode);
 
-        getElement().executeJs("this.calendar.changeView($0)", calendarView.getId());
+        getElement().executeJs("this.calendar.changeView($0)", displayMode.getId());
     }
 
     /**
-     * Adds custom view to the calendar. Then custom view can be shown by:
+     * Adds custom display mode to the calendar. Then custom display mode can be shown by:
      * <ul>
      *     <li>
-     *          {@link #setCalendarView(CalendarView)}
+     *          {@link #setCalendarDisplayMode(CalendarDisplayMode)}
      *     </li>
      *     <li>
-     *          {@link #setInitialCalendarView(CalendarView)}.
+     *          {@link #setInitialCalendarDisplayMode(CalendarDisplayMode)}.
      *     </li>
      * </ul>
-     * Note that it is initial option and dynamically changing/adding/removing custom view will not apply after
-     * attaching component to the UI.
+     * Note that it is initial option and dynamically changing/adding/removing custom display modes will not apply
+     * after attaching component to the UI.
      *
-     * @param calendarCustomView calendar custom view to add
+     * @param displayMode custom calendar display mode to add
      */
-    public void addCustomCalendarView(CustomCalendarView calendarCustomView) {
-        Objects.requireNonNull(calendarCustomView);
+    public void addCustomCalendarDisplayMode(CustomCalendarDisplayMode displayMode) {
+        Objects.requireNonNull(displayMode);
 
-        options.getViews().addCustomCalendarView(calendarCustomView);
+        options.getDisplayModes().addCustomCalendarDisplayMode(displayMode);
     }
 
     /**
-     * Removes calendar custom view.
+     * Removes custom calendar display mode.
      * <p>
-     * Note that it is initial option and dynamically changing/adding/removing custom view will not apply after
-     * attaching component to UI.
+     * Note that it is initial option and dynamically changing/adding/removing custom display modes will not apply
+     * after attaching component to UI.
      *
-     * @param calendarCustomView calendar custom view to remove
+     * @param customDisplayMode custom calendar display mode to remove
      */
-    public void removeCustomCalendarView(CustomCalendarView calendarCustomView) {
-        Objects.requireNonNull(calendarCustomView);
+    public void removeCustomCalendarDisplayMode(CustomCalendarDisplayMode customDisplayMode) {
+        Objects.requireNonNull(customDisplayMode);
 
-        options.getViews().removeCustomCalendarView(calendarCustomView);
+        options.getDisplayModes().removeCustomCalendarDisplayMode(customDisplayMode);
     }
 
     /**
-     * Returns custom calendar view by its ID.
+     * Returns custom calendar display mode by its ID.
      *
-     * @param viewId the ID of custom calendar view
-     * @return custom calendar view or {@code null} if there is no custom calendar view with provded ID
+     * @param id the ID of custom calendar display mode
+     * @return custom calendar display mode or {@code null} if there is no display mode with the provided ID
      */
     @Nullable
-    public CustomCalendarView getCustomCalendarView(String viewId) {
-        return options.getViews().getCustomCalendarView(viewId);
+    public CustomCalendarDisplayMode getCustomCalendarDisplayMode(String id) {
+        return options.getDisplayModes().getCustomCalendarDisplayMode(id);
     }
 
     /**
-     * @return list of custom calendar views added to the component
+     * @return list of custom calendar display modes added to the component
      */
-    public List<CustomCalendarView> getCustomCalendarViews() {
-        return options.getViews().getCustomCalendarViews();
+    public List<CustomCalendarDisplayMode> getCustomCalendarDisplayModes() {
+        return options.getDisplayModes().getCustomCalendarDisplayModes();
     }
 
     /**
-     * Returns properties for the specific calendar view. Almost all calendar views have
-     * a specific set of properties. Moreover, the view properties object can override some properties
+     * Returns properties for the specific calendar display mode. Almost all calendar display modes have
+     * a specific set of properties. Moreover, the properties object can override some properties
      * from the component.
      *
-     * @param calendarView calendar view type to get properties
-     * @param <T>          type of view properties
-     * @return view properties object that correspond to the provided calendar view type
+     * @param displayMode calendar display mode to get properties
+     * @param <T>         type of display mode properties
+     * @return properties object that correspond to the provided calendar display mode
      */
-    public <T extends AbstractCalendarViewProperties> T getCalendarViewProperties(CalendarViewType calendarView) {
-        return options.getViews().getCalendarViewProperties(calendarView);
+    public <T extends AbstractCalendarDisplayModeProperties> T getCalendarDisplayModeProperties(
+            CalendarDisplayModes displayMode) {
+        return options.getDisplayModes().getCalendarDisplayModeProperties(displayMode);
     }
 
     /**
@@ -294,9 +295,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * The visible date range is applied together with generic calendar views {@link GenericCalendarViewType}.
-     * For instance, you can set {@link GenericCalendarViewType#DAY_GRID}, visible range from {@code 2024-09-01} to
-     * {@code 2024-09-03} and component will show two days.
+     * The visible date range is applied together with generic calendar display modes
+     * {@link GenericCalendarDisplayModes}. For instance, you can set {@link GenericCalendarDisplayModes#DAY_GRID},
+     * visible range from {@code 2024-09-01} to {@code 2024-09-03} and component will show two days.
      * <p>
      * Note the end date is exclusive.
      *
@@ -333,16 +334,18 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Moves the calendar one step forward. For instance:
      * <ul>
      *     <li>
-     *         For {@link CalendarViewType#DAY_GRID_DAY} and other day-views calendar will be moved one day forward.
+     *         For {@link CalendarDisplayModes#DAY_GRID_DAY} and other day display modes calendar will be moved
+     *         one day forward.
      *     </li>
      *     <li>
-     *         For {@link CalendarViewType#DAY_GRID_WEEK} and other week-views calendar will be moved one week forward.
+     *         For {@link CalendarDisplayModes#DAY_GRID_WEEK} and other week display modes calendar will be moved
+     *         one week forward.
      *     </li>
      *     <li>
      *         And so on.
      *     </li>
      * </ul>
-     * The duration of {@link CustomCalendarView} also will be respected.
+     * The duration of {@link CustomCalendarDisplayMode} also will be respected.
      */
     public void navigateToNext() {
         getElement().callJsFunction("navigateToNext");
@@ -361,16 +364,18 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Moves the calendar one step back. For instance:
      * <ul>
      *     <li>
-     *         For {@link CalendarViewType#DAY_GRID_DAY} and other day-views calendar will be moved one day back.
+     *         For {@link CalendarDisplayModes#DAY_GRID_DAY} and other day display modes calendar will be moved
+     *         one day back.
      *     </li>
      *     <li>
-     *         For {@link CalendarViewType#DAY_GRID_WEEK} and other week-views calendar will be moved one week back.
+     *         For {@link CalendarDisplayModes#DAY_GRID_WEEK} and other week display modes calendar will be moved
+     *         one week back.
      *     </li>
      *     <li>
      *         And so on.
      *     </li>
      * </ul>
-     * The duration of {@link CustomCalendarView} also will be respected.
+     * The duration of {@link CustomCalendarDisplayMode} also will be respected.
      */
     public void navigateToPrevious() {
         getElement().callJsFunction("navigateToPrevious");
@@ -406,8 +411,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     /**
      * Scrolls to the specified time in milliseconds.
      * <p>
-     * Scrolling to a specific time works when the calendar view is either {@link CalendarViewType#TIME_GRID_DAY} or
-     * {@link CalendarViewType#TIME_GRID_WEEK}.
+     * Scrolling to a specific time works when the calendar display mode is either
+     * {@link CalendarDisplayModes#TIME_GRID_DAY} or {@link CalendarDisplayModes#TIME_GRID_WEEK}.
      *
      * @param duration the time duration
      */
@@ -419,8 +424,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     /**
      * Scrolls to the specified time.
      * <p>
-     * Scrolling to a specific time works when the calendar view is either {@link CalendarViewType#TIME_GRID_DAY} or
-     * {@link CalendarViewType#TIME_GRID_WEEK}.
+     * Scrolling to a specific time works when the calendar display mode is either
+     * {@link CalendarDisplayModes#TIME_GRID_DAY} or {@link CalendarDisplayModes#TIME_GRID_WEEK}.
      *
      * @param localTime the time to scroll
      */
@@ -519,7 +524,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *         <strong>{@code false}</strong> - component displays all events as is.
      *     </li>
      * </ul>
-     * This property is applied for day-grid calendar views and in all-day cells.
+     * This property is applied for day-grid display modes and in all-day cells.
      * <p>
      * The default value {@code false}.
      *
@@ -538,7 +543,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets rows count of events in day-grid views and in "all-day" section in time-grid views.
+     * Sets rows count of events in day-grid display modes and in "all-day" section in time-grid display modes.
      * <p>
      * Note that "+x more" row is included to count. For instance, if dayMaxEventRows = 1, only the "+x more" row
      * will be shown.
@@ -568,7 +573,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *         <strong>{@code false}</strong> - component displays all events as is.
      *     </li>
      * </ul>
-     * This property is applied for day-grid calendar views and in all-day cells.
+     * This property is applied for day-grid display modes and in all-day cells.
      * <p>
      * The default value {@code false}.
      *
@@ -587,7 +592,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets rows count of events in day-grid views and in "all-day" section in time-grid views.
+     * Sets rows count of events in day-grid display modes and in "all-day" section in time-grid display modes.
      * <p>
      * Note that "+ more" row <strong>is not included</strong> to count. For instance, if dayMaxEventRows = 1,
      * one event and the "+x more" row will be shown.
@@ -609,7 +614,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets the maximum number of events that stack top-to-bottom for time-grid views.
+     * Sets the maximum number of events that stack top-to-bottom for time-grid display modes.
      *
      * @param eventMaxStack the maximum number of events that stack. The {@code null} or {@code -1}
      *                      values set default behaviour.
@@ -622,21 +627,22 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * @return the calendar view that should be shown when "more" more link is clicked or {@code null} if not set
+     * @return the calendar display mode that should be shown when "more" more link is clicked
+     * or {@code null} if not set
      */
     @Nullable
-    public CalendarView getMoreLinkCalendarView() {
+    public CalendarDisplayMode getMoreLinkCalendarDisplayMode() {
         return options.getMoreLinkClick().getCalendarView();
     }
 
     /**
-     * Sets the calendar view that should be shown when "more" more link is clicked.
+     * Sets the calendar display mode that should be shown when "more" link is clicked.
      *
-     * @param calendarView the view that should be opened
+     * @param displayMode the display mode that should be opened
      */
     @StudioIgnore
-    public void setMoreLinkCalendarView(@Nullable CalendarView calendarView) {
-        options.getMoreLinkClick().setCalendarView(calendarView);
+    public void setMoreLinkCalendarDisplayMode(@Nullable CalendarDisplayMode displayMode) {
+        options.getMoreLinkClick().setCalendarView(displayMode);
     }
 
     /**
@@ -946,7 +952,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     /**
      * Enables to draw a "placeholder" event while the user is dragging.
      * <p>
-     * This property is applied to time-grid views.
+     * This property is applied to time-grid display modes.
      * <p>
      * The default value is {@code false}.
      *
@@ -1119,9 +1125,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the date format of title of the popover that is shown when "more" link is clicked. By default,
      * component sets localized format from messages when is created.
      * <p>
-     * This property act as default format for all views and {@link CustomCalendarView} until specific
-     * property won't be set for these views. However, all views properties by default explicitly specify the format,
-     * thus they override this property.
+     * This property act as default format for all display modes and {@link CustomCalendarDisplayMode} until specific
+     * property won't be set for these display modes. However, all display-mode properties objects by default explicitly
+     * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
@@ -1148,9 +1154,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the format of the text that will be displayed on the calendar’s column headings. By default,
      * component sets localized format from messages when is created.
      * <p>
-     * This property act as default format for all views and {@link CustomCalendarView} until specific
-     * property won't be set for these views. However, all views properties by default explicitly specify the format,
-     * thus they override this property.
+     * This property act as default format for all display modes and {@link CustomCalendarDisplayMode} until specific
+     * property won't be set for these display modes. However, all display-mode properties objects by default explicitly
+     * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
@@ -1177,9 +1183,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the format of the week number that will be displayed when {@link #isWeekNumbersVisible()} is {@code true}.
      * By default, component sets localized format from messages when is created.
      * <p>
-     * This property act as default format for all views and {@link CustomCalendarView} until specific
-     * property won't be set for these views. However, all views properties by default explicitly specify the format,
-     * thus they override this property.
+     * This property act as default format for all display modes and {@link CustomCalendarDisplayMode} until specific
+     * property won't be set for these display modes. However, all display-mode properties objects by default explicitly
+     * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
@@ -1206,9 +1212,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the format of the text that will be displayed within a time slot. By default, component sets
      * localized format from messages when is created.
      * <p>
-     * This property act as default format for all views and {@link CustomCalendarView} until specific
-     * property won't be set for these views. However, all views properties by default explicitly specify the format,
-     * thus they override this property.
+     * This property act as default format for all display modes and {@link CustomCalendarDisplayMode} until specific
+     * property won't be set for these display modes. However, all display-mode properties objects by default explicitly
+     * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
@@ -1235,9 +1241,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the format of the time-text that will be displayed on each event. By default, component sets
      * localized format from messages when is created.
      * <p>
-     * This property act as default format for all views and {@link CustomCalendarView} until specific
-     * property won't be set for these views. However, all views properties by default explicitly specify the format,
-     * thus they override this property.
+     * This property act as default format for all display modes and {@link CustomCalendarDisplayMode} until specific
+     * property won't be set for these display modes. However, all display-mode properties objects by default explicitly
+     * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
@@ -1260,7 +1266,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets whether to include Saturday/Sunday columns in any of the calendar views.
+     * Sets whether to include Saturday/Sunday columns in any of the calendar display modes.
      * <p>
      * The default value is {@code true}
      *
@@ -1278,7 +1284,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets whether the day headers should appear. It works for day-grid, time-grid and month views.
+     * Sets whether the day headers should appear. It works for day-grid, time-grid and month display modes.
      * <p>
      * The default value is {@code true}.
      *
@@ -1384,7 +1390,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * The user will be able to scroll back to see events before this time. If you want to prevent users
      * from doing this, use the {@link #setSlotMinTime(CalendarDuration)} instead.
      * <p>
-     * By default, scroll time is reapplied to the view whenever the date range changes. To disable this,
+     * By default, scroll time is reapplied to the calendar whenever the date range changes. To disable this,
      * set {@link #setScrollTimeReset(boolean)} to {@code false}.
      * <p>
      * The default value is {@code 06:00:00}.
@@ -1405,7 +1411,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets whether the calendar view should scroll to {@link #getScrollTime()} every time the date range changes.
+     * Sets whether the calendar should scroll to {@link #getScrollTime()} every time
+     * the date range changes.
      * <p>
      * By default, whenever the date range changes either via calendar methods or the user actions,
      * the scroll is reset. Set the property to {@code false} to disable this behaviour.
@@ -1557,10 +1564,11 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     /**
      * Defines the step of {@link #navigateToNext()}/{@link #navigateToPrevious()} methods.
      * <p>
-     * It is unnecessary to define this property if predefined views are used, because the step is calculated
-     * automatically based on view type.
+     * It is unnecessary to define this property if predefined display modes are used, because the step is calculated
+     * automatically based on display mode.
      * <p>
-     * For {@link CustomCalendarView} the {@link CustomCalendarView#getDuration()} will be used as step if specified.
+     * For {@link CustomCalendarDisplayMode} the {@link CustomCalendarDisplayMode#getDuration()} will be used as step
+     * if specified.
      *
      * @param dateIncrement the step duration
      */
@@ -1569,7 +1577,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * @return the first visible date of {@link CustomCalendarView} or {@code null} if not set
+     * @return the first visible date of {@link CustomCalendarDisplayMode} or {@code null} if not set
      */
     @Nullable
     public String getDateAlignment() {
@@ -1577,14 +1585,15 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets the first visible date of {@link CustomCalendarView}.
+     * Sets the first visible date of {@link CustomCalendarDisplayMode}.
      * <p>
-     * When a custom view is being used, and you’d like to guarantee that the view begins at a certain interval,
-     * like the start-of-week or start-of-month, specify a value like {@code "week"} or {@code "month"}. If the
-     * property is not specified, a reasonable default will be generated based on the view’s duration.
+     * When a custom calendar display mode is being used, and you’d like to guarantee that the
+     * calendar begins at a certain interval, like the start-of-week or start-of-month, specify a value like
+     * {@code "week"} or {@code "month"}. If the property is not specified, a reasonable default will be
+     * generated based on the display mode’s duration.
      * <p>
-     * If a view’s range is explicitly defined with {@link #setVisibleRange(LocalDate, LocalDate)}, this property
-     * will be ignored.
+     * If a display mode’s range is explicitly defined with {@link #setVisibleRange(LocalDate, LocalDate)},
+     * this property will be ignored.
      *
      * @param alignment the first visible date, like {@code "week"} or {@code "month"}
      */
@@ -1664,7 +1673,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Enables displaying a marker indicating the current time. The property applies in time-grid views.
+     * Enables displaying a marker indicating the current time. The property applies in time-grid display modes.
      * <p>
      * The default value is {@code false}.
      * <p>
@@ -1677,14 +1686,14 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * @return {@code true} if rows are expanded in time-grid views
+     * @return {@code true} if rows are expanded in time-grid display modes
      */
     public boolean isExpandRows() {
         return options.getExpandRows().getNotNullValue();
     }
 
     /**
-     * Enables to expand rows of time-grid views if they don’t take up the entire height.
+     * Enables to expand rows of time-grid display modes if they don’t take up the entire height.
      * <p>
      * The default value is {@code false}.
      *
@@ -1812,7 +1821,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *     </li>
      * </ul>
      * <p>
-     * The color applies in time-grid views and for all-day events in day-grid views.
+     * The color applies in time-grid display modes and for all-day events in day-grid display modes.
      *
      * @param textColor event text color
      */
@@ -1867,8 +1876,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * {@code nextDayThreshold} property. However, If the event has end date - {@code 2024-09-02T10:00:00}, it will be
      * rendered as two-day event.
      * <p>
-     * Only affects timed events that appear on whole-days cells. Whole-day cells occur in day-grid views and
-     * the all-day slots in the time-grid views.
+     * Only affects timed events that appear on whole-days cells. Whole-day cells occur in day-grid display modes and
+     * the all-day slots in the time-grid display modes.
      * <p>
      * Note that this property is ignored when event's {@code allDay} property is set to {@code true}.
      * <p>
@@ -1913,8 +1922,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the list of calendar event properties that should participate in sorting. It is also available to specify
      * properties from {@code getAdditionalProperties()}.
      * <p>
-     * For most calendar views, this property determines the vertical ordering of events within the same day.
-     * For time-grid views however, it determines the horizontal ordering of events within the same time slot.
+     * For most calendar display modes, this property determines the vertical ordering of events within the same day.
+     * For time-grid display modes however, it determines the horizontal ordering of events within the same time slot.
      * <p>
      * The default value puts earlier events first. If tied, it puts longer events first. If still tied, it puts
      * all-day events first. If still tied, orders events by title, alphabetically.
@@ -2195,7 +2204,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected void onDatesSet(DatesSetDomEvent event) {
-        calendarView = getCalendarView(event.getViewType());
+        displayMode = getDisplayMode(event.getViewType());
     }
 
     protected void onMoreLinkClick(MoreLinkClickDomEvent event) {
@@ -2222,18 +2231,18 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         // Stub, is used in inheritors
     }
 
-    protected CalendarView getCalendarView(String id) {
-        CalendarView calendarView = CalendarViewType.fromId(id);
-        if (calendarView != null) {
-            return calendarView;
+    protected CalendarDisplayMode getDisplayMode(String id) {
+        CalendarDisplayMode displayMode = CalendarDisplayModes.fromId(id);
+        if (displayMode != null) {
+            return displayMode;
         }
-        calendarView = GenericCalendarViewType.fromId(id);
-        if (calendarView != null) {
-            return calendarView;
+        displayMode = GenericCalendarDisplayModes.fromId(id);
+        if (displayMode != null) {
+            return displayMode;
         }
-        CustomCalendarView customView = options.getViews().getCustomCalendarView(id);
+        CustomCalendarDisplayMode customDisplayMode = options.getDisplayModes().getCustomCalendarDisplayMode(id);
 
-        return customView != null ? customView.getCalendarView() : () -> id;
+        return customDisplayMode != null ? customDisplayMode.getDisplayMode() : () -> id;
     }
 
     @ClientCallable

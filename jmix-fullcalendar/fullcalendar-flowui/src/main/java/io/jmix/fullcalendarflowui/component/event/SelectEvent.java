@@ -22,7 +22,7 @@ public class SelectEvent extends ComponentEvent<FullCalendar> {
 
     protected final MouseEventDetails mouseEventDetails;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public SelectEvent(FullCalendar source,
                        boolean fromClient,
@@ -30,7 +30,7 @@ public class SelectEvent extends ComponentEvent<FullCalendar> {
                        LocalDateTime startDateTime,
                        LocalDateTime endDateTime,
                        boolean allDay,
-                       ViewInfo viewInfo) {
+                       DisplayModeInfo displayModeInfo) {
         super(source, fromClient);
 
         this.mouseEventDetails = mouseEventDetails;
@@ -38,7 +38,7 @@ public class SelectEvent extends ComponentEvent<FullCalendar> {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.allDay = allDay;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
     }
 
     /**
@@ -69,10 +69,10 @@ public class SelectEvent extends ComponentEvent<FullCalendar> {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 
     /**

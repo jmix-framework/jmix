@@ -14,19 +14,19 @@ public class EventMouseEnterEvent extends AbstractClickEvent {
 
     protected final CalendarDataProvider dataProvider;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public EventMouseEnterEvent(FullCalendar fullCalendar,
                                 boolean fromClient,
                                 MouseEventDetails mouseEventDetails,
                                 CalendarEvent calendarEvent,
                                 CalendarDataProvider dataProvider,
-                                ViewInfo viewInfo) {
+                                DisplayModeInfo displayModeInfo) {
         super(fullCalendar, fromClient, mouseEventDetails);
 
         this.calendarEvent = calendarEvent;
         this.dataProvider = dataProvider;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
     }
 
     /**
@@ -44,9 +44,9 @@ public class EventMouseEnterEvent extends AbstractClickEvent {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 }

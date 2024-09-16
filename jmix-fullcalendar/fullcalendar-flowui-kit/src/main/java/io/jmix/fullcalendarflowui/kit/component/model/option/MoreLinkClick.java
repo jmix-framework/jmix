@@ -16,7 +16,7 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model.option;
 
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarView;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayMode;
 import jakarta.annotation.Nullable;
 
 import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.MORE_LINK_CLICK;
@@ -26,7 +26,7 @@ import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConsta
  */
 public class MoreLinkClick extends CalendarOption {
 
-    protected CalendarView calendarView;
+    protected CalendarDisplayMode calendarView;
 
     protected boolean functionEnabled = false;
 
@@ -35,11 +35,11 @@ public class MoreLinkClick extends CalendarOption {
     }
 
     @Nullable
-    public CalendarView getCalendarView() {
+    public CalendarDisplayMode getCalendarView() {
         return calendarView ;
     }
 
-    public void setCalendarView(@Nullable CalendarView calendarView) {
+    public void setCalendarView(@Nullable CalendarDisplayMode calendarView) {
         this.calendarView = calendarView;
 
         markAsDirty();

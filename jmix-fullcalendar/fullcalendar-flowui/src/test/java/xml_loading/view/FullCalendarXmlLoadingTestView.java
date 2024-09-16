@@ -28,11 +28,11 @@ public class FullCalendarXmlLoadingTestView extends StandardView {
     @ViewComponent
     public FullCalendar calendar;
     @ViewComponent
-    public FullCalendar calendarViewProperties;
+    public FullCalendar calendarDisplayModeProperties;
     @ViewComponent
     public FullCalendar calendarDataProviders;
     @ViewComponent
     public FullCalendar calendarBusinessHours;
     @ViewComponent
-    public FullCalendar calendarCustomViews;
+    public FullCalendar calendarCustomDisplayMode;
 }

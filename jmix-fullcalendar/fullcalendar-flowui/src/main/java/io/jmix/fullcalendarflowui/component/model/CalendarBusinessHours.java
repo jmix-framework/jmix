@@ -40,7 +40,7 @@ public class CalendarBusinessHours implements Serializable {
     }
 
     /**
-     * Creates business hours entry from days of week. The duration of business hours will be calculated from
+     * Creates business hours entry from days-of-week. The duration of business hours will be calculated from
      * start of the day to {@link FullCalendar#getDefaultTimedEventDuration()}.
      *
      * @param daysOfWeek days of week

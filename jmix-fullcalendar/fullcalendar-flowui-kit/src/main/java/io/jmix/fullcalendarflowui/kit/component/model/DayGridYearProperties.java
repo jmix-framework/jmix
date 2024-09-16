@@ -20,20 +20,20 @@ import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import jakarta.annotation.Nullable;
 
 /**
- * Configuration properties of day-grid year view {@link CalendarViewType#DAY_GRID_YEAR}.
+ * Configuration properties of day-grid year display mode {@link CalendarDisplayModes#DAY_GRID_YEAR}.
  * <p>
- * The view properties can be retrieved from {@link JmixFullCalendar#getCalendarViewProperties(CalendarViewType)}.
+ * The properties can be retrieved from {@link JmixFullCalendar#getCalendarDisplayModeProperties(CalendarDisplayModes)}.
  * For instance:
  * <pre>{@code
- * calendar.getCalendarViewProperties(CalendarViewType.DAY_GRID_YEAR);
+ * calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_YEAR);
  * }</pre>
  */
-public class DayGridYearViewProperties extends AbstractDayGridViewProperties {
+public class DayGridYearProperties extends AbstractDayGridProperties {
 
     protected String monthStartFormat;
 
-    public DayGridYearViewProperties() {
-        super(CalendarViewType.DAY_GRID_YEAR.getId());
+    public DayGridYearProperties() {
+        super(CalendarDisplayModes.DAY_GRID_YEAR.getId());
     }
 
     /**

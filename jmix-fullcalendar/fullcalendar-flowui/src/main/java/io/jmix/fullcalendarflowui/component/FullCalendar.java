@@ -49,9 +49,9 @@ import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.*;
 import static io.jmix.fullcalendarflowui.kit.component.CalendarDateTimeUtils.parseAndTransform;
 
 /**
- * UI component for visualizing events in a calendar using various views (month, week, etc.).
+ * UI component for visualizing events in a calendar using various display modes (month, week, etc.).
  * <p>
- * Component provides event rendering, drag-and-drop functionality, event editing, and customizable views.
+ * Component provides event rendering, drag-and-drop functionality, event editing, and customizable display modes.
  */
 public class FullCalendar extends JmixFullCalendar implements ApplicationContextAware, InitializingBean {
 
@@ -470,7 +470,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
-     * Adds a "more" link click listener. When listener is added, the {@link #setMoreLinkCalendarView(CalendarView)}
+     * Adds a "more" link click listener. When listener is added, the {@link #setMoreLinkCalendarDisplayMode(CalendarDisplayMode)}
      * value will be ignored.
      *
      * @param listener listener to add
@@ -639,7 +639,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
-     * Adds a listener thaat is invoked when the current selection is cleared.
+     * Adds a listener that is invoked when the current selection is cleared.
      *
      * @param listener listener to add
      * @return a registration object for removing an event listener added to a component
@@ -693,7 +693,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
 
     /**
      * Sets a class names generator for day headers. The day header is a cell that shows day of week and date in
-     * some views.
+     * some display modes.
      *
      * @param classNamesGenerator the generator to set
      */
@@ -713,8 +713,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
-     * Sets a day cell class names generator. The day cell appears in day grid views and
-     * in time grid views as an all-day cell.
+     * Sets a day cell class-names generator. The day cell appears in day-grid and time-grid display modes
+     * as an all-day cell.
      *
      * @param dayCellClassNamesGenerator the generator to set
      */
@@ -734,7 +734,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
-     * Sets a slot label class names generator. The slot label appears in time grid views. It is a cell with time label.
+     * Sets a slot label class-names generator. The slot label appears in time-grid display modes.
+     * It is a cell with time label.
      *
      * @param slotLabelClassNamesGenerator the generator to set
      */
@@ -911,7 +912,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 new DatesSetEvent(this, event.isFromClient(),
                         parseIsoDate(domDatesSet.getStartDate()),
                         parseIsoDate(domDatesSet.getEndDate()),
-                        createViewInfo(domDatesSet.getView())));
+                        createDisplayModeInfo(domDatesSet.getView())));
     }
 
     @Override
@@ -932,7 +933,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         hiddenCalendarEvents,
                         dataProviderContexts,
                         new MouseEventDetails(clientContext.getMouseDetails()),
-                        createViewInfo(clientContext.getView()))
+                        createDisplayModeInfo(clientContext.getView()))
         );
     }
 
@@ -948,7 +949,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         new MouseEventDetails(clientContext.getMouseDetails()),
                         calendarEvent,
                         dataProviderManager.getDataProvider(),
-                        createViewInfo(clientContext.getView()))
+                        createDisplayModeInfo(clientContext.getView()))
         );
     }
 
@@ -964,7 +965,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         new MouseEventDetails(clientContext.getMouseDetails()),
                         calendarEvent,
                         dataProviderManager.getDataProvider(),
-                        createViewInfo(clientContext.getView())));
+                        createDisplayModeInfo(clientContext.getView())));
     }
 
     @Override
@@ -979,7 +980,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         new MouseEventDetails(clientContext.getMouseDetails()),
                         calendarEvent,
                         dataProviderManager.getDataProvider(),
-                        createViewInfo(clientContext.getView())));
+                        createDisplayModeInfo(clientContext.getView())));
     }
 
     @Override
@@ -1000,7 +1001,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         createOldValues(clientEvent.getOldEvent()),
                         createDelta(clientEvent.getDelta()),
                         new MouseEventDetails(clientEvent.getMouseDetails()),
-                        createViewInfo(clientEvent.getView()))
+                        createDisplayModeInfo(clientEvent.getView()))
         );
     }
 
@@ -1023,7 +1024,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         clientEvent.getStartDelta() == null ? null : createDelta(clientEvent.getStartDelta()),
                         clientEvent.getEndDelta() == null ? null : createDelta(clientEvent.getEndDelta()),
                         new MouseEventDetails(clientEvent.getMouseDetails()),
-                        createViewInfo(clientEvent.getView())));
+                        createDisplayModeInfo(clientEvent.getView())));
     }
 
     @Override
@@ -1035,7 +1036,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         new MouseEventDetails(clientEvent.getMouseDetails()),
                         toLocalDateTime(clientEvent.getDateTime()),
                         clientEvent.isAllDay(),
-                        createViewInfo(clientEvent.getView())));
+                        createDisplayModeInfo(clientEvent.getView())));
     }
 
     @Override
@@ -1053,7 +1054,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         toLocalDateTime(clientEvent.getStartDateTime()),
                         toLocalDateTime(clientEvent.getEndDateTime()),
                         clientEvent.isAllDay(),
-                        createViewInfo(clientEvent.getView())));
+                        createDisplayModeInfo(clientEvent.getView())));
     }
 
     @Override
@@ -1067,7 +1068,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         getEventBus().fireEvent(
                 new UnselectEvent(
                         this, event.isFromClient(),
-                        createViewInfo(clientEvent.getView()),
+                        createDisplayModeInfo(clientEvent.getView()),
                         mouseEventDetails));
     }
 
@@ -1083,7 +1084,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 new MoreLinkClassNamesContext(
                         this,
                         clientContext.getEventsCount(),
-                        createViewInfo(clientContext.getView())));
+                        createDisplayModeInfo(clientContext.getView())));
 
         JsonArray classNamesJson = classNames == null
                 ? jsonFactory.createArray()
@@ -1112,7 +1113,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         clientContext.isOther(),
                         clientContext.isPast(),
                         clientContext.isToday(),
-                        createViewInfo(clientContext.getView())));
+                        createDisplayModeInfo(clientContext.getView())));
 
         JsonArray classNamesJson = classNames == null
                 ? jsonFactory.createArray()
@@ -1141,7 +1142,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         clientContext.isOther(),
                         clientContext.isPast(),
                         clientContext.isToday(),
-                        createViewInfo(clientContext.getView())));
+                        createDisplayModeInfo(clientContext.getView())));
 
         JsonArray classNamesJson = classNames == null
                 ? jsonFactory.createArray()
@@ -1164,7 +1165,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 new SlotLabelClassNamesContext(
                         this,
                         LocalTime.parse(clientContext.getTime()),
-                        createViewInfo(clientContext.getView())));
+                        createDisplayModeInfo(clientContext.getView())));
 
         JsonArray classNamesJson = classNames == null
                 ? jsonFactory.createArray()
@@ -1189,7 +1190,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         this,
                         clientContext.isAxis(),
                         toLocalDateTime(clientContext.getDateTime()),
-                        createViewInfo(clientContext.getView())));
+                        createDisplayModeInfo(clientContext.getView())));
 
         JsonArray classNamesJson = classNames == null
                 ? jsonFactory.createArray()
@@ -1383,13 +1384,13 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                 .plusMilliseconds(clientDuration.getMilliseconds());
     }
 
-    protected ViewInfo createViewInfo(DomViewInfo clientViewInfo) {
-        return new ViewInfo(
+    protected DisplayModeInfo createDisplayModeInfo(DomViewInfo clientViewInfo) {
+        return new DisplayModeInfo(
                 parseIsoDate(clientViewInfo.getActiveStart()),
                 parseIsoDate(clientViewInfo.getActiveEnd()),
                 parseIsoDate(clientViewInfo.getCurrentStart()),
                 parseIsoDate(clientViewInfo.getCurrentEnd()),
-                getCalendarView(clientViewInfo.getType()));
+                getDisplayMode(clientViewInfo.getType()));
     }
 
     protected FullCalendarI18n createDefaultI18n() {
@@ -1430,25 +1431,25 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected void setupDayGridLocalizedFormats() {
-        DayGridDayViewProperties dayGridDay = getCalendarViewProperties(CalendarViewType.DAY_GRID_DAY);
+        DayGridDayProperties dayGridDay = getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_DAY);
         dayGridDay.setDayPopoverFormat(getMessage("dayGridDayDayPopoverFormat"));
         dayGridDay.setDayHeaderFormat(getMessage("dayGridDayDayHeaderFormat"));
         dayGridDay.setWeekNumberFormat(getMessage("dayGridDayWeekNumberFormat"));
         dayGridDay.setEventTimeFormat(getMessage("dayGridDayEventTimeFormat"));
 
-        DayGridWeekViewProperties dayGridWeek = getCalendarViewProperties(CalendarViewType.DAY_GRID_WEEK);
+        DayGridWeekProperties dayGridWeek = getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_WEEK);
         dayGridWeek.setDayPopoverFormat(getMessage("dayGridWeekDayDayPopoverFormat"));
         dayGridWeek.setDayHeaderFormat(getMessage("dayGridWeekDayHeaderFormat"));
         dayGridWeek.setWeekNumberFormat(getMessage("dayGridWeekWeekNumberFormat"));
         dayGridWeek.setEventTimeFormat(getMessage("dayGridWeekEventTimeFormat"));
 
-        DayGridMonthViewProperties dayGridMonth = getCalendarViewProperties(CalendarViewType.DAY_GRID_MONTH);
+        DayGridMonthProperties dayGridMonth = getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_MONTH);
         dayGridMonth.setDayPopoverFormat(getMessage("dayGridMonthDayPopoverFormat"));
         dayGridMonth.setDayHeaderFormat(getMessage("dayGridMonthDayHeaderFormat"));
         dayGridMonth.setWeekNumberFormat(getMessage("dayGridMonthWeekNumberFormat"));
         dayGridMonth.setEventTimeFormat(getMessage("dayGridMonthEventTimeFormat"));
 
-        DayGridYearViewProperties dayGridYear = getCalendarViewProperties(CalendarViewType.DAY_GRID_YEAR);
+        DayGridYearProperties dayGridYear = getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_YEAR);
         dayGridYear.setDayPopoverFormat(getMessage("dayGridYearDayPopoverFormat"));
         dayGridYear.setDayHeaderFormat(getMessage("dayGridYearDayHeaderFormat"));
         dayGridYear.setWeekNumberFormat(getMessage("dayGridYearWeekNumberFormat"));
@@ -1457,14 +1458,14 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected void setupTimeGridLocalizedFormats() {
-        TimeGridDayViewProperties timeGridDay = getCalendarViewProperties(CalendarViewType.TIME_GRID_DAY);
+        TimeGridDayProperties timeGridDay = getCalendarDisplayModeProperties(CalendarDisplayModes.TIME_GRID_DAY);
         timeGridDay.setDayPopoverFormat(getMessage("timeGridDayDayPopoverFormat"));
         timeGridDay.setDayHeaderFormat(getMessage("timeGridDayDayHeaderFormat"));
         timeGridDay.setWeekNumberFormat(getMessage("timeGridDayWeekNumberFormat"));
         timeGridDay.setEventTimeFormat(getMessage("timeGridDayEventTimeFormat"));
         timeGridDay.setSlotLabelFormat(getMessage("timeGridDaySlotLabelFormat"));
 
-        TimeGridWeekViewProperties timeGridWeek = getCalendarViewProperties(CalendarViewType.TIME_GRID_WEEK);
+        TimeGridWeekProperties timeGridWeek = getCalendarDisplayModeProperties(CalendarDisplayModes.TIME_GRID_WEEK);
         timeGridWeek.setDayPopoverFormat(getMessage("timeGridWeekDayPopoverFormat"));
         timeGridWeek.setDayHeaderFormat(getMessage("timeGridWeekDayHeaderFormat"));
         timeGridWeek.setWeekNumberFormat(getMessage("timeGridWeekWeekNumberFormat"));
@@ -1473,25 +1474,25 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     protected void setupListLocalizedFormats() {
-        ListDayViewProperties listDay = getCalendarViewProperties(CalendarViewType.LIST_DAY);
+        ListDayProperties listDay = getCalendarDisplayModeProperties(CalendarDisplayModes.LIST_DAY);
         listDay.setListDayFormat(getMessage("listDayListDayFormat"));
         listDay.setListDaySideFormat(getMessage("listDayListDaySideFormat"));
 
-        ListWeekViewProperties listWeek = getCalendarViewProperties(CalendarViewType.LIST_WEEK);
+        ListWeekProperties listWeek = getCalendarDisplayModeProperties(CalendarDisplayModes.LIST_WEEK);
         listWeek.setListDayFormat(getMessage("listWeekListDayFormat"));
         listWeek.setListDaySideFormat(getMessage("listWeekListDaySideFormat"));
 
-        ListMonthViewProperties listMonth = getCalendarViewProperties(CalendarViewType.LIST_MONTH);
+        ListMonthProperties listMonth = getCalendarDisplayModeProperties(CalendarDisplayModes.LIST_MONTH);
         listMonth.setListDayFormat(getMessage("listMonthListDayFormat"));
         listMonth.setListDaySideFormat(getMessage("listMonthListDaySideFormat"));
 
-        ListYearViewProperties listYear = getCalendarViewProperties(CalendarViewType.LIST_YEAR);
+        ListYearProperties listYear = getCalendarDisplayModeProperties(CalendarDisplayModes.LIST_YEAR);
         listYear.setListDayFormat(getMessage("listYearListDayFormat"));
         listYear.setListDaySideFormat(getMessage("listYearListDaySideFormat"));
     }
 
     protected void setupMultiLocalizedFormats() {
-        MultiMonthYearViewProperties multiMonthYear = getCalendarViewProperties(CalendarViewType.MULTI_MONTH_YEAR);
+        MultiMonthYearProperties multiMonthYear = getCalendarDisplayModeProperties(CalendarDisplayModes.MULTI_MONTH_YEAR);
         multiMonthYear.setMultiMonthTitleFormat(getMessage("multiMonthYearMultiMonthTitleFormat"));
     }
 

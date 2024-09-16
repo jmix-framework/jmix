@@ -19,9 +19,9 @@ package io.jmix.fullcalendarflowui.kit.component.model;
 import jakarta.annotation.Nullable;
 
 /**
- * Base class for configuring properties of list views.
+ * Base class for configuring properties of list display modes.
  */
-public abstract class AbstractListViewProperties extends AbstractCalendarViewProperties {
+public abstract class AbstractListProperties extends AbstractCalendarDisplayModeProperties {
 
     protected String listDayFormat;
 
@@ -31,7 +31,7 @@ public abstract class AbstractListViewProperties extends AbstractCalendarViewPro
 
     protected boolean listDaySideVisible = true;
 
-    public AbstractListViewProperties(String name) {
+    public AbstractListProperties(String name) {
         super(name);
     }
 

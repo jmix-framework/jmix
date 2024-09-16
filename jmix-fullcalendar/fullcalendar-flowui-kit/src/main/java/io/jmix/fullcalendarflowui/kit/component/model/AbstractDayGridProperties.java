@@ -20,9 +20,9 @@ import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import jakarta.annotation.Nullable;
 
 /**
- * Base class for configuring properties of day-grid views.
+ * Base class for configuring properties of day-grid display modes.
  */
-public abstract class AbstractDayGridViewProperties extends AbstractCalendarViewProperties {
+public abstract class AbstractDayGridProperties extends AbstractCalendarDisplayModeProperties {
 
     protected String dayPopoverFormat;
 
@@ -34,7 +34,7 @@ public abstract class AbstractDayGridViewProperties extends AbstractCalendarView
 
     protected boolean displayEventEnd = false;
 
-    public AbstractDayGridViewProperties(String name) {
+    public AbstractDayGridProperties(String name) {
         super(name);
     }
 
@@ -160,7 +160,8 @@ public abstract class AbstractDayGridViewProperties extends AbstractCalendarView
     /**
      * Determines an event's end time visibility.
      * <p>
-     * By default {@code true} for {@link CalendarViewType#DAY_GRID_DAY} and {@code false} for other day-grid views.
+     * By default {@code true} for {@link CalendarDisplayModes#DAY_GRID_DAY} and {@code false} for other
+     * day-grid display modes.
      *
      * @param displayEventEnd whether to display end time
      */

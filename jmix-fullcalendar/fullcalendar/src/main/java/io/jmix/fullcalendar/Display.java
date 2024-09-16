@@ -20,7 +20,7 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 import jakarta.annotation.Nullable;
 
 /**
- * Represents possible preset rendering styles that event can use. It can be used in entities as a property type.
+ * Represents possible preset rendering styles that the event can use.
  */
 public enum Display implements EnumClass<String> {
 

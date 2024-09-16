@@ -10,7 +10,7 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 
 /**
- * The event is fired when resizing stops and the calendar event has changed in duration.
+ * The event is fired when the resizing stops and the calendar event's duration has changed.
  */
 public class EventResizeEvent extends AbstractEventMoveEvent {
 
@@ -22,7 +22,7 @@ public class EventResizeEvent extends AbstractEventMoveEvent {
 
     protected final CalendarDuration endDelta;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public EventResizeEvent(FullCalendar fullCalendar, boolean fromClient,
                             CalendarEvent calendarEvent,
@@ -33,19 +33,19 @@ public class EventResizeEvent extends AbstractEventMoveEvent {
                             @Nullable CalendarDuration startDelta,
                             @Nullable CalendarDuration endDelta,
                             MouseEventDetails mouseEventDetails,
-                            ViewInfo viewInfo) {
+                            DisplayModeInfo displayModeInfo) {
         super(fullCalendar, fromClient, mouseEventDetails, relatedDataProviderContexts, relatedCalendarEvents,
                 oldValues);
 
         this.calendarEvent = calendarEvent;
         this.dataProvider = dataProvider;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
         this.startDelta = startDelta;
         this.endDelta = endDelta;
     }
 
     /**
-     * @return calendar event that contains new values after the resize
+     * @return the changed calendar event
      */
     public CalendarEvent getCalendarEvent() {
         return calendarEvent;
@@ -55,8 +55,8 @@ public class EventResizeEvent extends AbstractEventMoveEvent {
      * Returns all related calendar events even if they are from different data providers. To get related calendar
      * events by data provider, use {@link #getRelatedDataProviderContexts()}.
      * <p>
-     * An event might have other recurring event instances or might be linked to other events with the same group ID.
-     * So these events will be related with resized one.
+     * An event might be linked to other events with the same group ID. So these events will be related with
+     * resized one.
      *
      * @return all related calendar events that were also resized
      */
@@ -88,9 +88,9 @@ public class EventResizeEvent extends AbstractEventMoveEvent {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 }

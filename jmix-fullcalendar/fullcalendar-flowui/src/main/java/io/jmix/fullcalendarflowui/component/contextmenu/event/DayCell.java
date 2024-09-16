@@ -2,24 +2,24 @@ package io.jmix.fullcalendarflowui.component.contextmenu.event;
 
 import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 
 import java.time.LocalDate;
 
 /**
- * Describes day cell from Day Grids:
+ * Describes day cell from day-grid:
  * <ul>
  *     <li>
- *          {@link CalendarViewType#DAY_GRID_DAY}
+ *          {@link CalendarDisplayModes#DAY_GRID_DAY}
  *     </li>
  *     <li>
- *         {@link CalendarViewType#DAY_GRID_WEEK},
+ *         {@link CalendarDisplayModes#DAY_GRID_WEEK},
  *     </li>
  *     <li>
- *          {@link CalendarViewType#DAY_GRID_MONTH}
+ *          {@link CalendarDisplayModes#DAY_GRID_MONTH}
  *     </li>
  *     <li>
- *         {@link CalendarViewType#DAY_GRID_YEAR}
+ *         {@link CalendarDisplayModes#DAY_GRID_YEAR}
  *     </li>
  * </ul>
  */
@@ -58,7 +58,7 @@ public class DayCell {
     }
 
     /**
-     * Cell can be disabled, for instance, if it is not in valid date range. See
+     * The cell can be disabled, for instance, if it is not in valid date range. See
      * {@link FullCalendar#setValidRange(LocalDate, LocalDate)}
      *
      * @return whether day cell is disabled

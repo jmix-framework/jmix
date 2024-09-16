@@ -20,9 +20,9 @@ import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 import jakarta.annotation.Nullable;
 
 /**
- * Base class for configuring properties of time-grid views.
+ * Base class for configuring properties of time-grid display modes.
  */
-public abstract class AbstractTimeGridViewProperties extends AbstractCalendarViewProperties {
+public abstract class AbstractTimeGridProperties extends AbstractCalendarDisplayModeProperties {
 
     protected String dayPopoverFormat;
 
@@ -44,7 +44,7 @@ public abstract class AbstractTimeGridViewProperties extends AbstractCalendarVie
 
     protected boolean displayEventEnd = true;
 
-    public AbstractTimeGridViewProperties(String name) {
+    public AbstractTimeGridProperties(String name) {
         super(name);
     }
 

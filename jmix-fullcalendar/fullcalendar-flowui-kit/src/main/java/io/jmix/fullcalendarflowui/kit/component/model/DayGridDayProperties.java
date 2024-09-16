@@ -19,10 +19,20 @@ package io.jmix.fullcalendarflowui.kit.component.model;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 
 /**
- * Base interface for views in {@link JmixFullCalendar}.
- *
- * @see CalendarViewType
- * @see <a href="https://fullcalendar.io/docs/view-object">FullCalendar docs :: view-object</a>
+ * Configuration properties of day-grid day display mode {@link CalendarDisplayModes#DAY_GRID_DAY}.
+ * <p>
+ * The display mode properties can be retrieved from
+ * {@link JmixFullCalendar#getCalendarDisplayModeProperties(CalendarDisplayModes)}.
+ * For instance:
+ * <pre>{@code
+ * calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.DAY_GRID_DAY);
+ * }</pre>
  */
-public interface CalendarView extends HasEnumId<String> {
+public class DayGridDayProperties extends AbstractDayGridProperties {
+
+    public DayGridDayProperties() {
+        super(CalendarDisplayModes.DAY_GRID_DAY.getId());
+
+        displayEventEnd = true;
+    }
 }

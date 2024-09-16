@@ -46,7 +46,7 @@ public class JmixFullCalendarOptions {
         initialOptionsMap.put(DRAG_SCROLL, new SimpleOption<>(DRAG_SCROLL, true));
         initialOptionsMap.put(EVENT_TIME_FORMAT, new SimpleOption<>(EVENT_TIME_FORMAT, "h:mma"));
         initialOptionsMap.put(INITIAL_DATE, new SimpleOption<>(INITIAL_DATE));
-        initialOptionsMap.put(INITIAL_VIEW, new SimpleOption<>(INITIAL_VIEW, CalendarViewType.DAY_GRID_MONTH));
+        initialOptionsMap.put(INITIAL_VIEW, new SimpleOption<>(INITIAL_VIEW, CalendarDisplayModes.DAY_GRID_MONTH));
         initialOptionsMap.put(NOW_INDICATOR, new SimpleOption<>(NOW_INDICATOR, false));
         initialOptionsMap.put(SCROLL_TIME, new SimpleOption<>(SCROLL_TIME, CalendarDuration.ofHours(6)));
         initialOptionsMap.put(SCROLL_TIME_RESET, new SimpleOption<>(SCROLL_TIME_RESET, true));
@@ -54,7 +54,7 @@ public class JmixFullCalendarOptions {
         initialOptionsMap.put(SLOT_LABEL_FORMAT, new SimpleOption<>(SLOT_LABEL_FORMAT, "ha"));
         initialOptionsMap.put(UNSELECT_AUTO, new SimpleOption<>(UNSELECT_AUTO, true));
         initialOptionsMap.put(UNSELECT_CANCEL, new SimpleOption<>(UNSELECT_CANCEL, ""));
-        initialOptionsMap.put(VIEWS, new Views());
+        initialOptionsMap.put(VIEWS, new DisplayModes());
         initialOptionsMap.put(WEEK_NUMBER_FORMAT, new SimpleOption<>(WEEK_NUMBER_FORMAT));
 
         optionsMap.put(ALL_DAY_MAINTAIN_DURATION, new SimpleOption<>(ALL_DAY_MAINTAIN_DURATION, false));
@@ -149,7 +149,7 @@ public class JmixFullCalendarOptions {
         return get(TIME_ZONE);
     }
 
-    public SimpleOption<CalendarView> getInitialView() {
+    public SimpleOption<CalendarDisplayMode> getInitialDisplayMode() {
         return getInitial(INITIAL_VIEW);
     }
 
@@ -241,7 +241,7 @@ public class JmixFullCalendarOptions {
         return getInitial(SELECT_MIN_DISTANCE);
     }
 
-    public Views getViews() {
+    public DisplayModes getDisplayModes() {
         return getInitial(VIEWS);
     }
 

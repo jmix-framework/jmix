@@ -15,7 +15,7 @@ import java.time.LocalDate;
  *         navigates to next and previous
  *     </li>
  *     <li>
- *         change the view
+ *         switches the display mode
  *     </li>
  *     <li>
  *         clicks a navigation link
@@ -30,18 +30,18 @@ public class DatesSetEvent extends ComponentEvent<FullCalendar> {
 
     protected final LocalDate endDate;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public DatesSetEvent(FullCalendar fullCalendar, boolean fromClient,
                          LocalDate startDate,
                          LocalDate endDate,
-                         ViewInfo viewInfo) {
+                         DisplayModeInfo displayModeInfo) {
         super(fullCalendar, fromClient);
 
         this.startDate = startDate;
         this.endDate = endDate;
 
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
     }
 
     /**
@@ -61,9 +61,9 @@ public class DatesSetEvent extends ComponentEvent<FullCalendar> {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 }

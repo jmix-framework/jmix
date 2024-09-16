@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Base class for configuring properties of calendar views ({@link CalendarViewType}).
+ * Base class for configuring properties of calendar display modes ({@link CalendarDisplayModes}).
  */
-public abstract class AbstractCalendarViewProperties extends CalendarOption {
+public abstract class AbstractCalendarDisplayModeProperties extends CalendarOption {
 
     protected Map<String, Object> properties;
 
-    public AbstractCalendarViewProperties(String name) {
+    public AbstractCalendarDisplayModeProperties(String name) {
         super(name);
     }
 
@@ -41,7 +41,7 @@ public abstract class AbstractCalendarViewProperties extends CalendarOption {
     }
 
     /**
-     * Adds property to calendar view
+     * Adds property to calendar display mode.
      *
      * @param name  property name
      * @param value property value
@@ -56,7 +56,7 @@ public abstract class AbstractCalendarViewProperties extends CalendarOption {
     }
 
     /**
-     * Removes property from calendar view.
+     * Removes property from calendar display mode.
      *
      * @param name property name to remove
      */

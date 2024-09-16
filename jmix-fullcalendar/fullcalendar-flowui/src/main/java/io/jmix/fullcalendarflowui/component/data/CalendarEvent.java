@@ -20,7 +20,7 @@ import io.jmix.fullcalendar.DaysOfWeek;
 import io.jmix.fullcalendar.Display;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 import io.jmix.fullcalendarflowui.kit.component.model.JsFunction;
 import org.springframework.lang.Nullable;
 
@@ -56,7 +56,7 @@ public interface CalendarEvent {
     Object getGroupId();
 
     /**
-     * Determines if the event is shown in the “all-day” section of relevant {@link CalendarViewType}.
+     * Determines if the event is shown in the “all-day” section of relevant {@link CalendarDisplayModes}.
      * The default value is {@code false}.
      * <p>
      * Note, the {@code null} value means not all day event.
@@ -67,7 +67,7 @@ public interface CalendarEvent {
     Boolean getAllDay();
 
     /**
-     * Sets whether the event should be shown in the "all-day" section of relevant {@link CalendarViewType}.
+     * Sets whether the event should be shown in the "all-day" section of relevant {@link CalendarDisplayModes}.
      * In addition, if {@code true} the time text is not displayed with the event. The default value is {@code false}.
      * <p>
      * Note, the {@code null} value means not all-day event.
@@ -308,8 +308,8 @@ public interface CalendarEvent {
      *     </li>
      * </ul>
      *  Note, if the text color is {@code null}, color will be managed by component's
-     *  {@link FullCalendar#getEventTextColor()}. The color applies in time-grid views and for
-     *  all-day events in day-grid views.
+     *  {@link FullCalendar#getEventTextColor()}. The color applies in time-grid display modes and for
+     *  all-day events in day-grid display modes.
      *
      * @return text color or {@code null} if not set
      */

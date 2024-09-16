@@ -3,7 +3,7 @@ package io.jmix.fullcalendarflowui.component.contextmenu.event;
 import io.jmix.fullcalendarflowui.component.data.CalendarDataProvider;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 import org.springframework.lang.Nullable;
 
 /**
@@ -30,8 +30,8 @@ public class FullCalendarCellContext {
     }
 
     /**
-     * @return day cell information or {@code null} if component's view is Time Grid:
-     * {@link CalendarViewType#TIME_GRID_DAY} or {@link CalendarViewType#TIME_GRID_WEEK}.
+     * @return day cell information or {@code null} if component's display mode is time-grid:
+     * {@link CalendarDisplayModes#TIME_GRID_DAY} or {@link CalendarDisplayModes#TIME_GRID_WEEK}.
      */
     @Nullable
     public DayCell getDayCell() {

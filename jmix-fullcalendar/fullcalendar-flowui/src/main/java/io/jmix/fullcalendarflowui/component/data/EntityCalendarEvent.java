@@ -244,10 +244,8 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof EntityCalendarEvent<?> ce) {
-            return id.equals(ce.id);
-        }
-        return false;
+        return (obj instanceof EntityCalendarEvent<?> ce)
+                && id.equals(ce.id);
     }
 
     @Override

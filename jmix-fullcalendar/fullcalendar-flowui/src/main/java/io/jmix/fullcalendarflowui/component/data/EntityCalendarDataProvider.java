@@ -6,8 +6,8 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 
 /**
- * Base interface for data providers that works with entities. It contains entity properties
- * names to get according values for {@link CalendarEvent}.
+ * Base interface for data providers that work with entities, containing property names to retrieve values
+ * for {@link CalendarEvent} entities.
  */
 public interface EntityCalendarDataProvider extends CalendarDataProvider {
 

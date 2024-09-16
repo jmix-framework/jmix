@@ -18,7 +18,7 @@ package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendar.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
@@ -42,7 +42,7 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
 
     protected final boolean isToday;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public DayHeaderClassNamesContext(FullCalendar fullCalendar,
                                       @Nullable LocalDate date,
@@ -52,7 +52,7 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
                                       boolean isOther,
                                       boolean isPast,
                                       boolean isToday,
-                                      ViewInfo viewInfo) {
+                                      DisplayModeInfo displayModeInfo) {
         super(fullCalendar);
         this.date = date;
         this.dayOfWeek = dayOfWeek;
@@ -61,11 +61,11 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
         this.isOther = isOther;
         this.isPast = isPast;
         this.isToday = isToday;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
     }
 
     /**
-     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it returns
+     * Note, for {@link CalendarDisplayModes#DAY_GRID_MONTH} and {@link CalendarDisplayModes#DAY_GRID_YEAR} it returns
      * {@code null} value.
      *
      * @return date that corresponds to day header cell
@@ -86,7 +86,7 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
      * Cell can be disabled, for instance, if it is not in valid date range. See
      * {@link FullCalendar#setValidRange(LocalDate, LocalDate)}.
      * <p>
-     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it always
+     * Note, for {@link CalendarDisplayModes#DAY_GRID_MONTH} and {@link CalendarDisplayModes#DAY_GRID_YEAR} it always
      * returns {@code false} value.
      *
      * @return {@code true} if day header cell is disabled
@@ -96,7 +96,7 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it always
+     * Note, for {@link CalendarDisplayModes#DAY_GRID_MONTH} and {@link CalendarDisplayModes#DAY_GRID_YEAR} it always
      * returns {@code false} value.
      *
      * @return whether the day header cell's date is in future compared with today's date
@@ -106,7 +106,7 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it always
+     * Note, for {@link CalendarDisplayModes#DAY_GRID_MONTH} and {@link CalendarDisplayModes#DAY_GRID_YEAR} it always
      * returns {@code false} value.
      *
      * @return whether the day header cell's date is in other month
@@ -116,7 +116,7 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it always
+     * Note, for {@link CalendarDisplayModes#DAY_GRID_MONTH} and {@link CalendarDisplayModes#DAY_GRID_YEAR} it always
      * returns {@code false} value.
      *
      * @return whether the day header cell's date is in past compared with today's date
@@ -126,7 +126,7 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * Note, for {@link CalendarViewType#DAY_GRID_MONTH} and {@link CalendarViewType#DAY_GRID_YEAR} it always
+     * Note, for {@link CalendarDisplayModes#DAY_GRID_MONTH} and {@link CalendarDisplayModes#DAY_GRID_YEAR} it always
      * returns {@code false} value.
      *
      * @return whether the day header cell's date is today
@@ -136,9 +136,9 @@ public class DayHeaderClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 }

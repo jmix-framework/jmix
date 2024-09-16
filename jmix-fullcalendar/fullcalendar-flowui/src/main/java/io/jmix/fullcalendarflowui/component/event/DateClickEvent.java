@@ -6,7 +6,7 @@ import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
 import java.time.LocalDateTime;
 
 /**
- * The event is fired when day cell or time cell is clicked.
+ * The event is fired when a day cell or time cell is clicked.
  */
 public class DateClickEvent extends AbstractClickEvent {
 
@@ -14,26 +14,26 @@ public class DateClickEvent extends AbstractClickEvent {
 
     protected final boolean allDay;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public DateClickEvent(FullCalendar fullCalendar,
                           boolean fromClient,
                           MouseEventDetails mouseEventDetails,
                           LocalDateTime dateTime,
                           boolean allDay,
-                          ViewInfo viewInfo) {
+                          DisplayModeInfo displayModeInfo) {
         super(fullCalendar, fromClient, mouseEventDetails);
 
         this.dateTime = dateTime;
         this.allDay = allDay;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
     }
 
     /**
      * Returns date-time as is from component without transformation. It means that value corresponds component's
      * TimeZone.
      * <p>
-     * Note, if day cell is clicked, the time part will be {@code 00:00:00}.
+     * Note, if the day cell is clicked, the time part will be {@code 00:00:00}.
      *
      * @return date-time of clicked cell
      */
@@ -49,9 +49,9 @@ public class DateClickEvent extends AbstractClickEvent {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 }

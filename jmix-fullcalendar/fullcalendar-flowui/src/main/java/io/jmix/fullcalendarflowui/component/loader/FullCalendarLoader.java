@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 
 public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
 
-    protected ViewPropertiesLoader viewPropertiesLoader;
+    protected DisplayModePropertiesLoader displayModeProperties;
 
     @Override
     protected FullCalendar createComponent() {
@@ -102,7 +102,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadString(element, "initialDate", (s) -> resultComponent.setInitialDate(LocalDate.parse(s)));
 
         loadStringList(element, "moreLinkClassNames", resultComponent::setMoreLinkClassNames);
-        loadMoreLinkView(element, resultComponent::setMoreLinkCalendarView);
+        loadMoreLinkDisplayMode(element, resultComponent::setMoreLinkCalendarDisplayMode);
 
         loadBoolean(element, "navigationLinksEnabled", resultComponent::setNavigationLinksEnabled);
         loadDuration(element, "nextDayThreshold", resultComponent::setNextDayThreshold);
@@ -133,9 +133,9 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
         loadInteger(element, "windowResizeDelay", resultComponent::setWindowResizeDelay);
 
-        viewProperties().loadCalendarViewProperties(element, resultComponent);
-        viewProperties().loadCustomCalendarViews(element, resultComponent);
-        loadInitialView(element, resultComponent);
+        displayModeProperties().loadCalendarDisplayModeProperties(element, resultComponent);
+        displayModeProperties().loadCustomCalendarDisplayModes(element, resultComponent);
+        loadInitialDisplayMode(element, resultComponent);
 
         loadBusinessHours(element, resultComponent::setBusinessHours);
         loadHiddenDays(element, resultComponent);
@@ -283,15 +283,15 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         return builder.build();
     }
 
-    protected void loadMoreLinkView(Element element, Consumer<CalendarView> setter) {
-        loadString(element, "moreLinkView")
+    protected void loadMoreLinkDisplayMode(Element element, Consumer<CalendarDisplayMode> setter) {
+        loadString(element, "moreLinkDisplayMode")
                 .ifPresent(t -> {
-                    List<Enum<?>> calendarViews = List.of(CalendarViewType.values());
+                    List<Enum<?>> calendarDisplayModes = List.of(CalendarDisplayModes.values());
 
-                    calendarViews.stream().filter(e -> e.name().contains(t))
+                    calendarDisplayModes.stream().filter(e -> e.name().contains(t))
                             .findFirst()
                             .ifPresentOrElse(
-                                    e -> setter.accept((CalendarView) e),
+                                    e -> setter.accept((CalendarDisplayMode) e),
                                     () -> setter.accept(() -> t));
                 });
     }
@@ -352,10 +352,10 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         return CalendarBusinessHours.of(startTime, endTime, businessDays.toArray(new DayOfWeek[0]));
     }
 
-    protected void loadInitialView(Element element, FullCalendar resultComponent) {
-        loadString(element, "initialView", (view) -> {
-            CalendarView calendarView = viewProperties().getView(view, resultComponent);
-            resultComponent.setInitialCalendarView(calendarView);
+    protected void loadInitialDisplayMode(Element element, FullCalendar resultComponent) {
+        loadString(element, "initialDisplayMode", (displayMode) -> {
+            CalendarDisplayMode calendarDisplayMode = displayModeProperties().getDisplayMode(displayMode, resultComponent);
+            resultComponent.setInitialCalendarDisplayMode(calendarDisplayMode);
         });
     }
 
@@ -377,10 +377,10 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         }
     }
 
-    protected ViewPropertiesLoader viewProperties() {
-        if (viewPropertiesLoader == null) {
-            viewPropertiesLoader = new ViewPropertiesLoader(loaderSupport, context);
+    protected DisplayModePropertiesLoader displayModeProperties() {
+        if (displayModeProperties == null) {
+            displayModeProperties = new DisplayModePropertiesLoader(loaderSupport, context);
         }
-        return viewPropertiesLoader;
+        return displayModeProperties;
     }
 }

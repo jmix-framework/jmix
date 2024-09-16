@@ -82,9 +82,9 @@
                            firstDayOfWeek="TUESDAY"
                            forceEventDuration="true"
                            initialDate="2024-09-01"
-                           initialView="TIME_GRID_WEEK"
+                           initialDisplayMode="TIME_GRID_WEEK"
                            moreLinkClassNames="moreLinkClassNames,moreLinkClassNames1"
-                           moreLinkView="LIST_DAY"
+                           moreLinkDisplayMode="LIST_DAY"
                            navigationLinksEnabled="true"
                            nextDayThreshold="PT9h"
                            nowIndicatorVisible="true"
@@ -125,22 +125,22 @@
             </calendar:businessHours>
         </calendar:calendar>
 
-        <calendar:calendar id="calendarCustomViews">
-            <calendar:customViews>
-                <calendar:view id="customView"
-                               type="DAY_GRID"
-                               dayCount="1">
+        <calendar:calendar id="calendarCustomDisplayMode">
+            <calendar:customDisplayModes>
+                <calendar:displayMode id="customDisplayMode"
+                                      type="DAY_GRID"
+                                      dayCount="1">
                     <calendar:duration years="1" months="1" weeks="1" days="1" hours="1" minutes="1" seconds="1"
                                        milliseconds="1"/>
                     <calendar:properties>
                         <calendar:property name="test" value="1"/>
                     </calendar:properties>
-                </calendar:view>
-            </calendar:customViews>
+                </calendar:displayMode>
+            </calendar:customDisplayModes>
         </calendar:calendar>
 
-        <calendar:calendar id="calendarViewProperties">
-            <calendar:viewProperties>
+        <calendar:calendar id="calendarDisplayModeProperties">
+            <calendar:displayModeProperties>
                 <calendar:dayGridDay dayPopoverFormat="dayPopoverFormat"
                                      dayHeaderFormat="dayHeaderFormat"
                                      eventTimeFormat="eventTimeFormat"
@@ -245,7 +245,7 @@
                                          multiMonthMinWidth="1"
                                          multiMonthTitleFormat="multiMonthTitleFormat"
                                          showNonCurrentDates="false"/>
-            </calendar:viewProperties>
+            </calendar:displayModeProperties>
         </calendar:calendar>
 
         <calendar:calendar id="calendarDataProviders">
@@ -274,27 +274,27 @@
                                                 recurringStartDate="recurringStartDate"
                                                 recurringEndDate="recurringEndDate"/>
                 <calendar:callbackDataProvider id="callbackDataProvider"
-                                            groupId="groupId"
-                                            allDay="allDay"
-                                            startDateTime="startDateTime"
-                                            endDateTime="endDateTime"
-                                            title="title"
-                                            description="description"
-                                            interactive="interactive"
-                                            classNames="classNames"
-                                            startEditable="startEditable"
-                                            durationEditable="durationEditable"
-                                            display="display"
-                                            overlap="overlap"
-                                            constraint="constraint"
-                                            backgroundColor="backgroundColor"
-                                            borderColor="borderColor"
-                                            textColor="textColor"
-                                            recurringDaysOfWeek="recurringDaysOfWeek"
-                                            recurringStartTime="recurringStartTime"
-                                            recurringEndTime="recurringEndTime"
-                                            recurringStartDate="recurringStartDate"
-                                            recurringEndDate="recurringEndDate">
+                                               groupId="groupId"
+                                               allDay="allDay"
+                                               startDateTime="startDateTime"
+                                               endDateTime="endDateTime"
+                                               title="title"
+                                               description="description"
+                                               interactive="interactive"
+                                               classNames="classNames"
+                                               startEditable="startEditable"
+                                               durationEditable="durationEditable"
+                                               display="display"
+                                               overlap="overlap"
+                                               constraint="constraint"
+                                               backgroundColor="backgroundColor"
+                                               borderColor="borderColor"
+                                               textColor="textColor"
+                                               recurringDaysOfWeek="recurringDaysOfWeek"
+                                               recurringStartTime="recurringStartTime"
+                                               recurringEndTime="recurringEndTime"
+                                               recurringStartDate="recurringStartDate"
+                                               recurringEndDate="recurringEndDate">
                     <calendar:itemsQuery class="test_support.entity.LocalDateTimeEvent">
                         <calendar:fetchPlan extends="_base"/>
                         <calendar:query>

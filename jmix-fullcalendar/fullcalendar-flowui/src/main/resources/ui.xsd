@@ -26,8 +26,8 @@
                     <xs:all minOccurs="0">
                         <xs:element name="dataProviders" type="dataProvidersType"/>
                         <xs:element name="businessHours" type="businessHoursType"/>
-                        <xs:element name="viewProperties" type="viewProperties"/>
-                        <xs:element name="customViews" type="customViews"/>
+                        <xs:element name="displayModeProperties" type="displayModeProperties"/>
+                        <xs:element name="customDisplayModes" type="customDisplayModes"/>
                         <xs:element name="hiddenDays" type="hiddenDaysType"/>
                     </xs:all>
 
@@ -70,9 +70,9 @@
                     <xs:attribute name="firstDayOfWeek" type="dayOfWeekType"/>
                     <xs:attribute name="forceEventDuration" type="xs:boolean"/>
                     <xs:attribute name="initialDate" type="xs:string"/>
-                    <xs:attribute name="initialView" type="calendarViewType"/>
+                    <xs:attribute name="initialDisplayMode" type="calendarDisplayModeType"/>
                     <xs:attribute name="moreLinkClassNames" type="xs:string"/>
-                    <xs:attribute name="moreLinkView" type="calendarViewType"/>
+                    <xs:attribute name="moreLinkDisplayMode" type="calendarDisplayModeType"/>
                     <xs:attribute name="navigationLinksEnabled" type="xs:boolean"/>
                     <xs:attribute name="nextDayThreshold" type="xs:string"/>
                     <xs:attribute name="nowIndicatorVisible" type="xs:boolean"/>
@@ -104,13 +104,13 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:complexType name="customViews">
+    <xs:complexType name="customDisplayModes">
         <xs:sequence maxOccurs="unbounded">
-            <xs:element name="view" type="customViewType"/>
+            <xs:element name="displayMode" type="customDisplayModeType"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="viewProperties">
+    <xs:complexType name="displayModeProperties">
         <xs:all minOccurs="0">
             <xs:element name="dayGridDay" type="dayGridDay"/>
             <xs:element name="dayGridWeek" type="dayGridWeek"/>
@@ -126,15 +126,15 @@
         </xs:all>
     </xs:complexType>
 
-    <xs:complexType name="baseViewType">
+    <xs:complexType name="baseDisplayModeType">
         <xs:choice minOccurs="0">
-            <xs:element name="properties" type="viewPropertiesType"/>
+            <xs:element name="properties" type="displayModePropertiesType"/>
         </xs:choice>
     </xs:complexType>
 
-    <xs:complexType name="baseDayGridViewType">
+    <xs:complexType name="baseDayGridDisplayModeType">
         <xs:complexContent>
-            <xs:extension base="baseViewType">
+            <xs:extension base="baseDisplayModeType">
                 <xs:attribute name="dayPopoverFormat" type="layout:resourceString"/>
                 <xs:attribute name="dayHeaderFormat" type="layout:resourceString"/>
                 <xs:attribute name="weekNumberFormat" type="layout:resourceString"/>
@@ -144,9 +144,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="baseTimeGridViewType">
+    <xs:complexType name="baseTimeGridDisplayModeType">
         <xs:complexContent>
-            <xs:extension base="baseViewType">
+            <xs:extension base="baseDisplayModeType">
                 <xs:attribute name="dayPopoverFormat" type="layout:resourceString"/>
                 <xs:attribute name="dayHeaderFormat" type="layout:resourceString"/>
                 <xs:attribute name="weekNumberFormat" type="layout:resourceString"/>
@@ -161,9 +161,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="baseListViewType">
+    <xs:complexType name="baseListDisplayModeType">
         <xs:complexContent>
-            <xs:extension base="baseViewType">
+            <xs:extension base="baseDisplayModeType">
                 <xs:attribute name="listDayFormat" type="layout:resourceString"/>
                 <xs:attribute name="listDaySideFormat" type="layout:resourceString"/>
                 <xs:attribute name="listDaySideVisible" type="xs:boolean"/>
@@ -172,34 +172,34 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="viewPropertiesType">
+    <xs:complexType name="displayModePropertiesType">
         <xs:sequence>
             <xs:choice maxOccurs="unbounded">
-                <xs:element name="property" type="viewProperty"/>
+                <xs:element name="property" type="displayModeProperty"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="viewProperty">
+    <xs:complexType name="displayModeProperty">
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="value" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="dayGridDay">
         <xs:complexContent>
-            <xs:extension base="baseDayGridViewType"/>
+            <xs:extension base="baseDayGridDisplayModeType"/>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="dayGridWeek">
         <xs:complexContent>
-            <xs:extension base="baseDayGridViewType"/>
+            <xs:extension base="baseDayGridDisplayModeType"/>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="dayGridMonth">
         <xs:complexContent>
-            <xs:extension base="baseDayGridViewType">
+            <xs:extension base="baseDayGridDisplayModeType">
                 <xs:attribute name="fixedWeekCount" type="xs:boolean"/>
                 <xs:attribute name="showNonCurrentDates" type="xs:boolean"/>
             </xs:extension>
@@ -208,20 +208,20 @@
 
     <xs:complexType name="dayGridYear">
         <xs:complexContent>
-            <xs:extension base="baseDayGridViewType">
+            <xs:extension base="baseDayGridDisplayModeType">
                 <xs:attribute name="monthStartFormat" type="layout:resourceString"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="customViewType">
+    <xs:complexType name="customDisplayModeType">
         <xs:complexContent>
-            <xs:extension base="baseViewType">
+            <xs:extension base="baseDisplayModeType">
                 <xs:choice minOccurs="0">
                     <xs:element name="duration" type="calendarDurationType"/>
                 </xs:choice>
                 <xs:attribute name="id" type="xs:string" use="required"/>
-                <xs:attribute name="type" type="customCalendarViewType"/>
+                <xs:attribute name="type" type="customCalendarDisplayModeType"/>
                 <xs:attribute name="dayCount" type="xs:integer"/>
             </xs:extension>
         </xs:complexContent>
@@ -229,43 +229,43 @@
 
     <xs:complexType name="timeGridDay">
         <xs:complexContent>
-            <xs:extension base="baseTimeGridViewType"/>
+            <xs:extension base="baseTimeGridDisplayModeType"/>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="timeGridWeek">
         <xs:complexContent>
-            <xs:extension base="baseTimeGridViewType"/>
+            <xs:extension base="baseTimeGridDisplayModeType"/>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="listDay">
         <xs:complexContent>
-            <xs:extension base="baseListViewType"/>
+            <xs:extension base="baseListDisplayModeType"/>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="listWeek">
         <xs:complexContent>
-            <xs:extension base="baseListViewType"/>
+            <xs:extension base="baseListDisplayModeType"/>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="listMonth">
         <xs:complexContent>
-            <xs:extension base="baseListViewType"/>
+            <xs:extension base="baseListDisplayModeType"/>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="listYear">
         <xs:complexContent>
-            <xs:extension base="baseListViewType"/>
+            <xs:extension base="baseListDisplayModeType"/>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="multiMonthYear">
         <xs:complexContent>
-            <xs:extension base="baseViewType">
+            <xs:extension base="baseDisplayModeType">
                 <xs:attribute name="multiMonthMaxColumns" type="xs:integer"/>
                 <xs:attribute name="multiMonthMinWidth" type="xs:integer"/>
                 <xs:attribute name="multiMonthTitleFormat" type="layout:resourceString"/>
@@ -286,7 +286,7 @@
         <xs:attribute name="milliseconds" type="xs:integer"/>
     </xs:complexType>
 
-    <xs:simpleType name="customCalendarViewType">
+    <xs:simpleType name="customCalendarDisplayModeType">
         <xs:restriction>
             <xs:enumeration value="DAY_GRID"/>
             <xs:enumeration value="TIME_GRID"/>
@@ -418,7 +418,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="calendarViewType">
+    <xs:simpleType name="calendarDisplayModeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="DAY_GRID_DAY"/>
             <xs:enumeration value="DAY_GRID_WEEK"/>

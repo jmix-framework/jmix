@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * Data provider that set events from {@link List}.
+ * Data provider that fetches events from {@link List}.
  */
 public class ListCalendarDataProvider extends AbstractDataProvider<CalendarEvent, Void>
         implements ItemsCalendarDataProvider {
@@ -120,7 +120,7 @@ public class ListCalendarDataProvider extends AbstractDataProvider<CalendarEvent
     }
 
     /**
-     * Removes event.
+     * Removes an event.
      *
      * @param item item to remove
      */

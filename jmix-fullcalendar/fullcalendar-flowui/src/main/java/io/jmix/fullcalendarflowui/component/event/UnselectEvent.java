@@ -16,7 +16,7 @@ import org.springframework.lang.Nullable;
  *         The user makes a new selection. The unselect event will be fired before the new selection occurs.
  *     </li>
  *     <li>
- *         The user moves forward or backward in the current calendar view, or switches to a new calendar view.
+ *         The user moves forward or backward in the current calendar's display mode, or switches to an other mode.
  *     </li>
  *     <li>
  *         The unselect method is called through the {@link FullCalendar#unselect()} method.
@@ -25,24 +25,24 @@ import org.springframework.lang.Nullable;
  */
 public class UnselectEvent extends ComponentEvent<FullCalendar> {
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     protected final MouseEventDetails mouseEventDetails;
 
     public UnselectEvent(FullCalendar source, boolean fromClient,
-                         ViewInfo viewInfo,
+                         DisplayModeInfo displayModeInfo,
                          @Nullable MouseEventDetails mouseEventDetails) {
         super(source, fromClient);
 
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
         this.mouseEventDetails = mouseEventDetails;
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 
     /**

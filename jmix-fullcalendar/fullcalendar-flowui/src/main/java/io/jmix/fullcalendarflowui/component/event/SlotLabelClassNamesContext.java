@@ -17,26 +17,26 @@
 package io.jmix.fullcalendarflowui.component.event;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import io.jmix.fullcalendarflowui.kit.component.model.CalendarViewType;
+import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
 
 import java.time.LocalTime;
 
 /**
- * The context for generating class names for labels in time slots in time views: {@link CalendarViewType#TIME_GRID_DAY}
- * and {@link CalendarViewType#TIME_GRID_WEEK}.
+ * The context for generating class names for labels in time slots in timed display modes:
+ * {@link CalendarDisplayModes#TIME_GRID_DAY} and {@link CalendarDisplayModes#TIME_GRID_WEEK}.
  */
 public class SlotLabelClassNamesContext extends AbstractFullCalendarContext {
 
     protected final LocalTime time;
 
-    protected final ViewInfo viewInfo;
+    protected final DisplayModeInfo displayModeInfo;
 
     public SlotLabelClassNamesContext(FullCalendar fullCalendar,
                                       LocalTime time,
-                                      ViewInfo viewInfo) {
+                                      DisplayModeInfo displayModeInfo) {
         super(fullCalendar);
         this.time = time;
-        this.viewInfo = viewInfo;
+        this.displayModeInfo = displayModeInfo;
     }
 
     /**
@@ -50,9 +50,9 @@ public class SlotLabelClassNamesContext extends AbstractFullCalendarContext {
     }
 
     /**
-     * @return information about current calendar's view
+     * @return information about current calendar's display mode
      */
-    public ViewInfo getViewInfo() {
-        return viewInfo;
+    public DisplayModeInfo getDisplayModeInfo() {
+        return displayModeInfo;
     }
 }

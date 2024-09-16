@@ -19,17 +19,17 @@ package io.jmix.fullcalendarflowui.kit.component.model;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 
 /**
- * Configuration properties of list year view {@link CalendarViewType#LIST_YEAR}.
+ * Configuration properties of list year display mode {@link CalendarDisplayModes#LIST_YEAR}.
  * <p>
- * The view properties can be retrieved from {@link JmixFullCalendar#getCalendarViewProperties(CalendarViewType)}.
+ * The properties can be retrieved from {@link JmixFullCalendar#getCalendarDisplayModeProperties(CalendarDisplayModes)}.
  * For instance:
  * <pre>{@code
- * calendar.getCalendarViewProperties(CalendarViewType.LIST_YEAR);
+ * calendar.getCalendarDisplayModeProperties(CalendarDisplayModes.LIST_YEAR);
  * }</pre>
  */
-public class ListYearViewProperties extends AbstractListViewProperties {
+public class ListYearProperties extends AbstractListProperties {
 
-    public ListYearViewProperties() {
-        super(CalendarViewType.LIST_YEAR.getId());
+    public ListYearProperties() {
+        super(CalendarDisplayModes.LIST_YEAR.getId());
     }
 }

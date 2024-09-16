@@ -17,11 +17,13 @@
 package rest_ds;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.security.UserRepository;
 import io.jmix.restds.auth.RestAuthenticationToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import test_support.BaseRestDsIntegrationTest;
 import test_support.TestSupport;
@@ -40,6 +42,9 @@ public class RestDataStorePasswordGrantTest extends BaseRestDsIntegrationTest {
     @Autowired
     AuthenticationManager authenticationManager;
 
+    @Autowired
+    UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
         RestAuthenticationToken authenticationToken = new RestAuthenticationToken("admin", "admin");
@@ -55,5 +60,13 @@ public class RestDataStorePasswordGrantTest extends BaseRestDsIntegrationTest {
         List<Customer2> customers = dataManager.load(Customer2.class).all().list();
 
         assertThat(customers).isNotEmpty();
+    }
+
+    @Test
+    void testUserRepository() {
+        List<? extends UserDetails> users = userRepository.getByUsernameLike("ad");
+        
+        assertThat(users).isNotEmpty();
+        assertThat(users).anyMatch(user -> "admin".equals(user.getUsername()));
     }
 }

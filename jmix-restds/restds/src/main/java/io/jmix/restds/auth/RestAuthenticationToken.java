@@ -5,6 +5,10 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
+/**
+ * {@code Authentication} object for authenticating through the REST DataStore
+ * with Resource Owner Password Credentials Grant.
+ */
 public class RestAuthenticationToken extends AbstractAuthenticationToken {
 
     private final Object principal;

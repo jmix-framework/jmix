@@ -20,9 +20,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.Metadata;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.security.UserRepository;
 import io.jmix.restds.impl.RestInvoker;
 import io.jmix.security.authentication.AcceptsGrantedAuthorities;
@@ -44,6 +46,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Base implementation of {@link UserRepository} that loads users from the REST DataStore.
+ * The type of entity representing users is specified in the {@link #getUserClass()} method.
+ *
+ * @param <T> type of entity representing users
+ */
 public abstract class AbstractRestUserRepository<T extends UserDetails> implements UserRepository {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractRestUserRepository.class);
@@ -54,6 +62,8 @@ public abstract class AbstractRestUserRepository<T extends UserDetails> implemen
     protected ApplicationContext applicationContext;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected UnconstrainedDataManager dataManager;
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
     @Autowired
@@ -81,7 +91,9 @@ public abstract class AbstractRestUserRepository<T extends UserDetails> implemen
 
     @Override
     public List<? extends UserDetails> getByUsernameLike(String substring) {
-        return List.of();
+        return dataManager.load(getUserClass())
+                .condition(PropertyCondition.contains("username", substring))
+                .list();
     }
 
     @Override

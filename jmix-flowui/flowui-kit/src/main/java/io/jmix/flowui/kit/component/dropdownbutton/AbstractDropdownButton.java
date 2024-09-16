@@ -519,7 +519,8 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     protected static class ActionItemImpl extends AbstractDropdownButtonItem
             implements ActionItem {
 
-        protected final static String ACTION_ITEM_ICON_CLASS_NAME = "jmix-dropdown-button-item-icon";
+        protected static final String ACTION_ITEM_ICON_CLASS_NAME = "jmix-dropdown-button-item-icon";
+        protected static final String ACTION_ITEM_WRAPPER_CLASS_NAME = "jmix-dropdown-button-item-wrapper";
 
         protected Icon iconComponent;
         protected Div actionLayout;
@@ -534,6 +535,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
 
             this.actionLayout = (Div) item.getChildren().findAny()
                     .orElseThrow(() -> new IllegalStateException("MenuItem's content is undefined"));
+            this.actionLayout.setClassName(ACTION_ITEM_WRAPPER_CLASS_NAME);
             this.action = action;
 
             setupAction();

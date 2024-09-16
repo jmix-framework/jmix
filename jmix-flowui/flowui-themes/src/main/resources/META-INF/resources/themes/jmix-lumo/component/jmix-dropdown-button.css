@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-.jmix-dropdown-button-item-icon {
-    width: var(--lumo-icon-size-s);
-    height: var(--lumo-icon-size-s);
-    margin-inline-end: var(--lumo-space-s);
+vaadin-menu-bar[jmix-role='jmix-dropdown-button'] vaadin-menu-bar-item::part(content),
+vaadin-menu-bar[jmix-role|='jmix-combo-button'] vaadin-menu-bar-item::part(content) {
+    align-items: center;
+    gap: var(--lumo-space-xs);
+}
+
+.jmix-dropdown-button-item-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--lumo-space-s);
+}
+
+vaadin-icon.jmix-dropdown-button-item-icon:not([icon^='lumo:']) {
+    padding: var(--lumo-space-xs);
+    box-sizing: border-box;
 }
 
 /* DropdownButton Styles */

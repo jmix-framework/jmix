@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.impl;
+package io.jmix.search.index.impl
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
+import spock.lang.Specification
 
-import static org.junit.jupiter.api.Assertions.*;
 
-class JsonNodesComparatorTest {
-    static String JSON_STRING_TWO_PARAMETERS = "{\n" +
+class JsonNodesComparatorTest extends Specification {
+
+    private static String JSON_STRING_TWO_PARAMETERS = "{\n" +
             "  \"aField\": \"1234\",\n" +
             "  \"bField\": \"some text\"\n" +
-            "}";
+            "}"
 
-    static String JSON_STRING_WITH_NULL = "{\n" +
+    private static String JSON_STRING_WITH_NULL = "{\n" +
             "  \"aField\": \"1234\",\n" +
             "  \"bField\": null\n" +
-            "}";
-    static String JSON_STRING_THREE_PARAMETERS = "{\n" +
+            "}"
+    private static String JSON_STRING_THREE_PARAMETERS = "{\n" +
             "  \"aField\": \"1234\",\n" +
             "  \"bField\": \"some text\",\n" +
             "  \"cField\": \"some text 2\"\n" +
-            "}";
+            "}"
 
-    static String BIGGER_JSON = "{\n" +
+    private static String BIGGER_JSON = "{\n" +
             "  \"mappings\": {\n" +
             "    \"properties\": {\n" +
             "      \"_instance_name\": {\n" +
@@ -66,9 +66,9 @@ class JsonNodesComparatorTest {
             "      }\n" +
             "    }\n" +
             "  }\n" +
-            "}";
+            "}"
 
-    static String SMALLER_JSON = "{\n" +
+    private static String SMALLER_JSON = "{\n" +
             "  \"mappings\": {\n" +
             "    \"properties\": {\n" +
             "      \"_instance_name\": {\n" +
@@ -92,72 +92,89 @@ class JsonNodesComparatorTest {
             "      }\n" +
             "    }\n" +
             "  }\n" +
-            "}";
+            "}"
 
-    @Test
-    void nodeContains() {
 
-        JsonNodesComparator comparator = new JsonNodesComparator();
-        assertTrue(comparator.nodeContains(toObjectNode(JSON_STRING_TWO_PARAMETERS), toObjectNode(JSON_STRING_TWO_PARAMETERS)));
+    def "comparing the same JSONs"() {
+        given:
+        JsonNodesComparator comparator = new JsonNodesComparator()
+
+        expect:
+        comparator.nodeContains(toObjectNode(JSON_STRING_TWO_PARAMETERS), toObjectNode(JSON_STRING_TWO_PARAMETERS))
     }
 
-    @Test
-    void nodeContains_2() {
-
+    def "container node contains an extra node"() {
+        given:
         JsonNodesComparator comparator = new JsonNodesComparator();
-        assertTrue(comparator.nodeContains(toObjectNode(JSON_STRING_THREE_PARAMETERS), toObjectNode(JSON_STRING_TWO_PARAMETERS)));
+
+        expect:
+        comparator.nodeContains(toObjectNode(JSON_STRING_THREE_PARAMETERS), toObjectNode(JSON_STRING_TWO_PARAMETERS))
     }
 
-    @Test
-    void nodeContains_3() {
-
+    void "content node contains an extra node"() {
+        given:
         JsonNodesComparator comparator = new JsonNodesComparator();
-        assertFalse(comparator.nodeContains(toObjectNode(JSON_STRING_TWO_PARAMETERS), toObjectNode(JSON_STRING_THREE_PARAMETERS)));
+
+        expect:
+        !comparator.nodeContains(toObjectNode(JSON_STRING_TWO_PARAMETERS), toObjectNode(JSON_STRING_THREE_PARAMETERS))
     }
 
-    @Test
-    void nodeContains_4() {
+    void "the same complex nodes ara equal"() {
+        given:
         JsonNodesComparator comparator = new JsonNodesComparator();
-        assertTrue(comparator.nodeContains(toObjectNode(BIGGER_JSON), toObjectNode(BIGGER_JSON)));
+
+        expect:
+        comparator.nodeContains(toObjectNode(BIGGER_JSON), toObjectNode(BIGGER_JSON))
     }
 
-    @Test
-    void nodeContains_5() {
+    void "the bigger JSON contains the smaller one"() {
+        given:
         JsonNodesComparator comparator = new JsonNodesComparator();
-        assertTrue(comparator.nodeContains(toObjectNode(BIGGER_JSON), toObjectNode(SMALLER_JSON)));
+
+        expect:
+        comparator.nodeContains(toObjectNode(BIGGER_JSON), toObjectNode(SMALLER_JSON))
     }
 
-    @Test
-    void nodeContains_6() {
+    void "the smaller JSON can't contain the smaller json"() {
+        given:
         JsonNodesComparator comparator = new JsonNodesComparator();
-        assertFalse(comparator.nodeContains(toObjectNode(SMALLER_JSON), toObjectNode(BIGGER_JSON)));
+
+        expect:
+        !comparator.nodeContains(toObjectNode(SMALLER_JSON), toObjectNode(BIGGER_JSON))
     }
 
-    @Test
-    void nodeContains_7() {
+    void "the same jsons with nulls are equal"() {
+        given:
         JsonNodesComparator comparator = new JsonNodesComparator();
-        assertTrue(comparator.nodeContains(toObjectNode(JSON_STRING_WITH_NULL), toObjectNode(JSON_STRING_WITH_NULL)));
-    }
 
-    @Test
-    void nodeContains_8() {
-        JsonNodesComparator comparator = new JsonNodesComparator();
-        assertFalse(comparator.nodeContains(toObjectNode(JSON_STRING_WITH_NULL), toObjectNode(JSON_STRING_TWO_PARAMETERS)));
-    }
-
-    @Test
-    void nodeContains_9() {
-        JsonNodesComparator comparator = new JsonNodesComparator();
-        assertFalse(comparator.nodeContains(toObjectNode(JSON_STRING_TWO_PARAMETERS), toObjectNode(JSON_STRING_WITH_NULL)));
+        expect:
+        comparator.nodeContains(toObjectNode(JSON_STRING_WITH_NULL), toObjectNode(JSON_STRING_WITH_NULL))
     }
 
 
-    static ObjectNode toObjectNode(String json) {
+    void "the json with the null is not equal to the other json without the null"() {
+        given:
+        JsonNodesComparator comparator = new JsonNodesComparator();
+
+        expect:
+        !comparator.nodeContains(toObjectNode(JSON_STRING_WITH_NULL), toObjectNode(JSON_STRING_TWO_PARAMETERS))
+    }
+
+    void "the json without the null is not equal to the other json with the null"() {
+        given:
+        JsonNodesComparator comparator = new JsonNodesComparator();
+
+        expect:
+        !comparator.nodeContains(toObjectNode(JSON_STRING_TWO_PARAMETERS), toObjectNode(JSON_STRING_WITH_NULL))
+    }
+
+    private static ObjectNode toObjectNode(String json) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            return (ObjectNode) mapper.readTree(json);
+            ObjectMapper mapper = new ObjectMapper()
+            return (ObjectNode) mapper.readTree(json)
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e)
         }
     }
+
 }

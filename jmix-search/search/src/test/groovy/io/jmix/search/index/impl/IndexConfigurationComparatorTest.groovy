@@ -21,7 +21,7 @@ import spock.lang.Specification
 
 class IndexConfigurationComparatorTest extends Specification {
 
-    def "IsIndexRecreatingRequired"() {
+    def "IsIndexRecreatingRequired returns NOT_COMPATIBLE if the resolved index state is null"() {
         given:
         IndexConfiguration configurationMock = Mock(IndexConfiguration.class)
         IndexConfigurationComparator<?, ?, ?> comparator

@@ -26,7 +26,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
-import io.jmix.flowui.component.delegate.FieldDelegate;
+import io.jmix.flowui.component.delegate.TwinColumnDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
@@ -53,7 +53,7 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
     protected Messages messages;
     protected MetadataTools metadataTools;
 
-    protected FieldDelegate<TwinColumn<V>, Collection<V>, Collection<V>> fieldDelegate;
+    protected TwinColumnDelegate<TwinColumn<V>, Collection<V>, Collection<V>> fieldDelegate;
     protected DataViewDelegate<TwinColumn<V>, V> dataViewDelegate;
 
     @Override
@@ -249,8 +249,8 @@ public class TwinColumn<V> extends JmixTwinColumn<V> implements
     }
 
     @SuppressWarnings("unchecked")
-    protected FieldDelegate<TwinColumn<V>, Collection<V>, Collection<V>> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
+    protected TwinColumnDelegate<TwinColumn<V>, Collection<V>, Collection<V>> createFieldDelegate() {
+        return applicationContext.getBean(TwinColumnDelegate.class, this);
     }
 
     @SuppressWarnings("unchecked")

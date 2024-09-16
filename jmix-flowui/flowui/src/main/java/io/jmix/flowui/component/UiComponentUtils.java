@@ -19,6 +19,7 @@ package io.jmix.flowui.component;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.server.StreamResource;
@@ -647,6 +648,15 @@ public final class UiComponentUtils {
     }
 
     /**
+     * Copies the value to the clipboard using an asynchronous JavaScript function call from the UI DOM element.
+     *
+     * @param valueToCopy the value to copy
+     */
+    public static PendingJavaScriptResult copyToClipboard(String valueToCopy) {
+        return UI.getCurrent().getElement().executeJs(getCopyToClipboardScript(), valueToCopy);
+    }
+
+    /**
      * Creates a resources from the passed object.
      *
      * @param value              the object from which the resource will be created
@@ -683,6 +693,27 @@ public final class UiComponentUtils {
 
     public static void walkComponents(View<?> view, Consumer<ViewChildrenVisitResult> viewChildrenVisitResultConsumer) {
         __walkComponentsInternal(view, UiComponentUtils.getComponents(view), viewChildrenVisitResultConsumer, new HashSet<Component>());
+    }
+
+    /**
+     * Gets JavaScript function for copying a value to the clipboard. A temporary invisible
+     * {@code textarea} DOM element is used for copying.
+     *
+     * @return JavaScript copy function script
+     */
+    private static String getCopyToClipboardScript() {
+        return """
+                   const textarea = document.createElement("textarea");
+                   textarea.value = $0;
+                
+                   textarea.style.position = "absolute";
+                   textarea.style.opacity = "0";
+                
+                   document.body.appendChild(textarea);
+                   textarea.select();
+                   document.execCommand("copy");
+                   document.body.removeChild(textarea);
+                """;
     }
 
     private static void __walkComponentsInternal(View<?> view,

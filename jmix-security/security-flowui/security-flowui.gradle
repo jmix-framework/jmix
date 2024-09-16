@@ -25,6 +25,8 @@ dependencies {
 
     api project(':flowui')
 
+    compileOnly project(':gridexport-flowui')
+
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

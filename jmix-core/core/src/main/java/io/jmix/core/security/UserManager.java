@@ -16,9 +16,9 @@
 
 package io.jmix.core.security;
 
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import org.springframework.lang.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -29,25 +29,54 @@ import java.util.Set;
 public interface UserManager {
 
     /**
-     * Changes the password for the specific user.
+     * Changes the password for the specific user and saves changes to the database immediately.
      *
-     * @param userName    - users login
-     * @param oldPassword - non encoded old users password
-     * @param newPassword - non encoded new users password
-     * @throws PasswordNotMatchException if the oldPassword is not null and the oldPassword does not equal to the current password or
-     *                                   if the oldPassword is null and the newPassword does equal the current password
+     * @param userName    user login
+     * @param oldPassword non-encoded old user password
+     * @param newPassword non-encoded new user password
+     * @throws PasswordNotMatchException if the oldPassword is not {@code null} and
+     *                                   the oldPassword does not equal to the current password or
+     *                                   if the oldPassword is {@code null}
+     *                                   and the newPassword does equal the current password
      */
-    void changePassword(String userName, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException;
-
+    default void changePassword(String userName, @Nullable String oldPassword, @Nullable String newPassword)
+            throws PasswordNotMatchException {
+        changePassword(userName, oldPassword, newPassword, true);
+    }
 
     /**
      * Changes the password for the specific user.
      *
-     * @param users - users which need reset passwords
-     * @return map which contains new password for specific user
+     * @param userName    users login
+     * @param oldPassword non-encoded old user password
+     * @param newPassword non-encoded new user password
+     * @param saveChanges whether to save changes to the database
+     * @throws PasswordNotMatchException if the oldPassword is not {@code null}
+     *                                   and the oldPassword does not equal to the current password or
+     *                                   if the oldPassword is {@code null}
+     *                                   and the newPassword does equal the current password
      */
-    Map<UserDetails, String> resetPasswords(Set<UserDetails> users);
+    UserDetails changePassword(String userName, @Nullable String oldPassword, @Nullable String newPassword,
+                               boolean saveChanges) throws PasswordNotMatchException;
 
+    /**
+     * Generates new passwords for passed users and saves changes to the database immediately.
+     *
+     * @param users users which need reset passwords
+     * @return map which contains new passwords for the passed users
+     */
+    default Map<UserDetails, String> resetPasswords(Set<UserDetails> users) {
+        return resetPasswords(users, true);
+    }
+
+    /**
+     * Generates new passwords for passed users.
+     *
+     * @param users       users which need reset passwords
+     * @param saveChanges whether to save changes to the database
+     * @return map which contains new passwords for the passed users
+     */
+    Map<UserDetails, String> resetPasswords(Set<UserDetails> users, boolean saveChanges);
 
     /**
      * Resets 'remember me' token for the specific user.

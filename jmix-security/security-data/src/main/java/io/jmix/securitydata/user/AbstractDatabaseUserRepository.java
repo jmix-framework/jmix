@@ -18,6 +18,7 @@ package io.jmix.securitydata.user;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
+import io.jmix.core.SaveContext;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
@@ -196,43 +197,63 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     @Override
-    public void changePassword(String userName, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException {
+    public T changePassword(String userName, @Nullable String oldPassword, @Nullable String newPassword,
+                            boolean saveChanges) throws PasswordNotMatchException {
         Preconditions.checkNotNullArgument(userName, "Null userName");
         Preconditions.checkNotNullArgument(newPassword, "Null new password");
         T userDetails = loadUserByUsername(userName);
         changePassword(userDetails, oldPassword, newPassword);
-        eventPublisher.publishEvent(new SingleUserPasswordChangeEvent(userName, newPassword));
+
+        if (saveChanges) {
+            dataManager.save(userDetails);
+            eventPublisher.publishEvent(new SingleUserPasswordChangeEvent(userName, newPassword));
+        }
+
+        return userDetails;
     }
 
-    private void changePassword(T userDetails, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException {
-        if (!Strings.isNullOrEmpty(userDetails.getPassword()) && passwordEncoder.matches(newPassword, userDetails.getPassword())
+    private void changePassword(T userDetails, @Nullable String oldPassword, @Nullable String newPassword)
+            throws PasswordNotMatchException {
+        if (!Strings.isNullOrEmpty(userDetails.getPassword())
+                && passwordEncoder.matches(newPassword, userDetails.getPassword())
                 || oldPassword != null && !passwordEncoder.matches(oldPassword, userDetails.getPassword())) {
             throw new PasswordNotMatchException();
         }
+
         EntityValues.setValue(userDetails, "password", passwordEncoder.encode(newPassword));
-        dataManager.save(userDetails);
     }
 
     @Override
-    public Map<UserDetails, String> resetPasswords(Set<UserDetails> users) {
+    public Map<UserDetails, String> resetPasswords(Set<UserDetails> users, boolean saveChanges) {
         Map<UserDetails, String> usernamePasswordMap = new LinkedHashMap<>();
+        SaveContext saveContext = new SaveContext();
+
         for (UserDetails user : users) {
             String newPassword;
             boolean success = false;
+            T userDetails = null;
             do {
                 newPassword = generateRandomPassword();
                 try {
-                    changePassword(loadUserByUsername(user.getUsername()), null, newPassword);
+                    userDetails = loadUserByUsername(user.getUsername());
+                    changePassword(userDetails, null, newPassword);
                 } catch (PasswordNotMatchException e) {
                     continue;
                 }
                 success = true;
             } while (!success);
-            usernamePasswordMap.put(user, newPassword);
+
+            saveContext.saving(userDetails);
+            usernamePasswordMap.put(userDetails, newPassword);
         }
-        resetRememberMe(users);
-        eventPublisher.publishEvent(new UserPasswordResetEvent(usernamePasswordMap.entrySet().stream()
-                .collect(Collectors.toMap(entry -> entry.getKey().getUsername(), Map.Entry::getValue))));
+
+        if (saveChanges) {
+            dataManager.save(saveContext);
+            resetRememberMe(users);
+            eventPublisher.publishEvent(new UserPasswordResetEvent(usernamePasswordMap.entrySet().stream()
+                    .collect(Collectors.toMap(entry -> entry.getKey().getUsername(), Map.Entry::getValue))));
+        }
+
         return usernamePasswordMap;
     }
 

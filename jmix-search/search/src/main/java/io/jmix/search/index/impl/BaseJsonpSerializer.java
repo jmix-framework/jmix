@@ -20,6 +20,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+/**
+ * This class is respond of the transforming search clients' specific JSonp format to Jackson's ObjectNode.
+ * @param <TJsonp> search clients' specific JSonp format
+ */
 public abstract class BaseJsonpSerializer<TJsonp> implements JsonpSerializer<TJsonp> {
 
     protected final ObjectMapper objectMapper = new ObjectMapper();

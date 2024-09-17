@@ -16,6 +16,11 @@
 
 package io.jmix.search.index.impl;
 
+/**
+ * The container of the two independent index configuration comparison result parts.
+ * The first one contains the result of the mappings' comparison.
+ * The second one contains the result of the settings' comparison.
+ */
 public class ConfigurationComparingResult {
     protected final MappingComparingResult mappingComparingResult;
     protected final SettingsComparingResult settingsComparingResult;

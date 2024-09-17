@@ -535,13 +535,16 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
             return Optional.empty();
         }
 
-        String fragmentClass = loaderSupport.loadString(fragmentRendererElement, "class")
+        String fragmentClassFqn = loaderSupport.loadString(fragmentRendererElement, "class")
                 .orElseThrow(() ->
                         new GuiDevelopmentException("Missing required 'class' attribute", context));
 
-        Class<?> aClass = applicationContext.getBean(ClassManager.class).loadClass(fragmentClass);
-        if (!FragmentRenderer.class.isAssignableFrom(aClass)) {
-            throw new GuiDevelopmentException("Class '" + fragmentClass + "' is not a fragment", context);
+        Class<?> fragmentRendererClass = applicationContext.getBean(ClassManager.class).loadClass(fragmentClassFqn);
+        if (!FragmentRenderer.class.isAssignableFrom(fragmentRendererClass)) {
+            throw new GuiDevelopmentException(
+                    "Class '%s' is not a %s".formatted(fragmentClassFqn, FragmentRenderer.class.getSimpleName()),
+                    context
+            );
         }
 
         return Optional.of(new ComponentRenderer<>(
@@ -552,7 +555,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                     // will not be performed
                     FragmentRenderer fragment = applicationContext.getBean(Fragments.class).create(
                             ((ComponentLoader.ComponentContext) context).getView(),
-                            aClass.asSubclass(FragmentRenderer.class)
+                            fragmentRendererClass.asSubclass(FragmentRenderer.class)
                     );
 
                     if (fragmentRendererElement.element("properties") != null) {

@@ -3327,9 +3327,9 @@
     <xs:complexType name="entityComboBoxComponent">
         <xs:complexContent>
             <xs:extension base="baseComboBoxPickerComponent">
-                <xs:sequence>
-                    <xs:element name="itemsQuery" minOccurs="0" type="entityComboBoxItemsQueryType"/>
-                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element name="itemsQuery" type="entityComboBoxItemsQueryType"/>
+                    <xs:element name="validators" type="baseValidatorType"/>
                     <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 

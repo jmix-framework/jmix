@@ -30,6 +30,12 @@ import java.util.Map;
 
 import static io.jmix.search.index.impl.MappingComparingResult.*;
 
+/**
+ * Compares both the mapping from the application's index configuration
+ * and the index state from the search server.
+ * @param <TState> the received from the server index state type
+ * @param <TJsonp> the specific for the search client Jsonp type
+ */
 public abstract class IndexMappingComparator<TState, TJsonp> {
     private static final Logger log = LoggerFactory.getLogger(IndexMappingComparator.class);
     protected static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {

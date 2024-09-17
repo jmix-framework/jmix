@@ -16,6 +16,9 @@
 
 package io.jmix.search.index.impl;
 
+/**
+ * The abstraction of the part of the indexes comparing result.
+ */
 interface ConfigurationPartComparingResult {
 
     boolean isIndexRecreatingRequired();

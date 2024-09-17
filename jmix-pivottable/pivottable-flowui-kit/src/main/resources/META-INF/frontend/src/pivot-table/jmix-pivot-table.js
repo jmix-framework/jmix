@@ -462,12 +462,13 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
             } else {
                 // Explicitly set default aggregator in order to use localized version
                 aggregationOptions.aggregator = allAggregators[localeMapping["count"]]();
+                aggregationOptions.aggregatorName = localeMapping["count"];
             }
         }
 
         // If selected aggregator name is not initialized, try to get value from options.aggregation.
         // It may have an aggregator name if the pivot table is shown in read-only mode or its state is saved in settings.
-        if (!aggregationOptions.aggregatorName) {
+        if (!aggregationOptions.aggregatorName && this._options.aggregation) {
             aggregationOptions.aggregatorName = this._options.aggregation.caption
                     ? this._options.aggregation.caption
                     : localeMapping[this._options.aggregation.mode];

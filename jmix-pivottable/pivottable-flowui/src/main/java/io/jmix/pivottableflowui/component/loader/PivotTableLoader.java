@@ -111,7 +111,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
     protected void loadOptions(Element element) {
         loadProperties(element);
         loadRows(element);
-        loadCols(element);
+        loadColumns(element);
         loadAggregationProperties(element);
         loadHiddenProperties(element);
         loadHiddenFromAggregations(element);
@@ -127,7 +127,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
         loadResourceString(element, "emptyDataMessage", context.getMessageGroup(), resultComponent::setEmptyDataMessage);
         loadEnum(element, Renderer.class, "renderer", resultComponent::setRenderer);
         loadEnum(element, Order.class, "rowOrder", resultComponent::setRowOrder);
-        loadEnum(element, Order.class, "colOrder", resultComponent::setColumnOrder);
+        loadEnum(element, Order.class, "columnOrder", resultComponent::setColumnOrder);
         loadInteger(element, "menuLimit", resultComponent::setMenuLimit);
         loadString(element, "unusedPropertiesVertical",
                 value -> resultComponent.setUnusedPropertiesVertical(UnusedPropertiesVertical.valueOf(value)));
@@ -136,7 +136,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
         loadBoolean(element, "autoSortUnusedProperties", resultComponent::setAutoSortUnusedProperties);
         loadBoolean(element, "showUI", resultComponent::setShowUI);
         loadBoolean(element, "showRowTotals", resultComponent::setShowRowTotals);
-        loadBoolean(element, "showColTotals", resultComponent::setShowColumnTotals);
+        loadBoolean(element, "showColumnTotals", resultComponent::setShowColumnTotals);
     }
 
     protected void loadProperties(Element element) {
@@ -189,12 +189,12 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
         }
     }
 
-    protected void loadCols(Element element) {
-        Element colsElement = element.element("cols");
-        if (colsElement != null) {
-            List<String> cols = loadListOfStrings(colsElement, "col", "value", true);
-            if (CollectionUtils.isNotEmpty(cols)) {
-                resultComponent.setColumns(cols);
+    protected void loadColumns(Element element) {
+        Element columnsElement = element.element("columns");
+        if (columnsElement != null) {
+            List<String> columns = loadListOfStrings(columnsElement, "column", "value", true);
+            if (CollectionUtils.isNotEmpty(columns)) {
+                resultComponent.setColumns(columns);
             }
         }
     }

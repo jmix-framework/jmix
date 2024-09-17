@@ -25,6 +25,9 @@ import org.springframework.stereotype.Component;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Compares two JSon nodes that contains index settings in correspondence to such comparison rules.
+ */
 @Component("search_JsonNodesComparator")
 public class JsonNodesComparator {
     private static final Logger log = LoggerFactory.getLogger(JsonNodesComparator.class);

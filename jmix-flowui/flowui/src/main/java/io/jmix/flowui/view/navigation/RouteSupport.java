@@ -144,7 +144,7 @@ public class RouteSupport {
             Location newLocation = new Location(locationString, resultQueryParameters);
 
             log.debug("Replace URL state with new location: {}", newLocation.getPathWithQueryParameters());
-            page.getHistory().replaceState(null, newLocation);
+            page.getHistory().replaceState(null, newLocation, false);
         });
     }
 
@@ -163,7 +163,7 @@ public class RouteSupport {
             Location newLocation = new Location(locationString, queryParameters);
 
             log.debug("Replace URL state with new location: {}", newLocation.getPathWithQueryParameters());
-            page.getHistory().replaceState(null, newLocation);
+            page.getHistory().replaceState(null, newLocation, false);
         });
     }
 
@@ -329,7 +329,7 @@ public class RouteSupport {
             Location newLocation = new Location(locationString, queryParameters);
 
             log.debug("Replace URL state with new location: {}", newLocation.getPathWithQueryParameters());
-            page.getHistory().replaceState(null, newLocation);
+            page.getHistory().replaceState(null, newLocation, false);
         });
     }
 

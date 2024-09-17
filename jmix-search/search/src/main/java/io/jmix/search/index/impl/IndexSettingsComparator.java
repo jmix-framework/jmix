@@ -23,6 +23,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+
+/**
+ * Compares both the settings from the application's index configuration
+ * and the settings from the index state from the search server.
+ * @param <TState> the received from the server index state type
+ * @param <TSettings> specific for the search client settings type
+ * @param <TJsonp> specific for the search client Jsonp type
+ */
 public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
     private static final Logger log = LoggerFactory.getLogger(IndexSettingsComparator.class);
 

@@ -42,7 +42,7 @@ class IndexMappingConfigurationSerializerTest extends Specification {
         ObjectNode objectNode = serializer.mergeFields(configuration)
 
         then:
-        JSON_TEXT == objectNode.toString()
+        objectNode.toString() == JSON_TEXT
     }
 
     private HashMap<String, MappingFieldDescriptor> getFields() {

@@ -2947,7 +2947,7 @@
         <xs:sequence minOccurs="0">
             <xs:element name="aggregation" type="gridAggregationType"/>
             <xs:group ref="renderers"/>
-            <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+            <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
         </xs:sequence>
 
         <xs:attribute name="key" type="xs:string"/>
@@ -3274,7 +3274,7 @@
                     <xs:element name="itemsQuery" type="multiSelectComboBoxItemsQueryType"/>
                     <xs:element name="tooltip" type="tooltipElement"/>
                     <xs:element name="validators" type="collectionValidatorType"/>
-                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                    <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -3330,7 +3330,7 @@
                 <xs:sequence>
                     <xs:element name="itemsQuery" minOccurs="0" type="entityComboBoxItemsQueryType"/>
                     <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
-                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                    <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="metaClass" type="xs:string"/>
@@ -3451,7 +3451,7 @@
             <xs:extension base="baseComponent">
                 <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                    <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="themeNames" type="radioButtonGroupThemeNames"/>
@@ -3479,7 +3479,7 @@
             <xs:extension base="baseComponent">
                 <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                    <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="itemsContainer" type="xs:string"/>
@@ -3507,7 +3507,7 @@
             <xs:extension base="baseComponent">
                 <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                    <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="itemsContainer" type="xs:string"/>
@@ -3528,7 +3528,7 @@
             <xs:extension base="baseComponent">
                 <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
-                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                    <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="itemsContainer" type="xs:string"/>
@@ -3796,7 +3796,7 @@
                 <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
                     <xs:element name="prefix" type="prefixOrSuffixComponent"/>
-                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                    <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 
                 <xs:attribute name="autofocus" type="xs:boolean"/>
@@ -4119,7 +4119,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:choice minOccurs="0">
-                    <xs:element name="fragmentRenderer" type="fragmentComponent"/>
+                    <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:choice>
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasClassNames"/>
@@ -4288,6 +4288,15 @@
                 <xs:attribute name="class" type="xs:string" use="required"/>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <!-- FragmentRenderer -->
+    <xs:complexType name="fragmentRendererElement">
+        <xs:sequence minOccurs="0">
+            <xs:element name="properties" type="genericComponentProperties"/>
+        </xs:sequence>
+
+        <xs:attribute name="class" type="xs:string" use="required"/>
     </xs:complexType>
 
     <!--    HTML-->

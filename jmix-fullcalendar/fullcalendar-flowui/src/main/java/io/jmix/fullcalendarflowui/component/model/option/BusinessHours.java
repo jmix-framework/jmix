@@ -23,7 +23,7 @@ import org.springframework.lang.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.BUSINESS_HOURS;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.BUSINESS_HOURS;
 
 /**
  * INTERNAL.

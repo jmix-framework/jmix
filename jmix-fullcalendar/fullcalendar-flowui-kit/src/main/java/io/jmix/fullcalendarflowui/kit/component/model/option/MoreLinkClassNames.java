@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.MORE_LINK_CLASS_NAMES;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.MORE_LINK_CLASS_NAMES;
 
 /**
  * INTERNAL.

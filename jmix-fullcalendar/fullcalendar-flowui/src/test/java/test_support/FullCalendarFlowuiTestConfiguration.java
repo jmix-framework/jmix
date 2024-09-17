@@ -32,7 +32,6 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.testassist.vaadin.TestServletContext;
-import io.jmix.fullcalendar.FullCalendarConfiguration;
 import io.jmix.fullcalendarflowui.FullCalendarFlowuiConfiguration;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.servlet.ServletContext;
@@ -56,7 +55,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @Import({FlowuiConfiguration.class, EclipselinkConfiguration.class, CoreConfiguration.class,
-        DataConfiguration.class, FullCalendarFlowuiConfiguration.class, FullCalendarConfiguration.class})
+        DataConfiguration.class, FullCalendarFlowuiConfiguration.class})
 @JmixModule
 public class FullCalendarFlowuiTestConfiguration {
 

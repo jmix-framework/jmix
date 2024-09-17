@@ -19,7 +19,7 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.VISIBLE_RANGE;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.VISIBLE_RANGE;
 
 /**
  * INTERNAL.

@@ -104,7 +104,6 @@ public class FullCalendarXmlLoadingTest {
                 () -> assertTrue(calendar.isEventStartEditable()),
                 () -> assertEquals("green", calendar.getEventTextColor()),
                 () -> assertTrue(calendar.isExpandRows()),
-                () -> assertEquals(DayOfWeek.TUESDAY, calendar.getFirstDayOfWeek()),
                 () -> assertTrue(calendar.isForceEventDuration()),
                 () -> assertEquals(LocalDate.of(2024, 9, 1), calendar.getInitialDate()),
                 () -> assertEquals(CalendarDisplayModes.TIME_GRID_WEEK, calendar.getInitialCalendarDisplayMode()),
@@ -254,6 +253,32 @@ public class FullCalendarXmlLoadingTest {
     }
 
     @Test
+    @DisplayName("Load FullCalendar I18n attributes from XML")
+    public void loadFullCalendarI18nAttributesFromXml() {
+        viewNavigators.view(UiTestUtils.getCurrentView(), FullCalendarXmlLoadingTestView.class)
+                .navigate();
+
+        FullCalendarXmlLoadingTestView testView = UiTestUtils.getCurrentView();
+        var calendar = testView.calendarI18n;
+
+        //noinspection DataFlowIssue
+        Assertions.assertAll(
+                () -> assertNotNull(calendar.getI18n()),
+                () -> assertEquals("allDayText", calendar.getI18n().getAllDayText()),
+                () -> assertEquals("closeHint", calendar.getI18n().getCloseHint()),
+                () -> assertEquals(DayOfWeek.WEDNESDAY, calendar.getI18n().getFirstDayOfWeek()),
+                () -> assertEquals(1, calendar.getI18n().getDayOfYear()),
+                () -> assertEquals("eventHint", calendar.getI18n().getEventHint()),
+                () -> assertEquals("moreLinkHint", calendar.getI18n().getMoreLinkHint()),
+                () -> assertEquals("moreLinkText", calendar.getI18n().getMoreLinkText()),
+                () -> assertEquals("navLinkHint", calendar.getI18n().getNavLinkHint()),
+                () -> assertEquals("noEventsText", calendar.getI18n().getNoEventsText()),
+                () -> assertEquals("timeHint", calendar.getI18n().getTimeHint()),
+                () -> assertEquals("weekTextLong", calendar.getI18n().getWeekTextLong())
+        );
+    }
+
+    @Test
     @DisplayName("Load FullCalendar data providers from XML")
     public void loadFullCalendarDataProvidersFromXml() {
         viewNavigators.view(UiTestUtils.getCurrentView(), FullCalendarXmlLoadingTestView.class)
@@ -322,7 +347,7 @@ public class FullCalendarXmlLoadingTest {
                 () -> assertEquals("eventTimeFormat", displayModeProperties.getEventTimeFormat()),
                 () -> assertEquals("weekNumberFormat", displayModeProperties.getWeekNumberFormat()),
                 () -> assertFalse(displayModeProperties.isDisplayEventEnd()),
-                () -> assertFalse(displayModeProperties.isAllDaySlot()),
+                () -> assertFalse(displayModeProperties.isAllDaySlotVisible()),
                 () -> assertEquals(1, displayModeProperties.getEventMinHeight()),
                 () -> assertEquals(1, displayModeProperties.getEventShortHeight()),
                 () -> assertFalse(displayModeProperties.isSlotEventOverlap()),

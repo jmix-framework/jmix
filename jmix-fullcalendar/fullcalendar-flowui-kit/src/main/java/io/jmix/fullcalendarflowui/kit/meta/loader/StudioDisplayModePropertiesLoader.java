@@ -139,7 +139,7 @@ public class StudioDisplayModePropertiesLoader implements HasLoaderSupport {
         loadInteger(timeGridElement, "eventMinHeight", timeGridProperties::setEventMinHeight);
         loadInteger(timeGridElement, "eventShortHeight", timeGridProperties::setEventShortHeight);
         loadBoolean(timeGridElement, "slotEventOverlap", timeGridProperties::setSlotEventOverlap);
-        loadBoolean(timeGridElement, "allDaySlot", timeGridProperties::setAllDaySlot);
+        loadBoolean(timeGridElement, "allDaySlot", timeGridProperties::setAllDaySlotVisible);
     }
 
     protected void loadListProperties(Element listElement, JmixFullCalendar resultComponent) {

@@ -40,7 +40,7 @@ public abstract class AbstractTimeGridProperties extends AbstractCalendarDisplay
 
     protected boolean slotEventOverlap = true;
 
-    protected boolean allDaySlot = true;
+    protected boolean allDaySlotVisible = true;
 
     protected boolean displayEventEnd = true;
 
@@ -251,8 +251,8 @@ public abstract class AbstractTimeGridProperties extends AbstractCalendarDisplay
     /**
      * @return {@code true} if all-day slots are displayed
      */
-    public boolean isAllDaySlot() {
-        return allDaySlot;
+    public boolean isAllDaySlotVisible() {
+        return allDaySlotVisible;
     }
 
     /**
@@ -260,10 +260,10 @@ public abstract class AbstractTimeGridProperties extends AbstractCalendarDisplay
      * <p>
      * The default value is {@code true}.
      *
-     * @param allDaySlot whether to display all-day slots
+     * @param allDaySlotVisible whether to display all-day slots
      */
-    public void setAllDaySlot(boolean allDaySlot) {
-        this.allDaySlot = allDaySlot;
+    public void setAllDaySlotVisible(boolean allDaySlotVisible) {
+        this.allDaySlotVisible = allDaySlotVisible;
 
         markAsDirty();
     }

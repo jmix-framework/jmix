@@ -35,4 +35,6 @@ public class FullCalendarXmlLoadingTestView extends StandardView {
     public FullCalendar calendarBusinessHours;
     @ViewComponent
     public FullCalendar calendarCustomDisplayMode;
+    @ViewComponent
+    public FullCalendar calendarI18n;
 }

@@ -188,7 +188,7 @@ public class DisplayModePropertiesLoader {
         loaderSupport.loadInteger(timeGridElement, "eventMinHeight", timeGrid::setEventMinHeight);
         loaderSupport.loadInteger(timeGridElement, "eventShortHeight", timeGrid::setEventShortHeight);
         loaderSupport.loadBoolean(timeGridElement, "slotEventOverlap", timeGrid::setSlotEventOverlap);
-        loaderSupport.loadBoolean(timeGridElement, "allDaySlot", timeGrid::setAllDaySlot);
+        loaderSupport.loadBoolean(timeGridElement, "allDaySlotVisible", timeGrid::setAllDaySlotVisible);
         loaderSupport.loadBoolean(timeGridElement, "displayEventEnd", timeGrid::setDisplayEventEnd);
     }
 

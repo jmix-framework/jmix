@@ -21,7 +21,6 @@ const SELECT_ALLOW = 'selectAllow';
 const VIEWS = 'views';
 const DAY_MAX_EVENT_ROWS = 'dayMaxEventRows';
 const DAY_MAX_EVENTS = 'dayMaxEvents';
-const FIRST_DAY = 'firstDay';
 const EVENT_ORDER = 'eventOrder';
 
 export function processInitialOptions(serverOptions) {
@@ -59,6 +58,11 @@ function processViews(viewsObject) {
             || view === 'listMonth'
             || view === 'listYear') {
             viewsObject[view] = processListView(viewsObject[view]);
+            continue;
+        }
+        if (view === 'timeGridDay'
+            || view === 'timeGridWeek') {
+            viewsObject[view] = processTimeGrid(viewsObject[view]);
             continue;
         }
         viewsObject[view] = {...viewsObject[view], ...viewsObject[view].properties && {...viewsObject[view].properties}};
@@ -101,6 +105,22 @@ function processListView(listView) {
     }
 
     return newListView;
+}
+
+function processTimeGrid(timeGridView) {
+    let newTimeGridView = {...timeGridView, ...timeGridView.properties && {...timeGridView.properties}};
+
+    // Delete null properties and 'properties' property
+    newTimeGridView = utils.deleteNullProperties(newTimeGridView);
+    delete newTimeGridView.properties;
+
+    // Handle allDaySlot
+    if (utils.isNotNullUndefined(newTimeGridView.allDaySlotVisible)) {
+        newTimeGridView.allDaySlot = newTimeGridView.allDaySlotVisible;
+        delete newTimeGridView.allDaySlotVisible;
+    }
+
+    return newTimeGridView;
 }
 
 class Options {
@@ -148,7 +168,6 @@ class Options {
             this._updateSlotLabelClassNames(options);
             this._updateNowIndicatorClassNames(options);
 
-            this._updateFirstDay(options);
             this._updateEventOrder(options);
         });
     }
@@ -188,7 +207,6 @@ class Options {
             || SELECT_ALLOW === key
             || DAY_MAX_EVENT_ROWS === key
             || DAY_MAX_EVENTS === key
-            || FIRST_DAY === key
             || EVENT_ORDER === key
     }
 
@@ -366,24 +384,6 @@ class Options {
         }
     }
 
-    _updateFirstDay(options) {
-        if (!options.hasOwnProperty(FIRST_DAY)) {
-            return;
-        }
-
-        let value = options[FIRST_DAY];
-
-        if (!this.context.initialized && value == null) {
-            return;
-        }
-
-        if (value == null) {
-            value = this.context.i18n.dayOfWeek;
-        }
-
-        this.updateOption(FIRST_DAY, value);
-    }
-
     _updateEventOrder(options) {
         const eventOrder = options[EVENT_ORDER];
 
@@ -441,12 +441,17 @@ class Options {
         return [];
     }
 
+    /**
+     * @param calendarI18n object to assign to
+     * @param jmixI18n object to assign from
+     * @private
+     */
     _assignI18n(calendarI18n, jmixI18n) {
         if (utils.isNotNullUndefined(jmixI18n.direction)) {
             calendarI18n['direction'] = jmixI18n.direction.toLowerCase();
         }
-        if (utils.isNotNullUndefined(jmixI18n.dayOfWeek)) {
-            calendarI18n['week'].dow = jmixI18n.dayOfWeek;
+        if (utils.isNotNullUndefined(jmixI18n.firstDayOfWeek)) {
+            calendarI18n['week'].dow = jmixI18n.firstDayOfWeek;
         }
         if (utils.isNotNullUndefined(jmixI18n.dayOfYear)) {
             calendarI18n['week'].doy = jmixI18n.dayOfYear;

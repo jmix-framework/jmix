@@ -19,7 +19,7 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 import io.jmix.fullcalendarflowui.kit.component.model.JsFunction;
 import jakarta.annotation.Nullable;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.EVENT_OVERLAP;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.EVENT_OVERLAP;
 
 /**
  * INTERNAL.

@@ -23,7 +23,7 @@ import org.springframework.lang.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.EVENT_CONSTRAINT;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.EVENT_CONSTRAINT;
 
 /**
  * INTERNAL.

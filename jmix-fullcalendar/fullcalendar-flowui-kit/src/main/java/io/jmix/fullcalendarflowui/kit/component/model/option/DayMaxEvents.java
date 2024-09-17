@@ -20,7 +20,7 @@ import jakarta.annotation.Nullable;
 
 import java.io.Serializable;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.DAY_MAX_EVENTS;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.DAY_MAX_EVENTS;
 
 /**
  * INTERNAL.

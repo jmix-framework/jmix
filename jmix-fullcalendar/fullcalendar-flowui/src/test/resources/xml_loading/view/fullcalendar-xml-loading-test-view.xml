@@ -185,7 +185,7 @@
                                       eventTimeFormat="eventTimeFormat"
                                       weekNumberFormat="weekNumberFormat"
                                       displayEventEnd="false"
-                                      allDaySlot="false"
+                                      allDaySlotVisible="false"
                                       eventMinHeight="1"
                                       eventShortHeight="1"
                                       slotEventOverlap="false"
@@ -199,7 +199,7 @@
                                        eventTimeFormat="eventTimeFormat"
                                        weekNumberFormat="weekNumberFormat"
                                        displayEventEnd="false"
-                                       allDaySlot="false"
+                                       allDaySlotVisible="false"
                                        eventMinHeight="1"
                                        eventShortHeight="1"
                                        slotEventOverlap="false"
@@ -247,6 +247,19 @@
                                          showNonCurrentDates="false"/>
             </calendar:displayModeProperties>
         </calendar:calendar>
+
+        <calendar:calendar id="calendarI18n"
+                           allDayText="allDayText"
+                           closeHint="closeHint"
+                           firstDayOfWeek="WEDNESDAY"
+                           dayOfYear="1"
+                           eventHint="eventHint"
+                           moreLinkHint="moreLinkHint"
+                           moreLinkText="moreLinkText"
+                           navLinkHint="navLinkHint"
+                           noEventsText="noEventsText"
+                           timeHint="timeHint"
+                           weekTextLong="weekTextLong"/>
 
         <calendar:calendar id="calendarDataProviders">
             <calendar:dataProviders>

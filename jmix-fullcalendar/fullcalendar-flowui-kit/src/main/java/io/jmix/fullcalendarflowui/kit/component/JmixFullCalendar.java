@@ -548,7 +548,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Note that "+x more" row is included to count. For instance, if dayMaxEventRows = 1, only the "+x more" row
      * will be shown.
      * <p>
-     * Takes precedence over {@link #setDefaultDayMaxEventRowsEnabled(boolean)}.
+     * Takes precedence over the {@link #setDefaultDayMaxEventRowsEnabled(boolean)}.
      *
      * @param maxEventRows maximum value of event rows in cell
      */
@@ -1125,7 +1125,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the date format of title of the popover that is shown when "more" link is clicked. By default,
      * component sets localized format from messages when is created.
      * <p>
-     * This property act as default format for all display modes and {@link CustomCalendarDisplayMode} until specific
+     * This property act as default format for all display modes and for {@link CustomCalendarDisplayMode} until specific
      * property won't be set for these display modes. However, all display-mode properties objects by default explicitly
      * specify the format, thus they override this property.
      * <p>
@@ -1154,7 +1154,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the format of the text that will be displayed on the calendar’s column headings. By default,
      * component sets localized format from messages when is created.
      * <p>
-     * This property act as default format for all display modes and {@link CustomCalendarDisplayMode} until specific
+     * This property act as default format for all display modes and for {@link CustomCalendarDisplayMode} until specific
      * property won't be set for these display modes. However, all display-mode properties objects by default explicitly
      * specify the format, thus they override this property.
      * <p>
@@ -1183,7 +1183,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the format of the week number that will be displayed when {@link #isWeekNumbersVisible()} is {@code true}.
      * By default, component sets localized format from messages when is created.
      * <p>
-     * This property act as default format for all display modes and {@link CustomCalendarDisplayMode} until specific
+     * This property act as default format for all display modes and for {@link CustomCalendarDisplayMode} until specific
      * property won't be set for these display modes. However, all display-mode properties objects by default explicitly
      * specify the format, thus they override this property.
      * <p>
@@ -1212,7 +1212,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the format of the text that will be displayed within a time slot. By default, component sets
      * localized format from messages when is created.
      * <p>
-     * This property act as default format for all display modes and {@link CustomCalendarDisplayMode} until specific
+     * This property act as default format for all display modes and for {@link CustomCalendarDisplayMode} until specific
      * property won't be set for these display modes. However, all display-mode properties objects by default explicitly
      * specify the format, thus they override this property.
      * <p>
@@ -1241,14 +1241,14 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the format of the time-text that will be displayed on each event. By default, component sets
      * localized format from messages when is created.
      * <p>
-     * This property act as default format for all display modes and {@link CustomCalendarDisplayMode} until specific
+     * This property act as default format for all display modes and for {@link CustomCalendarDisplayMode} until specific
      * property won't be set for these display modes. However, all display-mode properties objects by default explicitly
      * specify the format, thus they override this property.
      * <p>
      * As component uses <a href="https://fullcalendar.io/docs/moment-plugin">moment plugin</a> for FullCalendar,
      * we should follow the moment.js formatting rules:
      * <a href="https://momentjs.com/docs/#/displaying/format/">Moment.js Documentation</a>. For instance,
-     * the {@code "HH:mm"} produces {@code 00:00} (01, 2, ... 24 : 01, 02 ... 59).
+     * the {@code "HH:mm"} produces {@code 00:00} (01, 2, ... 23 : 01, 02 ... 59).
      * <p>
      * The property change is not applied after component attached to the UI.
      *
@@ -1460,15 +1460,16 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets the default duration of all-day events if they don't specify {@code end} property.
+     * Sets the default duration of all-day events if they don't specify {@code endDateTime} property.
      * <p>
      * For instance, the property is set to {@code 2 days}. The event that has {@code allDay = true} and do not
-     * have {@code end} property, will be shown in all-day section and will occupy two days.
+     * have {@code endDateTime} property, will be shown in all-day section and will occupy two days.
      * <p>
-     * Note, calendar event's end property will remain unset, unless {@link #setForceEventDuration(boolean)} has been
-     * set to {@code true}. In this case, the calendar will explicitly assign end date to an event. If such event
-     * will be changed by dragging or resizing, and you have listeners for these events, the component will set to
-     * calendar event {@code setEndDateTime()}, which can lead to modifying entity/DTO instance.
+     * Note, calendar event's {@code endDateTime} property will remain unset,
+     * unless {@link #setForceEventDuration(boolean)} has been set to {@code true}. In this case, the calendar
+     * will explicitly assign end date to an event. If such event will be changed by dragging or resizing, and
+     * you have listeners for these events, the component will set to calendar event {@code setEndDateTime()},
+     * which can lead to modifying entity/DTO instance.
      * <p>
      * This property only affects events with {@code allDay = true}.
      * <p>
@@ -1489,10 +1490,10 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets the default duration for timed events if they don't specify {@code end} property.
+     * Sets the default duration for timed events if they don't specify {@code endDateTime} property.
      * <p>
      * For instance, the property is set to {@code 2 hours}. The event that has {@code allDay = false} and do not
-     * have {@code end} property, will occupy two hours in time slots.
+     * have {@code endDateTime} property, will occupy two hours in time slots.
      * <p>
      * Note, calendar event's end property will remain unset, unless {@link #setForceEventDuration(boolean)} has been
      * set to {@code true}. In this case, the calendar will explicitly assign end date to an event. If such event
@@ -1920,7 +1921,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
     /**
      * Sets the list of calendar event properties that should participate in sorting. It is also available to specify
-     * properties from {@code getAdditionalProperties()}.
+     * properties from event's {@code additionalProperties}.
      * <p>
      * For most calendar display modes, this property determines the vertical ordering of events within the same day.
      * For time-grid display modes however, it determines the horizontal ordering of events within the same time slot.

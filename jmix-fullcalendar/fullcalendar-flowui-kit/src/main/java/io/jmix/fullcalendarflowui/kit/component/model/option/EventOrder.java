@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.EVENT_ORDER;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.EVENT_ORDER;
 
 /**
  * INTERNAL.

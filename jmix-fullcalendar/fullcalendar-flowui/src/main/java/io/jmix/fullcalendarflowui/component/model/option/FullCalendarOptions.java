@@ -23,7 +23,7 @@ import io.jmix.fullcalendarflowui.kit.component.model.option.SimpleOption;
 
 import java.util.List;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.*;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.*;
 
 /**
  * INTERNAL.
@@ -35,7 +35,6 @@ public class FullCalendarOptions extends JmixFullCalendarOptions {
         optionsMap.put(BUSINESS_HOURS, new BusinessHours());
         optionsMap.put(EVENT_CONSTRAINT, new EventConstraint());
         optionsMap.put(EVENT_DISPLAY, new SimpleOption<>(EVENT_DISPLAY, Display.AUTO));
-        optionsMap.put(FIRST_DAY, new SimpleOption<>(FIRST_DAY));
         optionsMap.put(HIDDEN_DAYS, new SimpleOption<>(HIDDEN_DAYS));
         optionsMap.put(SELECT_CONSTRAINT, new SelectConstraint());
     }
@@ -54,10 +53,6 @@ public class FullCalendarOptions extends JmixFullCalendarOptions {
 
     public SimpleOption<List<DayOfWeek>> getHiddenDays() {
         return get(HIDDEN_DAYS);
-    }
-
-    public SimpleOption<DayOfWeek> getFirstDay() {
-        return get(FIRST_DAY);
     }
 
     public SimpleOption<Display> getEventDisplay() {

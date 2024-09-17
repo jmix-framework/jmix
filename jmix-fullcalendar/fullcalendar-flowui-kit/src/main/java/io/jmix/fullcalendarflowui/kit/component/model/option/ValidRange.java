@@ -20,7 +20,7 @@ import jakarta.annotation.Nullable;
 
 import java.time.LocalDate;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.VALID_RANGE;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.VALID_RANGE;
 
 /**
  * INTERNAL.

@@ -18,7 +18,7 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 
 import jakarta.annotation.Nullable;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.DAY_MAX_EVENT_ROWS;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.DAY_MAX_EVENT_ROWS;
 
 /**
  * INTERNAL.

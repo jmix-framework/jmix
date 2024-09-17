@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.VIEWS;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.VIEWS;
 
 /**
  * INTERNAL.

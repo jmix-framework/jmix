@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.*;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.*;
 
 /**
  * INTERNAL.

@@ -419,23 +419,6 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
-     * @return first day of week or {@code null} if not set
-     */
-    @Nullable
-    public DayOfWeek getFirstDayOfWeek() {
-        return getOptions().getFirstDay().getValue();
-    }
-
-    /**
-     * Sets the day that each week begins. The default value is taken from locale.
-     *
-     * @param firstDay first day of week
-     */
-    public void setFirstDayOfWeek(@Nullable DayOfWeek firstDay) {
-        getOptions().getFirstDay().setValue(firstDay);
-    }
-
-    /**
      * @return display mode for events or {@code null} if not set
      */
     @Nullable
@@ -448,6 +431,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
      * <p>
      * To control the display of specific events, use the display property of calendar event
      * {@link CalendarEvent#getDisplay()}.
+     * <p>
+     * The default value is {@link Display#AUTO}.
      *
      * @param display display mode for events
      */
@@ -1396,7 +1381,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     protected FullCalendarI18n createDefaultI18n() {
         return new FullCalendarI18n()
                 .withDirection(FullCalendarI18n.Direction.valueOf(getMessage("i18n.direction").toUpperCase()))
-                .withDayOfWeek(Integer.parseInt(getMessage("i18n.dayOfWeek")))
+                .withFirstDayOfWeek(DayOfWeek.valueOf(getMessage("i18n.firstDayOfWeek")))
                 .withDayOfYear(Integer.parseInt(getMessage("i18n.dayOfYear")))
                 .withWeekTextLong(getMessage("i18n.weekTextLong"))
                 .withAllDayText(getMessage("i18n.allDayText"))

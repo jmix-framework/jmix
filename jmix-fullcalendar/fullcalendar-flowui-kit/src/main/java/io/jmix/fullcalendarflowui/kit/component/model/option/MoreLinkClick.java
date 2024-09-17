@@ -19,7 +19,7 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayMode;
 import jakarta.annotation.Nullable;
 
-import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionConstants.MORE_LINK_CLICK;
+import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.MORE_LINK_CLICK;
 
 /**
  * INTERNAL.

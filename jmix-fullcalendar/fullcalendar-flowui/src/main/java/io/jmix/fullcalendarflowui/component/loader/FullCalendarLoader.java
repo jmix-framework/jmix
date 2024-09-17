@@ -10,6 +10,7 @@ import io.jmix.core.impl.FetchPlanLoader;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.fullcalendarflowui.component.FullCalendarI18n;
 import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.model.Display;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
@@ -96,7 +97,6 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadString(element, "eventTextColor", resultComponent::setEventTextColor);
         loadBoolean(element, "expandRows", resultComponent::setExpandRows);
 
-        loadEnum(element, DayOfWeek.class, "firstDayOfWeek", resultComponent::setFirstDayOfWeek);
         loadBoolean(element, "forceEventDuration", resultComponent::setForceEventDuration);
 
         loadString(element, "initialDate", (s) -> resultComponent.setInitialDate(LocalDate.parse(s)));
@@ -133,6 +133,8 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
         loadInteger(element, "windowResizeDelay", resultComponent::setWindowResizeDelay);
 
+        loadI18n(element, resultComponent::setI18n);
+
         displayModeProperties().loadCalendarDisplayModeProperties(element, resultComponent);
         displayModeProperties().loadCustomCalendarDisplayModes(element, resultComponent);
         loadInitialDisplayMode(element, resultComponent);
@@ -144,6 +146,87 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
                 (dp) -> resultComponent.addDataProvider((ItemsCalendarDataProvider) dp));
         loadDataProviders(element, "callbackDataProvider",
                 (dp) -> resultComponent.addDataProvider((CallbackCalendarDataProvider) dp));
+    }
+
+    protected void loadI18n(Element element, Consumer<FullCalendarI18n> setter) {
+        FullCalendarI18n i18n = new FullCalendarI18n();
+
+        boolean loaded = false;
+
+        FullCalendarI18n.Direction direction =
+                loadEnum(element, FullCalendarI18n.Direction.class, "direction").orElse(null);
+        if (direction != null) {
+            loaded = true;
+            i18n.setDirection(direction);
+        }
+        DayOfWeek dayOfWeek = loadEnum(element, DayOfWeek.class, "firstDayOfWeek").orElse(null);
+        if (dayOfWeek != null) {
+            loaded = true;
+            i18n.setFirstDayOfWeek(dayOfWeek);
+        }
+        Integer dayOfYear = loadInteger(element, "dayOfYear").orElse(null);
+        if (dayOfYear != null) {
+            loaded = true;
+            i18n.setDayOfYear(dayOfYear);
+        }
+        String weekTextLong = loadResourceString(element, "weekTextLong", context.getMessageGroup())
+                .orElse(null);
+        if (!Strings.isNullOrEmpty(weekTextLong)) {
+            loaded = true;
+            i18n.setWeekTextLong(weekTextLong);
+        }
+        String allDayText = loadResourceString(element, "allDayText", context.getMessageGroup())
+                .orElse(null);
+        if (!Strings.isNullOrEmpty(allDayText)) {
+            loaded = true;
+            i18n.setAllDayText(allDayText);
+        }
+        String moreLinkText = loadResourceString(element, "moreLinkText", context.getMessageGroup())
+                .orElse(null);
+        if (!Strings.isNullOrEmpty(moreLinkText)) {
+            loaded = true;
+            i18n.setMoreLinkText(moreLinkText);
+        }
+        String noEventsText = loadResourceString(element, "noEventsText", context.getMessageGroup())
+                .orElse(null);
+        if (!Strings.isNullOrEmpty(noEventsText)) {
+            loaded = true;
+            i18n.setNoEventsText(noEventsText);
+        }
+        String closeHint = loadResourceString(element, "closeHint", context.getMessageGroup())
+                .orElse(null);
+        if (!Strings.isNullOrEmpty(closeHint)) {
+            loaded = true;
+            i18n.setCloseHint(closeHint);
+        }
+        String eventHint = loadResourceString(element, "eventHint", context.getMessageGroup())
+                .orElse(null);
+        if (!Strings.isNullOrEmpty(eventHint)) {
+            loaded = true;
+            i18n.setEventHint(eventHint);
+        }
+        String timeHint = loadResourceString(element, "timeHint", context.getMessageGroup())
+                .orElse(null);
+        if (!Strings.isNullOrEmpty(timeHint)) {
+            loaded = true;
+            i18n.setTimeHint(timeHint);
+        }
+        String navLinkHint = loadResourceString(element, "navLinkHint", context.getMessageGroup())
+                .orElse(null);
+        if (!Strings.isNullOrEmpty(navLinkHint)) {
+            loaded = true;
+            i18n.setNavLinkHint(navLinkHint);
+        }
+        String moreLinkHint = loadResourceString(element, "moreLinkHint", context.getMessageGroup())
+                .orElse(null);
+        if (!Strings.isNullOrEmpty(moreLinkHint)) {
+            loaded = true;
+            i18n.setMoreLinkHint(moreLinkHint);
+        }
+
+        if (loaded) {
+            setter.accept(i18n);
+        }
     }
 
     protected void loadDataProviders(Element element, String providerTag,

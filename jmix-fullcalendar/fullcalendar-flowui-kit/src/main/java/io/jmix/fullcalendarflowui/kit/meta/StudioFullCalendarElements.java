@@ -304,7 +304,7 @@ public interface StudioFullCalendarElements {
                     @StudioProperty(xmlAttribute = "eventMinHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "eventShortHeight", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "slotEventOverlap", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "allDaySlot", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "allDaySlotVisible", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "displayEventEnd", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
             }
     )

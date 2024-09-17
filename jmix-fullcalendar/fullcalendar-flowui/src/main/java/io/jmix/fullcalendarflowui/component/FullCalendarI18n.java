@@ -35,7 +35,7 @@ public class FullCalendarI18n implements Serializable {
     }
 
     protected Direction direction;
-    protected Integer dayOfWeek;
+    protected DayOfWeek firstDayOfWeek;
     protected Integer dayOfYear;
 
     protected String weekTextLong;
@@ -54,7 +54,7 @@ public class FullCalendarI18n implements Serializable {
 
     private FullCalendarI18n(FullCalendarI18n i18n) {
         direction = i18n.direction;
-        dayOfWeek = i18n.dayOfWeek;
+        firstDayOfWeek = i18n.firstDayOfWeek;
         dayOfYear = i18n.dayOfYear;
         weekTextLong = i18n.weekTextLong;
         allDayText = i18n.allDayText;
@@ -102,29 +102,29 @@ public class FullCalendarI18n implements Serializable {
      * @return the first day of week or {@code null} if not set
      */
     @Nullable
-    public Integer getDayOfWeek() {
-        return dayOfWeek;
+    public DayOfWeek getFirstDayOfWeek() {
+        return firstDayOfWeek;
     }
 
     /**
      * Sets the first day of week. The default value is taken from locale.
      * <p>
-     * The first day of week can be also set by {@link FullCalendar#setFirstDayOfWeek(DayOfWeek)}.
+     * The order of days is the following: 0 - Sunday, 1 - Monday, etc.
      *
      * @param dayOfWeek the first day of week
      */
-    public void setDayOfWeek(@Nullable Integer dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
+    public void setFirstDayOfWeek(@Nullable DayOfWeek dayOfWeek) {
+        this.firstDayOfWeek = dayOfWeek;
     }
 
     /**
-     * Sets the first day of week. See {@link #setDayOfWeek(Integer)}.
+     * Sets the first day of week. See {@link #setFirstDayOfWeek(DayOfWeek)}.
      *
      * @param dayOfWeek the first day of week
      * @return current instance of i18n
      */
-    public FullCalendarI18n withDayOfWeek(@Nullable Integer dayOfWeek) {
-        setDayOfWeek(dayOfWeek);
+    public FullCalendarI18n withFirstDayOfWeek(@Nullable DayOfWeek dayOfWeek) {
+        setFirstDayOfWeek(dayOfWeek);
         return this;
     }
 
@@ -137,8 +137,9 @@ public class FullCalendarI18n implements Serializable {
     }
 
     /**
-     * The rule how to define the first week of the year. Sets the count of days that should be at least presented
-     * in the week to consider it as a first week of the year.
+     * The rule how to define the first week of the year. For instance, if the first day of the week is {@code 1} and
+     * the day of year equals to {@code 4}, it means that the week that contains {@code Jan 4th} is the first week of
+     * the year.
      * <p>
      * The default value is taken from locale.
      *
@@ -471,7 +472,7 @@ public class FullCalendarI18n implements Serializable {
         }
 
         result.setDirection(requireNonNullElseGet(i18n.getDirection(), result::getDirection));
-        result.setDayOfWeek(requireNonNullElseGet(i18n.getDayOfWeek(), result::getDayOfWeek));
+        result.setFirstDayOfWeek(requireNonNullElseGet(i18n.getFirstDayOfWeek(), result::getFirstDayOfWeek));
         result.setDayOfYear(requireNonNullElseGet(i18n.getDayOfYear(), result::getDayOfYear));
         result.setWeekTextLong(requireNonNullElseGet(i18n.getWeekTextLong(), result::getWeekTextLong));
         result.setAllDayText(requireNonNullElseGet(i18n.getAllDayText(), result::getAllDayText));

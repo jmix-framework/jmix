@@ -22,6 +22,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+/**
+ *
+ */
 @Component("search_MappingFieldComparator")
 public class MappingFieldComparator {
     public static final String TYPE_KEY = "type";

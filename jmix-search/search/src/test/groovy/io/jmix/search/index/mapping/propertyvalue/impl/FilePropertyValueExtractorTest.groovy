@@ -20,8 +20,7 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import io.jmix.core.FileRef
-import io.jmix.search.exception.EmptyFileExtensionException
-import io.jmix.search.exception.UnsupportedFileExtensionException
+import io.jmix.search.exception.UnsupportedFileTypeException
 import io.jmix.search.utils.FileProcessor
 import spock.lang.Specification
 
@@ -39,13 +38,17 @@ class FilePropertyValueExtractorTest extends Specification {
                 Level.WARN)
     }
 
-    def "nothing should be thrown if fileProcessor throws a ParserResolvingException"() {
+    def "nothing should be thrown if fileProcessor throws a ParserResolvingException but should be logged"() {
         given:
         FileRef fileRef = Mock()
 
         and:
+        def exceptionMock = Mock(UnsupportedFileTypeException)
+        exceptionMock.getMessage() >> "Some exception message."
+
+        and:
         FileProcessor fileProcessor = Mock()
-        fileProcessor.extractFileContent(fileRef) >> {throw exception}
+        fileProcessor.extractFileContent(fileRef) >> {throw exceptionMock}
 
         and:
         FilePropertyValueExtractor extractor = new FilePropertyValueExtractor(fileProcessor)
@@ -57,10 +60,7 @@ class FilePropertyValueExtractorTest extends Specification {
         this.appender.list.size() == 1
         def loggingEvent = this.appender.list.get(0)
         loggingEvent.getLevel() == Level.WARN
-        loggingEvent.getMessage() == exception.getMessage()
-
-        where:
-        exception<<[new UnsupportedFileExtensionException("any.file", ["txt"]), new EmptyFileExtensionException("any", ["txt"])]
+        loggingEvent.getMessage() == exceptionMock.getMessage()
     }
 
     void cleanup() {

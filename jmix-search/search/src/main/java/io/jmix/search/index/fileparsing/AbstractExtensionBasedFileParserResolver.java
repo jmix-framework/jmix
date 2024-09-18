@@ -22,11 +22,14 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.util.List;
 
-
+/**
+ * Implements the common logic for all extension based file parser resolvers.
+ */
 public abstract class AbstractExtensionBasedFileParserResolver implements FileParserResolver {
 
     /**
      * Returns a collection of supported extensions of the supported file type. E.g. ["xlsx", "XLSX", "docx", "DOCX"].
+     *
      * @return collection of supported extensions
      */
     public abstract List<String> getSupportedExtensions();
@@ -47,7 +50,7 @@ public abstract class AbstractExtensionBasedFileParserResolver implements FilePa
         return getSupportedExtensions().contains(fileExtension);
     }
 
-    protected String getSupportedExtensionsString(List<String> supportedExtensions){
+    protected String getSupportedExtensionsString(List<String> supportedExtensions) {
         return String.join(", ", supportedExtensions);
     }
 }

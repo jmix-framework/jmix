@@ -27,14 +27,28 @@ import java.util.List;
  */
 public interface FileParserResolver {
 
+    /**
+     * This method should return the description that describes the constraints or the constraint for the files
+     * that are supported with this resolver. This message is used for generating the log message that
+     * is written into the log while no one of the resolvers supports the processed file.
+     *
+     * @return criteria description
+     */
     String getCriteriaDescription();
 
     /**
-     * Returns an instance of a file parser that is returned for the extensions being returned by
-     * {@link #getSupportedExtensions()} method.
+     * Returns an instance of a file parser for the supported file types.
+     *
      * @return an instance of a file parser
      */
     Parser getParser();
 
+    /**
+     * This method should implement the logic for checking
+     * if the file with given fileRef is supported by the resolver or not.
+     *
+     * @param fileRef object with the file information
+     * @return the given FileRef's checking result
+     */
     boolean supports(FileRef fileRef);
 }

@@ -51,6 +51,7 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
         "file1.ext1" | ["ext1"]         | true
         "file1.ext1" | ["ext1", "ext2"] | true
         "file1.doc"  | ["docx"]         | false
+        "file1."     | ["docx"]         | false
         "file"       | ["ext1"]         | false
     }
 

@@ -47,12 +47,18 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
         resolver.supports(fileRef) == supports
 
         where:
-        fileName     | extensions       | supports
-        "file1.ext1" | ["ext1"]         | true
-        "file1.ext1" | ["ext1", "ext2"] | true
-        "file1.doc"  | ["docx"]         | false
-        "file1."     | ["docx"]         | false
-        "file"       | ["ext1"]         | false
+        fileName      | extensions               | supports
+        "file1.ext1"  | ["ext1"]                 | true
+        "file1.ext11" | ["ext1"]                 | false
+        "file1..ext1" | ["ext1"]                 | true
+        "file1..ext"  | ["ext1"]                 | false
+        "file1.ext1"  | ["ext1", "ext2"]         | true
+        "file1.ext2"  | ["ext1", "ext2"]         | true
+        "file1.ext3"  | ["ext1", "ext2", "ext3"] | true
+        "file1.ext33" | ["ext1", "ext2", "ext3"] | false
+        "file1.doc"   | ["docx"]                 | false
+        "file1."      | ["docx"]                 | false
+        "file"        | ["ext1"]                 | false
     }
 
     private static class TestExtensionBasedFileParserResolver extends AbstractExtensionBasedFileParserResolver {

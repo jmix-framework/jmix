@@ -30,9 +30,9 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
 
         where:
         extensions               | criteriaDescription
-        ["ext1"]                 | "The file extension should be one of following: ext1."
-        ["ext1", "ext2"]         | "The file extension should be one of following: ext1, ext2."
-        ["ext1", "ext2", "ext3"] | "The file extension should be one of following: ext1, ext2, ext3."
+        ["ext1"]                 | "The file extension should be one of the following: ext1."
+        ["ext1", "ext2"]         | "The file extension should be one of the following: ext1, ext2."
+        ["ext1", "ext2", "ext3"] | "The file extension should be one of the following: ext1, ext2, ext3."
     }
 
     def "Supports"() {

@@ -27,7 +27,6 @@ class FileProcessorTest extends Specification {
         FileStorageLocator storageLocatorMock = Mock()
 
         and:
-
         def exception = Mock (UnsupportedFileTypeException)
 
         and:

@@ -16,16 +16,13 @@
 
 package io.jmix.search.utils;
 
-import com.google.common.base.Strings;
 import io.jmix.core.FileRef;
-import io.jmix.search.exception.EmptyFileExtensionException;
-import io.jmix.search.exception.ParserResolvingException;
-import io.jmix.search.exception.UnsupportedFileExtensionException;
+import io.jmix.search.exception.UnsupportedFileTypeException;
 import io.jmix.search.index.fileparsing.FileParserResolver;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.parser.Parser;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,26 +38,18 @@ public class FileParserResolverManager {
         this.fileParserResolvers = fileParserResolvers;
     }
 
-    public Parser getParser(FileRef fileRef) throws ParserResolvingException {
+    public Parser getParser(FileRef fileRef) throws UnsupportedFileTypeException {
         String fileName = fileRef.getFileName();
-        String fileExtension = FilenameUtils.getExtension(fileName);
-        if (Strings.isNullOrEmpty(fileExtension)) {
-            throw new EmptyFileExtensionException(fileName, getSupportedExtensions());
-        }
+
+        List<String> messages = new ArrayList<>();
 
         for (FileParserResolver resolver : fileParserResolvers) {
-            if (resolver.getSupportedExtensions().contains(fileExtension)) {
+            if (resolver.supports(fileRef)) {
                 return resolver.getParser();
             }
+            messages.add(resolver.getCriteriaDescription());
         }
 
-        throw new UnsupportedFileExtensionException(fileName, getSupportedExtensions());
-    }
-
-    protected List<String> getSupportedExtensions() {
-        return fileParserResolvers
-                .stream()
-                .flatMap(fileParserResolver -> fileParserResolver.getSupportedExtensions().stream())
-                .toList();
+        throw new UnsupportedFileTypeException(fileName, messages);
     }
 }

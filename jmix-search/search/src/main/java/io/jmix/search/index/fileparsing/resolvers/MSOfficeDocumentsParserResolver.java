@@ -16,7 +16,7 @@
 
 package io.jmix.search.index.fileparsing.resolvers;
 
-import io.jmix.search.index.fileparsing.FileParserResolver;
+import io.jmix.search.index.fileparsing.AbstractExtensionBasedFileParserResolver;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
 import org.springframework.core.annotation.Order;
@@ -26,7 +26,7 @@ import java.util.List;
 
 @Component("search_OfficeDocumentsParserResolver")
 @Order(100)
-public class MSOfficeDocumentsParserResolver implements FileParserResolver {
+public class MSOfficeDocumentsParserResolver extends AbstractExtensionBasedFileParserResolver {
     @Override
     public List<String> getSupportedExtensions() {
         return List.of("docx", "xlsx");

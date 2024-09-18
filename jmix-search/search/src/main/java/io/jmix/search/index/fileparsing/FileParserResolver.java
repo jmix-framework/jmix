@@ -16,6 +16,7 @@
 
 package io.jmix.search.index.fileparsing;
 
+import io.jmix.core.FileRef;
 import org.apache.tika.parser.Parser;
 
 import java.util.List;
@@ -26,11 +27,7 @@ import java.util.List;
  */
 public interface FileParserResolver {
 
-    /**
-     * Returns a collection of supported extensions of the supported file type. E.g. ["xlsx", "XLSX", "docx", "DOCX"].
-     * @return collection of supported extensions
-     */
-    List<String> getSupportedExtensions();
+    String getCriteriaDescription();
 
     /**
      * Returns an instance of a file parser that is returned for the extensions being returned by
@@ -38,4 +35,6 @@ public interface FileParserResolver {
      * @return an instance of a file parser
      */
     Parser getParser();
+
+    boolean supports(FileRef fileRef);
 }

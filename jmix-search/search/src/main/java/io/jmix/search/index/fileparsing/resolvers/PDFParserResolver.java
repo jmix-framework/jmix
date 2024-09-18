@@ -16,6 +16,7 @@
 
 package io.jmix.search.index.fileparsing.resolvers;
 
+import io.jmix.search.index.fileparsing.AbstractExtensionBasedFileParserResolver;
 import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.pdf.PDFParser;
@@ -27,7 +28,7 @@ import java.util.List;
 
 @Component("search_PDFParserResolver")
 @Order(100)
-public class PDFParserResolver implements FileParserResolver {
+public class PDFParserResolver extends AbstractExtensionBasedFileParserResolver {
     @Override
     public List<String> getSupportedExtensions() {
         return List.of("pdf");

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * The abstract class is respond of the transforming search clients' specific JSonp format to Jackson's ObjectNode.
+ *
  * @param <TJsonp> search clients' specific JSonp format
  */
 public abstract class BaseJsonpSerializer<TJsonp> implements JsonpSerializer<TJsonp> {

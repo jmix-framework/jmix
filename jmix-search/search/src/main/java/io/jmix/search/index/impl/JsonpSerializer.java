@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * The interface for transforming search clients' specific JSonp format to Jackson's ObjectNode.
+ *
  * @param <TJsonp> search clients' specific JSonp format
  */
 public interface JsonpSerializer<TJsonp> {

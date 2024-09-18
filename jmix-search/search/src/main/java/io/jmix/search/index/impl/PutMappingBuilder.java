@@ -20,8 +20,9 @@ import io.jmix.search.index.mapping.IndexMappingConfiguration;
 
 /**
  * The builder is for making request to a search engine server for updating the mapping of the index.
+ *
  * @param <TRequest> the search client's PutMappingRequest type
- * @param <TJsonp> search clients' specific JSonp format
+ * @param <TJsonp>   search clients' specific JSonp format
  */
 public interface PutMappingBuilder<TRequest, TJsonp> {
     TRequest buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, TJsonp jsonpMapper);

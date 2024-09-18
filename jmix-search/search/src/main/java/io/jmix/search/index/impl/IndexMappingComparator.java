@@ -33,6 +33,7 @@ import static io.jmix.search.index.impl.MappingComparingResult.*;
 /**
  * Compares both the mapping from the application's index configuration
  * and the index state from the search server.
+ *
  * @param <TState> the received from the server index state type
  * @param <TJsonp> the specific for the search client Jsonp type
  */
@@ -115,6 +116,7 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
 
     /**
      * Removes not necessary tag from serialized mapping. This tag is added by the 'client' of the search engine.
+     *
      * @param searchIndexMapping - serialized mapping with not necessary 'type: object' elements
      * @return filtered mapping without 'type: object' elements
      */

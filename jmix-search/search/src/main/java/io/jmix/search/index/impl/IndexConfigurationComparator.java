@@ -23,9 +23,10 @@ import jakarta.annotation.Nullable;
 /**
  * The comparator that compares both the application's index configuration and the search index state
  * at the search server.
- * @param <TState> - type of the index state object
+ *
+ * @param <TState>    - type of the index state object
  * @param <TSettings> - type of the settings object
- * @param <TJsonp> - Jsonp type
+ * @param <TJsonp>    - Jsonp type
  */
 public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
     protected final IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator;

@@ -17,6 +17,7 @@
 package io.jmix.search.utils;
 
 import io.jmix.core.FileRef;
+import io.jmix.search.exception.EmptyFileParserResolversList;
 import io.jmix.search.exception.UnsupportedFileTypeException;
 import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.tika.parser.Parser;
@@ -39,6 +40,10 @@ public class FileParserResolverManager {
     }
 
     public Parser getParser(FileRef fileRef) throws UnsupportedFileTypeException {
+        if(fileParserResolvers.isEmpty()){
+            throw new EmptyFileParserResolversList();
+        }
+
         String fileName = fileRef.getFileName();
 
         List<String> messages = new ArrayList<>();

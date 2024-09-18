@@ -17,42 +17,27 @@
 package io.jmix.search.utils.parserresolving
 
 import io.jmix.core.FileRef
-import io.jmix.search.exception.EmptyFileExtensionException
-import io.jmix.search.exception.UnsupportedFileExtensionException
+import io.jmix.search.exception.EmptyFileParserResolversList
+import io.jmix.search.exception.UnsupportedFileTypeException
 import io.jmix.search.index.fileparsing.FileParserResolver
 import io.jmix.search.utils.FileParserResolverManager
 import org.apache.tika.parser.Parser
 import spock.lang.Specification
 
+import static java.util.Collections.emptyList
+
 class FileParserResolverManagerTest extends Specification {
-    def "should throw EmptyFileExtensionException when the given file name has no extension"() {
-        given:
-        FileRef fileRef = Mock()
-        fileRef.getFileName() >> fileName
 
-        and:
-        def parserResolver = new FileParserResolverManager(Collections.emptyList())
-
-        when:
-        parserResolver.getParser(fileRef)
-
-        then:
-        thrown(EmptyFileExtensionException)
-
-        where:
-        fileName << ["abc", "def", "abc.", "abc.."]
-    }
-
-    def "should throw UnsupportedFileExtensionException when the given file name with unsupported extension"() {
+    def "should throw UnsupportedFileExtensionException when the given file of unsupported type"() {
         given:
         FileRef fileRef = Mock()
         fileRef.getFileName() >> fileName
 
         and:
         def resolver = Mock(FileParserResolver)
-        resolver.getSupportedExtensions() >> List.of("docx", "xlsx")
+        resolver.supports(fileRef) >> false
         def resolver2 = Mock(FileParserResolver)
-        resolver2.getSupportedExtensions() >> List.of("doc", "xls")
+        resolver2.supports(fileRef) >> false
 
         and:
         def parserResolver = new FileParserResolverManager(List.of(resolver, resolver2))
@@ -61,39 +46,70 @@ class FileParserResolverManagerTest extends Specification {
         parserResolver.getParser(fileRef)
 
         then:
-        def exception = thrown(UnsupportedFileExtensionException)
+        def exception = thrown(UnsupportedFileTypeException)
         exception.getMessage().contains(fileName)
+
         where:
         fileName << ["abc.def", "def.zxc"]
     }
 
-    def "should return parser of the type that corresponds to the file extension"() {
+    def "should return parser of the type that is supported with exact resolver"() {
         given:
-        def resolver = Mock(FileParserResolver)
-        resolver.getSupportedExtensions() >> List.of("docx", "xlsx")
-        def parser1 = Mock(Parser)
-        resolver.getParser() >> parser1
+        FileRef fileRef = Mock()
+        fileRef.getFileName() >> fileName
 
         and:
-        def resolver2 = Mock(FileParserResolver)
-        resolver2.getSupportedExtensions() >> List.of("doc", "xls")
-        def parser2 = Mock(Parser)
-        resolver2.getParser() >> parser2
+        def resolver1 = createExtensionBasedResolverResolver("txt", parser1)
+        def resolver2 = createExtensionBasedResolverResolver("rtf", parser2)
+        def resolver3 = Mock(FileParserResolver)
+        resolver3.supports(_ as FileRef) >> true;
+        resolver3.getParser() >> parser3
 
         and:
-        def parserResolver = new FileParserResolverManager(List.of(resolver, resolver2))
+        def resolverManager = new FileParserResolverManager(List.of(resolver1, resolver2, resolver3))
 
-        expect:
-        parserResolver.getParser(createFileRefMock("docx")) == parser1
-        parserResolver.getParser(createFileRefMock("xlsx")) == parser1
-        parserResolver.getParser(createFileRefMock("doc")) == parser2
-        parserResolver.getParser(createFileRefMock("xls")) == parser2
+        when:
+        def resolvedParser = resolverManager.getParser(fileRef)
 
+        then:
+        resolvedParser != null
+        resolvedParser == expectedResolvedParser
+
+        where:
+        fileName      | parser1      | parser2      | parser3      | expectedResolvedParser
+        "file.txt"    | Mock(Parser) | null         | null         | parser1
+        "file.rtf"    | null         | Mock(Parser) | null         | parser2
+        "another.rtf" | null         | Mock(Parser) | null         | parser2
+        "another.txt" | Mock(Parser) | null         | null         | parser1
+        "file.eps"    | null         | null         | Mock(Parser) | parser3
+        "file"        | null         | null         | Mock(Parser) | parser3
     }
 
-    private FileRef createFileRefMock(String extension) {
-        def fileRef = Mock(FileRef)
-        fileRef.getFileName() >> "filename." + extension
-        fileRef
+    def "should throw an exception when there are no any resolver"() {
+        given:
+        FileRef fileRef = Mock()
+
+        and:
+        def resolverManager = new FileParserResolverManager(emptyList())
+
+        when:
+        resolverManager.getParser(fileRef)
+
+        then:
+        thrown(EmptyFileParserResolversList)
+    }
+
+    FileParserResolver createExtensionBasedResolverResolver(String fileExtension, Parser parser) {
+        def resolver = Mock(FileParserResolver)
+        resolver.supports(_ as FileRef) >> { FileRef fileRef1 ->
+            {
+                if (fileRef1.getFileName().contains(fileExtension)) {
+                    return true
+                }
+                return false
+            }
+        }
+        resolver.getParser() >> parser
+        resolver
     }
 }

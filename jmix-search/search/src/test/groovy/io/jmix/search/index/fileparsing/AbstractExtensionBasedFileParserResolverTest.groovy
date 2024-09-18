@@ -55,11 +55,11 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
     }
 
     private static class TestExtensionBasedFileParserResolver extends AbstractExtensionBasedFileParserResolver {
-        private Parser innerParser
+        private Parser parser
         private List<String> extensions
 
-        TestExtensionBasedFileParserResolver(Parser innerParser, List<String> extensions) {
-            this.innerParser = innerParser
+        TestExtensionBasedFileParserResolver(Parser parser, List<String> extensions) {
+            this.parser = parser
             this.extensions = extensions
         }
 
@@ -70,7 +70,7 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
 
         @Override
         Parser getParser() {
-            return innerParser
+            return parser
         }
     }
 }

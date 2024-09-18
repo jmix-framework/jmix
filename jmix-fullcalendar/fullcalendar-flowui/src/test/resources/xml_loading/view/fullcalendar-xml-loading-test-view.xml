@@ -1,0 +1,322 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:calendar="http://jmix.io/schema/fullcalendar/ui">
+    <data>
+        <collection id="localDateTimeEventsDc"
+                    class="test_support.entity.LocalDateTimeEvent">
+            <fetchPlan extends="_base"/>
+            <loader id="localDateTimeEventsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from LocalDateTimeEvent e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <calendar:calendar id="calendar"
+                           visible="false"
+                           height="1px"
+                           maxHeight="1px"
+                           minHeight="1px"
+                           minWidth="1px"
+                           width="1px"
+                           alignSelf="START"
+                           colspan="1"
+                           classNames="classNames, classNames1"
+                           css="color:green"
+
+                           allDayMaintainDurationEnabled="true"
+                           dateAlignment="dateAlignment"
+                           dayHeadersVisible="false"
+                           dayMaxEventRows="1"
+                           dayMaxEvents="1"
+                           defaultAllDay="true"
+                           defaultAllDayEventDuration="P2d"
+                           defaultBusinessHoursEnabled="true"
+                           defaultDayHeaderFormat="defaultDayHeaderFormat"
+                           defaultDayMaxEventRowsEnabled="true"
+                           defaultDayMaxEventsEnabled="true"
+                           defaultDayPopoverFormat="defaultDayPopoverFormat"
+                           defaultEventTimeFormat="defaultEventTimeFormat"
+                           defaultSlotLabelFormat="defaultSlotLabelFormat"
+                           defaultTimedEventDuration="PT2h"
+                           defaultWeekNumberFormat="defaultWeekNumberFormat"
+                           displayEventTime="false"
+                           dragRevertDuration="1"
+                           dragScroll="false"
+                           eventBackgroundColor="green"
+                           eventBorderColor="green"
+                           eventConstraintGroupId="eventConstraintGroupId"
+                           eventConstraintBusinessHoursEnabled="true"
+                           eventDisplay="BACKGROUND"
+                           eventDragMinDistance="1"
+                           eventDurationEditable="true"
+                           eventInteractive="true"
+                           eventLongPressDelay="1"
+                           eventMaxStack="1"
+                           eventOrder="start"
+                           eventOrderStrict="true"
+                           eventOverlap="false"
+                           eventResizableFromStart="true"
+                           eventStartEditable="true"
+                           eventTextColor="green"
+                           expandRows="true"
+                           firstDayOfWeek="TUESDAY"
+                           forceEventDuration="true"
+                           initialDate="2024-09-01"
+                           initialDisplayMode="TIME_GRID_WEEK"
+                           moreLinkClassNames="moreLinkClassNames,moreLinkClassNames1"
+                           moreLinkDisplayMode="LIST_DAY"
+                           navigationLinksEnabled="true"
+                           nextDayThreshold="PT9h"
+                           nowIndicatorVisible="true"
+                           progressiveEventRendering="true"
+                           scrollTime="PT7h"
+                           scrollTimeReset="false"
+                           selectConstraintGroupId="selectConstraintGroupId"
+                           selectConstraintBusinessHoursEnabled="true"
+                           selectLongPressDelay="1"
+                           selectMinDistance="1"
+                           selectMirror="true"
+                           selectOverlap="false"
+                           selectionEnabled="true"
+                           slotDuration="PT35m"
+                           slotLabelInterval="PT1h"
+                           slotMaxTime="PT23h"
+                           slotMinTime="PT10h"
+                           snapDuration="PT35m"
+                           unselectAuto="false"
+                           unselectCancelSelector="form-layout > field-class-name"
+                           weekNumbersVisible="true"
+                           weekendsVisible="false"
+                           windowResizeDelay="1">
+            <calendar:hiddenDays>
+                <calendar:day name="MONDAY"/>
+                <calendar:day name="TUESDAY"/>
+            </calendar:hiddenDays>
+        </calendar:calendar>
+
+        <calendar:calendar id="calendarBusinessHours">
+            <calendar:businessHours>
+                <calendar:entry startTime="PT9h" endTime="PT10h">
+                    <calendar:day name="WEDNESDAY"/>
+                </calendar:entry>
+                <calendar:entry startTime="PT9h30m" endTime="PT12h30m">
+                    <calendar:day name="THURSDAY"/>
+                </calendar:entry>
+            </calendar:businessHours>
+        </calendar:calendar>
+
+        <calendar:calendar id="calendarCustomDisplayMode">
+            <calendar:customDisplayModes>
+                <calendar:displayMode id="customDisplayMode"
+                                      type="DAY_GRID"
+                                      dayCount="1">
+                    <calendar:duration years="1" months="1" weeks="1" days="1" hours="1" minutes="1" seconds="1"
+                                       milliseconds="1"/>
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:displayMode>
+            </calendar:customDisplayModes>
+        </calendar:calendar>
+
+        <calendar:calendar id="calendarDisplayModeProperties">
+            <calendar:displayModeProperties>
+                <calendar:dayGridDay dayPopoverFormat="dayPopoverFormat"
+                                     dayHeaderFormat="dayHeaderFormat"
+                                     eventTimeFormat="eventTimeFormat"
+                                     weekNumberFormat="weekNumberFormat"
+                                     displayEventEnd="false">
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:dayGridDay>
+                <calendar:dayGridWeek dayPopoverFormat="dayPopoverFormat"
+                                      dayHeaderFormat="dayHeaderFormat"
+                                      eventTimeFormat="eventTimeFormat"
+                                      weekNumberFormat="weekNumberFormat"
+                                      displayEventEnd="true">
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:dayGridWeek>
+                <calendar:dayGridMonth dayPopoverFormat="dayPopoverFormat"
+                                       dayHeaderFormat="dayHeaderFormat"
+                                       eventTimeFormat="eventTimeFormat"
+                                       weekNumberFormat="weekNumberFormat"
+                                       fixedWeekCount="false"
+                                       showNonCurrentDates="false"
+                                       displayEventEnd="true">
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:dayGridMonth>
+                <calendar:dayGridYear dayPopoverFormat="dayPopoverFormat"
+                                      dayHeaderFormat="dayHeaderFormat"
+                                      eventTimeFormat="eventTimeFormat"
+                                      weekNumberFormat="weekNumberFormat"
+                                      monthStartFormat="weekNumberFormat"
+                                      displayEventEnd="true">
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:dayGridYear>
+                <calendar:timeGridDay dayPopoverFormat="dayPopoverFormat"
+                                      dayHeaderFormat="dayHeaderFormat"
+                                      eventTimeFormat="eventTimeFormat"
+                                      weekNumberFormat="weekNumberFormat"
+                                      displayEventEnd="false"
+                                      allDaySlotVisible="false"
+                                      eventMinHeight="1"
+                                      eventShortHeight="1"
+                                      slotEventOverlap="false"
+                                      slotLabelFormat="slotLabelFormat">
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:timeGridDay>
+                <calendar:timeGridWeek dayPopoverFormat="dayPopoverFormat"
+                                       dayHeaderFormat="dayHeaderFormat"
+                                       eventTimeFormat="eventTimeFormat"
+                                       weekNumberFormat="weekNumberFormat"
+                                       displayEventEnd="false"
+                                       allDaySlotVisible="false"
+                                       eventMinHeight="1"
+                                       eventShortHeight="1"
+                                       slotEventOverlap="false"
+                                       slotLabelFormat="slotLabelFormat">
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:timeGridWeek>
+                <calendar:listDay listDayFormat="listDayFormat"
+                                  listDaySideFormat="listDaySideFormat"
+                                  listDaySideVisible="false"
+                                  listDayVisible="false">
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:listDay>
+                <calendar:listWeek listDayFormat="listDayFormat"
+                                   listDaySideFormat="listDaySideFormat"
+                                   listDaySideVisible="false"
+                                   listDayVisible="false">
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:listWeek>
+                <calendar:listMonth listDayFormat="listDayFormat"
+                                    listDaySideFormat="listDaySideFormat"
+                                    listDaySideVisible="false"
+                                    listDayVisible="false">
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:listMonth>
+                <calendar:listYear listDayFormat="listDayFormat"
+                                   listDaySideFormat="listDaySideFormat"
+                                   listDaySideVisible="false"
+                                   listDayVisible="false">
+                    <calendar:properties>
+                        <calendar:property name="test" value="1"/>
+                    </calendar:properties>
+                </calendar:listYear>
+                <calendar:multiMonthYear fixedWeekCount="false"
+                                         multiMonthMaxColumns="1"
+                                         multiMonthMinWidth="1"
+                                         multiMonthTitleFormat="multiMonthTitleFormat"
+                                         showNonCurrentDates="false"/>
+            </calendar:displayModeProperties>
+        </calendar:calendar>
+
+        <calendar:calendar id="calendarI18n"
+                           allDayText="allDayText"
+                           closeHint="closeHint"
+                           firstDayOfWeek="WEDNESDAY"
+                           dayOfYear="1"
+                           eventHint="eventHint"
+                           moreLinkHint="moreLinkHint"
+                           moreLinkText="moreLinkText"
+                           navLinkHint="navLinkHint"
+                           noEventsText="noEventsText"
+                           timeHint="timeHint"
+                           weekTextLong="weekTextLong"/>
+
+        <calendar:calendar id="calendarDataProviders">
+            <calendar:dataProviders>
+                <calendar:containerDataProvider id="containerDataProvider"
+                                                dataContainer="localDateTimeEventsDc"
+                                                groupId="groupId"
+                                                allDay="allDay"
+                                                startDateTime="startDateTime"
+                                                endDateTime="endDateTime"
+                                                title="title"
+                                                description="description"
+                                                interactive="interactive"
+                                                classNames="classNames"
+                                                startEditable="startEditable"
+                                                durationEditable="durationEditable"
+                                                display="display"
+                                                overlap="overlap"
+                                                constraint="constraint"
+                                                backgroundColor="backgroundColor"
+                                                borderColor="borderColor"
+                                                textColor="textColor"
+                                                recurringDaysOfWeek="recurringDaysOfWeek"
+                                                recurringStartTime="recurringStartTime"
+                                                recurringEndTime="recurringEndTime"
+                                                recurringStartDate="recurringStartDate"
+                                                recurringEndDate="recurringEndDate"/>
+                <calendar:callbackDataProvider id="callbackDataProvider"
+                                               groupId="groupId"
+                                               allDay="allDay"
+                                               startDateTime="startDateTime"
+                                               endDateTime="endDateTime"
+                                               title="title"
+                                               description="description"
+                                               interactive="interactive"
+                                               classNames="classNames"
+                                               startEditable="startEditable"
+                                               durationEditable="durationEditable"
+                                               display="display"
+                                               overlap="overlap"
+                                               constraint="constraint"
+                                               backgroundColor="backgroundColor"
+                                               borderColor="borderColor"
+                                               textColor="textColor"
+                                               recurringDaysOfWeek="recurringDaysOfWeek"
+                                               recurringStartTime="recurringStartTime"
+                                               recurringEndTime="recurringEndTime"
+                                               recurringStartDate="recurringStartDate"
+                                               recurringEndDate="recurringEndDate">
+                    <calendar:itemsQuery class="test_support.entity.LocalDateTimeEvent">
+                        <calendar:fetchPlan extends="_base"/>
+                        <calendar:query>
+                            <![CDATA[select e from LocalDateTimeEvent e where e.startDate >= :fetchStartDate
+                                                                          and e.endDate < :fetchEndDate]]>
+                        </calendar:query>
+                    </calendar:itemsQuery>
+                </calendar:callbackDataProvider>
+            </calendar:dataProviders>
+        </calendar:calendar>
+    </layout>
+</view>

@@ -1,0 +1,627 @@
+<!--
+  ~ Copyright 2024 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema targetNamespace="http://jmix.io/schema/fullcalendar/ui"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:layout="http://jmix.io/schema/flowui/layout"
+           xmlns="http://jmix.io/schema/fullcalendar/ui"
+           elementFormDefault="qualified">
+    <xs:element name="calendar">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="layout:baseComponent">
+                    <xs:all minOccurs="0">
+                        <xs:element name="dataProviders" type="dataProvidersType"/>
+                        <xs:element name="businessHours" type="businessHoursType"/>
+                        <xs:element name="displayModeProperties" type="displayModeProperties"/>
+                        <xs:element name="customDisplayModes" type="customDisplayModes"/>
+                        <xs:element name="hiddenDays" type="hiddenDaysType"/>
+                    </xs:all>
+
+                    <xs:attribute name="allDayMaintainDurationEnabled" type="xs:boolean"/>
+                    <xs:attribute name="allDayText" type="layout:resourceString"/>
+                    <xs:attribute name="closeHint" type="layout:resourceString"/>
+                    <xs:attribute name="dayHeadersVisible" type="xs:boolean"/>
+                    <xs:attribute name="dayMaxEvents" type="xs:integer"/>
+                    <xs:attribute name="dayMaxEventRows" type="xs:integer"/>
+                    <xs:attribute name="dayOfYear" type="xs:integer"/>
+                    <xs:attribute name="dateAlignment" type="xs:string"/>
+                    <xs:attribute name="defaultAllDay" type="xs:boolean"/>
+                    <xs:attribute name="defaultAllDayEventDuration" type="xs:string"/>
+                    <xs:attribute name="defaultDayHeaderFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultDayMaxEventRowsEnabled" type="xs:boolean"/>
+                    <xs:attribute name="defaultDayMaxEventsEnabled" type="xs:boolean"/>
+                    <xs:attribute name="defaultDayPopoverFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultBusinessHoursEnabled" type="xs:boolean"/>
+                    <xs:attribute name="defaultEventTimeFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultSlotLabelFormat" type="layout:resourceString"/>
+                    <xs:attribute name="defaultTimedEventDuration" type="xs:string"/>
+                    <xs:attribute name="defaultWeekNumberFormat" type="layout:resourceString"/>
+                    <xs:attribute name="direction" type="directionType"/>
+                    <xs:attribute name="displayEventTime" type="xs:boolean"/>
+                    <xs:attribute name="dragRevertDuration" type="xs:integer"/>
+                    <xs:attribute name="dragScroll" type="xs:boolean"/>
+                    <xs:attribute name="eventBackgroundColor" type="colorType"/>
+                    <xs:attribute name="eventBorderColor" type="colorType"/>
+                    <xs:attribute name="eventConstraintGroupId" type="xs:string"/>
+                    <xs:attribute name="eventConstraintBusinessHoursEnabled" type="xs:boolean"/>
+                    <xs:attribute name="eventDisplay" type="eventDisplay"/>
+                    <xs:attribute name="eventDragMinDistance" type="xs:integer"/>
+                    <xs:attribute name="eventDurationEditable" type="xs:boolean"/>
+                    <xs:attribute name="eventHint" type="layout:resourceString"/>
+                    <xs:attribute name="eventInteractive" type="xs:boolean"/>
+                    <xs:attribute name="eventLongPressDelay" type="xs:integer"/>
+                    <xs:attribute name="eventMaxStack" type="xs:integer"/>
+                    <xs:attribute name="eventOrder" type="xs:string"/>
+                    <xs:attribute name="eventOrderStrict" type="xs:boolean"/>
+                    <xs:attribute name="eventOverlap" type="xs:boolean"/>
+                    <xs:attribute name="eventResizableFromStart" type="xs:boolean"/>
+                    <xs:attribute name="eventStartEditable" type="xs:boolean"/>
+                    <xs:attribute name="eventTextColor" type="colorType"/>
+                    <xs:attribute name="expandRows" type="xs:boolean"/>
+                    <xs:attribute name="firstDayOfWeek" type="dayOfWeekType"/>
+                    <xs:attribute name="forceEventDuration" type="xs:boolean"/>
+                    <xs:attribute name="initialDate" type="xs:string"/>
+                    <xs:attribute name="initialDisplayMode" type="calendarDisplayModeType"/>
+                    <xs:attribute name="moreLinkClassNames" type="xs:string"/>
+                    <xs:attribute name="moreLinkDisplayMode" type="calendarDisplayModeType"/>
+                    <xs:attribute name="moreLinkHint" type="layout:resourceString"/>
+                    <xs:attribute name="moreLinkText" type="layout:resourceString"/>
+                    <xs:attribute name="navigationLinksEnabled" type="xs:boolean"/>
+                    <xs:attribute name="navLinkHint" type="layout:resourceString"/>
+                    <xs:attribute name="nextDayThreshold" type="xs:string"/>
+                    <xs:attribute name="noEventsText" type="layout:resourceString"/>
+                    <xs:attribute name="nowIndicatorVisible" type="xs:boolean"/>
+                    <xs:attribute name="progressiveEventRendering" type="xs:boolean"/>
+                    <xs:attribute name="scrollTime" type="xs:string"/>
+                    <xs:attribute name="scrollTimeReset" type="xs:boolean"/>
+                    <xs:attribute name="selectConstraintGroupId" type="xs:string"/>
+                    <xs:attribute name="selectConstraintBusinessHoursEnabled" type="xs:boolean"/>
+                    <xs:attribute name="selectionEnabled" type="xs:boolean"/>
+                    <xs:attribute name="selectLongPressDelay" type="xs:integer"/>
+                    <xs:attribute name="selectMinDistance" type="xs:integer"/>
+                    <xs:attribute name="selectMirror" type="xs:boolean"/>
+                    <xs:attribute name="selectOverlap" type="xs:boolean"/>
+                    <xs:attribute name="slotDuration" type="xs:string"/>
+                    <xs:attribute name="slotLabelInterval" type="xs:string"/>
+                    <xs:attribute name="slotMaxTime" type="xs:string"/>
+                    <xs:attribute name="slotMinTime" type="xs:string"/>
+                    <xs:attribute name="snapDuration" type="xs:string"/>
+                    <xs:attribute name="timeHint" type="layout:resourceString"/>
+                    <xs:attribute name="unselectAuto" type="xs:boolean"/>
+                    <xs:attribute name="unselectCancelSelector" type="xs:string"/>
+                    <xs:attribute name="weekendsVisible" type="xs:boolean"/>
+                    <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
+                    <xs:attribute name="weekTextLong" type="layout:resourceString"/>
+                    <xs:attribute name="windowResizeDelay" type="xs:integer"/>
+
+                    <xs:attributeGroup ref="layout:hasClassNames"/>
+                    <xs:attributeGroup ref="layout:hasSize"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="customDisplayModes">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="displayMode" type="customDisplayModeType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="displayModeProperties">
+        <xs:all minOccurs="0">
+            <xs:element name="dayGridDay" type="dayGridDay"/>
+            <xs:element name="dayGridWeek" type="dayGridWeek"/>
+            <xs:element name="dayGridMonth" type="dayGridMonth"/>
+            <xs:element name="dayGridYear" type="dayGridYear"/>
+            <xs:element name="timeGridDay" type="timeGridDay"/>
+            <xs:element name="timeGridWeek" type="timeGridWeek"/>
+            <xs:element name="listDay" type="listDay"/>
+            <xs:element name="listWeek" type="listWeek"/>
+            <xs:element name="listMonth" type="listMonth"/>
+            <xs:element name="listYear" type="listYear"/>
+            <xs:element name="multiMonthYear" type="multiMonthYear"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="baseDisplayModeType">
+        <xs:choice minOccurs="0">
+            <xs:element name="properties" type="displayModePropertiesType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="baseDayGridDisplayModeType">
+        <xs:complexContent>
+            <xs:extension base="baseDisplayModeType">
+                <xs:attribute name="dayPopoverFormat" type="layout:resourceString"/>
+                <xs:attribute name="dayHeaderFormat" type="layout:resourceString"/>
+                <xs:attribute name="weekNumberFormat" type="layout:resourceString"/>
+                <xs:attribute name="eventTimeFormat" type="layout:resourceString"/>
+                <xs:attribute name="displayEventEnd" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseTimeGridDisplayModeType">
+        <xs:complexContent>
+            <xs:extension base="baseDisplayModeType">
+                <xs:attribute name="dayPopoverFormat" type="layout:resourceString"/>
+                <xs:attribute name="dayHeaderFormat" type="layout:resourceString"/>
+                <xs:attribute name="weekNumberFormat" type="layout:resourceString"/>
+                <xs:attribute name="eventTimeFormat" type="layout:resourceString"/>
+                <xs:attribute name="slotLabelFormat" type="layout:resourceString"/>
+                <xs:attribute name="eventMinHeight" type="xs:integer"/>
+                <xs:attribute name="eventShortHeight" type="xs:integer"/>
+                <xs:attribute name="slotEventOverlap" type="xs:boolean"/>
+                <xs:attribute name="allDaySlotVisible" type="xs:boolean"/>
+                <xs:attribute name="displayEventEnd" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseListDisplayModeType">
+        <xs:complexContent>
+            <xs:extension base="baseDisplayModeType">
+                <xs:attribute name="listDayFormat" type="layout:resourceString"/>
+                <xs:attribute name="listDaySideFormat" type="layout:resourceString"/>
+                <xs:attribute name="listDaySideVisible" type="xs:boolean"/>
+                <xs:attribute name="listDayVisible" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="displayModePropertiesType">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="property" type="displayModeProperty"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="displayModeProperty">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="dayGridDay">
+        <xs:complexContent>
+            <xs:extension base="baseDayGridDisplayModeType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dayGridWeek">
+        <xs:complexContent>
+            <xs:extension base="baseDayGridDisplayModeType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dayGridMonth">
+        <xs:complexContent>
+            <xs:extension base="baseDayGridDisplayModeType">
+                <xs:attribute name="fixedWeekCount" type="xs:boolean"/>
+                <xs:attribute name="showNonCurrentDates" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dayGridYear">
+        <xs:complexContent>
+            <xs:extension base="baseDayGridDisplayModeType">
+                <xs:attribute name="monthStartFormat" type="layout:resourceString"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="customDisplayModeType">
+        <xs:complexContent>
+            <xs:extension base="baseDisplayModeType">
+                <xs:choice minOccurs="0">
+                    <xs:element name="duration" type="calendarDurationType"/>
+                </xs:choice>
+                <xs:attribute name="id" type="xs:string" use="required"/>
+                <xs:attribute name="type" type="customCalendarDisplayModeType"/>
+                <xs:attribute name="dayCount" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="timeGridDay">
+        <xs:complexContent>
+            <xs:extension base="baseTimeGridDisplayModeType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="timeGridWeek">
+        <xs:complexContent>
+            <xs:extension base="baseTimeGridDisplayModeType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="listDay">
+        <xs:complexContent>
+            <xs:extension base="baseListDisplayModeType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="listWeek">
+        <xs:complexContent>
+            <xs:extension base="baseListDisplayModeType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="listMonth">
+        <xs:complexContent>
+            <xs:extension base="baseListDisplayModeType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="listYear">
+        <xs:complexContent>
+            <xs:extension base="baseListDisplayModeType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="multiMonthYear">
+        <xs:complexContent>
+            <xs:extension base="baseDisplayModeType">
+                <xs:attribute name="multiMonthMaxColumns" type="xs:integer"/>
+                <xs:attribute name="multiMonthMinWidth" type="xs:integer"/>
+                <xs:attribute name="multiMonthTitleFormat" type="layout:resourceString"/>
+                <xs:attribute name="fixedWeekCount" type="xs:boolean"/>
+                <xs:attribute name="showNonCurrentDates" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="calendarDurationType">
+        <xs:attribute name="years" type="xs:integer"/>
+        <xs:attribute name="months" type="xs:integer"/>
+        <xs:attribute name="weeks" type="xs:integer"/>
+        <xs:attribute name="days" type="xs:integer"/>
+        <xs:attribute name="hours" type="xs:integer"/>
+        <xs:attribute name="minutes" type="xs:integer"/>
+        <xs:attribute name="seconds" type="xs:integer"/>
+        <xs:attribute name="milliseconds" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:simpleType name="customCalendarDisplayModeType">
+        <xs:restriction>
+            <xs:enumeration value="DAY_GRID"/>
+            <xs:enumeration value="TIME_GRID"/>
+            <xs:enumeration value="LIST"/>
+            <xs:enumeration value="MULTI_MONTH"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="directionType">
+        <xs:restriction>
+            <xs:enumeration value="LTR"/>
+            <xs:enumeration value="RTL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="businessHoursType">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="entry" type="businessHoursEntryType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="businessHoursEntryType">
+        <xs:choice maxOccurs="7">
+            <xs:element name="day" type="simpleDayType"/>
+        </xs:choice>
+        <xs:attribute name="startTime" type="xs:string"/>
+        <xs:attribute name="endTime" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="simpleDayType">
+        <xs:attribute name="name" use="required" type="dayOfWeekType"/>
+    </xs:complexType>
+
+    <xs:simpleType name="dayOfWeekType">
+        <xs:restriction>
+            <xs:enumeration value="MONDAY"/>
+            <xs:enumeration value="TUESDAY"/>
+            <xs:enumeration value="WEDNESDAY"/>
+            <xs:enumeration value="THURSDAY"/>
+            <xs:enumeration value="FRIDAY"/>
+            <xs:enumeration value="SATURDAY"/>
+            <xs:enumeration value="SUNDAY"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="hiddenDaysType">
+        <xs:choice maxOccurs="7">
+            <xs:element name="day" type="simpleDayType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="dataProvidersType">
+        <xs:all minOccurs="0">
+            <xs:element name="containerDataProvider" type="containerProviderType"/>
+            <xs:element name="callbackDataProvider" type="lazyProviderType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="baseProviderType">
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="groupId" type="xs:string"/>
+        <xs:attribute name="allDay" type="xs:string"/>
+        <xs:attribute name="startDateTime" type="xs:string"/>
+        <xs:attribute name="endDateTime" type="xs:string"/>
+        <xs:attribute name="title" type="xs:string"/>
+        <xs:attribute name="description" type="xs:string"/>
+        <xs:attribute name="interactive" type="xs:string"/>
+        <xs:attribute name="classNames" type="xs:string"/>
+        <xs:attribute name="startEditable" type="xs:string"/>
+        <xs:attribute name="durationEditable" type="xs:string"/>
+        <xs:attribute name="display" type="xs:string"/>
+        <xs:attribute name="overlap" type="xs:string"/>
+        <xs:attribute name="constraint" type="xs:string"/>
+        <xs:attribute name="backgroundColor" type="xs:string"/>
+        <xs:attribute name="borderColor" type="xs:string"/>
+        <xs:attribute name="textColor" type="xs:string"/>
+
+        <xs:attribute name="additionalProperties" type="xs:string"/>
+
+        <xs:attribute name="recurringDaysOfWeek" type="xs:string"/>
+        <xs:attribute name="recurringStartDate" type="xs:string"/>
+        <xs:attribute name="recurringEndDate" type="xs:string"/>
+        <xs:attribute name="recurringStartTime" type="xs:string"/>
+        <xs:attribute name="recurringEndTime" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="containerProviderType">
+        <xs:complexContent>
+            <xs:extension base="baseProviderType">
+                <xs:attribute name="dataContainer" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="lazyProviderType">
+        <xs:complexContent>
+            <xs:extension base="baseProviderType">
+                <xs:sequence>
+                    <xs:element name="itemsQuery" type="itemsQueryType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="itemsQueryType">
+        <xs:sequence>
+            <xs:element name="fetchPlan" type="itemsQueryFetchPlanType" minOccurs="0"/>
+            <xs:element name="query"/>
+        </xs:sequence>
+        <xs:attribute name="class" type="xs:string" use="required"/>
+        <xs:attribute name="fetchPlan" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="itemsQueryFetchPlanType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="itemsQueryFetchPlanPropertyType"/>
+        </xs:sequence>
+        <xs:attribute name="extends"/>
+    </xs:complexType>
+
+    <xs:complexType name="itemsQueryFetchPlanPropertyType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="itemsQueryFetchPlanPropertyType"/>
+        </xs:sequence>
+        <xs:attribute name="name"/>
+        <xs:attribute name="fetchPlan"/>
+        <xs:attribute name="fetch" type="itemsQueryFetchPlanFetchMode"/>
+    </xs:complexType>
+
+    <xs:simpleType name="itemsQueryFetchPlanFetchMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="UNDEFINED"/>
+            <xs:enumeration value="JOIN"/>
+            <xs:enumeration value="BATCH"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="calendarDisplayModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DAY_GRID_DAY"/>
+            <xs:enumeration value="DAY_GRID_WEEK"/>
+            <xs:enumeration value="DAY_GRID_MONTH"/>
+            <xs:enumeration value="DAY_GRID_YEAR"/>
+
+            <xs:enumeration value="TIME_GRID_DAY"/>
+            <xs:enumeration value="TIME_GRID_WEEK"/>
+
+            <xs:enumeration value="LIST_DAY"/>
+            <xs:enumeration value="LIST_WEEK"/>
+            <xs:enumeration value="LIST_MONTH"/>
+            <xs:enumeration value="LIST_YEAR"/>
+
+            <xs:enumeration value="MULTI_MONTH_YEAR"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="eventDisplay">
+        <xs:restriction>
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="BLOCK"/>
+            <xs:enumeration value="LIST_ITEM"/>
+            <xs:enumeration value="BACKGROUND"/>
+            <xs:enumeration value="INVERSE_BACKGROUND"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="colorType">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="ALICEBLUE"/>
+                    <xs:enumeration value="ANTIQUEWHITE"/>
+                    <xs:enumeration value="AQUA"/>
+                    <xs:enumeration value="AQUAMARINE"/>
+                    <xs:enumeration value="AZURE"/>
+                    <xs:enumeration value="BEIGE"/>
+                    <xs:enumeration value="BISQUE"/>
+                    <xs:enumeration value="BLACK"/>
+                    <xs:enumeration value="BLANCHEDALMOND"/>
+                    <xs:enumeration value="BLUE"/>
+                    <xs:enumeration value="BLUEVIOLET"/>
+                    <xs:enumeration value="BROWN"/>
+                    <xs:enumeration value="BURLYWOOD"/>
+                    <xs:enumeration value="CADETBLUE"/>
+                    <xs:enumeration value="CHARTREUSE"/>
+                    <xs:enumeration value="CHOCOLATE"/>
+                    <xs:enumeration value="CORAL"/>
+                    <xs:enumeration value="CORNFLOWERBLUE"/>
+                    <xs:enumeration value="CORNSILK"/>
+                    <xs:enumeration value="CRIMSON"/>
+                    <xs:enumeration value="CYAN"/>
+                    <xs:enumeration value="DARKBLUE"/>
+                    <xs:enumeration value="DARKCYAN"/>
+                    <xs:enumeration value="DARKGOLDENROD"/>
+                    <xs:enumeration value="DARKGRAY"/>
+                    <xs:enumeration value="DARKGREY"/>
+                    <xs:enumeration value="DARKGREEN"/>
+                    <xs:enumeration value="DARKKHAKI"/>
+                    <xs:enumeration value="DARKMAGENTA"/>
+                    <xs:enumeration value="DARKOLIVEGREEN"/>
+                    <xs:enumeration value="DARKORANGE"/>
+                    <xs:enumeration value="DARKORCHID"/>
+                    <xs:enumeration value="DARKRED"/>
+                    <xs:enumeration value="DARKSALMON"/>
+                    <xs:enumeration value="DARKSEAGREEN"/>
+                    <xs:enumeration value="DARKSLATEBLUE"/>
+                    <xs:enumeration value="DARKSLATEGRAY"/>
+                    <xs:enumeration value="DARKSLATEGREY"/>
+                    <xs:enumeration value="DARKTURQUOISE"/>
+                    <xs:enumeration value="DARKVIOLET"/>
+                    <xs:enumeration value="DEEPPINK"/>
+                    <xs:enumeration value="DEEPSKYBLUE"/>
+                    <xs:enumeration value="DIMGRAY"/>
+                    <xs:enumeration value="DIMGREY"/>
+                    <xs:enumeration value="DODGERBLUE"/>
+                    <xs:enumeration value="FIREBRICK"/>
+                    <xs:enumeration value="FLORALWHITE"/>
+                    <xs:enumeration value="FORESTGREEN"/>
+                    <xs:enumeration value="FUCHSIA"/>
+                    <xs:enumeration value="GAINSBORO"/>
+                    <xs:enumeration value="GHOSTWHITE"/>
+                    <xs:enumeration value="GOLD"/>
+                    <xs:enumeration value="GOLDENROD"/>
+                    <xs:enumeration value="GRAY"/>
+                    <xs:enumeration value="GREY"/>
+                    <xs:enumeration value="GREEN"/>
+                    <xs:enumeration value="GREENYELLOW"/>
+                    <xs:enumeration value="HONEYDEW"/>
+                    <xs:enumeration value="HOTPINK"/>
+                    <xs:enumeration value="INDIANRED"/>
+                    <xs:enumeration value="INDIGO"/>
+                    <xs:enumeration value="IVORY"/>
+                    <xs:enumeration value="KHAKI"/>
+                    <xs:enumeration value="LAVENDER"/>
+                    <xs:enumeration value="LAVENDERBLUSH"/>
+                    <xs:enumeration value="LAWNGREEN"/>
+                    <xs:enumeration value="LEMONCHIFFON"/>
+                    <xs:enumeration value="LIGHTBLUE"/>
+                    <xs:enumeration value="LIGHTCORAL"/>
+                    <xs:enumeration value="LIGHTCYAN"/>
+                    <xs:enumeration value="LIGHTGOLDENRODYELLOW"/>
+                    <xs:enumeration value="LIGHTGRAY"/>
+                    <xs:enumeration value="LIGHTGREY"/>
+                    <xs:enumeration value="LIGHTGREEN"/>
+                    <xs:enumeration value="LIGHTPINK"/>
+                    <xs:enumeration value="LIGHTSALMON"/>
+                    <xs:enumeration value="LIGHTSEAGREEN"/>
+                    <xs:enumeration value="LIGHTSKYBLUE"/>
+                    <xs:enumeration value="LIGHTSLATEGRAY"/>
+                    <xs:enumeration value="LIGHTSLATEGREY"/>
+                    <xs:enumeration value="LIGHTSTEELBLUE"/>
+                    <xs:enumeration value="LIGHTYELLOW"/>
+                    <xs:enumeration value="LIME"/>
+                    <xs:enumeration value="LIMEGREEN"/>
+                    <xs:enumeration value="LINEN"/>
+                    <xs:enumeration value="MAGENTA"/>
+                    <xs:enumeration value="MAROON"/>
+                    <xs:enumeration value="MEDIUMAQUAMARINE"/>
+                    <xs:enumeration value="MEDIUMBLUE"/>
+                    <xs:enumeration value="MEDIUMORCHID"/>
+                    <xs:enumeration value="MEDIUMPURPLE"/>
+                    <xs:enumeration value="MEDIUMSEAGREEN"/>
+                    <xs:enumeration value="MEDIUMSLATEBLUE"/>
+                    <xs:enumeration value="MEDIUMSPRINGGREEN"/>
+                    <xs:enumeration value="MEDIUMTURQUOISE"/>
+                    <xs:enumeration value="MEDIUMVIOLETRED"/>
+                    <xs:enumeration value="MIDNIGHTBLUE"/>
+                    <xs:enumeration value="MINTCREAM"/>
+                    <xs:enumeration value="MISTYROSE"/>
+                    <xs:enumeration value="MOCCASIN"/>
+                    <xs:enumeration value="NAVAJOWHITE"/>
+                    <xs:enumeration value="NAVY"/>
+                    <xs:enumeration value="OLDLACE"/>
+                    <xs:enumeration value="OLIVE"/>
+                    <xs:enumeration value="OLIVEDRAB"/>
+                    <xs:enumeration value="ORANGE"/>
+                    <xs:enumeration value="ORANGERED"/>
+                    <xs:enumeration value="ORCHID"/>
+                    <xs:enumeration value="PALEGOLDENROD"/>
+                    <xs:enumeration value="PALEGREEN"/>
+                    <xs:enumeration value="PALETURQUOISE"/>
+                    <xs:enumeration value="PALEVIOLETRED"/>
+                    <xs:enumeration value="PAPAYAWHIP"/>
+                    <xs:enumeration value="PEACHPUFF"/>
+                    <xs:enumeration value="PERU"/>
+                    <xs:enumeration value="PINK"/>
+                    <xs:enumeration value="PLUM"/>
+                    <xs:enumeration value="POWDERBLUE"/>
+                    <xs:enumeration value="PURPLE"/>
+                    <xs:enumeration value="RED"/>
+                    <xs:enumeration value="ROSYBROWN"/>
+                    <xs:enumeration value="ROYALBLUE"/>
+                    <xs:enumeration value="SADDLEBROWN"/>
+                    <xs:enumeration value="SALMON"/>
+                    <xs:enumeration value="SANDYBROWN"/>
+                    <xs:enumeration value="SEAGREEN"/>
+                    <xs:enumeration value="SEASHELL"/>
+                    <xs:enumeration value="SIENNA"/>
+                    <xs:enumeration value="SILVER"/>
+                    <xs:enumeration value="SKYBLUE"/>
+                    <xs:enumeration value="SLATEBLUE"/>
+                    <xs:enumeration value="SLATEGRAY"/>
+                    <xs:enumeration value="SLATEGREY"/>
+                    <xs:enumeration value="SNOW"/>
+                    <xs:enumeration value="SPRINGGREEN"/>
+                    <xs:enumeration value="STEELBLUE"/>
+                    <xs:enumeration value="TAN"/>
+                    <xs:enumeration value="TEAL"/>
+                    <xs:enumeration value="THISTLE"/>
+                    <xs:enumeration value="TOMATO"/>
+                    <xs:enumeration value="TURQUOISE"/>
+                    <xs:enumeration value="VIOLET"/>
+                    <xs:enumeration value="WHEAT"/>
+                    <xs:enumeration value="WHITE"/>
+                    <xs:enumeration value="WHITESMOKE"/>
+                    <xs:enumeration value="YELLOW"/>
+                    <xs:enumeration value="YELLOWGREEN"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+</xs:schema>

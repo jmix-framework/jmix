@@ -217,6 +217,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     _preparePivotTableOptions() {
         let options = this._options;
         let aggregationOptions = this._getAggregationOptions();
+        let renderOptions = this._getRenderOptions();
         let resultOptions = {
             onRefresh: (function(pivotTable) {
                 return function(pivotState) {
@@ -234,8 +235,9 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
             vals: options.aggregationProperties,
             exclusions: options.exclusions,
             inclusions: options.inclusions,
-            rendererName: this._getLocalizedRendererName(),
-            renderers: this._getLocalizedRenderers(),
+            rendererName: renderOptions.localizedRendererName,
+            renderers: renderOptions.localizedRenderers,
+            renderer: renderOptions.renderer,
             derivedAttributes: options.derivedProperties ? options.derivedProperties.properties : null,
             localeStrings: options.localizedStrings,
             rendererOptions: options.rendererOptions,
@@ -509,6 +511,16 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
             return localizedAggregation.count;
         }
         return localizedAggregation[aggregationMode];
+    }
+
+    _getRenderOptions() {
+        let localizedRendererName = this._getLocalizedRendererName();
+        let localizedRenderers = $.pivotUtilities.locales[this._options.localeCode].renderers;
+        return {
+            renderer: localizedRenderers[localizedRendererName],
+            rendererName: localizedRendererName,
+            renderers: this._getLocalizedRenderers()
+        };
     }
 
     _getLocalizedRendererName() {

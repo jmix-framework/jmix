@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * The service that searches appropriate file parsers for the supported file types.
- * Search principle is based on a file extension analysing.
+ * A search principle is based on the sequential applying FileParserResolver objects' checks for the given file.
  */
 @Component("search_FileParserResolverManager")
 public class FileParserResolverManager {
@@ -40,7 +40,7 @@ public class FileParserResolverManager {
     }
 
     public Parser getParser(FileRef fileRef) throws UnsupportedFileTypeException {
-        if(fileParserResolvers.isEmpty()){
+        if (fileParserResolvers.isEmpty()) {
             throw new EmptyFileParserResolversList();
         }
 

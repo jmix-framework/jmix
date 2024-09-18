@@ -609,19 +609,6 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     /**
-     * Server callable function.
-     * <p>
-     * If <code>momentPlugin</code> is used, FullCalendar starts to get all date units localization from
-     * <code>moment.js</code>. This function register localized date units that are defined in message bundle.
-     * @param localizedNames JSON with localized days, months, etc.
-     * @see https://momentjs.com/docs/#/customization/
-     * @private
-     */
-    _defineMomentJsLocale(localizedNames) {
-        moment.defineLocale(localizedNames.locale, localizedNames);
-    }
-
-    /**
      * Is required by Vaadin contextMenuTargetConnector.js. It returns
      * details for 'vaadin-context-menu-before-open' event that will be
      * sent to FullCalendarContextMenu#onBeforeOpenMenu().

@@ -780,24 +780,15 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
         setupMultiLocalizedFormats();
 
         setI18nInternal(defaultI18n);
-
-        setCalendarUnitNames();
     }
 
     protected void setI18nInternal(FullCalendarI18n i18n) {
         JsonObject json = getSerializer().serializeObject(i18n);
 
         json.put("locale", getSerializer().serializeValue(currentAuthentication.getLocale()));
+        json.put("momentLocale", createCalendarLocalizedUnitNamesJson());
 
         getElement().setPropertyJson("i18n", json);
-    }
-
-    protected void setCalendarUnitNames() {
-        JsonObject json = createCalendarLocalizedUnitNamesJson();
-
-        json.put("locale", getSerializer().serializeValue(currentAuthentication.getLocale()));
-
-        getElement().callJsFunction("_defineMomentJsLocale", json);
     }
 
     @Override

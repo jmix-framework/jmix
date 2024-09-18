@@ -2,6 +2,7 @@ import localesAll from '@fullcalendar/core/locales-all.js';
 
 import * as utils from "./jmix-full-calendar-utils";
 import {RAW_EN_LOCALE} from "./jmix-full-calendar-utils";
+import moment from 'moment';
 
 const NO_VIEW_MORE_LINK_CLICK = 'NO_VIEW';
 
@@ -180,10 +181,26 @@ class Options {
     }
 
     updateLocale(jmixI18n) {
-        const calendarI18nArray = localesAll.filter((item) => item.code === jmixI18n.locale);
-        const calendarI18n = calendarI18nArray.length > 0 ? calendarI18nArray[0] : RAW_EN_LOCALE;
+        const createMomentLocale = !this.localeSuffix
+        if (createMomentLocale) {
+            this.localeSuffix = 'u-' + window.crypto.randomUUID().split('-').join('').substring(0, 6);
+        }
 
-        this._assignI18n(calendarI18n, jmixI18n);
+        // Create FullCalendar locale
+        const calendarI18nArray = localesAll.filter((item) => item.code === jmixI18n.locale);
+        let calendarI18n = calendarI18nArray.length > 0 ? calendarI18nArray[0] : RAW_EN_LOCALE;
+        const newLocaleName = calendarI18n.code + '-' + this.localeSuffix;
+        calendarI18n = this._combineI18n(calendarI18n, jmixI18n);
+        calendarI18n.code = newLocaleName;
+
+        // Create Moment locale
+        const momentLocale = jmixI18n.momentLocale;
+        momentLocale.localeName = newLocaleName;
+        momentLocale.week = {};
+        momentLocale.week.dow = calendarI18n.week.dow;
+        momentLocale.week.doy = calendarI18n.week.doy;
+
+        this._updateMomentJsLocale(momentLocale, createMomentLocale);
 
         this.updateOption("locale", calendarI18n);
 
@@ -446,51 +463,109 @@ class Options {
      * @param jmixI18n object to assign from
      * @private
      */
-    _assignI18n(calendarI18n, jmixI18n) {
-        if (utils.isNotNullUndefined(jmixI18n.direction)) {
-            calendarI18n['direction'] = jmixI18n.direction.toLowerCase();
-        }
-        if (utils.isNotNullUndefined(jmixI18n.firstDayOfWeek)) {
-            calendarI18n['week'].dow = jmixI18n.firstDayOfWeek;
-        }
-        if (utils.isNotNullUndefined(jmixI18n.dayOfYear)) {
-            calendarI18n['week'].doy = jmixI18n.dayOfYear;
-        }
-        if (utils.isNotNullUndefined(jmixI18n.weekText)) {
-            calendarI18n['weekText'] = jmixI18n.weekText;
-        }
-        if (utils.isNotNullUndefined(jmixI18n.weekTextLong)) {
-            calendarI18n['weekTextLong'] = jmixI18n.weekTextLong;
-        }
-        if (utils.isNotNullUndefined(jmixI18n.allDayText)) {
-            calendarI18n['allDayText'] = jmixI18n.allDayText;
-        }
+    _combineI18n(calendarI18n, jmixI18n) {
+        const resultI18n = {
+            code: calendarI18n.code,
+            buttonHints: {
+                ...calendarI18n.buttonHints && calendarI18n.buttonHints.prev && {prev: calendarI18n.buttonHints.prev},
+                ...calendarI18n.buttonHints && calendarI18n.buttonHints.next && {next: calendarI18n.buttonHints.next},
+                ...calendarI18n.buttonHints && calendarI18n.buttonHints.today && {today: calendarI18n.buttonHints.today},
+            },
+            buttonText: {
+                ...calendarI18n.buttonText && calendarI18n.buttonText.day && {day: calendarI18n.buttonText.day},
+                ...calendarI18n.buttonText && calendarI18n.buttonText.list && {list: calendarI18n.buttonText.list},
+                ...calendarI18n.buttonText && calendarI18n.buttonText.month && {month: calendarI18n.buttonText.month},
+                ...calendarI18n.buttonText && calendarI18n.buttonText.next && {next: calendarI18n.buttonText.next},
+                ...calendarI18n.buttonText && calendarI18n.buttonText.nextYear && {nextYear: calendarI18n.buttonText.nextYear},
+                ...calendarI18n.buttonText && calendarI18n.buttonText.prev && {prev: calendarI18n.buttonText.prev},
+                ...calendarI18n.buttonText && calendarI18n.buttonText.prevYear && {prevYear: calendarI18n.buttonText.prevYear},
+                ...calendarI18n.buttonText && calendarI18n.buttonText.today && {today: calendarI18n.buttonText.today},
+                ...calendarI18n.buttonText && calendarI18n.buttonText.week && {week: calendarI18n.buttonText.week},
+                ...calendarI18n.buttonText && calendarI18n.buttonText.year && {year: calendarI18n.buttonText.year},
+            },
+            week: {}
+        };
+
+        resultI18n.direction = utils.isNotNullUndefined(jmixI18n.direction)
+            ? jmixI18n.direction.toLowerCase()
+            : calendarI18n.direction;
+
+        resultI18n['week'].dow = utils.isNotNullUndefined(jmixI18n.firstDayOfWeek)
+            ? jmixI18n.firstDayOfWeek
+            : calendarI18n.week.dow;
+
+        resultI18n['week'].doy = utils.isNotNullUndefined(jmixI18n.dayOfYear)
+            ? jmixI18n.dayOfYear
+            : calendarI18n.week.doy;
+
+        resultI18n.weekText = utils.isNotNullUndefined(jmixI18n.weekText)
+            ? jmixI18n.weekText
+            : calendarI18n.weekText;
+
+        resultI18n.weekTextLong = utils.isNotNullUndefined(jmixI18n.weekTextLong)
+            ? jmixI18n.weekTextLong
+            : calendarI18n.weekTextLong;
+
+        resultI18n.allDayText = utils.isNotNullUndefined(jmixI18n.allDayText)
+            ? jmixI18n.allDayText
+            : calendarI18n.allDayText;
+
         if (utils.isNotNullUndefined(jmixI18n.moreLinkText)) {
-            calendarI18n['moreLinkText'] = utils.isJavaScriptFunction(jmixI18n.moreLinkText)
+            resultI18n.moreLinkText = utils.isJavaScriptFunction(jmixI18n.moreLinkText)
                 ? utils.parseJavaScriptFunction(jmixI18n.moreLinkText)
                 : new Function("count", "return `" + jmixI18n.moreLinkText + "`");
+        } else {
+            resultI18n.moreLinkText = calendarI18n.moreLinkText;
         }
-        if (utils.isNotNullUndefined(jmixI18n.noEventsText)) {
-            calendarI18n['noEventsText'] = jmixI18n.noEventsText;
-        }
-        if (utils.isNotNullUndefined(jmixI18n.closeHint)) {
-            calendarI18n['closeHint'] = jmixI18n.closeHint;
-        }
-        if (utils.isNotNullUndefined(jmixI18n.eventHint)) {
-            calendarI18n['eventHint'] = jmixI18n.eventHint;
-        }
-        if (utils.isNotNullUndefined(jmixI18n.timeHint)) {
-            calendarI18n['timeHint'] = jmixI18n.timeHint;
-        }
+
+        resultI18n.noEventsText = utils.isNotNullUndefined(jmixI18n.noEventsText)
+            ? jmixI18n.noEventsText
+            : calendarI18n.noEventsText;
+
+        resultI18n.closeHint = utils.isNotNullUndefined(jmixI18n.closeHint)
+            ? jmixI18n.closeHint
+            : calendarI18n.closeHint;
+
+        resultI18n.eventHint = utils.isNotNullUndefined(jmixI18n.eventHint)
+            ? jmixI18n.eventHint
+            : calendarI18n.eventHint;
+
+        resultI18n.timeHint = utils.isNotNullUndefined(jmixI18n.timeHint)
+            ? jmixI18n.timeHint
+            : calendarI18n.timeHint;
+
         if (utils.isNotNullUndefined(jmixI18n.navLinkHint)) {
-            calendarI18n['navLinkHint'] = utils.isJavaScriptFunction(jmixI18n.navLinkHint)
+            resultI18n.navLinkHint = utils.isJavaScriptFunction(jmixI18n.navLinkHint)
                 ? utils.parseJavaScriptFunction(jmixI18n.navLinkHint)
                 : new Function("date", "return `" + jmixI18n.navLinkHint + "`");
+        } else {
+            resultI18n.navLinkHint = calendarI18n.navLinkHint;
         }
+
         if (utils.isNotNullUndefined(jmixI18n.moreLinkHint)) {
-            calendarI18n['moreLinkHint'] = utils.isJavaScriptFunction(jmixI18n.moreLinkHint)
+            resultI18n.moreLinkHint = utils.isJavaScriptFunction(jmixI18n.moreLinkHint)
                 ? utils.parseJavaScriptFunction(jmixI18n.moreLinkHint)
                 : new Function("count", "return `" + jmixI18n.moreLinkHint + "`")
+        } else {
+            resultI18n.moreLinkHint = calendarI18n.moreLinkHint;
+        }
+
+        return resultI18n;
+    }
+
+    /**
+     * If <code>momentPlugin</code> is used, FullCalendar starts to get all date units localization from
+     * <code>moment.js</code>. This function register localized date units that are defined in message bundle.
+     * @param config JSON with localized days, months, etc.
+     * @see https://momentjs.com/docs/#/customization/
+     * @private
+     */
+    _updateMomentJsLocale(config, create) {
+        if (create) {
+            // Should create new locale with the original parent locale
+            moment.defineLocale(config.localeName, config);
+        } else {
+            moment.updateLocale(config.localeName, config);
         }
     }
 }

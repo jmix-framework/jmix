@@ -18,22 +18,22 @@ package io.jmix.search.index.fileparsing.resolvers;
 
 import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.microsoft.OfficeParser;
+import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("search_OldOfficeDocumentsParserResolver")
+@Component("search_OfficeDocumentsParserResolver")
 @Order(100)
-public class OldOfficeDocumentsParserResolver implements FileParserResolver {
+public class MSOfficeDocumentsParserResolver implements FileParserResolver {
     @Override
     public List<String> getExtension() {
-        return List.of("doc", "xls");
+        return List.of("docx", "xlsx");
     }
 
     @Override
     public Parser getParser() {
-        return new OfficeParser();
+        return new OOXMLParser();
     }
 }

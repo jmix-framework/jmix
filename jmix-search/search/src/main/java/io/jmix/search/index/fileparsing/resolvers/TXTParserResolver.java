@@ -19,6 +19,7 @@ package io.jmix.search.index.fileparsing.resolvers;
 import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.pdf.PDFParser;
+import org.apache.tika.parser.txt.TXTParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +35,6 @@ public class TXTParserResolver implements FileParserResolver {
 
     @Override
     public Parser getParser() {
-        return new PDFParser();
+        return new TXTParser();
     }
 }

@@ -18,6 +18,7 @@ package io.jmix.search.index.fileparsing.resolvers;
 
 import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.pdf.PDFParser;
 import org.apache.tika.parser.rtf.RTFParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -29,11 +30,11 @@ import java.util.List;
 public class PDFParserResolver implements FileParserResolver {
     @Override
     public List<String> getExtension() {
-        return List.of("rtf");
+        return List.of("pdf");
     }
 
     @Override
     public Parser getParser() {
-        return new RTFParser();
+        return new PDFParser();
     }
 }

@@ -76,8 +76,6 @@ includeProject("flowui-data-starter", 'jmix-flowui/flowui-data-starter')
 includeProject("flowui-devserver", 'jmix-flowui/flowui-devserver')
 includeProject('flowui-test-assist', 'jmix-flowui/flowui-test-assist')
 
-includeProject('fullcalendar', 'jmix-fullcalendar/fullcalendar')
-includeProject('fullcalendar-starter', 'jmix-fullcalendar/fullcalendar-starter')
 includeProject('fullcalendar-flowui', 'jmix-fullcalendar/fullcalendar-flowui')
 includeProject('fullcalendar-flowui-kit', 'jmix-fullcalendar/fullcalendar-flowui-kit')
 includeProject('fullcalendar-flowui-starter', 'jmix-fullcalendar/fullcalendar-flowui-starter')

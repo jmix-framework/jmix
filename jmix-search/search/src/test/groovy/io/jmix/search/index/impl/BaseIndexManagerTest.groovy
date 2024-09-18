@@ -214,7 +214,7 @@ class BaseIndexManagerTest extends Specification {
 
         then:
         def exception = thrown(IllegalStateException)
-        exception.getMessage() == "Only index mapping update is already supported."
+        exception.getMessage() == "An index settings update is not supported yet. Only index recreating is supported."
 
         where:
         strategy           | isMappingUpdateRequired

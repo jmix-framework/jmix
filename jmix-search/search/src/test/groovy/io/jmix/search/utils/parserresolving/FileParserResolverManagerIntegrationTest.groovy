@@ -17,6 +17,7 @@
 package io.jmix.search.utils.parserresolving
 
 import io.jmix.core.FileRef
+import io.jmix.search.exception.UnsupportedFileTypeException
 import io.jmix.search.index.fileparsing.FileParserResolver
 import io.jmix.search.index.fileparsing.resolvers.MSOfficeDocumentsParserResolver
 import io.jmix.search.index.fileparsing.resolvers.OldMSOfficeDocumentsParserResolver
@@ -35,7 +36,7 @@ import spock.lang.Specification
 
 class FileParserResolverManagerIntegrationTest extends Specification {
 
-    def "resolvers test"() {
+    def "there is appropriate resolver for the file"() {
         given:
         def manager = new FileParserResolverManager(getResolvers())
 
@@ -57,6 +58,24 @@ class FileParserResolverManagerIntegrationTest extends Specification {
         "xls"     | OfficeParser
         "docx"    | OOXMLParser
         "xlsx"    | OOXMLParser
+    }
+
+    def "there is not appropriate resolver for the file"() {
+        given:
+        def manager = new FileParserResolverManager(getResolvers())
+
+        and:
+        def fileRef = Mock(FileRef)
+        fileRef.getFileName() >> "filename." + extension
+
+        when:
+        manager.getParser(fileRef)
+
+        then:
+        thrown(UnsupportedFileTypeException)
+
+        where:
+        extension<<["txt1", "ems", "", "od", "ods2"]
     }
 
     List<FileParserResolver> getResolvers() {

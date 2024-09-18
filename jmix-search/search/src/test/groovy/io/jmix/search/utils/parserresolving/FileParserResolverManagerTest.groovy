@@ -50,9 +50,9 @@ class FileParserResolverManagerTest extends Specification {
 
         and:
         def resolver = Mock(FileParserResolver)
-        resolver.getExtension() >> List.of("docx", "xlsx")
+        resolver.getSupportedExtensions() >> List.of("docx", "xlsx")
         def resolver2 = Mock(FileParserResolver)
-        resolver2.getExtension() >> List.of("doc", "xls")
+        resolver2.getSupportedExtensions() >> List.of("doc", "xls")
 
         and:
         def parserResolver = new FileParserResolverManager(List.of(resolver, resolver2))
@@ -70,13 +70,13 @@ class FileParserResolverManagerTest extends Specification {
     def "should return parser of the type that corresponds to the file extension"() {
         given:
         def resolver = Mock(FileParserResolver)
-        resolver.getExtension() >> List.of("docx", "xlsx")
+        resolver.getSupportedExtensions() >> List.of("docx", "xlsx")
         def parser1 = Mock(Parser)
         resolver.getParser() >> parser1
 
         and:
         def resolver2 = Mock(FileParserResolver)
-        resolver2.getExtension() >> List.of("doc", "xls")
+        resolver2.getSupportedExtensions() >> List.of("doc", "xls")
         def parser2 = Mock(Parser)
         resolver2.getParser() >> parser2
 

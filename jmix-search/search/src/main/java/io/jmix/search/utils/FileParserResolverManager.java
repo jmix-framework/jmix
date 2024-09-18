@@ -49,7 +49,7 @@ public class FileParserResolverManager {
         }
 
         for (FileParserResolver resolver : fileParserResolvers) {
-            if (resolver.getExtension().contains(fileExtension)) {
+            if (resolver.getSupportedExtensions().contains(fileExtension)) {
                 return resolver.getParser();
             }
         }
@@ -60,7 +60,7 @@ public class FileParserResolverManager {
     protected List<String> getSupportedExtensions() {
         return fileParserResolvers
                 .stream()
-                .flatMap(fileParserResolver -> fileParserResolver.getExtension().stream())
+                .flatMap(fileParserResolver -> fileParserResolver.getSupportedExtensions().stream())
                 .toList();
     }
 }

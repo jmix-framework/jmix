@@ -28,7 +28,7 @@ import java.util.List;
 @Order(100)
 public class OldMSOfficeDocumentsParserResolver implements FileParserResolver {
     @Override
-    public List<String> getExtension() {
+    public List<String> getSupportedExtensions() {
         return List.of("doc", "xls");
     }
 

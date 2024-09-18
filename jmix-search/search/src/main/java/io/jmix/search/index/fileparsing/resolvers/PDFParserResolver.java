@@ -29,7 +29,7 @@ import java.util.List;
 @Order(100)
 public class PDFParserResolver implements FileParserResolver {
     @Override
-    public List<String> getExtension() {
+    public List<String> getSupportedExtensions() {
         return List.of("pdf");
     }
 

@@ -22,6 +22,9 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentData;
 import io.jmix.flowui.model.InstanceContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 
 /**
  * Base class for {@link Fragment} components that will be used as {@link ComponentRenderer} for components
@@ -32,27 +35,48 @@ import io.jmix.flowui.model.InstanceContainer;
  */
 public abstract class FragmentRenderer<T extends Component, E> extends Fragment<T> {
 
+    private static final Logger log = LoggerFactory.getLogger(FragmentRenderer.class);
+
+    protected E item;
+
     /**
      * Sets the corresponding item for the rendered fragment component.
      *
      * @param item the item for the rendered fragment component
      */
     public void setItem(E item) {
-        getItemRendererContainer().setItem(item);
+        this.item = item;
+
+        if (getItemRendererContainer() != null) {
+            getItemRendererContainer().setItem(item);
+        }
     }
 
     /**
-     * @return instance container for the rendering item
-     * @throws IllegalStateException         if {@link RendererItemContainer} annotation is not declared
+     * @return an explicit renderer item or an item from the item renderer container if exists
+     */
+    @Nullable
+    protected E getItem() {
+        InstanceContainer<E> itemRendererContainer = getItemRendererContainer();
+        if (itemRendererContainer != null && itemRendererContainer.getItemOrNull() != null) {
+            return itemRendererContainer.getItemOrNull();
+        }
+
+        return this.item;
+    }
+
+    /**
+     * @return instance container for the rendering item or {@code null} if not declared
      * @throws UnsupportedOperationException if the renderer item container ID is incorrect
      */
+    @Nullable
     protected InstanceContainer<E> getItemRendererContainer() {
         RendererItemContainer annotation = getClass().getAnnotation(RendererItemContainer.class);
         if (annotation == null || Strings.isNullOrEmpty(annotation.value())) {
-            throw new IllegalStateException(
-                    "'%s' does not declare @%s"
-                            .formatted(getClass().getSimpleName(), RendererItemContainer.class.getSimpleName())
-            );
+            log.info("@{} does not declared in {}",
+                    RendererItemContainer.class.getSimpleName(), getClass().getSimpleName());
+
+            return null;
         }
 
         String[] parts = annotation.value().split("\\.");

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.processor.impl;
+package io.jmix.search.index.mapping.processor.impl.samples;
 
-import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 
-public record DynamicAttributeDescriptorExtractorTestCase(IndexConfiguration.DynamicAttributesIndexingDescriptor descriptor, Class<?> indexDefinitionClass) {
+@JmixEntitySearchIndex(entity = TestEntity.class)
+public interface Configuration {
 }

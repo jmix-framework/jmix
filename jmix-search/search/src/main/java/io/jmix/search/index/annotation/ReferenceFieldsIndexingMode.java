@@ -16,29 +16,6 @@
 
 package io.jmix.search.index.annotation;
 
-import com.drew.lang.annotations.Nullable;
-
-import java.lang.annotation.*;
-
-import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*;
-
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@FieldMappingAnnotation
-public @interface DynamicAttributes {
-    @Nullable
-    String[] includeCategories() default {};
-
-    @Nullable
-    String[] excludeCategories() default {};
-
-    @Nullable
-    String[] includeFields() default {};
-
-    @Nullable
-    String[] excludeFields() default {};
-
-    @Nullable
-    ReferenceFieldsIndexingMode referenceFieldsIndexingMode() default INSTANCE_NAME_ONLY;
-
+public enum ReferenceFieldsIndexingMode {
+    NONE, INSTANCE_NAME_ONLY
 }

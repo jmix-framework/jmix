@@ -16,9 +16,17 @@
 
 package io.jmix.search.index.mapping.processor.impl.samples;
 
+import io.jmix.search.index.annotation.DynamicAttributes;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
-import io.jmix.search.index.mapping.processor.impl.TestEntity;
+
+import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.NONE;
 
 @JmixEntitySearchIndex(entity = TestEntity.class)
-public interface TestIndexConfiguration {
+@DynamicAttributes(
+        referenceFieldsIndexingMode = NONE,
+        includeCategories = {"category1", "c2"},
+        excludeCategories = {"ex1", "ex2"},
+        includeFields = {"field1", "field2"},
+        excludeFields = {"field3", "field4"})
+public interface Configuration5 {
 }

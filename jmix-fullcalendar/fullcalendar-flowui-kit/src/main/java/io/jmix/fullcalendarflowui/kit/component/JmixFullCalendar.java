@@ -545,7 +545,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     /**
      * Sets rows count of events in day-grid display modes and in "all-day" section in time-grid display modes.
      * <p>
-     * Note that "+x more" row is included to count. For instance, if dayMaxEventRows = 1, only the "+x more" row
+     * Note that "more" row is included to count. For instance, if dayMaxEventRows = 1, only the "more" row
      * will be shown.
      * <p>
      * Takes precedence over the {@link #setDefaultDayMaxEventRowsEnabled(boolean)}.
@@ -594,12 +594,12 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     /**
      * Sets rows count of events in day-grid display modes and in "all-day" section in time-grid display modes.
      * <p>
-     * Note that "+ more" row <strong>is not included</strong> to count. For instance, if dayMaxEventRows = 1,
-     * one event and the "+x more" row will be shown.
+     * Note that "more" row <strong>is not included</strong> to count. For instance, if dayMaxEventRows = 1,
+     * one event and the "more" row will be shown.
      * <p>
      * Takes precedence over the {@link #setDefaultDayMaxEventsEnabled(boolean)}.
      *
-     * @param maxRows maximum value of event rows in cell excluding "+x more" row
+     * @param maxRows maximum value of event rows in cell excluding "more" row
      */
     public void setDayMaxEvents(@Nullable Integer maxRows) {
         options.getDayMaxEvents().setMax(maxRows);
@@ -731,7 +731,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     /**
      * Enables to edit event duration using resizing.
      * <p>
-     * Note, this property can be overridden on per-event by {@code CalendarEvent#getDurationEditable()} property.
+     * Note, this property can be overridden on per-event by {@code durationEditable} property.
      * <p>
      * The default value is {@code false}.
      *
@@ -826,8 +826,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets the time interval at which a dragged event will snap to the time axis. Also affects
-     * the granularity at which selections can be made.
+     * Sets a value that determines the time interval at which a dragged event will snap to the time axis.
+     * This also affects the granularity at which selections can be made.
      * <p>
      * The default value is taken from {@link #getSlotDuration()}.
      *
@@ -950,9 +950,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Enables to draw a "placeholder" event while the user is dragging.
+     * Enables the drawing of a placeholder event while the user is dragging.
      * <p>
-     * This property is applied to time-grid display modes.
+     * This property applies to time-grid display modes.
      * <p>
      * The default value is {@code false}.
      *
@@ -970,7 +970,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets whether clicking elsewhere on the page will cause the current selection to be cleared.
+     * Sets whether clicking elsewhere on the page will clear the current selection.
      * Works only if {@link #isSelectionEnabled()} is {@code true}.
      * <p>
      * The default value is {@code true}.
@@ -1100,7 +1100,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * Sets the minimum distance the user’s mouse must travel after a mousedown, before a selection is allowed.
      * A non-zero value is useful for differentiating a selection from a date click event.
      * <p>
-     * This setting is only applicable to mouse-related interaction. For touch interaction, see
+     * This property is only applicable to mouse-related interaction. For touch interaction, see
      * {@link #setSelectLongPressDelay(Integer)}.
      * <p>
      * The default value is {@code 0}.
@@ -1266,7 +1266,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets whether to include Saturday/Sunday columns in any of the calendar display modes.
+     * Sets whether to include Saturday and Sunday columns in any of the calendar display modes.
      * <p>
      * The default value is {@code true}
      *
@@ -1303,7 +1303,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets the interval for displaying time slots.
+     * Sets the interval at which time slots are displayed.
      * <p>
      * The default value is 30 minutes.
      *
@@ -1326,8 +1326,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * <p>
      * If not specified, a reasonable value will be automatically computed based on {@link #getSlotDuration()}.
      * <p>
-     * When specifying this property, give the {@code CalendarDuration.ofHours(1)}, this will cause the header
-     * labels to appear on the hour marks, even if {@link #getSlotDuration()} was hypothetically 15 or 30 minutes long.
+     * When specifying this property, give the {@code CalendarDuration.ofHours(1)} value, this will cause the header
+     * labels to appear on the hour marks, even if {@link #getSlotDuration()} was hypothetically {@code 15} or
+     * {@code 30} minutes long.
      *
      * @param duration the interval to set
      */
@@ -1365,7 +1366,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets the last time slot that will be displayed for each day. The specified value is an exclusive end time.
+     * Sets the last time slot that will be displayed for each day. The specified value represents the exclusive
+     * end time, meaning the time slot ending at this value will not be included.
      * <p>
      * The default value is {@code 24:00:00}. It means that the end time will be at the very end of the day (midnight).
      * Determines the last slot, even when the scrollbars have been scrolled all the way back.
@@ -1415,7 +1417,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * the date range changes.
      * <p>
      * By default, whenever the date range changes either via calendar methods or the user actions,
-     * the scroll is reset. Set the property to {@code false} to disable this behaviour.
+     * the scroll is reset. Set to {@code false} to disable this behaviour.
      * <p>
      * The default value is {@code true}.
      *
@@ -1653,9 +1655,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets amount of time the user must hold down before a date becomes selectable.
-     * <p>
-     * For touch devices.
+     * Sets the amount of time the user must hold down before a date becomes selectable on touch devices.
      * <p>
      * The default value is {@code 1000} milliseconds.
      *
@@ -1713,7 +1713,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Sets the delay that the calendar will wait to adjust its size after a window resize occurs.
+     * Sets the delay that the calendar will wait before adjusting its size after a window resize occurs.
      * <p>
      * The default value is {@code 100}.
      *
@@ -1990,14 +1990,14 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     /**
-     * Enables rendering events from the data provider immediately when events are loaded.
+     * Enables rendering of events from the data provider as soon as the events are loaded.
      * <ul>
      *     <li>
      *         {@code true} - renders each data provider as it is received. Will result in more renders.
      *     </li>
      *     <li>
-     *         {@code false} - waits until all data providers have been received and renders them all at once.
-     *         Results in less renders.
+     *         {@code false} - waits until all data providers have received their data and then renders everything
+     *         at once, resulting in fewer renders.
      *     </li>
      * </ul>
      * <p>

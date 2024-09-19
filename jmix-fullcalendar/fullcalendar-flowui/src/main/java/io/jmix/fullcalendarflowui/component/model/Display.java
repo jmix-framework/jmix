@@ -17,7 +17,7 @@
 package io.jmix.fullcalendarflowui.component.model;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * Represents possible preset rendering styles that the event can use.

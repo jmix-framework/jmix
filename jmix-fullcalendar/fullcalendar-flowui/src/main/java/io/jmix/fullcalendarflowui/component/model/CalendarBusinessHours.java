@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class CalendarBusinessHours implements Serializable {
 
-    public static final DayOfWeek[] ALL_DAYS = DayOfWeek.values();
+    private static final DayOfWeek[] ALL_DAYS = DayOfWeek.values();
 
     protected Set<DayOfWeek> daysOfWeek;
 

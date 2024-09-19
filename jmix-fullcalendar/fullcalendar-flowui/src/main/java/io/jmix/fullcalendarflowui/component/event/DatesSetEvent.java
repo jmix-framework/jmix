@@ -12,13 +12,14 @@ import java.time.LocalDate;
  * The calendar’s dates can change any time the user does the following:
  * <ul>
  *     <li>
- *         navigates to next and previous
+ *         navigates to next and previous;
  *     </li>
  *     <li>
- *         switches the display mode
+ *         switches the display mode;
  *     </li>
  *     <li>
- *         clicks a navigation link
+ *         clicks a navigation link (e.g. week or day if {@link FullCalendar#isNavigationLinksEnabled()} is
+ *         {@code true}).
  *     </li>
  * </ul>
  * The dates can also change when the current-date is manipulated via the API, such as when

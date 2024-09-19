@@ -64,7 +64,7 @@ public class ContainerCalendarDataProvider<E> extends AbstractEntityCalendarData
     @SuppressWarnings({"unchecked"})
     protected void containerCollectionChanged(CollectionContainer.CollectionChangeEvent<E> event) {
         switch (event.getChangeType()) {
-            case ADD_ITEMS -> {
+            case ADD_ITEMS, SET_ITEM -> {
                 List<CalendarEvent> addedItems = addToCache((Collection<E>) event.getChanges());
                 fireItemSetChangeEvent(DataChangeOperation.ADD, addedItems);
             }
@@ -72,7 +72,7 @@ public class ContainerCalendarDataProvider<E> extends AbstractEntityCalendarData
                 List<CalendarEvent> removedItems = removeFromCache((Collection<E>) event.getChanges());
                 fireItemSetChangeEvent(DataChangeOperation.REMOVE, removedItems);
             }
-            case REFRESH -> {
+            default -> {
                 refreshCache();
                 fireItemSetChangeEvent(DataChangeOperation.REFRESH, getItems());
             }

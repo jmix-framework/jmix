@@ -9,14 +9,14 @@ import org.springframework.lang.Nullable;
  * The event is fired when the current selection is cleared. A selection might be cleared for a number of reasons:
  * <ul>
  *     <li>
- *         The user clicks away from the current selection (does’t happen when {@link FullCalendar#isUnselectAuto()}
+ *         The user clicks away from the current selection (doesn’t happen when {@link FullCalendar#isUnselectAuto()}
  *         returns {@code false}).
  *     </li>
  *     <li>
  *         The user makes a new selection. The unselect event will be fired before the new selection occurs.
  *     </li>
  *     <li>
- *         The user moves forward or backward in the current calendar's display mode, or switches to an other mode.
+ *         The user moves forward or backward in the current calendar's display mode, or switches to another mode.
  *     </li>
  *     <li>
  *         The unselect method is called through the {@link FullCalendar#unselect()} method.

@@ -299,6 +299,8 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
      * <p>
      * It also respects custom business hours {@link #setBusinessHours(List)}.
      * <p>
+     * Note, this property will be applied if {@link FullCalendar#setSelectionEnabled(boolean)} is enabled.
+     * <p>
      * The default value is {@code false}.
      *
      * @param enabled whether to use business hours as selection constraint
@@ -656,7 +658,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     /**
      * Sets a class names generator for "more" link.
      * <p>
-     * Note, generator has a precedence over a {@link #setMoreLinkClassNames(List)} and other
+     * Note, generator takes precedence over a {@link #setMoreLinkClassNames(List)} and other
      * "add class name" methods.
      *
      * @param classNamesGenerator the generator to set
@@ -698,7 +700,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
-     * Sets a day cell class-names generator. The day cell appears in day-grid and time-grid display modes
+     * Sets a day cell class names generator. The day cell appears in day-grid and time-grid display modes
      * as an all-day cell.
      *
      * @param dayCellClassNamesGenerator the generator to set
@@ -740,7 +742,7 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
-     * Sets a now-indicator class names generator. The now-indicator contains of two part: line and axis.
+     * Sets a now-indicator class names generator. The now-indicator consists of two parts: the line and the axis.
      * <p>
      * The now-indicator can be enabled by {@link #setNowIndicatorVisible(boolean)}.
      *

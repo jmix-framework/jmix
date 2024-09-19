@@ -198,7 +198,7 @@ public class FullCalendarI18n implements Serializable {
     }
 
     /**
-     * Sets the all-day text.
+     * Sets the all-day text. The text is visible in time-grid display modes.
      *
      * @param allDayText the all-day text
      */
@@ -268,7 +268,7 @@ public class FullCalendarI18n implements Serializable {
     }
 
     /**
-     * Sets text that will be shown when no events are displayed. The text can be shown in list modes,
+     * Sets text that will be shown when no events are displayed in list display modes,
      * e.g {@link CalendarDisplayModes#LIST_DAY}.
      *
      * @param noEventsText the text to set
@@ -297,7 +297,7 @@ public class FullCalendarI18n implements Serializable {
     }
 
     /**
-     * Sets the hint for close button.
+     * Sets the hint for the close button in the popover when you click the "more" link.
      *
      * @param closeHint the close hint text
      */
@@ -325,7 +325,7 @@ public class FullCalendarI18n implements Serializable {
     }
 
     /**
-     * Sets the hint for event.
+     * Sets for list display modes' non-visible table header the name of the column with event names.
      *
      * @param eventHint the event hint text
      */
@@ -334,7 +334,8 @@ public class FullCalendarI18n implements Serializable {
     }
 
     /**
-     * Sets the event hint text. See {@link #setEventHint(String)}.
+     * Sets for list display modes' non-visible table header the name of the column with event names.
+     * See {@link #setEventHint(String)}.
      *
      * @param eventHint the even hint text
      * @return current instance of i18n
@@ -353,7 +354,7 @@ public class FullCalendarI18n implements Serializable {
     }
 
     /**
-     * Sets the time hint text.
+     * Sets for list display modes' non-visible table header the name of the column with days and times.
      *
      * @param timeHint the time hint text
      */
@@ -388,8 +389,8 @@ public class FullCalendarI18n implements Serializable {
      * <pre>
      *  setNavLinkHint("Navigate to ${date}");
      *  </pre>
-     * It also takes a string definition of JavaScript function that takes {@code date} as a parameter with
-     * String type. For instance:
+     * It also takes a string definition of JavaScript function that takes the {@code date} as a parameter with
+     * the String type. For instance:
      * <pre>
      *  setNavLinkHint(
      *      """
@@ -426,7 +427,7 @@ public class FullCalendarI18n implements Serializable {
     /**
      * Sets the "more" link hint. The provided text can be a
      * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals">
-     * JavaScript Template string</a>. This template takes the {@code date} parameter that has String type,
+     * JavaScript Template string</a>. This template takes the {@code count} parameter that has Number type,
      * for instance:
      * <pre>
      *  setMoreLinkHint("Show ${count} more event${count === 1 ? '' : 's'}");
@@ -436,7 +437,7 @@ public class FullCalendarI18n implements Serializable {
      *  setMoreLinkHint(
      *      """
      *      function (count) {
-     *          return `Show ${count} more event${count === 1 ? '' : 's'`};
+     *          return `Show ${count} more event${count === 1 ? '' : 's'}`;
      *      }
      *      """)
      *  </pre>

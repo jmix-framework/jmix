@@ -35,8 +35,8 @@
                     <xs:attribute name="allDayText" type="layout:resourceString"/>
                     <xs:attribute name="closeHint" type="layout:resourceString"/>
                     <xs:attribute name="dayHeadersVisible" type="xs:boolean"/>
-                    <xs:attribute name="dayMaxEvents" type="xs:integer"/>
                     <xs:attribute name="dayMaxEventRows" type="xs:integer"/>
+                    <xs:attribute name="dayMaxEvents" type="xs:integer"/>
                     <xs:attribute name="dayOfYear" type="xs:integer"/>
                     <xs:attribute name="dateAlignment" type="xs:string"/>
                     <xs:attribute name="defaultAllDay" type="xs:boolean"/>

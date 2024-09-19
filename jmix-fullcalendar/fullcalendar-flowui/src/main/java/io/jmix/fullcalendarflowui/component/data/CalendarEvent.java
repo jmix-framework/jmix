@@ -42,7 +42,7 @@ public interface CalendarEvent {
     /**
      * Returns a unique ID of calendar event, that will be used for identification on client-side.
      *
-     * @return ID of calendar event or {@code null} if not set
+     * @return ID of calendar event
      */
     Object getId();
 
@@ -111,7 +111,7 @@ public interface CalendarEvent {
     /**
      * Sets end date time value that corresponds to system default time zone: {@link TimeZone#getDefault()}.
      * <p>
-     * Note that this value is <strong>exclusive</strong>. For instance, ab event with end property -
+     * Note that this value is <strong>exclusive</strong>. For instance, an event with end property -
      * {@code 2024-09-03} will appear to span through {code 2024-09-02} but before the start of {@code 2024-09-03}.
      * <p>
      * For {@link EntityCalendarEvent} value automatically transformed from {@link LocalDateTime} to supported
@@ -317,8 +317,8 @@ public interface CalendarEvent {
     String getTextColor();
 
     /**
-     * Defines additional properties and their values that will be available in various JS functions that takes
-     * an event as parameter. For instance, see {@link FullCalendar#setEventOrderJsFunction(JsFunction)}.
+     * Defines additional properties and their values that will be available in various JavaScript functions that
+     * takes an event as parameter. For instance, see {@link FullCalendar#setEventOrderJsFunction(JsFunction)}.
      *
      * @return map of additional properties and their values
      */
@@ -328,51 +328,51 @@ public interface CalendarEvent {
     /**
      * Specifies the days of the week this event repeats. If omitted, the event is assumed to repeat every day.
      *
-     * @return the days of the week this event repeats
+     * @return the days of the week this event repeats or {@code null} if not set
      */
     @Nullable
     DaysOfWeek getRecurringDaysOfWeek();
 
     /**
-     * Returns the date when recurrences of this event start. If it is not specified, recurrences will extend
+     * Returns the date when the recurrences of this event start. If not specified, the recurrences will extend
      * infinitely into the past.
      *
-     * @return the start date of recurring event
+     * @return the start date of recurring event or {@code null} if not set
      */
     @Nullable
     LocalDate getRecurringStartDate();
 
     /**
-     * Returns the date when recurrences of this event end. If it is not specified, recurrences will extend
+     * Returns the date when the recurrences of this event end. If not specified, the recurrences will extend
      * infinitely into the future.
      * <p>
-     * Note that this value is <strong>exclusive</strong>. For all day recurring events, make end date the day
-     * after you want your last recurrence.
+     * Note that this value is <strong>exclusive</strong>. For all-day recurring events, set the end date to the day
+     * after your desired last recurrence.
      *
-     * @return the end date of recurring event
+     * @return the end date of recurring event or {@code null} if not set
      */
     @Nullable
     LocalDate getRecurringEndDate();
 
     /**
-     * Returns the start time of recurring event. If it is not defined, the event considered as all day event.
+     * Returns the start time of a recurring event. If this is not defined, the event is considered an all-day event.
      * <p>
-     * Note that calendar does not apply TimeZone conversion for this property. If {@link OffsetTime} type is used in
-     * entity it will be transformed to system default time zone.
+     * Note that the calendar does not apply time zone conversion for this property. If the {@link OffsetTime}
+     * datatype is used in the entity, it will be transformed to the system's default time zone.
      *
-     * @return the start time of recurring event
+     * @return the start time of recurring event or {@code null} if not set
      */
     @Nullable
     LocalTime getRecurringStartTime();
 
     /**
-     * Returns the end time of recurring event. If it is not defined, the event will appear to have the default
-     * duration as configured in {@link FullCalendar} component.
+     * Returns the end time of a recurring event. If this is not defined, the event will appear to have the default
+     * duration as configured in {@link FullCalendar#getDefaultTimedEventDuration()} property.
      * <p>
-     * Note that calendar does not apply TimeZone conversion for this property. If {@link OffsetTime} type is used in
-     * entity it will be transformed to system default time zone.
+     * Note that the calendar does not apply time zone conversion for this property. If the {@link OffsetTime}
+     * datatype is used in the entity, it will be transformed to the system's default time zone.
      *
-     * @return the end time of recurring event
+     * @return the end time of recurring event or {@code null} if not set
      */
     @Nullable
     LocalTime getRecurringEndTime();

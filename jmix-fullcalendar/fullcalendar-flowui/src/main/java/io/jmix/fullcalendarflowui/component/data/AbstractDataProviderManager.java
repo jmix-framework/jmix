@@ -39,14 +39,12 @@ public abstract class AbstractDataProviderManager {
     protected final KeyMapper<Object> eventKeyMapper = new KeyMapper<>();
 
     protected FullCalendarDataSerializer dataSerializer;
-    protected FullCalendar fullCalendar;
 
     public AbstractDataProviderManager(CalendarDataProvider dataProvider,
                                        FullCalendarSerializer serializer,
                                        FullCalendar fullCalendar,
                                        String jsFunctionName) {
         this.dataProvider = dataProvider;
-        this.fullCalendar = fullCalendar;
         this.jsFunctionName = jsFunctionName;
 
         this.sourceId = generateSourceId(dataProvider);

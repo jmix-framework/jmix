@@ -17,7 +17,7 @@
 package io.jmix.flowui.model;
 
 /**
- * Type of a collection change event.
+ * Describes the type of collection change event.
  */
 public enum CollectionChangeType {
 

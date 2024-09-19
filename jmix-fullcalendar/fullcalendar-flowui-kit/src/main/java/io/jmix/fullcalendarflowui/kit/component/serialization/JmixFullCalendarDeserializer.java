@@ -28,11 +28,9 @@ import elemental.json.impl.JreJsonFactory;
  */
 public class JmixFullCalendarDeserializer {
 
-    protected JsonFactory jsonFactory;
     protected ObjectMapper objectMapper;
 
     public JmixFullCalendarDeserializer() {
-        jsonFactory = createJsonFactory();
         objectMapper = createObjectMapper();
 
         initObjectMapper(objectMapper);
@@ -49,10 +47,6 @@ public class JmixFullCalendarDeserializer {
         }
 
         return context;
-    }
-
-    protected JsonFactory createJsonFactory() {
-        return new JreJsonFactory();
     }
 
     protected ObjectMapper createObjectMapper() {

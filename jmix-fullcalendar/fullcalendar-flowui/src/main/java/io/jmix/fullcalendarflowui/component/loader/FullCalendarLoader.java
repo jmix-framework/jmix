@@ -429,10 +429,19 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
                     loadString(e, "name")
                             .ifPresent(n -> businessDays.add(DayOfWeek.valueOf(n)));
                 });
-        if (startTime == null && endTime == null && businessDays.isEmpty()) {
-            return null;
+        if (startTime == null) {
+            return businessDays.isEmpty()
+                    ? null
+                    : CalendarBusinessHours.of(businessDays.toArray(new DayOfWeek[0]));
         }
-        return CalendarBusinessHours.of(startTime, endTime, businessDays.toArray(new DayOfWeek[0]));
+        if (endTime == null) {
+            return businessDays.isEmpty()
+                    ? CalendarBusinessHours.of(startTime)
+                    : CalendarBusinessHours.of(startTime, businessDays.toArray(new DayOfWeek[0]));
+        }
+        return businessDays.isEmpty()
+                ? CalendarBusinessHours.of(startTime, endTime)
+                : CalendarBusinessHours.of(startTime, endTime, businessDays.toArray(new DayOfWeek[0]));
     }
 
     protected void loadInitialDisplayMode(Element element, FullCalendar resultComponent) {

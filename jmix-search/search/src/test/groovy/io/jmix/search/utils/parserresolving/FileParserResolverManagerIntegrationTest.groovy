@@ -75,7 +75,7 @@ class FileParserResolverManagerIntegrationTest extends Specification {
         thrown(UnsupportedFileTypeException)
 
         where:
-        extension<<["txt1", "ems", "", "od", "ods2"]
+        extension << ["txt1", "ems", "", "od", "ods2"]
     }
 
     List<FileParserResolver> getResolvers() {

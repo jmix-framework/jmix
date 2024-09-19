@@ -16,7 +16,7 @@
 
 package io.jmix.search.exception;
 
-public class EmptyFileParserResolversList extends RuntimeException{
+public class EmptyFileParserResolversList extends RuntimeException {
 
     private static final String MESSAGE = "There are no any file parser resolvers in the application.";
 

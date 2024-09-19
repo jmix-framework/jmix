@@ -36,7 +36,7 @@ public class LogbackMocker {
         return appender;
     }
 
-    public static void cleanUpAppender(Class<?> classForLogging, Appender<ILoggingEvent> appender){
+    public static void cleanUpAppender(Class<?> classForLogging, Appender<ILoggingEvent> appender) {
         Logger logger = (Logger) LoggerFactory.getLogger(classForLogging);
         logger.detachAppender(appender);
     }

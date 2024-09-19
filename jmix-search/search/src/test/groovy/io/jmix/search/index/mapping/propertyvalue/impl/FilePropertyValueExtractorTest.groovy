@@ -48,7 +48,7 @@ class FilePropertyValueExtractorTest extends Specification {
 
         and:
         FileProcessor fileProcessor = Mock()
-        fileProcessor.extractFileContent(fileRef) >> {throw exceptionMock}
+        fileProcessor.extractFileContent(fileRef) >> { throw exceptionMock }
 
         and:
         FilePropertyValueExtractor extractor = new FilePropertyValueExtractor(fileProcessor)

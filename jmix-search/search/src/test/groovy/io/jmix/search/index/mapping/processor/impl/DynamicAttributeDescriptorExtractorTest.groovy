@@ -17,18 +17,9 @@
 package io.jmix.search.index.mapping.processor.impl
 
 import io.jmix.search.index.DynamicAttributesIndexingDescriptor
-import io.jmix.search.index.mapping.processor.impl.samples.Configuration3
-
-import io.jmix.search.index.mapping.processor.impl.samples.Configuration4
-import io.jmix.search.index.mapping.processor.impl.samples.Configuration5
-import io.jmix.search.index.mapping.processor.impl.samples.Configuration6
-import io.jmix.search.index.mapping.processor.impl.samples.Configuration7
-import io.jmix.search.index.mapping.processor.impl.samples.Configuration8
-import io.jmix.search.index.mapping.processor.impl.samples.Configuration9
+import io.jmix.search.index.mapping.processor.impl.samples.*
 
 import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.*
-import io.jmix.search.index.mapping.processor.impl.samples.Configuration
-import io.jmix.search.index.mapping.processor.impl.samples.Configuration2
 import spock.lang.Specification
 
 
@@ -48,7 +39,6 @@ class DynamicAttributeDescriptorExtractorTest extends Specification {
 
         when:
         def extractedDescriptor = extractor.extract(descriptorClass)
-
 
         then:
         expectedDescriptor == extractedDescriptor
@@ -82,7 +72,7 @@ class DynamicAttributeDescriptorExtractorTest extends Specification {
         Configuration8  | "f1, f2"          | "f1, f3"          | "Fields"
     }
 
-    def "clean"() {
+    def "duplicates cleaning"() {
         given:
         DynamicAttributeDescriptorExtractor extractor = new DynamicAttributeDescriptorExtractor()
 
@@ -95,6 +85,4 @@ class DynamicAttributeDescriptorExtractorTest extends Specification {
         descriptor.includedFields() == ["f2", "f1", "f5"]
         descriptor.excludedFields() == ["f4", "f3"]
     }
-
-
 }

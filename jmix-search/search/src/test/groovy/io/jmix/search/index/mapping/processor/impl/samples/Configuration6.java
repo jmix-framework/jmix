@@ -14,7 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.processor.impl;
+package io.jmix.search.index.mapping.processor.impl.samples;
 
-public class TestEntity {
+import io.jmix.search.index.annotation.DynamicAttributes;
+import io.jmix.search.index.annotation.JmixEntitySearchIndex;
+
+import static io.jmix.search.index.annotation.ReferenceFieldsIndexingMode.NONE;
+
+@JmixEntitySearchIndex(entity = TestEntity.class)
+@DynamicAttributes(
+        includeCategories = {"c1", "c2"},
+        excludeCategories = {"c2", "c3"},
+        includeFields = {"field1", "field2"},
+        excludeFields = {"field3", "field4"})
+public interface Configuration6 {
 }

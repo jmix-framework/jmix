@@ -36,7 +36,7 @@ class IndexConfigurationComparatorTest extends Specification {
         result.settingsComparingResult == SettingsComparingResult.NOT_COMPATIBLE
     }
 
-    private static class IndexConfigurationComparatorTestImpl extends IndexConfigurationComparator{
+    private static class IndexConfigurationComparatorTestImpl extends IndexConfigurationComparator {
 
         IndexConfigurationComparatorTestImpl(IndexMappingComparator mappingComparator, IndexSettingsComparator settingsComparator, IndexStateResolver indexStateResolver) {
             super(mappingComparator, settingsComparator, indexStateResolver)

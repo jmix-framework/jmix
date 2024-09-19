@@ -19,6 +19,7 @@ package io.jmix.gridexportflowui.exporter.excel;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import io.jmix.core.Entity;
@@ -41,7 +42,8 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.action.ExportAction;
-import io.jmix.gridexportflowui.exporter.*;
+import io.jmix.gridexportflowui.exporter.AbstractDataGridExporter;
+import io.jmix.gridexportflowui.exporter.ExportMode;
 import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoader;
 import io.jmix.gridexportflowui.exporter.entitiesloader.AllEntitiesLoaderFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -278,18 +280,30 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
     protected String getColumnHeaderText(DataGrid.Column<?> column) {
         String headerText = column.getHeaderText();
-        if (!Strings.isNullOrEmpty(headerText)) {
+        if (!Strings.isNullOrEmpty(headerText) && !isHeaderRowAppended(column)) {
             return headerText;
-        } else {
-            com.vaadin.flow.component.Component headerComponent = column.getHeaderComponent();
-            if (headerComponent instanceof HasText hasText) {
-                headerText = hasText.getText();
-            } else if (headerComponent instanceof DataGridHeaderFilter dataGridHeaderFilter
-                    && dataGridHeaderFilter.getHeader() instanceof HasText hasText) {
-                headerText = hasText.getText();
-            }
-            return Strings.nullToEmpty(headerText);
         }
+
+        com.vaadin.flow.component.Component headerComponent = getTopLevelHeaderComponent(column);
+        if (headerComponent instanceof HasText hasText) {
+            headerText = hasText.getText();
+        } else if (headerComponent instanceof DataGridHeaderFilter dataGridHeaderFilter
+                && dataGridHeaderFilter.getHeader() instanceof HasText hasText) {
+            headerText = hasText.getText();
+        }
+        return Strings.nullToEmpty(headerText);
+    }
+
+    protected boolean isHeaderRowAppended(DataGrid.Column<?> column) {
+        return column.getParent().isPresent() && !(column.getParent().get() instanceof DataGrid<?>);
+    }
+
+    @Nullable
+    protected com.vaadin.flow.component.Component getTopLevelHeaderComponent(DataGrid.Column<?> column) {
+        List<HeaderRow> headerRows = column.getGrid().getHeaderRows();
+        return headerRows.isEmpty()
+                ? null
+                : headerRows.get(0).getCell(column).getComponent();
     }
 
     protected int createDataGridHierarchicalRow(TreeGrid<?> dataGrid, ContainerTreeDataGridItems<Object> treeDataGridItems,

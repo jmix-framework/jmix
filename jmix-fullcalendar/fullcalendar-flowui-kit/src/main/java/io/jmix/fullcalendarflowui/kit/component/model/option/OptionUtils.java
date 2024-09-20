@@ -75,6 +75,8 @@ public final class OptionUtils {
     public static final String MORE_LINK_CLICK = "moreLinkClick";
     public static final String MORE_LINK_CLASS_NAMES = "moreLinkClassNames";
     public static final String NAV_LINKS = "navLinks";
+    public static final String NAV_LINK_DAY_CLICK = "navLinkDayClick";
+    public static final String NAV_LINK_WEEK_CLICK = "navLinkWeekClick";
     public static final String NEXT_DAY_THRESHOLD = "nextDayThreshold";
     public static final String NOW_INDICATOR_CLASS_NAMES = "nowIndicatorClassNames";
     public static final String PROGRESSIVE_EVENT_RENDERING = "progressiveEventRendering";

@@ -13,6 +13,8 @@ export const DAY_HEADER_CLASS_NAMES = 'dayHeaderClassNames';
 export const DAY_CELL_CLASS_NAMES = 'dayCellClassNames';
 export const SLOT_LABEL_CLASS_NAMES = 'slotLabelClassNames';
 export const NOW_INDICATOR_CLASS_NAMES = 'nowIndicatorClassNames';
+export const NAV_LINK_DAY_CLICK = 'navLinkDayClick';
+export const NAV_LINK_WEEK_CLICK = 'navLinkWeekClick';
 const EVENT_OVERLAP = 'eventOverlap';
 const SELECT_OVERLAP = 'selectOverlap';
 const EVENT_CONSTRAINT = 'eventConstraint';
@@ -170,6 +172,9 @@ class Options {
             this._updateNowIndicatorClassNames(options);
 
             this._updateEventOrder(options);
+
+            this._updateNavLinkDayClick(options);
+            this._updateNavLinkWeekClick(options);
         });
     }
 
@@ -216,6 +221,8 @@ class Options {
             || DAY_CELL_CLASS_NAMES === key
             || SLOT_LABEL_CLASS_NAMES === key
             || NOW_INDICATOR_CLASS_NAMES === key
+            || NAV_LINK_DAY_CLICK === key
+            || NAV_LINK_WEEK_CLICK === key
             || EVENT_OVERLAP === key
             || EVENT_CONSTRAINT === key
             || BUSINESS_HOURS === key
@@ -416,6 +423,22 @@ class Options {
         }
     }
 
+    _updateNavLinkDayClick(options) {
+        const navLinkDayClick = options[NAV_LINK_DAY_CLICK];
+
+        if (utils.isNotNullUndefined(navLinkDayClick)) {
+            this.updateOption(NAV_LINK_DAY_CLICK, navLinkDayClick ? this._onNavLinkDayClick.bind(this) : null);
+        }
+    }
+
+    _updateNavLinkWeekClick(options) {
+        const navLinkWeekClick = options[NAV_LINK_WEEK_CLICK];
+
+        if (utils.isNotNullUndefined(navLinkWeekClick)) {
+            this.updateOption(NAV_LINK_WEEK_CLICK, navLinkWeekClick ? this._onNavLinkWeekClick.bind(this) : null);
+        }
+    }
+
     _onMoreLinkClick(e) {
         if (this.listeners[MORE_LINK_CLICK]) {
             this.listeners[MORE_LINK_CLICK].forEach((listener) => listener(e));
@@ -456,6 +479,18 @@ class Options {
             this.listeners[NOW_INDICATOR_CLASS_NAMES].forEach((listener) => listener(e));
         }
         return [];
+    }
+
+    _onNavLinkDayClick(e) {
+        if (this.listeners[NAV_LINK_DAY_CLICK]) {
+            this.listeners[NAV_LINK_DAY_CLICK].forEach((listener) => listener(e));
+        }
+    }
+
+    _onNavLinkWeekClick(e) {
+        if (this.listeners[NAV_LINK_WEEK_CLICK]) {
+            this.listeners[NAV_LINK_WEEK_CLICK].forEach((listener) => listener(e));
+        }
     }
 
     /**

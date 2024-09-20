@@ -457,6 +457,68 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
     }
 
     /**
+     * Adds day navigation link click listener. The event is fired when the user clicks on the day heading navigation
+     * link. The navigation link can be activated by the {@link FullCalendar#setNavigationLinksEnabled(boolean)}
+     * property.
+     * <p>
+     * For instance:
+     * <pre>{@code
+     * @Subscribe("calendar")
+     * public void onCalendarDayNavigationLinkClick(final DayNavigationLinkClickEvent event) {
+     *     event.getSource().setCalendarDisplayMode(CalendarDisplayModes.TIME_GRID_DAY);
+     *     event.getSource().navigateToDate(event.getDate());
+     * }
+     * }</pre>
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
+    public Registration addDayNavigationLinkClickListener(ComponentEventListener<DayNavigationLinkClickEvent> listener) {
+        Preconditions.checkNotNullArgument(listener);
+
+        getOptions().getNavLinkDayClick().setValue(true);
+
+        Registration registration = getEventBus().addListener(DayNavigationLinkClickEvent.class, listener);
+
+        return () -> {
+            registration.remove();
+            if (!getEventBus().hasListener(DayNavigationLinkClickEvent.class)) {
+                getOptions().getNavLinkDayClick().setValue(false);
+            }
+        };
+    }
+
+    /**
+     * Adds week navigation link click listener. The event is fired when the user clicks the week number navigation
+     * link. The navigation link can be activated by the {@link FullCalendar#setNavigationLinksEnabled(boolean)}
+     * property.
+     * <p>
+     * For instance:
+     * <pre>{@code
+     * @Subscribe("calendar")
+     * public void onCalendarWeekNavigationLinkClick(final WeekNavigationLinkClickEvent event) {
+     *     event.getSource().setCalendarDisplayMode(CalendarDisplayModes.TIME_GRID_WEEK);
+     *     event.getSource().navigateToDate(event.getDate());
+     * }
+     * }</pre>
+     * @param listener listener to add
+     * @return a registration object for removing an event listener added to a component
+     */
+    public Registration addWeekNavigationLinkClickListener(ComponentEventListener<WeekNavigationLinkClickEvent> listener) {
+        Preconditions.checkNotNullArgument(listener);
+
+        getOptions().getNavLinkWeekClick().setValue(true);
+
+        Registration registration = getEventBus().addListener(WeekNavigationLinkClickEvent.class, listener);
+
+        return () -> {
+            registration.remove();
+            if (!getEventBus().hasListener(WeekNavigationLinkClickEvent.class)) {
+                getOptions().getNavLinkWeekClick().setValue(false);
+            }
+        };
+    }
+
+    /**
      * Adds a "more" link click listener. When listener is added, the {@link #setMoreLinkCalendarDisplayMode(CalendarDisplayMode)}
      * value will be ignored.
      *
@@ -1048,6 +1110,18 @@ public class FullCalendar extends JmixFullCalendar implements ApplicationContext
                         this, event.isFromClient(),
                         createDisplayModeInfo(clientEvent.getView()),
                         mouseEventDetails));
+    }
+
+    @Override
+    protected void onDayNavigationLinkClick(DayNavigationLinkClickDomEvent event) {
+        getEventBus().fireEvent(new DayNavigationLinkClickEvent(this, event.isFromClient(),
+                parseIsoDate(event.getDate())));
+    }
+
+    @Override
+    protected void onWeekNavigationLinkClick(WeekNavigationLinkClickDomEvent event) {
+        getEventBus().fireEvent(new WeekNavigationLinkClickEvent(this, event.isFromClient(),
+                parseIsoDate(event.getDate())));
     }
 
     @Override

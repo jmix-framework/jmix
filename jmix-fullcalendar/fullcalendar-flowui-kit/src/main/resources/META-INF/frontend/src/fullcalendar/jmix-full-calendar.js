@@ -21,7 +21,7 @@ import Options, {
     MORE_LINK_CLICK,
     DAY_HEADER_CLASS_NAMES,
     DAY_CELL_CLASS_NAMES,
-    SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES
+    SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES, NAV_LINK_DAY_CLICK, NAV_LINK_WEEK_CLICK
 } from './Options.js';
 
 const FC_NON_BUSINESS_CLASS_NAME = 'fc-non-business';
@@ -92,6 +92,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         this.jmixOptions.addListener(DAY_CELL_CLASS_NAMES, this._onDayCellClassNames.bind(this));
         this.jmixOptions.addListener(SLOT_LABEL_CLASS_NAMES, this._onSlotLabelClassNames.bind(this));
         this.jmixOptions.addListener(NOW_INDICATOR_CLASS_NAMES, this._onNowIndicatorClassNames.bind(this));
+        this.jmixOptions.addListener(NAV_LINK_DAY_CLICK, this._onNavLinkDayClick.bind(this));
+        this.jmixOptions.addListener(NAV_LINK_WEEK_CLICK, this._onNavLinkWeekClick.bind(this));
 
         // First call of `_onI18nChange` was ignored since jmixOptions was undefined.
         // So call it again to update locale.
@@ -588,6 +590,26 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             this.contextMenuDetails['mouseDetails'] = utils.createMouseDetails(jsEvent);
             this.contextMenuDetails['event'] = utils.eventToServerData(e.event);
         });
+    }
+
+    _onNavLinkDayClick(date) {
+        this.dispatchEvent(new CustomEvent('jmix-day-link-click', {
+            detail: {
+                context: {
+                    date: this.formatDate(date, true) // omit time
+                }
+            }
+        }));
+    }
+
+    _onNavLinkWeekClick(date) {
+        this.dispatchEvent(new CustomEvent('jmix-week-link-click', {
+            detail: {
+                context: {
+                    date: this.formatDate(date, true) // omit time
+                }
+            }
+        }));
     }
 
     _onI18nChange(i18n) {

@@ -72,6 +72,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected Registration dateClickDomRegistration;
     protected Registration selectDomRegistration;
     protected Registration unselectDomRegistration;
+    protected Registration dayNavigationLinkClickDomRegistration;
+    protected Registration weekNavigationLinkClickDomRegistration;
 
     protected boolean initialized = false;
 
@@ -83,6 +85,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         attachCalendarOptionChangeListener();
         attachDatesSetDomEventListener();
         attachMoreLinkClickDomEventListener();
+        attachDayNavigationLinkClickDomEventListener();
+        attachWeekNavigationLinkClickDomEventListener();
     }
 
     /**
@@ -2192,6 +2196,20 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         }
     }
 
+    protected void attachDayNavigationLinkClickDomEventListener() {
+        if (dayNavigationLinkClickDomRegistration == null) {
+            dayNavigationLinkClickDomRegistration =
+                    addListener(DayNavigationLinkClickDomEvent.class, this::onDayNavigationLinkClick);
+        }
+    }
+
+    protected void attachWeekNavigationLinkClickDomEventListener() {
+        if (weekNavigationLinkClickDomRegistration == null) {
+            weekNavigationLinkClickDomRegistration =
+                    addListener(WeekNavigationLinkClickDomEvent.class, this::onWeekNavigationLinkClick);
+        }
+    }
+
     protected void onEventClick(EventClickDomEvent event) {
         // Stub, is used in inheritors
     }
@@ -2229,6 +2247,14 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected void onUnselect(UnselectDomEvent event) {
+        // Stub, is used in inheritors
+    }
+
+    protected void onDayNavigationLinkClick(DayNavigationLinkClickDomEvent event) {
+        // Stub, is used in inheritors
+    }
+
+    protected void onWeekNavigationLinkClick(WeekNavigationLinkClickDomEvent event) {
         // Stub, is used in inheritors
     }
 

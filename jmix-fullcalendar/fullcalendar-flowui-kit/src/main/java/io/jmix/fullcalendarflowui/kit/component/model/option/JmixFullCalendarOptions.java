@@ -88,6 +88,8 @@ public class JmixFullCalendarOptions {
         optionsMap.put(MORE_LINK_CLASS_NAMES, new MoreLinkClassNames());
         optionsMap.put(MORE_LINK_CLICK, new MoreLinkClick());
         optionsMap.put(NAV_LINKS, new SimpleOption<>(NAV_LINKS, false));
+        optionsMap.put(NAV_LINK_DAY_CLICK, new SimpleOption<>(NAV_LINK_DAY_CLICK, false));
+        optionsMap.put(NAV_LINK_WEEK_CLICK, new SimpleOption<>(NAV_LINK_WEEK_CLICK, false));
         optionsMap.put(NEXT_DAY_THRESHOLD, new SimpleOption<>(NEXT_DAY_THRESHOLD, CalendarDuration.ofHours(0)));
         optionsMap.put(NOW_INDICATOR_CLASS_NAMES, new SimpleOption<>(NOW_INDICATOR_CLASS_NAMES, false));
         optionsMap.put(PROGRESSIVE_EVENT_RENDERING, new SimpleOption<>(PROGRESSIVE_EVENT_RENDERING, false));
@@ -155,6 +157,14 @@ public class JmixFullCalendarOptions {
 
     public SimpleOption<Boolean> getNavLinks() {
         return get(NAV_LINKS);
+    }
+
+    public SimpleOption<Boolean> getNavLinkDayClick() {
+        return get(NAV_LINK_DAY_CLICK);
+    }
+
+    public SimpleOption<Boolean> getNavLinkWeekClick() {
+        return get(NAV_LINK_WEEK_CLICK);
     }
 
     public DayMaxEventRows getDayMaxEventRows() {

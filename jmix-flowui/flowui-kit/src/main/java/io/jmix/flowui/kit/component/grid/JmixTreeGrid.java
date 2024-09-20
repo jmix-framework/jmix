@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
@@ -60,6 +61,11 @@ public class JmixTreeGrid<T> extends TreeGrid<T> implements SelectionChangeNotif
     @Override
     public Object getSubPart(String name) {
         return getColumnByKey(name);
+    }
+
+    @Override
+    public HeaderRow getDefaultHeaderRow() {
+        return super.getDefaultHeaderRow();
     }
 
     public GridActionsSupport<JmixTreeGrid<T>, T> getActionsSupport() {

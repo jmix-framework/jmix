@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.function.SerializableFunction;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
@@ -67,6 +68,14 @@ public class JmixGrid<T> extends Grid<T> implements SelectionChangeNotifier<Grid
     @StudioIgnore
     public void setClassNameGenerator(SerializableFunction<T, String> classNameGenerator) {
         super.setClassNameGenerator(classNameGenerator);
+    }
+
+    /**
+     * @return a default header row
+     */
+    @Override
+    public HeaderRow getDefaultHeaderRow() {
+        return super.getDefaultHeaderRow();
     }
 
     public GridActionsSupport<JmixGrid<T>, T> getActionsSupport() {

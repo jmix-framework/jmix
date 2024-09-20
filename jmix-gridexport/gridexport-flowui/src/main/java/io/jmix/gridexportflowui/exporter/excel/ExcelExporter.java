@@ -39,6 +39,7 @@ import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.data.grid.ContainerTreeDataGridItems;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.Downloader;
+import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.action.ExportAction;
@@ -283,12 +284,16 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
     }
 
     protected String getColumnHeaderText(DataGrid.Column<?> column) {
-        String headerText = column.getHeaderText();
-        if (!Strings.isNullOrEmpty(headerText) && !isHeaderRowAppended(column)) {
+        String headerText = !isHeaderRowAppended(column)
+                ? column.getHeaderText()
+                : getDefaultHeaderText(column);
+
+        if (!Strings.isNullOrEmpty(headerText)) {
             return headerText;
         }
 
-        com.vaadin.flow.component.Component headerComponent = getTopLevelHeaderComponent(column);
+        com.vaadin.flow.component.Component headerComponent = getDefaultHeaderComponent(column);
+
         if (headerComponent instanceof HasText hasText) {
             headerText = hasText.getText();
         } else if (headerComponent instanceof DataGridHeaderFilter dataGridHeaderFilter
@@ -303,11 +308,19 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
     }
 
     @Nullable
-    protected com.vaadin.flow.component.Component getTopLevelHeaderComponent(DataGrid.Column<?> column) {
-        List<HeaderRow> headerRows = column.getGrid().getHeaderRows();
-        return headerRows.isEmpty()
+    protected String getDefaultHeaderText(Grid.Column<?> column) {
+        HeaderRow defaultHeaderRow = ((JmixGrid<?>) column.getGrid()).getDefaultHeaderRow();
+        return defaultHeaderRow == null
                 ? null
-                : headerRows.get(0).getCell(column).getComponent();
+                : defaultHeaderRow.getCell(column).getText();
+    }
+
+    @Nullable
+    protected com.vaadin.flow.component.Component getDefaultHeaderComponent(DataGrid.Column<?> column) {
+        HeaderRow defaultHeaderRow = ((JmixGrid<?>) column.getGrid()).getDefaultHeaderRow();
+        return defaultHeaderRow == null
+                ? null
+                : defaultHeaderRow.getCell(column).getComponent();
     }
 
     protected int createDataGridHierarchicalRow(TreeGrid<?> dataGrid, ContainerTreeDataGridItems<Object> treeDataGridItems,

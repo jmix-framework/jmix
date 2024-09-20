@@ -25,11 +25,10 @@ import io.jmix.pivottableflowui.component.PivotTable;
 
 @Route(value = "PivotTableLoaderTestView")
 @ViewController
-@ViewDescriptor("pivot-table-options-test-view.xml")
-public class PivotTableOptionsTestView extends StandardView {
+@ViewDescriptor("pivot-table-xml-load-test-view.xml")
+public class PivotTableXmlLoadTestView extends StandardView {
 
     @ViewComponent
-    public PivotTable pivotTable;
-
+    public PivotTable<?> temperatureDataPivotTable;
 }
 

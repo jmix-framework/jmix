@@ -44,7 +44,7 @@ import java.util.function.Consumer;
  * datasets in a flexible and interactive manner.
  * @see <a href="https://github.com/nicolaskruchten/pivottable/wiki">Pivot table documentation</a>
  */
-public class PivotTable extends JmixPivotTable implements ApplicationContextAware, InitializingBean {
+public class PivotTable<T> extends JmixPivotTable<T> implements ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
     protected Messages messages;
@@ -63,8 +63,10 @@ public class PivotTable extends JmixPivotTable implements ApplicationContextAwar
         initLocalization();
     }
 
-    public void getPivotData(Consumer<PivotData> consumer) {
-        getElement().executeJs("return this._getTableElementData();")
+    public void requestPivotData(String dateTimeParseFormat, String dateParseFormat, String timeParseFormat,
+                                 Consumer<PivotData> consumer) {
+        String jsFunctionParams = dateTimeParseFormat + ", " + dateParseFormat + ", " + timeParseFormat;
+        getElement().executeJs("return this._getTableElementData(" + jsFunctionParams + ");")
                 .then((SerializableConsumer<JsonValue>) jsonValue -> {
                     PivotData pivotData = (PivotData) serializer.deserialize((JsonObject) jsonValue, PivotData.class);
                     consumer.accept(pivotData);

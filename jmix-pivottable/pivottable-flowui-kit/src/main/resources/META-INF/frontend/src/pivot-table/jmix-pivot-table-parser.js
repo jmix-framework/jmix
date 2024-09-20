@@ -161,7 +161,7 @@ export class PivotTableParser {
         return modelCell.value;
     }
 
-    static parseToJson(pivotElement, pivotMessages) {
+    static parseToJson(pivotElement, pivotMessages, dateTimeParseFormat, dateParseFormat, timeParseFormat) {
         let parser = new PivotTableParser(pivotMessages);
 
         var resultObject = {};

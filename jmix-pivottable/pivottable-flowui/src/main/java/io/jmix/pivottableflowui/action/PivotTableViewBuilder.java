@@ -29,9 +29,7 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.pivottableflowui.component.PivotTable;
-import io.jmix.pivottableflowui.data.item.EntityDataItem;
-import io.jmix.pivottableflowui.export.view.PivotTableView;
-import io.jmix.pivottableflowui.kit.data.DataItem;
+import io.jmix.pivottableflowui.view.PivotTableView;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +62,7 @@ public class PivotTableViewBuilder {
     protected List<String> excludedProperties;
     protected List<String> additionalProperties;
 
-    protected List<DataItem> dataItems;
+    protected List<Object> items;
     protected String nativeJson;
 
     protected ListDataComponent<?> target;
@@ -209,10 +207,8 @@ public class PivotTableViewBuilder {
      * @return current instance
      */
     public PivotTableViewBuilder withItems(Collection<?> items) {
-        dataItems = new ArrayList<>(items.size());
-        for (Object entity : items) {
-            dataItems.add(new EntityDataItem(entity));
-        }
+        this.items = new ArrayList<>(items);
+
         return this;
     }
 
@@ -225,8 +221,8 @@ public class PivotTableViewBuilder {
                     String.format("Component '%s' is null or not added to a view", ((Grid<?>) target).getId()));
         }
 
-        if (dataItems == null) {
-            dataItems = Collections.emptyList();
+        if (items == null) {
+            items = Collections.emptyList();
         }
 
         Map<String, String> properties = getPropertiesWithLocale();
@@ -237,7 +233,7 @@ public class PivotTableViewBuilder {
                     PivotTableView pivotTableView = event.getView();
                     pivotTableView.setProperties(properties);
                     pivotTableView.setNativeJson(nativeJson);
-                    pivotTableView.setDataItems(dataItems);
+                    pivotTableView.setDataItems(items);
                 })
                 .navigate();
     }

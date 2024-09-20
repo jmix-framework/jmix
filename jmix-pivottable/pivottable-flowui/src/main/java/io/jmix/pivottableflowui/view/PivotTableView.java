@@ -14,37 +14,41 @@
  * limitations under the License.
  */
 
-package io.jmix.pivottableflowui.export.view;
+package io.jmix.pivottableflowui.view;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.router.Route;
+import io.jmix.core.Messages;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import io.jmix.pivottableflowui.component.PivotTable;
+import io.jmix.pivottableflowui.data.ListPivotTableItems;
 import io.jmix.pivottableflowui.export.PivotTableExcelExporter;
 import io.jmix.pivottableflowui.export.PivotTableExporter;
 import io.jmix.pivottableflowui.export.PivotTableExporterImpl;
-import io.jmix.pivottableflowui.kit.data.DataItem;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
+import org.hibernate.validator.constraints.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
 
 @Route(value = "pivot-table-view")
-@ViewController("PivotTableView")
+@ViewController("pivot-table-view")
 @ViewDescriptor("pivot-table-view.xml")
 public class PivotTableView extends StandardView {
 
     @ViewComponent
-    protected PivotTable pivotTable;
+    protected PivotTable<?> pivotTable;
     @ViewComponent
     protected JmixButton exportExcel;
+    @Autowired
+    protected Downloader downloader;
+    @Autowired
+    protected Messages messages;
 
     protected PivotTableExporter pivotTableExporter;
-    @Autowired
-    private Downloader downloader;
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
@@ -58,8 +62,8 @@ public class PivotTableView extends StandardView {
         pivotTable.addColumns(properties.values().toArray(new String[0]));
     }
 
-    public void setDataItems(List<DataItem> dataItems) {
-        pivotTable.setData(dataItems.toArray(new DataItem[0]));
+    public void setDataItems(List<Object> items) {
+        pivotTable.setItems(new ListPivotTableItems("id", UUID.class, items));
     }
 
     public void setNativeJson(String nativeJson) {
@@ -68,12 +72,12 @@ public class PivotTableView extends StandardView {
 
     @Subscribe(id = "exportExcel", subject = "clickListener")
     public void exportExcel(final ClickEvent<JmixButton> event) {
-        pivotTableExporter.setFileName("export.xls");
+        pivotTableExporter.setFileName(messages.getMessage("pivotTableView.fileName"));
         pivotTableExporter.exportTableToXls(downloader);
     }
 
     @Subscribe(id = "pivotTable")
     protected void onPivotTableRefreshEvent(PivotTableRefreshEvent event) {
-        exportExcel.setEnabled(pivotTableExporter.isRendererSupported(event.getRenderer()));
+        exportExcel.setEnabled(pivotTableExporter.isRendererSupported(event.getDetail().getRenderer()));
     }
 }

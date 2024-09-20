@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.pivottableflowui.kit.event.js;
+package io.jmix.pivottableflowui.kit.event;
 
 import io.jmix.pivottableflowui.kit.component.model.AggregationMode;
 import io.jmix.pivottableflowui.kit.component.model.Order;
@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Contains deserialized json data from {@link PivotTableJsRefreshEvent}
+ * Contains deserialized json data from {@link PivotTableRefreshEvent}
  */
-public class PivotTableRefreshEventParams {
+public class PivotTableRefreshEventDetail {
 
     private List<String> rows;
     private List<String> columns;

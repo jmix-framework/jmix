@@ -30,7 +30,7 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.pivottableflowui.component.PivotTable;
-import io.jmix.pivottableflowui.data.PivotTableContainerDataset;
+import io.jmix.pivottableflowui.data.ContainerPivotTableItems;
 import io.jmix.pivottableflowui.kit.component.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -39,7 +39,7 @@ import org.dom4j.Element;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
+public class PivotTableLoader extends AbstractComponentLoader<PivotTable<?>> {
 
     protected AccessManager accessManager;
     protected MessageTools messageTools;
@@ -78,17 +78,18 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
     }
 
     @Override
-    protected PivotTable createComponent() {
+    protected PivotTable<?> createComponent() {
         return factory.create(PivotTable.class);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected void loadDataContainer(Element element) {
         loadString(element, "dataContainer")
                 .ifPresent(dataContainerId -> {
                     InstanceContainer<?> container = context.getDataHolder().getContainer(dataContainerId);
 
                     if (container instanceof CollectionContainer<?> collectionContainer) {
-                        resultComponent.setDataProvider(new PivotTableContainerDataset(collectionContainer));
+                        resultComponent.setItems(new ContainerPivotTableItems(collectionContainer, UUID.class));
                     } else {
                         throw new GuiDevelopmentException("Not a CollectionContainer: " + container, context);
                     }
@@ -145,8 +146,8 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
             for (Element propertyElement : propertiesElement.elements("property")) {
                 loadString(propertyElement, "name").ifPresent(name -> {
                     if (!Strings.isNullOrEmpty(name)) {
-                        MetaClass metaClass = resultComponent.getDataProvider() instanceof EntityDataUnit ?
-                                ((EntityDataUnit) resultComponent.getDataProvider()).getEntityMetaClass() : null;
+                        MetaClass metaClass = resultComponent.getItems() instanceof EntityDataUnit ?
+                                ((EntityDataUnit) resultComponent.getItems()).getEntityMetaClass() : null;
                         checkValidProperty(metaClass, name);
                         if (metaClass == null || hasPropertyPermission(metaClass, name)) {
                             resultComponent.addProperty(name, loadResourceString(propertyElement, "localizedName",

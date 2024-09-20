@@ -136,9 +136,9 @@ public interface StudioPivotTableElements {
     Row row();
 
     @StudioElement(
-            name = "Col",
-            classFqn = "io.jmix.pivottableflowui.kit.meta.Col",
-            xmlElement = "col",
+            name = "Column",
+            classFqn = "io.jmix.pivottableflowui.kit.meta.Column",
+            xmlElement = "column",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg",
@@ -146,7 +146,7 @@ public interface StudioPivotTableElements {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING)
             }
     )
-    Column col();
+    Column column();
 
     @StudioElement(
             name = "Property",

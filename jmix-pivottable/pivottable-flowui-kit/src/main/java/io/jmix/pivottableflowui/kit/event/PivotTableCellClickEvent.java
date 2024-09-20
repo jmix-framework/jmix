@@ -17,51 +17,52 @@
 package io.jmix.pivottableflowui.kit.event;
 
 import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.DomEvent;
+import com.vaadin.flow.component.EventData;
+import elemental.json.JsonArray;
+import elemental.json.JsonObject;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
-import io.jmix.pivottableflowui.kit.data.DataItem;
+import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer;
 
-import javax.annotation.Nullable;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Describes PivotTable cell click event.
+ * Pivot table cell click event sent from the client.
  */
+@DomEvent(PivotTableCellClickEvent.EVENT_NAME)
 public class PivotTableCellClickEvent extends ComponentEvent<JmixPivotTable> {
 
-    protected Double value;
-    protected Map<String, String> filters;
-    protected List<DataItem> usedDataItems;
+    public static final String EVENT_NAME = "jmix-pivottable:cellclick";
 
-    public PivotTableCellClickEvent(JmixPivotTable pivotTable, Double value, Map<String, String> filters,
-                                    List<DataItem> usedDataItems) {
-        super(pivotTable, false);
+    protected JsonObject detailJson;
+    protected PivotTableCellClickEventDetail detail;
 
-        this.value = value;
-        this.filters = filters;
-        this.usedDataItems = usedDataItems;
+    public PivotTableCellClickEvent(JmixPivotTable pivotTable, boolean fromClient,
+                                    @EventData("event.detail") JsonObject detailJson) {
+        super(pivotTable, fromClient);
+        this.detailJson = detailJson;
     }
 
-    /**
-     * @return value of the clicked cell
-     */
-    @Nullable
-    public Double getValue() {
-        return value;
-    }
+    public PivotTableCellClickEventDetail getDetail() {
+        if (detail == null) {
+            JmixPivotTableSerializer serializer = new JmixPivotTableSerializer();
+            detail = (PivotTableCellClickEventDetail) serializer.deserialize(
+                    detailJson, PivotTableCellClickEventDetail.class);
 
-    /**
-     * @return a map in which keys are localized property names used in columns or rows
-     * and values are localized property values
-     */
-    public Map<String, String> getFilters() {
-        return filters;
-    }
-
-    /**
-     * @return a list of {@link DataItem} used in the clicked cell value generation
-     */
-    public List<DataItem> getUsedDataItems() {
-        return usedDataItems;
+            List<Object> clickedItems = new LinkedList<>();
+            JsonArray dataItemsKeys = detailJson.getArray("itemsKeys");
+            if (dataItemsKeys != null) {
+                for (int i = 0; i < dataItemsKeys.length(); i++) {
+                    String key = dataItemsKeys.get(i).asString();
+                    Object item = getSource().getItems().getItem(key);
+                    if (item != null) {
+                        clickedItems.add(item);
+                    }
+                }
+            }
+            detail.setItems(clickedItems);
+        }
+        return detail;
     }
 }

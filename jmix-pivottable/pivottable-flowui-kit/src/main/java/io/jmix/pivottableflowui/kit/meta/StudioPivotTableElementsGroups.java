@@ -83,15 +83,15 @@ public interface StudioPivotTableElementsGroups {
     void rows();
 
     @StudioElementsGroup(
-            name = "Cols",
-            elementClassFqn = "io.jmix.pivottableflowui.kit.meta.Col",
+            name = "Columns",
+            elementClassFqn = "io.jmix.pivottableflowui.kit.meta.Column",
             target = {"io.jmix.pivottableflowui.component.PivotTable"},
-            xmlElement = "cols",
+            xmlElement = "columns",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/unknownComponent.svg"
     )
-    void cols();
+    void columns();
 
     @StudioElementsGroup(
             name = "Properties",

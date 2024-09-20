@@ -25,7 +25,6 @@ import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.pivottableflowui.kit.component.model.*;
-import io.jmix.pivottableflowui.kit.data.DataItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

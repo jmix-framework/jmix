@@ -16,7 +16,7 @@
   -->
 <view xmlns="http://jmix.io/schema/flowui/view"
       xmlns:pivot="http://jmix.io/schema/pvttbl/ui"
-      title="msg://pivotTableView.title">
+      title="msg://title">
     <layout>
         <button id="exportExcel" text="msg://exportExcel" icon="TABLE"/>
         <pivot:pivotTable id="pivotTable" showUI="true" width="100%"/>

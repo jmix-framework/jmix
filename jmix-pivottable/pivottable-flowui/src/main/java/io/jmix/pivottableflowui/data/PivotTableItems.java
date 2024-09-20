@@ -14,7 +14,18 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.pivottableflowui.data.item;
+package io.jmix.pivottableflowui.data;
 
-import org.springframework.lang.NonNullApi;
+import io.jmix.flowui.data.DataUnit;
+import io.jmix.flowui.data.HasType;
+import io.jmix.pivottableflowui.component.PivotTable;
+import io.jmix.pivottableflowui.kit.data.JmixPivotTableItems;
+
+/**
+ * Base interface for {@link PivotTable} component items element implementation.
+ *
+ * @param <T> type of items contained
+ */
+public interface PivotTableItems<T> extends JmixPivotTableItems<T>, DataUnit, HasType<T> {
+}
+

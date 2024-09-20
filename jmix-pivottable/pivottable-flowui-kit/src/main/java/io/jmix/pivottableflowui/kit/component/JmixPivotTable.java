@@ -20,11 +20,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.shared.SlotUtils;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.DataProviderListener;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
@@ -33,28 +28,32 @@ import elemental.json.JsonValue;
 import elemental.json.impl.JreJsonFactory;
 import io.jmix.pivottableflowui.kit.component.model.*;
 import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer;
-import io.jmix.pivottableflowui.kit.data.DataItem;
-import io.jmix.pivottableflowui.kit.data.PivotTableListDataSet;
+import io.jmix.pivottableflowui.kit.data.JmixEmptyPivotTableItems;
+import io.jmix.pivottableflowui.kit.data.JmixPivotTableItems;
 import io.jmix.pivottableflowui.kit.event.PivotTableCellClickEvent;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
-import io.jmix.pivottableflowui.kit.event.js.PivotTableCellClickEventParams;
-import io.jmix.pivottableflowui.kit.event.js.PivotTableJsCellClickEvent;
-import io.jmix.pivottableflowui.kit.event.js.PivotTableJsRefreshEvent;
-import io.jmix.pivottableflowui.kit.event.js.PivotTableRefreshEventParams;
+import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEventDetail;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Base component for implementing pivot table.
+ *
+ * @param <T> type of items contained
+ */
 @Tag("jmix-pivot-table")
 @JsModule("./src/pivot-table/jmix-pivot-table.js")
-public class JmixPivotTable extends Component implements HasEnabled, HasSize {
+public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize {
 
     protected static final String DATA_ITEM_ID_PROPERTY_NAME = "$k";
 
-    protected DataProvider<DataItem, ?> dataProvider;
-    protected Registration dataProviderItemSetChangeRegistration;
-    protected Registration cellClickJsRegistration;
+    protected JmixPivotTableItems<T> jmixPivotTableItems = JmixEmptyPivotTableItems.getInstance();
+    protected Registration jmixPivotTableItemsChangeRegistration;
 
     protected PivotTableOptions options;
     protected JmixPivotTableSerializer serializer;
@@ -65,47 +64,12 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
     protected StateTree.ExecutionRegistration synchronizeOptionsExecution;
     protected StateTree.ExecutionRegistration synchronizeItemsExecution;
 
-    protected Map<String, Registration> eventRegistrations = new HashMap<>();
-
     public JmixPivotTable() {
         initComponent();
     }
 
-    public DataProvider<DataItem, ?> getDataProvider() {
-        return dataProvider;
-    }
-
-    /**
-     * Sets a data provider to the pivot table or replaces existing one.
-     * Using the {@link DataProvider}, the component can easily retrieve data from any data source.
-     *
-     * @param dataProvider data source to set
-     */
-    public void setDataProvider(DataProvider<DataItem, ?> dataProvider) {
-        if (Objects.equals(dataProvider, this.dataProvider)) {
-            return;
-        }
-
-        this.dataProvider = dataProvider;
-        onDataProviderChange();
-    }
-
-    /**
-     * Init component data with array of {@link DataItem}
-     * @param dataItems items array
-     */
-    public void setData(DataItem... dataItems) {
-        if (dataItems != null) {
-            setDataProvider(new PivotTableListDataSet<>(Arrays.asList(dataItems)));
-        }
-    }
-
-    /**
-     * Init component data with the list of {@link DataItem}
-     * @param dataItems
-     */
-    public void setItems(List<DataItem> dataItems) {
-        setDataProvider(new PivotTableListDataSet<>(dataItems));
+    public JmixPivotTableItems<T> getItems() {
+        return jmixPivotTableItems;
     }
 
     /**
@@ -126,18 +90,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
      * @return subscription
      */
     public Registration addCellClickListener(ComponentEventListener<PivotTableCellClickEvent> listener) {
-        if (cellClickJsRegistration == null) {
-            cellClickJsRegistration = getEventBus().addListener(PivotTableJsCellClickEvent.class, this::onCellClick);
-        }
-
-        Registration registration = getEventBus().addListener(PivotTableCellClickEvent.class, listener);
-        return () -> {
-            registration.remove();
-            if (!getEventBus().hasListener(PivotTableCellClickEvent.class)) {
-                cellClickJsRegistration.remove();
-                cellClickJsRegistration = null;
-            }
-        };
+        return getEventBus().addListener(PivotTableCellClickEvent.class, listener);
     }
 
     /**
@@ -791,17 +744,27 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         return options.getNativeJson();
     }
 
-    protected void onDataProviderChange() {
-        if (dataProviderItemSetChangeRegistration != null) {
-            dataProviderItemSetChangeRegistration.remove();
-            dataProviderItemSetChangeRegistration = null;
+    /**
+     * Sets the {@link JmixPivotTableItems} instance to use as data provider.
+     *
+     * @param items the {@link JmixPivotTableItems} instance to use
+     */
+    public void setItems(JmixPivotTableItems<T> items) {
+        if (this.jmixPivotTableItems != JmixEmptyPivotTableItems.getInstance()) {
+            if (jmixPivotTableItemsChangeRegistration != null) {
+                jmixPivotTableItemsChangeRegistration.remove();
+                jmixPivotTableItemsChangeRegistration = null;
+            }
         }
-        if (dataProvider == null) {
-            return;
+
+        if (items != null) {
+            this.jmixPivotTableItems = items;
+            jmixPivotTableItemsChangeRegistration = items.addItemsChangeListener(e -> requestUpdateItems());
+        } else {
+            this.jmixPivotTableItems = JmixEmptyPivotTableItems.getInstance();
         }
+
         requestUpdateItems();
-        dataProviderItemSetChangeRegistration = dataProvider.addDataProviderListener(
-                (DataProviderListener<DataItem>) event -> requestUpdateItems());
     }
 
     protected void initComponent() {
@@ -809,14 +772,6 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
         serializer = createSerializer();
 
         initComponentListeners();
-
-        SlotUtils.addToSlot(this, "pivot-table-slot", createPivotTablePlaceHolder());
-    }
-
-    protected Div createPivotTablePlaceHolder() {
-        Div div = new Div();
-        div.addClassName("pivot-table-output");
-        return div;
     }
 
     protected PivotTableOptions createOptions() {
@@ -830,79 +785,43 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
     protected void initComponentListeners() {
         options.setPivotTableObjectChangeListener(this::onOptionsChange);
 
-        Registration eventRegistration = getEventBus().addListener(PivotTableJsRefreshEvent.class, this::onRefresh);
-        eventRegistrations.put(PivotTableJsRefreshEvent.EVENT_NAME, eventRegistration);
+        getEventBus().addListener(PivotTableRefreshEvent.class, this::onRefresh);
     }
 
     protected void onOptionsChange(PivotTableOptionsObservable.ObjectChangeEvent event) {
         requestUpdateOptions();
     }
 
-    protected void onCellClick(PivotTableJsCellClickEvent event) {
-        PivotTableCellClickEventParams cellClickParams =
-                (PivotTableCellClickEventParams) serializer.deserialize(
-                        event.getParams(), PivotTableCellClickEventParams.class);
-
-        List<DataItem> dataItems = getDataProvider().fetch(new Query<>()).toList();
-        List<DataItem> clickedDataItems = cellClickParams.getDataItemKeys() != null
-                ? cellClickParams.getDataItemKeys()
-                        .stream()
-                        .map(key -> dataItems.stream()
-                                .filter(i -> i.getIdAsString().equals(key))
-                                .findFirst()
-                                .orElse(null))
-                        .toList()
-                : null;
-
-        fireEvent(new PivotTableCellClickEvent(this, cellClickParams.getValue(),
-                cellClickParams.getFilters(), clickedDataItems));
+    protected void onRefresh(PivotTableRefreshEvent event) {
+        updateOptionsAfterRefresh(event.getDetail());
     }
 
-    protected void onRefresh(PivotTableJsRefreshEvent event) {
-        PivotTableRefreshEventParams refreshParams = (PivotTableRefreshEventParams) serializer.deserialize(
-                event.getParams(), PivotTableRefreshEventParams.class);
-
-        updateOptionsAfterRefresh(refreshParams);
-        sendRefreshEvent(refreshParams);
-    }
-
-    private void sendRefreshEvent(PivotTableRefreshEventParams refreshParams) {
-        PivotTableRefreshEvent refreshEvent = new PivotTableRefreshEvent(this,
-                refreshParams.getRows(), refreshParams.getColumns(),
-                refreshParams.getRenderer(),
-                refreshParams.getAggregationMode(), refreshParams.getAggregationProperties(),
-                refreshParams.getInclusions(), refreshParams.getExclusions(),
-                refreshParams.getColumnOrder(), refreshParams.getRowOrder());
-
-        fireEvent(refreshEvent);
-    }
-
-    protected void updateOptionsAfterRefresh(PivotTableRefreshEventParams params) {
+    protected void updateOptionsAfterRefresh(PivotTableRefreshEventDetail detail) {
         options.setChangedFromClient(true);
 
-        options.setRows(params.getRows());
-        options.setColumns(params.getColumns());
+        options.setRows(detail.getRows());
+        options.setColumns(detail.getColumns());
         if (options.getRenderers() != null) {
-            options.getRenderers().setSelectedRenderer(params.getRenderer());
+            options.getRenderers().setSelectedRenderer(detail.getRenderer());
         } else {
-            options.setRenderer(params.getRenderer());
+            options.setRenderer(detail.getRenderer());
         }
         if (options.getAggregations() != null) {
-            options.getAggregations().setSelectedAggregation(params.getAggregationMode());
+            options.getAggregations().setSelectedAggregation(detail.getAggregationMode());
         } else {
 
             // If we get a refresh event, the component shows with UI.
             // So create an empty aggregation to store the aggregation mode received from the client.
             // Now it can be saved in the settings.
             Aggregation aggregation = new Aggregation();
-            aggregation.setMode(params.getAggregationMode());
+            aggregation.setMode(detail.getAggregationMode());
             options.setAggregation(aggregation);
         }
-        options.setAggregationProperties(params.getAggregationProperties());
-        options.setInclusions(params.getInclusions());
-        options.setExclusions(params.getExclusions());
-        options.setColumnOrder(params.getColumnOrder());
-        options.setRowOrder(params.getRowOrder());
+        options.setAggregationProperties(detail.getAggregationProperties());
+        options.setInclusions(detail.getInclusions());
+        options.setExclusions(detail.getExclusions());
+        options.setColumnOrder(detail.getColumnOrder());
+        options.setRowOrder(detail.getRowOrder());
 
         options.setChangedFromClient(false);
     }
@@ -918,7 +837,7 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
 
     protected void requestUpdateItems() {
         // Do not call if it's still updating
-        if (synchronizeItemsExecution != null || getDataProvider() == null) {
+        if (synchronizeItemsExecution != null || getItems().getItems().isEmpty()) {
             return;
         }
         getUI().ifPresent(ui ->
@@ -936,13 +855,15 @@ public class JmixPivotTable extends Component implements HasEnabled, HasSize {
 
     protected void performUpdateItems(ExecutionContext context) {
         JsonObject resultJson = new JreJsonFactory().createObject();
-        List<DataItem> dataItems = getDataProvider().fetch(new Query<>()).toList();
-        JsonValue dataJson = serializer.serializeItems(dataItems.stream().map(dataItem -> {
+        Collection<T> items = jmixPivotTableItems.getItems();
+        JsonValue dataJson = serializer.serializeItems(items.stream().map(item -> {
                     Map<String, Object> propertyWithValue = options.getProperties()
                             .entrySet()
                             .stream()
-                            .collect(Collectors.toMap(Map.Entry::getValue, e -> dataItem.getValue(e.getKey())));
-                    propertyWithValue.put(DATA_ITEM_ID_PROPERTY_NAME, dataItem.getId());
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getValue,
+                                    e -> jmixPivotTableItems.getItemValue(item, e.getKey())));
+                    propertyWithValue.put(DATA_ITEM_ID_PROPERTY_NAME, jmixPivotTableItems.getItemId(item));
                     return propertyWithValue;
                 })
                 .toList());

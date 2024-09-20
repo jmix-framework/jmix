@@ -48,11 +48,6 @@ public interface PivotTableExporter {
     String getFileName();
 
     /**
-     * @return JSON string which represents PivotTable with aggregated data
-     */
-    String getPivotDataJSON();
-
-    /**
      * @return serialized object from JSON which represents PivotTable with aggregated data
      */
     PivotData getPivotData();

@@ -22,6 +22,7 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.pivottableflowui.component.PivotTable;
 import io.jmix.pivottableflowui.export.model.PivotData;
 import io.jmix.pivottableflowui.kit.component.model.Renderer;
+import org.springframework.lang.Nullable;
 
 import java.util.Collections;
 import java.util.Set;
@@ -32,10 +33,14 @@ public class PivotTableExporterImpl implements PivotTableExporter {
             Renderer.TABLE, Renderer.TABLE_BAR_CHART, Renderer.HEATMAP, Renderer.ROW_HEATMAP, Renderer.COL_HEATMAP));
 
     protected PivotTableExcelExporter excelExporter;
-    protected PivotTable pivotTable;
+    protected PivotTable<?> pivotTable;
     protected String fileName;
 
-    public PivotTableExporterImpl(PivotTable pivotTable, PivotTableExcelExporter exporter) {
+    protected String dateTimeParseFormat;
+    protected String dateParseFormat;
+    protected String timeParseFormat;
+
+    public PivotTableExporterImpl(PivotTable<?> pivotTable, PivotTableExcelExporter exporter) {
         Preconditions.checkNotNullArgument(pivotTable);
         Preconditions.checkNotNullArgument(exporter);
 
@@ -50,7 +55,8 @@ public class PivotTableExporterImpl implements PivotTableExporter {
 
         setupParseFormats();
 
-        pivotTable.getPivotData(data -> excelExporter.exportPivotTable(data, fileName));
+        pivotTable.requestPivotData(dateTimeParseFormat, dateParseFormat, timeParseFormat,
+                pivotData -> excelExporter.exportPivotTable(pivotData, fileName));
     }
 
     @Override
@@ -59,7 +65,8 @@ public class PivotTableExporterImpl implements PivotTableExporter {
 
         setupParseFormats();
 
-        pivotTable.getPivotData(data -> excelExporter.exportPivotTable(data, fileName, downloader));
+        pivotTable.requestPivotData(dateTimeParseFormat, dateParseFormat, timeParseFormat,
+                pivotData -> excelExporter.exportPivotTable(pivotData, fileName, downloader));
     }
 
     @Override
@@ -73,43 +80,38 @@ public class PivotTableExporterImpl implements PivotTableExporter {
     }
 
     @Override
-    public String getPivotDataJSON() {
-        return "";//pivotTableExtension.getPivotDataJSON();
-    }
-
-    @Override
     public PivotData getPivotData() {
         return new PivotData();
     }
 
     @Override
     public String getDateTimeParseFormat() {
-        return "";//pivotTableExtension.getDateTimeParseFormat();
+        return dateTimeParseFormat;
     }
 
     @Override
     public void setDateTimeParseFormat(String dateTimeParseFormat) {
-        //pivotTableExtension.setDateTimeParseFormat(dateTimeParseFormat);
+        this.dateTimeParseFormat = dateTimeParseFormat;
     }
 
     @Override
     public String getDateParseFormat() {
-        return "";//pivotTableExtension.getDateParseFormat();
+        return dateParseFormat;
     }
 
     @Override
     public void setDateParseFormat(String dateParseFormat) {
-        //pivotTableExtension.setDateParseFormat(dateParseFormat);
+        this.dateParseFormat = dateParseFormat;
     }
 
     @Override
     public String getTimeParseFormat() {
-        return "";//pivotTableExtension.getTimeParseFormat();
+        return timeParseFormat;
     }
 
     @Override
     public void setTimeParseFormat(String timeParseFormat) {
-        //pivotTableExtension.setTimeParseFormat(timeParseFormat);
+        this.timeParseFormat = timeParseFormat;
     }
 
     @Override
@@ -129,45 +131,26 @@ public class PivotTableExporterImpl implements PivotTableExporter {
 
     protected void setupParseFormats() {
         if (excelExporter != null) {
-            excelExporter.setDateTimeParseFormat(getDateTimeParseFormat());
-            excelExporter.setDateParseFormat(getDateParseFormat());
-            excelExporter.setTimeParseFormat(getTimeParseFormat());
+            excelExporter.setDateTimeParseFormat(dateTimeParseFormat);
+            excelExporter.setDateParseFormat(dateParseFormat);
+            excelExporter.setTimeParseFormat(timeParseFormat);
         }
     }
 
     protected void checkSupportedRenderer() {
-        /*String json = pivotTable.getNativeJson();
-        Boolean editable = PivotNativeJsonUtils.isEditable(json);
-
-        if (!Boolean.FALSE.equals(editable)) {
-            Renderer currentRenderer = pivotTableExtension.getCurrentRenderer();
-
-            if (currentRenderer != null) {
-                checkRenderer(currentRenderer);
-            } else if (pivotTable.getRenderers() != null) {
-                Renderer defaultRenderer = pivotTable.getRenderers().getSelectedRenderer();
-                if (defaultRenderer != null) {
-                    checkRenderer(defaultRenderer);
-                }
-            }
+        boolean showUI = pivotTable.isEnabled() && (pivotTable.isShowUI() == null || pivotTable.isShowUI());
+        if (showUI) {
+            checkRenderer(pivotTable.getRenderers() != null ? pivotTable.getRenderers().getSelectedRenderer() : null);
+        } else {
+            checkRenderer(pivotTable.getRenderer());
         }
-
-        if ((editable == null && !pivotTable.isEditable()) || Boolean.FALSE.equals(editable)) {
-            String rendererId = PivotNativeJsonUtils.getRenderer(json);
-
-            if (rendererId != null) {
-                if (Renderer.fromId(rendererId) != null) { // check render in native json
-                    checkRenderer(Renderer.fromId(rendererId));
-                }
-            } else if (pivotTable.getRenderer() != null) { // check in server configuration
-                checkRenderer(pivotTable.getRenderer());
-            }
-        }*/
     }
 
-    protected void checkRenderer(Renderer renderer) {
+    protected void checkRenderer(@Nullable Renderer renderer) {
+        Preconditions.checkNotNullArgument(renderer, "PivotTable component doesn't have a renderer");
         if (!supportedRenderers.contains(renderer)) {
-            throw new IllegalStateException(String.format("'%s' renderer is not supported for data export", renderer.name()));
+            throw new IllegalStateException(
+                    String.format("'%s' renderer is not supported for data export", renderer.name()));
         }
     }
 }

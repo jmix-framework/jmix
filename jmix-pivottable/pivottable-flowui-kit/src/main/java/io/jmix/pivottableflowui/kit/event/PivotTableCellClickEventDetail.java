@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.pivottableflowui.kit.event.js;
+package io.jmix.pivottableflowui.kit.event;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Contains deserialized json data from {@link PivotTableJsCellClickEvent}
+ * Contains deserialized json data from {@link PivotTableCellClickEvent}
  */
-public class PivotTableCellClickEventParams {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class PivotTableCellClickEventDetail {
 
     private Double value;
     private Map<String, String> filters;
-    private List<Object> dataItemKeys;
+    private List items;
 
     public Double getValue() {
         return value;
@@ -44,11 +47,11 @@ public class PivotTableCellClickEventParams {
         this.filters = filters;
     }
 
-    public List<Object> getDataItemKeys() {
-        return dataItemKeys;
+    public List getItems() {
+        return items;
     }
 
-    public void setDataItemKeys(List<Object> dataItemKeys) {
-        this.dataItemKeys = dataItemKeys;
+    public void setItems(List items) {
+        this.items = items;
     }
 }

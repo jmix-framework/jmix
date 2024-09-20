@@ -144,8 +144,8 @@ public class PivotTableExcelExporter {
     }
 
     public void init(PivotTable pivotTable) {
-        entityMetaClass = pivotTable.getDataProvider() instanceof EntityDataUnit
-                ? ((EntityDataUnit) pivotTable.getDataProvider()).getEntityMetaClass() : null;
+        entityMetaClass = pivotTable.getItems() instanceof EntityDataUnit
+                ? ((EntityDataUnit) pivotTable.getItems()).getEntityMetaClass() : null;
     }
 
     /**
@@ -364,7 +364,7 @@ public class PivotTableExcelExporter {
         boldCellDateTimeStyle.setDataFormat(getBuiltinFormat(dateTimeFormat));
         boldCellDateTimeStyle.setFont(boldFont);
 
-        String dateFormat = messages.getMessage("pivotExcelExporter.timeFormat");
+        String dateFormat = messages.getMessage("pivotExcelExporter.dateFormat");
         cellDateStyle = wb.createCellStyle();
         cellDateStyle.setDataFormat(getBuiltinFormat(dateFormat));
         boldCellDateStyle = wb.createCellStyle();

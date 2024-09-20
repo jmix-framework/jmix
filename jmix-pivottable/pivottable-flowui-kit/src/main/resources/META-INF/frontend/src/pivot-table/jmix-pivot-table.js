@@ -46,7 +46,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     static get template() {
         return html`
             <div class="jmix-pivot-table-wrapper" style="height: inherit; width: inherit;">
-                <slot name="pivot-table-slot"></slot>
+                <slot name="pivot-table"></slot>
             </div>
 
             <style>
@@ -80,7 +80,18 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     ready() {
         super.ready();
 
+        const layout = this._layout();
+        layout.setAttribute('slot', 'pivot-table');
+        this.appendChild(layout);
+
         this.initApplicationThemeObserver();
+    }
+
+    /** @private */
+    _layout() {
+        const container = document.createElement('div');
+        container.className = 'pivot-table-output';
+        return container;
     }
 
     initApplicationThemeObserver() {
@@ -112,8 +123,9 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
         this._recreatePivot();
     }
 
-    _getTableElementData() {
-        return PivotTableParser.parseToJson(this, this._options.localizedStrings);
+    _getTableElementData(dateTimeParseFormat, dateParseFormat, timeParseFormat) {
+        return PivotTableParser.parseToJson(this, this._options.localizedStrings,
+                dateTimeParseFormat, dateParseFormat, timeParseFormat);
     }
 
     _refreshHandler(pivotState) {
@@ -156,12 +168,12 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     }
 
     _cellClickHandler(value, filters, pivotData) {
-        let dataItemKeys = [];
+        let itemsKeys = [];
         (function(pivotTable) {
             pivotData.forEachMatchingRecord(filters, function(record) {
                 let itemIndex = pivotTable._dataSet.indexOf(record);
                 if (itemIndex >= 0) {
-                    dataItemKeys.push(pivotTable.itemIds[itemIndex]);
+                    itemsKeys.push(pivotTable.itemIds[itemIndex]);
                 }
             });
         })(this);
@@ -170,7 +182,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
             detail: {
                 value: value,
                 filters: filters,
-                dataItemKeys: dataItemKeys
+                itemsKeys: itemsKeys
             }
         });
 

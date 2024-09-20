@@ -42,8 +42,9 @@ public class EventDropEvent extends AbstractEventMoveEvent {
     /**
      * @return calendar event that contains new values after the drop
      */
-    public CalendarEvent getCalendarEvent() {
-        return calendarEvent;
+    @SuppressWarnings("unchecked")
+    public <T extends CalendarEvent> T getCalendarEvent() {
+        return (T) calendarEvent;
     }
 
     /**

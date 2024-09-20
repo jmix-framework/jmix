@@ -73,6 +73,10 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     @Override
     public void setAllDay(@Nullable Boolean allDay) {
+        if (Strings.isNullOrEmpty(dataProvider.getAllDayProperty())) {
+            // Do not set value if property is not defined
+            return;
+        }
         EntityValues.setValue(entity, dataProvider.getAllDayProperty(), allDay);
     }
 
@@ -87,6 +91,10 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     @Override
     public void setStartDateTime(@Nullable LocalDateTime start) {
+        if (Strings.isNullOrEmpty(dataProvider.getStartDateTimeProperty())) {
+            // Do not set value if property is not defined
+            return;
+        }
         Class<?> propertyJavaType = dataProvider.getStartPropertyJavaType();
         if (propertyJavaType == null) {
             log.warn("Cannot set start date since no Java type specified");
@@ -108,6 +116,10 @@ public class EntityCalendarEvent<E> implements CalendarEvent {
 
     @Override
     public void setEndDateTime(@Nullable LocalDateTime end) {
+        if (Strings.isNullOrEmpty(dataProvider.getEndDateTimeProperty())) {
+            // Do not set value if property is not defined
+            return;
+        }
         Class<?> propertyJavaType = dataProvider.getEndPropertyJavaType();
         if (propertyJavaType == null) {
             log.warn("Cannot set end date since no Java type specified");

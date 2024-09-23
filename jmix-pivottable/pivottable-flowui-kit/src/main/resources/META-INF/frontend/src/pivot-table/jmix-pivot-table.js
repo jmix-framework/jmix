@@ -217,9 +217,12 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                 $.pivotUtilities.renderers = $.extend($.pivotUtilities.c3_renderers,
                     $.extend($.pivotUtilities.d3_renderers, $.pivotUtilities.renderers));
                 pivotTable._initLocale();
-                let showPivotFunction = pivotTable._options.showUI ? outputDiv.pivotUI : outputDiv.pivot;
+                let options = pivotTable._preparePivotTableOptions();
+                let showUI = pivotTable.enabled && pivotTable._options.showUI;
+                options.showUI = showUI;
+                let showPivotFunction = showUI ? outputDiv.pivotUI : outputDiv.pivot;
                 showPivotFunction.call(outputDiv, pivotTable._dataSet,
-                    pivotTable._preparePivotTableOptions(),
+                    options,
                     false,
                     pivotTable._options.localeCode);
             })(this);

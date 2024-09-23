@@ -29,20 +29,26 @@ import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.*;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import io.jmix.core.ClassManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.DatatypeRegistryImpl;
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.flowui.Fragments;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.formatter.FormatterLoadFactory;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.validation.ValidatorLoadFactory;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.fragmentrenderer.FragmentRenderer;
 import io.jmix.flowui.kit.component.*;
 import io.jmix.flowui.kit.component.formatter.Formatter;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
+import io.jmix.flowui.xml.layout.loader.PropertiesLoaderSupport;
 import io.jmix.flowui.xml.layout.loader.PropertyShortcutCombinationLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -514,6 +520,54 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
         loadFirstDayOfWeek(datePickerI18n, element);
         loadDateFormat(datePickerI18n, element);
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    public void loadFragmentRenderer(Element element, Consumer<ComponentRenderer> setter) {
+        loadFragmentRenderer(element)
+                .ifPresent(setter);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public Optional<ComponentRenderer> loadFragmentRenderer(Element element) {
+        Element fragmentRendererElement = element.element("fragmentRenderer");
+        if (fragmentRendererElement == null) {
+            return Optional.empty();
+        }
+
+        String fragmentClassFqn = loaderSupport.loadString(fragmentRendererElement, "class")
+                .orElseThrow(() ->
+                        new GuiDevelopmentException("Missing required 'class' attribute", context));
+
+        Class<?> fragmentRendererClass = applicationContext.getBean(ClassManager.class).loadClass(fragmentClassFqn);
+        if (!FragmentRenderer.class.isAssignableFrom(fragmentRendererClass)) {
+            throw new GuiDevelopmentException(
+                    "Class '%s' is not a %s".formatted(fragmentClassFqn, FragmentRenderer.class.getSimpleName()),
+                    context
+            );
+        }
+
+        return Optional.of(new ComponentRenderer<>(
+                () -> {
+                    // it is necessary to create the component programmatically, not using the element loader,
+                    // because the creation will be called at the moment of updating the bound data.
+                    // in this case, if you use the loader, required initializations and injections
+                    // will not be performed
+                    FragmentRenderer fragment = applicationContext.getBean(Fragments.class).create(
+                            ((ComponentLoader.ComponentContext) context).getView(),
+                            fragmentRendererClass.asSubclass(FragmentRenderer.class)
+                    );
+
+                    if (fragmentRendererElement.element("properties") != null) {
+                        PropertiesLoaderSupport propertiesLoader =
+                                applicationContext.getBean(PropertiesLoaderSupport.class, context);
+                        propertiesLoader.loadProperties(fragment, fragmentRendererElement);
+                    }
+
+                    return fragment;
+                },
+                (component, item) -> component.setItem(item)
+        ));
     }
 
     protected void loadDateFormat(DatePicker.DatePickerI18n datePickerI18n, Element element) {

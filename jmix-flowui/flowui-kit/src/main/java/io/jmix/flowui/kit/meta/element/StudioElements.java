@@ -1081,4 +1081,29 @@ public interface StudioElements {
             }
     )
     void genericComponentProperty();
+
+    @StudioElement(
+            name = "FragmentRenderer",
+            classFqn = "io.jmix.flowui.kit.stub.StudioFragmentRenderer",
+            icon = "io/jmix/flowui/kit/meta/icon/element/fragmentRenderer.svg",
+            xmlElement = "fragmentRenderer",
+            target = {
+                    "io.jmix.flowui.component.virtuallist.JmixVirtualList",
+                    "io.jmix.flowui.component.grid.DataGridColumn",
+                    "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
+                    "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
+                    "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
+                    "io.jmix.flowui.component.combobox.EntityComboBox",
+                    "io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup",
+                    "io.jmix.flowui.component.select.JmixSelect",
+                    "io.jmix.flowui.component.listbox.JmixListBox",
+                    "io.jmix.flowui.component.listbox.JmixMultiSelectListBox"
+            },
+            unlimitedCount = false,
+            properties = {
+                    @StudioProperty(xmlAttribute = "class", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.FRAGMENT_CLASS, required = true)
+            }
+    )
+    void fragmentRenderer();
 }

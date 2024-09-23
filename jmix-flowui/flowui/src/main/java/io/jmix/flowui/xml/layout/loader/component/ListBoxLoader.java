@@ -40,6 +40,8 @@ public class ListBoxLoader extends AbstractComponentLoader<JmixListBox<?>> {
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
+
+        componentLoader().loadFragmentRenderer(element, resultComponent::setRenderer);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

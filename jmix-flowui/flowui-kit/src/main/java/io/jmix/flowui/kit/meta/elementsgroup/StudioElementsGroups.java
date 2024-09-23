@@ -118,7 +118,7 @@ public interface StudioElementsGroups {
             elementClassFqn = "io.jmix.flowui.kit.stub.StudioFragmentPropertyElement",
             xmlElement = "properties",
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",
-            target = {"io.jmix.flowui.fragment.Fragment"}
+            target = {"io.jmix.flowui.fragment.Fragment", "io.jmix.flowui.kit.stub.StudioFragmentRenderer"}
     )
     void fragmentProperties();
 

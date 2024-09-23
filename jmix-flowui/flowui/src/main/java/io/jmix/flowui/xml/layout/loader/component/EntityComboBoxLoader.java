@@ -61,6 +61,8 @@ public class EntityComboBoxLoader extends AbstractComboBoxLoader<EntityComboBox<
                         context, "Component ID", resultComponent.getId().orElse("null"));
             }
         }
+
+        componentLoader().loadFragmentRenderer(element, resultComponent::setRenderer);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

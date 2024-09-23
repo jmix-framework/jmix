@@ -40,6 +40,8 @@ public class MultiSelectListBoxLoader extends AbstractComponentLoader<JmixMultiS
         componentLoader().loadClassNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
+
+        componentLoader().loadFragmentRenderer(element, resultComponent::setRenderer);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

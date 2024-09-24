@@ -110,7 +110,7 @@ public abstract class BaseEntityAttributesEraser implements EntityAttributesEras
         }
         for (Object id : ids) {
             MetaClass metaClass = metaProperty.getRange().asClass();
-            Object reference = getEntityReference(metaClass, id); //dataManager.getReference(metaClass.getJavaClass(), id);
+            Object reference = getEntityReference(metaClass, id);
             items.add(reference);
         }
     }

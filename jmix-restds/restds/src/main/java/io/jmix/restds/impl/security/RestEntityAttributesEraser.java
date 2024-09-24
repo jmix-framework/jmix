@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,10 @@ public class RestEntityAttributesEraser extends BaseEntityAttributesEraser {
     @Override
     protected Object getEntityReference(MetaClass entityMetaClass, Object id) {
         // TODO optimize - ideally to save instances instead of ids in security state
-        return dataManager.load(new LoadContext<>(entityMetaClass).setId(id));
+        Object ref = dataManager.load(new LoadContext<>(entityMetaClass).setId(id));
+        if (ref == null)
+            throw new RuntimeException("Unable to load %s with id=%s".formatted(entityMetaClass.getName(), id));
+        return ref;
     }
 
     @Override

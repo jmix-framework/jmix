@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An access context to check permissions on entity operations.
+ * Defines an authorization point for entity operations.
  */
 public class CrudEntityContext implements AccessContext {
 

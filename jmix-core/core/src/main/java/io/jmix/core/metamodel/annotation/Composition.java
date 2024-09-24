@@ -29,4 +29,9 @@ import java.lang.annotation.Target;
 @Target({java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Composition {
+
+    /**
+     * Inverse property name.
+     */
+    String inverse() default "";
 }

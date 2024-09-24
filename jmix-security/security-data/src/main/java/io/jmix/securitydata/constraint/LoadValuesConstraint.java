@@ -28,6 +28,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Checks access to entity attributes in a JPQL query loading scalar values based on resource policies.
+ */
 @Component("sec_LoadValuesConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class LoadValuesConstraint implements EntityOperationConstraint<LoadValuesAccessContext> {

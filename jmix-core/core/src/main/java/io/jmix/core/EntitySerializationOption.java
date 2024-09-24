@@ -57,5 +57,10 @@ public enum EntitySerializationOption {
      * Specifies that fields with {@code io.jmix.core.annotation.Secret} annotation should be serialized. By default,
      * secret fields are not written to the result JSON.
      */
-    SERIALIZE_SECRET_FIELDS
+    SERIALIZE_SECRET_FIELDS,
+
+    /**
+     * Do not serialize entity name in JSON and ignore it during deserialization.
+     */
+    IGNORE_ENTITY_NAME
 }

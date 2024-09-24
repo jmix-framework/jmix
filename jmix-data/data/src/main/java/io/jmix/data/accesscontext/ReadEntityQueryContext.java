@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Modifies the query depending on current security constraints.
+ * Defines an authorization point for modifying JPQL queries by adding JOIN and WHERE clauses.
  */
 public class ReadEntityQueryContext implements AccessContext {
 

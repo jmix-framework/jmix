@@ -21,6 +21,9 @@ import io.jmix.flowui.menu.MenuItem;
 
 import org.springframework.lang.Nullable;
 
+/**
+ * Defines authorization point for UI menu items.
+ */
 public class UiMenuContext implements AccessContext {
     protected final MenuItem menuItem;
     protected boolean permitted = true;

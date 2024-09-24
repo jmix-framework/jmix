@@ -430,16 +430,17 @@ public class MetadataTools {
     }
 
     /**
+     * @deprecated Use {@code metaProperty.getType() == MetaProperty.Type.EMBEDDED}
+     *
      * Determine whether the given property denotes an embedded object.
      *
      * @see Embedded
      * @see EmbeddedId
      */
+    @Deprecated
     public boolean isEmbedded(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
-        return metaProperty.getAnnotatedElement() != null
-                && (metaProperty.getAnnotatedElement().isAnnotationPresent(Embedded.class) ||
-                metaProperty.getAnnotatedElement().isAnnotationPresent(EmbeddedId.class));
+        return metaProperty.getType() == MetaProperty.Type.EMBEDDED;
     }
 
     /**
@@ -510,6 +511,7 @@ public class MetadataTools {
      * @return meta-annotation value for specified metaClass and annotation
      */
     @SuppressWarnings("unchecked")
+    @Nullable
     public <T> T getMetaAnnotationValue(MetaClass metaClass, Class<?> metaAnnotationClass) {
         Map<String, Object> metaAnnotationAttributes = getMetaAnnotationAttributes(metaClass.getAnnotations(), metaAnnotationClass);
         return (T) metaAnnotationAttributes.get("value");
@@ -519,6 +521,7 @@ public class MetadataTools {
      * @return meta-annotation value for specified metaProperty and annotation
      */
     @SuppressWarnings("unchecked")
+    @Nullable
     public <T> T getMetaAnnotationValue(MetaProperty metaProperty, Class<?> metaAnnotationClass) {
         Map<String, Object> metaAnnotationAttributes = getMetaAnnotationAttributes(metaProperty.getAnnotations(), metaAnnotationClass);
         return (T) metaAnnotationAttributes.get("value");

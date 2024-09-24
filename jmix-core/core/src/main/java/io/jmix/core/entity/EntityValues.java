@@ -232,11 +232,11 @@ public class EntityValues {
     }
 
     /**
-     * Used by {@link } to check whether a property value has been changed.
+     * Checks whether an entity property value has been changed.
      *
      * @param a an object
      * @param b an object
-     * @return true if {@code a} equals to {@code b}, but in case of {@code a} is {@link } or {@code Collection} returns
+     * @return true if {@code a} equals to {@code b}, but in case of {@code a} is an entity or a collection returns
      * true only if {@code a} is the same instance as {@code b}
      */
     public static boolean propertyValueEquals(@Nullable Object a, @Nullable Object b) {

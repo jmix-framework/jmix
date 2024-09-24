@@ -17,8 +17,8 @@
 package io.jmix.securitydata.impl.constraint;
 
 import io.jmix.core.AccessConstraintsRegistry;
-import io.jmix.securitydata.constraint.CrudEntityConstraint;
-import io.jmix.securitydata.constraint.InMemoryCrudEntityConstraint;
+import io.jmix.security.constraint.CrudEntityConstraint;
+import io.jmix.security.constraint.InMemoryCrudEntityConstraint;
 import io.jmix.securitydata.constraint.LoadValuesConstraint;
 import io.jmix.securitydata.constraint.ReadEntityQueryConstraint;
 import org.springframework.beans.factory.BeanFactory;

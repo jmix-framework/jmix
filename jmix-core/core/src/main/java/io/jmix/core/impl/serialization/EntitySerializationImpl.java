@@ -32,14 +32,14 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
-import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -189,30 +189,24 @@ public class EntitySerializationImpl implements EntitySerialization {
 
     protected class EntitySerializer implements JsonSerializer<Entity> {
 
-        protected boolean compactRepeatedEntities = false;
+        protected boolean compactRepeatedEntities;
         protected boolean serializeInstanceName;
-        protected boolean doNotSerializeReadOnlyProperties = false;
-        protected boolean doNotSerializeDeniedProperties = false;
-        protected boolean serializeSecretFields = false;
+        protected boolean doNotSerializeReadOnlyProperties;
+        protected boolean doNotSerializeDeniedProperties;
+        protected boolean serializeSecretFields;
+        protected boolean ignoreEntityName;
         protected FetchPlan fetchPlan;
 
         public EntitySerializer(@Nullable FetchPlan fetchPlan, EntitySerializationOption... options) {
             this.fetchPlan = fetchPlan;
-            if (options != null) {
-                if (ArrayUtils.contains(options, EntitySerializationOption.COMPACT_REPEATED_ENTITIES)) {
-                    compactRepeatedEntities = true;
-                }
-                if (ArrayUtils.contains(options, EntitySerializationOption.SERIALIZE_INSTANCE_NAME)) {
-                    serializeInstanceName = true;
-                }
-                if (ArrayUtils.contains(options, EntitySerializationOption.DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES)) {
-                    doNotSerializeReadOnlyProperties = true;
-                }
-                if (ArrayUtils.contains(options, EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY)) {
-                    doNotSerializeDeniedProperties = true;
-                }
-                if (ArrayUtils.contains(options, EntitySerializationOption.SERIALIZE_SECRET_FIELDS)) {
-                    serializeSecretFields = true;
+            for (EntitySerializationOption option : options) {
+                switch (option) {
+                    case IGNORE_ENTITY_NAME -> ignoreEntityName = true;
+                    case COMPACT_REPEATED_ENTITIES -> compactRepeatedEntities = true;
+                    case SERIALIZE_INSTANCE_NAME -> serializeInstanceName = true;
+                    case DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES -> doNotSerializeReadOnlyProperties = true;
+                    case DO_NOT_SERIALIZE_DENIED_PROPERTY -> doNotSerializeDeniedProperties = true;
+                    case SERIALIZE_SECRET_FIELDS -> serializeSecretFields = true;
                 }
             }
         }
@@ -225,8 +219,10 @@ public class EntitySerializationImpl implements EntitySerialization {
         protected JsonObject serializeEntity(Entity entity, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
             JsonObject jsonObject = new JsonObject();
             MetaClass metaClass = metadata.getClass(entity);
-            if (!metadataTools.isJpaEmbeddable(metaClass)) {
-                jsonObject.addProperty(ENTITY_NAME_PROP, metaClass.getName());
+            if (metadataTools.getPrimaryKeyName(metaClass) != null) {
+                if (!ignoreEntityName) {
+                    jsonObject.addProperty(ENTITY_NAME_PROP, metaClass.getName());
+                }
                 if (serializeInstanceName) {
                     String instanceName = null;
                     try {
@@ -266,9 +262,6 @@ public class EntitySerializationImpl implements EntitySerialization {
         protected void writeIdField(Entity entity, JsonObject jsonObject) {
             MetaClass metaClass = metadata.getClass(entity);
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
-            if (primaryKeyProperty == null) {
-                primaryKeyProperty = metaClass.getProperty("id");
-            }
             if (primaryKeyProperty == null)
                 throw new EntitySerializationException("Primary key property not found for entity " + metaClass);
             if (metadataTools.hasCompositePrimaryKey(metaClass)) {
@@ -417,9 +410,11 @@ public class EntitySerializationImpl implements EntitySerialization {
     protected class EntityDeserializer implements JsonDeserializer<Entity> {
 
         protected MetaClass metaClass;
+        protected final boolean ignoreEntityName;
 
         public EntityDeserializer(@Nullable MetaClass metaClass, EntitySerializationOption... options) {
             this.metaClass = metaClass;
+            ignoreEntityName = Arrays.stream(options).anyMatch(o -> o == EntitySerializationOption.IGNORE_ENTITY_NAME);
         }
 
         @Override
@@ -432,12 +427,13 @@ public class EntitySerializationImpl implements EntitySerialization {
             MetaClass resultMetaClass = metaClass;
             JsonElement idJsonElement = jsonObject.get("id");
 
-            JsonPrimitive entityNameJsonPrimitive = jsonObject.getAsJsonPrimitive(ENTITY_NAME_PROP);
-            if (entityNameJsonPrimitive != null) {
-                String entityName = entityNameJsonPrimitive.getAsString();
-                resultMetaClass = metadata.getClass(entityName);
+            if (!ignoreEntityName) {
+                JsonPrimitive entityNameJsonPrimitive = jsonObject.getAsJsonPrimitive(ENTITY_NAME_PROP);
+                if (entityNameJsonPrimitive != null) {
+                    String entityName = entityNameJsonPrimitive.getAsString();
+                    resultMetaClass = metadata.getClass(entityName);
+                }
             }
-
 
             if (resultMetaClass == null) {
                 throw new EntitySerializationException("Cannot deserialize an entity. MetaClass is not defined");
@@ -503,7 +499,10 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected boolean propertyReadRequired(String propertyName) {
-            return !"id".equals(propertyName) && !ENTITY_NAME_PROP.equals(propertyName) && !"__securityToken".equals(propertyName);
+            return !"id".equals(propertyName)
+                    && !ENTITY_NAME_PROP.equals(propertyName)
+                    && !INSTANCE_NAME_PROP.equals(propertyName)
+                    && !"__securityToken".equals(propertyName);
         }
 
         protected void readFields(JsonObject jsonObject, Object entity) {
@@ -599,7 +598,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                         }
                     }
                 } else {
-                    log.warn("Entity {} doesn't contain a '{}' property", metadata.getClass(entity.getClass()).getName(), propertyName);
+                    log.debug("Entity {} doesn't contain '{}' property", metadata.getClass(entity.getClass()).getName(), propertyName);
                 }
             }
 

@@ -23,6 +23,7 @@ import io.jmix.core.QueryStringProcessor;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
@@ -40,7 +41,8 @@ public class JpqlQueryStringProcessor implements QueryStringProcessor {
     @Autowired
     private Metadata metadata;
 
-    public String process(String queryString, Class<?> entityClass) {
+    @Nullable
+    public String process(@Nullable String queryString, Class<?> entityClass) {
         if (Strings.isNullOrEmpty(queryString)) {
             return queryString;
         }

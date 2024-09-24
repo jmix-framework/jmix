@@ -26,6 +26,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Applies row-level policies to JPQL queries.
+ */
 @Component("sec_ReadEntityQueryConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ReadEntityQueryConstraint implements RowLevelConstraint<ReadEntityQueryContext> {

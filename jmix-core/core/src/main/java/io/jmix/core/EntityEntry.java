@@ -23,12 +23,13 @@ import io.jmix.core.entity.SecurityState;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.impl.EntityInternals;
-
-import org.springframework.lang.Nullable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Id;
+import org.springframework.lang.Nullable;
+
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 
 
 public interface EntityEntry extends Serializable {
@@ -99,16 +100,29 @@ public interface EntityEntry extends Serializable {
 
     void setRemoved(boolean removed);
 
+    /**
+     * Optional set of names of properties loaded from data store.
+     */
+    @Nullable
+    Set<String> getLoadedProperties();
+
+    void setLoadedProperties(@Nullable Set<String> loadedProperties);
+
     SecurityState getSecurityState();
 
     void setSecurityState(SecurityState securityState);
 
     /**
-     * Add listener to track attributes changes.
+     * Adds a listener to track attributes changes. The listener will be added using a weak reference.
      *
-     * @param listener listener
+     * @see #addPropertyChangeListener(EntityPropertyChangeListener, boolean)
      */
     void addPropertyChangeListener(EntityPropertyChangeListener listener);
+
+    /**
+     * Adds a listener to track attributes changes.
+     */
+    void addPropertyChangeListener(EntityPropertyChangeListener listener, boolean weakReference);
 
     /**
      * Remove listener.

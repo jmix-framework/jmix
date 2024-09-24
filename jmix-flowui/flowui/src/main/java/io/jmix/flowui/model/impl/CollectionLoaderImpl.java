@@ -103,8 +103,6 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     protected boolean _load() {
         if (container == null)
             throw new IllegalStateException("container is null");
-        if (query == null && delegate == null)
-            throw new IllegalStateException("both query and delegate are null");
 
         LoadContext<E> loadContext = createLoadContext();
 

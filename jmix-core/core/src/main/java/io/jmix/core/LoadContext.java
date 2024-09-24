@@ -26,6 +26,8 @@ import io.jmix.core.querycondition.Condition;
 import org.springframework.lang.Nullable;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TemporalType;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,6 +48,7 @@ import java.util.stream.Collectors;
  */
 public class LoadContext<E> implements DataLoadContext, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3406772812465222907L;
 
     protected MetaClass metaClass;
@@ -103,7 +106,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
      * @return query definition object
      */
     @Override
-    public Query setQueryString(String queryString) {
+    public Query setQueryString(@Nullable String queryString) {
         final Query query = new Query(queryString);
         setQuery(query);
         return query;
@@ -316,6 +319,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
      */
     public static class Query implements DataLoadContextQuery, Serializable {
 
+        @Serial
         private static final long serialVersionUID = -5803374131930436223L;
 
         private Map<String, Object> parameters = new HashMap<>();
@@ -331,21 +335,22 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         }
 
         /**
-         * @param queryString JPQL query string. Only named parameters are supported.
+         * @param queryString query string. Only named parameters are supported.
          */
-        public Query(String queryString) {
+        public Query(@Nullable String queryString) {
             this.queryString = queryString;
         }
 
         /**
-         * @return JPQL query string
+         * @return query string
          */
+        @Nullable
         public String getQueryString() {
             return queryString;
         }
 
         /**
-         * @param queryString JPQL query string. Only named parameters are supported.
+         * @param queryString query string. Only named parameters are supported.
          */
         public Query setQueryString(String queryString) {
             this.queryString = queryString;
@@ -413,6 +418,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         /**
          * @return root query condition
          */
+        @Nullable
         public Condition getCondition() {
             return condition;
         }
@@ -429,6 +435,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         /**
          * @return query sort
          */
+        @Nullable
         public Sort getSort() {
             return sort;
         }

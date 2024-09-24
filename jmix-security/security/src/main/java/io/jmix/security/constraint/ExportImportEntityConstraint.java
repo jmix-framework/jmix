@@ -25,6 +25,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Checks access to entity attributes based on resource policies when serializing entities to/from JSON.
+ */
 @Component("sec_ImportEntityConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ExportImportEntityConstraint implements EntityOperationConstraint<ExportImportEntityContext> {

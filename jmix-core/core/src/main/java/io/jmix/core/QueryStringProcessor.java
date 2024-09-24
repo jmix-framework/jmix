@@ -16,10 +16,13 @@
 
 package io.jmix.core;
 
+import org.springframework.lang.Nullable;
+
 /**
  * Interface to be implemented by beans that pre-process query text before setting it to {@code LoadContext.Query}.
  */
 public interface QueryStringProcessor {
 
-    String process(String queryString, Class<?> entityClass);
+    @Nullable
+    String process(@Nullable String queryString, Class<?> entityClass);
 }

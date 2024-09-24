@@ -275,7 +275,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
     protected void addAttributesToLocalFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder) {
         for (MetaProperty property : metaClass.getProperties()) {
-            if (!property.getRange().isClass()) {
+            if (!property.getRange().isClass() && isPersistent(metaClass, property)) {
                 fetchPlanBuilder.add(property.getName());
             }
         }
@@ -285,7 +285,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                                                         FetchPlanBuilder fetchPlanBuilder,
                                                         FetchPlanLoader.FetchPlanInfo info,
                                                         Set<FetchPlanLoader.FetchPlanInfo> visited) {
-        for (MetaProperty metaProperty : getInstanceNameProperties(metaClass)) {
+        for (MetaProperty metaProperty : getInstanceNamePersistentProperties(metaClass)) {
             if (metaProperty.getRange().isClass()) {
                 addClassAttributeWithFetchPlan(metaProperty, FetchPlan.INSTANCE_NAME, fetchPlanBuilder, info, visited);
             } else {
@@ -299,14 +299,16 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                                                 FetchPlanLoader.FetchPlanInfo info,
                                                 Set<FetchPlanLoader.FetchPlanInfo> visited) {
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-            if (!metaProperty.getRange().isClass()) {
-                fetchPlanBuilder.add(metaProperty.getName());
-            } else if (metadataTools.isEmbedded(metaProperty)) {
-                addClassAttributeWithFetchPlan(metaProperty, FetchPlan.BASE, fetchPlanBuilder, info, visited);
+            if (isPersistent(metaClass, metaProperty)) {
+                if (!metaProperty.getRange().isClass()) {
+                    fetchPlanBuilder.add(metaProperty.getName());
+                } else if (metadataTools.isEmbedded(metaProperty)) {
+                    addClassAttributeWithFetchPlan(metaProperty, FetchPlan.BASE, fetchPlanBuilder, info, visited);
+                }
             }
         }
 
-        for (MetaProperty metaProperty : getInstanceNameProperties(metaClass)) {
+        for (MetaProperty metaProperty : getInstanceNamePersistentProperties(metaClass)) {
             if (metaProperty.getRange().isClass()) {
                 addClassAttributeWithFetchPlan(metaProperty, FetchPlan.BASE, fetchPlanBuilder, info, visited);
             }
@@ -335,15 +337,22 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         }
     }
 
-    protected Collection<MetaProperty> getInstanceNameProperties(MetaClass metaClass) {
+    protected boolean isPersistent(MetaClass metaClass, MetaProperty metaProperty) {
+        return !metadataTools.isJpaEntity(metaClass) || metadataTools.isJpa(metaProperty);
+    }
+
+    protected Collection<MetaProperty> getInstanceNamePersistentProperties(MetaClass metaClass) {
         Collection<MetaProperty> metaProperties = new ArrayList<>();
         for (MetaProperty metaProperty : metadataTools.getInstanceNameRelatedProperties(metaClass, true)) {
-            List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
-            if (dependsOnProperties.isEmpty()) {
+            if (isPersistent(metaClass, metaProperty)) {
                 metaProperties.add(metaProperty);
             } else {
+                List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
                 for (String dependsOnPropertyName : dependsOnProperties) {
-                    metaProperties.add(metaClass.getProperty(dependsOnPropertyName));
+                    MetaProperty relatedProperty = metaClass.getProperty(dependsOnPropertyName);
+                    if (isPersistent(metaClass, relatedProperty)) {
+                        metaProperties.add(relatedProperty);
+                    }
                 }
             }
         }

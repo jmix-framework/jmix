@@ -344,9 +344,11 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
         boolean repeatRequired = false;
         MetaClass metaClass = metadata.getClass(entity);
         for (MetaProperty property : metaClass.getProperties()) {
-            if (property.getRange().isClass() && !property.getRange().getCardinality().isMany()) {
+            if (property.getRange().isClass() && !property.getRange().getCardinality().isMany()
+                    && !metadataTools.isMethodBased(property)) {
                 MetaClass propertyMetaClass = property.getRange().asClass();
-                if (!Objects.equals(propertyMetaClass.getStore().getName(), metaClass.getStore().getName())) {
+                if (!Objects.equals(propertyMetaClass.getStore().getName(), metaClass.getStore().getName())
+                        && !Stores.NOOP.equals(propertyMetaClass.getStore().getName())) {
                     List<String> dependsOnProperties = metadataTools.getDependsOnProperties(property);
                     if (dependsOnProperties.size() == 0) {
                         continue;

@@ -28,6 +28,8 @@ import test_support.entity.nullable_id.Foo
 import test_support.entity.nullable_id.FooPart
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
+import test_support.entity.transient_dto.TestDto
+import test_support.entity.transient_dto.TestEntity
 import test_support.listeners.TestOrderChangedEventListener
 
 class DataManagerCommitTest extends DataSpec {
@@ -213,5 +215,26 @@ class DataManagerCommitTest extends DataSpec {
         then:
         saved2.contains(customer1)
         saved2.contains(customer2)
+    }
+
+    def "saving entity with DTO attribute dependent on datatype attribute doesn't erase it"(){
+
+        when: "Entity with DTO attributes saved"
+        TestEntity entity = dataManager.create(TestEntity)
+        entity.boolVar = false
+        entity.name = "Test entity"
+
+        entity.testDto = dataManager.create(TestDto)
+        entity.testDto.name = "Some DTO name"
+
+        dataManager.save(entity)
+
+        then:"these DTO attributes should not be considered as cross-datastore references"
+        //no 'jakarta.validation.ConstraintViolationException: One or more Bean Validation constraints were violated'
+        //no 'java.lang.ClassCastException: class java.util.UUID cannot be cast to class java.lang.Boolean'
+        noExceptionThrown()
+
+        cleanup:
+        jdbc.update('delete from DTOE_TEST_ENTITY')
     }
 }

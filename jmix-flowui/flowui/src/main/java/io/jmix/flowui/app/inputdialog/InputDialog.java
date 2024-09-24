@@ -36,6 +36,7 @@ import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.inputdialog.InputDialogAction;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsTypedValue;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.UiComponentsGenerator;
 import io.jmix.flowui.component.factory.InputDialogGenerationContext;
 import io.jmix.flowui.component.validation.ValidationErrors;
@@ -144,6 +145,13 @@ public class InputDialog extends StandardView {
         } else {
             initActions(actionsList);
         }
+        initFocusComponent();
+    }
+
+    protected void initFocusComponent() {
+        UiComponentUtils.findFocusComponent(this)
+                .ifPresent(focusable ->
+                        focusable.getElement().setProperty("autofocus", true));
     }
 
     @Subscribe

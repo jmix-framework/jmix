@@ -22,6 +22,7 @@ import io.jmix.flowui.action.view.ViewAction;
 import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.View;
 
 import org.springframework.lang.Nullable;
@@ -80,6 +81,15 @@ public class InputDialogAction extends ViewAction<InputDialogAction, InputDialog
     public InputDialogAction withValidationRequired(boolean validationRequired) {
         this.validationRequired = validationRequired;
         return this;
+    }
+
+    @Override
+    public void setShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+        if (shortcutCombination != null) {
+            shortcutCombination.setResetFocusOnActiveElement(true);
+        }
+
+        super.setShortcutCombination(shortcutCombination);
     }
 
     /**

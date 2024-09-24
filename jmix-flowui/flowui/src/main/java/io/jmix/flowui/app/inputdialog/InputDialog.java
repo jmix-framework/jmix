@@ -412,6 +412,7 @@ public class InputDialog extends StandardView {
 
     protected void initActions(List<Action> actions) {
         actionBox.removeAll();
+        getViewActions().removeAllActions();
 
         for (Action action : actions) {
             JmixButton button = uiComponents.create(JmixButton.class);
@@ -424,6 +425,7 @@ public class InputDialog extends StandardView {
             }
 
             actionBox.add(button);
+            getViewActions().addAction(action);
         }
     }
 

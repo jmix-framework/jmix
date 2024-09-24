@@ -312,7 +312,11 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     public OperationResult save() {
         return saveChanges(true)
                 .then(() -> saveActionPerformed = true)
-                .then(this::updateUrl);
+                .then(() -> {
+                    if (!UiComponentUtils.isComponentAttachedToDialog(this)) {
+                        updateUrl();
+                    }
+                });
     }
 
     private void updateUrl() {

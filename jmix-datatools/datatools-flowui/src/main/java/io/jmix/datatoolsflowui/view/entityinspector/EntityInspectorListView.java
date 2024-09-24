@@ -47,6 +47,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.data.PersistenceHints;
 import io.jmix.datatools.EntityRestore;
+import io.jmix.datatoolsflowui.DatatoolsUiProperties;
 import io.jmix.datatoolsflowui.action.ShowEntityInfoAction;
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorDataGridBuilder;
 import io.jmix.datatoolsflowui.view.entityinspector.assistant.InspectorFetchPlanBuilder;
@@ -177,6 +178,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected RouteSupport routeSupport;
     @Autowired
     protected Downloader downloader;
+    @Autowired
+    protected DatatoolsUiProperties datatoolsProperties;
 
     protected DataGrid<Object> entitiesDataGrid;
     protected GenericFilter entitiesGenericFilter;
@@ -321,6 +324,13 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected SimplePagination createPagination() {
         SimplePagination pagination = uiComponents.create(SimplePagination.class);
         pagination.addClassName(LumoUtility.Margin.Start.AUTO);
+
+        DatatoolsUiProperties.EntityInspectorListView properties = datatoolsProperties.getEntityInspectorListView();
+        pagination.setItemsPerPageVisible(properties.isItemsPerPageVisible());
+        pagination.setItemsPerPageUnlimitedItemVisible(properties.isItemsPerPageUnlimitedOptionVisible());
+        if (properties.getItemsPerPageOptions() != null) {
+            pagination.setItemsPerPageItems(properties.getItemsPerPageOptions());
+        }
 
         PaginationDataLoaderImpl paginationLoader =
                 getApplicationContext().getBean(PaginationDataLoaderImpl.class, entitiesDl);

@@ -17,11 +17,7 @@
 package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.server.ServiceInitEvent;
-import com.vaadin.flow.server.SessionInitEvent;
-import com.vaadin.flow.server.VaadinServiceInitListener;
-import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.server.WrappedSession;
+import com.vaadin.flow.server.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -70,7 +66,8 @@ public class SessionHolder implements VaadinServiceInitListener {
             for (Iterator<WeakReference<VaadinSession>> iterator = sessions.iterator(); iterator.hasNext(); ) {
                 WeakReference<VaadinSession> reference = iterator.next();
                 VaadinSession session = reference.get();
-                if (session != null) {
+                if (session != null
+                        && !getVaadinSessionState(session).equals(VaadinSessionState.CLOSED)) {
                     String sessionUsername = getUsernameFromVaadinSession(session);
                     if (Strings.isNullOrEmpty(sessionUsername)) {
                         log.debug("Skip Vaadin session {} as it does not contain security context or" +
@@ -105,9 +102,11 @@ public class SessionHolder implements VaadinServiceInitListener {
     @Nullable
     protected String getUsernameFromVaadinSession(VaadinSession session) {
         WrappedSession wrappedSession = session.getSession();
-        if (wrappedSession == null) {
+        if (wrappedSession == null
+                || !getVaadinSessionState(session).equals(VaadinSessionState.OPEN)) {
             return null;
         }
+
         SecurityContext securityContext = (SecurityContext) wrappedSession.getAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
         if (securityContext == null || securityContext.getAuthentication() == null) {
@@ -120,6 +119,24 @@ public class SessionHolder implements VaadinServiceInitListener {
         return ((UserDetails) authentication.getPrincipal()).getUsername();
     }
 
+    protected VaadinSessionState getVaadinSessionState(VaadinSession session) {
+        VaadinSessionState state;
+        if (session.hasLock()) {
+            state = session.getState();
+        } else {
+            // When session is 'CLOSED' it may not have lock,
+            // but we still need to get its state
+            try {
+                session.lock();
+                state = session.getState();
+            } finally {
+                session.unlock();
+            }
+        }
+
+        return state;
+    }
+
     @Override
     public void serviceInit(ServiceInitEvent event) {
         event.getSource().addSessionInitListener(this::onSessionInit);
@@ -129,7 +146,7 @@ public class SessionHolder implements VaadinServiceInitListener {
         lock.writeLock().lock();
         try {
             sessions.add(new WeakReference<>(event.getSession()));
-            log.trace("Added session: " + event.getSession());
+            log.trace("Added session: {}", event.getSession());
         } finally {
             lock.writeLock().unlock();
         }

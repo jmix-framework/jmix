@@ -49,10 +49,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.lang.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
@@ -266,6 +263,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         ValidationErrors errors = new ValidationErrors();
         if (isCrossFieldValidationEnabled()) {
             ViewValidation viewValidation = getViewValidation();
+
+            // io.jmix.flowui.component.validation.group.UiCrossFieldChecks is deprecated
+            // must be removed for 2.4 release
+            errors.addAll(viewValidation.validateBeanGroup(
+                    io.jmix.flowui.component.validation.group.UiCrossFieldChecks.class, getEditedEntity()));
+
             errors.addAll(viewValidation.validateBeanGroup(UiCrossFieldChecks.class, getEditedEntity()));
         }
 

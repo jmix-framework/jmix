@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "name": "Composite Project for Monorepo",
+  "order": 165,
+  "addon": false,
+  "description": "<html>The composite project allows you to develop multiple add-ons and applications in one IDE workspace. It enables transparent refactorings and eliminates the need to publish add-ons before using them in other add-ons and applications.<p>This template is best suited for the case where subprojects are stored in a single source code repository.<p>The created structure contains the aggregating project build scripts in the root folder. Refer to the README file for more information.</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": false,
+      "hidden": true
+    },
+    {
+      "name": "rootPackage",
+      "hidden": true
+    },
+    {
+      "name": "locales",
+      "hidden": true
+    }
+  ],
+  "hideForSubproject": true
+}

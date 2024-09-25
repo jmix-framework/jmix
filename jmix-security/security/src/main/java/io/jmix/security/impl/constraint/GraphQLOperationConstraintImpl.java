@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+@Deprecated(forRemoval = true)
 @Component("sec_GraphQLOperationConstraintImpl")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class GraphQLOperationConstraintImpl implements GraphQLOperationConstraint<GraphQLOperationAccessContext> {

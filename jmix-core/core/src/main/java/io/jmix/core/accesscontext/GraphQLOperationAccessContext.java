@@ -16,6 +16,7 @@
 
 package io.jmix.core.accesscontext;
 
+@Deprecated(forRemoval = true)
 public class GraphQLOperationAccessContext implements AccessContext {
     protected boolean permitted = true;
     protected final String operationName;

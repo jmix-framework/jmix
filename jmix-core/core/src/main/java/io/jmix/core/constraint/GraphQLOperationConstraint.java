@@ -18,5 +18,6 @@ package io.jmix.core.constraint;
 
 import io.jmix.core.accesscontext.AccessContext;
 
+@Deprecated(forRemoval = true)
 public interface GraphQLOperationConstraint<T extends AccessContext> extends AccessConstraint<T> {
 }

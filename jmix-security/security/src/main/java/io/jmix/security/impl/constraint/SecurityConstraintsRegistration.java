@@ -19,10 +19,9 @@ package io.jmix.security.impl.constraint;
 import io.jmix.core.AccessConstraintsRegistry;
 import io.jmix.security.constraint.EntityAttributeConstraint;
 import io.jmix.security.constraint.ExportImportEntityConstraint;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import jakarta.annotation.PostConstruct;
 
 public class SecurityConstraintsRegistration {
 
@@ -36,6 +35,5 @@ public class SecurityConstraintsRegistration {
         accessConstraintsRegistry.register(beanFactory.getBean(ExportImportEntityConstraint.class));
         accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class));
         accessConstraintsRegistry.register(beanFactory.getBean(EntityAttributeConstraint.class));
-        accessConstraintsRegistry.register(beanFactory.getBean(GraphQLOperationConstraintImpl.class));
     }
 }

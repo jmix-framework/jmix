@@ -16,10 +16,12 @@
 
 package io.jmix.flowuidata.action.genericfilter;
 
+import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
+import io.jmix.flowuidata.accesscontext.UiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowuidata.entity.FilterConfiguration;
 import io.jmix.flowuidata.genericfilter.UiDataGenericFilterSupport;
 import org.springframework.lang.Nullable;
@@ -30,6 +32,8 @@ public class GenericFilterSaveWithValuesAction
         extends AbstractGenericFilterSaveAction<GenericFilterSaveWithValuesAction> {
 
     public static final String ID = "genericFilter_saveWithValues";
+
+    protected boolean globalConfigurationModificationPermitted;
 
     public GenericFilterSaveWithValuesAction() {
         this(ID);
@@ -45,11 +49,20 @@ public class GenericFilterSaveWithValuesAction
         this.messages = messages;
     }
 
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        UiGenericFilterModifyGlobalConfigurationContext globalFilterContext =
+                new UiGenericFilterModifyGlobalConfigurationContext();
+        accessManager.applyRegisteredConstraints(globalFilterContext);
+        globalConfigurationModificationPermitted = globalFilterContext.isPermitted();
+    }
+
     @Override
     protected boolean isApplicable() {
         return target != null
                 && !(target.getCurrentConfiguration() instanceof DesignTimeConfiguration)
-                && !target.getCurrentConfiguration().getRootLogicalFilterComponent().getFilterComponents().isEmpty();
+                && !target.getCurrentConfiguration().getRootLogicalFilterComponent().getFilterComponents().isEmpty()
+                && (globalConfigurationModificationPermitted || !isCurrentConfigurationAvailableForAll());
     }
 
     @Override

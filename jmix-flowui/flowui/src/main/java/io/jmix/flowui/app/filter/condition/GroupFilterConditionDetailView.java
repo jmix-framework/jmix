@@ -21,6 +21,7 @@ import com.vaadin.flow.component.html.H4;
 import io.jmix.flowui.action.genericfilter.GenericFilterAddConditionAction;
 import io.jmix.flowui.action.list.RemoveAction;
 import io.jmix.flowui.action.logicalfilter.LogicalFilterEditAction;
+import io.jmix.flowui.action.view.DetailSaveCloseAction;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
@@ -61,6 +62,9 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
     protected JmixButton moveUpBtn;
     @ViewComponent
     protected TreeDataGrid<FilterCondition> conditionsTreeDataGrid;
+
+    @ViewComponent
+    private DetailSaveCloseAction<?> saveAction;
 
     protected String title;
 
@@ -130,6 +134,13 @@ public class GroupFilterConditionDetailView extends LogicalFilterConditionDetail
         });
 
         expandItems();
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
+        saveAction.setEnabled(!readOnly);
     }
 
     @Subscribe("conditionsTreeDataGrid.moveUp")

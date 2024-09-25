@@ -265,7 +265,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             ViewValidation viewValidation = getViewValidation();
 
             // io.jmix.flowui.component.validation.group.UiCrossFieldChecks is deprecated
-            // must be removed for 2.4 release
+            // added for compatibility
             errors.addAll(viewValidation.validateBeanGroup(
                     io.jmix.flowui.component.validation.group.UiCrossFieldChecks.class, getEditedEntity()));
 

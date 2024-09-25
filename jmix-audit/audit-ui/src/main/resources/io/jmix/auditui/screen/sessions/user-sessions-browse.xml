@@ -27,6 +27,7 @@
                 width="800"/>
     <facets>
         <presentations id="presentations" auto="true"/>
+        <dataLoadCoordinator auto="true"/>
     </facets>
     <layout spacing="true" expand="sessionsTable">
         <hbox id="filterHBox" spacing="true" width="100%">

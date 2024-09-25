@@ -51,11 +51,11 @@ dependencies {
     testRuntimeOnly 'ch.qos.logback:logback-classic'
 }
 
-boolean skipRestDsTests = project.rootProject.findProperty('skipRestDsTests')?.toBoolean() ?: false
+boolean runRestDsTests = project.rootProject.findProperty('runRestDsTests')?.toBoolean() ?: false
 boolean useStandaloneServiceForRestDsTests = project.rootProject.findProperty('useStandaloneServiceForRestDsTests')?.toBoolean() ?: false
 
 tasks.named('test') {
-    onlyIf { !skipRestDsTests }
+    onlyIf { runRestDsTests }
     if (useStandaloneServiceForRestDsTests) {
         systemProperty('useStandaloneServiceForRestDsTests', true)
     } else {

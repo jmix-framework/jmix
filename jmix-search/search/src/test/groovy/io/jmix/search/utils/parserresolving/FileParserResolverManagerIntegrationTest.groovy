@@ -60,7 +60,7 @@ class FileParserResolverManagerIntegrationTest extends Specification {
         "xlsx"    | OOXMLParser
     }
 
-    def "there is no appropriate resolver for the file if the capital letters"() {
+    def "there is no appropriate resolver for the file if the file is with the capital letters"() {
         given:
         def manager = new FileParserResolverManager(getResolvers())
 

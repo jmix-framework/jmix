@@ -129,16 +129,9 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     }
 
     private void updateControls(boolean editing) {
-        form.getChildren().forEach(component -> {
+        UiComponentUtils.getComponents(form).forEach(component -> {
             if (component instanceof HasValueAndElement<?, ?> field) {
                 field.setReadOnly(!editing);
-            } else if (component instanceof DynamicAttributesPanel panel) {
-                Collection<Component> ownComponents = UiComponentUtils.getComponents(panel.getContent());
-                ownComponents.forEach(panelComponent -> {
-                    if (panelComponent instanceof HasValueAndElement<?,?> panelField) {
-                        panelField.setReadOnly(!editing);
-                    }
-                });
             }
         });
 

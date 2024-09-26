@@ -121,16 +121,9 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     }
 
     private fun updateControls(editing: Boolean) {
-        form.children.forEach { component ->
+        UiComponentUtils.getComponents(form).forEach { component ->
             if (component is HasValueAndElement<*, *>) {
                 component.isReadOnly = !editing
-            } else if (component is DynamicAttributesPanel) {
-                val ownComponents:Collection<Component> = UiComponentUtils.getComponents(component.getContent())
-                ownComponents.forEach(panelComponent -> {
-                    if (panelComponent is HasValueAndElement<*, *>) {
-                        panelComponent.setReadOnly(!editing)
-                    }
-                })
             }
         }
         detailActions.isVisible = editing

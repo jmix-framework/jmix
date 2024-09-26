@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.*;

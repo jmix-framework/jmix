@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.Route
 import io.jmix.flowui.component.validation.ValidationErrors
 import io.jmix.core.validation.group.UiCrossFieldChecks
+import io.jmix.flowui.component.UiComponentUtils
 import io.jmix.flowui.kit.action.ActionPerformedEvent
 import io.jmix.flowui.kit.component.button.JmixButton
 import io.jmix.flowui.model.*
@@ -56,7 +57,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     private lateinit var detailActions: HorizontalLayout
 
     @Subscribe
-    fun onInit(event: InitEvent) {
+    fun onBeforeShow(event: BeforeShowEvent) {
         updateControls(false)
     }<%if (tableActions.contains("create")) {%>
 
@@ -106,6 +107,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
             ${detailDl}.entityId = null
             ${detailDc}.setItem(null)
         }
+        updateControls(false)
     }
 
     private fun validateView(entity: ${entity.className}): ValidationErrors {
@@ -122,6 +124,13 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
         form.children.forEach { component ->
             if (component is HasValueAndElement<*, *>) {
                 component.isReadOnly = !editing
+            } else if (component is DynamicAttributesPanel) {
+                val ownComponents:Collection<Component> = UiComponentUtils.getComponents(component.getContent())
+                ownComponents.forEach(panelComponent -> {
+                    if (panelComponent is HasValueAndElement<*, *>) {
+                        panelComponent.setReadOnly(!editing)
+                    }
+                })
             }
         }
         detailActions.isVisible = editing

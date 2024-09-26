@@ -29,8 +29,8 @@ public interface FileParserResolver {
 
     /**
      * Returns the description of the criteria for the files that are supported with this resolver.
-     * This message is used for generating the log message that is written into the log
-     * while no one of the resolvers supports the processing file.
+     * This text is used for generating the log message that is written into the log
+     * while no one of the resolvers supports the processing of the given file.
      *
      * @return criteria description
      */

@@ -64,7 +64,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     private HorizontalLayout detailActions;
 
     @Subscribe
-    public void onInit(final InitEvent event) {
+    public void onBeforeShow(final BeforeShowEvent event) {
         updateControls(false);
     }<%if (tableActions.contains("create")) {%>
 
@@ -114,6 +114,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
             ${detailDl}.setEntityId(null);
             ${detailDc}.setItem(null);
         }
+        updateControls(false);
     }
 
     protected ValidationErrors validateView(${entity.className} entity) {
@@ -130,6 +131,13 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         form.getChildren().forEach(component -> {
             if (component instanceof HasValueAndElement<?, ?> field) {
                 field.setReadOnly(!editing);
+            } else if (component instanceof DynamicAttributesPanel panel) {
+                Collection<Component> ownComponents = UiComponentUtils.getComponents(panel.getContent());
+                ownComponents.forEach(panelComponent -> {
+                    if (panelComponent instanceof HasValueAndElement<?,?> panelField) {
+                        panelField.setReadOnly(!editing);
+                    }
+                });
             }
         });
 

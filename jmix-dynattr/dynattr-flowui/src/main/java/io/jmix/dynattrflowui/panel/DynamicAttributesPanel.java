@@ -241,7 +241,11 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
                     "'category' attribute in order to use DynamicAttributesPanel.");
         }
 
-        categoryField.setItems(getCategoriesOptionsList());
+        List<Category> categoriesOptionsList = getCategoriesOptionsList();
+        categoryField.setItems(categoriesOptionsList);
+        if (!categoriesOptionsList.isEmpty() && instanceContainer.getItemOrNull() != null) {
+            categoryField.setValue(categoriesOptionsList.get(0));
+        }
         categoryField.setValueSource(new ContainerValueSource<>(instanceContainer, "category"));
     }
 

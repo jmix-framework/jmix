@@ -29,6 +29,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.microsoft.OfficeParser;
+import org.apache.tika.parser.microsoft.OfficeParserConfig;
 import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
 import org.apache.tika.parser.odf.OpenDocumentParser;
 import org.apache.tika.parser.pdf.PDFParser;
@@ -62,14 +63,15 @@ public class FileProcessor {
         log.debug("Parser for file {}: {}", fileRef, parser);
 
         StringWriter stringWriter = new StringWriter();
+        ParseContext parseContext = createParseContext();
         try (InputStream stream = fileStorage.openStream(fileRef)) {
-            parser.parse(stream, new BodyContentHandler(stringWriter), new Metadata(), new ParseContext());
+            parser.parse(stream, new BodyContentHandler(stringWriter), new Metadata(), parseContext);
         } catch (OfficeXmlFileException e) {
             if (parser instanceof OfficeParser) {
                 parser = new OOXMLParser();
                 try (InputStream secondStream = fileStorage.openStream(fileRef)) {
                     stringWriter = new StringWriter();
-                    parser.parse(secondStream, new BodyContentHandler(stringWriter), new Metadata(), new ParseContext());
+                    parser.parse(secondStream, new BodyContentHandler(stringWriter), new Metadata(), parseContext);
                 } catch (Exception e1) {
                     log.error("Unable to parse OOXML file '{}'", fileRef.getFileName(), e1);
                     throw new FileParseException(fileRef.getFileName(), "Fail to parse OOXML file via OOXMLParser", e);
@@ -86,6 +88,16 @@ public class FileProcessor {
     protected Parser getParser(FileRef fileRef) throws UnsupportedFileFormatException {
         Optional<Parser> parserOpt = getParserOpt(fileRef);
         return parserOpt.orElseThrow(() -> new UnsupportedFileFormatException(fileRef.getFileName()));
+    }
+
+    protected ParseContext createParseContext() {
+        ParseContext parseContext = new ParseContext();
+
+        OfficeParserConfig officeParserConfig = new OfficeParserConfig();
+        officeParserConfig.setIncludeHeadersAndFooters(false);
+        parseContext.set(OfficeParserConfig.class, officeParserConfig);
+
+        return parseContext;
     }
 
     protected Optional<Parser> getParserOpt(FileRef fileRef) {

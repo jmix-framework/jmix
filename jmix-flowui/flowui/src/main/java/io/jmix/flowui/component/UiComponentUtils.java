@@ -311,8 +311,6 @@ public final class UiComponentUtils {
         for (Component component : ownComponents) {
             if (isContainer(component)) {
                 fillChildComponents(component, components);
-            } else if (component instanceof Composite<?> composite && isContainer(composite.getContent())) {
-                fillChildComponents(composite.getContent(), components);
             }
         }
     }

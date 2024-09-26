@@ -60,6 +60,24 @@ class FileParserResolverManagerIntegrationTest extends Specification {
         "xlsx"    | OOXMLParser
     }
 
+    def "there is no appropriate resolver for the file if the capital letters"() {
+        given:
+        def manager = new FileParserResolverManager(getResolvers())
+
+        and:
+        def fileRef = Mock(FileRef)
+        fileRef.getFileName() >> "filename." + extension
+
+        when:
+        manager.getParser(fileRef)
+
+        then:
+        thrown(UnsupportedFileTypeException)
+
+        where:
+        extension << ["TXT", "PDF", "RTF", "ODT", "ODS", "DOC", "XLS", "DOCX", "XLSX"]
+    }
+
     def "there is not appropriate resolver for the file"() {
         given:
         def manager = new FileParserResolverManager(getResolvers())

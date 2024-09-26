@@ -68,6 +68,7 @@ public class FileProcessor {
                     parsingBundle.metadata(),
                     parsingBundle.parseContext());
         } catch (OfficeXmlFileException e) {
+            //Protection from Office 2007 documents with old .doc extension.
             if (parser instanceof OfficeParser) {
                 parser = new OOXMLParser();
                 try (InputStream secondStream = fileStorage.openStream(fileRef)) {

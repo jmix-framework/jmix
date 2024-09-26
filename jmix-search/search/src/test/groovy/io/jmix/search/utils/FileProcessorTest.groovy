@@ -31,10 +31,10 @@ class FileProcessorTest extends Specification {
         def exception = Mock(UnsupportedFileFormatException)
 
         and:
-        FileParserResolverManager fileParserResolver = Mock()
+        FileParserProvider fileParserProvider = Mock()
         FileRef fileRefMock = Mock()
-        fileParserResolver.getParser(fileRefMock) >> { throw exception }
-        FileProcessor fileProcessor = new FileProcessor(storageLocatorMock, fileParserResolver)
+        fileParserProvider.getParser(fileRefMock) >> { throw exception }
+        FileProcessor fileProcessor = new FileProcessor(storageLocatorMock, fileParserProvider)
 
         when:
         fileProcessor.extractFileContent(fileRefMock)

@@ -43,11 +43,11 @@ public class FileProcessor {
     private static final Logger log = LoggerFactory.getLogger(FileProcessor.class);
 
     protected FileStorageLocator fileStorageLocator;
-    protected FileParserResolverManager fileParserResolverManager;
+    protected FileParserProvider fileParserProvider;
 
-    public FileProcessor(FileStorageLocator fileStorageLocator, FileParserResolverManager fileParserResolverManager) {
+    public FileProcessor(FileStorageLocator fileStorageLocator, FileParserProvider fileParserProvider) {
         this.fileStorageLocator = fileStorageLocator;
-        this.fileParserResolverManager = fileParserResolverManager;
+        this.fileParserProvider = fileParserProvider;
     }
 
     public String extractFileContent(FileRef fileRef) throws FileParseException, UnsupportedFileFormatException {
@@ -81,6 +81,6 @@ public class FileProcessor {
     }
 
     protected Parser getParser(FileRef fileRef) throws UnsupportedFileFormatException {
-        return fileParserResolverManager.getParser(fileRef);
+        return fileParserProvider.getParser(fileRef);
     }
 }

@@ -25,7 +25,7 @@ import io.jmix.search.index.fileparsing.resolvers.OpenOfficeDocumentsParserResol
 import io.jmix.search.index.fileparsing.resolvers.PDFParserResolver
 import io.jmix.search.index.fileparsing.resolvers.RTFParserResolver
 import io.jmix.search.index.fileparsing.resolvers.TXTParserResolver
-import io.jmix.search.utils.FileParserResolverManager
+import io.jmix.search.utils.FileParserProvider
 import org.apache.tika.parser.microsoft.OfficeParser
 import org.apache.tika.parser.microsoft.ooxml.OOXMLParser
 import org.apache.tika.parser.odf.OpenDocumentParser
@@ -34,18 +34,18 @@ import org.apache.tika.parser.rtf.RTFParser
 import org.apache.tika.parser.txt.TXTParser
 import spock.lang.Specification
 
-class FileParserResolverManagerIntegrationTest extends Specification {
+class FileParserProviderIntegrationTest extends Specification {
 
     def "there is appropriate resolver for the file"() {
         given:
-        def manager = new FileParserResolverManager(getResolvers())
+        def provider = new FileParserProvider(getResolvers())
 
         and:
         def fileRef = Mock(FileRef)
         fileRef.getFileName() >> "filename." + extension
 
         expect:
-        manager.getParser(fileRef).getClass() == theClass
+        provider.getParser(fileRef).getClass() == theClass
 
         where:
         extension | theClass
@@ -62,14 +62,14 @@ class FileParserResolverManagerIntegrationTest extends Specification {
 
     def "there is no appropriate resolver for the file if the file is with the capital letters"() {
         given:
-        def manager = new FileParserResolverManager(getResolvers())
+        def provider = new FileParserProvider(getResolvers())
 
         and:
         def fileRef = Mock(FileRef)
         fileRef.getFileName() >> "filename." + extension
 
         when:
-        manager.getParser(fileRef)
+        provider.getParser(fileRef)
 
         then:
         thrown(UnsupportedFileFormatException)
@@ -80,14 +80,14 @@ class FileParserResolverManagerIntegrationTest extends Specification {
 
     def "there is not appropriate resolver for the file"() {
         given:
-        def manager = new FileParserResolverManager(getResolvers())
+        def provider = new FileParserProvider(getResolvers())
 
         and:
         def fileRef = Mock(FileRef)
         fileRef.getFileName() >> "filename." + extension
 
         when:
-        manager.getParser(fileRef)
+        provider.getParser(fileRef)
 
         then:
         thrown(UnsupportedFileFormatException)

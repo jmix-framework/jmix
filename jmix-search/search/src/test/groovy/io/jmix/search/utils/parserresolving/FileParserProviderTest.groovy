@@ -19,13 +19,13 @@ package io.jmix.search.utils.parserresolving
 import io.jmix.core.FileRef
 import io.jmix.search.exception.UnsupportedFileFormatException
 import io.jmix.search.index.fileparsing.FileParserResolver
-import io.jmix.search.utils.FileParserResolverManager
+import io.jmix.search.utils.FileParserProvider
 import org.apache.tika.parser.Parser
 import spock.lang.Specification
 
 import static java.util.Collections.emptyList
 
-class FileParserResolverManagerTest extends Specification {
+class FileParserProviderTest extends Specification {
 
     def "should throw UnsupportedFileExtensionException when the given file of unsupported type"() {
         given:
@@ -39,10 +39,10 @@ class FileParserResolverManagerTest extends Specification {
         resolver2.supports(fileRef) >> false
 
         and:
-        def parserResolver = new FileParserResolverManager(List.of(resolver, resolver2))
+        def parserProvider = new FileParserProvider(List.of(resolver, resolver2))
 
         when:
-        parserResolver.getParser(fileRef)
+        parserProvider.getParser(fileRef)
 
         then:
         def exception = thrown(UnsupportedFileFormatException)
@@ -65,10 +65,10 @@ class FileParserResolverManagerTest extends Specification {
         resolver3.getParser() >> parser3
 
         and:
-        def resolverManager = new FileParserResolverManager(List.of(resolver1, resolver2, resolver3))
+        def parserProvider = new FileParserProvider(List.of(resolver1, resolver2, resolver3))
 
         when:
-        def resolvedParser = resolverManager.getParser(fileRef)
+        def resolvedParser = parserProvider.getParser(fileRef)
 
         then:
         resolvedParser != null
@@ -89,7 +89,7 @@ class FileParserResolverManagerTest extends Specification {
         FileRef fileRef = Mock()
 
         and:
-        def resolverManager = new FileParserResolverManager(emptyList())
+        def resolverManager = new FileParserProvider(emptyList())
 
         when:
         resolverManager.getParser(fileRef)

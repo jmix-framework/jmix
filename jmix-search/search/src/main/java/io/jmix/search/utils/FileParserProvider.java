@@ -29,15 +29,15 @@ import java.util.List;
  * The service that searches appropriate file parsers for the supported file types.
  * A search principle is based on the sequential applying FileParserResolver objects' checks for the given file.
  */
-@Component("search_FileParserResolverManager")
-public class FileParserResolverManager {
+@Component("search_FileParserProvider")
+public class FileParserProvider {
 
     private static final String EMPTY_FILE_PARSER_RESOLVERS_LIST_MESSAGE
             = "There are no any file parser resolvers in the application.";
 
     protected List<FileParserResolver> fileParserResolvers;
 
-    public FileParserResolverManager(List<FileParserResolver> fileParserResolvers) {
+    public FileParserProvider(List<FileParserResolver> fileParserResolvers) {
         this.fileParserResolvers = fileParserResolvers;
     }
 

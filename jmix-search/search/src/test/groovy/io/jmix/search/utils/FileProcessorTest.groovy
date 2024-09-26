@@ -22,6 +22,7 @@ import io.jmix.search.exception.UnsupportedFileFormatException
 import spock.lang.Specification
 
 class FileProcessorTest extends Specification {
+
     def "should throw the UnsupportedFileTypeException that have been thrown by the FileParserResolver"() {
         given:
         FileStorageLocator storageLocatorMock = Mock()

@@ -21,6 +21,7 @@ import org.apache.tika.parser.Parser
 import spock.lang.Specification
 
 class AbstractExtensionBasedFileParserResolverTest extends Specification {
+
     def "GetCriteriaDescription"() {
         given:
         def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), extensions as List<String>)

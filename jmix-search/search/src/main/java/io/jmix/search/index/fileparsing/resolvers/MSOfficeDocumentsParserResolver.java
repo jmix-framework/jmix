@@ -27,6 +27,7 @@ import java.util.List;
 @Component("search_OfficeDocumentsParserResolver")
 @Order(100)
 public class MSOfficeDocumentsParserResolver extends AbstractExtensionBasedFileParserResolver {
+
     @Override
     public List<String> getSupportedExtensions() {
         return List.of("docx", "xlsx");

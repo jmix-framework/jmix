@@ -20,7 +20,6 @@ import spock.lang.Specification
 
 class UnsupportedFileFormatExceptionTest extends Specification {
 
-
     private static final String MESSAGE_1 = "The file another-file.smt can't be parsed. " +
             "Only the following file parsing criteria are supported:\n" +
             "  -The only one criteria."

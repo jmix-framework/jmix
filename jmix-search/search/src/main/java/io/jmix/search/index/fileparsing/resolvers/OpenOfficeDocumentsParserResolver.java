@@ -17,7 +17,6 @@
 package io.jmix.search.index.fileparsing.resolvers;
 
 import io.jmix.search.index.fileparsing.AbstractExtensionBasedFileParserResolver;
-import io.jmix.search.index.fileparsing.FileParserResolver;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.odf.OpenDocumentParser;
 import org.springframework.core.annotation.Order;
@@ -28,6 +27,7 @@ import java.util.List;
 @Component("search_OpenOfficeDocumentsParserResolver")
 @Order(100)
 public class OpenOfficeDocumentsParserResolver extends AbstractExtensionBasedFileParserResolver {
+
     @Override
     public List<String> getSupportedExtensions() {
         return List.of("odt", "ods");

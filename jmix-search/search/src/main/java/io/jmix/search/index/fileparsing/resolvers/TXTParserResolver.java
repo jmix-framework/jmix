@@ -22,15 +22,15 @@ import org.apache.tika.parser.txt.TXTParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 @Component("search_TXTParserResolver")
 @Order(100)
 public class TXTParserResolver extends AbstractExtensionBasedFileParserResolver {
 
     @Override
-    public List<String> getSupportedExtensions() {
-        return List.of("txt");
+    public Set<String> getSupportedExtensions() {
+        return Set.of("txt");
     }
 
     @Override

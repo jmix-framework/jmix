@@ -22,15 +22,15 @@ import org.apache.tika.parser.rtf.RTFParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 @Component("search_RTFParserResolver")
 @Order(100)
 public class RTFParserResolver extends AbstractExtensionBasedFileParserResolver {
 
     @Override
-    public List<String> getSupportedExtensions() {
-        return List.of("rtf");
+    public Set<String> getSupportedExtensions() {
+        return Set.of("rtf");
     }
 
     @Override

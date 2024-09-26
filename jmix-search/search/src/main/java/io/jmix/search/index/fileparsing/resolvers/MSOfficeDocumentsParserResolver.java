@@ -22,15 +22,15 @@ import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 @Component("search_OfficeDocumentsParserResolver")
 @Order(100)
 public class MSOfficeDocumentsParserResolver extends AbstractExtensionBasedFileParserResolver {
 
     @Override
-    public List<String> getSupportedExtensions() {
-        return List.of("docx", "xlsx");
+    public Set<String> getSupportedExtensions() {
+        return Set.of("docx", "xlsx");
     }
 
     @Override

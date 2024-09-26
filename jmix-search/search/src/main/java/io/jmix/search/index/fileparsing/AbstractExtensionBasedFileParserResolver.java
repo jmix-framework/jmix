@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.FileRef;
 import org.apache.commons.io.FilenameUtils;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Implements the common logic for all extension based file parser resolvers.
@@ -32,7 +32,7 @@ public abstract class AbstractExtensionBasedFileParserResolver implements FilePa
      *
      * @return collection of supported extensions
      */
-    public abstract List<String> getSupportedExtensions();
+    public abstract Set<String> getSupportedExtensions();
 
     @Override
     public String getCriteriaDescription() {
@@ -50,7 +50,7 @@ public abstract class AbstractExtensionBasedFileParserResolver implements FilePa
         return getSupportedExtensions().contains(fileExtension);
     }
 
-    protected String getSupportedExtensionsString(List<String> supportedExtensions) {
+    protected String getSupportedExtensionsString(Set<String> supportedExtensions) {
         return String.join(", ", supportedExtensions);
     }
 }

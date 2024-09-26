@@ -24,7 +24,7 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
 
     def "GetCriteriaDescription"() {
         given:
-        def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), extensions as List<String>)
+        def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), extensions as Set<String>)
 
         expect:
         resolver.getCriteriaDescription() == criteriaDescription
@@ -38,7 +38,7 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
 
     def "Supports"() {
         given:
-        def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), extensions as List<String>)
+        def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), extensions as Set<String>)
 
         and:
         def fileRef = Mock(FileRef)
@@ -64,15 +64,15 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
 
     private static class TestExtensionBasedFileParserResolver extends AbstractExtensionBasedFileParserResolver {
         private Parser parser
-        private List<String> extensions
+        private Set<String> extensions
 
-        TestExtensionBasedFileParserResolver(Parser parser, List<String> extensions) {
+        TestExtensionBasedFileParserResolver(Parser parser, Set<String> extensions) {
             this.parser = parser
             this.extensions = extensions
         }
 
         @Override
-        List<String> getSupportedExtensions() {
+        Set<String> getSupportedExtensions() {
             return extensions;
         }
 

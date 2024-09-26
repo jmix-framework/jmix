@@ -22,15 +22,15 @@ import org.apache.tika.parser.odf.OpenDocumentParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 @Component("search_OpenOfficeDocumentsParserResolver")
 @Order(100)
 public class OpenOfficeDocumentsParserResolver extends AbstractExtensionBasedFileParserResolver {
 
     @Override
-    public List<String> getSupportedExtensions() {
-        return List.of("odt", "ods");
+    public Set<String> getSupportedExtensions() {
+        return Set.of("odt", "ods");
     }
 
     @Override

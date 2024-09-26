@@ -22,15 +22,15 @@ import org.apache.tika.parser.pdf.PDFParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 @Component("search_PDFParserResolver")
 @Order(100)
 public class PDFParserResolver extends AbstractExtensionBasedFileParserResolver {
 
     @Override
-    public List<String> getSupportedExtensions() {
-        return List.of("pdf");
+    public Set<String> getSupportedExtensions() {
+        return Set.of("pdf");
     }
 
     @Override

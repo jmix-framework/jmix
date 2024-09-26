@@ -20,7 +20,31 @@ import io.jmix.core.FileRef
 import org.apache.tika.parser.Parser
 import spock.lang.Specification
 
+import static io.jmix.search.index.fileparsing.ObjectsComparator.isTheSame
+
 class AbstractExtensionBasedFileParserResolverTest extends Specification {
+
+    def "getParsingBundle. Different bundles are returned each time"() {
+        given:
+        def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), Mock(Set))
+
+        expect:
+        resolver.getParsingBundle() != resolver.getParsingBundle()
+    }
+
+    def "getParsingBundle. Not the same objects inside of the bundles"() {
+        given:
+        def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), Mock(Set))
+
+        when:
+        def bundle1 = resolver.getParsingBundle()
+        def bundle2 = resolver.getParsingBundle()
+
+        then:
+        bundle1.bodyContentHandlerGenerator() != null
+        !isTheSame(bundle1.metadata(), bundle2.metadata())
+        !isTheSame(bundle1.parseContext(), bundle2.parseContext())
+    }
 
     def "GetCriteriaDescription"() {
         given:

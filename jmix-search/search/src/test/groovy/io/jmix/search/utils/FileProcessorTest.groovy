@@ -33,7 +33,7 @@ class FileProcessorTest extends Specification {
         and:
         FileParserProvider fileParserProvider = Mock()
         FileRef fileRefMock = Mock()
-        fileParserProvider.getParser(fileRefMock) >> { throw exception }
+        fileParserProvider.getParsingBundle(fileRefMock) >> { throw exception }
         FileProcessor fileProcessor = new FileProcessor(storageLocatorMock, fileParserProvider)
 
         when:

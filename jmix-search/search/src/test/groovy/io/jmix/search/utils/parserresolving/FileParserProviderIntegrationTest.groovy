@@ -45,7 +45,7 @@ class FileParserProviderIntegrationTest extends Specification {
         fileRef.getFileName() >> "filename." + extension
 
         expect:
-        provider.getParser(fileRef).getClass() == theClass
+        provider.getParsingBundle(fileRef).parser().getClass() == theClass
 
         where:
         extension | theClass
@@ -69,7 +69,7 @@ class FileParserProviderIntegrationTest extends Specification {
         fileRef.getFileName() >> "filename." + extension
 
         when:
-        provider.getParser(fileRef)
+        provider.getParsingBundle(fileRef)
 
         then:
         thrown(UnsupportedFileFormatException)
@@ -87,7 +87,7 @@ class FileParserProviderIntegrationTest extends Specification {
         fileRef.getFileName() >> "filename." + extension
 
         when:
-        provider.getParser(fileRef)
+        provider.getParsingBundle(fileRef)
 
         then:
         thrown(UnsupportedFileFormatException)

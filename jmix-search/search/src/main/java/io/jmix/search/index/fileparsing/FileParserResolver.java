@@ -17,7 +17,6 @@
 package io.jmix.search.index.fileparsing;
 
 import io.jmix.core.FileRef;
-import org.apache.tika.parser.Parser;
 
 /**
  * Interface to be implemented for adding a custom file parser resolver
@@ -37,11 +36,11 @@ public interface FileParserResolver {
     String getCriteriaDescription();
 
     /**
-     * Returns an instance of a file parser for the supported file types.
+     * Returns a complex object that contains the all necessary objects for the supported file type parsing.
      *
      * @return an instance of a file parser
      */
-    Parser getParser();
+    FileParsingBundle getParsingBundle();
 
     /**
      * Returns the result of the checking if the file with the given fileRef is supported by the resolver or not.

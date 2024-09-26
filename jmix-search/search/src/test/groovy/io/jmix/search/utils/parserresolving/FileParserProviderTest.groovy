@@ -19,9 +19,13 @@ package io.jmix.search.utils.parserresolving
 import io.jmix.core.FileRef
 import io.jmix.search.exception.UnsupportedFileFormatException
 import io.jmix.search.index.fileparsing.FileParserResolver
+import io.jmix.search.index.fileparsing.FileParsingBundle
 import io.jmix.search.utils.FileParserProvider
+import org.apache.tika.metadata.Metadata
+import org.apache.tika.parser.ParseContext
 import org.apache.tika.parser.Parser
 import spock.lang.Specification
+import java.util.function.Function
 
 import static java.util.Collections.emptyList
 
@@ -42,7 +46,7 @@ class FileParserProviderTest extends Specification {
         def parserProvider = new FileParserProvider(List.of(resolver, resolver2))
 
         when:
-        parserProvider.getParser(fileRef)
+        parserProvider.getParsingBundle(fileRef)
 
         then:
         def exception = thrown(UnsupportedFileFormatException)
@@ -58,17 +62,20 @@ class FileParserProviderTest extends Specification {
         fileRef.getFileName() >> fileName
 
         and:
-        def resolver1 = createExtensionBasedResolverResolver("txt", parser1)
-        def resolver2 = createExtensionBasedResolverResolver("rtf", parser2)
+        def resolver1 = createExtensionBasedResolver("txt", parser1)
+        def resolver2 = createExtensionBasedResolver("rtf", parser2)
         def resolver3 = Mock(FileParserResolver)
         resolver3.supports(_ as FileRef) >> true;
-        resolver3.getParser() >> parser3
+        resolver3.getParsingBundle() >> new FileParsingBundle(parser3,
+                Mock(Function),
+                Mock(Metadata),
+                Mock(ParseContext))
 
         and:
         def parserProvider = new FileParserProvider(List.of(resolver1, resolver2, resolver3))
 
         when:
-        def resolvedParser = parserProvider.getParser(fileRef)
+        def resolvedParser = parserProvider.getParsingBundle(fileRef).parser()
 
         then:
         resolvedParser != null
@@ -92,14 +99,14 @@ class FileParserProviderTest extends Specification {
         def resolverManager = new FileParserProvider(emptyList())
 
         when:
-        resolverManager.getParser(fileRef)
+        resolverManager.getParsingBundle(fileRef)
 
         then:
         def exception = thrown(IllegalStateException)
         exception.getMessage() == "There are no any file parser resolvers in the application."
     }
 
-    FileParserResolver createExtensionBasedResolverResolver(String fileExtension, Parser parser) {
+    FileParserResolver createExtensionBasedResolver(String fileExtension, Parser parser) {
         def resolver = Mock(FileParserResolver)
         resolver.supports(_ as FileRef) >> { FileRef fileRef1 ->
             {
@@ -109,7 +116,11 @@ class FileParserProviderTest extends Specification {
                 return false
             }
         }
-        resolver.getParser() >> parser
+        resolver.getParsingBundle() >> new FileParsingBundle(
+                parser,
+                Mock(Function),
+                Mock(Metadata),
+                Mock(ParseContext))
         resolver
     }
 }

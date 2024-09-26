@@ -19,8 +19,14 @@ package io.jmix.search.index.fileparsing;
 import com.google.common.base.Strings;
 import io.jmix.core.FileRef;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.sax.BodyContentHandler;
 
+import java.io.StringWriter;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Implements the common logic for all extension based file parser resolvers.
@@ -58,5 +64,40 @@ public abstract class AbstractExtensionBasedFileParserResolver implements FilePa
 
     protected String getSupportedExtensionsString(Set<String> supportedExtensions) {
         return String.join(", ", supportedExtensions);
+    }
+
+    @Override
+    public FileParsingBundle getParsingBundle() {
+        return new FileParsingBundle(
+                getParser(),
+                getBodyContentHandlerGenerator(),
+                getMetadata(),
+                getParseContext());
+    }
+
+    /**
+     * Returns a parser for the supported file type.
+     */
+    protected abstract Parser getParser();
+
+    /**
+     * Returns a function for the BodyContentHandler generating that is necessary for the given file parsing.
+     */
+    protected Function<StringWriter, BodyContentHandler> getBodyContentHandlerGenerator() {
+        return stringWriter -> new BodyContentHandler(stringWriter);
+    }
+
+    /**
+     * Returns a Metadata object for the given file parsing.
+     */
+    protected Metadata getMetadata() {
+        return new Metadata();
+    }
+
+    /**
+     * Returns a ParseContext object for the given file parsing.
+     */
+    protected ParseContext getParseContext() {
+        return new ParseContext();
     }
 }

@@ -17,7 +17,6 @@
 package io.jmix.search.utils.parserresolving
 
 import io.jmix.core.FileRef
-import io.jmix.search.exception.EmptyFileParserResolversList
 import io.jmix.search.exception.UnsupportedFileTypeException
 import io.jmix.search.index.fileparsing.FileParserResolver
 import io.jmix.search.utils.FileParserResolverManager
@@ -96,7 +95,8 @@ class FileParserResolverManagerTest extends Specification {
         resolverManager.getParser(fileRef)
 
         then:
-        thrown(EmptyFileParserResolversList)
+        def exception = thrown(IllegalStateException)
+        exception.getMessage() == "There are no any file parser resolvers in the application."
     }
 
     FileParserResolver createExtensionBasedResolverResolver(String fileExtension, Parser parser) {

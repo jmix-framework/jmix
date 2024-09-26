@@ -24,9 +24,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
-@Component("search_OldOfficeDocumentsParserResolver")
+@Component("search_LegacyMSOfficeDocumentsParserResolver")
 @Order(100)
-public class OldMSOfficeDocumentsParserResolver extends AbstractExtensionBasedFileParserResolver {
+public class LegacyMSOfficeDocumentsParserResolver extends AbstractExtensionBasedFileParserResolver {
 
     @Override
     public Set<String> getSupportedExtensions() {

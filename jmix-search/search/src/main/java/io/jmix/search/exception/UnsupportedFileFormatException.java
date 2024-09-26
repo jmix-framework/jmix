@@ -28,8 +28,8 @@ public class UnsupportedFileFormatException extends Exception {
             "Only the following file parsing criteria are supported:\n  -%s";
 
     /**
-     * @param fileName            - the name of the file which type is not supported
-     * @param supportedExtensions - the list of the criteria that are supported in the application
+     * @param fileName            the name of the file which type is not supported
+     * @param supportedExtensions the list of the criteria that are supported in the application
      */
     public UnsupportedFileFormatException(String fileName, List<String> supportedExtensions) {
         super(String.format(

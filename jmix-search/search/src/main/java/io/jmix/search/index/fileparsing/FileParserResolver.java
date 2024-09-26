@@ -19,18 +19,18 @@ package io.jmix.search.index.fileparsing;
 import io.jmix.core.FileRef;
 import org.apache.tika.parser.Parser;
 
-import java.util.List;
-
 /**
- * Is a part of the extendable engine the gives an ability to implement custom file parser resolvers and to support
- * custom file types or to modify behavior of existing file parser resolvers.
+ * Interface to be implemented for adding a custom file parser resolver
+ * or modifying the behavior of the existing file parser resolvers. It gives an ability to define the exact parser
+ * for the exact file types with a custom implementation of the file checking logic. These parsers are used to extract
+ * file content for sending it to the search server and indexing.
  */
 public interface FileParserResolver {
 
     /**
-     * This method should return the description that describes the constraints or the constraint for the files
-     * that are supported with this resolver. This message is used for generating the log message that
-     * is written into the log while no one of the resolvers supports the processed file.
+     * Returns the description of the criteria for the files that are supported with this resolver.
+     * This message is used for generating the log message that is written into the log
+     * while no one of the resolvers supports the processing file.
      *
      * @return criteria description
      */
@@ -44,8 +44,7 @@ public interface FileParserResolver {
     Parser getParser();
 
     /**
-     * This method should implement the logic for checking
-     * if the file with given fileRef is supported by the resolver or not.
+     * Returns the result of the checking if the file with the given fileRef is supported by the resolver or not.
      *
      * @param fileRef object with the file information
      * @return the given FileRef's checking result

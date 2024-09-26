@@ -20,7 +20,7 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import io.jmix.core.FileRef
-import io.jmix.search.exception.UnsupportedFileTypeException
+import io.jmix.search.exception.UnsupportedFileFormatException
 import io.jmix.search.utils.FileProcessor
 import spock.lang.Specification
 
@@ -43,7 +43,7 @@ class FilePropertyValueExtractorTest extends Specification {
         FileRef fileRef = Mock()
 
         and:
-        def exceptionMock = Mock(UnsupportedFileTypeException)
+        def exceptionMock = Mock(UnsupportedFileFormatException)
         exceptionMock.getMessage() >> "Some exception message."
 
         and:

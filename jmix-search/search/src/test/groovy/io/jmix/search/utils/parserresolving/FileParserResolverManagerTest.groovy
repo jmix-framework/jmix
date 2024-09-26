@@ -17,7 +17,7 @@
 package io.jmix.search.utils.parserresolving
 
 import io.jmix.core.FileRef
-import io.jmix.search.exception.UnsupportedFileTypeException
+import io.jmix.search.exception.UnsupportedFileFormatException
 import io.jmix.search.index.fileparsing.FileParserResolver
 import io.jmix.search.utils.FileParserResolverManager
 import org.apache.tika.parser.Parser
@@ -45,7 +45,7 @@ class FileParserResolverManagerTest extends Specification {
         parserResolver.getParser(fileRef)
 
         then:
-        def exception = thrown(UnsupportedFileTypeException)
+        def exception = thrown(UnsupportedFileFormatException)
         exception.getMessage().contains(fileName)
 
         where:

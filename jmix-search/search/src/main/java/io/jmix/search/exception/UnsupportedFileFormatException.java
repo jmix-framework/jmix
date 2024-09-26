@@ -22,7 +22,7 @@ import java.util.List;
  * An exception that is thrown when a user added some file of the type that is not supported
  * and there are no any known parser for.
  */
-public class UnsupportedFileTypeException extends Exception {
+public class UnsupportedFileFormatException extends Exception {
 
     private static final String MESSAGE = "The file %s can't be parsed. " +
             "Only the following file parsing criteria are supported:\n  -%s";
@@ -31,7 +31,7 @@ public class UnsupportedFileTypeException extends Exception {
      * @param fileName            - the name of the file which type is not supported
      * @param supportedExtensions - the list of the criteria that are supported in the application
      */
-    public UnsupportedFileTypeException(String fileName, List<String> supportedExtensions) {
+    public UnsupportedFileFormatException(String fileName, List<String> supportedExtensions) {
         super(String.format(
                 MESSAGE,
                 fileName,

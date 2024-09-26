@@ -18,7 +18,7 @@ package io.jmix.search.exception
 
 import spock.lang.Specification
 
-class UnsupportedFileTypeExceptionTest extends Specification {
+class UnsupportedFileFormatExceptionTest extends Specification {
 
 
     private static final String MESSAGE_1 = "The file another-file.smt can't be parsed. " +
@@ -38,7 +38,7 @@ class UnsupportedFileTypeExceptionTest extends Specification {
 
     def "message test"() {
         when:
-        def exception = new UnsupportedFileTypeException(fileName, supportedTypes)
+        def exception = new UnsupportedFileFormatException(fileName, supportedTypes)
 
         then:
         exception.getMessage() == message

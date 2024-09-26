@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.exception.FileParseException;
-import io.jmix.search.exception.UnsupportedFileTypeException;
+import io.jmix.search.exception.UnsupportedFileFormatException;
 import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.utils.BooleanParser;
 import io.jmix.search.utils.FileProcessor;
@@ -91,7 +91,7 @@ public class FilePropertyValueExtractor extends AbstractPropertyValueExtractor {
         try {
             String content = fileProcessor.extractFileContent(fileRef);
             node.put("_content", content);
-        } catch (UnsupportedFileTypeException e) {
+        } catch (UnsupportedFileFormatException e) {
             log.warn(e.getMessage());
         } catch (FileParseException e) {
             log.error("Unable to index file content", e);

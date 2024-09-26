@@ -18,7 +18,7 @@ package io.jmix.search.utils
 
 import io.jmix.core.FileRef
 import io.jmix.core.FileStorageLocator
-import io.jmix.search.exception.UnsupportedFileTypeException
+import io.jmix.search.exception.UnsupportedFileFormatException
 import spock.lang.Specification
 
 class FileProcessorTest extends Specification {
@@ -27,7 +27,7 @@ class FileProcessorTest extends Specification {
         FileStorageLocator storageLocatorMock = Mock()
 
         and:
-        def exception = Mock(UnsupportedFileTypeException)
+        def exception = Mock(UnsupportedFileFormatException)
 
         and:
         FileParserResolverManager fileParserResolver = Mock()
@@ -39,7 +39,7 @@ class FileProcessorTest extends Specification {
         fileProcessor.extractFileContent(fileRefMock)
 
         then:
-        UnsupportedFileTypeException throwable = thrown()
+        UnsupportedFileFormatException throwable = thrown()
         throwable == exception
     }
 }

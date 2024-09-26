@@ -17,7 +17,7 @@
 package io.jmix.search.utils.parserresolving
 
 import io.jmix.core.FileRef
-import io.jmix.search.exception.UnsupportedFileTypeException
+import io.jmix.search.exception.UnsupportedFileFormatException
 import io.jmix.search.index.fileparsing.FileParserResolver
 import io.jmix.search.index.fileparsing.resolvers.MSOfficeDocumentsParserResolver
 import io.jmix.search.index.fileparsing.resolvers.OldMSOfficeDocumentsParserResolver
@@ -72,7 +72,7 @@ class FileParserResolverManagerIntegrationTest extends Specification {
         manager.getParser(fileRef)
 
         then:
-        thrown(UnsupportedFileTypeException)
+        thrown(UnsupportedFileFormatException)
 
         where:
         extension << ["TXT", "PDF", "RTF", "ODT", "ODS", "DOC", "XLS", "DOCX", "XLSX"]
@@ -90,7 +90,7 @@ class FileParserResolverManagerIntegrationTest extends Specification {
         manager.getParser(fileRef)
 
         then:
-        thrown(UnsupportedFileTypeException)
+        thrown(UnsupportedFileFormatException)
 
         where:
         extension << ["txt1", "ems", "", "od", "ods2"]

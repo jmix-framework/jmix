@@ -28,7 +28,10 @@ import java.util.Set;
 public abstract class AbstractExtensionBasedFileParserResolver implements FileParserResolver {
 
     /**
-     * Returns a collection of supported extensions of the supported file type. E.g. ["xlsx", "XLSX", "docx", "DOCX"].
+     * Returns a collection of supported extensions of the supported file type.
+     * Note that the extension checking mechanism is case-sensitive. So in order to support
+     * the both uppercase one and lowercase option of the extension they should be defined explicitly.
+     * E.g. ["xlsx", "XLSX", "docx", "DOCX"].
      *
      * @return collection of supported extensions
      */

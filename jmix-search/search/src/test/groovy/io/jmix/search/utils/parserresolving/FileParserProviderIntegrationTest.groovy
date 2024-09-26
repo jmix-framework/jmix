@@ -20,7 +20,7 @@ import io.jmix.core.FileRef
 import io.jmix.search.exception.UnsupportedFileFormatException
 import io.jmix.search.index.fileparsing.FileParserResolver
 import io.jmix.search.index.fileparsing.resolvers.MSOfficeDocumentsParserResolver
-import io.jmix.search.index.fileparsing.resolvers.OldMSOfficeDocumentsParserResolver
+import io.jmix.search.index.fileparsing.resolvers.LegacyMSOfficeDocumentsParserResolver
 import io.jmix.search.index.fileparsing.resolvers.OpenOfficeDocumentsParserResolver
 import io.jmix.search.index.fileparsing.resolvers.PDFParserResolver
 import io.jmix.search.index.fileparsing.resolvers.RTFParserResolver
@@ -99,7 +99,7 @@ class FileParserProviderIntegrationTest extends Specification {
     List<FileParserResolver> getResolvers() {
         List.of(
                 new MSOfficeDocumentsParserResolver(),
-                new OldMSOfficeDocumentsParserResolver(),
+                new LegacyMSOfficeDocumentsParserResolver(),
                 new OpenOfficeDocumentsParserResolver(),
                 new PDFParserResolver(),
                 new RTFParserResolver(),

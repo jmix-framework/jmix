@@ -36,7 +36,10 @@ public abstract class AbstractExtensionBasedFileParserResolver implements FilePa
 
     @Override
     public String getCriteriaDescription() {
-        return String.format("The file extension should be one of the following: %s.", getSupportedExtensionsString(getSupportedExtensions()));
+        return String.format(
+                "Parser: %s. Supported extensions: %s.",
+                this.getClass().getSimpleName(),
+                getSupportedExtensionsString(getSupportedExtensions()));
     }
 
     @Override

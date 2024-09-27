@@ -47,7 +47,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
 
     protected final ElasticsearchClient client;
     protected final ElasticsearchIndexSettingsProvider indexSettingsProcessor;
-    protected final ElasticsearchPutMappingBuilder putMappingService;
+    protected final ElasticsearchPutMappingRequestBuilder putMappingRequestBuilder;
 
     public ElasticsearchIndexManager(ElasticsearchClient client,
                                      IndexStateRegistry indexStateRegistry,
@@ -56,11 +56,11 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
                                      ElasticsearchIndexSettingsProvider indexSettingsProcessor,
                                      ElasticsearchIndexConfigurationComparator configurationComparator,
                                      ElasticsearchIndexStateResolver indexStateResolver,
-                                     ElasticsearchPutMappingBuilder putMappingService) {
+                                     ElasticsearchPutMappingRequestBuilder putMappingRequestBuilder) {
         super(indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, indexStateResolver);
         this.client = client;
         this.indexSettingsProcessor = indexSettingsProcessor;
-        this.putMappingService = putMappingService;
+        this.putMappingRequestBuilder = putMappingRequestBuilder;
     }
 
     @Override
@@ -126,7 +126,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
     @Override
     public boolean putMapping(String indexName, IndexMappingConfiguration mapping) {
         try {
-            return client.indices().putMapping(putMappingService.buildRequest(mapping, indexName, null)).acknowledged();
+            return client.indices().putMapping(putMappingRequestBuilder.buildRequest(mapping, indexName, null)).acknowledged();
         } catch (IOException e) {
             throw new RuntimeException("Problem with sending request to elastic search server.", e);
         }

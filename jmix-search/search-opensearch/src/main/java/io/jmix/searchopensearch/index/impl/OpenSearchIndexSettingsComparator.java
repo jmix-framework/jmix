@@ -42,15 +42,8 @@ public class OpenSearchIndexSettingsComparator
     }
 
     @Override
-    protected Optional<IndexSettings> extractAppliedIndexSettings(IndexState currentIndexState, String indexName) {
-        IndexSettings allAppliedSettings = currentIndexState.settings();
-        if (allAppliedSettings == null) {
-            throw new IllegalArgumentException(
-                    "No info about all applied settings for index '" + indexName + "'"
-            );
-        }
-
-        return Optional.ofNullable(allAppliedSettings.index());
+    protected Optional<IndexSettings> extractAppliedIndexSettings(IndexState indexState) {
+        return Optional.ofNullable(indexState.settings()).map(IndexSettings::index);
     }
 
     @Override

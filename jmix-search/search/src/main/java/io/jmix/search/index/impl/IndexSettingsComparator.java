@@ -61,8 +61,8 @@ public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
     }
 
     @SuppressWarnings("unchecked")
-    protected TJsonp getAppliedIndexSettings(TState currentIndexState, String indexName) {
-        Optional<TSettings> appliedIndexSettings = extractAppliedIndexSettings(currentIndexState, indexName);
+    protected TJsonp getAppliedIndexSettings(TState indexState, String indexName) {
+        Optional<TSettings> appliedIndexSettings = extractAppliedIndexSettings(indexState);
         if (appliedIndexSettings.isEmpty()) {
             throw new IllegalArgumentException(
                     "No info about applied index settings for index '" + indexName + "'"
@@ -71,7 +71,7 @@ public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
         return (TJsonp) appliedIndexSettings;
     }
 
-    protected abstract Optional<TSettings> extractAppliedIndexSettings(TState currentIndexState, String indexName);
+    protected abstract Optional<TSettings> extractAppliedIndexSettings(TState currentIndexState);
 
     protected abstract TJsonp getExpectedIndexSettings(IndexConfiguration indexConfiguration);
 

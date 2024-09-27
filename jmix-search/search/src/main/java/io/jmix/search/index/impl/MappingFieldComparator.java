@@ -23,7 +23,8 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- *
+ * Class encapsulates logic of comparing the mapping's fields that are "leaf" field. That means that the field doen't
+ * contain any inner objects and is just a field of a primitive type.
  */
 @Component("search_MappingFieldComparator")
 public class MappingFieldComparator {

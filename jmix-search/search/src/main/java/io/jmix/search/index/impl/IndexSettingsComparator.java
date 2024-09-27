@@ -68,7 +68,7 @@ public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
                     "No info about applied index settings for index '" + indexName + "'"
             );
         }
-        return (TJsonp) appliedIndexSettings;
+        return (TJsonp) appliedIndexSettings.get();
     }
 
     protected abstract Optional<TSettings> extractAppliedIndexSettings(TState currentIndexState);

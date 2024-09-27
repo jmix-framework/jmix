@@ -109,24 +109,33 @@ public class FileProcessor {
         } else {
             switch (ext) {
                 case "pdf":
+                case "PDF":
                     parser = new PDFParser();
                     break;
                 case "doc":
                 case "xls":
+                case "DOC":
+                case "XLS":
                     parser = new OfficeParser();
                     break;
                 case "docx":
                 case "xlsx":
+                case "DOCX":
+                case "XLSX":
                     parser = new OOXMLParser();
                     break;
                 case "odt":
                 case "ods":
+                case "ODT":
+                case "ODS":
                     parser = new OpenDocumentParser();
                     break;
                 case "rtf":
+                case "RTF":
                     parser = new RTFParser();
                     break;
                 case "txt":
+                case "TXT":
                     parser = new TXTParser();
                     break;
                 default:

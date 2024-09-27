@@ -38,7 +38,8 @@ public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<Put
 
     public static final TypeReference<Map<String, Object>> TYPE_REF = new TypeReference<>() {
     };
-    private static final String MAPPING_CONFIGURATION_PARSING_EXCEPTION_TEXT = "Unable to parse the mapping of the index.";
+    private static final String MAPPING_CONFIGURATION_PARSING_EXCEPTION_TEXT
+            = "Unable to parse the mapping of the '%s' index.";
     private static final String PROPERTIES_KEY = "properties";
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -48,12 +49,15 @@ public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<Put
             String indexName,
             JsonpMapper jsonpMapper) {
         return PutMappingRequest.of(
-                builder -> builder.index(indexName).properties(getPropertiesMap(mappingConfiguration, jsonpMapper)));
+                builder -> builder
+                        .index(indexName)
+                        .properties(getPropertiesMap(mappingConfiguration, jsonpMapper, indexName)));
     }
 
     protected Map<String, Property> getPropertiesMap(
             IndexMappingConfiguration mappingConfiguration,
-            JsonpMapper jsonpMapper) {
+            JsonpMapper jsonpMapper,
+            String indexName) {
 
         JsonpDeserializer<Map<String, Property>> mapJsonpDeserializer
                 = JsonpDeserializer.stringMapDeserializer(Property._DESERIALIZER);
@@ -66,7 +70,7 @@ public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<Put
                 return mapJsonpDeserializer.deserialize(parser, jsonpMapper);
             }
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(MAPPING_CONFIGURATION_PARSING_EXCEPTION_TEXT, e);
+            throw new RuntimeException(String.format(MAPPING_CONFIGURATION_PARSING_EXCEPTION_TEXT, indexName), e);
         }
     }
 

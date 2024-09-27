@@ -16,14 +16,12 @@
 
 package io.jmix.supersetflowui;
 
-import io.jmix.core.annotation.Experimental;
 import io.jmix.supersetflowui.component.SupersetDashboard;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.Duration;
 
-@Experimental
 @ConfigurationProperties("jmix.superset.ui")
 public class SupersetUiProperties {
 

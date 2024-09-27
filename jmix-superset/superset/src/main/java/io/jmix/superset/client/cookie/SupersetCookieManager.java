@@ -16,7 +16,6 @@
 
 package io.jmix.superset.client.cookie;
 
-import io.jmix.core.annotation.Experimental;
 import io.jmix.superset.client.SupersetClient;
 
 import java.net.CookieManager;
@@ -32,6 +31,5 @@ import java.net.http.HttpClient;
  * <p>
  * This class can be extended for configuring more advanced cookie policy or cookie store.
  */
-@Experimental
 public class SupersetCookieManager extends CookieManager {
 }

@@ -78,6 +78,9 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     public <E, V extends View<?>> DialogWindow<V> build(DetailWindowBuilder<E, V> builder) {
         V view = createView(builder);
 
+        DialogWindow<V> dialog = createDialog(view);
+        initDialog(builder, dialog);
+
         CollectionContainer<E> container = findContainer(builder);
 
         E entity = initEntity(builder, container);
@@ -87,9 +90,6 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         DataContext parentDataContext = setupParentDataContext(builder, view, container);
 
         ((DetailView<E>) view).setEntityToEdit(entity);
-
-        DialogWindow<V> dialog = createDialog(view);
-        initDialog(builder, dialog);
 
         setupListDataComponent(builder, ((DetailView<E>) view), dialog, container, parentDataContext);
         setupField(builder, view, dialog);

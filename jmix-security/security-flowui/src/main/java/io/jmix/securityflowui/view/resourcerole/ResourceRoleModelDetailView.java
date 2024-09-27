@@ -51,6 +51,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
+
 @Route(value = "sec/resourcerolemodels/:code", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.detail")
 @ViewDescriptor("resource-role-model-detail-view.xml")
@@ -131,6 +133,15 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         ResourceRole roleByCode = roleRepository.findRoleByCode(code);
 
         ResourceRoleModel resourceRoleModel = roleModelConverter.createResourceRoleModel(roleByCode);
+
+        // Sort resource policies in acs by default
+        resourceRoleModel.setResourcePolicies(
+                resourceRoleModel.getResourcePolicies()
+                        .stream()
+                        .sorted((model1, model2) -> CASE_INSENSITIVE_ORDER.compare(
+                                Strings.nullToEmpty(model1.getPolicyGroup()),
+                                Strings.nullToEmpty(model2.getPolicyGroup())))
+                        .collect(Collectors.toList()));
         roleModelDc.setItem(resourceRoleModel);
     }
 

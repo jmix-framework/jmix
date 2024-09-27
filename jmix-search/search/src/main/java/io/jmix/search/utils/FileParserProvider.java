@@ -19,7 +19,7 @@ package io.jmix.search.utils;
 import io.jmix.core.FileRef;
 import io.jmix.search.exception.UnsupportedFileFormatException;
 import io.jmix.search.index.fileparsing.FileParserResolver;
-import io.jmix.search.index.fileparsing.FileParsingBundle;
+import io.jmix.search.index.fileparsing.FileParserKit;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class FileParserProvider {
         this.fileParserResolvers = fileParserResolvers;
     }
 
-    public FileParsingBundle getParsingBundle(FileRef fileRef) throws UnsupportedFileFormatException {
+    public FileParserKit getParserKit(FileRef fileRef) throws UnsupportedFileFormatException {
         if (fileParserResolvers.isEmpty()) {
             throw new IllegalStateException(EMPTY_FILE_PARSER_RESOLVERS_LIST_MESSAGE);
         }
@@ -52,7 +52,7 @@ public class FileParserProvider {
 
         for (FileParserResolver resolver : fileParserResolvers) {
             if (resolver.supports(fileRef)) {
-                return resolver.getParsingBundle();
+                return resolver.getParserKit();
             }
             messages.add(resolver.getCriteriaDescription());
         }

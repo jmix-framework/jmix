@@ -67,8 +67,8 @@ public abstract class AbstractExtensionBasedFileParserResolver implements FilePa
     }
 
     @Override
-    public FileParsingBundle getParsingBundle() {
-        return new FileParsingBundle(
+    public FileParserKit getParserKit() {
+        return new FileParserKit(
                 getParser(),
                 getBodyContentHandlerGenerator(),
                 getMetadata(),

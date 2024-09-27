@@ -19,7 +19,7 @@ package io.jmix.search.utils.parserresolving
 import io.jmix.core.FileRef
 import io.jmix.search.exception.UnsupportedFileFormatException
 import io.jmix.search.index.fileparsing.FileParserResolver
-import io.jmix.search.index.fileparsing.FileParsingBundle
+import io.jmix.search.index.fileparsing.FileParserKit
 import io.jmix.search.utils.FileParserProvider
 import org.apache.tika.metadata.Metadata
 import org.apache.tika.parser.ParseContext
@@ -46,7 +46,7 @@ class FileParserProviderTest extends Specification {
         def parserProvider = new FileParserProvider(List.of(resolver, resolver2))
 
         when:
-        parserProvider.getParsingBundle(fileRef)
+        parserProvider.getParserKit(fileRef)
 
         then:
         def exception = thrown(UnsupportedFileFormatException)
@@ -66,7 +66,7 @@ class FileParserProviderTest extends Specification {
         def resolver2 = createExtensionBasedResolver("rtf", parser2)
         def resolver3 = Mock(FileParserResolver)
         resolver3.supports(_ as FileRef) >> true;
-        resolver3.getParsingBundle() >> new FileParsingBundle(parser3,
+        resolver3.getParserKit() >> new FileParserKit(parser3,
                 Mock(Function),
                 Mock(Metadata),
                 Mock(ParseContext))
@@ -75,7 +75,7 @@ class FileParserProviderTest extends Specification {
         def parserProvider = new FileParserProvider(List.of(resolver1, resolver2, resolver3))
 
         when:
-        def resolvedParser = parserProvider.getParsingBundle(fileRef).parser()
+        def resolvedParser = parserProvider.getParserKit(fileRef).parser()
 
         then:
         resolvedParser != null
@@ -99,7 +99,7 @@ class FileParserProviderTest extends Specification {
         def resolverManager = new FileParserProvider(emptyList())
 
         when:
-        resolverManager.getParsingBundle(fileRef)
+        resolverManager.getParserKit(fileRef)
 
         then:
         def exception = thrown(IllegalStateException)
@@ -116,7 +116,7 @@ class FileParserProviderTest extends Specification {
                 return false
             }
         }
-        resolver.getParsingBundle() >> new FileParsingBundle(
+        resolver.getParserKit() >> new FileParserKit(
                 parser,
                 Mock(Function),
                 Mock(Metadata),

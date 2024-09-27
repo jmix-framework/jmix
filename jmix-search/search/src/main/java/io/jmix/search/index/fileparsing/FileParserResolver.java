@@ -36,11 +36,11 @@ public interface FileParserResolver {
     String getCriteriaDescription();
 
     /**
-     * Returns a complex object that contains the all necessary objects for the supported file type parsing.
+     * Returns a complex object that contains all necessary objects for the supported file type parsing.
      *
-     * @return an instance of a file parser
+     * @return an instance of a file parser kit
      */
-    FileParsingBundle getParsingBundle();
+    FileParserKit getParserKit();
 
     /**
      * Returns the result of the checking if the file with the given fileRef is supported by the resolver or not.

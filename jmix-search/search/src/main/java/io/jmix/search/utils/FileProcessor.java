@@ -22,7 +22,7 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.exception.FileParseException;
 import io.jmix.search.exception.UnsupportedFileFormatException;
-import io.jmix.search.index.fileparsing.FileParsingBundle;
+import io.jmix.search.index.fileparsing.FileParserKit;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -55,7 +55,7 @@ public class FileProcessor {
         Preconditions.checkNotNullArgument(fileRef);
         log.debug("Extract content of file {}", fileRef);
         FileStorage fileStorage = fileStorageLocator.getByName(fileRef.getStorageName());
-        FileParsingBundle parsingBundle = getParsingBundle(fileRef);
+        FileParserKit parsingBundle = getParserKit(fileRef);
         Parser parser = parsingBundle.parser();
         log.debug("Parser for file {}: {}", fileRef, parser);
 
@@ -87,7 +87,7 @@ public class FileProcessor {
         return stringWriter.toString();
     }
 
-    protected FileParsingBundle getParsingBundle(FileRef fileRef) throws UnsupportedFileFormatException {
-        return fileParserProvider.getParsingBundle(fileRef);
+    protected FileParserKit getParserKit(FileRef fileRef) throws UnsupportedFileFormatException {
+        return fileParserProvider.getParserKit(fileRef);
     }
 }

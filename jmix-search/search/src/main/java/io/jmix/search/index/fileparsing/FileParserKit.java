@@ -25,7 +25,7 @@ import org.apache.tika.sax.BodyContentHandler;
 import java.io.StringWriter;
 import java.util.function.Function;
 
-public record FileParsingBundle(
+public record FileParserKit(
         @NotNull Parser parser,
         @NotNull Function<StringWriter, BodyContentHandler> bodyContentHandlerGenerator,
         @NotNull Metadata metadata,

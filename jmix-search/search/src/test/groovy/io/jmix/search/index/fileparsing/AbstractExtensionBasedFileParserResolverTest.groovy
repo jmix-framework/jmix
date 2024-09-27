@@ -29,7 +29,7 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
         def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), Mock(Set))
 
         expect:
-        resolver.getParsingBundle() != resolver.getParsingBundle()
+        resolver.getParserKit() != resolver.getParserKit()
     }
 
     def "getParsingBundle. Not the same objects inside of the bundles"() {
@@ -37,13 +37,13 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
         def resolver = new TestExtensionBasedFileParserResolver(Mock(Parser), Mock(Set))
 
         when:
-        def bundle1 = resolver.getParsingBundle()
-        def bundle2 = resolver.getParsingBundle()
+        def kit1 = resolver.getParserKit()
+        def kit2 = resolver.getParserKit()
 
         then:
-        bundle1.bodyContentHandlerGenerator() != null
-        !isTheSame(bundle1.metadata(), bundle2.metadata())
-        !isTheSame(bundle1.parseContext(), bundle2.parseContext())
+        kit1.bodyContentHandlerGenerator() != null
+        !isTheSame(kit1.metadata(), kit2.metadata())
+        !isTheSame(kit1.parseContext(), kit2.parseContext())
     }
 
     def "GetCriteriaDescription"() {

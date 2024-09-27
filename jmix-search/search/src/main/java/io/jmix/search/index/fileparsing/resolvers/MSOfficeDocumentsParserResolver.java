@@ -30,7 +30,7 @@ public class MSOfficeDocumentsParserResolver extends AbstractExtensionBasedFileP
 
     @Override
     public Set<String> getSupportedExtensions() {
-        return Set.of("docx", "xlsx");
+        return Set.of("docx", "xlsx", "DOCX", "XLSX");
     }
 
     @Override

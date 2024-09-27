@@ -30,7 +30,7 @@ public class TXTParserResolver extends AbstractExtensionBasedFileParserResolver 
 
     @Override
     public Set<String> getSupportedExtensions() {
-        return Set.of("txt");
+        return Set.of("txt", "TXT");
     }
 
     @Override

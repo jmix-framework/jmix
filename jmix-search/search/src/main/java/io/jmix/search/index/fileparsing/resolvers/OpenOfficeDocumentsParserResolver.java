@@ -30,7 +30,7 @@ public class OpenOfficeDocumentsParserResolver extends AbstractExtensionBasedFil
 
     @Override
     public Set<String> getSupportedExtensions() {
-        return Set.of("odt", "ods");
+        return Set.of("odt", "ods", "ODT", "ODS");
     }
 
     @Override

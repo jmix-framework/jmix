@@ -30,7 +30,7 @@ public class LegacyMSOfficeDocumentsParserResolver extends AbstractExtensionBase
 
     @Override
     public Set<String> getSupportedExtensions() {
-        return Set.of("doc", "xls");
+        return Set.of("doc", "xls", "DOC", "XLS");
     }
 
     @Override

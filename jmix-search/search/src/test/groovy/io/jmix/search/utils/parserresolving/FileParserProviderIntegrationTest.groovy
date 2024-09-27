@@ -50,32 +50,23 @@ class FileParserProviderIntegrationTest extends Specification {
         where:
         extension | theClass
         "txt"     | TXTParser
+        "TXT"     | TXTParser
         "pdf"     | PDFParser
+        "PDF"     | PDFParser
         "rtf"     | RTFParser
+        "RTF"     | RTFParser
         "odt"     | OpenDocumentParser
+        "ODT"     | OpenDocumentParser
         "ods"     | OpenDocumentParser
+        "ODS"     | OpenDocumentParser
         "doc"     | OfficeParser
+        "DOC"     | OfficeParser
         "xls"     | OfficeParser
+        "XLS"     | OfficeParser
         "docx"    | OOXMLParser
+        "DOCX"    | OOXMLParser
         "xlsx"    | OOXMLParser
-    }
-
-    def "there is no appropriate resolver for the file if the file is with the capital letters"() {
-        given:
-        def provider = new FileParserProvider(getResolvers())
-
-        and:
-        def fileRef = Mock(FileRef)
-        fileRef.getFileName() >> "filename." + extension
-
-        when:
-        provider.getParsingBundle(fileRef)
-
-        then:
-        thrown(UnsupportedFileFormatException)
-
-        where:
-        extension << ["TXT", "PDF", "RTF", "ODT", "ODS", "DOC", "XLS", "DOCX", "XLSX"]
+        "XLSX"    | OOXMLParser
     }
 
     def "there is not appropriate resolver for the file"() {

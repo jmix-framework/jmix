@@ -30,7 +30,7 @@ public class PDFParserResolver extends AbstractExtensionBasedFileParserResolver 
 
     @Override
     public Set<String> getSupportedExtensions() {
-        return Set.of("pdf");
+        return Set.of("pdf", "PDF");
     }
 
     @Override

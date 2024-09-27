@@ -30,7 +30,7 @@ public class RTFParserResolver extends AbstractExtensionBasedFileParserResolver 
 
     @Override
     public Set<String> getSupportedExtensions() {
-        return Set.of("rtf");
+        return Set.of("rtf", "RTF");
     }
 
     @Override

@@ -94,8 +94,12 @@ public class AppSettingsEntityView extends StandardView {
     protected DataComponents dataComponents;
     @Autowired
     protected ViewValidation viewValidation;
+    // Keep for compatibility, to prevent possible compilation errors,
+    // if someone has extended this view and is using Messages.
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected MessageBundle messageBundle;
     @Autowired
     protected AppSettingsTools appSettingsTools;
     @Autowired
@@ -347,7 +351,7 @@ public class AppSettingsEntityView extends StandardView {
         ComponentGenerationContext componentContext = new ComponentGenerationContext(metaClass, metaProperty.getName());
         componentContext.setValueSource(valueSource);
         AbstractField currentField = (AbstractField) uiComponentsGenerator.generate(componentContext);
-        ((HasLabel) currentField).setLabel(messages.getMessage(this.getClass(), "currentValueLabel"));
+        ((HasLabel) currentField).setLabel(messageBundle.getMessage("currentValueLabel"));
         formLayout.add(currentField);
 
         //default value
@@ -359,7 +363,7 @@ public class AppSettingsEntityView extends StandardView {
         componentContextForDefaultField.setValueSource(valueSourceForDefaultField);
         AbstractField defaultValueField = (AbstractField)
                 uiComponentsGenerator.generate(componentContextForDefaultField);
-        ((HasLabel) defaultValueField).setLabel(messages.getMessage(this.getClass(), "defaultValueLabel"));
+        ((HasLabel) defaultValueField).setLabel(messageBundle.getMessage("defaultValueLabel"));
         if (defaultValueField instanceof SupportsTypedValue) {
             ((SupportsTypedValue<?, ?, Object, ?>) defaultValueField)
                     .setTypedValue(appSettingsTools.getDefaultPropertyValue(metaClass.getJavaClass(),
@@ -456,7 +460,7 @@ public class AppSettingsEntityView extends StandardView {
     }
 
     protected void showSaveNotification() {
-        String caption = messages.formatMessage(this.getClass(), "entitySaved",
+        String caption = messageBundle.formatMessage("entitySaved",
                 messageTools.getEntityCaption(currentMetaClass));
         notifications.create(caption)
                 .withType(Notifications.Type.SUCCESS)

@@ -17,7 +17,9 @@
 package io.jmix.search.index.fileparsing.resolvers;
 
 import io.jmix.search.index.fileparsing.AbstractExtensionBasedFileParserResolver;
+import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.microsoft.OfficeParserConfig;
 import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -36,5 +38,16 @@ public class MSOfficeDocumentsParserResolver extends AbstractExtensionBasedFileP
     @Override
     public Parser getParser() {
         return new OOXMLParser();
+    }
+
+    @Override
+    protected ParseContext getParseContext() {
+        ParseContext parseContext = super.getParseContext();
+
+        OfficeParserConfig officeParserConfig = new OfficeParserConfig();
+        officeParserConfig.setIncludeHeadersAndFooters(false);
+        parseContext.set(OfficeParserConfig.class, officeParserConfig);
+
+        return parseContext;
     }
 }

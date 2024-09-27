@@ -43,13 +43,20 @@ public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<Put
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Valid
-    public PutMappingRequest buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, JsonpMapper jsonpMapper) {
-        return PutMappingRequest.of(builder -> builder.index(indexName).properties(getPropertiesMap(mappingConfiguration, jsonpMapper)));
+    public PutMappingRequest buildRequest(
+            IndexMappingConfiguration mappingConfiguration,
+            String indexName,
+            JsonpMapper jsonpMapper) {
+        return PutMappingRequest.of(
+                builder -> builder.index(indexName).properties(getPropertiesMap(mappingConfiguration, jsonpMapper)));
     }
 
-    protected Map<String, Property> getPropertiesMap(IndexMappingConfiguration mappingConfiguration, JsonpMapper jsonpMapper) {
+    protected Map<String, Property> getPropertiesMap(
+            IndexMappingConfiguration mappingConfiguration,
+            JsonpMapper jsonpMapper) {
 
-        JsonpDeserializer<Map<String, Property>> mapJsonpDeserializer = JsonpDeserializer.stringMapDeserializer(Property._DESERIALIZER);
+        JsonpDeserializer<Map<String, Property>> mapJsonpDeserializer
+                = JsonpDeserializer.stringMapDeserializer(Property._DESERIALIZER);
         try {
             Map<String, Object> propertiesMap = getPropertiesMap(mappingConfiguration);
             String mappingBody = objectMapper.writeValueAsString(propertiesMap);

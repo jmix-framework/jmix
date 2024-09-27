@@ -26,7 +26,9 @@ public class ConfigurationComparingResult {
     protected final MappingComparingResult mappingComparingResult;
     protected final SettingsComparingResult settingsComparingResult;
 
-    ConfigurationComparingResult(MappingComparingResult mappingComparingResult, SettingsComparingResult settingsComparingResult) {
+    ConfigurationComparingResult(
+            MappingComparingResult mappingComparingResult,
+            SettingsComparingResult settingsComparingResult) {
         this.mappingComparingResult = mappingComparingResult;
         this.settingsComparingResult = settingsComparingResult;
     }

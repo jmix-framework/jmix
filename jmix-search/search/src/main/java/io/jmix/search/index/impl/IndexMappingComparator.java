@@ -80,6 +80,7 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
     protected abstract TJsonp extractTypeMapping(TState currentIndexState);
 
 
+    @SuppressWarnings("unchecked")
     MappingComparingResult compare(Map<String, Object> appliedMapping, Map<String, Object> expectedMapping) {
 
         Map<String, Object> filteredSearchIndexMapping = getFilteredMapping(appliedMapping);
@@ -101,7 +102,9 @@ public abstract class IndexMappingComparator<TState, TJsonp> {
                 return NOT_COMPATIBLE;
             }
 
-            MappingComparingResult currentResult = compare((Map<String, Object>) mapEntry.getValue(), (Map<String, Object>) expectedMapping.get(mapEntry.getKey()));
+            MappingComparingResult currentResult = compare(
+                    (Map<String, Object>) mapEntry.getValue(),
+                    (Map<String, Object>) expectedMapping.get(mapEntry.getKey()));
             if (currentResult == NOT_COMPATIBLE) return NOT_COMPATIBLE;
             if (currentResult == UPDATABLE && result != UPDATABLE) {
                 result = UPDATABLE;

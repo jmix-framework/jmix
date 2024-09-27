@@ -35,7 +35,8 @@ public abstract class BaseJsonpSerializer<TJsonp> implements JsonpSerializer<TJs
         if (jsonNode.isObject()) {
             return (ObjectNode) jsonNode;
         } else {
-            throw new RuntimeException("Unable to convert provided object to ObjectNode: JsonNode type is '" + jsonNode.getNodeType() + "'");
+            throw new RuntimeException("Unable to convert provided object to ObjectNode: JsonNode type is '"
+                    + jsonNode.getNodeType() + "'");
         }
     }
 

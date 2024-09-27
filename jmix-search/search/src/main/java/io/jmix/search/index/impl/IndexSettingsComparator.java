@@ -47,12 +47,17 @@ public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
     public SettingsComparingResult compareSettings(IndexConfiguration indexConfiguration, TState currentIndexState) {
 
         ObjectNode expectedSettingsNode = jsonpSerializer.toObjectNode(getExpectedIndexSettings(indexConfiguration));
-        ObjectNode appliedSettingsNode = jsonpSerializer.toObjectNode(getAppliedIndexSettings(currentIndexState, indexConfiguration.getIndexName()));
+        ObjectNode appliedSettingsNode
+                = jsonpSerializer.toObjectNode(getAppliedIndexSettings(
+                        currentIndexState,
+                        indexConfiguration.getIndexName()));
 
         log.debug("Settings of index '{}':\nExpected: {}\nApplied: {}",
                 indexConfiguration.getIndexName(), expectedSettingsNode, appliedSettingsNode);
 
-        return jsonNodesComparator.nodeContains(appliedSettingsNode, expectedSettingsNode) ? SettingsComparingResult.EQUAL : SettingsComparingResult.NOT_COMPATIBLE;
+        return jsonNodesComparator.nodeContains(
+                appliedSettingsNode,
+                expectedSettingsNode) ? SettingsComparingResult.EQUAL : SettingsComparingResult.NOT_COMPATIBLE;
     }
 
     @SuppressWarnings("unchecked")

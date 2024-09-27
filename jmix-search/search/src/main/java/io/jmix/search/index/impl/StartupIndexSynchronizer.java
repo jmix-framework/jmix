@@ -54,7 +54,8 @@ public class StartupIndexSynchronizer {
     protected void postConstruct() {
         try {
             log.info("Start initial index synchronization");
-            Map<IndexConfiguration, IndexSynchronizationStatus> indexSynchronizationResults = indexManager.synchronizeIndexSchemas();
+            Map<IndexConfiguration, IndexSynchronizationStatus> indexSynchronizationResults
+                    = indexManager.synchronizeIndexSchemas();
 
             List<IndexConfiguration> enqueueAllCandidates = new ArrayList<>();
             List<IndexConfiguration> available = new ArrayList<>();
@@ -87,11 +88,14 @@ public class StartupIndexSynchronizer {
             if (searchProperties.isEnqueueIndexAllOnStartupIndexRecreationEnabled()) {
                 List<IndexConfiguration> indexConfigurationsToEnqueueAll = enqueueAllCandidates.stream()
                         .filter(config -> {
-                            List<String> entitiesAllowedToEnqueue = searchProperties.getEnqueueIndexAllOnStartupIndexRecreationEntities();
-                            return entitiesAllowedToEnqueue.isEmpty() || entitiesAllowedToEnqueue.contains(config.getEntityName());
+                            List<String> entitiesAllowedToEnqueue
+                                    = searchProperties.getEnqueueIndexAllOnStartupIndexRecreationEntities();
+                            return entitiesAllowedToEnqueue.isEmpty()
+                                    || entitiesAllowedToEnqueue.contains(config.getEntityName());
                         })
-                        .collect(Collectors.toList());
-                indexConfigurationsToEnqueueAll.forEach(config -> indexingQueueManager.initAsyncEnqueueIndexAll(config.getEntityName()));
+                        .toList();
+                indexConfigurationsToEnqueueAll.forEach(
+                        config -> indexingQueueManager.initAsyncEnqueueIndexAll(config.getEntityName()));
             }
             log.info("Finish initial index synchronization");
         } catch (Exception e) {

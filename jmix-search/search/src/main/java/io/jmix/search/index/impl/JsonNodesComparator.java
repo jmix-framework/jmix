@@ -53,7 +53,9 @@ public class JsonNodesComparator {
             }
 
             if (!contentFieldValue.getNodeType().equals(containerFieldValue.getNodeType())) {
-                log.trace("Type of container field ({}) doesn't match the type of content field ({}). STOP - FALSE", containerFieldValue.getNodeType(), contentFieldValue.getNodeType());
+                log.trace(
+                        "Type of container field ({}) doesn't match the type of content field ({}). STOP - FALSE",
+                        containerFieldValue.getNodeType(), contentFieldValue.getNodeType());
                 return false;
             }
 

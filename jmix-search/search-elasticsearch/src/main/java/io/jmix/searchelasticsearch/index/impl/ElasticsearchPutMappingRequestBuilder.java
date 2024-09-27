@@ -33,7 +33,10 @@ public class ElasticsearchPutMappingRequestBuilder implements PutMappingBuilder<
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public PutMappingRequest buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, JsonpMapper jsonpMapper) {
+    public PutMappingRequest buildRequest(
+            IndexMappingConfiguration mappingConfiguration,
+            String indexName,
+            JsonpMapper jsonpMapper) {
         InputStream mappingBodyStream = getMappingAsStream(indexName, mappingConfiguration);
         return PutMappingRequest.of(builder -> builder.index(indexName).withJson(mappingBodyStream));
     }
@@ -44,7 +47,9 @@ public class ElasticsearchPutMappingRequestBuilder implements PutMappingBuilder<
             String mappingBody = objectMapper.writeValueAsString(mapping);
             mappingBodyStream = new ByteArrayInputStream(mappingBody.getBytes());
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to update index mapping'" + indexName + "': Failed to parse index mapping.", e);
+            throw new RuntimeException(
+                    "Unable to update index mapping'" + indexName + "': Failed to parse index mapping.",
+                    e);
         }
         return mappingBodyStream;
     }

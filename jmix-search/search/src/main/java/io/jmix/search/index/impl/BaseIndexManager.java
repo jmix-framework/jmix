@@ -123,7 +123,8 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
     }
 
     @Override
-    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations) {
+    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(
+            Collection<IndexConfiguration> indexConfigurations) {
         Preconditions.checkNotNullArgument(indexConfigurations);
 
         Map<IndexConfiguration, IndexSynchronizationStatus> result = new HashMap<>();
@@ -142,7 +143,9 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
         return synchronizeIndexSchema(indexConfiguration, strategy);
     }
 
-    protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationStatus synchronizeIndexSchema(
+            IndexConfiguration indexConfiguration,
+            IndexSchemaManagementStrategy strategy) {
         log.info("Synchronize search index '{}' (entity '{}') according to strategy '{}'",
                 indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), strategy);
         IndexSynchronizationStatus status;
@@ -165,7 +168,9 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
         return status;
     }
 
-    protected IndexSynchronizationStatus recreateIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationStatus recreateIrrelevantIndex(
+            IndexConfiguration indexConfiguration,
+            IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
         if (strategy.isIndexRecreationSupported()) {
             boolean created = recreateIndex(indexConfiguration);
@@ -183,7 +188,9 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
         return status;
     }
 
-    protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationStatus handleMissingIndex(
+            IndexConfiguration indexConfiguration,
+            IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
 
         if (!strategy.isIndexCreationSupported()) {
@@ -201,7 +208,10 @@ public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements Ind
         return status;
     }
 
-    protected IndexSynchronizationStatus updateIndexConfiguration(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy, ConfigurationComparingResult result) {
+    protected IndexSynchronizationStatus updateIndexConfiguration(
+            IndexConfiguration indexConfiguration,
+            IndexSchemaManagementStrategy strategy,
+            ConfigurationComparingResult result) {
         if (strategy.isConfigurationUpdateSupported()) {
             if (result.isMappingUpdateRequired()) {
                 boolean mappingSavingResult = putMapping(indexConfiguration.getIndexName(), indexConfiguration.getMapping());

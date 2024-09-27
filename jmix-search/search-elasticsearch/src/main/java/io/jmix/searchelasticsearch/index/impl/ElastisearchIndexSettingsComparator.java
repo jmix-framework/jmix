@@ -28,7 +28,8 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component("search_ElastisearchIndexSettingsComparator")
-public class ElastisearchIndexSettingsComparator extends IndexSettingsComparator<IndexState, IndexSettings, JsonpSerializable> {
+public class ElastisearchIndexSettingsComparator
+        extends IndexSettingsComparator<IndexState, IndexSettings, JsonpSerializable> {
 
     protected final ElasticsearchIndexSettingsProvider settingsProvider;
 

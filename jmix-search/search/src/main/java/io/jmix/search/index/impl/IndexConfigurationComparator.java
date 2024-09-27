@@ -35,7 +35,10 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
     protected final IndexStateResolver<TState, TJsonp> indexStateResolver;
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
-    public IndexConfigurationComparator(IndexMappingComparator<TState, TJsonp> mappingComparator, IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator, IndexStateResolver<TState, TJsonp> indexStateResolver) {
+    public IndexConfigurationComparator(
+            IndexMappingComparator<TState, TJsonp> mappingComparator,
+            IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator,
+            IndexStateResolver<TState, TJsonp> indexStateResolver) {
         this.mappingComparator = mappingComparator;
         this.settingsComparator = settingsComparator;
         this.indexStateResolver = indexStateResolver;
@@ -44,7 +47,9 @@ public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
     public ConfigurationComparingResult compareConfigurations(IndexConfiguration indexConfiguration) {
         TState indexState = getIndexState(indexConfiguration);
         if (indexState == null) {
-            return new ConfigurationComparingResult(MappingComparingResult.NOT_COMPATIBLE, SettingsComparingResult.NOT_COMPATIBLE);
+            return new ConfigurationComparingResult(
+                    MappingComparingResult.NOT_COMPATIBLE,
+                    SettingsComparingResult.NOT_COMPATIBLE);
         }
         MappingComparingResult mappingState = mappingComparator.compare(indexConfiguration, indexState);
         SettingsComparingResult settingsState = settingsComparator.compareSettings(indexConfiguration, indexState);

@@ -31,6 +31,10 @@ dependencies {
     api 'org.opensearch.client:opensearch-java'
     api 'org.opensearch.client:opensearch-rest-client'
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.mockito:mockito-core'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
     compileOnly project(':security')
     testImplementation project(':search').sourceSets.test.output
     testImplementation project(':eclipselink')

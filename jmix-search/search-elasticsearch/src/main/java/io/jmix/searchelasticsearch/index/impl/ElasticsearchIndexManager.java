@@ -22,7 +22,6 @@ import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.json.JsonpMapper;
 import co.elastic.clients.json.JsonpSerializable;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
@@ -30,38 +29,43 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.impl.BaseIndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
 import jakarta.json.spi.JsonProvider;
-import jakarta.json.stream.JsonGenerator;
 import jakarta.json.stream.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Collections;
-import java.util.Map;
+import java.io.*;
 
 /**
  * Implementation for Elasticsearch
  */
-public class ElasticsearchIndexManager extends BaseIndexManager {
+public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, IndexSettings, JsonpSerializable> {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchIndexManager.class);
 
     protected final ElasticsearchClient client;
     protected final ElasticsearchIndexSettingsProvider indexSettingsProcessor;
+    protected final ElasticsearchPutMappingRequestBuilder putMappingRequestBuilder;
 
     public ElasticsearchIndexManager(ElasticsearchClient client,
                                      IndexStateRegistry indexStateRegistry,
                                      IndexConfigurationManager indexConfigurationManager,
                                      SearchProperties searchProperties,
-                                     ElasticsearchIndexSettingsProvider indexSettingsProcessor) {
-        super(indexConfigurationManager, indexStateRegistry, searchProperties);
+                                     ElasticsearchIndexSettingsProvider indexSettingsProcessor,
+                                     ElasticsearchIndexConfigurationComparator configurationComparator,
+                                     ElasticsearchIndexStateResolver indexStateResolver,
+                                     ElasticsearchPutMappingRequestBuilder putMappingRequestBuilder) {
+        super(
+                indexConfigurationManager,
+                indexStateRegistry,
+                searchProperties,
+                configurationComparator,
+                indexStateResolver);
         this.client = client;
         this.indexSettingsProcessor = indexSettingsProcessor;
+        this.putMappingRequestBuilder = putMappingRequestBuilder;
     }
 
     @Override
@@ -121,25 +125,19 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
 
     @Override
     public ObjectNode getIndexMetadata(String indexName) {
-        IndexState indexState = getIndexMetadataInternal(indexName);
-        if (indexState == null) {
-            return objectMapper.createObjectNode();
-        }
-        return toObjectNode(indexState);
+        return indexStateResolver.getSerializedState(indexName);
     }
 
     @Override
-    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
-        IndexState indexState = getIndexMetadataInternal(indexConfiguration.getIndexName());
-        if (indexState == null) {
-            return false;
+    public boolean putMapping(String indexName, IndexMappingConfiguration mapping) {
+        try {
+            return client
+                    .indices()
+                    .putMapping(putMappingRequestBuilder.buildRequest(mapping, indexName, null))
+                    .acknowledged();
+        } catch (IOException e) {
+            throw new RuntimeException("Problem with sending request to elastic search server.", e);
         }
-        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexState);
-        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexState);
-
-        return indexMappingActual && indexSettingsActual;
     }
 
     protected TypeMapping buildMapping(IndexConfiguration indexConfiguration) {
@@ -159,84 +157,5 @@ public class ElasticsearchIndexManager extends BaseIndexManager {
 
     protected IndexSettings buildSettings(IndexConfiguration indexConfiguration) {
         return indexSettingsProcessor.getSettingsForIndex(indexConfiguration);
-    }
-
-    protected JsonNode toJsonNode(JsonpSerializable object) {
-        StringWriter stringWriter = new StringWriter();
-        JsonpMapper mapper = client._transport().jsonpMapper();
-        JsonGenerator generator = mapper.jsonProvider().createGenerator(stringWriter);
-        object.serialize(generator, mapper);
-        generator.close();
-        String stringValue = stringWriter.toString();
-
-        try {
-            return objectMapper.readTree(stringValue);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to generate JsonNode", e);
-        }
-    }
-
-    protected ObjectNode toObjectNode(JsonpSerializable object) {
-        JsonNode jsonNode = toJsonNode(object);
-        if (jsonNode.isObject()) {
-            return (ObjectNode) jsonNode;
-        } else {
-            throw new RuntimeException("Unable to convert provided object to ObjectNode: JsonNode type is '" + jsonNode.getNodeType() + "'");
-        }
-    }
-
-    protected Map<String, IndexState> getIndexMetadataMapInternal(String indexName) {
-        Preconditions.checkNotNullArgument(indexName);
-        try {
-            return client.indices().get(builder -> builder.index(indexName).includeDefaults(true)).result();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to load metadata of index '" + indexName + "'", e);
-        }
-    }
-
-    @Nullable
-    protected IndexState getIndexMetadataInternal(String indexName) {
-        return getIndexMetadataMapInternal(indexName).get(indexName);
-    }
-
-    protected boolean isIndexMappingActual(IndexConfiguration indexConfiguration, IndexState currentIndexState) {
-        Map<String, Object> currentMapping;
-        TypeMapping typeMapping = currentIndexState.mappings();
-        if (typeMapping == null) {
-            currentMapping = Collections.emptyMap();
-        } else {
-            ObjectNode currentMappingNode = toObjectNode(typeMapping);
-            currentMapping = objectMapper.convertValue(currentMappingNode, MAP_TYPE_REF);
-        }
-        Map<String, Object> actualMapping = objectMapper.convertValue(indexConfiguration.getMapping(), MAP_TYPE_REF);
-        log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
-                indexConfiguration.getIndexName(), currentMapping, actualMapping);
-        return actualMapping.equals(currentMapping);
-    }
-
-    protected boolean isIndexSettingsActual(IndexConfiguration indexConfiguration, IndexState currentIndexState) {
-        IndexSettings expectedIndexSettings = indexSettingsProcessor.getSettingsForIndex(indexConfiguration);
-        IndexSettings allAppliedSettings = currentIndexState.settings();
-
-        if (allAppliedSettings == null) {
-            throw new IllegalArgumentException(
-                    "No info about all applied settings for index '" + indexConfiguration.getIndexName() + "'"
-            );
-        }
-
-        IndexSettings appliedIndexSettings = allAppliedSettings.index();
-        if (appliedIndexSettings == null) {
-            throw new IllegalArgumentException(
-                    "No info about applied index settings for index '" + indexConfiguration.getIndexName() + "'"
-            );
-        }
-
-        ObjectNode expectedSettingsNode = toObjectNode(expectedIndexSettings);
-        ObjectNode appliedSettingsNode = toObjectNode(appliedIndexSettings);
-
-        log.debug("Settings of index '{}':\nExpected: {}\nApplied: {}",
-                indexConfiguration.getIndexName(), expectedSettingsNode, appliedSettingsNode);
-
-        return nodeContains(appliedSettingsNode, expectedSettingsNode);
     }
 }

@@ -28,6 +28,10 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.mockito:mockito-core'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
     api 'co.elastic.clients:elasticsearch-java'
 
     compileOnly project(':security')

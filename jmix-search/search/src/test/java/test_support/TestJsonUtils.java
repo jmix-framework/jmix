@@ -16,6 +16,7 @@
 
 package test_support;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -85,4 +87,26 @@ public class TestJsonUtils {
             throw new RuntimeException(String.format("Unable to read json from file '%s'", path), e);
         }
     }
+
+    public static Map<String, Object> readJsonAsMap(String path) {
+        try {
+            URL resource = ClassLoader.getSystemClassLoader().getResource(path);
+            JsonNode node = objectMapper.readTree(resource);
+            return objectMapper.convertValue(node, new TypeReference<Map<String, Object>>() {
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Unable to read json from file '%s'", path), e);
+        }
+    }
+
+    public static Map<String, Object> readJsonAsMap(URL resource) {
+        try {
+            JsonNode node = objectMapper.readTree(resource);
+            return objectMapper.convertValue(node, new TypeReference<Map<String, Object>>() {
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Unable to read json from file '%s'", resource.getPath()), e);
+        }
+    }
+
 }

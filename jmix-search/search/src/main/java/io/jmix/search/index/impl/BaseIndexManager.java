@@ -1,9 +1,6 @@
 package io.jmix.search.index.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
@@ -13,14 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
  * Contains non-platform-specific operations.
  * Interaction with indexes is performed in platform-specific implementations.
  */
-public abstract class BaseIndexManager implements IndexManager {
+public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements IndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(BaseIndexManager.class);
 
@@ -30,15 +26,19 @@ public abstract class BaseIndexManager implements IndexManager {
 
     protected final ObjectMapper objectMapper;
 
-    protected final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
-    };
+    protected final IndexConfigurationComparator<TState, TSettings, TJsonp> indexConfigurationComparator;
+    protected final IndexStateResolver<TState, TJsonp> indexStateResolver;
 
     protected BaseIndexManager(IndexConfigurationManager indexConfigurationManager,
                                IndexStateRegistry indexStateRegistry,
-                               SearchProperties searchProperties) {
+                               SearchProperties searchProperties,
+                               IndexConfigurationComparator<TState, TSettings, TJsonp> indexConfigurationComparator,
+                               IndexStateResolver<TState, TJsonp> indexStateResolver) {
         this.indexConfigurationManager = indexConfigurationManager;
         this.indexStateRegistry = indexStateRegistry;
         this.searchProperties = searchProperties;
+        this.indexConfigurationComparator = indexConfigurationComparator;
+        this.indexStateResolver = indexStateResolver;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -98,12 +98,13 @@ public abstract class BaseIndexManager implements IndexManager {
 
         IndexValidationStatus status;
         if (isIndexExist(indexConfiguration.getIndexName())) {
-            if (isIndexActual(indexConfiguration)) {
-                status = IndexValidationStatus.ACTUAL;
-                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-            } else {
+            ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
+            if (result.isIndexRecreatingRequired()) {
                 status = IndexValidationStatus.IRRELEVANT;
                 indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+            } else {
+                status = IndexValidationStatus.ACTUAL;
+                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             }
         } else {
             status = IndexValidationStatus.MISSING;
@@ -122,7 +123,8 @@ public abstract class BaseIndexManager implements IndexManager {
     }
 
     @Override
-    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations) {
+    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(
+            Collection<IndexConfiguration> indexConfigurations) {
         Preconditions.checkNotNullArgument(indexConfigurations);
 
         Map<IndexConfiguration, IndexSynchronizationStatus> result = new HashMap<>();
@@ -141,20 +143,22 @@ public abstract class BaseIndexManager implements IndexManager {
         return synchronizeIndexSchema(indexConfiguration, strategy);
     }
 
-    protected abstract boolean isIndexActual(IndexConfiguration indexConfiguration);
-
-    protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationStatus synchronizeIndexSchema(
+            IndexConfiguration indexConfiguration,
+            IndexSchemaManagementStrategy strategy) {
         log.info("Synchronize search index '{}' (entity '{}') according to strategy '{}'",
                 indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), strategy);
         IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            boolean indexActual = isIndexActual(indexConfiguration);
-            if (indexActual) {
+            ConfigurationComparingResult result = indexConfigurationComparator.compareConfigurations(indexConfiguration);
+            if (result.isIndexRecreatingRequired()) {
+                status = recreateIrrelevantIndex(indexConfiguration, strategy);
+            } else if (result.isConfigurationUpdateRequired()) {
+                status = updateIndexConfiguration(indexConfiguration, strategy, result);
+            } else {
                 status = IndexSynchronizationStatus.ACTUAL;
                 indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
-            } else {
-                status = handleIrrelevantIndex(indexConfiguration, strategy);
             }
         } else {
             status = handleMissingIndex(indexConfiguration, strategy);
@@ -164,9 +168,11 @@ public abstract class BaseIndexManager implements IndexManager {
         return status;
     }
 
-    protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationStatus recreateIrrelevantIndex(
+            IndexConfiguration indexConfiguration,
+            IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
-        if (IndexSchemaManagementStrategy.CREATE_OR_RECREATE.equals(strategy)) {
+        if (strategy.isIndexRecreationSupported()) {
             boolean created = recreateIndex(indexConfiguration);
             if (created) {
                 status = IndexSynchronizationStatus.RECREATED;
@@ -182,10 +188,12 @@ public abstract class BaseIndexManager implements IndexManager {
         return status;
     }
 
-    protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationStatus handleMissingIndex(
+            IndexConfiguration indexConfiguration,
+            IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
 
-        if (IndexSchemaManagementStrategy.NONE.equals(strategy)) {
+        if (!strategy.isIndexCreationSupported()) {
             status = IndexSynchronizationStatus.MISSING;
         } else {
             boolean created = createIndex(indexConfiguration);
@@ -200,48 +208,30 @@ public abstract class BaseIndexManager implements IndexManager {
         return status;
     }
 
-    protected boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) {
-        log.trace("Check if node {} contains {}", containerNode, contentNode);
-        Iterator<Map.Entry<String, JsonNode>> fieldsIterator = contentNode.fields();
-        while (fieldsIterator.hasNext()) {
-            Map.Entry<String, JsonNode> entry = fieldsIterator.next();
-            String fieldName = entry.getKey();
-            log.trace("Check field '{}'", fieldName);
-            JsonNode contentFieldValue = entry.getValue();
-            JsonNode containerFieldValue;
-            if (containerNode.has(fieldName)) {
-                log.trace("Container has field '{}'", fieldName);
-                containerFieldValue = containerNode.get(fieldName);
-            } else {
-                log.trace("Container doesn't have field '{}'. STOP - FALSE", fieldName);
-                return false;
-            }
-
-            if (containerFieldValue == null) {
-                log.trace("Container has NULL field '{}'. STOP - FALSE", fieldName);
-                return false;
-            }
-
-            if (!contentFieldValue.getNodeType().equals(containerFieldValue.getNodeType())) {
-                log.trace("Type of container field ({}) doesn't match the type of content field ({}). STOP - FALSE",
-                        containerFieldValue.getNodeType(), contentFieldValue.getNodeType());
-                return false;
-            }
-
-            if (contentFieldValue.isObject() && containerFieldValue.isObject()) {
-                log.trace("Both container and content field is objects - check nested structure");
-                boolean nestedResult = nodeContains((ObjectNode) containerFieldValue, (ObjectNode) contentFieldValue);
-                if (!nestedResult) {
-                    log.trace("Structures of the nested objects ({}) are different. STOP - FALSE", fieldName);
-                    return false;
+    protected IndexSynchronizationStatus updateIndexConfiguration(
+            IndexConfiguration indexConfiguration,
+            IndexSchemaManagementStrategy strategy,
+            ConfigurationComparingResult result) {
+        if (strategy.isConfigurationUpdateSupported()) {
+            if (result.isMappingUpdateRequired()) {
+                boolean mappingSavingResult = putMapping(indexConfiguration.getIndexName(), indexConfiguration.getMapping());
+                if (mappingSavingResult) {
+                    indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
+                    return IndexSynchronizationStatus.UPDATED;
+                } else {
+                    log.error("Problem with index mapping saving.");
+                    indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+                    return IndexSynchronizationStatus.IRRELEVANT;
                 }
             }
-
-            if (!containerFieldValue.equals(contentFieldValue)) {
-                return false;
-            }
+            //Such exception throwing is because we have a potential possibility when the
+            //strategy.isConfigurationUpdateSupported()==true and the result.isMappingUpdateRequired()==false.
+            //But actually it is an impossible situation because actually the result.isSettingsUpdateRequired() method
+            //always returns false. The ability to update settings will be implemented later.
+            throw new IllegalStateException("An index settings update is not supported yet. Only index recreating is supported.");
+        } else {
+            indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+            return IndexSynchronizationStatus.IRRELEVANT;
         }
-        log.trace("Structures are the same. TRUE");
-        return true;
     }
 }

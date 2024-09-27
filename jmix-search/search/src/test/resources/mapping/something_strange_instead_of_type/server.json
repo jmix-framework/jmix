@@ -1,0 +1,18 @@
+{
+  "parameters": {
+    "field1": {
+      "type": "text"
+    },
+    "field2": {
+      "type": "text"
+    },
+    "referenceField1": {
+      "field_1_1": {
+        "type": "text"
+      },
+      "field_1_2": {
+        "noAType": "text"
+      }
+    }
+  }
+}

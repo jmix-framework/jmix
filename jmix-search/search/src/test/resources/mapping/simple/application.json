@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "number": {
+      "type": "text"
+    },
+    "product": {
+      "type": "text"
+    }
+  }
+}

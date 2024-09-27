@@ -31,7 +31,7 @@ public interface StudioSupersetComponents {
             xmlElement = "dashboard",
             xmlns = "http://jmix.io/schema/superset/ui",
             xmlnsAlias = "superset",
-            icon = "io/jmix/supersetflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/supersetflowui/kit/meta/icon/supersetDashboard.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

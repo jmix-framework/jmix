@@ -30,7 +30,8 @@ public interface StudioSupersetElementsGroups {
             },
             xmlElement = "datasetConstraints",
             xmlns = "http://jmix.io/schema/superset/ui",
-            xmlnsAlias = "superset"
+            xmlnsAlias = "superset",
+            icon = "io/jmix/supersetflowui/kit/meta/icon/unknownComponent.svg"
     )
     void parameters();
 

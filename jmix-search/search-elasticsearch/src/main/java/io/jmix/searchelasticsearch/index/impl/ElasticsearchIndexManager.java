@@ -45,7 +45,7 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchIndexManager.class);
 
-    private final ElasticsearchClient client;
+    protected final ElasticsearchClient client;
     protected final ElasticsearchIndexSettingsProvider indexSettingsProcessor;
     protected final ElasticsearchPutMappingBuilder putMappingService;
 
@@ -55,9 +55,9 @@ public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, Inde
                                      SearchProperties searchProperties,
                                      ElasticsearchIndexSettingsProvider indexSettingsProcessor,
                                      ElasticsearchIndexConfigurationComparator configurationComparator,
-                                     ElasticsearchIndexStateResolver metadataResolver,
+                                     ElasticsearchIndexStateResolver indexStateResolver,
                                      ElasticsearchPutMappingBuilder putMappingService) {
-        super(indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, metadataResolver);
+        super(indexConfigurationManager, indexStateRegistry, searchProperties, configurationComparator, indexStateResolver);
         this.client = client;
         this.indexSettingsProcessor = indexSettingsProcessor;
         this.putMappingService = putMappingService;

@@ -41,7 +41,7 @@ class AbstractExtensionBasedFileParserResolverTest extends Specification {
         def kit2 = resolver.getParserKit()
 
         then:
-        kit1.bodyContentHandlerGenerator() != null
+        kit1.contentHandlerGenerator() != null
         !isTheSame(kit1.metadata(), kit2.metadata())
         !isTheSame(kit1.parseContext(), kit2.parseContext())
     }

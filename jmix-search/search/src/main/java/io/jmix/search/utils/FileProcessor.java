@@ -64,7 +64,7 @@ public class FileProcessor {
         try (InputStream stream = fileStorage.openStream(fileRef)) {
             parser.parse(
                     stream,
-                    parsingBundle.bodyContentHandlerGenerator().apply(stringWriter),
+                    parsingBundle.contentHandlerGenerator().apply(stringWriter),
                     parsingBundle.metadata(),
                     parsingBundle.parseContext());
         } catch (OfficeXmlFileException e) {

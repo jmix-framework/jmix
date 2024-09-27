@@ -20,13 +20,13 @@ import jakarta.validation.constraints.NotNull;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
-import org.apache.tika.sax.BodyContentHandler;
+import org.xml.sax.ContentHandler;
 
 import java.io.StringWriter;
 import java.util.function.Function;
 
 public record FileParserKit(
         @NotNull Parser parser,
-        @NotNull Function<StringWriter, BodyContentHandler> bodyContentHandlerGenerator,
+        @NotNull Function<StringWriter, ContentHandler> contentHandlerGenerator,
         @NotNull Metadata metadata,
         @NotNull ParseContext parseContext) {}

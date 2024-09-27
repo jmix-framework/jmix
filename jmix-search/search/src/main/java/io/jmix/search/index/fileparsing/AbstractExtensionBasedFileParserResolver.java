@@ -23,6 +23,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.xml.sax.ContentHandler;
 
 import java.io.StringWriter;
 import java.util.Set;
@@ -70,7 +71,7 @@ public abstract class AbstractExtensionBasedFileParserResolver implements FilePa
     public FileParserKit getParserKit() {
         return new FileParserKit(
                 getParser(),
-                getBodyContentHandlerGenerator(),
+                getContentHandlerGenerator(),
                 getMetadata(),
                 getParseContext());
     }
@@ -81,9 +82,9 @@ public abstract class AbstractExtensionBasedFileParserResolver implements FilePa
     protected abstract Parser getParser();
 
     /**
-     * Returns a function for the BodyContentHandler generating that is necessary for the given file parsing.
+     * Returns a function for the ContentHandler generating that is necessary for the given file parsing.
      */
-    protected Function<StringWriter, BodyContentHandler> getBodyContentHandlerGenerator() {
+    protected Function<StringWriter, ContentHandler> getContentHandlerGenerator() {
         return stringWriter -> new BodyContentHandler(stringWriter);
     }
 

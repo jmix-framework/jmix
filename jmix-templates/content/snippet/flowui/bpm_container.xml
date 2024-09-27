@@ -16,6 +16,7 @@ if (formTemplate.name() == 'VARIABLE') {
         if (v.type.id == 'entity') {
             def entityName = ''
             def fqn = ''
+            def query = ''
             if (v.getProperty('uiComponent') == 'comboBox') {
                 hasComboBox = true
                 entityName = v.getProperty("entityName")
@@ -25,6 +26,7 @@ if (formTemplate.name() == 'VARIABLE') {
                         fqn = entity.getFqn()
                     }
                 }
+                query = v.getProperty("query")
             } else {
                 fqn = v.getProperty("entityName")
                 if (fqn != null) {
@@ -33,6 +35,7 @@ if (formTemplate.name() == 'VARIABLE') {
                         entityName = entity.name
                     }
                 }
+                query = 'select e from ${entityName} e'
             }
 
             def entity = api.findEntityByName(entityName)
@@ -42,7 +45,7 @@ if (formTemplate.name() == 'VARIABLE') {
                 containerBuilder.append("<fetchPlan extends=\"_base\"/>")
                 containerBuilder.append("<loader id=\"${api.camelCase(entityName)}Dl\" readOnly=\"true\">")
                 containerBuilder.append("<query>")
-                containerBuilder.append("<![CDATA[select e from ${entityName} e]]>")
+                containerBuilder.append("<![CDATA[${query}]]>")
                 containerBuilder.append("</query>")
                 containerBuilder.append("</loader>")
                 containerBuilder.append("</collection>")

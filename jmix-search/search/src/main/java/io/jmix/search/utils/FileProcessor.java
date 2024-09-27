@@ -102,7 +102,7 @@ public class FileProcessor {
 
     protected Optional<Parser> getParserOpt(FileRef fileRef) {
         Parser parser;
-        String ext = FilenameUtils.getExtension(fileRef.getFileName());
+        String ext = FilenameUtils.getExtension(fileRef.getFileName()).toLowerCase();
         if (Strings.isNullOrEmpty(ext)) {
             log.warn("Unable to create a parser for a file without extension");
             parser = null;

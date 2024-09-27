@@ -23,7 +23,7 @@ import jakarta.annotation.Nullable;
 import java.util.Map;
 
 /**
- * The abstract class for all implementations that receive the index state from the search engine service.
+ * Class encapsulates the logic of receiving the index state from the search engine service.
  *
  * @param <TState> search client's specific index state type
  * @param <TJsonp> search client's specific Jsonp type

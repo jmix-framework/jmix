@@ -25,14 +25,15 @@ import java.util.Optional;
 
 
 /**
- * Compares both the settings from the application's index configuration
- * and the settings from the index state from the search server.
+ * Class encapsulates logic of both the settings from the application's index configuration
+ * and the settings from the index state from the search server comparing.
  *
  * @param <TState>    the received from the server index state type
  * @param <TSettings> specific for the search client settings type
  * @param <TJsonp>    specific for the search client Jsonp type
  */
 public abstract class IndexSettingsComparator<TState, TSettings, TJsonp> {
+
     private static final Logger log = LoggerFactory.getLogger(IndexSettingsComparator.class);
 
     protected final JsonpSerializer<TJsonp> jsonpSerializer;

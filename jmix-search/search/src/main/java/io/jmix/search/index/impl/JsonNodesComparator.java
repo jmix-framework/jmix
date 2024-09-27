@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Compares two JSon nodes that contains index settings or index mapping in correspondence to such comparison rules.
+ * Compares two JSON nodes that contains index settings or index mapping in correspondence to such comparison rules.
  * The 'container node' must contain all content of the 'content node'.
  * But the 'content node' can contain some extra tags.
  */

@@ -42,8 +42,8 @@ public class ElastisearchIndexSettingsComparator
 
 
     @Override
-    protected Optional<IndexSettings> extractAppliedIndexSettings(IndexState currentIndexState, String indexName) {
-        IndexSettings allAppliedSettings = currentIndexState.settings();
+    protected Optional<IndexSettings> extractAppliedIndexSettings(IndexState indexState, String indexName) {
+        IndexSettings allAppliedSettings = indexState.settings();
         if (allAppliedSettings == null) {
             throw new IllegalArgumentException(
                     "No info about all applied settings for index '" + indexName + "'"

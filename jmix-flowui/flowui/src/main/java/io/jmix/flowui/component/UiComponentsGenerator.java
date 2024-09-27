@@ -17,6 +17,7 @@
 package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.Component;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -45,10 +46,33 @@ public class UiComponentsGenerator {
      * </ol>
      *
      * @param context the {@link ComponentGenerationContext} instance
-     * @return a component instance for the current client type (web or desktop)
+     * @return a component instance
      * @throws IllegalArgumentException if no component can be created for a given context
      */
     public Component generate(ComponentGenerationContext context) {
+        Component component = generateOrNull(context);
+        if (component != null) {
+            return component;
+        }
+
+        throw new IllegalArgumentException(String.format("Can't create component for the '%s' with " +
+                "given meta class '%s'", context.getProperty(), context.getMetaClass()));
+    }
+
+    /**
+     * Creates a component according to the given {@link ComponentGenerationContext}.
+     * <p>
+     * Trying to find {@link ComponentGenerationStrategy} implementations. If at least one strategy exists, then:
+     * <ol>
+     * <li>Iterates over factories according to the {@link org.springframework.core.Ordered} interface.</li>
+     * <li>Returns the first created not {@code null} component, or {@code null} if none created.</li>
+     * </ol>
+     *
+     * @param context the {@link ComponentGenerationContext} instance
+     * @return a component instance or {@code null}
+     */
+    @Nullable
+    public Component generateOrNull(ComponentGenerationContext context) {
         List<ComponentGenerationStrategy> strategies = getComponentGenerationStrategies();
 
         for (ComponentGenerationStrategy strategy : strategies) {
@@ -58,8 +82,7 @@ public class UiComponentsGenerator {
             }
         }
 
-        throw new IllegalArgumentException(String.format("Can't create component for the '%s' with " +
-                "given meta class '%s'", context.getProperty(), context.getMetaClass()));
+        return null;
     }
 
     protected List<ComponentGenerationStrategy> getComponentGenerationStrategies() {

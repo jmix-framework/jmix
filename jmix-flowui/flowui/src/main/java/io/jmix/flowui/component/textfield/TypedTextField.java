@@ -324,6 +324,10 @@ public class TypedTextField<V> extends TextField
 
     @Nullable
     protected V convertToModel(String presentationValue) throws ConversionException {
+        if (isTrimEnabled()) {
+            presentationValue = StringUtils.trimToEmpty(presentationValue);
+        }
+
         presentationValue = Strings.emptyToNull(presentationValue);
 
         if (fieldDelegate.getValueSource() instanceof EntityValueSource) {

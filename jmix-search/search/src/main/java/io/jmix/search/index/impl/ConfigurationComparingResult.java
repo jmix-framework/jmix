@@ -22,6 +22,7 @@ package io.jmix.search.index.impl;
  * The second one contains the result of the settings' comparison.
  */
 public class ConfigurationComparingResult {
+
     protected final MappingComparingResult mappingComparingResult;
     protected final SettingsComparingResult settingsComparingResult;
 

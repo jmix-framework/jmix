@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Component("search_OpenSearchIndexMappingComparator")
 public class OpenSearchIndexMappingComparator extends IndexMappingComparator<IndexState, JsonpSerializable> {
+
     public OpenSearchIndexMappingComparator(MappingFieldComparator mappingFieldComparator, OpenSearchJsonpSerializer jsonpSerializer) {
         super(mappingFieldComparator, jsonpSerializer);
     }

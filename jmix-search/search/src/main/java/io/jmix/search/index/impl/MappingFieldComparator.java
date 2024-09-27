@@ -27,6 +27,7 @@ import java.util.Map;
  */
 @Component("search_MappingFieldComparator")
 public class MappingFieldComparator {
+
     public static final String TYPE_KEY = "type";
 
     public boolean isLeafField(@NotNull Map<String, Object> mapping) {

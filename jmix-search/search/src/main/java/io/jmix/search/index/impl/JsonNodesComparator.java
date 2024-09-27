@@ -32,6 +32,7 @@ import java.util.Map;
  */
 @Component("search_JsonNodesComparator")
 public class JsonNodesComparator {
+
     private static final Logger log = LoggerFactory.getLogger(JsonNodesComparator.class);
 
     public boolean nodeContains(ObjectNode containerNode, ObjectNode contentNode) {

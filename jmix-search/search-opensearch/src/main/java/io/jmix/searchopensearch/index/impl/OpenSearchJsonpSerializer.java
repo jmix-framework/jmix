@@ -29,6 +29,7 @@ import java.io.StringWriter;
 
 @Component("search_OpenSearchJsonpSerializer")
 public class OpenSearchJsonpSerializer extends BaseJsonpSerializer<JsonpSerializable> {
+
     protected final OpenSearchClient searchClient;
 
     public OpenSearchJsonpSerializer(OpenSearchClient searchClient) {

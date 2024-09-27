@@ -24,5 +24,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @param <TJsonp> search clients' specific JSonp format
  */
 public interface JsonpSerializer<TJsonp> {
+
     ObjectNode toObjectNode(TJsonp object);
 }

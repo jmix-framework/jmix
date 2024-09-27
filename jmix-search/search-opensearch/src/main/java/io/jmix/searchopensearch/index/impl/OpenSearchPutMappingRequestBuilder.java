@@ -35,6 +35,7 @@ import java.util.Map;
 
 @Component("search_OpenSearchPutMappingRequestBuilder")
 public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<PutMappingRequest, JsonpMapper> {
+
     public static final TypeReference<Map<String, Object>> TYPE_REF = new TypeReference<>() {
     };
     private static final String MAPPING_CONFIGURATION_PARSING_EXCEPTION_TEXT = "Unable to parse the mapping of the index.";

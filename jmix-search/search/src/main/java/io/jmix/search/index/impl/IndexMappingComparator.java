@@ -38,6 +38,7 @@ import static io.jmix.search.index.impl.MappingComparingResult.*;
  * @param <TJsonp> the specific for the search client Jsonp type
  */
 public abstract class IndexMappingComparator<TState, TJsonp> {
+
     private static final Logger log = LoggerFactory.getLogger(IndexMappingComparator.class);
     protected static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
     };

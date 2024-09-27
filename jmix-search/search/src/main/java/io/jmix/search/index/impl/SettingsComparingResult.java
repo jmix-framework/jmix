@@ -17,6 +17,7 @@
 package io.jmix.search.index.impl;
 
 public enum SettingsComparingResult implements ConfigurationPartComparingResult {
+
     EQUAL,
     NOT_COMPATIBLE;
 

@@ -17,6 +17,7 @@
 package io.jmix.search.index.impl;
 
 public enum MappingComparingResult implements ConfigurationPartComparingResult {
+
     EQUAL,
     UPDATABLE,
     NOT_COMPATIBLE;

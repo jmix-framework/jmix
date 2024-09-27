@@ -25,5 +25,6 @@ import io.jmix.search.index.mapping.IndexMappingConfiguration;
  * @param <TJsonp>   search clients' specific JSonp format
  */
 public interface PutMappingBuilder<TRequest, TJsonp> {
+
     TRequest buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, TJsonp jsonpMapper);
 }

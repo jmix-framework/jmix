@@ -25,13 +25,14 @@ import org.springframework.stereotype.Component;
 
 @Component("search_ElasticsearchIndexMappingComparator")
 public class ElasticsearchIndexMappingComparator extends IndexMappingComparator<IndexState, JsonpSerializable> {
+
     public ElasticsearchIndexMappingComparator(MappingFieldComparator mappingFieldComparator, ElasticsearchJsonpSerializer jsonpSerializer) {
         super(mappingFieldComparator, jsonpSerializer);
     }
 
     @Override
     @Nullable
-    protected JsonpSerializable extractTypeMapping(IndexState currentIndexState) {
-        return currentIndexState.mappings();
+    protected JsonpSerializable extractTypeMapping(IndexState indexState) {
+        return indexState.mappings();
     }
 }

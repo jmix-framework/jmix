@@ -29,6 +29,7 @@ import jakarta.annotation.Nullable;
  * @param <TJsonp>    - Jsonp type
  */
 public abstract class IndexConfigurationComparator<TState, TSettings, TJsonp> {
+
     protected final IndexSettingsComparator<TState, TSettings, TJsonp> settingsComparator;
     protected final IndexMappingComparator<TState, TJsonp> mappingComparator;
     protected final IndexStateResolver<TState, TJsonp> indexStateResolver;

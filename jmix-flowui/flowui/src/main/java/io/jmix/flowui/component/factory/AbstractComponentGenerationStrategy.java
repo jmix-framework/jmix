@@ -25,6 +25,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.Actions;
@@ -259,7 +260,14 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         return fileStorageUploadField;
     }
 
+    @Nullable
     protected Component createCollectionField(ComponentGenerationContext context, MetaPropertyPath mpp) {
+        if (isComposition(mpp)) {
+            // The collection composition must be edited taking into
+            // account the parent entity
+            return null;
+        }
+
         JmixMultiValuePicker<?> multiValuePicker = uiComponents.create(JmixMultiValuePicker.class);
         setValueSource(multiValuePicker, context);
 
@@ -278,6 +286,10 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         multiValuePicker.addAction(selectAction);
         multiValuePicker.addAction(actions.create(ValueClearAction.ID));
         return multiValuePicker;
+    }
+
+    protected boolean isComposition(MetaPropertyPath mpp) {
+        return mpp.getMetaProperty().getType() == MetaProperty.Type.COMPOSITION;
     }
 
     @Nullable

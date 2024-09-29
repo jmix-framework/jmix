@@ -573,13 +573,14 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
             this.property = property;
         }
 
+        @Nullable
         @Override
         public Component apply(EditComponentGenerationContext<T> generationContext) {
             ComponentGenerationContext context = new ComponentGenerationContext(getEntityMetaClass(), property);
             context.setValueSource(generationContext.getValueSourceProvider().getValueSource(property));
             context.setTargetClass(DataGrid.class);
 
-            Component editComponent = getUiComponentsGenerator().generate(context);
+            Component editComponent = getUiComponentsGenerator().generateOrNull(context);
 
             if (editComponent instanceof SupportsStatusChangeHandler) {
                 //noinspection unchecked,rawtypes

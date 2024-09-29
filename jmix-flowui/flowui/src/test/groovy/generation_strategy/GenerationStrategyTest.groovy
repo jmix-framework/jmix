@@ -128,13 +128,10 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
 
         context.setValueSource(valueSource)
 
-        def component = uiComponentsGenerator.generate(context)
+        def component = uiComponentsGenerator.generateOrNull(context)
 
-        then: "JmixMultiValuePicker component will be generated"
-        component instanceof JmixMultiValuePicker
-        (component as JmixMultiValuePicker).getAction(MultiValueSelectAction.ID) != null
-        ((component as JmixMultiValuePicker).getAction(MultiValueSelectAction.ID) as MultiValueSelectAction)
-                .getEntityName() == "test_OrderLine"
+        then: "no component is generated"
+        component == null
     }
 
     def "Generate component for association attribute without items"() {

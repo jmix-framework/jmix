@@ -46,6 +46,19 @@ public @interface StudioComponent {
     String category() default "";
 
     /**
+     * Xml attribute that should be used as identifier for injection or handler target.
+     * <p></p>
+     * Default value is <code>id</code>.
+     */
+    String injectionIdentifier() default "id";
+
+    /**
+     * Determines whether a component can be injected into controller.
+     * Default value is <code>true</code>.
+     */
+    boolean isInjectable() default true;
+
+    /**
      * Path to the icon that Studio will use in palette and inspector.
      */
     String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";

@@ -35,7 +35,7 @@ import io.jmix.chartsflowui.kit.component.model.visualMap.ContinuousVisualMap;
 import io.jmix.chartsflowui.kit.component.model.visualMap.PiecewiseVisualMap;
 import io.jmix.flowui.kit.meta.*;
 
-@StudioUiKit(studioClassloaderDependencies = "io.jmix.charts:jmix-charts-flowui-kit")
+@StudioUiKit
 public interface StudioChartsElements {
 
     @StudioElement(

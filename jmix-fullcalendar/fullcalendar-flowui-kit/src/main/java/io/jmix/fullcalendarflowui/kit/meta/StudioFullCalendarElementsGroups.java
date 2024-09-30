@@ -19,7 +19,7 @@ package io.jmix.fullcalendarflowui.kit.meta;
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
-@StudioUiKit(studioClassloaderDependencies = "io.jmix.fullcalendar:jmix-fullcalendar-flowui-kit")
+@StudioUiKit
 public interface StudioFullCalendarElementsGroups {
 
     @StudioElementsGroup(

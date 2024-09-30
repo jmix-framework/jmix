@@ -38,6 +38,16 @@ public @interface StudioElement {
     String classFqn() default "";
 
     /**
+     * @see StudioComponent#injectionIdentifier
+     */
+    String injectionIdentifier() default "id";
+
+    /**
+     * @see StudioComponent#isInjectable
+     */
+    boolean isInjectable() default true;
+
+    /**
      * @see StudioComponent#icon
      */
     String icon() default "io/jmix/flowui/kit/meta/icon/unknownComponent.svg";

@@ -18,7 +18,7 @@ package io.jmix.fullcalendarflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.*;
 
-@StudioUiKit(studioClassloaderDependencies = "io.jmix.fullcalendar:jmix-fullcalendar-flowui-kit")
+@StudioUiKit
 public interface StudioFullCalendarElements {
 
     @StudioElement(
@@ -27,6 +27,7 @@ public interface StudioFullCalendarElements {
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             classFqn = "io.jmix.fullcalendarflowui.component.data.ContainerCalendarDataProvider",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
+            isInjectable = false,
             properties = {
                     @StudioProperty(xmlAttribute = "id",
                             category = StudioProperty.Category.GENERAL,
@@ -68,6 +69,7 @@ public interface StudioFullCalendarElements {
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             classFqn = "io.jmix.fullcalendarflowui.component.data.EntityCalendarDataRetriever",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
+            isInjectable = false,
             properties = {
                     @StudioProperty(xmlAttribute = "id",
                             category = StudioProperty.Category.GENERAL,
@@ -119,6 +121,7 @@ public interface StudioFullCalendarElements {
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarDisplayMode",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
+            isInjectable = false,
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.STRING,

@@ -121,11 +121,12 @@ public class FilterMetadataTools {
     }
 
     protected boolean isMetaPropertyPathAllowedJpaAware(MetaPropertyPath propertyPath, String query) {
-        return componentProperties.isFilterShowNonJpaProperties()
-                ? isKeyValueQueryAllowed(propertyPath, query) || isCrossDataStoreReferenceAllowed(propertyPath)
-                : (metadataTools.isJpa(propertyPath)
-                || (propertyPath.getMetaClass() instanceof KeyValueMetaClass && isKeyValueQueryAllowed(propertyPath, query)))
-                || isCrossDataStoreReferenceAllowed(propertyPath);
+        return metadataTools.isJpa(propertyPath)
+                || isKeyValueMetaClass(propertyPath)
+                && isKeyValueQueryAllowed(propertyPath, query)
+                || isCrossDataStoreReferenceAllowed(propertyPath)
+                || componentProperties.isFilterShowNonJpaProperties()
+                && !belongToCrossDataStoreReference(propertyPath, query);
     }
 
     protected boolean isKeyValueQueryAllowed(MetaPropertyPath propertyPath, String query) {
@@ -135,7 +136,7 @@ public class FilterMetadataTools {
 
     protected boolean isCrossDataStoreReferenceAllowed(MetaPropertyPath propertyPath) {
         return isCrossDataStoreReference(propertyPath.getMetaProperty())
-                && !(propertyPath.getMetaClass() instanceof KeyValueMetaClass);
+                && !isKeyValueMetaClass(propertyPath);
     }
 
     @SuppressWarnings("unused")
@@ -147,6 +148,14 @@ public class FilterMetadataTools {
         return metadataTools.getCrossDataStoreReferenceIdProperty(
                 metaProperty.getDomain().getStore().getName(),
                 metaProperty) != null;
+    }
+
+    protected boolean belongToCrossDataStoreReference(MetaPropertyPath propertyPath, String query) {
+        MetaClass mainFromMetaClass = getMainFromMetaClass(query);
+        MetaProperty metaProperty = propertyPath.getMetaProperty();
+
+        return metaProperty.getStore().getDescriptor().isJpa() &&
+                !mainFromMetaClass.getStore().getName().equals(metaProperty.getStore().getName());
     }
 
     protected boolean isKeyValueCrossDataStoreReferenceAllowed(MetaPropertyPath propertyPath, String query) {
@@ -164,15 +173,23 @@ public class FilterMetadataTools {
             return propertyMetaClass == null
                     || domainMetaClass.getStore().getName().equals(propertyMetaClass.getStore().getName());
         } else if (propertyMetaClass != null) {
-            String entityName = query.substring(query.indexOf("from") + 4)
-                    .trim()
-                    .split(" ")[0];
-
-            MetaClass mainFromMetaClass = metadata.getClass(entityName);
+            MetaClass mainFromMetaClass = getMainFromMetaClass(query);
             return mainFromMetaClass.getStore().getName().equals(propertyMetaClass.getStore().getName())
                     || propertyMetaClass instanceof KeyValueMetaClass;
         } else {
             return true;
         }
+    }
+
+    protected MetaClass getMainFromMetaClass(String query) {
+        String entityName = query.substring(query.indexOf("from") + 4)
+                .trim()
+                .split(" ")[0];
+
+        return metadata.getClass(entityName);
+    }
+
+    protected boolean isKeyValueMetaClass(MetaPropertyPath propertyPath) {
+        return propertyPath.getMetaClass() instanceof KeyValueMetaClass;
     }
 }

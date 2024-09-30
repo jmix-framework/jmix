@@ -103,7 +103,7 @@ dependencies {
     api('org.docx4j:docx4j-JAXB-ReferenceImpl') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'log4j', module: 'log4j'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.slf4j'
         exclude group: 'ch.qos.logback'
         exclude group: 'com.fasterxml.jackson.core'
     }
@@ -111,14 +111,14 @@ dependencies {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.apache.poi', module: 'poi'
         exclude group: 'log4j', module: 'log4j'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.slf4j'
         exclude group: 'ch.qos.logback'
         exclude group: 'com.fasterxml.jackson.core'
     }
     api('org.docx4j:docx4j-export-fo') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'log4j', module: 'log4j'
-        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.slf4j'
         exclude group: 'ch.qos.logback'
         exclude group: 'com.fasterxml.jackson.core'
     }

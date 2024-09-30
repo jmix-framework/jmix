@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.*;
@@ -64,7 +65,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     private HorizontalLayout detailActions;
 
     @Subscribe
-    public void onInit(final InitEvent event) {
+    public void onBeforeShow(final BeforeShowEvent event) {
         updateControls(false);
     }<%if (tableActions.contains("create")) {%>
 
@@ -114,6 +115,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
             ${detailDl}.setEntityId(null);
             ${detailDc}.setItem(null);
         }
+        updateControls(false);
     }
 
     protected ValidationErrors validateView(${entity.className} entity) {
@@ -127,7 +129,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     }
 
     private void updateControls(boolean editing) {
-        form.getChildren().forEach(component -> {
+        UiComponentUtils.getComponents(form).forEach(component -> {
             if (component instanceof HasValueAndElement<?, ?> field) {
                 field.setReadOnly(!editing);
             }

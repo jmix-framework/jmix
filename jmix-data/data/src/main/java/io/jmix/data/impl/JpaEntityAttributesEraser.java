@@ -16,21 +16,13 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.MetadataTools;
-import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.datastore.security.BaseEntityAttributesEraser;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("data_JpaEntityAttributesEraser")
 public class JpaEntityAttributesEraser extends BaseEntityAttributesEraser {
-
-    @Autowired
-    protected UnconstrainedDataManager dataManager;
-    @Autowired
-    protected MetadataTools metadataTools;
 
     @Override
     protected Object getEntityReference(MetaClass entityMetaClass, Object id) {

@@ -17,18 +17,13 @@
 package io.jmix.restds.impl.security;
 
 import io.jmix.core.LoadContext;
-import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.datastore.security.BaseEntityAttributesEraser;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("restds_RestEntityAttributesEraser")
 public class RestEntityAttributesEraser extends BaseEntityAttributesEraser {
-
-    @Autowired
-    protected UnconstrainedDataManager dataManager;
 
     @Override
     protected Object getEntityReference(MetaClass entityMetaClass, Object id) {

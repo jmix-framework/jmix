@@ -286,12 +286,12 @@ public class RestDataStore extends AbstractDataStore {
 
     @Override
     protected Object beginLoadTransaction(boolean joinTransaction) {
-        return null;
+        return new Object();
     }
 
     @Override
     protected Object beginSaveTransaction(boolean joinTransaction) {
-        return null;
+        return new Object();
     }
 
     @Override

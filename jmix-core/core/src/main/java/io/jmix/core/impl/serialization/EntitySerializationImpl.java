@@ -207,6 +207,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                     case DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES -> doNotSerializeReadOnlyProperties = true;
                     case DO_NOT_SERIALIZE_DENIED_PROPERTY -> doNotSerializeDeniedProperties = true;
                     case SERIALIZE_SECRET_FIELDS -> serializeSecretFields = true;
+                    default -> {}
                 }
             }
         }

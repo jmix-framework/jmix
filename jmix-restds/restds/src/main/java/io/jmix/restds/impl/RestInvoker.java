@@ -42,6 +42,7 @@ import org.springframework.web.util.UriBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 @SuppressWarnings("UnnecessaryLocalVariable")
 @Component("restds_RestInvoker")
@@ -298,7 +299,7 @@ public class RestInvoker implements InitializingBean {
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
             log.debug("Request: {} {}", request.getMethod(), request.getURI());
             if (request.getMethod().equals(HttpMethod.POST) || request.getMethod().equals(HttpMethod.PUT))
-                log.trace("Request body: {}", new String(body));
+                log.trace("Request body: {}", new String(body, StandardCharsets.UTF_8));
 
             ClientHttpResponse response = execution.execute(request, body);
 

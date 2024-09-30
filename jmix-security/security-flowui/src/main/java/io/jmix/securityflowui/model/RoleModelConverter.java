@@ -16,6 +16,7 @@
 
 package io.jmix.securityflowui.model;
 
+import com.google.common.base.Strings;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.security.model.*;
@@ -25,6 +26,8 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 /**
  * Class is used for converting {@link ResourceRole}, {@link RowLevelRole} objects
@@ -89,6 +92,9 @@ public class RoleModelConverter {
                     entityStates.setNew(model, false);
                     return model;
                 })
+                .sorted((model1, model2) -> CASE_INSENSITIVE_ORDER.compare(
+                        Strings.nullToEmpty(model1.getPolicyGroup()),
+                        Strings.nullToEmpty(model2.getPolicyGroup())))
                 .collect(Collectors.toList());
     }
 

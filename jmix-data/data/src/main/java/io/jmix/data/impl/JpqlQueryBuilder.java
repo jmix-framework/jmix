@@ -294,20 +294,29 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
             String property = propertyCondition.getProperty();
             MetaClass metaClass = metadata.getClass(entityName);
             MetaPropertyPath propertyPath = metaClass.getPropertyPath(property);
+
             if (propertyPath == null) {
                 return null;
             }
+
             for (MetaProperty metaProperty : propertyPath.getMetaProperties()) {
-                if (!metadataTools.isJpa(metaProperty)) {
+                if (!metadataTools.isJpa(metaProperty)
+                        && !isCrossDataStoreReference(metaProperty)) {
                     resultParameters.remove(propertyCondition.getParameterName());
                     return null;
                 }
             }
-            return condition.copy();
 
+            return condition.copy();
         } else {
             return condition.copy();
         }
+    }
+
+    protected boolean isCrossDataStoreReference(MetaProperty metaProperty) {
+        return metadataTools.getCrossDataStoreReferenceIdProperty(
+                metaProperty.getDomain().getStore().getName(),
+                metaProperty) != null;
     }
 
     protected ConditionGenerationContext createConditionGenerationContext(@Nullable Condition condition) {

@@ -1871,7 +1871,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "pattern", category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "placeholder", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "property", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.PROPERTY_REF,
-                            typeParameter = "T"),
+                            typeParameter = "V"),
                     @StudioProperty(xmlAttribute = "readOnly", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.BOOLEAN,

@@ -39,7 +39,7 @@ public abstract class AbstractDataSerializer<T> extends AbstractSerializer<T> {
     protected static final String ITEM_KEY_PROPERTY_NAME = "$k";
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
-    public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss:S";
+    public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss.SSS";
     public static final String DEFAULT_DATE_TIME_FORMAT = DEFAULT_DATE_FORMAT + " " + DEFAULT_TIME_FORMAT;
 
     protected static final FastDateFormat DATE_FORMATTER

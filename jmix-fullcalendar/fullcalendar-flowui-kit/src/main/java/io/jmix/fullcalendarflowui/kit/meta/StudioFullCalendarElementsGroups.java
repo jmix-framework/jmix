@@ -64,7 +64,7 @@ public interface StudioFullCalendarElementsGroups {
                     "io.jmix.fullcalendarflowui.kit.component.model.TimeGridWeekProperties",
                     "io.jmix.fullcalendarflowui.kit.component.model.MultiMonthYearProperties",
             },
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg"
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg"
     )
     void properties();
 

@@ -26,7 +26,7 @@ public interface StudioFullCalendarElements {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             classFqn = "io.jmix.fullcalendarflowui.component.data.ContainerCalendarDataProvider",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id",
                             category = StudioProperty.Category.GENERAL,
@@ -67,7 +67,7 @@ public interface StudioFullCalendarElements {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             classFqn = "io.jmix.fullcalendarflowui.component.data.EntityCalendarDataRetriever",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id",
                             category = StudioProperty.Category.GENERAL,
@@ -118,7 +118,7 @@ public interface StudioFullCalendarElements {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarDisplayMode",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.STRING,
@@ -150,7 +150,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.DayGridDayProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "dayHeaderFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "dayPopoverFormat", type = StudioPropertyType.LOCALIZED_STRING),
@@ -168,7 +168,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.DayGridWeekProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "dayHeaderFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "dayPopoverFormat", type = StudioPropertyType.LOCALIZED_STRING),
@@ -186,7 +186,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.DayGridMonthProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "dayHeaderFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "dayPopoverFormat", type = StudioPropertyType.LOCALIZED_STRING),
@@ -206,7 +206,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.DayGridYearProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "dayHeaderFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "dayPopoverFormat", type = StudioPropertyType.LOCALIZED_STRING),
@@ -225,7 +225,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.ListDayProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
@@ -243,7 +243,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.ListWeekProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
@@ -260,7 +260,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.ListMonthProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
@@ -277,7 +277,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.ListYearProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "listDayFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "listDaySideFormat", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
@@ -294,7 +294,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.TimeGridDayProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "dayPopoverFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "dayHeaderFormat", type = StudioPropertyType.LOCALIZED_STRING),
@@ -317,7 +317,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.TimeGridWeekProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "dayPopoverFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "dayHeaderFormat", type = StudioPropertyType.LOCALIZED_STRING),
@@ -340,7 +340,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.MultiMonthYearProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "multiMonthMaxColumns", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "multiMonthMinWidth", type = StudioPropertyType.INTEGER),
@@ -358,7 +358,7 @@ public interface StudioFullCalendarElements {
             unlimitedCount = false,
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration",
             target = "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarDisplayMode",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "years", type = StudioPropertyType.INTEGER, defaultValue = "0"),
                     @StudioProperty(xmlAttribute = "months", type = StudioPropertyType.INTEGER, defaultValue = "0"),
@@ -377,7 +377,7 @@ public interface StudioFullCalendarElements {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             classFqn = "io.jmix.fullcalendarflowui.kit.meta.group.StudioFullCalendarProperties",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true),
@@ -390,7 +390,7 @@ public interface StudioFullCalendarElements {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             classFqn = "io.jmix.fullcalendarflowui.component.model.BusinessHours",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "endTime", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "startTime", type = StudioPropertyType.STRING),
@@ -403,7 +403,7 @@ public interface StudioFullCalendarElements {
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             classFqn = "io.jmix.fullcalendarflowui.kit.meta.group.StudioFullCalendarHiddenDays",
-            icon = "io/jmix/mapsflowui/kit/meta/icon/unknownComponent.svg",
+            icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.ENUMERATION, required = true,
                             classFqn = "io.jmix.fullcalendar.DayOfWeek",

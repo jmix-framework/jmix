@@ -21,7 +21,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.EntitySystemAccess;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
@@ -86,7 +86,7 @@ public class HtmlContainerReadonlyDataBindingImpl implements HtmlContainerReadon
 
         Object item = dataContainer.getItemOrNull();
         if (item != null) {
-            Object propertyValue = EntitySystemAccess.getEntityEntry(item).getAttributeValue(property);
+            Object propertyValue = EntityValues.getValueEx(item, property);
             updateHtmlContainerText(htmlContainer, propertyValue);
         }
 
@@ -98,7 +98,7 @@ public class HtmlContainerReadonlyDataBindingImpl implements HtmlContainerReadon
 
         Subscription itemChangeSubscription = dataContainer.addItemChangeListener(itemChangeEvent -> {
             Object propertyValue = itemChangeEvent.getItem() != null
-                    ? EntitySystemAccess.getEntityEntry(itemChangeEvent.getItem()).getAttributeValue(property)
+                    ? EntityValues.getValueEx(itemChangeEvent.getItem(), property)
                     : null;
             updateHtmlContainerText(htmlContainer, propertyValue);
         });

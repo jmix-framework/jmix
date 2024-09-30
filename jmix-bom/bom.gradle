@@ -320,12 +320,15 @@ dependencies {
 
         api 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.6.RELEASE'
 
+        api 'org.springframework.security:spring-security-core:5.7.12'
+
         api 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
 
         api 'org.springframework.security:spring-security-oauth2-authorization-server:0.3.1'
 
-        api 'org.springframework:spring-web:5.3.37'
-        api 'org.springframework:spring-webmvc:5.3.37'
+        api 'org.springframework:spring-web:5.3.39'
+        api 'org.springframework:spring-webmvc:5.3.39'
+        api 'org.springframework:spring-webflux:5.3.39'
 
         api 'javax.cache:cache-api:1.1.1'
 
@@ -429,7 +432,7 @@ dependencies {
         api 'org.jetbrains:annotations:22.0.0'
         api 'commons-codec:commons-codec:1.15'
 
-        api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.18'
+        api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.24'
 
         api 'org.freemarker:freemarker:2.3.32'
         api 'xerces:xercesImpl:2.12.2'
@@ -447,6 +450,10 @@ dependencies {
         api 'com.nimbusds:nimbus-jose-jwt:9.37.3'
         api 'com.jayway.jsonpath:json-path:2.9.0'
         api 'org.apache.james:apache-mime4j-core:0.8.10'
+
+        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.95'
+        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.95'
+        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.95'
 
         runtime 'org.postgresql:postgresql:42.7.3'
         runtime 'org.hsqldb:hsqldb:2.7.2'

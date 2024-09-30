@@ -31,6 +31,7 @@ import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.dynattr.model.Categorized;
 import io.jmix.dynattr.model.Category;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.UiComponentsGenerator;
@@ -52,7 +53,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DynamicAttributesPanel extends Composite<VerticalLayout> implements HasSize {
+import static io.jmix.flowui.component.UiComponentUtils.sameId;
+
+public class DynamicAttributesPanel extends Composite<VerticalLayout> implements HasSize, ComponentContainer {
 
     public static final String NAME = "dynamicAttributesPanel";
 
@@ -274,6 +277,18 @@ public class DynamicAttributesPanel extends Composite<VerticalLayout> implements
         if (event.getItem() == null) {
             propertiesForm.removeAll();
         }
+    }
+
+    @Override
+    public Optional<Component> findOwnComponent(String id) {
+        return getOwnComponents().stream()
+                .filter(component -> sameId(component, id))
+                .findAny();
+    }
+
+    @Override
+    public Collection<Component> getOwnComponents() {
+        return List.of(categoryFieldLabel, categoryField, propertiesForm);
     }
 
     /**

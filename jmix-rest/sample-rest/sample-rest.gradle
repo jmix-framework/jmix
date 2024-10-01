@@ -61,7 +61,9 @@ dependencies {
 
     testImplementation 'io.rest-assured:rest-assured'
 
-    testImplementation 'com.jayway.jsonpath:json-path'
+    testImplementation ('com.jayway.jsonpath:json-path') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
     testImplementation 'net.minidev:json-smart'
     testImplementation 'org.mockito:mockito-core:3.6.0'
 

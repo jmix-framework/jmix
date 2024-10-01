@@ -37,14 +37,28 @@
             </loader>
             <fetchPlan extends="_base"/>
         </collection>
+        <instance id="animalDc" class="test_support.entity.Animal">
+            <loader id="animalDl">
+                <query>
+                    <![CDATA[select e from test_Animal e where e.name = 'Animal1']]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base">
+                <property name="zoo" fetchPlan="_base">
+                    <property name="city" fetchPlan="_base"/>
+                </property>
+            </fetchPlan>
+        </instance>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
         <div id="name" dataContainer="zooDc" property="name"/>
-        <div id="city" dataContainer="zooDc" property="city"/>
+        <div id="address" dataContainer="zooDc" property="address"/>
         <div id="zooAnimals" dataContainer="zooDc" property="animals"/>
+        <div id="animalZoo" dataContainer="animalDc" property="zoo.name"/>
+        <div id="animalZooCity" dataContainer="animalDc" property="zoo.city.name"/>
 
         <formLayout dataContainer="zooDc">
             <div id="formDiv" property="name"/>

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.entity.Animal
+import test_support.entity.City
 import test_support.entity.Zoo
 import test_support.spec.FlowuiTestSpecification
 
@@ -53,9 +54,12 @@ class HtmlContainerReadonlyDataBindingTest extends FlowuiTestSpecification {
 
         def saveContext = new SaveContext()
 
+        def city = dataManager.create(City)
+        city.name = "City"
+
         def zoo = dataManager.create(Zoo)
         zoo.name = "Zoo"
-        zoo.city = "City"
+        zoo.address = "Street 1"
         zoo.animals = new LinkedList<>()
         List<Animal> animals = new LinkedList<>()
         for (int i = 1; i <= 10; i++) {
@@ -66,17 +70,27 @@ class HtmlContainerReadonlyDataBindingTest extends FlowuiTestSpecification {
             }
             animals.add(animal)
         }
+        city.setZoos(new ArrayList<Zoo>(List.of(zoo)))
 
         saveContext.saving(animals)
         saveContext.saving(zoo)
+        saveContext.saving(city)
+        dataManager.save(saveContext)
+
+        zoo.setCity(city)
+        saveContext.saving(zoo)
+        animals.forEach {animal -> animal.setZoo(zoo)}
+        saveContext.saving(animals)
         dataManager.save(saveContext)
     }
 
     @Override
     void cleanup() {
+        jdbcTemplate.execute("delete from TEST_CITY_ZOO_LINK")
         jdbcTemplate.execute("delete from TEST_ZOO_ANIMAL_LINK")
-        jdbcTemplate.execute("delete from TEST_ZOO")
         jdbcTemplate.execute("delete from TEST_ANIMAL")
+        jdbcTemplate.execute("delete from TEST_ZOO")
+        jdbcTemplate.execute("delete from TEST_CITY")
     }
 
     def "Bind data containers in loader"() {
@@ -90,7 +104,7 @@ class HtmlContainerReadonlyDataBindingTest extends FlowuiTestSpecification {
 
         then: "Divs with data binding should have text value equal to zoo properties values"
         dataBindingHtmlContainerView.name.text == "Zoo"
-        dataBindingHtmlContainerView.city.text == "City"
+        dataBindingHtmlContainerView.address.text == "Street 1"
         dataBindingHtmlContainerView.zooAnimals.text == zooAnimalsAsString
     }
 
@@ -100,20 +114,20 @@ class HtmlContainerReadonlyDataBindingTest extends FlowuiTestSpecification {
         when: "Create div and bind with zooDc using property"
         Div zooName = new Div()
         htmlContainerReadonlyDataBinding.bind(zooName, dataBindingHtmlContainerView.zooDc, "name")
-        Div zooCity = new Div()
-        htmlContainerReadonlyDataBinding.bind(zooCity, dataBindingHtmlContainerView.zooDc, "city")
+        Div zooAddress = new Div()
+        htmlContainerReadonlyDataBinding.bind(zooAddress, dataBindingHtmlContainerView.zooDc, "address")
 
         then: "Divs with data binding should have text value equal to zoo properties values"
         zooName.text == "Zoo"
-        zooCity.text == "City"
+        zooAddress.text == "Street 1"
 
         when: "Change name and city properties"
         dataBindingHtmlContainerView.zooDc.getItem().name = "Zoo Zoo"
-        dataBindingHtmlContainerView.zooDc.getItem().city = "City City"
+        dataBindingHtmlContainerView.zooDc.getItem().address = "Street 2"
 
         then: "Divs text should change its value after changing entity properties"
         zooName.text == "Zoo Zoo"
-        zooCity.text == "City City"
+        zooAddress.text == "Street 2"
 
         when: "Create div and bind with collection animalsDc"
         Div animals = new Div()
@@ -174,5 +188,14 @@ class HtmlContainerReadonlyDataBindingTest extends FlowuiTestSpecification {
 
         then: "Html container in formLayout should have the text value equal to zoo instance name value"
         dataBindingHtmlContainerView.formDiv.text == dataBindingHtmlContainerView.zooDc.item.name
+    }
+
+    def "Bind nested property"() {
+        when: "Open the view"
+        def dataBindingHtmlContainerView = navigateToView(DataBindingHtmlContainerView.class)
+
+        then: "Html containers should have the text values from the nested properties"
+        dataBindingHtmlContainerView.animalZoo.text == "Zoo"
+        dataBindingHtmlContainerView.animalZooCity.text == "City"
     }
 }

@@ -99,6 +99,14 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
                             new IndirectSetWrapper<>((Set<Object>) collectionWrapFunction.apply(collection), indirectSet);
 
                     setCollectionProperty(dst, metaProperty.getName(), wrappedCollection);
+                } else if (value instanceof IndirectListWrapper) {
+                    //noinspection unchecked,rawtypes
+                    Collection<Object> wrappedCollection = IndirectListWrapper.copyWithNewWrapper((IndirectListWrapper) value, collectionWrapFunction);
+                    setCollectionProperty(dst, metaProperty.getName(), wrappedCollection);
+                } else if (value instanceof IndirectSetWrapper) {
+                    //noinspection unchecked,rawtypes
+                    Collection<Object> wrappedCollection = IndirectSetWrapper.copyWithNewWrapper((IndirectSetWrapper) value, collectionWrapFunction);
+                    setCollectionProperty(dst, metaProperty.getName(), wrappedCollection);
                 }
             } else {
                 Object valueHolder = getSingleValueHolder(src, metaProperty.getName());

@@ -27,8 +27,8 @@ import org.eclipse.persistence.internal.queries.EntityFetchGroup;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -98,6 +98,14 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
                     Collection<Object> wrappedCollection =
                             new IndirectSetWrapper<>((Set<Object>) collectionWrapFunction.apply(collection), indirectSet);
 
+                    setCollectionProperty(dst, metaProperty.getName(), wrappedCollection);
+                } else if (value instanceof IndirectListWrapper) {
+                    //noinspection unchecked,rawtypes
+                    Collection<Object> wrappedCollection = IndirectListWrapper.copyWithNewWrapper((IndirectListWrapper) value, collectionWrapFunction);
+                    setCollectionProperty(dst, metaProperty.getName(), wrappedCollection);
+                } else if (value instanceof IndirectSetWrapper) {
+                    //noinspection unchecked,rawtypes
+                    Collection<Object> wrappedCollection = IndirectSetWrapper.copyWithNewWrapper((IndirectSetWrapper) value, collectionWrapFunction);
                     setCollectionProperty(dst, metaProperty.getName(), wrappedCollection);
                 }
             } else {

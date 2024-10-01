@@ -21,7 +21,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 
 @Tag("jmix-superset-dashboard")
-@NpmPackage(value = "@superset-ui/embedded-sdk", version = "0.1.0-alpha.10")
+@NpmPackage(value = "@superset-ui/embedded-sdk", version = "0.1.2")
 @JsModule("./src/superset-dashboard/jmix-superset-dashboard.js")
 public class JmixSupersetDashboard extends Component implements HasSize, HasStyle {
 

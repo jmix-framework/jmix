@@ -26,15 +26,41 @@ import com.vaadin.flow.component.html.RangeInput
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.data.value.ValueChangeMode
 import component_xml_load.screen.HtmlView
+import io.jmix.core.DataManager
+import io.jmix.core.SaveContext
+import io.jmix.flowui.data.binding.HtmlContainerReadonlyDataBinding
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.core.JdbcTemplate
+import test_support.entity.Animal
+import test_support.entity.Foo
+import test_support.entity.Zoo
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
 class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
+    @Autowired
+    JdbcTemplate jdbcTemplate
+
+    @Autowired
+    DataManager dataManager
+
     @Override
     void setup() {
         registerViewBasePackages("component_xml_load.screen")
+        def saveContext = new SaveContext()
+
+        def foo = dataManager.create(Foo)
+        foo.name = "Foo"
+
+        saveContext.saving(foo)
+        dataManager.save(saveContext)
+    }
+
+    @Override
+    void cleanup() {
+        jdbcTemplate.execute("delete from TEST_FOO")
     }
 
     def "Load #container from XML"() {
@@ -64,6 +90,23 @@ class HtmlComponentXmlLoadTest extends FlowuiTestSpecification {
 
         where:
         container << ["article", "aside", "descriptionList", "term", "description", "div", "emphasis", "footer", "h1",
+                      "h2", "h3", "h4", "h5", "h6", "header", "listItem", "p", "pre", "section", "span",
+                      "unorderedList", "anchor", "htmlObject", "label", "main", "nav", "orderedList"]
+    }
+
+    def "Load #container with DataContainer from XML"() {
+        when: "Open the HtmlView"
+        def htmlView = navigateToView(HtmlView.class)
+
+        then: "#container dataContainer attributes will be loaded and data will be binded"
+        def htmlContainer = htmlView."${container}Id" as HtmlContainer
+
+        verifyAll(htmlContainer) {
+            htmlContainer.getText() == "Foo"
+        }
+
+        where:
+        container << ["article", "aside", "div", "emphasis", "footer", "h1",
                       "h2", "h3", "h4", "h5", "h6", "header", "listItem", "p", "pre", "section", "span",
                       "unorderedList", "anchor", "htmlObject", "label", "main", "nav", "orderedList"]
     }

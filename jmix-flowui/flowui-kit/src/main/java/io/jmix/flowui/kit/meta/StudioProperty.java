@@ -44,14 +44,18 @@ public @interface StudioProperty {
     String defaultValue() default "";
 
     /**
-     * Describes an element whose default property value
+     * Describes an application property or an element whose default property value
      * should be used as the default value for the current property.
      * <p></p>
      * <b>Supported syntax:</b>
      * <ol>
      *  <li>
-     *      {@code parent:someParentProperty} - where someParentProperty should be replaced with property name.
-     *      For example: {@code parent:sortable}
+     *      {@code parent:someParentProperty}
+     *      <p>Example: <i>parent:sortable</i></p>
+     *  </li>
+     *  <li>
+     *      {@code application_property:someApplicationProperty}
+     *      <p>Example: <i>application_property:jmix.ui.component.default-trim-enabled</i></p>
      *  </li>
      * </ol>
      */

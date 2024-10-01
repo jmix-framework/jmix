@@ -22,30 +22,20 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-@Table(name = "TEST_ZOO")
-@Entity(name = "test_Zoo")
+@Table(name = "TEST_CITY")
+@Entity(name = "test_City")
 @JmixEntity
-public class Zoo extends TestBaseEntity {
-
-    private static final long serialVersionUID = 5682981871475199801L;
+public class City extends TestBaseEntity {
 
     @Column(name = "NAME", nullable = false)
     @NotNull
     private String name;
 
-    @Column(name = "ADDRESS", nullable = false)
-    @NotNull
-    private String address;
-
-    @JoinTable(name = "TEST_ZOO_ANIMAL_LINK",
-            joinColumns = @JoinColumn(name = "ZOO_ID"),
+    @JoinTable(name = "TEST_CITY_ZOO_LINK",
+            joinColumns = @JoinColumn(name = "CITY_ID"),
             inverseJoinColumns = @JoinColumn(name = "ANIMAL_ID"))
     @ManyToMany
-    private List<Animal> animals;
-
-    @JoinColumn(name = "CITY_ID")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private City city;
+    private List<Zoo> zoos;
 
     public String getName() {
         return name;
@@ -55,27 +45,11 @@ public class Zoo extends TestBaseEntity {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public List<Zoo> getZoos() {
+        return zoos;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public List<Animal> getAnimals() {
-        return animals;
-    }
-
-    public void setAnimals(List<Animal> animals) {
-        this.animals = animals;
-    }
-
-    public City getCity() {
-        return city;
-    }
-
-    public void setCity(City city) {
-        this.city = city;
+    public void setZoos(List<Zoo> zoos) {
+        this.zoos = zoos;
     }
 }

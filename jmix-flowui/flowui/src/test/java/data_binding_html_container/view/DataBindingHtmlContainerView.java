@@ -36,13 +36,19 @@ public class DataBindingHtmlContainerView extends StandardView {
     public Div name;
 
     @ViewComponent
-    public Div city;
+    public Div address;
 
     @ViewComponent
     public Div zooAnimals;
 
     @ViewComponent
     public Div formDiv;
+
+    @ViewComponent
+    public Div animalZoo;
+
+    @ViewComponent
+    public Div animalZooCity;
 
     @ViewComponent
     public InstanceContainer<Zoo> zooDc;

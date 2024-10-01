@@ -16,7 +16,11 @@
 
 package data_components
 
+import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
+import io.jmix.core.Id
+import io.jmix.eclipselink.impl.lazyloading.IndirectListWrapper
+import io.jmix.eclipselink.impl.lazyloading.ValueHoldersSupport
 import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.DataContext
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,6 +40,8 @@ class DataContextParentTest extends DataContextSpec {
     DataComponents factory
     @Autowired
     EntityStates entityStates
+    @Autowired
+    DataManager dataManager
 
     def "child context creation and merging instance from parent"() throws Exception {
 
@@ -384,6 +390,47 @@ class DataContextParentTest extends DataContextSpec {
         !ctx1.getModified().contains(line)
         !ctx1.getModified().contains(param)
     }
+
+    def "lazy loading state merged correctly into child context"() {
+
+        setup:
+        DataContext parentContext = factory.createDataContext()
+        User user1 = new User(login: 'u1', name: 'User 1', userRoles: [])
+        Role role1 = new Role(name: 'Role 1')
+        UserRole user1Role1 = new UserRole(user: user1, role: role1)
+        user1.userRoles.add(user1Role1)
+
+        dataManager.save(role1, user1, user1Role1)
+        User reloadedUser = dataManager.load(Id.of(user1)).one()
+
+        when: "merge instance into parent context"
+        def parentUser = parentContext.merge(reloadedUser)
+
+        then: "lazy collection is wrapped correctly"
+        //do not forget to mute renderers for debug in IDEA!
+        Object parentUserRolesCollection = ValueHoldersSupport.getCollectionProperty(parentUser, "userRoles")
+        parentUserRolesCollection.getClass() == IndirectListWrapper.class
+
+        when: "create child context and merge user into it"
+        DataContext childContext = factory.createDataContext()
+        childContext.setParent(parentContext)
+
+        def childUser = childContext.merge(parentUser)
+
+        then: "user in child context has correct lazy collection wrapper instead of empty IndirectList"
+        Object childUserRolesCollection = ValueHoldersSupport.getCollectionProperty(childUser, "userRoles")
+        childUserRolesCollection != null //may happen if lazy loading state is not merged correctly
+        childUserRolesCollection.getClass() == IndirectListWrapper.class
+
+        when: "lazy collection loaded and modified"
+        childUser.getUserRoles().remove(0)
+
+        then: "correct context notified with correct user object"
+        childContext.getModified().size() == 1
+        childContext.getModified()[0].is(childUser)
+        parentContext.getModified().size() == 0
+    }
+
 
     boolean isNew(def entity) {
         entity.__getEntityEntry().isNew()

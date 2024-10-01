@@ -24,6 +24,7 @@ import org.eclipse.persistence.indirection.ValueHolderInterface;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 public class IndirectListWrapper<E> extends ForwardingList<E> implements IndirectCollection, Serializable {
     private static final long serialVersionUID = -4117263695105315477L;
@@ -84,5 +85,10 @@ public class IndirectListWrapper<E> extends ForwardingList<E> implements Indirec
     @Override
     public void setValueHolder(ValueHolderInterface valueHolder) {
         indirectDelegate.setValueHolder(valueHolder);
+    }
+
+    public static <E> IndirectListWrapper<E> copyWithNewWrapper(IndirectListWrapper<E> oldWrapper, Function<Collection<Object>, Collection<Object>> newCollectionWrapFunction) {
+        //noinspection unchecked
+        return new IndirectListWrapper<>((List<E>) newCollectionWrapFunction.apply((Collection<Object>) oldWrapper.indirectDelegate), oldWrapper.indirectDelegate);
     }
 }

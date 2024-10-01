@@ -582,12 +582,13 @@ public class GenericFilter extends Composite<JmixDetails>
     protected void setCurrentConfigurationInternal(Configuration currentConfiguration, boolean fromClient) {
         if (configurations.contains(currentConfiguration)
                 || getEmptyConfiguration().equals(currentConfiguration)) {
-            if (this.currentConfiguration != currentConfiguration) {
-                clearValues();
-            }
 
             Configuration previousConfiguration = this.currentConfiguration;
             this.currentConfiguration = currentConfiguration;
+
+            if (previousConfiguration != currentConfiguration) {
+                clearValues();
+            }
 
             refreshCurrentConfigurationLayout();
             updateSelectConfigurationDropdown();
@@ -976,7 +977,7 @@ public class GenericFilter extends Composite<JmixDetails>
             return;
         }
 
-        for (FilterComponent component : rootLogicalFilterComponent.getFilterComponents()) {
+        for (FilterComponent component : getCurrentConfiguration().getRootLogicalFilterComponent().getFilterComponents()) {
             if (component instanceof SingleFilterComponentBase singleFilterComponent) {
                 singleFilterComponent.setValue(getCurrentConfiguration()
                         .getFilterComponentDefaultValue(singleFilterComponent.getParameterName()));

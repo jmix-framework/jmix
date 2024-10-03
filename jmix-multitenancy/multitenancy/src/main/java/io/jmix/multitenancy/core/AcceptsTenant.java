@@ -16,9 +16,14 @@
 
 package io.jmix.multitenancy.core;
 
+import io.jmix.core.annotation.TenantId;
+
 /**
  * Should be implemented by the User entity to provide tenant id for current authentication.
+ *
+ * @deprecated use {@link TenantId} instead
  */
+@Deprecated(since = "2.4", forRemoval = true)
 public interface AcceptsTenant {
 
     /**

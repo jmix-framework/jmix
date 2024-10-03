@@ -65,7 +65,7 @@ public class UserDetailView extends StandardDetailView<User> {
     }
 
     @Subscribe
-    protected void onBeforeSave(final BeforeSaveEvent event) {
+    public void onBeforeSave(final BeforeSaveEvent event) {
         if (entityStates.isNew(getEditedEntity())) {
             getEditedEntity().setPassword(passwordEncoder.encode(passwordField.getValue()));
         }

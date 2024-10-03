@@ -38,7 +38,7 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     private static final Logger log = LoggerFactory.getLogger(LoginView.class);
 
     @Autowired
-    protected CoreProperties coreProperties;
+    private CoreProperties coreProperties;
 
     @Autowired
     private LoginViewSupport loginViewSupport;
@@ -64,7 +64,7 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
         initDefaultCredentials();
     }
 
-    protected void initLocales() {
+    private void initLocales() {
         LinkedHashMap<Locale, String> locales = coreProperties.getAvailableLocales().stream()
                 .collect(Collectors.toMap(Function.identity(), messageTools::getLocaleDisplayName, (s1, s2) -> s1,
                         LinkedHashMap::new));
@@ -74,7 +74,7 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
         login.setSelectedLocale(VaadinSession.getCurrent().getLocale());
     }
 
-    protected void initDefaultCredentials() {
+    private void initDefaultCredentials() {
         if (StringUtils.isNotBlank(defaultUsername)) {
             login.setUsername(defaultUsername);
         }

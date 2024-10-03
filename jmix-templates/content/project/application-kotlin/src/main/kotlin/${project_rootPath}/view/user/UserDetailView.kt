@@ -68,7 +68,7 @@ open class UserDetailView : StandardDetailView<User>() {
     }
 
     @Subscribe
-    protected fun onBeforeSave(event: BeforeSaveEvent) {
+    fun onBeforeSave(event: BeforeSaveEvent) {
         if (entityStates.isNew(editedEntity)) {
             editedEntity.password = passwordEncoder.encode(passwordField.value)
         }

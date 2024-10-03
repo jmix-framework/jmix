@@ -55,7 +55,7 @@ open class LoginView : StandardView(), LocaleChangeObserver {
         initDefaultCredentials()
     }
 
-    protected open fun initLocales() {
+    private fun initLocales() {
         val locales: MutableMap<Locale, String> =
                 coreProperties.availableLocales.associateByTo(
                         mutableMapOf(), { it }, messageTools::getLocaleDisplayName)
@@ -65,7 +65,7 @@ open class LoginView : StandardView(), LocaleChangeObserver {
         login.selectedLocale = VaadinSession.getCurrent().locale
     }
 
-    protected open fun initDefaultCredentials() {
+    private fun initDefaultCredentials() {
         if (defaultUsername.isNotBlank()) {
             login.username = defaultUsername
         }

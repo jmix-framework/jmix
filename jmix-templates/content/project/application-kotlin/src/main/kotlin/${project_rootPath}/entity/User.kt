@@ -57,7 +57,7 @@ open class User : JmixUserDetails, HasTimeZone {
     var timeZoneId: String? = null
 
     @Transient
-    protected var userAuthorities: Collection<GrantedAuthority?>? = null
+    private var userAuthorities: Collection<GrantedAuthority?>? = null
 
     override fun getPassword(): String? = password
 

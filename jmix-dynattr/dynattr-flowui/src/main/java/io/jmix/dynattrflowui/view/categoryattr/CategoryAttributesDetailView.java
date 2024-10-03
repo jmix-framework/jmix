@@ -266,6 +266,11 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     private JmixButton editEnumerationBtn;
     private boolean isRefreshing = false;
 
+    @ViewComponent
+    protected TypedTextField<String> defaultStringField; //debug
+    @ViewComponent
+    protected TypedTextField<Integer> defaultIntField; //debug
+
     private final List<String> defaultEnumValues = new ArrayList<>();
 
     @Subscribe
@@ -278,7 +283,10 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     private void initDefaultEnumField() {
         defaultEnumValues.addAll(getEnumValues());
         defaultEnumField.setItems(defaultEnumValues);
-        defaultEnumField.addValueChangeListener(e -> getEditedEntity().setDefaultString(e.getValue()));
+        defaultEnumField.addValueChangeListener(e -> {
+            getEditedEntity().setDefaultString(e.getValue());
+        });
+
         if (StringUtils.isNotBlank(getEditedEntity().getDefaultString())) {
             defaultEnumField.setValue(getEditedEntity().getDefaultString());
         }
@@ -302,7 +310,10 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     @Subscribe
     protected void onAfterShow(BeforeShowEvent event) {
-        initDefaultEnumField();
+        if (getEditedEntity().getDataType() != null &&
+                getEditedEntity().getDataType().equals(AttributeType.ENUMERATION)) {
+            initDefaultEnumField();
+        }
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
         initDependsOnAttributesField();
@@ -684,6 +695,10 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
             component.setVisible(visible);
 
             if (!visible && component instanceof HasValue) {
+                if (component.equals(defaultStringField) && ENUMERATION.equals(attributeType) &&
+                        !defaultEnumField.isEmpty()) {
+                    continue;
+                }
                 ((HasValue<?, ?>) component).clear();
             }
         }

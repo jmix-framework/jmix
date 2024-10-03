@@ -18,7 +18,6 @@ package io.jmix.securityflowui.authentication;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteConfiguration;
@@ -35,6 +34,7 @@ import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.ClientDetails;
+import io.jmix.core.security.DeviceTimeZoneProvider;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
@@ -50,7 +50,6 @@ import io.jmix.security.model.SecurityScope;
 import io.jmix.securityflowui.accesscontext.UiLoginToUiContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +103,7 @@ public class LoginViewSupport {
     protected AccessManager accessManager;
     protected Messages messages;
     protected ExtendedClientDetailsProvider clientDetailsProvider;
+    protected DeviceTimeZoneProvider deviceTimeZoneProvider;
     protected RememberMeServices rememberMeServices;
     protected ApplicationEventPublisher applicationEventPublisher;
     protected VaadinDefaultRequestCache requestCache;
@@ -165,9 +165,18 @@ public class LoginViewSupport {
         this.requestCache = requestCache;
     }
 
+    /**
+     * @deprecated use {@link DeviceTimeZoneProvider} instead
+     */
+    @Deprecated(since = "2.4", forRemoval = true)
     @Autowired
     public void setClientDetailsProvider(ExtendedClientDetailsProvider clientDetailsProvider) {
         this.clientDetailsProvider = clientDetailsProvider;
+    }
+
+    @Autowired
+    public void setDeviceTimeZoneProvider(DeviceTimeZoneProvider deviceTimeZoneProvider) {
+        this.deviceTimeZoneProvider = deviceTimeZoneProvider;
     }
 
     @Autowired(required = false)
@@ -377,24 +386,7 @@ public class LoginViewSupport {
 
     @Nullable
     protected TimeZone getDeviceTimeZone() {
-        ExtendedClientDetails clientDetails = clientDetailsProvider.getExtendedClientDetails();
-        return clientDetails != null ? detectTimeZone(clientDetails) : null;
-    }
-
-    protected TimeZone detectTimeZone(ExtendedClientDetails details) {
-        String timeZoneId = details.getTimeZoneId();
-        if (!Strings.isNullOrEmpty(timeZoneId)) {
-            return TimeZone.getTimeZone(timeZoneId);
-        } else {
-            int offset = details.getTimezoneOffset() / 1000 / 60;
-            char sign = offset >= 0 ? '+' : '-';
-            int absOffset = Math.abs(offset);
-
-            String hours = StringUtils.leftPad(String.valueOf(absOffset / 60), 2, '0');
-            String minutes = StringUtils.leftPad(String.valueOf(absOffset % 60), 2, '0');
-
-            return TimeZone.getTimeZone("GMT" + sign + hours + minutes);
-        }
+        return deviceTimeZoneProvider.getDeviceTimeZone();
     }
 
     protected AppCookies getCookies() {

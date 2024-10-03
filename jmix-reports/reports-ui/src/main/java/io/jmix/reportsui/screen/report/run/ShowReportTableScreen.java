@@ -215,7 +215,6 @@ public class ShowReportTableScreen extends Screen {
 
     protected KeyValueCollectionContainer createContainer(String dataSetName, List<KeyValueEntity> keyValueEntities, Map<String, Set<JmixTableData.ColumnInfo>> headerMap) {
         KeyValueCollectionContainer collectionContainer = dataComponents.createKeyValueCollectionContainer();
-        collectionContainer.setIdName(dataSetName + "Dc");
         collectionContainer.setItems(keyValueEntities);
 
         Set<JmixTableData.ColumnInfo> columnInfos = headerMap.get(dataSetName);

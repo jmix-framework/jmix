@@ -37,7 +37,7 @@ import java.util.UUID;
 @Table(name = "SCR_USER", indexes = {
         @Index(name = "IDX_SCR_USER_ON_USERNAME", columnList = "USERNAME", unique = true)
 })
-public class User implements JmixUserDetails, AcceptsTenant {
+public class User implements JmixUserDetails {
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -188,7 +188,6 @@ public class User implements JmixUserDetails, AcceptsTenant {
         this.authorities = authorities;
     }
 
-    @Override
     public String getTenantId() {
         return tenantId;
     }

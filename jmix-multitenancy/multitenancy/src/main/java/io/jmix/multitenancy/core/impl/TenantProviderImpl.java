@@ -16,13 +16,15 @@
 
 package io.jmix.multitenancy.core.impl;
 
+import io.jmix.core.annotation.TenantId;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.multitenancy.core.TenantProvider;
-import io.jmix.multitenancy.core.AcceptsTenant;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.lang.reflect.Field;
 
 /**
  * Implementation of {@link TenantProvider} based on {@link CurrentAuthentication}.
@@ -46,14 +48,33 @@ public class TenantProviderImpl implements TenantProvider {
         if (!currentAuthentication.isSet()) {
             return TenantProvider.NO_TENANT;
         }
+
         if (!(currentAuthentication.getAuthentication().getPrincipal() instanceof UserDetails)) {
             return TenantProvider.NO_TENANT;
         }
+
         UserDetails userDetails = currentAuthentication.getUser();
-        if (!(userDetails instanceof AcceptsTenant)) {
+        String tenantIdFieldName = getTenantIdFieldName(userDetails.getClass());
+
+        if (tenantIdFieldName == null) {
             return TenantProvider.NO_TENANT;
         }
-        String tenantId = ((AcceptsTenant) userDetails).getTenantId();
+
+        String tenantId = (String) ReflectionHelper.getFieldValue(userDetails, tenantIdFieldName);
+        //noinspection ConstantValue
         return tenantId != null ? tenantId : TenantProvider.NO_TENANT;
+    }
+
+    @Nullable
+    protected String getTenantIdFieldName(Class<?> clazz) {
+        Field[] declaredFields = clazz.getDeclaredFields();
+
+        for (Field field : declaredFields) {
+            if (field.isAnnotationPresent(TenantId.class)) {
+                return field.getName();
+            }
+        }
+
+        return null;
     }
 }

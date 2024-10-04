@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  ~ Copyright 2022 Haulmont.
+  ~ Copyright 2024 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -31,546 +31,60 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-        <!--        Containers-->
-        <article id="articleId"
-                 classNames="cssClassName1, cssClassName2"
-                 css="color: red;"
-                 dataContainer="fooDc"
-                 enabled="true"
-                 height="50px"
-                 maxHeight="55px"
-                 maxWidth="120px"
-                 minHeight="40px"
-                 minWidth="80px"
-                 property="name"
-                 themeNames="badge, primary, small"
-                 title="articleTitle"
-                 visible="true"
-                 whiteSpace="PRE"
-                 width="100px">
-            <article text="articleChild"/>
-        </article>
+        <article id="articleId" dataContainer="fooDc" property="name"/>
 
-        <aside id="asideId"
-               classNames="cssClassName1, cssClassName2"
-               css="color: red;"
-               enabled="true"
-               dataContainer="fooDc"
-               height="50px"
-               width="100px"
-               maxHeight="55px"
-               maxWidth="120px"
-               minHeight="40px"
-               minWidth="80px"
-               property="name"
-               themeNames="badge, primary, small"
-               title="asideTitle"
-               visible="true"
-               whiteSpace="PRE">
-            <aside text="asideChild"/>
-        </aside>
+        <aside id="asideId" dataContainer="fooDc" property="name"/>
 
-        <descriptionList id="descriptionListId"
-                         classNames="cssClassName1, cssClassName2"
-                         css="color: red;"
-                         enabled="true"
-                         height="50px"
-                         width="100px"
-                         maxHeight="55px"
-                         maxWidth="120px"
-                         minHeight="40px"
-                         minWidth="80px"
-                         themeNames="badge, primary, small"
-                         title="descriptionListTitle"
-                         visible="true"
-                         whiteSpace="PRE">
-            <descriptionList text="descriptionListChild"/>
-        </descriptionList>
+        <descriptionList id="descriptionListId" dataContainer="fooDc" property="name"/>
 
-        <term id="termId"
-              classNames="cssClassName1, cssClassName2"
-              css="color: red;"
-              enabled="true"
-              height="50px"
-              maxHeight="55px"
-              maxWidth="120px"
-              minHeight="40px"
-              minWidth="80px"
-              themeNames="badge, primary, small"
-              title="termTitle"
-              visible="true"
-              whiteSpace="PRE"
-              width="100px">
-            <term text="termChild"/>
-        </term>
+        <term id="termId" dataContainer="fooDc" property="name"/>
 
-        <description id="descriptionId"
-                     classNames="cssClassName1, cssClassName2"
-                     css="color: red;"
-                     enabled="true"
-                     height="50px"
-                     maxHeight="55px"
-                     maxWidth="120px"
-                     minHeight="40px"
-                     minWidth="80px"
-                     themeNames="badge, primary, small"
-                     title="descriptionTitle"
-                     visible="true"
-                     whiteSpace="PRE"
-                     width="100px">
-            <description text="descriptionChild"/>
-        </description>
+        <description id="descriptionId" dataContainer="fooDc" property="name"/>
 
-        <div id="divId"
-             classNames="cssClassName1, cssClassName2"
-             css="color: red;"
-             enabled="true"
-             dataContainer="fooDc"
-             height="50px"
-             maxHeight="55px"
-             maxWidth="120px"
-             minHeight="40px"
-             minWidth="80px"
-             property="name"
-             themeNames="badge, primary, small"
-             title="divTitle"
-             visible="true"
-             whiteSpace="PRE"
-             width="100px">
-            <div text="divChild"/>
-        </div>
+        <div id="divId" dataContainer="fooDc" property="name"/>
 
-        <emphasis id="emphasisId"
-                  classNames="cssClassName1, cssClassName2"
-                  css="color: red;"
-                  enabled="true"
-                  dataContainer="fooDc"
-                  height="50px"
-                  maxHeight="55px"
-                  maxWidth="120px"
-                  minHeight="40px"
-                  minWidth="80px"
-                  property="name"
-                  themeNames="badge, primary, small"
-                  title="emphasisTitle"
-                  visible="true"
-                  whiteSpace="PRE"
-                  width="100px">
-            <emphasis text="emphasisChild"/>
-        </emphasis>
+        <emphasis id="emphasisId" dataContainer="fooDc" property="name"/>
 
-        <footer id="footerId"
-                classNames="cssClassName1, cssClassName2"
-                css="color: red;"
-                enabled="true"
-                dataContainer="fooDc"
-                height="50px"
-                maxHeight="55px"
-                maxWidth="120px"
-                minHeight="40px"
-                minWidth="80px"
-                property="name"
-                themeNames="badge, primary, small"
-                title="footerTitle"
-                visible="true"
-                whiteSpace="PRE"
-                width="100px">
-            <footer text="footerChild"/>
-        </footer>
+        <footer id="footerId" dataContainer="fooDc" property="name"/>
 
-        <h1 id="h1Id"
-            classNames="cssClassName1, cssClassName2"
-            css="color: red;"
-            enabled="true"
-            dataContainer="fooDc"
-            height="50px"
-            maxHeight="55px"
-            maxWidth="120px"
-            minHeight="40px"
-            minWidth="80px"
-            property="name"
-            themeNames="badge, primary, small"
-            title="h1Title"
-            visible="true"
-            whiteSpace="PRE"
-            width="100px">
-            <h1 text="h1Child"/>
-        </h1>
+        <h1 id="h1Id" dataContainer="fooDc" property="name"/>
 
-        <h2 id="h2Id"
-            classNames="cssClassName1, cssClassName2"
-            css="color: red;"
-            enabled="true"
-            dataContainer="fooDc"
-            height="50px"
-            maxHeight="55px"
-            maxWidth="120px"
-            minHeight="40px"
-            minWidth="80px"
-            property="name"
-            themeNames="badge, primary, small"
-            title="h2Title"
-            visible="true"
-            whiteSpace="PRE"
-            width="100px">
-            <h2 text="h2Child"/>
-        </h2>
+        <h2 id="h2Id" dataContainer="fooDc" property="name"/>
 
-        <h3 id="h3Id"
-            classNames="cssClassName1, cssClassName2"
-            css="color: red;"
-            enabled="true"
-            dataContainer="fooDc"
-            height="50px"
-            maxHeight="55px"
-            maxWidth="120px"
-            minHeight="40px"
-            minWidth="80px"
-            property="name"
-            themeNames="badge, primary, small"
-            title="h3Title"
-            visible="true"
-            whiteSpace="PRE"
-            width="100px">
-            <h3 text="h3Child"/>
-        </h3>
+        <h3 id="h3Id" dataContainer="fooDc" property="name"/>
 
-        <h4 id="h4Id"
-            classNames="cssClassName1, cssClassName2"
-            css="color: red;"
-            enabled="true"
-            dataContainer="fooDc"
-            height="50px"
-            maxHeight="55px"
-            maxWidth="120px"
-            minHeight="40px"
-            minWidth="80px"
-            property="name"
-            themeNames="badge, primary, small"
-            title="h4Title"
-            visible="true"
-            whiteSpace="PRE"
-            width="100px">
-            <h4 text="h4Child"/>
-        </h4>
+        <h4 id="h4Id" dataContainer="fooDc" property="name"/>
 
-        <h5 id="h5Id"
-            classNames="cssClassName1, cssClassName2"
-            css="color: red;"
-            enabled="true"
-            dataContainer="fooDc"
-            height="50px"
-            maxHeight="55px"
-            maxWidth="120px"
-            minHeight="40px"
-            minWidth="80px"
-            property="name"
-            themeNames="badge, primary, small"
-            title="h5Title"
-            visible="true"
-            whiteSpace="PRE"
-            width="100px">
-            <h5 text="h5Child"/>
-        </h5>
+        <h5 id="h5Id" dataContainer="fooDc" property="name"/>
 
-        <h6 id="h6Id"
-            classNames="cssClassName1, cssClassName2"
-            css="color: red;"
-            enabled="true"
-            dataContainer="fooDc"
-            height="50px"
-            maxHeight="55px"
-            maxWidth="120px"
-            minHeight="40px"
-            minWidth="80px"
-            property="name"
-            themeNames="badge, primary, small"
-            title="h6Title"
-            visible="true"
-            whiteSpace="PRE"
-            width="100px">
-            <h6 text="h6Child"/>
-        </h6>
+        <h6 id="h6Id" dataContainer="fooDc" property="name"/>
 
-        <header id="headerId"
-                classNames="cssClassName1, cssClassName2"
-                css="color: red;"
-                enabled="true"
-                dataContainer="fooDc"
-                height="50px"
-                maxHeight="55px"
-                maxWidth="120px"
-                minHeight="40px"
-                minWidth="80px"
-                property="name"
-                themeNames="badge, primary, small"
-                title="headerTitle"
-                visible="true"
-                whiteSpace="PRE"
-                width="100px">
-            <header text="headerChild"/>
-        </header>
+        <header id="headerId" dataContainer="fooDc" property="name"/>
 
-        <listItem id="listItemId"
-                  classNames="cssClassName1, cssClassName2"
-                  css="color: red;"
-                  enabled="true"
-                  dataContainer="fooDc"
-                  height="50px"
-                  maxHeight="55px"
-                  maxWidth="120px"
-                  minHeight="40px"
-                  minWidth="80px"
-                  property="name"
-                  themeNames="badge, primary, small"
-                  title="listItemTitle"
-                  visible="true"
-                  whiteSpace="PRE"
-                  width="100px">
-            <listItem text="listItemChild"/>
-        </listItem>
+        <listItem id="listItemId" dataContainer="fooDc" property="name"/>
 
-        <p id="pId"
-           classNames="cssClassName1, cssClassName2"
-           css="color: red;"
-           enabled="true"
-           dataContainer="fooDc"
-           height="50px"
-           maxHeight="55px"
-           maxWidth="120px"
-           minHeight="40px"
-           minWidth="80px"
-           property="name"
-           themeNames="badge, primary, small"
-           title="pTitle"
-           visible="true"
-           whiteSpace="PRE"
-           width="100px">
-            <p text="pChild"/>
-        </p>
+        <p id="pId" dataContainer="fooDc" property="name"/>
 
-        <pre id="preId"
-             classNames="cssClassName1, cssClassName2"
-             css="color: red;"
-             enabled="true"
-             dataContainer="fooDc"
-             height="50px"
-             maxHeight="55px"
-             maxWidth="120px"
-             minHeight="40px"
-             minWidth="80px"
-             property="name"
-             themeNames="badge, primary, small"
-             title="preTitle"
-             visible="true"
-             whiteSpace="PRE"
-             width="100px">
-            <pre text="preChild"/>
-        </pre>
+        <pre id="preId" dataContainer="fooDc" property="name"/>
 
-        <section id="sectionId"
-                 classNames="cssClassName1, cssClassName2"
-                 css="color: red;"
-                 enabled="true"
-                 dataContainer="fooDc"
-                 height="50px"
-                 maxHeight="55px"
-                 maxWidth="120px"
-                 minHeight="40px"
-                 minWidth="80px"
-                 property="name"
-                 themeNames="badge, primary, small"
-                 title="sectionTitle"
-                 visible="true"
-                 whiteSpace="PRE"
-                 width="100px"
-                 ariaLabel="ariaLabelString">
-            <section text="sectionChild"/>
-        </section>
+        <section id="sectionId" dataContainer="fooDc" property="name"/>
 
-        <span id="spanId"
-              classNames="cssClassName1, cssClassName2"
-              css="color: red;"
-              enabled="true"
-              dataContainer="fooDc"
-              height="50px"
-              maxHeight="55px"
-              maxWidth="120px"
-              minHeight="40px"
-              minWidth="80px"
-              property="name"
-              themeNames="badge, primary, small"
-              title="spanTitle"
-              visible="true"
-              whiteSpace="PRE"
-              width="100px">
-            <span text="spanChild"/>
-        </span>
+        <span id="spanId" dataContainer="fooDc" property="name"/>
 
-        <unorderedList id="unorderedListId"
-                       classNames="cssClassName1, cssClassName2"
-                       css="color: red;"
-                       enabled="true"
-                       dataContainer="fooDc"
-                       height="50px"
-                       maxHeight="55px"
-                       maxWidth="120px"
-                       minHeight="40px"
-                       minWidth="80px"
-                       property="name"
-                       themeNames="badge, primary, small"
-                       title="unorderedListTitle"
-                       visible="true"
-                       whiteSpace="PRE"
-                       width="100px">
-            <unorderedList text="unorderedListChild"/>
-        </unorderedList>
+        <unorderedList id="unorderedListId" dataContainer="fooDc" property="name"/>
 
-        <anchor id="anchorId"
-                classNames="cssClassName1, cssClassName2"
-                css="color: red;"
-                enabled="true"
-                dataContainer="fooDc"
-                height="50px"
-                href="anchorHref"
-                maxHeight="55px"
-                maxWidth="120px"
-                minHeight="40px"
-                minWidth="80px"
-                property="name"
-                tabIndex="3"
-                target="PARENT"
-                themeNames="badge, primary, small"
-                title="anchorTitle"
-                visible="true"
-                whiteSpace="PRE"
-                width="100px">
-            <anchor text="anchorChild"/>
-        </anchor>
+        <anchor id="anchorId" dataContainer="fooDc" property="name"/>
 
-        <htmlObject id="htmlObjectId"
-                    classNames="cssClassName1, cssClassName2"
-                    css="color: red;"
-                    data="data"
-                    enabled="true"
-                    dataContainer="fooDc"
-                    height="50px"
-                    maxHeight="55px"
-                    maxWidth="120px"
-                    minHeight="40px"
-                    minWidth="80px"
-                    property="name"
-                    tabIndex="3"
-                    themeNames="badge, primary, small"
-                    title="htmlObjectTitle"
-                    type="type"
-                    visible="true"
-                    whiteSpace="PRE"
-                    width="100px">
-            <htmlObject text="htmlObjectChild"/>
-        </htmlObject>
+        <htmlObject id="htmlObjectId" dataContainer="fooDc" property="name"/>
 
-        <image id="imageId"
-               alternateText="alternativeTextString"
-               ariaLabel="ariaLabelString"
-               classNames="cssClassName1, cssClassName2"
-               css="color: red;"
-               enabled="true"
-               dataContainer="fooDc"
-               height="50px"
-               maxHeight="55px"
-               maxWidth="120px"
-               minHeight="40px"
-               minWidth="80px"
-               property="name"
-               resource="resourceString"
-               themeNames="primary, small"
-               title="imageTitle"
-               visible="true"
-               whiteSpace="PRE"
-               width="100px">
-            <image text="imageChild"/>
-        </image>
+        <image id="imageId" dataContainer="fooDc" property="name"/>
 
-        <main id="mainId"
-              ariaLabel="ariaLabelString"
-              classNames="cssClassName1, cssClassName2"
-              css="color: red;"
-              enabled="true"
-              dataContainer="fooDc"
-              height="50px"
-              maxHeight="55px"
-              maxWidth="120px"
-              minHeight="40px"
-              minWidth="80px"
-              property="name"
-              themeNames="badge, primary, small"
-              title="mainTitle"
-              visible="true"
-              whiteSpace="PRE"
-              width="100px">
-            <main text="mainChild"/>
-        </main>
+        <main id="mainId" dataContainer="fooDc" property="name"/>
 
-        <nav id="navId"
-             ariaLabel="ariaLabelString"
-             classNames="cssClassName1, cssClassName2"
-             css="color: red;"
-             enabled="true"
-             dataContainer="fooDc"
-             height="50px"
-             maxHeight="55px"
-             maxWidth="120px"
-             minHeight="40px"
-             minWidth="80px"
-             property="name"
-             themeNames="badge, primary, small"
-             title="navTitle"
-             visible="true"
-             whiteSpace="PRE"
-             width="100px">
-            <nav text="navChild"/>
-        </nav>
+        <nav id="navId" dataContainer="fooDc" property="name"/>
 
-        <orderedList id="orderedListId"
-                     classNames="cssClassName1, cssClassName2"
-                     css="color: red;"
-                     enabled="true"
-                     dataContainer="fooDc"
-                     height="50px"
-                     maxHeight="55px"
-                     maxWidth="120px"
-                     minHeight="40px"
-                     minWidth="80px"
-                     property="name"
-                     numberingType="UPPERCASE_LETTER"
-                     themeNames="badge, primary, small"
-                     title="orderedListTitle"
-                     visible="true"
-                     whiteSpace="PRE"
-                     width="100px">
-            <orderedList text="orderedListChild"/>
-        </orderedList>
+        <orderedList id="orderedListId" dataContainer="fooDc" property="name"/>
 
-        <nativeLabel id="labelId"
-                     classNames="cssClassName1, cssClassName2"
-                     css="color: red;"
-                     enabled="true"
-                     dataContainer="fooDc"
-                     height="50px"
-                     maxHeight="55px"
-                     maxWidth="120px"
-                     minHeight="40px"
-                     minWidth="80px"
-                     property="name"
-                     setFor="inputId"
-                     text="labelText"
-                     themeNames="badge, primary, small"
-                     title="labelTitle"
-                     visible="true"
-                     whiteSpace="PRE"
-                     width="100px">
-            <nativeLabel text="labelChild"/>
-        </nativeLabel>
+        <nativeLabel id="labelId" dataContainer="fooDc" property="name"/>
     </layout>
 </view>

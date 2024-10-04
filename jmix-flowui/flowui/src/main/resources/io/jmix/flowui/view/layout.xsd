@@ -2410,22 +2410,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="baseHtmlDescription">
-        <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:group ref="singleLayoutOrComponent"/>
-                <xs:attribute name="themeNames" type="badgeThemeNames"/>
-
-                <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasText"/>
-                <xs:attributeGroup ref="hasTitle"/>
-                <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <xs:complexType name="baseFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
@@ -4834,9 +4818,9 @@
                 <xs:element name="image" type="imageComponent"/>
                 <xs:element name="iframe" type="iframeHtmlComponent"/>
                 <xs:element name="htmlObject" type="htmlObjectComponent"/>
-                <xs:element name="descriptionList" type="baseHtmlDescription"/>
-                <xs:element name="term" type="baseHtmlDescription"/>
-                <xs:element name="description" type="baseHtmlDescription"/>
+                <xs:element name="descriptionList" type="baseClickableHtmlContainer"/>
+                <xs:element name="term" type="baseClickableHtmlContainer"/>
+                <xs:element name="description" type="baseClickableHtmlContainer"/>
 
                 <!-- Layout -->
                 <xs:element name="vbox" type="componentLayout"/>

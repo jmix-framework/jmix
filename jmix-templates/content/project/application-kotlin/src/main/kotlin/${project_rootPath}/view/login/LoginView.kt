@@ -22,8 +22,8 @@ import org.springframework.beans.factory.annotation.Value
 import java.util.Locale
 
 @Route(value = "login")
-@ViewController("${normalizedPrefix_underscore}LoginView")
-@ViewDescriptor("login-view.xml")
+@ViewController(id = "${normalizedPrefix_underscore}LoginView")
+@ViewDescriptor(path = "login-view.xml")
 open class LoginView : StandardView(), LocaleChangeObserver {
 
     @Autowired

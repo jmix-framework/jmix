@@ -11,8 +11,8 @@ import io.jmix.flowui.view.Target
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = "${listRoute}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent::class <%} else {%>${routeLayout.getControllerClassName()}::class<%}%>)
-@ViewController("${viewId}")
-@ViewDescriptor("${viewDescriptorName}.xml")
+@ViewController(id = "${viewId}")
+@ViewDescriptor(path = "${viewDescriptorName}.xml")
 @LookupComponent("${tableId}")
 @DialogMode(width = "50em")
 class ${viewControllerName} : StandardListView<${entity.className}>() {

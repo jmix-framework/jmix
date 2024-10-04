@@ -18,7 +18,7 @@ import ${importedClassFqn};
 <%if (classComment) {%>
     ${classComment}<%}%>
 @Route(value = "${viewRoute}", layout = ${overrideView.getLayoutClassName(module_basePackage)}.class)
-@ViewController("${viewId}")
-@ViewDescriptor("${descriptorName}.xml")
+@ViewController(id = "${viewId}")
+@ViewDescriptor(path = "${descriptorName}.xml")
 public class ${controllerName} extends ${extendedClassName} {
 }

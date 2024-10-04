@@ -17,8 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
 
 @Route(value = "users/:id", layout = MainView::class)
-@ViewController("${normalizedPrefix_underscore}User.detail")
-@ViewDescriptor("user-detail-view.xml")
+@ViewController(id = "${normalizedPrefix_underscore}User.detail")
+@ViewDescriptor(path = "user-detail-view.xml")
 @EditedEntityContainer("userDc")
 open class UserDetailView : StandardDetailView<User>() {
 

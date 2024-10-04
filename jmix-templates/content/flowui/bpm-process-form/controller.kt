@@ -19,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired
 
 @ProcessForm
 @Route(value = "${route}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent::class <%} else {%>MainView::class<%}%>)
-@ViewController("${id}")
-@ViewDescriptor("${descriptorName}.xml")
+@ViewController(id = "${id}")
+@ViewDescriptor(path = "${descriptorName}.xml")
 class ${controllerName} : ${superClass}() {
 
     @Autowired

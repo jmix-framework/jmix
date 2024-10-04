@@ -12,8 +12,8 @@ import io.jmix.flowui.view.Target
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = "${detailRoute}/:${detailRouteParam}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent::class <%} else {%>${routeLayout.getControllerClassName()}::class<%}%>)
-@ViewController("${api.escapeKotlinDollar(detailId)}")
-@ViewDescriptor("${detailDescriptorName}.xml")
+@ViewController(id = "${api.escapeKotlinDollar(detailId)}")
+@ViewDescriptor(path = "${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")
 class ${detailControllerName} : StandardDetailView<${entity.className}>() {
 

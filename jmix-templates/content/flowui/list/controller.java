@@ -23,8 +23,8 @@ import static io.jmix.core.repository.JmixDataRepositoryUtils.*;<%}%>
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = "${listRoute}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent.class <%} else {%>${routeLayout.getControllerClassName()}.class<%}%>)
-@ViewController("${viewId}")
-@ViewDescriptor("${viewDescriptorName}.xml")
+@ViewController(id = "${viewId}")
+@ViewDescriptor(path = "${viewDescriptorName}.xml")
 @LookupComponent("${tableId}")
 @DialogMode(width = "64em")
 public class ${viewControllerName} extends StandardListView<${entity.className}> {<%if (useDataRepositories){%>

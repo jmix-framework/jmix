@@ -13,8 +13,8 @@ import io.jmix.flowui.view.ViewDescriptor;
  * Also, the route of this view (see @Route) must differ from the route of default MainView.
  */<%}%>
 @Route("")
-@ViewController("${id}")
-@ViewDescriptor("${descriptorName}.xml")
+@ViewController(id = "${id}")
+@ViewDescriptor(path = "${descriptorName}.xml")
 public class ${controllerName} extends StandardMainView {
 
     @Override

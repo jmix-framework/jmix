@@ -17,7 +17,7 @@ import io.jmix.flowui.view.ViewDescriptor
 <%if (classComment) {%>
         ${classComment}
 <%}%>@Route(value = "${route}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent::class <%} else {%>${routeLayout.getControllerClassName()}::class<%}%>)
-@ViewController("${id}")
-@ViewDescriptor("${descriptorName}.xml")
+@ViewController(id = "${id}")
+@ViewDescriptor(path = "${descriptorName}.xml")
 class ${controllerName} : ${superClass}() {
 }

@@ -8,7 +8,7 @@ import ${extendView.controllerFqn};
 <%if (classComment) {%>
 ${classComment}<%}%>
 @Route(value = "${viewRoute}", layout = ${extendView.getLayoutClassName(module_basePackage)}.class)
-@ViewController("${viewId}")
-@ViewDescriptor("${descriptorName}.xml")
+@ViewController(id = "${viewId}")
+@ViewDescriptor(path = "${descriptorName}.xml")
 public class ${controllerName} extends ${extendView.controllerClassName} {
 }

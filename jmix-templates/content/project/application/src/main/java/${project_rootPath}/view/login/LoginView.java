@@ -31,8 +31,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Route(value = "login")
-@ViewController("${normalizedPrefix_underscore}LoginView")
-@ViewDescriptor("login-view.xml")
+@ViewController(id = "${normalizedPrefix_underscore}LoginView")
+@ViewDescriptor(path = "login-view.xml")
 public class LoginView extends StandardView implements LocaleChangeObserver {
 
     private static final Logger log = LoggerFactory.getLogger(LoginView.class);

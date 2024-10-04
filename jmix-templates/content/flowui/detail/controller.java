@@ -23,8 +23,8 @@ import static io.jmix.core.repository.JmixDataRepositoryUtils.*;
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = "${detailRoute}/:${detailRouteParam}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent.class <%} else {%>${routeLayout.getControllerClassName()}.class<%}%>)
-@ViewController("${detailId}")
-@ViewDescriptor("${detailDescriptorName}.xml")
+@ViewController(id = "${detailId}")
+@ViewDescriptor(path = "${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")
 public class ${detailControllerName} extends StandardDetailView<${entity.className}> {<%if (useDataRepositories){%>
 

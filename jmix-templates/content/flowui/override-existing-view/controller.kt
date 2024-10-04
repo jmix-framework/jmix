@@ -18,6 +18,6 @@ import ${importedClassFqn}
 <%if (classComment) {%>
     ${classComment}<%}%>
 @Route(value = "${viewRoute}", layout = ${overrideView.getLayoutClassName(module_basePackage)}::class)
-@ViewController("${api.escapeKotlinDollar(viewId)}")
-@ViewDescriptor("${descriptorName}.xml")
+@ViewController(id = "${api.escapeKotlinDollar(viewId)}")
+@ViewDescriptor(path = "${descriptorName}.xml")
 class ${controllerName} : ${extendedClassName}()

@@ -8,6 +8,6 @@ import ${extendView.controllerFqn}
 <%if (classComment) {%>
 ${classComment}<%}%>
 @Route(value = "${viewRoute}", layout = ${extendView.getLayoutClassName(module_basePackage)}::class)
-@ViewController("${api.escapeKotlinDollar(viewId)}")
-@ViewDescriptor("${descriptorName}.xml")
+@ViewController(id = "${api.escapeKotlinDollar(viewId)}")
+@ViewDescriptor(path = "${descriptorName}.xml")
 class ${controllerName} : ${extendView.controllerClassName}()

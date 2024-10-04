@@ -104,13 +104,12 @@
         </preConditions>
 
         <addColumn tableName="WEBDAV_WEBDAV_CREDENTIALS">
-            <column name="USERNAME" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="USERNAME" type="varchar(255)"/>
         </addColumn>
         <update tableName="WEBDAV_WEBDAV_CREDENTIALS">
             <column name="USERNAME" valueComputed="(select u.USERNAME from SEC_USER u where u.ID = USER_ID)"/>
         </update>
+        <addNotNullConstraint tableName="WEBDAV_WEBDAV_CREDENTIALS" columnName="USERNAME" columnDataType="VARCHAR(255)" validate="true"/>
 
         <renameColumn tableName="WEBDAV_WEBDAV_CREDENTIALS" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE" columnDataType="datetime"/>
         <renameColumn tableName="WEBDAV_WEBDAV_CREDENTIALS" oldColumnName="UPDATE_TS" newColumnName="LAST_MODIFIED_DATE" columnDataType="datetime"/>

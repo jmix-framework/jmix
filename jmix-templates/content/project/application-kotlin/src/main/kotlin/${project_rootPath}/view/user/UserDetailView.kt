@@ -3,9 +3,12 @@ package ${project_rootPackage}.view.user
 import ${project_rootPackage}.entity.User
 import ${project_rootPackage}.view.main.MainView
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.textfield.PasswordField
 import com.vaadin.flow.router.Route
 import io.jmix.core.EntityStates
+import io.jmix.core.MessageTools
+import io.jmix.flowui.Notifications
 import io.jmix.flowui.component.textfield.TypedTextField
 import io.jmix.flowui.view.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,6 +36,12 @@ open class UserDetailView : StandardDetailView<User>() {
 
     @ViewComponent
     private lateinit var messageBundle: MessageBundle
+
+    @Autowired
+    private lateinit var messageTools: MessageTools
+
+    @Autowired
+    private lateinit var notifications: Notifications
 
     @Autowired
     private lateinit var entityStates: EntityStates
@@ -71,6 +80,12 @@ open class UserDetailView : StandardDetailView<User>() {
     fun onBeforeSave(event: BeforeSaveEvent) {
         if (entityStates.isNew(editedEntity)) {
             editedEntity.password = passwordEncoder.encode(passwordField.value)
+
+            val entityCaption = messageTools.getEntityCaption(editedEntityContainer.entityMetaClass)
+            notifications.create(messageBundle.formatMessage("noAssignedRolesNotification", entityCaption))
+                .withType(Notifications.Type.WARNING)
+                .withPosition(Notification.Position.TOP_END)
+                .show()
         }
     }
 }

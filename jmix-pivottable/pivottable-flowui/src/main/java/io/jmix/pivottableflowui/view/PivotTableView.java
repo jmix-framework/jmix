@@ -67,7 +67,7 @@ public class PivotTableView extends StandardView {
     }
 
     public void setNativeJson(String nativeJson) {
-        pivotTable.setNativeJson(nativeJson);
+        pivotTable.setJsonOptions(nativeJson);
     }
 
     @Subscribe(id = "exportExcel", subject = "clickListener")

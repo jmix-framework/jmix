@@ -304,22 +304,6 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
         return resultOptions;
     }
 
-    _mergeOptionsWithNativeJsonOptions(dst, src) {
-        for (let property in src) {
-            if (src.hasOwnProperty(property)) {
-                if (src[property] && typeof src[property] === "object") {
-                    if (!dst[property]) {
-                        dst[property] = src[property];
-                    } else {
-                        this._mergeOptionsWithNativeJsonOptions(dst[property], src[property]);
-                    }
-                } else {
-                    dst[property] = src[property];
-                }
-            }
-        }
-    }
-
     _getColorScaleGenerator(rendererOptions) {
         if (rendererOptions && rendererOptions.heatmap && rendererOptions.heatmap.colorScaleGenerator) {
             return rendererOptions.heatmap.colorScaleGenerator;
@@ -601,9 +585,6 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
 
     _updateOptions(changes) {
         this._options = changes.options;
-        if (this._options.nativeJson) {
-            this._mergeOptionsWithNativeJsonOptions(this._options, window.eval("(" + this._options.nativeJson + ")"));
-        }
         this._updateDerivedPropertiesPropertyName();
         this._processNativeJsFunctions(this._options)
         this._recreatePivot();

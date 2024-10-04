@@ -719,22 +719,97 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
 
     /**
      * Set pivot table configuration params in Json format.
-     * Json property overrides component property if they match by name
+     * Json property overrides component property if they match by name.
+     * Example:
+     * <pre> {@code
+     * {
+     *     "showUI": "true",
+     *     "renderer": "barChart",
+     *     "autoSortUnusedProperties": "true",
+     *     "columnOrder": "key_a_to_z",
+     *     "rowOrder": "value_z_to_a",
+     *     "emptyDataMessage": "Empty data msg",
+     *     "menuLimit": "10",
+     *     "showColumnTotals": "true",
+     *     "showRowTotals": "false",
+     *     "unusedPropertiesVertical": "true",
+     *     "renderers": {
+     *         "selected": "treemap",
+     *         "renderers": ["barChart", "table", "treemap"]
+     *     },
+     *     "derivedProperties": {
+     *         "properties": {
+     *             "fahrenheit" : "function(record){return record.temperature * 1.8 + 32;}"
+     *         }
+     *     },
+     *     "aggregation": {
+     *         "caption": "custom",
+     *         "mode": "maximum",
+     *         "custom": "true",
+     *         "function":  "function(){return $.pivotUtilities.aggregatorTemplates.count()();}"
+     *     },
+     *     "aggregationProperties": ["month"],
+     *     "aggregations": {
+     *         "selected": "lowerBound80",
+     *         "aggregations": [
+     *             {
+     *                 "caption": "MAXIMUM",
+     *                 "mode": "maximum",
+     *                 "custom": "false"
+     *             },
+     *             {
+     *                 "caption": "CUSTOM",
+     *                 "custom": "true",
+     *                 "function": "function(){return $.pivotUtilities.aggregatorTemplates.count()();}"
+     *             }
+     *         ]
+     *     },
+     *     "rendererOptions": {
+     *         "c3": {
+     *             "size": {
+     *                 "width": "200",
+     *                 "height": "300"
+     *             }
+     *         },
+     *         "heatmap": {
+     *             "colorScaleGeneratorFunction": "function(values) { return \"rgb(0, 255, 0)\"; }"
+     *         }
+     *     },
+     *     "filterFunction": "function(property) { return false; }",
+     *     "hiddenFromAggregations": ["city"],
+     *     "hiddenFromDragDrop": ["temperature"],
+     *     "hiddenProperties": ["month"],
+     *     "sortersFunction": "function(property) {if (property == \"%s\") {return $.pivotUtilities.sortAs([6,5,4,3,2,1]);}}",
+     *     "properties": {
+     *         "temperature": "Temperature",
+     *         "month" : "Month",
+     *         "city" : "City"
+     *     },
+     *     "rows": ["month"],
+     *     "columns": ["temperature"],
+     *     "inclusions": {
+     *         "month": ["December"]
+     *     },
+     *     "exclusions": {
+     *         "temperature": ["-20"]
+     *     }
+     * }}
+     * </pre>
      *
-     * @param nativeJson json as string
+     * @param jsonOptions json with options as string
      */
-    public void setNativeJson(String nativeJson) {
-        if (!StringUtils.equals(getNativeJson(), nativeJson)) {
-            if (nativeJson != null) {
+    public void setJsonOptions(String jsonOptions) {
+        if (!StringUtils.equals(getNativeJson(), jsonOptions)) {
+            if (jsonOptions != null) {
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                    mapper.readTree(nativeJson);
+                    mapper.readTree(jsonOptions);
                 } catch (JsonProcessingException e) {
                     throw new IllegalStateException("Unable to parse pivot table json configuration", e);
                 }
             }
-            options.setNativeJson(nativeJson);
-            convertNativeJsonToOptions(nativeJson);
+            options.setJsonOptions(jsonOptions);
+            convertNativeJsonToOptions(jsonOptions);
         }
     }
 
@@ -742,7 +817,7 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
      * @return string with valid json
      */
     public String getNativeJson() {
-        return options.getNativeJson();
+        return options.getJsonOptions();
     }
 
     /**
@@ -841,9 +916,44 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
                 nativeJson, PivotTableOptions.class);
         options.setChangedFromClient(true);
 
-        setRenderers(deserialize.getRenderers());
+        options.setShowUI(overrideOption(options.isShowUI(), deserialize.isShowUI()));
+        options.setRenderer(overrideOption(options.getRenderer(), deserialize.getRenderer()));
+        options.setAutoSortUnusedProperties(
+                overrideOption(options.getAutoSortUnusedProperties(), deserialize.getAutoSortUnusedProperties()));
+        options.setRowOrder(overrideOption(options.getRowOrder(), deserialize.getRowOrder()));
+        options.setColumnOrder(overrideOption(options.getColumnOrder(), deserialize.getColumnOrder()));
+        options.setEmptyDataMessage(overrideOption(options.getEmptyDataMessage(), deserialize.getEmptyDataMessage()));
+        options.setMenuLimit(overrideOption(options.getMenuLimit(), deserialize.getMenuLimit()));
+        options.setShowColumnTotals(overrideOption(options.isShowColumnTotals(), deserialize.isShowColumnTotals()));
+        options.setShowRowTotals(overrideOption(options.isShowRowTotals(), deserialize.isShowRowTotals()));
+        options.setUnusedPropertiesVertical(
+                overrideOption(options.getUnusedPropertiesVertical(), deserialize.getUnusedPropertiesVertical()));
+        options.setRenderers(overrideOption(options.getRenderers(), deserialize.getRenderers()));
+        options.setDerivedProperties(overrideOption(options.getDerivedProperties(), deserialize.getDerivedProperties()));
+        options.setAggregation(overrideOption(options.getAggregation(), deserialize.getAggregation()));
+        options.setAggregationProperties(overrideOption(options.getAggregationProperties(), deserialize.getAggregationProperties()));
+        options.setAggregations(overrideOption(options.getAggregations(), deserialize.getAggregations()));
+        options.setRendererOptions(overrideOption(options.getRendererOptions(), deserialize.getRendererOptions()));
+        options.setFilterFunction(overrideOption(options.getFilterFunction(), deserialize.getFilterFunction()));
+        options.setHiddenFromAggregations(overrideOption(
+                options.getHiddenFromAggregations(), deserialize.getHiddenFromAggregations()));
+        options.setHiddenFromDragDrop(
+                overrideOption(options.getHiddenFromDragDrop(), deserialize.getHiddenFromDragDrop()));
+        options.setHiddenProperties(overrideOption(options.getHiddenProperties(), deserialize.getHiddenProperties()));
+        options.setSortersFunction(overrideOption(options.getSortersFunction(), deserialize.getSortersFunction()));
+        options.setProperties(overrideOption(options.getProperties(), deserialize.getProperties()));
+        options.setRows(overrideOption(options.getRows(), deserialize.getRows()));
+        options.setColumns(overrideOption(options.getColumns(), deserialize.getColumns()));
+        options.setInclusions(overrideOption(options.getInclusions(), deserialize.getInclusions()));
+        options.setExclusions(overrideOption(options.getExclusions(), deserialize.getExclusions()));
 
         options.setChangedFromClient(false);
+
+        requestUpdateOptions();
+    }
+
+    protected <T> T overrideOption(T current, T override) {
+        return override != null ? override : current;
     }
 
     protected void requestUpdateItems() {

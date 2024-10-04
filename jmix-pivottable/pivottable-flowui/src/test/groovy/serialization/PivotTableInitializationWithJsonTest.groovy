@@ -14,40 +14,105 @@
  * limitations under the License.
  */
 
-package component_xml_load
+package serialization
 
-import component_xml_load.view.PivotTableXmlLoadTestView
-import io.jmix.pivottableflowui.PivotTableFlowuiConfiguration
-import io.jmix.pivottableflowui.data.ContainerPivotTableItems
+
+import io.jmix.pivottableflowui.kit.component.JmixPivotTable
 import io.jmix.pivottableflowui.kit.component.model.AggregationMode
 import io.jmix.pivottableflowui.kit.component.model.Order
 import io.jmix.pivottableflowui.kit.component.model.Renderer
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ContextConfiguration
-import test_support.PivotTableFlowuiTestSpecification
+import spock.lang.Specification
 
-@SpringBootTest
-@ContextConfiguration(classes = [PivotTableFlowuiConfiguration])
-class PivotTableXmlLoadTest extends PivotTableFlowuiTestSpecification {
+class PivotTableInitializationWithJsonTest extends Specification {
 
-    @Override
-    void setup() {
-        registerViewBasePackages("component_xml_load.view")
-    }
+    def "Initialize PivotTable with json"() {
+        when: "Set json to the PivotTable"
 
-    def "Load #container from XML"() {
-        when: "Open the HtmlView"
-        def view = navigateToView(PivotTableXmlLoadTestView.class)
-        def pivotTable = view.temperatureDataPivotTable
+        def pivotTable = new JmixPivotTable<>()
+        pivotTable.setJsonOptions(
+                """
+                {
+                    "showUI": "true",
+                    "renderer": "barChart",
+                    "autoSortUnusedProperties": "true",
+                    "columnOrder": "key_a_to_z",
+                    "rowOrder": "value_z_to_a",
+                    "emptyDataMessage": "Empty data msg",
+                    "menuLimit": "10",
+                    "showColumnTotals": "true",
+                    "showRowTotals": "false",
+                    "unusedPropertiesVertical": "true",
+                    "renderers": {
+                        "selected": "treemap",
+                        "renderers": ["barChart", "table", "treemap"]
+                    },
+                    "derivedProperties": {
+                        "properties": {
+                            "fahrenheit" : "function(record){return record.temperature * 1.8 + 32;}"
+                        }
+                    },
+                    "aggregation": {
+                        "caption": "custom",
+                        "mode": "maximum",
+                        "custom": "true",
+                        "function":  "function(){return \$.pivotUtilities.aggregatorTemplates.count()();}"
+                    },
+                    "aggregationProperties": ["month"],
+                    "aggregations": {
+                        "selected": "lowerBound80",
+                        "aggregations": [
+                            {
+                                "caption": "MAXIMUM",
+                                "mode": "maximum",
+                                "custom": "false"
+                            },
+                            {
+                                "caption": "CUSTOM",
+                                "custom": "true",
+                                "function": "function(){return \$.pivotUtilities.aggregatorTemplates.count()();}"
+                            }
+                        ]
+                    },
+                    "rendererOptions": {
+                        "c3": {
+                            "size": {
+                                "width": "200",
+                                "height": "300"
+                            }
+                        },
+                        "heatmap": {
+                            "colorScaleGeneratorFunction": "function(values) { return \\"rgb(0, 255, 0)\\"; }"
+                        }
+                    },
+                    "filterFunction": "function(property) { return false; }",
+                    "hiddenFromAggregations": ["city"],
+                    "hiddenFromDragDrop": ["temperature"],
+                    "hiddenProperties": ["month"],
+                    "sortersFunction": "function(property) {if (property == \\"%s\\") {return \$.pivotUtilities.sortAs([6,5,4,3,2,1]);}}",
+                    "properties": {
+                        "temperature": "Temperature",
+                        "month" : "Month",
+                        "city" : "City"
+                    },
+                    "rows": ["month"],
+                    "columns": ["temperature"],
+                    "inclusions": {
+                        "month" : ["December"]
+                    },
+                    "exclusions": {
+                        "temperature" : ["-20"]
+                    }
+                }
+                """
+        )
 
-        then: "All PivotTable attributes will be loaded"
-        pivotTable.getId().orElse(null) == "temperatureDataPivotTable"
-        pivotTable.items instanceof ContainerPivotTableItems
+        then: "All component properties are initialized"
+
         pivotTable.isShowUI()
         pivotTable.renderer == Renderer.BAR_CHART
         pivotTable.autoSortUnusedProperties
-        pivotTable.rowOrder == Order.VALUES_ASCENDING
-        pivotTable.columnOrder == Order.VALUES_DESCENDING
+        pivotTable.rowOrder == Order.VALUES_DESCENDING
+        pivotTable.columnOrder == Order.KEYS_ASCENDING
         pivotTable.emptyDataMessage == "Empty data msg"
         pivotTable.menuLimit == 10
         pivotTable.isShowColumnTotals()

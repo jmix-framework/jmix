@@ -94,6 +94,16 @@
             <pvttbl:columns>
                 <pvttbl:column value="temperature"/>
             </pvttbl:columns>
+            <pvttbl:inclusions>
+                <pvttbl:property name="month">
+                    <pvttbl:value value="December"/>
+                </pvttbl:property>
+            </pvttbl:inclusions>
+            <pvttbl:exclusions>
+                <pvttbl:property name="temperature">
+                    <pvttbl:value value="-20"/>
+                </pvttbl:property>
+            </pvttbl:exclusions>
         </pvttbl:pivotTable>
     </layout>
 </view>

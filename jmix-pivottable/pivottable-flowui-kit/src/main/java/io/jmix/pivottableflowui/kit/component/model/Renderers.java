@@ -16,6 +16,8 @@
 
 package io.jmix.pivottableflowui.kit.component.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,8 @@ import java.util.List;
 public class Renderers extends PivotTableOptionsObservable {
 
     protected List<Renderer> renderers;
+
+    @JsonProperty("selected")
     protected Renderer selectedRenderer;
 
     /**

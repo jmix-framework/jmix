@@ -31,6 +31,6 @@ public class JsFunctionSerializer extends AbstractSerializer<JsFunction> {
     @Override
     public void serializeNonNullValue(JsFunction value, JsonGenerator gen, SerializerProvider provider)
             throws IOException {
-        gen.writeString(value.code());
+        gen.writeString(value.getCode());
     }
 }

@@ -52,7 +52,7 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
     protected Boolean showColumnTotals;
     protected String emptyDataMessage;
     protected Map<String, Object> localizedStrings;
-    protected String nativeJson;
+    protected String jsonOptions;
 
     @Override
     public void setPivotTableObjectChangeListener(Consumer<ObjectChangeEvent> listener) {
@@ -802,11 +802,11 @@ public class PivotTableOptions extends PivotTableOptionsObservable {
         this.localizedStrings = localizedStrings;
     }
 
-    public String getNativeJson() {
-        return nativeJson;
+    public String getJsonOptions() {
+        return jsonOptions;
     }
 
-    public void setNativeJson(String nativeJson) {
-        this.nativeJson = nativeJson;
+    public void setJsonOptions(String jsonOptions) {
+        this.jsonOptions = jsonOptions;
     }
 }

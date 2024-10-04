@@ -68,6 +68,16 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
         this.applicationContext = applicationContext;
     }
 
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
+    }
+
+    @Autowired
+    public void setDialogs(Dialogs dialogs) {
+        this.dialogs = dialogs;
+    }
+
     /**
      * Executes the action to show the pivot table.
      */
@@ -82,17 +92,17 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
         } else {
             Action[] actions = new Action[]{
                     new SecuredBaseAction("ShowPivotTableMode.SELECTED_ROWS")
-                            .withText(messages.getMessage("actions.showPivotAction.SELECTED_ROWS"))
+                            .withText(messages.getMessage("io.jmix.pivottableflowui.action/showPivotTable.SELECTED_ROWS"))
                             .withHandler(event -> showPivotTable(ShowPivotTableMode.SELECTED_ROWS)),
                     new SecuredBaseAction("ShowPivotTableMode.ALL_ROWS")
-                            .withText(messages.getMessage("actions.showPivotAction.ALL_ROWS"))
+                            .withText(messages.getMessage("io.jmix.pivottableflowui.action/showPivotTable.ALL_ROWS"))
                             .withHandler(event -> showPivotTable(ShowPivotTableMode.ALL_ROWS)),
                     new DialogAction(DialogAction.Type.CANCEL)
             };
 
             dialogs.createOptionDialog()
-                    .withHeader(messages.getMessage("actions.showPivotAction.dialogTitle"))
-                    .withText(messages.getMessage("actions.showPivotAction.dialogMessage"))
+                    .withHeader(messages.getMessage("io.jmix.pivottableflowui.action/showPivotTable.dialogTitle"))
+                    .withText(messages.getMessage("io.jmix.pivottableflowui.action/showPivotTable.dialogMessage"))
                     .withActions(actions)
                     .withWidth("32em")
                     .open();
@@ -143,16 +153,6 @@ public class ShowPivotTableAction extends ListDataComponentAction<ShowPivotTable
             return Collections.emptyList();
         }
         return parseProperties(includedProperties);
-    }
-
-    @Autowired
-    protected void setMessages(Messages messages) {
-        this.messages = messages;
-    }
-
-    @Autowired
-    protected void setDialogs(Dialogs dialogs) {
-        this.dialogs = dialogs;
     }
 
     /**

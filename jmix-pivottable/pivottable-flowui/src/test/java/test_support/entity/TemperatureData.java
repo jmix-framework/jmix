@@ -22,13 +22,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 @JmixEntity
 @Table(name = "TEMPERATURE_DATA")
-@Entity
+@Entity(name = "TemperatureData")
 public class TemperatureData {
 
     @JmixGeneratedValue
@@ -36,39 +35,36 @@ public class TemperatureData {
     @Id
     private UUID id;
 
-    @NotNull
     @Column(name = "TEMPERATURE", nullable = false)
     private Integer temperature;
 
-    @NotNull
     @Column(name = "CITY", nullable = false)
     private String city;
 
-    @NotNull
     @Column(name = "MONTH", nullable = false)
     private String month;
 
-    public @NotNull Integer getTemperature() {
+    public Integer getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(@NotNull Integer temperature) {
+    public void setTemperature(Integer temperature) {
         this.temperature = temperature;
     }
 
-    public @NotNull String getCity() {
+    public String getCity() {
         return city;
     }
 
-    public void setCity(@NotNull String city) {
+    public void setCity(String city) {
         this.city = city;
     }
 
-    public @NotNull String getMonth() {
+    public String getMonth() {
         return month;
     }
 
-    public void setMonth(@NotNull String month) {
+    public void setMonth(String month) {
         this.month = month;
     }
 

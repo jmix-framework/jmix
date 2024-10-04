@@ -13,7 +13,6 @@ jmix-pivot-table {
     table.pvtTable tbody tr th {
         background-color: #e6EEEE;
         border: 1px solid var(--lumo-contrast-20pct);
-        font-size: 8pt;
         padding: 5px;
     }
 
@@ -195,14 +194,6 @@ jmix-pivot-table {
         background-color: var(--lumo-contrast-20pct) !important;
     }
 
-    th,
-    td {
-        color: var(--lumo-body-text-color) !important;
-        font-size: var(--lumo-font-size-m);
-        font-weight: 500;
-        font-family: var(--lumo-font-family);
-    }
-
     .pvtAttr {
         width: 30em !important;
         border-color: transparent !important;
@@ -315,25 +306,19 @@ jmix-pivot-table {
         border: 1px solid var(--lumo-contrast-20pct);
     }
 
-    td .pvtVal {
-        color: var(--lumo-primary-text-color);
-        font-family: var(--lumo-font-family);
+    th, td {
+        color: var(--lumo-body-text-color) !important;
+        font-size: var(--lumo-font-size-m);
         font-weight: 400;
-        font-size: var(--lumo-font-size-xs);
+        font-family: var(--lumo-font-family);
     }
 
     td .pvtTotal {
-        color: var(--lumo-primary-text-color);
-        font-family: var(--lumo-font-family);
         font-weight: 550;
-        font-size: var(--lumo-font-size-xs);
     }
 
     td .pvtGrandTotal {
-        color: var(--lumo-primary-text-color);
-        font-family: var(--lumo-font-family);
         font-weight: 700;
-        font-size: var(--lumo-font-size-xs);
     }
 
     select.pvtAttrDropdown {
@@ -373,9 +358,31 @@ jmix-pivot-table {
         content: '\e753';
     }
 
+    a.pvtRowOrder.disabled, a.pvtColOrder.disabled {
+        cursor: default;
+
+    }
+
+    a.pvtRowOrder.disabled::before, a.pvtColOrder.disabled::before {
+        color: var(--lumo-disabled-text-color);
+    }
+
     .pvtRenderer {
         min-width: 7em;
         width: 100%;
+    }
+
+    span.pvtAttr.disabled .pvtTriangle {
+        display: none;
+    }
+
+    span.pvtAttr.disabled {
+        color: var(--lumo-disabled-text-color);
+        cursor: default;
+    }
+
+    li.ui-sortable-handle.disabled {
+        cursor:default;
     }
 }
 

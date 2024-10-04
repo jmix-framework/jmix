@@ -274,7 +274,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
         assertEquals(14, legend.getItemHeight());
         assertEquals(0, legend.getSymbolRotate());
         assertEquals("Legend {name}", legend.getFormatter());
-        assertEquals("function (name) { return 'Legend ' + name; }", legend.getFormatterFunction().code());
+        assertEquals("function (name) { return 'Legend ' + name; }", legend.getFormatterFunction().getCode());
         assertEquals(SelectedMode.SINGLE, legend.getSelectedMode());
         assertEquals(GRAY, legend.getInactiveColor());
         assertEquals(GRAY, legend.getInactiveBorderColor());

@@ -734,6 +734,7 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
                 }
             }
             options.setNativeJson(nativeJson);
+            convertNativeJsonToOptions(nativeJson);
         }
     }
 
@@ -833,6 +834,16 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
         }
         getUI().ifPresent(ui ->
                 synchronizeOptionsExecution = ui.beforeClientResponse(this, this::performUpdateOptions));
+    }
+
+    protected void convertNativeJsonToOptions(String nativeJson) {
+        PivotTableOptions deserialize = (PivotTableOptions) serializer.deserialize(
+                nativeJson, PivotTableOptions.class);
+        options.setChangedFromClient(true);
+
+        setRenderers(deserialize.getRenderers());
+
+        options.setChangedFromClient(false);
     }
 
     protected void requestUpdateItems() {

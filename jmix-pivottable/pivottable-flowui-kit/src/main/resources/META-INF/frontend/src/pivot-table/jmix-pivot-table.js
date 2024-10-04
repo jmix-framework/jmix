@@ -28,6 +28,7 @@ import './pivot/export_renderers.min.js';
 import './jmix-pivot-table.css';
 
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import {DisabledMixin} from '@vaadin/a11y-base/src/disabled-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 
@@ -38,7 +39,11 @@ import {PivotTableParser} from './jmix-pivot-table-parser.js';
 
 registerStyles('jmix-pivot-table', [jmixPivotTableStyles], {moduleId: 'jmix-pivot-table-styles'});
 
-export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) {
+/**
+ * @class JmixPivotTable is the client part of the PivotTable component that integrates the
+ * {@link https://github.com/nicolaskruchten/pivottable}[Pivot]
+ */
+export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(PolymerElement))) {
     static get is() {
         return 'jmix-pivot-table';
     }
@@ -218,15 +223,32 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                     $.extend($.pivotUtilities.d3_renderers, $.pivotUtilities.renderers));
                 pivotTable._initLocale();
                 let options = pivotTable._preparePivotTableOptions();
-                let showUI = pivotTable.enabled && pivotTable._options.showUI;
+                let showUI = pivotTable._options.showUI;
                 options.showUI = showUI;
                 let showPivotFunction = showUI ? outputDiv.pivotUI : outputDiv.pivot;
                 showPivotFunction.call(outputDiv, pivotTable._dataSet,
                     options,
-                    false,
+                    true,
                     pivotTable._options.localeCode);
             })(this);
         }
+    }
+
+    _disabledChanged(disabled) {
+        super._disabledChanged(disabled);
+
+        this._recreatePivot();
+
+        if (disabled) {
+            this.querySelectorAll('select').forEach(select => {
+              select.disabled = disabled;
+            });
+
+            $('.pvtAxisContainer').sortable('disable');
+            $('span.pvtAttr, li.ui-sortable-handle').addClass('disabled');
+
+            $('a.pvtRowOrder, a.pvtColOrder').unbind("click").addClass('disabled');
+         }
     }
 
     _preparePivotTableOptions() {
@@ -250,12 +272,11 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
             vals: options.aggregationProperties,
             exclusions: options.exclusions,
             inclusions: options.inclusions,
-            rendererName: renderOptions.localizedRendererName,
-            renderers: renderOptions.localizedRenderers,
+            rendererName: renderOptions.rendererName,
+            renderers: renderOptions.renderers,
             renderer: renderOptions.renderer,
             derivedAttributes: options.derivedProperties ? options.derivedProperties.properties : null,
             localeStrings: options.localizedStrings,
-            rendererOptions: options.rendererOptions,
             sorters: options.sorters,
             rendererOptions: {
                 table: {
@@ -264,8 +285,8 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                             pivotTable._cellClickHandler(value, filters, pivotData);
                         };
                     })(this),
-                    rowTotals: options.showRowTotals ? options.showRowTotals : true,
-                    colTotals: options.showColumnTotals ? options.showColumnTotals : true
+                    rowTotals: options.showRowTotals,
+                    colTotals: options.showColumnTotals
                 },
                 heatmap : {
                     colorScaleGenerator : this._getColorScaleGenerator(options.rendererOptions)
@@ -459,6 +480,8 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
                         aggregatorsIds[aggregationKey] = aggregations[i].id;
                     }
                     aggregationOptions.aggregators = aggregators;
+                } else {
+                    aggregationOptions.aggregators = allAggregators;
                 }
             } else {
                 aggregationOptions.aggregators = allAggregators;
@@ -555,7 +578,7 @@ export class JmixPivotTable extends ElementMixin(ThemableMixin(PolymerElement)) 
     }
 
     _getLocalizedRenderers() {
-        if (!this._options.renderers) {
+        if (!this._options.renderers || !this._options.renderers.renderers) {
             return $.pivotUtilities.locales[this._options.localeCode].renderers;
         }
         let localizedRenderers = {};

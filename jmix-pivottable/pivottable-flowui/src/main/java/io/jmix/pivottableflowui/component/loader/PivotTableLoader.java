@@ -132,14 +132,17 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable<?>> {
         loadInteger(element, "menuLimit", resultComponent::setMenuLimit);
         loadString(element, "unusedPropertiesVertical",
                 value -> resultComponent.setUnusedPropertiesVertical(UnusedPropertiesVertical.valueOf(value)));
+
         String filterFunction = element.elementText("filterFunction");
         if (!Strings.isNullOrEmpty(filterFunction)) {
             resultComponent.setFilterFunction(new JsFunction(filterFunction));
         }
+
         String sortersFunction = element.elementText("sortersFunction");
         if (!Strings.isNullOrEmpty(sortersFunction)) {
             resultComponent.setSortersFunction(new JsFunction(sortersFunction));
         }
+
         loadBoolean(element, "autoSortUnusedProperties", resultComponent::setAutoSortUnusedProperties);
         loadBoolean(element, "showUI", resultComponent::setShowUI);
         loadBoolean(element, "showRowTotals", resultComponent::setShowRowTotals);

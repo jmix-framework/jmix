@@ -90,15 +90,19 @@ public class JmixPivotTableSerializer {
     }
 
     public <T> Object deserialize(JsonObject jsonObject, Class<T> objectClass) {
+        return deserialize(jsonObject.toJson(), objectClass);
+    }
+
+    public <T> Object deserialize(String jsonContent, Class<T> objectClass) {
         T deserializedObject;
 
         log.debug("Starting deserialize {}", objectClass.getSimpleName());
 
         try {
-            deserializedObject = objectMapper.readValue(jsonObject.toJson(), objectClass);
+            deserializedObject = objectMapper.readValue(jsonContent, objectClass);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(String.format("Cannot deserialize %s to %s",
-                    jsonObject.toJson(), objectClass.getSimpleName()), e);
+                    jsonContent, objectClass.getSimpleName()), e);
         }
 
         return deserializedObject;

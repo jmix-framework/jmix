@@ -40,10 +40,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -54,9 +51,15 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.sql.DataSource;
 
 @Configuration
-@Import({FlowuiConfiguration.class, EclipselinkConfiguration.class, CoreConfiguration.class,
-        DataConfiguration.class, PivotTableFlowuiConfiguration.class})
+@ComponentScan
+@Import({FlowuiConfiguration.class,
+        CoreConfiguration.class,
+        DataConfiguration.class,
+        EclipselinkConfiguration.class,
+        PivotTableFlowuiConfiguration.class
+})
 @JmixModule
+@EnableWebSecurity
 public class PivotTableFlowuiTestConfiguration {
 
     @Bean

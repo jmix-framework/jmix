@@ -57,7 +57,7 @@ public class PivotTableFlowuiConfiguration {
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ViewControllersConfiguration viewControllers
                 = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
-        viewControllers.setBasePackages(Collections.singletonList("io.jmix.pivottableflowui.export.view"));
+        viewControllers.setBasePackages(Collections.singletonList("io.jmix.pivottableflowui.view"));
         return viewControllers;
     }
 }

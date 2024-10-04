@@ -63,7 +63,7 @@ public class PivotTable<T> extends JmixPivotTable<T> implements ApplicationConte
         initLocalization();
     }
 
-    public void requestPivotData(String dateTimeParseFormat, String dateParseFormat, String timeParseFormat,
+    protected void requestPivotData(String dateTimeParseFormat, String dateParseFormat, String timeParseFormat,
                                  Consumer<PivotData> consumer) {
         String jsFunctionParams = dateTimeParseFormat + ", " + dateParseFormat + ", " + timeParseFormat;
         getElement().executeJs("return this._getTableElementData(" + jsFunctionParams + ");")

@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 @Route(value = "pivot-table-view")
-@ViewController("pivot-table-view")
+@ViewController("PivotTableView")
 @ViewDescriptor("pivot-table-view.xml")
 public class PivotTableView extends StandardView {
 
@@ -72,7 +72,7 @@ public class PivotTableView extends StandardView {
 
     @Subscribe(id = "exportExcel", subject = "clickListener")
     public void exportExcel(final ClickEvent<JmixButton> event) {
-        pivotTableExporter.setFileName(messages.getMessage("pivotTableView.fileName"));
+        pivotTableExporter.setFileName(messages.getMessage("io.jmix.pivottableflowui.view/fileName"));
         pivotTableExporter.exportTableToXls(downloader);
     }
 

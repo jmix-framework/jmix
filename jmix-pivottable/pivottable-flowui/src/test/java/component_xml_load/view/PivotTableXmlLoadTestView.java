@@ -31,4 +31,3 @@ public class PivotTableXmlLoadTestView extends StandardView {
     @ViewComponent
     public PivotTable<?> temperatureDataPivotTable;
 }
-

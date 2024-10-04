@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.pivottableflowui.kit.component.model;
+package io.jmix.pivottableflowui.component;
 
-import java.io.Serializable;
+import io.jmix.core.annotation.Internal;
+import io.jmix.pivottableflowui.export.model.PivotData;
 
-/**
- * JavaScript function definition.
- * Must be determined by a specific pattern: <pre>{@code function($parameters$): {$code$};}</pre>
- * Example:
- * <pre>{@code new JsFunction("function(value) { return \"Value is \" + value };")}</pre>
- */
-public record JsFunction(String code) implements Serializable {
+import java.util.function.Consumer;
+
+@Internal
+public class PivotTableUtils {
+
+    public static void requestPivotData(PivotTable<?> pivotTable,
+                                        String dateTimeParseFormat, String dateParseFormat, String timeParseFormat,
+                                        Consumer<PivotData> consumer) {
+        pivotTable.requestPivotData(dateTimeParseFormat, dateParseFormat, timeParseFormat, consumer);
+    }
 }

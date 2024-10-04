@@ -1,3 +1,7 @@
+/**
+ * @class PivotTableParser prepares the data that is currently displayed in the PivotTable.
+ * This data can then be passed to the server side for export or for display in other components.
+ */
 export class PivotTableParser {
 
     floatFormatAggregationIds = ['sum', 'average', 'minimum', 'maximum', 'sumOverSum', 'upperBound80', 'lowerBound80'];

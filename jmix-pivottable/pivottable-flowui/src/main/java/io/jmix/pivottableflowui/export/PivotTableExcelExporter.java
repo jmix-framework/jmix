@@ -73,7 +73,7 @@ public class PivotTableExcelExporter {
     public static final String DEFAULT_FILE_NAME = "pivotData";
 
     public enum ExportFormat {
-        XLS, XLSX;
+        XLS, XLSX
     }
 
     protected ExportFormat exportFormat = ExportFormat.XLSX;
@@ -126,11 +126,11 @@ public class PivotTableExcelExporter {
     @Autowired
     protected CurrentAuthentication currentAuthentication;
 
-    public PivotTableExcelExporter(PivotTable pivotTable) {
-        init(pivotTable);
+    public PivotTableExcelExporter() {
     }
 
-    public PivotTableExcelExporter() {
+    public PivotTableExcelExporter(PivotTable<?> pivotTable) {
+        init(pivotTable);
     }
 
     @Autowired
@@ -143,13 +143,13 @@ public class PivotTableExcelExporter {
         this.downloader = downloader;
     }
 
-    public void init(PivotTable pivotTable) {
+    public void init(PivotTable<?> pivotTable) {
         entityMetaClass = pivotTable.getItems() instanceof EntityDataUnit
                 ? ((EntityDataUnit) pivotTable.getItems()).getEntityMetaClass() : null;
     }
 
     /**
-     * Exports pivot table data to the excel file. File format can be configured by
+     * Exports pivot table data to the Excel file. File format can be configured by
      * {@link #setExportFormat(ExportFormat)}.
      *
      * @param pivotData pivot with aggregated data
@@ -184,7 +184,7 @@ public class PivotTableExcelExporter {
     }
 
     /**
-     * Exports pivot table data to the excel file. File format can be configured by
+     * Exports pivot table data to the Excel file. File format can be configured by
      * {@link #setExportFormat(ExportFormat)}.
      *
      * @param pivotData  pivot with aggregated data
@@ -197,10 +197,6 @@ public class PivotTableExcelExporter {
         if (isPivotDataEmpty(pivotData)) {
             showNoDataWarning();
             return;
-        }
-
-        if (downloader == null) {
-            throw new IllegalArgumentException("ExportDisplay is null");
         }
 
         if (!isNullOrEmpty(fileName)) {
@@ -317,7 +313,7 @@ public class PivotTableExcelExporter {
         }
     }
 
-    protected void initDateTimeCell(Cell excelCell, PivotDataSeparatedCell cell, SimpleDateFormat formatter,
+    protected void initDateTimeCell(Cell excelCell, PivotDataSeparatedCell cell, @Nullable SimpleDateFormat formatter,
                                     CellStyle cellStyle, CellStyle boldCellStyle) {
         if (formatter != null) {
             try {
@@ -357,28 +353,28 @@ public class PivotTableExcelExporter {
         cellLabelBoldStyle = wb.createCellStyle();
         cellLabelBoldStyle.setFont(boldFont);
 
-        String dateTimeFormat = messages.getMessage("pivotExcelExporter.dateTimeFormat");
+        String dateTimeFormat = messages.getMessage("pivotTable.excelExporter.dateTimeFormat");
         cellDateTimeStyle = wb.createCellStyle();
         cellDateTimeStyle.setDataFormat(getBuiltinFormat(dateTimeFormat));
         boldCellDateTimeStyle = wb.createCellStyle();
         boldCellDateTimeStyle.setDataFormat(getBuiltinFormat(dateTimeFormat));
         boldCellDateTimeStyle.setFont(boldFont);
 
-        String dateFormat = messages.getMessage("pivotExcelExporter.dateFormat");
+        String dateFormat = messages.getMessage("pivotTable.excelExporter.dateFormat");
         cellDateStyle = wb.createCellStyle();
         cellDateStyle.setDataFormat(getBuiltinFormat(dateFormat));
         boldCellDateStyle = wb.createCellStyle();
         boldCellDateStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat(dateFormat));
         boldCellDateStyle.setFont(boldFont);
 
-        String timeFormat = messages.getMessage("pivotExcelExporter.timeFormat");
+        String timeFormat = messages.getMessage("pivotTable.excelExporter.timeFormat");
         cellTimeStyle = wb.createCellStyle();
         cellTimeStyle.setDataFormat(getBuiltinFormat(timeFormat));
         boldCellTimeStyle = wb.createCellStyle();
         boldCellTimeStyle.setDataFormat(getBuiltinFormat(timeFormat));
         boldCellTimeStyle.setFont(boldFont);
 
-        String integerFormat = messages.getMessage("pivotExcelExporter.integerFormat");
+        String integerFormat = messages.getMessage("pivotTable.excelExporter.integerFormat");
         cellIntegerStyle = wb.createCellStyle();
         cellIntegerStyle.setDataFormat(getBuiltinFormat(integerFormat));
         boldCellIntegerStyle = wb.createCellStyle();
@@ -386,7 +382,7 @@ public class PivotTableExcelExporter {
         boldCellIntegerStyle.setFont(boldFont);
 
         DataFormat format = wb.createDataFormat();
-        String doubleFormat = messages.getMessage("pivotExcelExporter.doubleFormat");
+        String doubleFormat = messages.getMessage("pivotTable.excelExporter.doubleFormat");
         cellDoubleStyle = wb.createCellStyle();
         cellDoubleStyle.setDataFormat(format.getFormat(doubleFormat));
         boldCellDoubleStyle = wb.createCellStyle();
@@ -399,7 +395,7 @@ public class PivotTableExcelExporter {
     }
 
     protected void showWarnNotification() {
-        notifications.create(messages.getMessage(getClass(), "maximumRowsNumberExceededWarning.caption"),
+        notifications.create(messages.getMessage(getClass(), "maximumRowsNumberExceededWarning.title"),
                         messages.formatMessage(getClass(), "maximumRowsNumberExceededWarning.message", MAX_ROW_INDEX))
                 .withType(Notifications.Type.WARNING)
                 .show();
@@ -430,7 +426,7 @@ public class PivotTableExcelExporter {
     }
 
     protected void showNoDataWarning() {
-        notifications.create(messages.getMessage("warningNotification.caption"))
+        notifications.create(messages.getMessage("pivotTable.warningNotification.text"))
                 .withType(Notifications.Type.WARNING)
                 .show();
     }

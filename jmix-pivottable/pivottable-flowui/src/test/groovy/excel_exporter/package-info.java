@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.pivottableflowui.kit.component.model;
+@NonNullApi
+package excel_exporter;
 
-import java.io.Serializable;
-
-/**
- * JavaScript function definition.
- * Must be determined by a specific pattern: <pre>{@code function($parameters$): {$code$};}</pre>
- * Example:
- * <pre>{@code new JsFunction("function(value) { return \"Value is \" + value };")}</pre>
- */
-public record JsFunction(String code) implements Serializable {
-}
+import org.springframework.lang.NonNullApi;

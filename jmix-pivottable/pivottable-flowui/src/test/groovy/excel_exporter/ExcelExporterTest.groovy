@@ -25,6 +25,7 @@ import io.jmix.pivottableflowui.export.model.PivotData
 import io.jmix.pivottableflowui.export.model.PivotDataCell
 import io.jmix.pivottableflowui.export.model.PivotDataSeparatedCell
 import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer
+import jakarta.validation.constraints.NotNull
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
@@ -50,8 +51,8 @@ class ExcelExporterTest extends Specification {
         byte[] encoded = Files.readAllBytes(Paths.get(resource.toURI()))
         def pivotDataJson = new String(encoded, StandardCharsets.UTF_8)
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        pivotData = objectMapper.readValue(pivotDataJson, PivotData.class);
+        ObjectMapper objectMapper = new ObjectMapper()
+        pivotData = objectMapper.readValue(pivotDataJson, PivotData.class)
 
         exporter = new TestPivotExcelExporter(pivotTable)
 
@@ -142,7 +143,6 @@ class ExcelExporterTest extends Specification {
 
         @Override
         protected void export(Downloader downloader) {
-            //do nothing
         }
 
         @Override
@@ -150,13 +150,12 @@ class ExcelExporterTest extends Specification {
             Object cellValue = cell.getType() == PivotDataCell.Type.DECIMAL
                     ? Double.parseDouble(cell.getValue())
                     : cell.getValue()
-            excelCell.setCellValue(cellValue);
+            excelCell.setCellValue(cellValue)
 
             if (cell.isBold()) {
-                excelCell.setCellStyle(cellLabelBoldStyle);
+                excelCell.setCellStyle(cellLabelBoldStyle)
             }
         }
-
     }
 }
 

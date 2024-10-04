@@ -20,13 +20,22 @@ import com.google.common.collect.Sets;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.pivottableflowui.component.PivotTable;
+import io.jmix.pivottableflowui.component.PivotTableUtils;
 import io.jmix.pivottableflowui.export.model.PivotData;
 import io.jmix.pivottableflowui.kit.component.model.Renderer;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Set;
 
+/**
+ * Prepare the data {@link PivotData} requested from {@link PivotTable}, then export to an XLS file.
+ */
+@Component("pvttbl_PivotTableExporter")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PivotTableExporterImpl implements PivotTableExporter {
 
     public static final Set<Renderer> supportedRenderers = Collections.unmodifiableSet(Sets.newHashSet(
@@ -55,7 +64,7 @@ public class PivotTableExporterImpl implements PivotTableExporter {
 
         setupParseFormats();
 
-        pivotTable.requestPivotData(dateTimeParseFormat, dateParseFormat, timeParseFormat,
+        PivotTableUtils.requestPivotData(pivotTable, dateTimeParseFormat, dateParseFormat, timeParseFormat,
                 pivotData -> excelExporter.exportPivotTable(pivotData, fileName));
     }
 
@@ -65,7 +74,7 @@ public class PivotTableExporterImpl implements PivotTableExporter {
 
         setupParseFormats();
 
-        pivotTable.requestPivotData(dateTimeParseFormat, dateParseFormat, timeParseFormat,
+        PivotTableUtils.requestPivotData(pivotTable, dateTimeParseFormat, dateParseFormat, timeParseFormat,
                 pivotData -> excelExporter.exportPivotTable(pivotData, fileName, downloader));
     }
 

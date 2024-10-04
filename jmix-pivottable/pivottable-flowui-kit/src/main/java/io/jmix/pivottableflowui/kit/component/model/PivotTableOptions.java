@@ -19,6 +19,9 @@ package io.jmix.pivottableflowui.kit.component.model;
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * Class contains properties to set up the PivotTable component.
+ */
 public class PivotTableOptions extends PivotTableOptionsObservable {
 
     protected Map<String, String> properties;

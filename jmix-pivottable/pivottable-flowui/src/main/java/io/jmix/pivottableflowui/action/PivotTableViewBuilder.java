@@ -18,7 +18,6 @@ package io.jmix.pivottableflowui.action;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -28,6 +27,7 @@ import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.ContainerDataUnit;
+import io.jmix.flowui.view.View;
 import io.jmix.pivottableflowui.component.PivotTable;
 import io.jmix.pivottableflowui.view.PivotTableView;
 import org.apache.commons.collections4.CollectionUtils;
@@ -69,6 +69,41 @@ public class PivotTableViewBuilder {
 
     public PivotTableViewBuilder(ListDataComponent<?> target) {
         this.target = target;
+    }
+
+    @Autowired
+    public void setViewNavigators(ViewNavigators viewNavigators) {
+        this.viewNavigators = viewNavigators;
+    }
+
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setFetchPlanRepository(FetchPlanRepository fetchPlanRepository) {
+        this.fetchPlanRepository = fetchPlanRepository;
+    }
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
+    }
+
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    public void setMessageTools(MessageTools messageTools) {
+        this.messageTools = messageTools;
     }
 
     /**
@@ -148,10 +183,9 @@ public class PivotTableViewBuilder {
      * {
      * 	"cols": ["localized property", "localized property"],
      * 	"rows": ["localized property"],
-     * 	"editable": false,
+     * 	"showUI": false,
      * 	"renderer": "heatmap",
      * 	"aggregation": {
-     * 		"id": "d8fc3fdf-730d-c94f-a0c8-72a9ce3dcb3a",
      * 		"mode": "sumOverSum",
      * 		"properties": ["localized property", "localized property"]
      *    }
@@ -163,7 +197,7 @@ public class PivotTableViewBuilder {
      * {
      * 	"cols": ["localized property"],
      * 	"rows": ["localized property"],
-     * 	"editable": true,
+     * 	"showUI": true,
      * 	"renderers": {
      * 		"selectedRenderer": "barChart"
      *    },
@@ -172,11 +206,9 @@ public class PivotTableViewBuilder {
      * 	"aggregations": {
      * 		"selectedAggregation": "count",
      * 		"aggregations": [{
-     * 			"id": "647780f0-c6d0-6ade-a63a-542b5c8cdbd5",
      * 			"mode": "count",
      * 			"caption": "Count"
      *        }, {
-     * 			"id": "c2663238-2654-67f0-2dec-add6962d867c",
      * 			"mode": "sumOverSum"
      *        }]
      *    }
@@ -216,61 +248,21 @@ public class PivotTableViewBuilder {
      * Navigate to {@link PivotTableView} and show {@link PivotTable} component with the set parameters
      */
     public void show() {
-        if (!(target instanceof Grid<?> grid) || UiComponentUtils.findView(grid) == null) {
-            throw new IllegalStateException(
-                    String.format("Component '%s' is null or not added to a view", ((Grid<?>) target).getId()));
+        if (target == null) {
+            throw new IllegalStateException("ListDataComponent is not set");
         }
 
-        if (items == null) {
-            items = Collections.emptyList();
-        }
+        View<?> targetView = UiComponentUtils.getView((com.vaadin.flow.component.Component) target);
 
         Map<String, String> properties = getPropertiesWithLocale();
-
-        viewNavigators.view(Objects.requireNonNull(UiComponentUtils.findView((Grid<?>) target),
-                        "View cannot be null for target"), PivotTableView.class)
+        viewNavigators.view(targetView, PivotTableView.class)
                 .withAfterNavigationHandler(event -> {
                     PivotTableView pivotTableView = event.getView();
                     pivotTableView.setProperties(properties);
                     pivotTableView.setNativeJson(nativeJson);
-                    pivotTableView.setDataItems(items);
+                    pivotTableView.setDataItems(items == null ? Collections.emptyList() : items);
                 })
                 .navigate();
-    }
-
-    @Autowired
-    protected void setViewNavigators(ViewNavigators viewNavigators) {
-        this.viewNavigators = viewNavigators;
-    }
-
-    @Autowired
-    protected void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
-
-    @Autowired
-    protected void setFetchPlanRepository(FetchPlanRepository fetchPlanRepository) {
-        this.fetchPlanRepository = fetchPlanRepository;
-    }
-
-    @Autowired
-    protected void setMessages(Messages messages) {
-        this.messages = messages;
-    }
-
-    @Autowired
-    protected void setAccessManager(AccessManager accessManager) {
-        this.accessManager = accessManager;
-    }
-
-    @Autowired
-    protected void setMetadataTools(MetadataTools metadataTools) {
-        this.metadataTools = metadataTools;
-    }
-
-    @Autowired
-    protected void setMessageTools(MessageTools messageTools) {
-        this.messageTools = messageTools;
     }
 
     protected Map<String, String> getPropertiesWithLocale() {
@@ -411,7 +403,9 @@ public class PivotTableViewBuilder {
 
         // in this case we should use `metaProperty.getJavaType()` because
         // we need to get class type of EmbeddedId property and then get MetaClass of it
-        return metadataTools.isEmbedded(metaProperty) ? metadata.getClass(metaProperty.getJavaType()) : null;
+        return MetaProperty.Type.EMBEDDED == metaProperty.getType()
+                ? metadata.getClass(metaProperty.getJavaType())
+                : null;
     }
 
     protected List<String> removeNonExistingProperties(List<String> properties, MetaClass metaClass, FetchPlan fetchPlan) {

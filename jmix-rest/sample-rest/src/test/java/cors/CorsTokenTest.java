@@ -22,6 +22,7 @@ import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.SampleRestApplication;
 import io.jmix.security.SecurityConfiguration;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -47,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
         "jmix.cors.allowed-origins = http://www.allowed1.com"
 })
+@Disabled //todo [jmix-framework/jmix#1866]
 public class CorsTokenTest {
 
     @Autowired

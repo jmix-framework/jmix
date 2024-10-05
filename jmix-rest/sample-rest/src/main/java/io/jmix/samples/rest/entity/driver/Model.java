@@ -21,12 +21,12 @@ import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 import java.util.Set;
 
 @Entity(name = "ref$Model")

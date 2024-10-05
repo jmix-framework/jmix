@@ -26,37 +26,34 @@ dependencies {
 
     implementation project(':core-starter')
     implementation project(':eclipselink-starter')
-    implementation project(':ui-starter')
-    implementation project(':ui-data-starter')
-    implementation project(':ui-themes-compiled')
-    implementation project(':ui-widgets-compiled')
     implementation project(':security-starter')
-    implementation project(':security-ui-starter')
     implementation project(':security-data-starter')
-//    implementation project(':security-oauth2-starter')
+
+    implementation project(':authserver-starter')
     implementation project(':localfs-starter')
-    implementation project(':sessions-starter')
     implementation project(':dynattr-starter')
-    implementation project(':dynattr-ui-starter')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     runtimeOnly 'org.hsqldb:hsqldb'
 
-    implementation 'javax.inject:javax.inject'
+    implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
     implementation 'org.apache.commons:commons-dbcp2'
+
+
+
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'org.codehaus.groovy:groovy-sql'
+    testImplementation 'org.apache.groovy:groovy-sql'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework:spring-webflux'
 
-    testImplementation 'com.squareup.retrofit2:converter-scalars:2.8.1'
+    testImplementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
 
     testImplementation 'io.rest-assured:rest-assured'
 

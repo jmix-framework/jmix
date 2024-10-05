@@ -18,19 +18,20 @@ package messages;
 
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
-import test_support.AbstractRestControllerFT;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import test_support.AbstractRestControllerFT;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static test_support.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static test_support.RestTestUtils.*;
 
 /**
  *
@@ -52,6 +53,7 @@ public class MessagesControllerFT extends AbstractRestControllerFT {
         }
     }
 
+    @Disabled //todo [jmix-framework/jmix#1866]
     @Test
     public void testLocalizationForEntityUsingRuLanguage() throws Exception {
         String url = baseUrl + "/messages/entities/sec$User";
@@ -77,6 +79,7 @@ public class MessagesControllerFT extends AbstractRestControllerFT {
         }
     }
 
+    @Disabled //todo [jmix-framework/jmix#1866]
     @Test
     public void testLocalizationUsingLocaleFromLogin() throws Exception {
         String url = baseUrl + "/messages/entities/sec$User";

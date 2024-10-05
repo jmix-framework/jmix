@@ -26,7 +26,7 @@
 
     <include file="/io/jmix/data/liquibase/changelog.xml"/>
     <include file="/io/jmix/securitydata/liquibase/changelog.xml"/>
-    <include file="/io/jmix/securityoauth2/liquibase/changelog.xml"/>
+    <!--<include file="/io/jmix/securityoauth2/liquibase/changelog.xml"/>--><!--todo! adapt? use correct changelog or not needed?-->
 
     <changeSet author="sample-rest" id="1.0">
 
@@ -133,10 +133,12 @@
                 <constraints foreignKeyName="SAMPLE_REST_SEC_USER_ROLE_ROLE" references="SAMPLE_REST_SEC_ROLE(ID)"
                              nullable="false"/>
             </column>
+            <column name="ROLE_NAME" type="varchar(50)"/>
         </createTable>
 
         <createTable tableName="REST_NSIN_ENTITY">
-            <column name="ID" type="int">
+            <!--todo ID changed to CODE. Compare with 1.6, how should it work-->
+            <column name="CODE" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="NAME" type="varchar(255)">

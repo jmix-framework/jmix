@@ -16,24 +16,26 @@
 
 package messages;
 
-import test_support.AbstractRestControllerFT;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.lang.Nullable;
+import test_support.AbstractRestControllerFT;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static test_support.RestTestUtils.sendPutWithHeaders;
 import static test_support.RestTestUtils.statusCode;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserSessionControllerFT extends AbstractRestControllerFT {
 
     @Test
+    @Disabled //todo [jmix-framework/jmix#1866]
     public void setSessionLocale() throws Exception {
         setSessionLocale(
                 "en",

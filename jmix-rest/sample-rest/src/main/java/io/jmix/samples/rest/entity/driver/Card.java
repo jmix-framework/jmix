@@ -23,8 +23,8 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 import io.jmix.samples.rest.entity.sec.User;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name = "ref$Card")

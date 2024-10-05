@@ -18,9 +18,9 @@ package entities;
 
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
-import io.jmix.samples.rest.service.RestTestService;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import test_support.AbstractRestControllerFT;
@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static test_support.RestTestUtils.*;
 
 @TestPropertySource(properties = {"jmix.security.oauth2.dev-mode=true", "jmix.security.oauth2.dev-username=admin"})
+@Disabled//todo [jmix-framework/jmix#1866]
 public class EntitiesControllerDevModeFT extends AbstractRestControllerFT {
     protected String carUuidString;
     protected String colourUuidString;

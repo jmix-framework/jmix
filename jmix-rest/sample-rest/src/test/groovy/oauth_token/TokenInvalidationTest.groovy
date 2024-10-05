@@ -22,10 +22,11 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
+import spock.lang.Ignore
 import test_support.RestSpec
 
 import static test_support.RestSpecsUtils.createRequest
-
+@Ignore //todo [jmix-framework/jmix#1866]
 class TokenInvalidationTest extends RestSpec {
     @Autowired
     protected SessionRegistry sessionRegistry

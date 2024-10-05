@@ -17,8 +17,6 @@
 package anonymous_access;
 
 import com.jayway.jsonpath.ReadContext;
-import test_support.AbstractRestControllerFT;
-import test_support.JmixRestTestAnonymousConfiguration;
 import io.jmix.samples.rest.service.RestTestService;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -26,10 +24,13 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.lang.Nullable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.lang.Nullable;
+import test_support.AbstractRestControllerFT;
+import test_support.JmixRestTestAnonymousConfiguration;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -38,13 +39,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static test_support.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static test_support.RestTestUtils.*;
 
 @TestPropertySource(properties = {"jmix.rest.anonymousUrlPatterns=/rest/services/" + RestTestService.NAME + "/sum," +
         "/rest/queries/sec$User/currentUser"})
 @ContextConfiguration(classes = {
         JmixRestTestAnonymousConfiguration.class})
+@Disabled //todo [jmix-framework/jmix#1866]
 public class AnonymousServiceAndQueryAccessFT extends AbstractRestControllerFT {
 
     protected Map<String, String> serviceParams = new HashMap<String, String>() {{

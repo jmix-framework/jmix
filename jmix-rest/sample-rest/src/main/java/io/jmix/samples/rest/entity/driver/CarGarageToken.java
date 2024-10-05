@@ -19,10 +19,10 @@ package io.jmix.samples.rest.entity.driver;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Date;
 
 @Entity(name = "ref$CarGarageToken")

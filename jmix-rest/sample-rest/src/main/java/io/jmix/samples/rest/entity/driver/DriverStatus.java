@@ -16,7 +16,7 @@
 
 package io.jmix.samples.rest.entity.driver;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.EnumClass;
 
 public enum DriverStatus implements EnumClass<Integer> {
 

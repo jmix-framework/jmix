@@ -19,10 +19,10 @@ package io.jmix.samples.rest.entity.driver;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Past;
 
-import javax.persistence.*;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.Past;
 import java.util.Date;
 import java.util.UUID;
 

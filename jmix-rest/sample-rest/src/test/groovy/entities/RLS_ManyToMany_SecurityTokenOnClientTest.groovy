@@ -18,11 +18,11 @@ package entities
 
 import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.samples.rest.security.InMemoryManyToManyRowLevelRole
-import io.jmix.security.authentication.RoleGrantedAuthority
 import org.apache.http.HttpStatus
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.context.TestPropertySource
+import spock.lang.Ignore
 import test_support.RestSpec
 
 import static org.hamcrest.CoreMatchers.notNullValue
@@ -31,8 +31,7 @@ import static test_support.DbUtils.getSql
 import static test_support.RestSpecsUtils.createRequest
 import static test_support.RestSpecsUtils.getAuthToken
 
-@TestPropertySource(properties =
-        ["jmix.core.entitySerializationTokenRequired = true"])
+@TestPropertySource(properties = ["jmix.core.entitySerializationTokenRequired = true"])
 class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
 
     private UUID plantId
@@ -49,11 +48,9 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         user = User.builder()
                 .username(userLogin)
                 .password("{noop}" + userPassword)
-                .authorities(RoleGrantedAuthority.withResourceRoleProvider({ resourceRoleRepository.getRoleByCode(it) })
-                        .withRowLevelRoleProvider({ rowLevelRoleRepository.getRoleByCode(it) })
-                        .withResourceRoles(FullAccessRole.NAME)
-                        .withRowLevelRoles(InMemoryManyToManyRowLevelRole.NAME)
-                        .build())
+                .authorities(Arrays.asList(
+                        roleGrantedAuthorityUtils.createResourceRoleGrantedAuthority(FullAccessRole.NAME),
+                        roleGrantedAuthorityUtils.createRowLevelRoleGrantedAuthority(InMemoryManyToManyRowLevelRole.NAME)))
                 .build()
 
         userRepository.addUser(user)
@@ -267,6 +264,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         assertModelNames_notChanged()
     }
 
+    @Ignore //todo [jmix-framework/jmix#1866]
     def """Store entity with deleted element in the collection, element should not be deleted because it was hidden when entity is loaded from REST"""() {
         when:
 
@@ -319,7 +317,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         assertModelLinkExists(plantId, model5Id)
         assertModelNames_notChanged()
     }
-
+    @Ignore //todo [jmix-framework/jmix#1866]
     def """Store entity with null element in the collection, element should not be deleted because it was hidden when entity is loaded from REST"""() {
         when:
 

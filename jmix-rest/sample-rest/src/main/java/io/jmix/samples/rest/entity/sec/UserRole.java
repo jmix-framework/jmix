@@ -20,8 +20,7 @@ import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Link between users and roles.

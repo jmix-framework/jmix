@@ -18,13 +18,13 @@ package io.jmix.samples.rest.validation;
 
 import io.jmix.core.EntityStates;
 import io.jmix.samples.rest.entity.driver.Currency;
-
-import javax.inject.Inject;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TestCurrencyValidator implements ConstraintValidator<TestCurrencyClassConstraint, Currency> {
-    @Inject
+
+    @Autowired //todo [jmix-framework/jmix#1866]
     protected EntityStates entityStates;
 
     @Override

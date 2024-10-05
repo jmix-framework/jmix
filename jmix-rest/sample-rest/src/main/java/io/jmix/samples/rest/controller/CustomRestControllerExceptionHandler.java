@@ -38,7 +38,10 @@ public class CustomRestControllerExceptionHandler {
         log.error("Exception in REST controller", e);
         if (e instanceof CustomHttpClientErrorException) {
             CustomHttpClientErrorException ex = (CustomHttpClientErrorException) e;
-            ErrorInfo errorInfo = new ErrorInfo(ex.getStatusCode().getReasonPhrase(), ex.getStatusText());
+
+            //todo [jmix-framework/jmix#1866]
+            //ErrorInfo errorInfo = new ErrorInfo(ex.getStatusCode().getReasonPhrase(), ex.getStatusText());
+            ErrorInfo errorInfo = new ErrorInfo(ex.getMessage(), ex.getStatusText());
             return new ResponseEntity<>(errorInfo, ex.getStatusCode());
         }
         return null;

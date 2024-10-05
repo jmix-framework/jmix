@@ -18,8 +18,7 @@ package io.jmix.samples.rest.entity.identity;
 
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity(name = "ref$IdentityCustomer")
 @JmixEntity

@@ -16,7 +16,7 @@ ${classComment}
 @LookupComponent("${tableId}")
 @DialogMode(width = "50em")
 class ${viewControllerName} : StandardListView<${entity.className}>() {
-
+<%if (generateDelegates) {%>
     @Install(to = "${tableDl}", target = Target.DATA_LOADER)
     fun ${tableDl}LoadDelegate(loadContext: LoadContext<${entity.className}>): MutableList<${entity.className}> {
         // Here you can load entities from an external store.
@@ -27,5 +27,5 @@ class ${viewControllerName} : StandardListView<${entity.className}>() {
     @Install(to = "${tableId}.remove", subject = "delegate")
     fun ${tableId}RemoveDelegate(entities: Collection<${entity.className}>) {
         // Here you can remove entities from an external storage
-    }<%}%>
+    }<%}%><%}%>
 }

@@ -18,7 +18,7 @@ ${classComment}
 @LookupComponent("${tableId}")
 @DialogMode(width = "50em")
 public class ${viewControllerName} extends StandardListView<${entity.className}> {
-
+<%if (generateDelegates) {%>
     @Install(to = "${tableDl}", target = Target.DATA_LOADER)
     protected List<${entity.className}> ${tableDl}LoadDelegate(LoadContext<${entity.className}> loadContext) {
         // Here you can load entities from an external storage.
@@ -31,5 +31,5 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
         for (${entity.className} entity : collection) {
             // Here you can remove entities from an external storage
         }
-    }<%}%>
+    }<%}%><%}%>
 }

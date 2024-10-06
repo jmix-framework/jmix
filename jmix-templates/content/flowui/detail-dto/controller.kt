@@ -16,7 +16,7 @@ ${classComment}
 @ViewDescriptor(path = "${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")
 class ${detailControllerName} : StandardDetailView<${entity.className}>() {
-
+<%if (generateDelegates) {%>
     @Install(to = "${dlId}", target = Target.DATA_LOADER)
     private fun ${dlId}LoadDelegate(loadContext: LoadContext<${entity.className}>): ${entity.className}? {
         val id = loadContext.id
@@ -33,5 +33,5 @@ class ${detailControllerName} : StandardDetailView<${entity.className}>() {
         // to let the framework match the saved instance with the original one.
         val savedEntity = editedEntity
         return mutableSetOf(savedEntity)
-    }
+    }<%}%>
 }

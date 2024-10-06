@@ -17,7 +17,7 @@ ${classComment}
 @ViewDescriptor(path = "${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")
 public class ${detailControllerName} extends StandardDetailView<${entity.className}> {
-
+<%if (generateDelegates) {%>
     @Install(to = "${dlId}", target = Target.DATA_LOADER)
     private ${entity.className} customerDlLoadDelegate(final LoadContext<${entity.className}> loadContext) {
         Object id = loadContext.getId();
@@ -35,5 +35,5 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
         // to let the framework match the saved instance with the original one.
         ${entity.className} saved = entity;
         return Set.of(saved);
-    }
+    }<%}%>
 }

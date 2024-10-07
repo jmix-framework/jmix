@@ -294,7 +294,4 @@ public class OpenSearchEntitySearcher implements EntitySearcher {
         }
         return result;
     }
-
-
-    /
 }

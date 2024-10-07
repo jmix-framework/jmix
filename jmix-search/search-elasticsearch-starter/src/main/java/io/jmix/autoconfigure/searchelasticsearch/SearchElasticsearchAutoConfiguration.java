@@ -29,6 +29,7 @@ import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.utils.SslConfigurer;
 import io.jmix.searchelasticsearch.SearchElasticsearchConfiguration;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
@@ -147,7 +148,8 @@ public class SearchElasticsearchAutoConfiguration {
                                                          IdSerialization idSerialization,
                                                          SecureOperations secureOperations,
                                                          PolicyStore policyStore,
-                                                         ElasticsearchSearchStrategyProvider searchStrategyManager) {
+                                                         ElasticsearchSearchStrategyProvider searchStrategyManager,
+                                                         SearchUtils searchUtils) {
         return new ElasticsearchEntitySearcher(
                 client,
                 indexConfigurationManager,
@@ -159,7 +161,8 @@ public class SearchElasticsearchAutoConfiguration {
                 idSerialization,
                 secureOperations,
                 policyStore,
-                searchStrategyManager
+                searchStrategyManager,
+                searchUtils
         );
     }
 

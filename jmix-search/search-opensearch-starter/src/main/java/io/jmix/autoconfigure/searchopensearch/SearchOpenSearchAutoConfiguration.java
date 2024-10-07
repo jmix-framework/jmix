@@ -26,6 +26,7 @@ import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchUtils;
 import io.jmix.search.utils.SslConfigurer;
 import io.jmix.searchopensearch.SearchOpenSearchConfiguration;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
@@ -145,7 +146,8 @@ public class SearchOpenSearchAutoConfiguration {
                                                       IdSerialization idSerialization,
                                                       SecureOperations secureOperations,
                                                       PolicyStore policyStore,
-                                                      OpenSearchSearchStrategyProvider searchStrategyManager) {
+                                                      OpenSearchSearchStrategyProvider searchStrategyManager,
+                                                      SearchUtils searchUtils) {
         return new OpenSearchEntitySearcher(
                 client,
                 indexConfigurationManager,
@@ -157,7 +159,8 @@ public class SearchOpenSearchAutoConfiguration {
                 idSerialization,
                 secureOperations,
                 policyStore,
-                searchStrategyManager
+                searchStrategyManager,
+                searchUtils
         );
     }
 

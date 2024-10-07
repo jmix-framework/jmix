@@ -17,8 +17,10 @@
 package test_support;
 
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
+import co.elastic.clients.elasticsearch.indices.IndexSettingsAnalysis;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfigurationContext;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfigurer;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import test_support.entity.TestRootEntity;
 
@@ -26,28 +28,28 @@ import test_support.entity.TestRootEntity;
 public class ElasticsearchAnalysisIndexSettingsConfigurer implements ElasticsearchIndexSettingsConfigurer {
 
     @Override
-    public void configure(ElasticsearchIndexSettingsConfigurationContext context) {
-        IndexSettings.Builder commonSettingsBuilder = context.getCommonSettingsBuilder();
+    public void configure(@NonNull ElasticsearchIndexSettingsConfigurationContext context) {
+        IndexSettings.Builder commonSettingsBuilder = context.getCommonIndexSettingsBuilder();
         commonSettingsBuilder
-                .maxResultWindow(15000)
-                .analysis(analysisBuilder ->
-                        analysisBuilder.analyzer("customized_standard", analyzerBuilder ->
-                                analyzerBuilder.standard(stdAnalyzerBuilder ->
-                                        stdAnalyzerBuilder.maxTokenLength(100)
-                                )
-                        )
-                );
+                .maxResultWindow(15000);
 
-        IndexSettings.Builder rootEntitySettingsBuilder = context.getEntitySettingsBuilder(TestRootEntity.class);
+        IndexSettingsAnalysis.Builder commonAnalysisBuilder = context.getCommonAnalysisBuilder();
+        commonAnalysisBuilder.analyzer("customized_standard", analyzerBuilder ->
+                analyzerBuilder.standard(stdAnalyzerBuilder ->
+                        stdAnalyzerBuilder.maxTokenLength(100)
+                )
+        );
+
+        IndexSettings.Builder rootEntitySettingsBuilder = context.getEntityIndexSettingsBuilder(TestRootEntity.class);
         rootEntitySettingsBuilder
                 .maxResultWindow(15000)
-                .maxRegexLength(2000)
-                .analysis(analysisBuilder ->
-                        analysisBuilder.analyzer("customized_standard", analyzerBuilder ->
-                                analyzerBuilder.standard(stdAnalyzerBuilder ->
-                                        stdAnalyzerBuilder.maxTokenLength(150)
-                                )
-                        )
-                );
+                .maxRegexLength(2000);
+
+        IndexSettingsAnalysis.Builder rootEntityAnalysisBuilder = context.getEntityAnalysisBuilder(TestRootEntity.class);
+        rootEntityAnalysisBuilder.analyzer("customized_standard", analyzerBuilder ->
+                analyzerBuilder.standard(stdAnalyzerBuilder ->
+                        stdAnalyzerBuilder.maxTokenLength(150)
+                )
+        );
     }
 }
